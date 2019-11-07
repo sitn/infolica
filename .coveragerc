@@ -1,0 +1,3 @@
+[run]
+source = infolica
+omit = infolica/test*
