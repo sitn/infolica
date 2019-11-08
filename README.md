@@ -27,5 +27,5 @@
    `env/bin/pserve development.ini`
 
 ## Etapes réalisées
-08.11.2019 MR - Modification du fichier `infolica/models/mymodel.py`. La base de donnée n'a pas encore été générée ni testée.  
-08.11.2019 MR - Création du projet avec un cookie-cutter: https://docs.pylonsproject.org/projects/pyramid/en/latest/quick_tutorial/cookiecutters.html  
+* 08.11.2019 MR - Modification du fichier `infolica/models/mymodel.py`. La base de donnée n'a pas encore été générée ni testée.  
+* 08.11.2019 MR - Création du projet avec un cookie-cutter: https://docs.pylonsproject.org/projects/pyramid/en/latest/quick_tutorial/cookiecutters.html  
