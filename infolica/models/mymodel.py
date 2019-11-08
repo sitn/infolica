@@ -246,28 +246,28 @@ class EnvoiDocument(Base):
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
-class SuiviMandat(Base):
-    __tablename__ = 'suivi_mandat'
-    __table_args__ = {'schema': 'controle'}
-    id = Column(Integer, primary_key=True)
-    affaire_id = Column(Integer, ForeignKey(Affaire.id) nullable=False)
-    ...
+# class SuiviMandat(Base):
+#     __tablename__ = 'suivi_mandat'
+#     __table_args__ = {'schema': 'controle'}
+#     id = Column(Integer, primary_key=True)
+#     affaire_id = Column(Integer, ForeignKey(Affaire.id) nullable=False)
+#     ...
 
 
-class ControleMutation(Base):
-    __tablename__ = 'controle_mutation'
-    __table_args__ = {'schema': 'controle'}
-    id = Column(Integer, primary_key=True)
-    affaire_id = Column(Integer, ForeignKey(Affaire.id), nullable=False)
-    ...
+# class ControleMutation(Base):
+#     __tablename__ = 'controle_mutation'
+#     __table_args__ = {'schema': 'controle'}
+#     id = Column(Integer, primary_key=True)
+#     affaire_id = Column(Integer, ForeignKey(Affaire.id), nullable=False)
+#     ...
 
 
-class ControleMutation(Base):
-    __tablename__ = 'controle_mutation'
-    __table_args__ = {'schema': 'controle'}
-    id = Column(Integer, primary_key=True)
-    affaire_id = Column(Integer, ForeignKey(Affaire.id), nullable=False)
-    ...
+# class ControleMutation(Base):
+#     __tablename__ = 'controle_mutation'
+#     __table_args__ = {'schema': 'controle'}
+#     id = Column(Integer, primary_key=True)
+#     affaire_id = Column(Integer, ForeignKey(Affaire.id), nullable=False)
+#     ...
 
 
 class NumeroType(Base):
@@ -358,6 +358,13 @@ class PreavisType(Base):
     nom = Column(Text, nullable=False)
 
 
+class PreavisDecision(Base):
+    __tablename__ = 'preavis_decision'
+    __table_args__ = {'schema': 'preavis'}
+    id = Column(Integer, primary_key=True)
+    nom = Column(Text, nullable=False)
+
+
 class Preavis(Base):
     __tablename__ = 'preavis'
     __table_args__ = {'schema': 'preavis'}
@@ -365,6 +372,7 @@ class Preavis(Base):
     affaire_id = Column(Integer, ForeignKey(Affaire.id), nullable=False)
     service_id = Column(Integer, ForeignKey(Service.id), nullable=False)
     preavis_id = Column(Text, ForeignKey(Preavis_type.id) nullable=False)
+    decision = Column(Text, ForeignKey(PreavisDecision.id), nullable=False)
     date_demande = Column(
         Date, default=datetime.datetime.utcnow, nullable=False)
-    date_réponse = Column(Date)
+    date_reponse = Column(Date)
