@@ -13,7 +13,6 @@ from sqlalchemy import (
 
 import datetime
 from .constant import Constant
-
 from .meta import Base
 
 
@@ -116,6 +115,19 @@ class Client(Base):
         'polymorphic_identity': 'client',
         'polymorphic_on': type
     }
+
+    def format(self):
+        return {
+            id: self.id,
+            adresse: self.adresse,
+            npa: self.npa,
+            localite: self.localite,
+            tel_fixe: self.tel_fixe,
+            mail: self.mail,
+            entree: self.entree,
+            sortie: self.sortie,
+            type: self.type
+        }
 
 
 class ClientEntreprise(Client):
