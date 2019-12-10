@@ -1,0 +1,91 @@
+###
+# app configuration
+# https://docs.pylonsproject.org/projects/pyramid/en/latest/narr/environment.html
+###
+
+[app:main]
+use = egg:infolica
+
+pyramid.reload_templates = false
+pyramid.debug_authorization = false
+pyramid.debug_notfound = false
+pyramid.debug_routematch = false
+pyramid.default_locale_name = en
+
+## CHANGER ICI
+sqlalchemy.url = postgresql://username:password@host:port/database
+
+retry.attempts = 3
+
+[pshell]
+setup = infolica.pshell.setup
+
+###
+# wsgi server configuration
+###
+
+[alembic]
+# path to migration scripts
+script_location = infolica/alembic
+file_template = %%(year)d%%(month).2d%%(day).2d_%%(rev)s
+# file_template = %%(rev)s_%%(slug)s
+
+[server:main]
+use = egg:waitress#main
+listen = *:6543
+
+###
+# logging configuration
+# https://docs.pylonsproject.org/projects/pyramid/en/latest/narr/logging.html
+###
+
+[loggers]
+keys = root, infolica, sqlalchemy
+
+[handlers]
+keys = console, filelog,accesslog
+
+[formatters]
+keys = generic,accesslog
+
+[logger_root]
+level = WARN
+handlers = filelog
+
+
+[logger_infolica]
+level = WARN
+handlers =
+qualname = infolica
+
+[logger_sqlalchemy]
+level = WARN
+handlers =
+qualname = sqlalchemy.engine
+# "level = INFO" logs SQL queries.
+# "level = DEBUG" logs SQL queries and results.
+# "level = WARN" logs neither.  (Recommended for production systems.)
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = NOTSET
+formatter = generic
+
+[handler_filelog]
+class = FileHandler
+args = (r'%(here)s/logs/logs.log','a')
+level = INFO
+formatter = generic
+
+[handler_accesslog]
+class = FileHandler
+args = (r'%(here)s/logs/access.log','a')
+level = INFO
+formatter = accesslog
+
+[formatter_generic]
+format = %(asctime)s %(levelname)-5.5s [%(name)s:%(lineno)s][%(threadName)s] %(message)s
+
+[formatter_accesslog]
+format = %(message)s
