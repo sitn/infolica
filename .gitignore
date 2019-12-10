@@ -128,4 +128,5 @@ venv.bak/
 .vscode/*
 
 # ini files
-.ini
+development.ini
+production.ini
