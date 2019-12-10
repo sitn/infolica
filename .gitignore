@@ -128,4 +128,4 @@ venv.bak/
 .vscode/*
 
 # ini files
-*.ini
+.ini
