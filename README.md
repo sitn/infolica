@@ -24,3 +24,6 @@ Fork and clone Infolica.
 
 1. Run your project  
    `pserve development.ini`
+
+## Generate alembic DB revision  
+   `alembic -c development.ini revision --autogenerate -m "init"`

@@ -98,6 +98,13 @@ class ModificationAffaire(Base):
         ModificationAffaireType.id), nullable=False)
 
 
+class ClientType(Base):
+    __tablename__ = 'client_type'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True)
+    nom = Column(Text, nullable=False)
+
+
 class Client(Base):
     __tablename__ = 'client'
     __table_args__ = {'schema': 'infolica'}
@@ -109,11 +116,11 @@ class Client(Base):
     mail = Column(Text)
     entree = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     sortie = Column(Date)
-    type = Column(Text)
+    type_client = Column(BigInteger, ForeignKey(ClientType.id), nullable=False)
 
     __mapper_args__ = {
         'polymorphic_identity': 'client',
-        'polymorphic_on': type
+        'polymorphic_on': type_client
     }
 
     def format(self):
@@ -126,7 +133,7 @@ class Client(Base):
             mail: self.mail,
             entree: self.entree,
             sortie: self.sortie,
-            type: self.type
+            type_client: self.type_client
         }
 
 
@@ -178,11 +185,11 @@ class Facture(Base):
     montant_mat_diff = Column(Float, default=0.0, nullable=False)
     total = Column(Float, default=0.0, nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
-    type = Column(Text)
+    type_facture = Column(Text)
 
     __mapper_args__ = {
         'polymorphic_identity': 'facture',
-        'polymorphic_on': type
+        'polymorphic_on': type_facture
     }
 
     def __init__(self, montant_mo, montant_rf, montant_mat_diff):
@@ -213,7 +220,6 @@ class EmolumentsMO(Base):
     id = Column(BigInteger, primary_key=True)
 
 
-
 class EmolumentsMOParametres(Base):
     __tablename__ = 'emoluments_mo_parametres'
     __table_args__ = {'schema': 'infolica'}
@@ -227,7 +233,6 @@ class EmolumentsRF(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-
 
 
 class EmolumentsRFParametres(Base):

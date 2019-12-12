@@ -25,6 +25,7 @@ setup.txt
 __pycache__/
 *.py[cod]
 *$py.class
+.vscode/
 
 # C extensions
 *.so
@@ -128,5 +129,5 @@ venv.bak/
 .vscode/*
 
 # ini files
-development.ini
-production.ini
+/development.ini
+/production.ini
