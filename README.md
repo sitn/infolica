@@ -8,8 +8,8 @@ Fork and clone Infolica.
    `python3 -m venv env`
 1. Launch the virtual environment  
    `env\Scripts\activate`
-1. Upgrade packaging tools  
-   `pip install --upgrade pip setuptools`
+1. Install requirements  
+   `pip install -r requirements.txt`
 1. Rename `development.ini.template` to `development.ini`  
    Open the file and adapt `sqlalchemy.url`
 1. Install the project in editable mode with its testing requirements  
@@ -24,3 +24,6 @@ Fork and clone Infolica.
 
 1. Run your project  
    `pserve development.ini`
+
+## Generate alembic DB revision  
+   `alembic -c development.ini revision --autogenerate -m "init"`
