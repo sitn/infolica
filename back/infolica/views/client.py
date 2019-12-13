@@ -9,7 +9,18 @@ from ..models import Constant
 
 import logging
 log = logging.getLogger(__name__)
+from ..scripts.utils import Utils
 
+
+""" Return all types clients"""
+@view_config(route_name='types_clients', request_method='GET', renderer='json')
+@view_config(route_name='types_clients_s', request_method='GET', renderer='json')
+def types_clients_view(request):
+    try:
+        query = request.dbsession.query(models.ClientType).all()
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
+    return Utils.serialize_many(query)
 
 """ Return all clients"""
 @view_config(route_name='clients', request_method='GET', renderer='json')

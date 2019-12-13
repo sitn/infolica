@@ -38,7 +38,7 @@ ldap_passwd=
 ###########################################################
 
 # Le DN de base de la recherche des logins
-ldap_login_query_base_dn= ou=perturbtraficUsers,ou=People,dc=maxcrc,dc=com
+ldap_login_query_base_dn= ou=infolicaUsers,ou=People,dc=maxcrc,dc=com
 
 # Le filtre de la recherche des logins
 ldap_login_query_filter_tmpl= (uid=%%(login)s)
@@ -55,10 +55,10 @@ ldap_login_query_scope= SUBTREE
 ###########################################################
 
 # Le DN de base de la recherche des groupes
-ldap_group_query_base_dn= ou=perturbtraficGroups,ou=People,dc=maxcrc,dc=com
+ldap_group_query_base_dn= ou=infolicaGroups,ou=People,dc=maxcrc,dc=com
 
 # Le filtre de la recherche des groupes
-ldap_group_query_filter_tmpl= (&(objectClass=groupOfNames)(cn=PERTURBTRAFIC_*)(member=%%(userdn)s))
+ldap_group_query_filter_tmpl= (&(objectClass=groupOfNames)(cn=INFOLICA*)(member=%%(userdn)s))
 
 # Le nombre de secondes du cache de la recherche des groupes
 ldap_group_query_cache_period=600

@@ -1,4 +1,4 @@
-perturbtrafic_api
+infolica_api
 =================
 
 Getting Started
@@ -6,7 +6,7 @@ Getting Started
 
 - Change directory into your newly created project.
 
-    cd perturbtrafic_api
+    cd back
 
 - Create a Python virtual environment.
 
@@ -32,7 +32,7 @@ Getting Started
 
 - Load default data into the database using a script.
 
-    env/bin/initialize_perturbtrafic_api_db development.ini
+    env/bin/initialize_infolica_db development.ini
 
 - Run your project's tests.
 
