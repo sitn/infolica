@@ -1,11 +1,15 @@
 from pyramid.view import view_config
 from pyramid.response import Response
-
 from sqlalchemy.exc import DBAPIError
-
 from .. import models
+from sqlalchemy import exc
+from ..exceptions.custom_error import CustomError
+from pyramid.httpexceptions import HTTPForbidden
 
+import logging
+log = logging.getLogger(__name__)
 
+"""
 @view_config(route_name='home', renderer='../templates/mytemplate.mako')
 def my_view(request):
     try:
@@ -14,6 +18,98 @@ def my_view(request):
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
     return {'one': one, 'project': 'infolica'}
+"""
+
+########################################################
+# Common IntegrityError return message
+########################################################
+@view_config(context=exc.IntegrityError, renderer='json')
+def integrity_error(exc, request):
+    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    request.response.status = 500
+    return {'error': 'true', 'code': 500, 'message': str(exc)}
+
+
+########################################################
+# Common StatementError return message
+########################################################
+@view_config(context=exc.StatementError, renderer='json')
+def statement_error(exc, request):
+    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    request.response.status = 500
+    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+
+
+########################################################
+# Common ResourceClosedError return message
+########################################################
+@view_config(context=exc.ResourceClosedError, renderer='json')
+def resource_closed_error(exc, request):
+    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    request.response.status = 500
+    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+
+
+########################################################
+# Common InternalError return message
+########################################################
+@view_config(context=exc.InternalError, renderer='json')
+def internal_error(exc, request):
+    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    request.response.status = 500
+    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+
+
+########################################################
+# Common NoReferenceError return message
+########################################################
+@view_config(context=exc.NoReferenceError, renderer='json')
+def noreference_error(exc, request):
+    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    request.response.status = 500
+    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+
+
+
+########################################################
+# Common InvalidRequestError, return message
+########################################################
+@view_config(context=exc.InvalidRequestError, renderer='json')
+def noreference_error(exc, request):
+    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    request.response.status = 500
+    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+
+
+########################################################
+# Common DBAPIError return message
+########################################################
+@view_config(context=exc.DBAPIError, renderer='json')
+def noreference_error(exc, request):
+    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    request.response.status = 500
+    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+
+
+########################################################
+# Common SQLAlchemyError return message
+########################################################
+@view_config(context=exc.SQLAlchemyError, renderer='json')
+def noreference_error(exc, request):
+    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    request.response.status = 500
+    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+
+
+
+########################################################
+# Common HTTPForbidden return message
+########################################################
+@view_config(context=HTTPForbidden, renderer='json')
+def http_forbidden_error(exc, request):
+    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    request.response.status = 403
+    return {'error': 'true', 'code': 403, 'message': CustomError.NOT_AUTHORIZED_EXCEPTION}
 
 
 db_err_msg = """\
