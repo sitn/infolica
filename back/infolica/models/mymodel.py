@@ -52,6 +52,7 @@ class Affaire(Base):
     __tablename__ = 'affaire'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text)
     responsable_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
     technicien_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
     type_id = Column(BigInteger, ForeignKey(
@@ -153,7 +154,7 @@ class ClientPersonne(Client):
     titre = Column(Text)
     nom = Column(Text, nullable=False)
     prenom = Column(Text, nullable=False)
-    tel_portable = Column(Text, nullable=False)
+    tel_portable = Column(Text)
 
     __mapper_args__ = {'polymorphic_identity': 'client_personne'}
 
@@ -163,7 +164,7 @@ class RelationClientAffaireType(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
-
+    
 
 class RelationAffaireClient(Base):
     __tablename__ = 'relation_affaire_client'
@@ -175,41 +176,52 @@ class RelationAffaireClient(Base):
         RelationClientAffaireType.id), nullable=False)
 
 
+class FactureType(Base):
+    __tablename__ = 'facture_type'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    facture_type = Column(Text, nullable=False)
+
+
 class Facture(Base):
     __tablename__ = 'facture'
     __table_args__ = {'schema': 'infolica'}
-    sap = Column(Text, primary_key=True)
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    sap = Column(Text, nullable=False)
     client_id = Column(BigInteger, ForeignKey(Client.id))
     montant_mo = Column(Float, default=0.0, nullable=False)
     montant_rf = Column(Float, default=0.0, nullable=False)
     montant_mat_diff = Column(Float, default=0.0, nullable=False)
+    tva = Column(Float, default=0.0, nullable=False)
     total = Column(Float, default=0.0, nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
-    type_facture = Column(Text)
+    type_facture = Column(BigInteger, ForeignKey(FactureType.id), nullable=False)
 
     __mapper_args__ = {
         'polymorphic_identity': 'facture',
         'polymorphic_on': type_facture
     }
 
-    def __init__(self, montant_mo, montant_rf, montant_mat_diff):
+    def __init__(self, montant_mo, montant_rf, montant_mat_diff, tva, total):
         self.montant_mo = montant_mo
         self.montant_rf = montant_rf
         self.montant_matdiff = montant_mat_diff
+        self.tva = tva
+        self.total = total
 
-    def tva(self):
+    def compute_tva(self):
         self.tva = Constant.tva * \
             (self.montant_mo + self.montant_matdiff)  # TVA MO
 
     def total(self):
-        self.total = self.montant_mo + self.montant_rf + self.montant_matdiff
+        self.total = self.montant_mo + self.montant_rf + self.montant_matdiff + self.tva
 
 
 class FacturePartielle(Facture):
     __tablename__ = 'facture_partielle'
     __table_args__ = {'schema': 'infolica'}
-    sap = Column(Text, ForeignKey(Facture.sap), primary_key=True, nullable=False)
-    immeuble = Column(Text, default='Tous', nullable=False)
+    id = Column(BigInteger, ForeignKey(Facture.id), primary_key=True, autoincrement=True)
+    immeuble = Column(Text, nullable=False)
 
     __mapper_args__ = {'polymorphic_identity': 'facture_partielle'}
 
