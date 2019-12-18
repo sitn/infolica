@@ -6,10 +6,12 @@ from sqlalchemy.exc import DBAPIError
 from .. import models
 import transaction
 from ..models import Constant
+from ..exceptions.custom_error import CustomError
+from ..scripts.utils import Utils
+
 
 import logging
 log = logging.getLogger(__name__)
-from ..scripts.utils import Utils
 
 
 """ Return all types clients"""
@@ -147,9 +149,118 @@ def clients_new_view(request):
 
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return Constant.success_save
+    return Constant.SUCCESS_SAVE
 
 
+""" Update client"""
+@view_config(route_name='clients', request_method='PUT', renderer='json')
+@view_config(route_name='clients_s', request_method='PUT', renderer='json')
+def clients_update_view(request):
+    try:
+        settings = request.registry.settings
+        client_record = None
+
+        # Read params client
+        id_client = None
+        adresse = None
+        npa = None
+        localite = None
+        tel_fixe = None
+        mail = None
+        entree = None
+        sortie = None
+        type = None
+
+        if 'id_client' in request.params:
+            id_client = request.params['id_client']
+
+        if 'adresse' in request.params:
+            adresse = request.params['adresse']
+
+        if 'npa' in request.params:
+            npa = request.params['npa']
+
+        if 'localite' in request.params:
+            localite = request.params['localite']
+
+        if 'tel_fixe' in request.params:
+            tel_fixe = request.params['tel_fixe']
+
+        if 'mail' in request.params:
+            mail = request.params['mail']
+
+        if 'entree' in request.params:
+            entree = request.params['entree']
+
+        if 'sortie' in request.params:
+            sortie = request.params['sortie']
+
+        if 'type' in request.params:
+            type = request.params['type']
+
+        # Get the client
+        client_record = request.dbsession.query(models.Client).filter(
+                models.Client.id == id_client).first()
+
+        if not client_record:
+            raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Perturbation.__tablename__, id_client))
+
+        with transaction.manager:
+
+            client_record.adresse = adresse
+            client_record.npa = npa
+            client_record.localite = localite
+            client_record.tel_fixe = tel_fixe
+            client_record.mail = mail
+            client_record.entree = entree
+            client_record.sortie = sortie
+            client_record.type = type
+
+
+            # Read params client entreprise
+            if type == settings['type_entreprise']:
+                if 'nom' in request.params:
+                    entreprise_record = request.dbsession.query(models.ClientEntreprise).filter(
+                        models.ClientEntreprise.id == id_client).first()
+                    if entreprise_record:
+                        entreprise_record.nom = request.params['nom']
+
+            # Read params client personne
+            elif type == settings['type_personne']:
+
+                personne_record = request.dbsession.query(models.ClientPersonne).filter(
+                    models.ClientPersonne.id == id_client).first()
+
+                if personne_record:
+
+                    titre = None
+                    nom = None
+                    prenom = None
+                    tel_portable = None
+
+                    if 'titre' in request.params:
+                        titre = request.params['titre']
+
+                    if 'nom' in request.params:
+                        nom = request.params['nom']
+
+                    if 'prenom' in request.params:
+                        prenom = request.params['prenom']
+
+                    if 'tel_portable' in request.params:
+                        tel_portable = request.params['tel_portable']
+
+                    personne_record.titre = titre
+                    personne_record.nom = nom
+                    personne_record.prenom = prenom
+                    personne_record.tel_portable = tel_portable
+
+            # Commit transaction
+            transaction.commit()
+
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
+    return Constant.SUCCESS_SAVE
 
 
 
