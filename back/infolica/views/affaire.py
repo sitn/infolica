@@ -6,6 +6,7 @@ from sqlalchemy.exc import DBAPIError
 from .. import models
 import transaction
 from ..models import Constant
+from ..exceptions.custom_error import CustomError
 
 
 """ Return all affaires"""
@@ -103,7 +104,7 @@ def affaires_new_view(request):
 
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return Constant.success_save
+    return Constant.SUCCESS_SAVE
 
 
 
