@@ -53,8 +53,10 @@ class Affaire(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text)
-    responsable_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
-    technicien_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
+    responsable_id = Column(
+        BigInteger, ForeignKey(Operateur.id), nullable=False)
+    technicien_id = Column(BigInteger, ForeignKey(
+        Operateur.id), nullable=False)
     type_id = Column(BigInteger, ForeignKey(
         AffaireType.id), nullable=False)
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
@@ -78,7 +80,8 @@ class EtapeAffaire(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-    statut_id = Column(BigInteger, ForeignKey(StatutAffaire.id), nullable=False)
+    statut_id = Column(BigInteger, ForeignKey(
+        StatutAffaire.id), nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
@@ -128,7 +131,8 @@ class Client(Base):
 class ClientEntreprise(Client):
     __tablename__ = 'client_entreprise'
     __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, ForeignKey(Client.id), primary_key=True, nullable=False)
+    id = Column(BigInteger, ForeignKey(Client.id),
+                primary_key=True, nullable=False)
     nom = Column(Text, nullable=False)
 
     __mapper_args__ = {'polymorphic_identity': 'client_entreprise'}
@@ -137,7 +141,8 @@ class ClientEntreprise(Client):
 class ClientPersonne(Client):
     __tablename__ = 'client_personne'
     __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, ForeignKey(Client.id), primary_key=True, nullable=False)
+    id = Column(BigInteger, ForeignKey(Client.id),
+                primary_key=True, nullable=False)
     titre = Column(Text)
     nom = Column(Text, nullable=False)
     prenom = Column(Text, nullable=False)
@@ -151,7 +156,7 @@ class RelationClientAffaireType(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
-    
+
 
 class RelationAffaireClient(Base):
     __tablename__ = 'relation_affaire_client'
@@ -182,7 +187,8 @@ class Facture(Base):
     tva = Column(Float, default=0.0, nullable=False)
     total = Column(Float, default=0.0, nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
-    type_facture = Column(BigInteger, ForeignKey(FactureType.id), nullable=False)
+    type_facture = Column(BigInteger, ForeignKey(
+        FactureType.id), nullable=False)
 
     __mapper_args__ = {
         'polymorphic_identity': 'facture',
@@ -207,7 +213,8 @@ class Facture(Base):
 class FacturePartielle(Facture):
     __tablename__ = 'facture_partielle'
     __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, ForeignKey(Facture.id), primary_key=True, autoincrement=True)
+    id = Column(BigInteger, ForeignKey(Facture.id),
+                primary_key=True, autoincrement=True)
     immeuble = Column(Text, nullable=False)
 
     __mapper_args__ = {'polymorphic_identity': 'facture_partielle'}
@@ -317,6 +324,16 @@ class Numero(Base):
     etat_id = Column(BigInteger, ForeignKey(NumeroEtat.id), nullable=False)
 
 
+class NumeroEtatHisto(Base):
+    __tablename__ = 'numero_etat_histo'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    numero_id = Column(BigInteger, ForeignKey(Numero.id), nullable=False)
+    numero_etat_id = Column(BigInteger, ForeignKey(
+        NumeroEtat.id), nullable=False)
+    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+
+
 class RelationType(Base):
     __tablename__ = 'relation_type'
     __table_args__ = {'schema': 'infolica'}
@@ -394,7 +411,8 @@ class Preavis(Base):
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     service_id = Column(BigInteger, ForeignKey(Service.id), nullable=False)
     preavis_id = Column(BigInteger, ForeignKey(PreavisType.id), nullable=False)
-    decision = Column(BigInteger, ForeignKey(PreavisDecision.id), nullable=False)
+    decision = Column(BigInteger, ForeignKey(
+        PreavisDecision.id), nullable=False)
     date_demande = Column(
         Date, default=datetime.datetime.utcnow, nullable=False)
     date_reponse = Column(Date)
