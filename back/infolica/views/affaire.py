@@ -7,7 +7,7 @@ from .. import models
 import transaction
 from ..models import Constant
 from ..exceptions.custom_error import CustomError
-
+from ..scripts.utils import Utils
 
 """ Return all affaires"""
 @view_config(route_name='affaires', request_method='GET', renderer='json')
@@ -17,7 +17,7 @@ def affaires_view(request):
         query = request.dbsession.query(models.Affaire).all()
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return query
+    return Utils.serialize_many(query)
 
 
 """ Return affaires by id"""
@@ -29,7 +29,7 @@ def affaire_by_id_view(request):
         one = query.filter(models.Affaire.id == id).first()
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return one
+    return Utils.serialize_one(one)
 
 
 """ Return all types affaires"""
@@ -40,7 +40,7 @@ def types_affaires_view(request):
         query = request.dbsession.query(models.AffaireType).all()
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return query
+    return Utils.serialize_many(query)
 
 
 """ Add new affaire"""

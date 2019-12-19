@@ -1,11 +1,4 @@
-from pyramid_ldap3 import (
-    get_ldap_connector,
-    groupfinder,
-)
-
-from pyramid.security import remember, forget
-from pyramid.response import Response
-import json
+from datetime import time, date, datetime
 
 class Utils():
 
@@ -16,7 +9,10 @@ class Utils():
         item = {}
         for n in d.keys():
             if n != '_sa_instance_state':
-                item[n] = d[n]
+                if isinstance(d[n], (datetime, date)):
+                    item[n] = d[n].isoformat()
+                else:
+                    item[n] = d[n]
 
         return item
 
@@ -31,6 +27,10 @@ class Utils():
             item = {}
             for n in d.keys():
                 if n != '_sa_instance_state':
-                    item[n] = d[n]
+                    if isinstance(d[n], (datetime, date)):
+                        item[n] = d[n].isoformat()
+                    else:
+                        item[n] = d[n]
             master.append(item)
         return master
+

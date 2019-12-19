@@ -1,6 +1,13 @@
 from pyramid.view import view_config
 from pyramid.response import Response
 
+from pyramid.view import exception_view_config
+
+from pyramid.httpexceptions import (
+    HTTPException,
+    HTTPBadRequest
+)
+
 from sqlalchemy.exc import DBAPIError
 
 from .. import models
@@ -24,29 +31,77 @@ def types_clients_view(request):
         return Response(db_err_msg, content_type='text/plain', status=500)
     return Utils.serialize_many(query)
 
-""" Return all clients"""
-@view_config(route_name='clients', request_method='GET', renderer='json')
-@view_config(route_name='clients_s', request_method='GET', renderer='json')
-def clients_view(request):
+""" Return all clients personnes"""
+@view_config(route_name='clients_personnes', request_method='GET', renderer='json')
+@view_config(route_name='clients_personnes_s', request_method='GET', renderer='json')
+def clients_personnes_view(request):
+    result = []
     try:
-        query = request.dbsession.query(models.Client).all()
+        query = request.dbsession.query(models.Client, models.ClientPersonne).filter(models.Client.id == models.ClientPersonne.id).all()
+
+        if query:
+            for c, cp in query:
+                merged = dict()
+                merged.update(Utils.serialize_one(c))
+                merged.update(Utils.serialize_one(cp))
+                result.append(merged)
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return query
+    return result#Utils.serialize_many(result)
 
 
-""" Return client by id"""
-@view_config(route_name='client_by_id', request_method='GET', renderer='json')
-def client_by_id_view(request):
+""" Return client personne by id"""
+@view_config(route_name='client_personne_by_id', request_method='GET', renderer='json')
+def client_personne_by_id_view(request):
+    merged = None
     try:
         id = request.matchdict['id']
-        query = request.dbsession.query(models.Client, models.ClientPersonne, models.ClientEntreprise).filter(
-            models.Client.id == id).filter(models.Client.id == models.ClientPersonne.id).filter(
-            models.Client.id == models.ClientEntreprise).first()
+        query = request.dbsession.query(models.Client, models.ClientPersonne).filter(models.Client.id == models.ClientPersonne.id).first()
+
+        if query:
+            merged = dict()
+            merged.update(Utils.serialize_one(query[0]))
+            merged.update(Utils.serialize_one(query[1]))
 
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return query
+    return merged
+
+""" Return all clients entreprise"""
+@view_config(route_name='clients_entreprises', request_method='GET', renderer='json')
+@view_config(route_name='clients_entreprises_s', request_method='GET', renderer='json')
+def clients_entreprises_view(request):
+    result = []
+    try:
+        query = request.dbsession.query(models.Client, models.ClientEntreprise).filter(models.Client.id == models.ClientEntreprise.id).all()
+
+        if query:
+            for c, ce in query:
+                merged = dict()
+                merged.update(Utils.serialize_one(c))
+                merged.update(Utils.serialize_one(ce))
+                result.append(merged)
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
+    return result#Utils.serialize_many(result)
+
+
+""" Return client entreprise by id"""
+@view_config(route_name='client_entreprise_by_id', request_method='GET', renderer='json')
+def client_entreprise_by_id_view(request):
+    merged = None
+    try:
+        id = request.matchdict['id']
+        query = request.dbsession.query(models.Client, models.ClientEntreprise).filter(models.Client.id == models.ClientEntreprise.id).first()
+
+        if query:
+            merged = dict()
+            merged.update(Utils.serialize_one(query[0]))
+            merged.update(Utils.serialize_one(query[1]))
+
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
+    return merged
 
 
 """ Add new client"""
@@ -64,7 +119,7 @@ def clients_new_view(request):
         mail = None
         entree = None
         sortie = None
-        type = None
+        type_client = None
 
         if 'adresse' in request.params:
             adresse = request.params['adresse']
@@ -87,19 +142,20 @@ def clients_new_view(request):
         if 'sortie' in request.params:
             sortie = request.params['sortie']
 
-        if 'type' in request.params:
-            type = request.params['type']
+        if 'type_client' in request.params:
+            type_client = request.params['type_client']
 
         with transaction.manager:
+
             model = models.Client(
-                adresse = adresse,
+                adresse=adresse,
                 npa = npa,
                 localite = localite,
                 tel_fixe = tel_fixe,
                 mail = mail,
                 entree = entree,
                 sortie = sortie,
-                type = type
+                type_client = int(type_client)
             )
 
             request.dbsession.add(model)
@@ -107,7 +163,7 @@ def clients_new_view(request):
             max_client_id = model.id
 
             # Read params client entreprise
-            if type == settings['type_entreprise']:
+            if int(type_client) == int(settings['type_entreprise']):
                 if 'nom' in request.params:
                     model_e = models.ClientEntreprise(
                         id = max_client_id,
@@ -117,7 +173,7 @@ def clients_new_view(request):
 
 
             # Read params client personne
-            elif type == settings['type_personne']:
+            elif int(type_client) == int(settings['type_personne']):
                 titre = None
                 nom = None
                 prenom = None
@@ -147,8 +203,8 @@ def clients_new_view(request):
             # Commit transaction
             transaction.commit()
 
-    except DBAPIError:
-        return Response(db_err_msg, content_type='text/plain', status=500)
+    except Exception as e:
+        raise e
     return Constant.SUCCESS_SAVE
 
 

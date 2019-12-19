@@ -27,7 +27,7 @@ def my_view(request):
 def integrity_error(exc, request):
     log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
     request.response.status = 500
-    return {'error': 'true', 'code': 500, 'message': str(exc)}
+    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
 
 
 ########################################################

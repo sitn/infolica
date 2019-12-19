@@ -120,22 +120,9 @@ class Client(Base):
     type_client = Column(BigInteger, ForeignKey(ClientType.id), nullable=False)
 
     __mapper_args__ = {
-        'polymorphic_identity': 'client',
-        'polymorphic_on': type_client
+        'polymorphic_identity': 'client'#,
+        #'polymorphic_on': type_client
     }
-
-    def format(self):
-        return {
-            'id': self.id,
-            'adresse': self.adresse,
-            'npa': self.npa,
-            'localite': self.localite,
-            'tel_fixe': self.tel_fixe,
-            'mail': self.mail,
-            'entree': self.entree,
-            'sortie': self.sortie,
-            'type_client': self.type_client
-        }
 
 
 class ClientEntreprise(Client):
