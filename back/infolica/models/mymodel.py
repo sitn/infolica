@@ -326,16 +326,6 @@ class NumeroEtat(Base):
     nom = Column(Text, nullable=False)
 
 
-class NumeroEtatHisto(Base):
-    __tablename__ = 'numero_etat_histo'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    numero_id = Column(BigInteger, ForeignKey(Numero.id), nullable=False)
-    numero_etat_id = Column(BigInteger, ForeignKey(
-        NumeroEtat.id), nullable=False)
-    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
-
-
 class Numero(Base):
     __tablename__ = 'numero'
     __table_args__ = {'schema': 'infolica'}
@@ -345,6 +335,16 @@ class Numero(Base):
     numero = Column(Integer, nullable=False)
     suffixe = Column(Text)
     etat_id = Column(BigInteger, ForeignKey(NumeroEtat.id), nullable=False)
+
+
+class NumeroEtatHisto(Base):
+    __tablename__ = 'numero_etat_histo'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    numero_id = Column(BigInteger, ForeignKey(Numero.id), nullable=False)
+    numero_etat_id = Column(BigInteger, ForeignKey(
+        NumeroEtat.id), nullable=False)
+    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
 class RelationType(Base):
