@@ -260,6 +260,7 @@ class RemarqueAffaire(Base):
     __tablename__ = 'remarque_affaire'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     remarque = Column(Text, nullable=False)
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
