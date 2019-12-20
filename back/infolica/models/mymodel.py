@@ -334,6 +334,16 @@ class NumeroEtatHisto(Base):
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
+class NumeroDiffere(Base):
+    __tablename__ = 'numero_differe'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    numero_id = Column(BigInteger, ForeignKey(Numero.id), nullable=False)
+    date_entree = Column(
+        Date, default=datetime.datetime.utcnow, nullable=False)
+    date_sortie = Column(Date)
+
+
 class RelationType(Base):
     __tablename__ = 'relation_type'
     __table_args__ = {'schema': 'infolica'}
