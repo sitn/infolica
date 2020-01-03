@@ -123,8 +123,8 @@ class Client(Base):
     type_client = Column(BigInteger, ForeignKey(ClientType.id), nullable=False)
 
     __mapper_args__ = {
-        'polymorphic_identity': 'client'#,
-        #'polymorphic_on': type_client
+        'polymorphic_identity': 'client',
+        'polymorphic_on': type_client
     }
 
 
@@ -344,8 +344,8 @@ class NumeroDiffere(Base):
     date_sortie = Column(Date)
 
 
-class RelationType(Base):
-    __tablename__ = 'relation_type'
+class NumeroRelationType(Base):
+    __tablename__ = 'numero_relation_type'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
@@ -358,7 +358,7 @@ class NumeroRelation(Base):
     numero_id_base = Column(Integer, ForeignKey(Numero.id), nullable=False)
     numero_id_associe = Column(Integer, ForeignKey(Numero.id), nullable=False)
     relation_type_id = Column(BigInteger, ForeignKey(
-        RelationType.id), nullable=False)
+        NumeroRelationType.id), nullable=False)
 
 
 class NumeroPlan(Base):
