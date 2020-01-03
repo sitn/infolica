@@ -267,12 +267,22 @@ class Document(Base):
     chemin = Column(Text, nullable=False)
 
 
+class DocumentType(Base):
+    __tablename__ = 'document_type'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
+
+
 class EnvoiDocument(Base):
     __tablename__ = 'envoi_document'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     destinataire_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
+    document_type_id = Column(BigInteger, ForeignKey(Document.id), nullable=True)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+
 
 
 # class SuiviMandat(Base):
