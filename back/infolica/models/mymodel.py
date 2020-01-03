@@ -179,6 +179,7 @@ class Facture(Base):
     __tablename__ = 'facture'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     sap = Column(Text, nullable=False)
     client_id = Column(BigInteger, ForeignKey(Client.id))
     montant_mo = Column(Float, default=0.0, nullable=False)
