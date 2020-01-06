@@ -134,6 +134,8 @@ class ClientEntreprise(Client):
     id = Column(BigInteger, ForeignKey(Client.id),
                 primary_key=True, nullable=False)
     nom = Column(Text, nullable=False)
+    represente_par = Column(Text)
+    bdee = Column(BigInteger)
 
     __mapper_args__ = {'polymorphic_identity': 'client_entreprise'}
 
@@ -147,6 +149,7 @@ class ClientPersonne(Client):
     nom = Column(Text, nullable=False)
     prenom = Column(Text, nullable=False)
     tel_portable = Column(Text)
+    bdp = Column(BigInteger)
 
     __mapper_args__ = {'polymorphic_identity': 'client_personne'}
 
@@ -417,22 +420,13 @@ class PreavisType(Base):
     nom = Column(Text, nullable=False)
 
 
-class PreavisDecision(Base):
-    __tablename__ = 'preavis_decision'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-
-
 class Preavis(Base):
     __tablename__ = 'preavis'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     service_id = Column(BigInteger, ForeignKey(Service.id), nullable=False)
-    preavis_id = Column(BigInteger, ForeignKey(PreavisType.id), nullable=False)
-    decision = Column(BigInteger, ForeignKey(
-        PreavisDecision.id), nullable=False)
+    preavis_id = Column(BigInteger, ForeignKey(PreavisType.id))
     date_demande = Column(
         Date, default=datetime.datetime.utcnow, nullable=False)
     date_reponse = Column(Date)
