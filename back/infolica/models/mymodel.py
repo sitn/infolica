@@ -407,14 +407,6 @@ class Service(Base):
     mail = Column(Text)
 
 
-class RemarquePreavis(Base):
-    __tablename__ = 'remarque_preavis'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    remarque = Column(Text, nullable=False)
-    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
-
-
 class PreavisType(Base):
     __tablename__ = 'preavis_type'
     __table_args__ = {'schema': 'infolica'}
@@ -432,3 +424,12 @@ class Preavis(Base):
     date_demande = Column(
         Date, default=datetime.datetime.utcnow, nullable=False)
     date_reponse = Column(Date)
+
+
+class RemarquePreavis(Base):
+    __tablename__ = 'remarque_preavis'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
+    remarque = Column(Text, nullable=False)
+    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
