@@ -36,6 +36,36 @@ class Cadastre(Base):
     nom = Column(Text, nullable=False)
 
 
+class ClientType(Base):
+    __tablename__ = 'client_type'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
+
+
+class Client(Base):
+    __tablename__ = 'client'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    type_client = Column(BigInteger, ForeignKey(ClientType.id), nullable=False)
+    titre = Column(Text)
+    nom = Column(Text)
+    prenom = Column(Text)
+    represente_par = Column(Text)
+    adresse = Column(Text)
+    npa = Column(Text)
+    localite = Column(Text)
+    case_postale = Column(Text)
+    tel_fixe = Column(Text)
+    fax = Column(Text)
+    tel_portable = Column(Text)
+    mail = Column(Text)
+    entree = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+    sortie = Column(Date)
+    no_sap = Column(Text)
+    no_bdp_bdee = Column(Text)
+
+
 class Plan(Base):
     __tablename__ = 'plan'
     __table_args__ = {'schema': 'infolica'}
@@ -57,6 +87,7 @@ class Affaire(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text)
+    client_commande_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
     responsable_id = Column(
         BigInteger, ForeignKey(Operateur.id), nullable=False)
     technicien_id = Column(BigInteger, ForeignKey(
@@ -89,77 +120,6 @@ class ModificationAffaire(Base):
     type_id = Column(BigInteger, ForeignKey(
         ModificationAffaireType.id), nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
-
-
-class ClientType(Base):
-    __tablename__ = 'client_type'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-
-
-class Client(Base):
-    __tablename__ = 'client'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    adresse = Column(Text)
-    npa = Column(Text)
-    localite = Column(Text)
-    case_postale = Column(Text)
-    tel_fixe = Column(Text)
-    fax = Column(Text)
-    mail = Column(Text)
-    entree = Column(Date, default=datetime.datetime.utcnow, nullable=False)
-    sortie = Column(Date)
-    type_client = Column(BigInteger, ForeignKey(ClientType.id), nullable=False)
-
-    __mapper_args__ = {
-        'polymorphic_identity': 'client',
-        'polymorphic_on': type_client
-    }
-
-
-class ClientEntreprise(Client):
-    __tablename__ = 'client_entreprise'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, ForeignKey(Client.id),
-                primary_key=True, nullable=False)
-    nom = Column(Text, nullable=False)
-    represente_par = Column(Text)
-    bdee = Column(BigInteger)
-
-    __mapper_args__ = {'polymorphic_identity': 'client_entreprise'}
-
-
-class ClientPersonne(Client):
-    __tablename__ = 'client_personne'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, ForeignKey(Client.id),
-                primary_key=True, nullable=False)
-    titre = Column(Text)
-    nom = Column(Text, nullable=False)
-    prenom = Column(Text, nullable=False)
-    tel_portable = Column(Text)
-    bdp = Column(BigInteger)
-
-    __mapper_args__ = {'polymorphic_identity': 'client_personne'}
-
-
-class RelationClientAffaireType(Base):
-    __tablename__ = 'relation_affaire_client_type'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-
-
-class RelationAffaireClient(Base):
-    __tablename__ = 'relation_affaire_client'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
-    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-    relation_type_id = Column(BigInteger, ForeignKey(
-        RelationClientAffaireType.id), nullable=False)
 
 
 class FactureType(Base):
@@ -251,7 +211,7 @@ class Envoi(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     destinataire_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
-    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+    date = Column(Date)
 
 
 class EnvoiDocument(Base):
@@ -265,6 +225,7 @@ class EnvoiDocument(Base):
 class OuiNon(enum.Enum):
     oui = "Oui"
     non = "Non"
+
 
 class EnOrdre(enum.Enum):
     eo = "En ordre"
