@@ -39,6 +39,7 @@ class Plan(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
     nom = Column(Text, nullable=False)
+    echelle = Column(BigInteger, nullable=False)
 
 
 class AffaireType(Base):
@@ -63,26 +64,27 @@ class Affaire(Base):
     information = Column(Text)
     date_ouverture = Column(
         Date, default=datetime.datetime.utcnow, nullable=False)
+    date_validation = Column(Date)
     date_cloture = Column(Date)
     localisation_E = Column(Integer, nullable=False)
     localisation_N = Column(Integer, nullable=False)
 
 
-class StatutAffaire(Base):
-    __tablename__ = 'statut_affaire'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
+# class StatutAffaire(Base):
+#     __tablename__ = 'statut_affaire'
+#     __table_args__ = {'schema': 'infolica'}
+#     id = Column(BigInteger, primary_key=True, autoincrement=True)
+#     nom = Column(Text, nullable=False)
 
 
-class EtapeAffaire(Base):
-    __tablename__ = 'etape_affaire'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-    statut_id = Column(BigInteger, ForeignKey(
-        StatutAffaire.id), nullable=False)
-    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+# class EtapeAffaire(Base):
+#     __tablename__ = 'etape_affaire'
+#     __table_args__ = {'schema': 'infolica'}
+#     id = Column(BigInteger, primary_key=True, autoincrement=True)
+#     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
+#     statut_id = Column(BigInteger, ForeignKey(
+#         StatutAffaire.id), nullable=False)
+#     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
 class ModificationAffaireType(Base):
@@ -100,6 +102,7 @@ class ModificationAffaire(Base):
     affaire_id_fille = Column(Integer, ForeignKey(Affaire.id), nullable=False)
     type_id = Column(BigInteger, ForeignKey(
         ModificationAffaireType.id), nullable=False)
+    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
 class ClientType(Base):
@@ -116,15 +119,17 @@ class Client(Base):
     adresse = Column(Text)
     npa = Column(Text)
     localite = Column(Text)
+    case_postale = Column(Text)
     tel_fixe = Column(Text)
+    fax = Column(Text)
     mail = Column(Text)
     entree = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     sortie = Column(Date)
     type_client = Column(BigInteger, ForeignKey(ClientType.id), nullable=False)
 
     __mapper_args__ = {
-        'polymorphic_identity': 'client'#,
-        #'polymorphic_on': type_client
+        'polymorphic_identity': 'client',
+        'polymorphic_on': type_client
     }
 
 
@@ -134,6 +139,8 @@ class ClientEntreprise(Client):
     id = Column(BigInteger, ForeignKey(Client.id),
                 primary_key=True, nullable=False)
     nom = Column(Text, nullable=False)
+    represente_par = Column(Text)
+    bdee = Column(BigInteger)
 
     __mapper_args__ = {'polymorphic_identity': 'client_entreprise'}
 
@@ -147,6 +154,7 @@ class ClientPersonne(Client):
     nom = Column(Text, nullable=False)
     prenom = Column(Text, nullable=False)
     tel_portable = Column(Text)
+    bdp = Column(BigInteger)
 
     __mapper_args__ = {'polymorphic_identity': 'client_personne'}
 
@@ -180,12 +188,15 @@ class Facture(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     sap = Column(Text, nullable=False)
-    client_id = Column(BigInteger, ForeignKey(Client.id))
-    montant_mo = Column(Float, default=0.0, nullable=False)
+    client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
+    indice_application_mo = Column(Float, default=1.2, nullable=False)
+    indice_tva = Column(Float, default=7.7)
+    montant_mo = Column(Float, default=0.0)
     montant_rf = Column(Float, default=0.0, nullable=False)
     montant_mat_diff = Column(Float, default=0.0, nullable=False)
-    tva = Column(Float, default=0.0, nullable=False)
-    total = Column(Float, default=0.0, nullable=False)
+    montant_tva = Column(Float, default=0.0, nullable=False)
+    montant_total = Column(Float, default=0.0, nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     type_facture = Column(BigInteger, ForeignKey(
         FactureType.id), nullable=False)
@@ -194,20 +205,6 @@ class Facture(Base):
         'polymorphic_identity': 'facture',
         'polymorphic_on': type_facture
     }
-
-    def __init__(self, montant_mo, montant_rf, montant_mat_diff, tva, total):
-        self.montant_mo = montant_mo
-        self.montant_rf = montant_rf
-        self.montant_matdiff = montant_mat_diff
-        self.tva = tva
-        self.total = total
-
-    def compute_tva(self):
-        self.tva = Constant.tva * \
-            (self.montant_mo + self.montant_matdiff)  # TVA MO
-
-    def total(self):
-        self.total = self.montant_mo + self.montant_rf + self.montant_matdiff + self.tva
 
 
 class FacturePartielle(Facture):
@@ -220,34 +217,29 @@ class FacturePartielle(Facture):
     __mapper_args__ = {'polymorphic_identity': 'facture_partielle'}
 
 
-class EmolumentsMO(Base):
-    __tablename__ = 'emoluments_mo'
+class TableauEmoluments(Base):
+    __tablename__ = 'tableau_emoluments'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
+    domaine = Column(Text, nullable=False)
+    categorie = Column(Text, nullable=False)
+    sous_categorie = Column(Text, nullable=False)
+    nom = Column(Text, nullable=False)
+    unite = Column(Text, nullable=False)
+    montant = Column(Float, default=0.0, nullable=False)
 
 
-class EmolumentsMOParametres(Base):
-    __tablename__ = 'emoluments_mo_parametres'
+class EmolumentFacture(Base):
+    __tablename__ = 'emolument_facture'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    indice = Column(Float, default=0.0, nullable=False)
-    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
-
-
-class EmolumentsRF(Base):
-    __tablename__ = 'emoluments_rf'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-
-
-class EmolumentsRFParametres(Base):
-    __tablename__ = 'emoluments_rf_parametres'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    tarif_servitude_principale = Column(Float, default=0.0, nullable=False)
-    tarif_servitude_secondaire = Column(Float, default=0.0, nullable=False)
-    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+    facture_id = Column(BigInteger, ForeignKey(Facture.id), nullable=False)
+    emolument_id = Column(BigInteger, ForeignKey(
+        TableauEmoluments.id), nullable=False)
+    nombre = Column(Text, nullable=False)
+    facteur_correctif = Column(Float, default=1.0, nullable=False)
+    batiment = Column(Text)
+    montant = Column(Float, default=0.0, nullable=False)
 
 
 class RemarqueAffaire(Base):
@@ -267,12 +259,21 @@ class Document(Base):
     chemin = Column(Text, nullable=False)
 
 
+class Envoi(Base):
+    __tablename__ = 'envoi'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
+    destinataire_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
+    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+
+
 class EnvoiDocument(Base):
     __tablename__ = 'envoi_document'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    destinataire_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
-    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+    envoi_id = Column(BigInteger, ForeignKey(Envoi.id), nullable=False)
+    document_id = Column(BigInteger, ForeignKey(Document.id), nullable=False)
 
 
 # class SuiviMandat(Base):
@@ -334,8 +335,18 @@ class NumeroEtatHisto(Base):
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
-class RelationType(Base):
-    __tablename__ = 'relation_type'
+class NumeroDiffere(Base):
+    __tablename__ = 'numero_differe'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    numero_id = Column(BigInteger, ForeignKey(Numero.id), nullable=False)
+    date_entree = Column(
+        Date, default=datetime.datetime.utcnow, nullable=False)
+    date_sortie = Column(Date)
+
+
+class NumeroRelationType(Base):
+    __tablename__ = 'numero_relation_type'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
@@ -348,7 +359,7 @@ class NumeroRelation(Base):
     numero_id_base = Column(Integer, ForeignKey(Numero.id), nullable=False)
     numero_id_associe = Column(Integer, ForeignKey(Numero.id), nullable=False)
     relation_type_id = Column(BigInteger, ForeignKey(
-        RelationType.id), nullable=False)
+        NumeroRelationType.id), nullable=False)
 
 
 class NumeroPlan(Base):
@@ -382,23 +393,8 @@ class Service(Base):
     mail = Column(Text)
 
 
-class RemarquePreavis(Base):
-    __tablename__ = 'remarque_preavis'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    remarque = Column(Text, nullable=False)
-    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
-
-
 class PreavisType(Base):
     __tablename__ = 'preavis_type'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-
-
-class PreavisDecision(Base):
-    __tablename__ = 'preavis_decision'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
@@ -410,9 +406,16 @@ class Preavis(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     service_id = Column(BigInteger, ForeignKey(Service.id), nullable=False)
-    preavis_id = Column(BigInteger, ForeignKey(PreavisType.id), nullable=False)
-    decision = Column(BigInteger, ForeignKey(
-        PreavisDecision.id), nullable=False)
+    preavis_id = Column(BigInteger, ForeignKey(PreavisType.id))
     date_demande = Column(
         Date, default=datetime.datetime.utcnow, nullable=False)
     date_reponse = Column(Date)
+
+
+class RemarquePreavis(Base):
+    __tablename__ = 'remarque_preavis'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
+    remarque = Column(Text, nullable=False)
+    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)

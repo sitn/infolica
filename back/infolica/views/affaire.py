@@ -15,9 +15,10 @@ from ..scripts.utils import Utils
 def affaires_view(request):
     try:
         query = request.dbsession.query(models.Affaire).all()
+        return Utils.serialize_many(query)
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return Utils.serialize_many(query)
+
 
 
 """ Return affaires by id"""
@@ -27,9 +28,10 @@ def affaire_by_id_view(request):
         id = request.matchdict['id']
         query = request.dbsession.query(models.Affaire)
         one = query.filter(models.Affaire.id == id).first()
+        return Utils.serialize_one(one)
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return Utils.serialize_one(one)
+
 
 
 """ Return all types affaires"""
@@ -38,9 +40,10 @@ def affaire_by_id_view(request):
 def types_affaires_view(request):
     try:
         query = request.dbsession.query(models.AffaireType).all()
+        return Utils.serialize_many(query)
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return Utils.serialize_many(query)
+
 
 
 """ Add new affaire"""

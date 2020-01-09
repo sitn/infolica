@@ -25,5 +25,8 @@ Fork and clone Infolica.
 1. Run your project  
    `pserve development.ini`
 
-## Generate alembic DB revision  
+## Generate and apply alembic DB revision  
+1. Generate
    `alembic -c development.ini revision --autogenerate -m "init"`
+2. Apply
+   `alembic -c development.ini upgrade head`  
