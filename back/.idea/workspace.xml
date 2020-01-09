@@ -2,17 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="51a38106-afd0-4071-a97e-7937b616b656" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alembic.ini" beforeDir="false" afterPath="$PROJECT_DIR$/alembic.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alembic/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/alembic/env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alembic/script.py.mako" beforeDir="false" afterPath="$PROJECT_DIR$/alembic/script.py.mako" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/models/constant.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/models/constant.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/models/mymodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/models/mymodel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/default.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/default.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/facture.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/facture.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,7 +21,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/infolica/views/affaire.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="102">
@@ -62,13 +52,13 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/infolica/models/mymodel.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2924">
-              <caret line="187" column="18" selection-start-line="187" selection-start-column="4" selection-end-line="187" selection-end-column="18" />
+            <state relative-caret-position="248">
+              <caret line="495" column="25" selection-start-line="495" selection-start-column="25" selection-end-line="495" selection-end-column="25" />
               <folding>
-                <element signature="e#0#159#0" expanded="true" />
+                <element signature="e#556#725#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -199,16 +189,16 @@
         <option value="$PROJECT_DIR$/infolica/exceptions/custom_error.py" />
         <option value="$PROJECT_DIR$/development.ini" />
         <option value="$PROJECT_DIR$/infolica/scripts/utils.py" />
-        <option value="$PROJECT_DIR$/infolica/models/mymodel.py" />
         <option value="$PROJECT_DIR$/infolica/views/client.py" />
         <option value="$PROJECT_DIR$/infolica/views/default.py" />
         <option value="$PROJECT_DIR$/infolica/routes.py" />
         <option value="$PROJECT_DIR$/infolica/views/facture.py" />
         <option value="$PROJECT_DIR$/infolica/views/affaire.py" />
+        <option value="$PROJECT_DIR$/infolica/models/mymodel.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="785" />
     <option name="y" value="85" />
     <option name="width" value="715" />
@@ -488,16 +478,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/infolica/models/mymodel.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2924">
-          <caret line="187" column="18" selection-start-line="187" selection-start-column="4" selection-end-line="187" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#159#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/infolica/scripts/utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
@@ -557,6 +537,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="18" lean-forward="true" selection-start-line="6" selection-start-column="18" selection-end-line="6" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/infolica/models/mymodel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="495" column="25" selection-start-line="495" selection-start-column="25" selection-end-line="495" selection-end-column="25" />
+          <folding>
+            <element signature="e#556#725#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

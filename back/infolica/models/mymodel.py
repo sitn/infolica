@@ -1,29 +1,3 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@chokri-koussa 
-Learn Git and GitHub without any code!
-Using the Hello World guide, you’ll start a branch, write comments, and open a pull request.
-
-
-sitn
-/
-infolica
-5
-03
- Code Issues 59 Pull requests 1 Actions Projects 1 Wiki Security Insights
-infolica/back/infolica/models/mymodel.py / 
-@rufener rufener ajout tables controle
-c88dc36 yesterday
-525 lines (440 sloc)  26.5 KB
-  
-You're using code navigation to jump to definitions or references.
-Learn more or give us feedback
 from sqlalchemy import (
     Column,
     Index,
