@@ -24,6 +24,7 @@ class Operateur(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     prenom = Column(Text, nullable=False)
+    login = Column(Text, nullable=False)
     responsable = Column(Boolean, default=False, nullable=False)
     entree = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     sortie = Column(Date)
