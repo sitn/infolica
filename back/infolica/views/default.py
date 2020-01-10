@@ -75,7 +75,7 @@ def noreference_error(exc, request):
 # Common InvalidRequestError, return message
 ########################################################
 @view_config(context=exc.InvalidRequestError, renderer='json')
-def noreference_error(exc, request):
+def invalidrequest_error(exc, request):
     log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
     request.response.status = 500
     return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
@@ -85,7 +85,7 @@ def noreference_error(exc, request):
 # Common DBAPIError return message
 ########################################################
 @view_config(context=exc.DBAPIError, renderer='json')
-def noreference_error(exc, request):
+def dbaapi_error(exc, request):
     log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
     request.response.status = 500
     return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
@@ -95,7 +95,7 @@ def noreference_error(exc, request):
 # Common SQLAlchemyError return message
 ########################################################
 @view_config(context=exc.SQLAlchemyError, renderer='json')
-def noreference_error(exc, request):
+def sqlalchemy_error(exc, request):
     log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
     request.response.status = 500
     return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}

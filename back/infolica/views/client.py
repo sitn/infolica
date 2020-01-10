@@ -259,7 +259,7 @@ def clients_update_view(request):
                 models.Client.id == id_client).first()
 
         if not client_record:
-            raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Perturbation.__tablename__, id_client))
+            raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Client.__tablename__, id_client))
 
         with transaction.manager:
 

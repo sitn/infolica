@@ -18,6 +18,12 @@ def includeme(config):
     config.add_route('types_affaires', '/infolica/api/types_affaires')
     config.add_route('types_affaires_s', '/infolica/api/types_affaires/')
     config.add_route('affaire_by_id', '/infolica/api/affaires/{id}')
+    #Factures
+    config.add_route('types_factures', '/infolica/api/types_factures')
+    config.add_route('types_factures_s', '/infolica/api/types_factures/')
+    config.add_route('factures', '/infolica/api/factures')
+    config.add_route('factures_s', '/infolica/api/factures/')
+    config.add_route('facture_by_id', '/infolica/api/factures/{id}')
     #Login
     config.add_route('login', '/infolica/api/login')
     config.add_route('login_s', '/infolica/api/login/')
