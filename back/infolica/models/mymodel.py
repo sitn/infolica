@@ -49,6 +49,7 @@ class Client(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     type_client = Column(BigInteger, ForeignKey(ClientType.id), nullable=False)
+    entreprise = Column(Text)
     titre = Column(Text)
     nom = Column(Text)
     prenom = Column(Text)
@@ -89,6 +90,7 @@ class Affaire(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text)
     client_commande_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
+    client_commande_complement = Column(Text)
     responsable_id = Column(
         BigInteger, ForeignKey(Operateur.id), nullable=False)
     technicien_id = Column(BigInteger, ForeignKey(
@@ -135,8 +137,9 @@ class Facture(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     sap = Column(Text, nullable=False)
-    client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
+    client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
+    client_complement = Column(Text)
     indice_application_mo = Column(Float, default=1.2, nullable=False)
     indice_tva = Column(Float, default=7.7)
     montant_mo = Column(Float, default=0.0)
@@ -211,8 +214,9 @@ class Envoi(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-    destinataire_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
-    date = Column(Date)
+    client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
+    client_complement = Column(Text)
+    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
 class EnvoiDocument(Base):
