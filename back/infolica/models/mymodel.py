@@ -90,7 +90,7 @@ class Affaire(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text)
     client_commande_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
-    client_commande_complement = Column(Text)
+    client_commande_par_id = Column(BigInteger, ForeignKey(Client.id))
     responsable_id = Column(
         BigInteger, ForeignKey(Operateur.id), nullable=False)
     technicien_id = Column(BigInteger, ForeignKey(
@@ -139,7 +139,7 @@ class Facture(Base):
     sap = Column(Text, nullable=False)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
-    client_complement = Column(Text)
+    client_par_id = Column(BigInteger, ForeignKey(Client.id))
     indice_application_mo = Column(Float, default=1.2, nullable=False)
     indice_tva = Column(Float, default=7.7)
     montant_mo = Column(Float, default=0.0)
@@ -215,7 +215,7 @@ class Envoi(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
-    client_complement = Column(Text)
+    client_par_id = Column(BigInteger, ForeignKey(Client.id))
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
