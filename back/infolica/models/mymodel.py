@@ -150,21 +150,7 @@ class Facture(Base):
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     type_facture = Column(BigInteger, ForeignKey(
         FactureType.id), nullable=False)
-
-    __mapper_args__ = {
-        'polymorphic_identity': 'facture',
-        'polymorphic_on': type_facture
-    }
-
-
-class FacturePartielle(Facture):
-    __tablename__ = 'facture_partielle'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, ForeignKey(Facture.id),
-                primary_key=True, autoincrement=True)
-    immeuble = Column(Text, nullable=False)
-
-    __mapper_args__ = {'polymorphic_identity': 'facture_partielle'}
+    remarque = Column(Text)
 
 
 class TableauEmoluments(Base):
