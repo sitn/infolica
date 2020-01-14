@@ -125,13 +125,6 @@ class ModificationAffaire(Base):
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
-class FactureType(Base):
-    __tablename__ = 'facture_type'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    facture_type = Column(Text, nullable=False)
-
-
 class Facture(Base):
     __tablename__ = 'facture'
     __table_args__ = {'schema': 'infolica'}
@@ -148,8 +141,6 @@ class Facture(Base):
     montant_tva = Column(Float, default=0.0, nullable=False)
     montant_total = Column(Float, default=0.0, nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
-    type_facture = Column(BigInteger, ForeignKey(
-        FactureType.id), nullable=False)
     remarque = Column(Text)
 
 
