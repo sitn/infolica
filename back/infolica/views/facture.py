@@ -114,7 +114,7 @@ def factures_new_view(request):
 
 """ Update facture"""
 @view_config(route_name='factures', request_method='PUT', renderer='json')
-@view_config(route_name='factures_s', request_method='POST', renderer='json')
+@view_config(route_name='factures_s', request_method='PUT', renderer='json')
 def factures_update_view(request):
     try:
         settings = request.registry.settings
