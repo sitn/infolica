@@ -4,14 +4,9 @@ def includeme(config):
     #Clients
     config.add_route('types_clients', '/infolica/api/types_clients')
     config.add_route('types_clients_s', '/infolica/api/types_clients/')
-    config.add_route('clients_personnes', '/infolica/api/clients_personnes')
-    config.add_route('clients_personnes_s', '/infolica/api/clients_personnes/')
-    config.add_route('client_personne_by_id', '/infolica/api/clients_personnes/{id}')
-    config.add_route('clients_entreprises', '/infolica/api/clients_entreprises')
-    config.add_route('clients_entreprises_s', '/infolica/api/clients_entreprises/')
-    config.add_route('client_entreprise_by_id', '/infolica/api/clients_entreprises/{id}')
     config.add_route('clients', '/infolica/api/clients')
     config.add_route('clients_s', '/infolica/api/clients/')
+    config.add_route('client_by_id', '/infolica/api/clients/{id}')
     #Affaires
     config.add_route('affaires', '/infolica/api/affaires')
     config.add_route('affaires_s', '/infolica/api/affaires/')
@@ -19,8 +14,6 @@ def includeme(config):
     config.add_route('types_affaires_s', '/infolica/api/types_affaires/')
     config.add_route('affaire_by_id', '/infolica/api/affaires/{id}')
     #Factures
-    config.add_route('types_factures', '/infolica/api/types_factures')
-    config.add_route('types_factures_s', '/infolica/api/types_factures/')
     config.add_route('factures', '/infolica/api/factures')
     config.add_route('factures_s', '/infolica/api/factures/')
     config.add_route('facture_by_id', '/infolica/api/factures/{id}')

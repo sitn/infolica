@@ -13,19 +13,6 @@ import logging
 log = logging.getLogger(__name__)
 
 
-
-""" Return all types factures"""
-@view_config(route_name='types_factures', request_method='GET', renderer='json')
-@view_config(route_name='types_factures_s', request_method='GET', renderer='json')
-def factures_types_view(request):
-    try:
-        query = request.dbsession.query(models.FactureType).all()
-        return Utils.serialize_many(query)
-    except DBAPIError as e:
-        log.error(str(e), exc_info=True)
-        return Response(db_err_msg, content_type='text/plain', status=500)
-
-
 """ Return all factures"""
 @view_config(route_name='factures', request_method='GET', renderer='json')
 @view_config(route_name='factures_s', request_method='GET', renderer='json')
@@ -55,7 +42,6 @@ def factures_new_view(request):
         tva = None
         total = None
         date = None
-        type_facture = None
 
         if 'affaire_id' in request.params:
             affaire_id = request.params['affaire_id']
@@ -84,10 +70,6 @@ def factures_new_view(request):
         if 'date' in request.params:
             date = request.params['date']
 
-        if 'type_facture' in request.params:
-            type_facture = request.params['type_facture']
-
-
         with transaction.manager:
             model = models.Facture(
                 affaire_id= affaire_id,
@@ -99,7 +81,6 @@ def factures_new_view(request):
                 tva = tva,
                 total = total,
                 date = date,
-                type_facture = type_facture
             )
 
             request.dbsession.add(model)
@@ -129,7 +110,6 @@ def factures_update_view(request):
         tva = None
         total = None
         date = None
-        type_facture = None
 
         if 'id_facture' in request.params:
             id_facture = request.params['id_facture']
@@ -161,9 +141,6 @@ def factures_update_view(request):
         if 'date' in request.params:
             date = request.params['date']
 
-        if 'type_facture' in request.params:
-            type_facture = request.params['type_facture']
-
         # Get the facture
         facture_record = request.dbsession.query(models.Facture).filter(
             models.Client.id == id_facture).first()
@@ -183,7 +160,6 @@ def factures_update_view(request):
             facture_record.tva = tva
             facture_record.total = total
             facture_record.date = date
-            facture_record.type_facture = type_facture
 
             # Commit transaction
             transaction.commit()
