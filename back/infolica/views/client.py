@@ -90,7 +90,6 @@ def clients_update_view(request):
     
     # Read params client
     model = Utils.set_model_record(model, request.params)
-    model.id = id_client
 
     try:
         with transaction.manager:
