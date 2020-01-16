@@ -17,9 +17,6 @@ from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
 
-from copy import copy
-from pprint import pprint
-
 import logging
 log = logging.getLogger(__name__)
 
@@ -94,6 +91,7 @@ def clients_update_view(request):
     
     # Read params client
     model = Utils.set_model_record(model, request.params)
+    model.id = id_client
 
     try:
         with transaction.manager:
