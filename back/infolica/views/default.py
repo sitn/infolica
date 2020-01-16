@@ -5,7 +5,7 @@ from .. import models
 from sqlalchemy import exc
 from ..exceptions.custom_error import CustomError
 from pyramid.httpexceptions import HTTPForbidden
-
+from ..scripts.utils import Utils
 import logging
 log = logging.getLogger(__name__)
 
@@ -19,6 +19,15 @@ def my_view(request):
         return Response(db_err_msg, content_type='text/plain', status=500)
     return {'one': one, 'project': 'infolica'}
 """
+
+########################################################
+# Test (temp endpoint)
+########################################################
+@view_config(route_name='test', request_method='POST', renderer='json')
+def test_error(exc, request):
+    query = request.dbsession.query(models.Client).first()
+    query = Utils.set_model_record(query, request.params)
+    return Utils.serialize_one(query)
 
 ########################################################
 # Common IntegrityError return message
