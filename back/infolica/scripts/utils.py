@@ -34,13 +34,12 @@ class Utils():
             master.append(item)
         return master
 
+    """ Return model record parameters """
     @classmethod
     def get_model_record_attributes(cls, record):
-        for tmp in dir(record):
-            if tmp.startswith('_'):
-                print(tmp)
-        return [a for a in dir(record) if not a.startswith('_')] if record else []
+        [a for a in dir(record) if not (a == 'id' or a.startswith('__') or a.startswith('_'))] if record else []
 
+    """ Set model record"""
     @classmethod
     def set_model_record(cls, record, params):
         atts = cls.get_model_record_attributes(record)
