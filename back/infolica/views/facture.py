@@ -66,7 +66,6 @@ def factures_update_view(request):
                 CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Facture.__tablename__, id_facture))
 
         facture_record = Utils.set_model_record(facture_record, request.params)
-        facture_record.id = id_facture
 
         with transaction.manager:
 
