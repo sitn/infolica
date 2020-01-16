@@ -69,11 +69,10 @@ def clients_new_view(request):
             request.dbsession.flush()
             print("model.id = ", model.id)
             transaction.commit()
-            return HTTPOk("POST Client OK")
+            return Constant.SUCCESS_SAVE
 
-    except Exception as e:
-        print(e)
-        raise e
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
     
 
 """ Update client"""
@@ -97,10 +96,10 @@ def clients_update_view(request):
         with transaction.manager:
             
             transaction.commit()
-            return HTTPOk("PULL Client OK")
+            return Constant.SUCCESS_SAVE
         
-    except Exception as e:
-        raise e
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
 
 
 db_err_msg = """\
