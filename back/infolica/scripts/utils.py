@@ -37,7 +37,8 @@ class Utils():
     """ Return model record parameters """
     @classmethod
     def get_model_record_attributes(cls, record):
-
+        return [a for a in dir(record) if not a.startswith('_')] if record else []
+    
     """ Set model record"""
     @classmethod
     def set_model_record(cls, record, params):
