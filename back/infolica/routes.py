@@ -21,3 +21,6 @@ def includeme(config):
     config.add_route('login', '/infolica/api/login')
     config.add_route('login_s', '/infolica/api/login/')
     config.add_route('logout', '/infolica/api/logout')
+    #Test (temp endpoint)
+    config.add_route('test', '/infolica/api/test')
+
