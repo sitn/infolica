@@ -1,0 +1,697 @@
+2020-01-09 16:22:12,115 ERROR [infolica.views.facture:24][waitress] (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.ProgrammingError: column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\arx it\mandats\9116_ge - ne - sgrf - infolica\production\2 - realisation\infolica\back\infolica\views\facture.py", line 21, in factures_view
+    query = request.dbsession.query(models.Facture).all()
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 2925, in all
+    return list(self)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3081, in __iter__
+    return self._execute_and_instances(context)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3106, in _execute_and_instances
+    result = conn.execute(querycontext.statement, self._params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 980, in execute
+    return meth(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\sql\elements.py", line 273, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1099, in _execute_clauseelement
+    distilled_params,
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1240, in _execute_context
+    e, statement, parameters, cursor, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1458, in _handle_dbapi_exception
+    util.raise_from_cause(sqlalchemy_exception, exc_info)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 296, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=cause)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 276, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+2020-01-09 16:22:20,554 ERROR [infolica.views.facture:24][waitress] (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.ProgrammingError: column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\arx it\mandats\9116_ge - ne - sgrf - infolica\production\2 - realisation\infolica\back\infolica\views\facture.py", line 21, in factures_view
+    query = request.dbsession.query(models.Facture).all()
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 2925, in all
+    return list(self)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3081, in __iter__
+    return self._execute_and_instances(context)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3106, in _execute_and_instances
+    result = conn.execute(querycontext.statement, self._params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 980, in execute
+    return meth(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\sql\elements.py", line 273, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1099, in _execute_clauseelement
+    distilled_params,
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1240, in _execute_context
+    e, statement, parameters, cursor, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1458, in _handle_dbapi_exception
+    util.raise_from_cause(sqlalchemy_exception, exc_info)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 296, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=cause)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 276, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+2020-01-09 16:22:21,320 ERROR [infolica.views.facture:24][waitress] (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.ProgrammingError: column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\arx it\mandats\9116_ge - ne - sgrf - infolica\production\2 - realisation\infolica\back\infolica\views\facture.py", line 21, in factures_view
+    query = request.dbsession.query(models.Facture).all()
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 2925, in all
+    return list(self)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3081, in __iter__
+    return self._execute_and_instances(context)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3106, in _execute_and_instances
+    result = conn.execute(querycontext.statement, self._params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 980, in execute
+    return meth(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\sql\elements.py", line 273, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1099, in _execute_clauseelement
+    distilled_params,
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1240, in _execute_context
+    e, statement, parameters, cursor, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1458, in _handle_dbapi_exception
+    util.raise_from_cause(sqlalchemy_exception, exc_info)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 296, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=cause)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 276, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+2020-01-09 16:22:21,486 ERROR [infolica.views.facture:24][waitress] (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.ProgrammingError: column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\arx it\mandats\9116_ge - ne - sgrf - infolica\production\2 - realisation\infolica\back\infolica\views\facture.py", line 21, in factures_view
+    query = request.dbsession.query(models.Facture).all()
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 2925, in all
+    return list(self)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3081, in __iter__
+    return self._execute_and_instances(context)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3106, in _execute_and_instances
+    result = conn.execute(querycontext.statement, self._params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 980, in execute
+    return meth(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\sql\elements.py", line 273, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1099, in _execute_clauseelement
+    distilled_params,
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1240, in _execute_context
+    e, statement, parameters, cursor, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1458, in _handle_dbapi_exception
+    util.raise_from_cause(sqlalchemy_exception, exc_info)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 296, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=cause)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 276, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+2020-01-09 16:22:21,679 ERROR [infolica.views.facture:24][waitress] (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.ProgrammingError: column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\arx it\mandats\9116_ge - ne - sgrf - infolica\production\2 - realisation\infolica\back\infolica\views\facture.py", line 21, in factures_view
+    query = request.dbsession.query(models.Facture).all()
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 2925, in all
+    return list(self)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3081, in __iter__
+    return self._execute_and_instances(context)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3106, in _execute_and_instances
+    result = conn.execute(querycontext.statement, self._params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 980, in execute
+    return meth(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\sql\elements.py", line 273, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1099, in _execute_clauseelement
+    distilled_params,
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1240, in _execute_context
+    e, statement, parameters, cursor, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1458, in _handle_dbapi_exception
+    util.raise_from_cause(sqlalchemy_exception, exc_info)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 296, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=cause)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 276, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+2020-01-09 16:22:21,846 ERROR [infolica.views.facture:24][waitress] (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.ProgrammingError: column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\arx it\mandats\9116_ge - ne - sgrf - infolica\production\2 - realisation\infolica\back\infolica\views\facture.py", line 21, in factures_view
+    query = request.dbsession.query(models.Facture).all()
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 2925, in all
+    return list(self)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3081, in __iter__
+    return self._execute_and_instances(context)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3106, in _execute_and_instances
+    result = conn.execute(querycontext.statement, self._params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 980, in execute
+    return meth(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\sql\elements.py", line 273, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1099, in _execute_clauseelement
+    distilled_params,
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1240, in _execute_context
+    e, statement, parameters, cursor, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1458, in _handle_dbapi_exception
+    util.raise_from_cause(sqlalchemy_exception, exc_info)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 296, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=cause)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 276, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+2020-01-09 16:22:22,031 ERROR [infolica.views.facture:24][waitress] (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.ProgrammingError: column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\arx it\mandats\9116_ge - ne - sgrf - infolica\production\2 - realisation\infolica\back\infolica\views\facture.py", line 21, in factures_view
+    query = request.dbsession.query(models.Facture).all()
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 2925, in all
+    return list(self)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3081, in __iter__
+    return self._execute_and_instances(context)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3106, in _execute_and_instances
+    result = conn.execute(querycontext.statement, self._params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 980, in execute
+    return meth(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\sql\elements.py", line 273, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1099, in _execute_clauseelement
+    distilled_params,
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1240, in _execute_context
+    e, statement, parameters, cursor, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1458, in _handle_dbapi_exception
+    util.raise_from_cause(sqlalchemy_exception, exc_info)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 296, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=cause)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 276, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+2020-01-09 16:22:22,211 ERROR [infolica.views.facture:24][waitress] (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.ProgrammingError: column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\arx it\mandats\9116_ge - ne - sgrf - infolica\production\2 - realisation\infolica\back\infolica\views\facture.py", line 21, in factures_view
+    query = request.dbsession.query(models.Facture).all()
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 2925, in all
+    return list(self)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3081, in __iter__
+    return self._execute_and_instances(context)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3106, in _execute_and_instances
+    result = conn.execute(querycontext.statement, self._params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 980, in execute
+    return meth(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\sql\elements.py", line 273, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1099, in _execute_clauseelement
+    distilled_params,
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1240, in _execute_context
+    e, statement, parameters, cursor, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1458, in _handle_dbapi_exception
+    util.raise_from_cause(sqlalchemy_exception, exc_info)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 296, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=cause)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 276, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+2020-01-09 16:22:22,380 ERROR [infolica.views.facture:24][waitress] (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.ProgrammingError: column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\arx it\mandats\9116_ge - ne - sgrf - infolica\production\2 - realisation\infolica\back\infolica\views\facture.py", line 21, in factures_view
+    query = request.dbsession.query(models.Facture).all()
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 2925, in all
+    return list(self)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3081, in __iter__
+    return self._execute_and_instances(context)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3106, in _execute_and_instances
+    result = conn.execute(querycontext.statement, self._params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 980, in execute
+    return meth(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\sql\elements.py", line 273, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1099, in _execute_clauseelement
+    distilled_params,
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1240, in _execute_context
+    e, statement, parameters, cursor, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1458, in _handle_dbapi_exception
+    util.raise_from_cause(sqlalchemy_exception, exc_info)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 296, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=cause)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 276, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+2020-01-09 16:22:22,572 ERROR [infolica.views.facture:24][waitress] (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.ProgrammingError: column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\arx it\mandats\9116_ge - ne - sgrf - infolica\production\2 - realisation\infolica\back\infolica\views\facture.py", line 21, in factures_view
+    query = request.dbsession.query(models.Facture).all()
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 2925, in all
+    return list(self)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3081, in __iter__
+    return self._execute_and_instances(context)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3106, in _execute_and_instances
+    result = conn.execute(querycontext.statement, self._params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 980, in execute
+    return meth(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\sql\elements.py", line 273, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1099, in _execute_clauseelement
+    distilled_params,
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1240, in _execute_context
+    e, statement, parameters, cursor, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1458, in _handle_dbapi_exception
+    util.raise_from_cause(sqlalchemy_exception, exc_info)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 296, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=cause)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 276, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+2020-01-09 16:22:22,748 ERROR [infolica.views.facture:24][waitress] (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.ProgrammingError: column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\arx it\mandats\9116_ge - ne - sgrf - infolica\production\2 - realisation\infolica\back\infolica\views\facture.py", line 21, in factures_view
+    query = request.dbsession.query(models.Facture).all()
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 2925, in all
+    return list(self)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3081, in __iter__
+    return self._execute_and_instances(context)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3106, in _execute_and_instances
+    result = conn.execute(querycontext.statement, self._params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 980, in execute
+    return meth(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\sql\elements.py", line 273, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1099, in _execute_clauseelement
+    distilled_params,
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1240, in _execute_context
+    e, statement, parameters, cursor, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1458, in _handle_dbapi_exception
+    util.raise_from_cause(sqlalchemy_exception, exc_info)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 296, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=cause)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 276, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+2020-01-09 16:22:22,938 ERROR [infolica.views.facture:24][waitress] (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.ProgrammingError: column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\arx it\mandats\9116_ge - ne - sgrf - infolica\production\2 - realisation\infolica\back\infolica\views\facture.py", line 21, in factures_view
+    query = request.dbsession.query(models.Facture).all()
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 2925, in all
+    return list(self)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3081, in __iter__
+    return self._execute_and_instances(context)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 3106, in _execute_and_instances
+    result = conn.execute(querycontext.statement, self._params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 980, in execute
+    return meth(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\sql\elements.py", line 273, in _execute_on_connection
+    return connection._execute_clauseelement(self, multiparams, params)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1099, in _execute_clauseelement
+    distilled_params,
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1240, in _execute_context
+    e, statement, parameters, cursor, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1458, in _handle_dbapi_exception
+    util.raise_from_cause(sqlalchemy_exception, exc_info)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 296, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=cause)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 276, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\base.py", line 1236, in _execute_context
+    cursor, statement, parameters, context
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\engine\default.py", line 536, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.ProgrammingError) column facture.tva does not exist
+LINE 1: ...nt_mat_diff AS infolica_facture_montant_mat_diff, infolica.f...
+                                                             ^
+ [SQL: 'SELECT infolica.facture.id AS infolica_facture_id, infolica.facture.affaire_id AS infolica_facture_affaire_id, infolica.facture.sap AS infolica_facture_sap, infolica.facture.client_id AS infolica_facture_client_id, infolica.facture.montant_mo AS infolica_facture_montant_mo, infolica.facture.montant_rf AS infolica_facture_montant_rf, infolica.facture.montant_mat_diff AS infolica_facture_montant_mat_diff, infolica.facture.tva AS infolica_facture_tva, infolica.facture.date AS infolica_facture_date, infolica.facture.type_facture AS infolica_facture_type_facture \nFROM infolica.facture'] (Background on this error at: http://sqlalche.me/e/f405)
+2020-01-16 07:47:33,388 INFO  [pyramid_debugtoolbar:268][waitress] Squashed pyramid.exceptions.PredicateMismatch at http://localhost:6543/infolica/api/clients
+traceback url: http://localhost:6543/_debug_toolbar/32383234303332393738303838/exception
+2020-01-16 07:47:45,094 ERROR [pyramid_debugtoolbar:279][waitress] Uncaught AssertionError at http://localhost:6543/infolica/api/factures
+traceback url: http://localhost:6543/_debug_toolbar/32383234303432303437363936/exception
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\pyramid\tweens.py", line 13, in _error_handler
+    response = request.invoke_exception_view(exc_info)
+  File "C:\Python\Python37\lib\site-packages\pyramid\view.py", line 769, in invoke_exception_view
+    raise HTTPNotFound
+pyramid.httpexceptions.HTTPNotFound: The resource could not be found.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\pyramid_debugtoolbar\toolbar.py", line 257, in toolbar_tween
+    response = _handler(request)
+  File "C:\Python\Python37\lib\site-packages\pyramid_debugtoolbar\panels\performance.py", line 72, in noresource_timer_handler
+    result = handler(request)
+  File "C:\Python\Python37\lib\site-packages\pyramid_tm\__init__.py", line 171, in tm_tween
+    reraise(*exc_info)
+  File "C:\Python\Python37\lib\site-packages\pyramid_tm\compat.py", line 36, in reraise
+    raise value
+  File "C:\Python\Python37\lib\site-packages\pyramid_tm\__init__.py", line 136, in tm_tween
+    response = handler(request)
+  File "C:\Python\Python37\lib\site-packages\pyramid\tweens.py", line 43, in excview_tween
+    response = _error_handler(request, exc)
+  File "C:\Python\Python37\lib\site-packages\pyramid\tweens.py", line 17, in _error_handler
+    reraise(*exc_info)
+  File "C:\Python\Python37\lib\site-packages\pyramid\compat.py", line 179, in reraise
+    raise value
+  File "C:\Python\Python37\lib\site-packages\pyramid\tweens.py", line 41, in excview_tween
+    response = handler(request)
+  File "C:\Python\Python37\lib\site-packages\pyramid\router.py", line 148, in handle_request
+    registry, request, context, context_iface, view_name
+  File "C:\Python\Python37\lib\site-packages\pyramid\view.py", line 657, in _call_view
+    response = view_callable(context, request)
+  File "C:\Python\Python37\lib\site-packages\pyramid\config\views.py", line 169, in __call__
+    return view(context, request)
+  File "C:\Python\Python37\lib\site-packages\pyramid\config\views.py", line 188, in attr_view
+    return view(context, request)
+  File "C:\Python\Python37\lib\site-packages\pyramid\config\views.py", line 214, in predicate_wrapper
+    return view(context, request)
+  File "C:\Python\Python37\lib\site-packages\pyramid\viewderivers.py", line 436, in rendered_view
+    result = view(context, request)
+  File "C:\Python\Python37\lib\site-packages\pyramid\viewderivers.py", line 144, in _requestonly_view
+    response = view(request)
+  File "d:\arx it\mandats\9116_ge - ne - sgrf - infolica\production\2 - realisation\infolica\back\infolica\views\facture.py", line 34, in factures_view
+    query = request.dbsession.query(models.Facture).all()
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 2925, in all
+    return list(self)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\loading.py", line 105, in instances
+    util.raise_from_cause(err)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 296, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=cause)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 277, in reraise
+    raise value
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\loading.py", line 85, in instances
+    rows = [proc(row) for row in fetch]
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\loading.py", line 85, in <listcomp>
+    rows = [proc(row) for row in fetch]
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\loading.py", line 839, in polymorphic_instance
+    _instance = polymorphic_instances[discriminator]
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\_collections.py", line 729, in __missing__
+    self[key] = val = self.creator(key)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\loading.py", line 819, in configure_subclass_mapper
+    "No such polymorphic_identity %r is defined" % discriminator
+AssertionError: No such polymorphic_identity 1 is defined
+2020-01-16 07:47:45,179 WARNI [waitress.queue:115][MainThread] Task queue depth is 1
+2020-01-16 07:48:45,997 ERROR [pyramid_debugtoolbar:279][waitress] Uncaught AssertionError at http://localhost:6543/infolica/api/factures
+traceback url: http://localhost:6543/_debug_toolbar/32383234303638313638383430/exception
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\pyramid\tweens.py", line 13, in _error_handler
+    response = request.invoke_exception_view(exc_info)
+  File "C:\Python\Python37\lib\site-packages\pyramid\view.py", line 769, in invoke_exception_view
+    raise HTTPNotFound
+pyramid.httpexceptions.HTTPNotFound: The resource could not be found.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python\Python37\lib\site-packages\pyramid_debugtoolbar\toolbar.py", line 257, in toolbar_tween
+    response = _handler(request)
+  File "C:\Python\Python37\lib\site-packages\pyramid_debugtoolbar\panels\performance.py", line 72, in noresource_timer_handler
+    result = handler(request)
+  File "C:\Python\Python37\lib\site-packages\pyramid_tm\__init__.py", line 171, in tm_tween
+    reraise(*exc_info)
+  File "C:\Python\Python37\lib\site-packages\pyramid_tm\compat.py", line 36, in reraise
+    raise value
+  File "C:\Python\Python37\lib\site-packages\pyramid_tm\__init__.py", line 136, in tm_tween
+    response = handler(request)
+  File "C:\Python\Python37\lib\site-packages\pyramid\tweens.py", line 43, in excview_tween
+    response = _error_handler(request, exc)
+  File "C:\Python\Python37\lib\site-packages\pyramid\tweens.py", line 17, in _error_handler
+    reraise(*exc_info)
+  File "C:\Python\Python37\lib\site-packages\pyramid\compat.py", line 179, in reraise
+    raise value
+  File "C:\Python\Python37\lib\site-packages\pyramid\tweens.py", line 41, in excview_tween
+    response = handler(request)
+  File "C:\Python\Python37\lib\site-packages\pyramid\router.py", line 148, in handle_request
+    registry, request, context, context_iface, view_name
+  File "C:\Python\Python37\lib\site-packages\pyramid\view.py", line 657, in _call_view
+    response = view_callable(context, request)
+  File "C:\Python\Python37\lib\site-packages\pyramid\config\views.py", line 169, in __call__
+    return view(context, request)
+  File "C:\Python\Python37\lib\site-packages\pyramid\config\views.py", line 188, in attr_view
+    return view(context, request)
+  File "C:\Python\Python37\lib\site-packages\pyramid\config\views.py", line 214, in predicate_wrapper
+    return view(context, request)
+  File "C:\Python\Python37\lib\site-packages\pyramid\viewderivers.py", line 436, in rendered_view
+    result = view(context, request)
+  File "C:\Python\Python37\lib\site-packages\pyramid\viewderivers.py", line 144, in _requestonly_view
+    response = view(request)
+  File "d:\arx it\mandats\9116_ge - ne - sgrf - infolica\production\2 - realisation\infolica\back\infolica\views\facture.py", line 34, in factures_view
+    query = request.dbsession.query(models.Facture).all()
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\query.py", line 2925, in all
+    return list(self)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\loading.py", line 105, in instances
+    util.raise_from_cause(err)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 296, in raise_from_cause
+    reraise(type(exception), exception, tb=exc_tb, cause=cause)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\compat.py", line 277, in reraise
+    raise value
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\loading.py", line 85, in instances
+    rows = [proc(row) for row in fetch]
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\loading.py", line 85, in <listcomp>
+    rows = [proc(row) for row in fetch]
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\loading.py", line 839, in polymorphic_instance
+    _instance = polymorphic_instances[discriminator]
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\util\_collections.py", line 729, in __missing__
+    self[key] = val = self.creator(key)
+  File "C:\Python\Python37\lib\site-packages\sqlalchemy\orm\loading.py", line 819, in configure_subclass_mapper
+    "No such polymorphic_identity %r is defined" % discriminator
+AssertionError: No such polymorphic_identity 1 is defined
