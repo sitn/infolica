@@ -36,9 +36,6 @@ class Utils():
 
     @classmethod
     def get_model_record_attributes(cls, record):
-        for tmp in dir(record):
-            if tmp.startswith('_'):
-                print(tmp)
         return [a for a in dir(record) if not a.startswith('_')] if record else []
 
     @classmethod
