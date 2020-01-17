@@ -183,6 +183,7 @@ class Document(Base):
     __tablename__ = 'document'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
     chemin = Column(Text, nullable=False)
 
 
@@ -466,3 +467,56 @@ class RemarquePreavis(Base):
     preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
     remarque = Column(Text, nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+
+
+# ======================== VUES ========================
+
+class VNumeros(Base):
+    __tablename__ = 'v_numeros'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True)
+    cadastre = Column(Text)
+    numero = Column(Text)
+    suffixe = Column(Text)
+    etat = Column(Text)
+    type_numero = Column(Text)
+
+
+class VAffaire(Base):
+    __tablename__ = 'v_affaires'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True)
+    nom = Column(Text)
+    client_commande = Column(Text)
+    client_commande_par = Column(Text)
+    responsable = Column(Text)
+    technicien = Column(Text)
+    type_affaire = Column(Text)
+    cadastre = Column(Text)
+    information = Column(Text)
+    date_ouverture = Column(Date)
+    date_validation = Column(Date)
+    date_cloture = Column(Date)
+    localisation = Column(Text)
+
+
+class VEnvois(Base):
+    __tablename__ = 'v_envois'
+    __table_args__ = {'schema': 'infolica'}
+    affaire_id = Column(BigInteger, primary_key=True)
+    affaire_nom = Column(Text)
+    client = Column(Text, primary_key=True)
+    document_nom = Column(Text, primary_key=True)
+    date = Column(Date, primary_key=True)
+
+
+class VEtapesAffaires(Base):
+    __tablename__ = 'v_etapes_affaires'
+    __table_args__ = {'schema': 'infolica'}
+    affaire_id = Column(BigInteger, primary_key=True)
+    affaire_nom = Column(Text)
+    etape = Column(Text, primary_key=True)
+    date = Column(Date, primary_key=True)
+    affaire_liee_id = Column(BigInteger)
+    nom_affaire_liee = Column(Text)
+
