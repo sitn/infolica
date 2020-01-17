@@ -471,7 +471,7 @@ class RemarquePreavis(Base):
 
 # ======================== VUES ========================
 
-class v_numeros(Base):
+class Numeros_view(Base):
     __tablename__ = 'v_numeros'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True)
@@ -482,7 +482,7 @@ class v_numeros(Base):
     type_numero = Column(Text)
 
 
-class v_affaire(Base):
+class Affaire_view(Base):
     __tablename__ = 'v_affaires'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True)
@@ -500,7 +500,7 @@ class v_affaire(Base):
     localisation = Column(Text)
 
 
-class v_envois(Base):
+class Envois_view(Base):
     __tablename__ = 'v_envois'
     __table_args__ = {'schema': 'infolica'}
     affaire_id = Column(BigInteger, primary_key=True)
@@ -510,7 +510,7 @@ class v_envois(Base):
     date = Column(Date, primary_key=True)
 
 
-class v_etapes_affaires(Base):
+class EtapesAffaires_view(Base):
     __tablename__ = 'v_etapes_affaires'
     __table_args__ = {'schema': 'infolica'}
     affaire_id = Column(BigInteger, primary_key=True)
