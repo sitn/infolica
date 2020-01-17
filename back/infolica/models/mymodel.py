@@ -509,3 +509,14 @@ class v_envois(Base):
     document_nom = Column(Text)
     date = Column(Date)
 
+
+class v_etapes_affaires(Base):
+    __tablename__ = 'v_etapes_affaires'
+    __table_args__ = {'schema': 'infolica'}
+    affaire_id = Column(BigInteger)
+    affaire_nom = Column(Text)
+    etape = Column(Text)
+    date = Column(Date)
+    affaire_liee_id = Column(BigInteger)
+    nom_affaire_liee = Column(Text)
+
