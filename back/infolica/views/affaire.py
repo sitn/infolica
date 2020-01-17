@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 from pyramid.response import Response
-
+from sqlalchemy import func
 from sqlalchemy.exc import DBAPIError
 
 from .. import models
@@ -33,6 +33,18 @@ def affaire_by_id_view(request):
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
+""" Search affaires"""
+@view_config(route_name='recherche_affaires', request_method='GET', renderer='json')
+@view_config(route_name='recherche_affaires_s', request_method='GET', renderer='json')
+def affaires_view(request):
+    try:
+        settings = request.registry.settings
+        search_limit = int(settings['search_limit'])
+        conditions = Utils.get_search_conditions(models.Affaire, request.params)
+        query = request.dbsession.query(models.Affaire).filter(*conditions).all()[:search_limit]
+        return Utils.serialize_many(query)
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
 
 """ Return all types affaires"""
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
