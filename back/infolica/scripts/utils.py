@@ -1,4 +1,5 @@
 from datetime import time, date, datetime
+from sqlalchemy import func
 
 class Utils():
 
@@ -53,3 +54,14 @@ class Utils():
     @classmethod
     def get_data_save_response(cls, message):
         return {'message': message}
+
+    """ Get search conditions """
+    @classmethod
+    def get_search_conditions(cls, model, params):
+        conditions = list()
+
+        for param in params:
+            conditions.append(func.lower(getattr(model, param)).like(
+                '%' + func.lower(params[param]) + '%'))
+        return conditions
+
