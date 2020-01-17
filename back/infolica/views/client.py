@@ -71,7 +71,8 @@ def clients_new_view(request):
             request.dbsession.flush()
             print("model.id = ", model.id)
             transaction.commit()
-            return Constant.SUCCESS_SAVE
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Client.__tablename__))
+
 
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
@@ -97,7 +98,7 @@ def clients_update_view(request):
         with transaction.manager:
             
             transaction.commit()
-            return Constant.SUCCESS_SAVE
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Client.__tablename__))
         
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
@@ -122,7 +123,8 @@ def clients_update_view(request):
         with transaction.manager:
             
             transaction.commit()
-            return Constant.SUCCESS_SAVE
+            return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Client.__tablename__))
+
         
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
