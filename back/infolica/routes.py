@@ -7,6 +7,8 @@ def includeme(config):
     config.add_route('clients', '/infolica/api/clients')
     config.add_route('clients_s', '/infolica/api/clients/')
     config.add_route('client_by_id', '/infolica/api/clients/{id}')
+    config.add_route('recherche_clients', '/infolica/api/recherche_clients')
+    config.add_route('recherche_clients_s', '/infolica/api/recherche_clients/')
     #Affaires
     config.add_route('affaires', '/infolica/api/affaires')
     config.add_route('affaires_s', '/infolica/api/affaires/')

@@ -57,6 +57,18 @@ def client_personne_by_id_view(request):
         return Response(db_err_msg, content_type='text/plain', status=500)
     return Utils.serialize_one(query)
 
+""" Search clients"""
+@view_config(route_name='recherche_clients', request_method='GET', renderer='json')
+@view_config(route_name='recherche_clients_s', request_method='GET', renderer='json')
+def clients_search_view(request):
+    try:
+        settings = request.registry.settings
+        search_limit = int(settings['search_limit'])
+        conditions = Utils.get_search_conditions(models.Client, request.params)
+        query = request.dbsession.query(models.Client).filter(*conditions).all()[:search_limit]
+        return Utils.serialize_many(query)
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
 
 """ Add new client"""
 @view_config(route_name='clients', request_method='POST', renderer='json')
