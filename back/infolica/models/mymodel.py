@@ -519,4 +519,6 @@ class VEtapesAffaires(Base):
     date = Column(Date, primary_key=True)
     affaire_liee_id = Column(BigInteger)
     nom_affaire_liee = Column(Text)
+    service_nom = Column(Text, primary_key=True)
+
 
