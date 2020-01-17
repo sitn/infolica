@@ -36,7 +36,7 @@ def affaire_by_id_view(request):
 """ Search affaires"""
 @view_config(route_name='recherche_affaires', request_method='GET', renderer='json')
 @view_config(route_name='recherche_affaires_s', request_method='GET', renderer='json')
-def affaires_view(request):
+def affaires_search_view(request):
     try:
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
@@ -62,56 +62,11 @@ def types_affaires_view(request):
 @view_config(route_name='affaires', request_method='POST', renderer='json')
 def affaires_new_view(request):
     try:
-        settings = request.registry.settings
 
-        # Read params affaire
-        responsable_id = None
-        technicien_id = None
-        type_id = None
-        cadastre_id = None
-        information = None
-        date_ouverture = None
-        date_cloture = None
-        localisation_E = None
-        localisation_N = None
-
-        if 'responsable_id' in request.params:
-            responsable_id = request.params['responsable_id']
-
-        if 'technicien_id' in request.params:
-            technicien_id = request.params['technicien_id']
-
-        if 'cadastre_id' in request.params:
-            cadastre_id = request.params['cadastre_id']
-
-        if 'information' in request.params:
-            information = request.params['information']
-
-        if 'date_ouverture' in request.params:
-            date_ouverture = request.params['date_ouverture']
-
-        if 'date_cloture' in request.params:
-            date_cloture = request.params['date_cloture']
-
-        if 'localisation_E' in request.params:
-            localisation_E = request.params['localisation_E']
-
-        if 'localisation_N' in request.params:
-            localisation_N = request.params['localisation_N']
+        model = models.Affaire()
+        model = Utils.set_model_record(model, request.params)
 
         with transaction.manager:
-            model = models.Affaire(
-                responsable_id = responsable_id,
-                technicien_id = technicien_id,
-                type_id = type_id,
-                cadastre_id = cadastre_id,
-                information = information,
-                date_ouverture = date_ouverture,
-                date_cloture = date_cloture,
-                localisation_E = localisation_E,
-                localisation_N = localisation_N
-            )
-
             request.dbsession.add(model)
 
             # Commit transaction
@@ -119,10 +74,63 @@ def affaires_new_view(request):
 
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return Constant.SUCCESS_SAVE
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
+
+""" Update affaire"""
+@view_config(route_name='affaires', request_method='PUT', renderer='json')
+@view_config(route_name='affaires_s', request_method='PUT', renderer='json')
+def affaires_update_view(request):
+    try:
+
+        # id_affaire
+        id_affaire = None
+
+        if 'id_affaire' in request.params:
+            id_affaire = request.params['id_affaire']
+
+        # Get the affaire
+        affaire_record = request.dbsession.query(models.Affaire).filter(
+            models.Affaire.id == id_affaire).first()
+
+        if not affaire_record:
+            raise CustomError(
+                CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Affaire.__tablename__, id_affaire))
+
+        affaire_record = Utils.set_model_record(affaire_record, request.params)
+
+        with transaction.manager:
+
+            # Commit transaction
+            transaction.commit()
+
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
 
 
+""" Delete affaire"""
+@view_config(route_name='affaire_by_id', request_method='DELETE', renderer='json')
+def affaires_delete_view(request):
+    try:
+        id = request.matchdict['id']
 
+        query = request.dbsession.query(models.Affaire)
+        affaire = query.filter(models.Affaire.id == id).first()
+
+        if not affaire:
+            raise CustomError(
+                CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Affaire.__tablename__, id))
+
+        with transaction.manager:
+            request.dbsession.delete(affaire)
+            # Commit transaction
+            transaction.commit()
+
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Affaire.__tablename__))
 
 
 db_err_msg = """\
