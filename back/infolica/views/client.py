@@ -20,6 +20,8 @@ from ..scripts.utils import Utils
 import logging
 log = logging.getLogger(__name__)
 
+from datetime import datetime
+
 
 """ Return all types clients"""
 @view_config(route_name='types_clients', request_method='GET', renderer='json')
@@ -69,7 +71,8 @@ def clients_new_view(request):
             request.dbsession.flush()
             print("model.id = ", model.id)
             transaction.commit()
-            return Constant.SUCCESS_SAVE
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Client.__tablename__))
+
 
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
@@ -95,7 +98,33 @@ def clients_update_view(request):
         with transaction.manager:
             
             transaction.commit()
-            return Constant.SUCCESS_SAVE
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Client.__tablename__))
+        
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" Delete client"""
+@view_config(route_name='clients', request_method='DELETE', renderer='json')
+@view_config(route_name='clients_s', request_method='DELETE', renderer='json')
+def clients_update_view(request):
+    # Get client_id
+    id_client = request.params['id'] if 'id' in request.params else None
+
+    model = request.dbsession.query(models.Client).filter(models.Client.id == id_client).first()
+    
+    # If result is empty
+    if not model:
+        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Client.__tablename__, id_client))
+
+    model.sortie = datetime.utcnow()
+
+    try:
+        with transaction.manager:
+            
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Client.__tablename__))
+
         
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
