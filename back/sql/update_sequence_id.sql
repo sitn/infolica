@@ -1,0 +1,1 @@
+SELECT setval('infolica.numero_id_seq', (select max(id) from infolica.numero))
