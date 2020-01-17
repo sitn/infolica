@@ -503,20 +503,20 @@ class v_affaire(Base):
 class v_envois(Base):
     __tablename__ = 'v_envois'
     __table_args__ = {'schema': 'infolica'}
-    affaire_id = Column(BigInteger)
+    affaire_id = Column(BigInteger, primary_key=True)
     affaire_nom = Column(Text)
-    client = Column(Text)
-    document_nom = Column(Text)
-    date = Column(Date)
+    client = Column(Text, primary_key=True)
+    document_nom = Column(Text, primary_key=True)
+    date = Column(Date, primary_key=True)
 
 
 class v_etapes_affaires(Base):
     __tablename__ = 'v_etapes_affaires'
     __table_args__ = {'schema': 'infolica'}
-    affaire_id = Column(BigInteger)
+    affaire_id = Column(BigInteger, primary_key=True)
     affaire_nom = Column(Text)
-    etape = Column(Text)
-    date = Column(Date)
+    etape = Column(Text, primary_key=True)
+    date = Column(Date, primary_key=True)
     affaire_liee_id = Column(BigInteger)
     nom_affaire_liee = Column(Text)
 
