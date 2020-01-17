@@ -42,7 +42,8 @@ def factures_new_view(request):
 
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return Constant.SUCCESS_SAVE
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Facture.__tablename__))
 
 
 """ Update facture"""
@@ -74,7 +75,8 @@ def factures_update_view(request):
 
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return Constant.SUCCESS_SAVE
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Facture.__tablename__))
 
 
 """ Delete facture"""
@@ -97,7 +99,7 @@ def factures_delete_view(request):
 
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return Constant.SUCCESS_SAVE
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Facture.__tablename__))
 
 
 

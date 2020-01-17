@@ -48,3 +48,8 @@ class Utils():
             setattr(record, att, params[att] if att in params else None)
 
         return record
+
+    """ Get data save response"""
+    @classmethod
+    def get_data_save_response(cls, message):
+        return {'message': message}
