@@ -69,14 +69,12 @@ ldap_group_query_scope=SUBTREE
 # Les attributs à retourner
 ldap_group_attributes=cn, ou,member
 
+######################################################################################
+# Le nombre max des résultats retournés par la recherche
+######################################################################################
+search_limit = 20
+
 retry.attempts = 3
-
-########################################
-# Clients
-########################################
-type_entreprise = entreprise
-type_personne = personne
-
 
 [pshell]
 setup = infolica.pshell.setup
