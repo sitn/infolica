@@ -559,3 +559,23 @@ class VAffairesBalances(Base):
     numero_relation_type = Column(Text)
 
 
+class VTableauBord(Base):
+    __tablename__ = 'v_tableau_de_bord'
+    __table_args__ = {'schema': 'infolica'}
+    affaire_id = Column(BigInteger, primary_key=True)
+    affaire_nom = Column(Text)
+    délai = Column(integer)
+    client_entreprise = Column(Text)
+    client_titre = Column(Text)
+    client_nom = Column(Text)
+    client_prenom = Column(Text)
+    affaire_type = Column(Text)
+    chef_nom = Column(Text)
+    chef_prenom = Column(Text)
+    technicien_nom = Column(Text)
+    technicien_prenom = Column(Text)
+    information = Column(Text)
+    cadastre = Column(Text)
+    etape = Column(Text)
+
+
