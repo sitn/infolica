@@ -107,6 +107,23 @@ class Affaire(Base):
     localisation_N = Column(Integer, nullable=False)
 
 
+class AffaireEtapeIndex(Base):
+    __tablename__ = 'affaire_etape_index'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
+
+
+class AffaireEtape(Base):
+    __tablename__ = 'affaire_etape'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    affaire_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id), nullable=False)
+    etape_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id), nullable=False)
+    date = Column(Date, default=datetime.datetime.utcnow(), nullable=False)
+    remarque = Column(Text)
+
+
 class ModificationAffaireType(Base):
     __tablename__ = 'modification_affaire_type'
     __table_args__ = {'schema': 'infolica'}
@@ -520,5 +537,25 @@ class VEtapesAffaires(Base):
     affaire_liee_id = Column(BigInteger)
     nom_affaire_liee = Column(Text)
     service_nom = Column(Text, primary_key=True)
+    remarque = Column(Text)
+
+
+class VAffairesBalances(Base):
+    __tablename__ = 'v_affaires_balances'
+    __table_args__ = {'schema': 'infolica'}
+    affaire_id = Column(BigInteger, primary_key=True)
+    numero_base_id = Column(BigInteger, primary_key=True)
+    numero_associe_id = Column(BigInteger, primary_key=True)
+    numero_relation_id = Column(BigInteger, primary_key=True)
+    affaire_nom = Column(Text)
+    numero_base_type = Column(Text)
+    numero_base = Column(Integer)
+    numero_base_suffixe = Column(Text)
+    numero_base_etat = Column(Text)
+    numero_associe_type = Column(Text)
+    numero_associe = Column(Integer)
+    numero_associe_suffixe = Column(Text)
+    numero_associe_etat = Column(Text)
+    numero_relation_type = Column(Text)
 
 
