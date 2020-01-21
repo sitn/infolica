@@ -1,4 +1,4 @@
-create view infolica.tableau_de_bord as
+create view infolica.v_tableau_de_bord as
 select aff.id as aff_id, aff.nom as affaire_nom, date(now())-aff.date_ouverture as delai, cl.entreprise as client_entreprise, cl.titre as client_titre, cl.nom as client_nom, 
 cl.prenom as client_prenom, afft.nom as affaire_type, opc.nom as chef_nom, opc.prenom as chef_prenom, opt.nom as technicien_nom, opt.prenom as technicien_prenom, 
 aff.information as information, cad.nom as cadastre, vetaff.etape
