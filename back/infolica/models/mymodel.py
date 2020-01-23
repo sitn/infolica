@@ -118,7 +118,7 @@ class AffaireEtape(Base):
     __tablename__ = 'affaire_etape'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    affaire_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id), nullable=False)
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     etape_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id), nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow(), nullable=False)
     remarque = Column(Text)
@@ -363,6 +363,8 @@ class ControlePPE(Base):
     fact_5 = Column(Boolean)  # Données numériques fournies ou plan de situation
     fact_6 = Column(Boolean)  # Report des montants de la facture sur le formulaire de demande
     fact_7 = Column(Boolean)  # Impression facture -> datée et signée
+    visa = Column(BigInteger, ForeignKey(Operateur.id))
+    date = Column(Date)
 
 
 class NumeroType(Base):
@@ -577,5 +579,3 @@ class VTableauBord(Base):
     information = Column(Text)
     cadastre = Column(Text)
     etape = Column(Text)
-
-
