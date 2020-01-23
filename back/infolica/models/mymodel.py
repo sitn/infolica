@@ -566,7 +566,7 @@ class VTableauBord(Base):
     __table_args__ = {'schema': 'infolica'}
     affaire_id = Column(BigInteger, primary_key=True)
     affaire_nom = Column(Text)
-    délai = Column(integer)
+    delai = Column(Integer)
     client_entreprise = Column(Text)
     client_titre = Column(Text)
     client_nom = Column(Text)
