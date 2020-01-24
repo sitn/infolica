@@ -6,12 +6,13 @@ from pyramid_ldap3 import (
 from pyramid.security import remember, forget
 from pyramid.response import Response
 import json
+from ..scripts.utils import Utils
 
 class LDAPQuery():
 
 
     @classmethod
-    def do_login(cls, request, login, password, client):
+    def do_login(cls, request, login, password, operateur):
         response = None
         try:
             headers = forget(request)
@@ -25,12 +26,12 @@ class LDAPQuery():
 
                 headers = remember(request, dn)
 
-                if client :
-                    contact_json = client.format()
+                if operateur :
+                    operateur_json = Utils.serialize_one(operateur)
 
-                contact_json = json.dumps(contact_json) if client else ''
+                operateur_json_json = json.dumps(operateur_json) if operateur else ''
 
-                response = Response(contact_json,
+                response = Response(operateur_json_json,
                                     content_type='application/json; charset=UTF-8', headers=headers)
 
             else:

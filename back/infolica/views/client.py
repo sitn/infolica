@@ -37,7 +37,7 @@ def types_clients_view(request):
 """ Return all clients"""
 @view_config(route_name='clients', request_method='GET', renderer='json')
 @view_config(route_name='clients_s', request_method='GET', renderer='json')
-def clients_personnes_view(request):
+def clients_view(request):
     result = []
     try:
         query = request.dbsession.query(models.Client).all()
@@ -48,7 +48,7 @@ def clients_personnes_view(request):
 
 """ Return client by id"""
 @view_config(route_name='client_by_id', request_method='GET', renderer='json')
-def client_personne_by_id_view(request):
+def client_by_id_view(request):
     merged = None
     try:
         id = request.matchdict['id']
@@ -119,7 +119,7 @@ def clients_update_view(request):
 """ Delete client"""
 @view_config(route_name='clients', request_method='DELETE', renderer='json')
 @view_config(route_name='clients_s', request_method='DELETE', renderer='json')
-def clients_update_view(request):
+def clients_delete_view(request):
     # Get client_id
     id_client = request.params['id'] if 'id' in request.params else None
 
