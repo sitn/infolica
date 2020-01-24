@@ -1,0 +1,33 @@
+.header{
+    height: 40px;
+    width: 100%;
+    float: left;
+}
+
+.header .md-card.md-theme-default{
+    height: 40px;
+}
+
+.header .md-card-content{
+    padding: 0 10px;
+}
+
+.header .logo{
+    height: 40px;
+    float: left;
+}
+
+.header h2{
+    float: left;
+    margin: 10px;
+}
+
+.header .menu{
+    width: 355px;
+    margin: 0 auto;
+}
+
+.header .menu .md-menu .md-button{
+    height: 40px;
+}
+
