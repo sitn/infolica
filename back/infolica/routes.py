@@ -25,6 +25,10 @@ def includeme(config):
     config.add_route('login', '/infolica/api/login')
     config.add_route('login_s', '/infolica/api/login/')
     config.add_route('logout', '/infolica/api/logout')
+    #Operateur
+    config.add_route('operateurs', '/infolica/api/operateurs')
+    config.add_route('operateurs_s', '/infolica/api/operateurs/')
+    config.add_route('operateur_by_id', '/infolica/api/operateurs/{id}')
     #Test (temp endpoint)
     config.add_route('test', '/infolica/api/test')
 
