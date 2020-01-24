@@ -71,9 +71,6 @@ def controles_ppe_update_view(request):
     record = request.dbsession.query(models.ControlePPE).filter(
         models.ControlePPE.id == id).first()
 
-    from pprint import pprint
-    pprint(vars(record))
-
     if not record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.ControlePPE.__tablename__, id))
@@ -92,6 +89,7 @@ def controles_ppe_update_view(request):
 
 """ Delete controles_ppe"""
 @view_config(route_name='controles_ppe', request_method='DELETE', renderer='json')
+@view_config(route_name='controles_ppe_s', request_method='DELETE', renderer='json')
 def controles_ppe_delete_view(request):
     
     # Get controle mutation id

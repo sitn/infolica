@@ -9,10 +9,8 @@ from sqlalchemy import (
     Boolean,
     ForeignKey,
     UniqueConstraint,
-    Enum
 )
 
-import enum
 import datetime
 from .constant import Constant
 from .meta import Base
@@ -222,14 +220,11 @@ class EnvoiDocument(Base):
     document_id = Column(BigInteger, ForeignKey(Document.id), nullable=False)
 
 
-class OuiNon(enum.Enum):
-    oui = "Oui"
-    non = "Non"
-
-
-class EnOrdre(enum.Enum):
-    eo = "En ordre"
-    rem = "Remarque" 
+class SuiviMandatStatut(Base):
+    __tablename__ = 'suivi_mandat_statut'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
 
 
 class SuiviMandat(Base):
@@ -237,29 +232,29 @@ class SuiviMandat(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
-    av_11 = Column(Enum(OuiNon))  # CREATION DE L’AFFAIRE DANS INFOLICA
-    av_12 = Column(Enum(OuiNon))  # DATE CREATION DE L’AFFAIRE DANS INFOLICA
-    av_21 = Column(Enum(OuiNon))  # CREATION DE L’AFFAIRE DANSTIMELEAD
-    av_31 = Column(Enum(OuiNon))  # VERIFICATION PAR LE CHEF DE PROJET DE LA MENSURATION OFFICIELLE
+    av_11 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CREATION DE L’AFFAIRE DANS INFOLICA
+    av_12 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # DATE CREATION DE L’AFFAIRE DANS INFOLICA
+    av_21 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CREATION DE L’AFFAIRE DANSTIMELEAD
+    av_31 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # VERIFICATION PAR LE CHEF DE PROJET DE LA MENSURATION OFFICIELLE
     av_32 = Column(BigInteger, ForeignKey(Operateur.id))  # LE CHEF DE PROJET
     av_33 = Column(Date)  # DATE DE LA VERIFICATION PAR LE CHEF DE PROJET
-    av_41 = Column(Enum(OuiNon))  # REPORT DATE PREAVIS SAT OU SEA
+    av_41 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # REPORT DATE PREAVIS SAT OU SEA
     av_51 = Column(Text)  # INFORMATIONS COMPLEMENTAIRES
-    pdt_11 = Column(Enum(EnOrdre))  # CONTROLE DES DESIGNATIONS ET DE LA BALANCE
+    pdt_11 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CONTROLE DES DESIGNATIONS ET DE LA BALANCE
     pdt_12 = Column(Text)  # REMARQUE CONTROLE DES DESIGNATIONS ET DE LA BALANCE
-    pdt_21 = Column(Enum(EnOrdre))  # CONTROLE DU TABLEAU DES EMOLUMENTS ET REPORT SUR LA DEMANDE
+    pdt_21 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CONTROLE DU TABLEAU DES EMOLUMENTS ET REPORT SUR LA DEMANDE
     pdt_22 = Column(Text)  # REMARQUE CONTROLE DU TABLEAU DES EMOLUMENTS ET REPORT SUR LA DEMANDE
-    pdt_31 = Column(Enum(OuiNon))  # MATERIALISATION DIFFEREE (COPIE DU PLAN DE MUTATION)
-    pdt_41 = Column(Enum(EnOrdre))  # CONTROLE DE L'ENREGISTREMENT DE TOUS LES DOCUMENTS (COURRIEL, COURRIER, PREAVIS, PLAN, ETC…)
+    pdt_31 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # MATERIALISATION DIFFEREE (COPIE DU PLAN DE MUTATION)
+    pdt_41 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CONTROLE DE L'ENREGISTREMENT DE TOUS LES DOCUMENTS (COURRIEL, COURRIER, PREAVIS, PLAN, ETC…)
     pdt_42 = Column(Text)  # REMARQUE CONTROLE DE L'ENREGISTREMENT DE TOUS LES DOCUMENTS (COURRIEL, COURRIER, PREAVIS, PLAN, ETC…)
-    ap_11 = Column(Enum(EnOrdre))  # RESPECT DES DIRECTIVES DU SCAT, SAGR OU SERVICE URBANISME
+    ap_11 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # RESPECT DES DIRECTIVES DU SCAT, SAGR OU SERVICE URBANISME
     ap_12 = Column(Text)  # REMARQUE RESPECT DES DIRECTIVES DU SCAT, SAGR OU SERVICE URBANISME
-    ap_21 = Column(Enum(EnOrdre))  # STRUCTURE DES REPERTOIRES ET CONTENU
+    ap_21 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # STRUCTURE DES REPERTOIRES ET CONTENU
     ap_22 = Column(Text)  # REMARQUE STRUCTURE DES REPERTOIRES ET CONTENU
-    ap_31 = Column(Enum(OuiNon))  # GENERATION DE L’ETAT DESCRIPTIF POUR TERRIS
+    ap_31 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # GENERATION DE L’ETAT DESCRIPTIF POUR TERRIS
     ap_32 = Column(BigInteger, ForeignKey(Operateur.id))  # CHEF DE PROJET
     ap_33 = Column(Date)  # DATE GENERATION DE L’ETAT DESCRIPTIF POUR TERRIS
-    ap_41 = Column(Enum(OuiNon))  # CONTROLE DE LA BASE DE DONNEES
+    ap_41 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CONTROLE DE LA BASE DE DONNEES
     ap_42 = Column(Text)  # REMARQUE CONTROLE DE LA BASE DE DONNEES
     visa = Column(BigInteger, ForeignKey(Operateur.id))
     date = Column(Date)
@@ -387,7 +382,7 @@ class Numero(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
     type_id = Column(BigInteger, ForeignKey(NumeroType.id), nullable=False)
-    numero = Column(Integer, nullable=False)
+    numero = Column(BigInteger, nullable=False)
     suffixe = Column(Text)
     etat_id = Column(BigInteger, ForeignKey(NumeroEtat.id), nullable=False)
 

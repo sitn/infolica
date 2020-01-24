@@ -89,6 +89,7 @@ def controles_mutations_update_view(request):
 
 """ Delete controle_mutation"""
 @view_config(route_name='controles_mutations', request_method='DELETE', renderer='json')
+@view_config(route_name='controles_mutations_s', request_method='DELETE', renderer='json')
 def controles_mutations_delete_view(request):
     
     # Get controle mutation id

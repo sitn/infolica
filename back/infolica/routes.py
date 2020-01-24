@@ -39,4 +39,8 @@ def includeme(config):
     config.add_route('controles_ppe','/infolica/api/controles_ppe')
     config.add_route('controles_ppe_s','/infolica/api/controles_ppe/')
     config.add_route('controle_ppe_by_id', '/infolica/api/controles_ppe/{id}')
+    #Suivi_Mandat
+    config.add_route('suivis_mandats','/infolica/api/suivis_mandats')
+    config.add_route('suivis_mandats_s','/infolica/api/suivis_mandats/')
+    config.add_route('suivi_mandat_by_id', '/infolica/api/suivi_mandat/{id}')
 
