@@ -7,6 +7,7 @@ from ..scripts.ldap_query import LDAPQuery
 from ..models import Constant
 import logging
 log = logging.getLogger(__name__)
+from ..exceptions.custom_error import CustomError
 
 
 ########################################################
@@ -27,13 +28,13 @@ def login_view(request):
             password = request.params['password']
 
         #Check if user exists in DB
-        query = request.dbsession.query(models.Client)
-        client = query.filter(func.lower(models.Client.login) == func.lower(login)).first()
+        query = request.dbsession.query(models.Operateur)
+        operateur = query.filter(func.lower(models.Operateur.login) == func.lower(login)).first()
 
-        if not client:
-            raise Exception(Constant.user_not_found_exception)
+        if not operateur:
+            raise Exception(CustomError.USER_NOT_FOUND_EXCEPTION)
 
-        response = LDAPQuery.do_login(request, login, password, client)
+        response = LDAPQuery.do_login(request, login, password, operateur)
 
     except Exception as error:
         #log.error(str(error))
