@@ -1,0 +1,14 @@
+select affnum.affaire_id as affaire_id, aff.nom as affaire_nom, affnum.numero_id as numero_id, src.numero_relation_id as numero_relation_id
+from infolica.affaire_numero as affnum, infolica.affaire as aff, 
+	(select numrel.numero_id_base as numero_id, numrel.id as numero_relation_id, 'src' as relation
+	from infolica.numero_relation as numrel, infolica.affaire_numero as affnum
+	where affnum.numero_id = numrel.numero_id_base) as src,
+	(select numrel.numero_id_associe as numero_id, numrel.id as numero_relation_id, 'dst' as relation
+	from infolica.numero_relation as numrel, infolica.affaire_numero as affnum
+	where affnum.numero_id = numrel.numero_id_associe) as dst
+where affnum.affaire_id = aff.id
+and (affnum.numero_id = src.numero_id
+or affnum.numero_id = dst.numero_id)
+and src.numero_relation_id = dst.numero_relation_id
+and aff.nom like 'B_4501_0'
+order by numero_relation_id asc
