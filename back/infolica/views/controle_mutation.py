@@ -50,7 +50,7 @@ def controles_mutations_new_view(request):
 
     try:
         with transaction.manager:
-            request.dbsession.add(model)
+            request.dbsession.add(record)
             # Commit transaction
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ControleMutation.__tablename__))
