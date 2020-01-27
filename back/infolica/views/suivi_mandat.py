@@ -50,6 +50,7 @@ def suivis_mandats_new_view(request):
     try:
         with transaction.manager:
             request.dbsession.add(record)
+            request.dbsession.flush()
             # Commit transaction
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.SuiviMandat.__tablename__))
