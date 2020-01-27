@@ -29,10 +29,9 @@ def controles_ppe_view(request):
 """ Return controles_ppe by id"""
 @view_config(route_name='controle_ppe_by_id', request_method='GET', renderer='json')
 def controles_ppe_by_id_view(request):
-    # Get controle mutation id
-    id = request.params['id'] if 'id' in request.params else None
-    
     try:
+        # Get controle mutation id    
+        id = request.id = request.matchdict['id']
         query = request.dbsession.query(models.ControlePPE).filter(models.ControlePPE.id == id).first()
         return Utils.serialize_one(query)
 

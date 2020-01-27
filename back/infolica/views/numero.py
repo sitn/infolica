@@ -1,22 +1,128 @@
 from pyramid.view import view_config
 from pyramid.response import Response
+from ..scripts.utils import Utils
+from ..models import Constant
+import transaction
+from sqlalchemy import and_, func, desc
 
 from sqlalchemy.exc import DBAPIError
+from ..exceptions.custom_error import CustomError
 
 from .. import models
 
+import logging
+log = logging.getLogger(__name__)
 
-"""
-@view_config(route_name='home', renderer='../templates/mytemplate.mako')
-def numero_view(request):
+
+""" Return all numeros"""
+@view_config(route_name='numeros', request_method='GET', renderer='json')
+@view_config(route_name='numeros_s', request_method='GET', renderer='json')
+def numeros_view(request):
     try:
-        query = request.dbsession.query(models.Affaire)
-        one = query.filter(models.Affaire.id != 0).first()
+        query = request.dbsession.query(models.VNumeros).all()
+        return Utils.serialize_many(query)
+    
+    except DBAPIError as e:
+        log.error(str(e), exc_info=True)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" Return numeros by id"""
+@view_config(route_name='numero_by_id', request_method='GET', renderer='json')
+def numeros_by_id_view(request):
+    try:
+        # Get controle mutation id    
+        id = request.id = request.matchdict['id']
+        query = request.dbsession.query(models.VNumeros).filter(models.VNumeros.id == id).first()
+        return Utils.serialize_one(query)
+
     except DBAPIError:
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return {'one': one, 'project': 'infolica'}
-"""
+    
 
+""" Add new numeros"""
+@view_config(route_name='numeros', request_method='POST', renderer='json')
+@view_config(route_name='numeros_s', request_method='POST', renderer='json')
+def numeros_new_view(request):
+    #nouveau numero
+    record = models.Numero()
+    record = Utils.set_model_record(record, request.params)
+    
+    try:
+        with transaction.manager:
+            request.dbsession.add(record)
+            request.dbsession.flush()
+            # Commit transaction
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
+
+    except DBAPIError as e:
+        print(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+def next_number(request, type_id, cadastre_id, plan_id=None):
+    if plan_id is None:
+        query = request.query(models.Numero).filter(and_(models.Numero.type_id==type_id, models.Numero.cadastre_id==cadastre_id))
+    else:
+        query = request.query(models.Numero).filter(and_(models.Numero.type_id==type_id, models.Numero.cadastre_id==cadastre_id, models.Numero.plan_id==plan_id))
+    return query.order_by(desc(models.Numero.numero)).limit(1).first()
+
+
+""" Update numeros"""
+@view_config(route_name='numeros', request_method='PUT', renderer='json')
+@view_config(route_name='numeros_s', request_method='PUT', renderer='json')
+def numeros_update_view(request):
+
+    # Get numero id
+    id = request.params['id'] if 'id' in request.params else None
+
+    # Get numero record
+    record = request.dbsession.query(models.Numero).filter(
+        models.Numero.id == id).first()
+
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Numero.__tablename__, id))
+
+    record = Utils.set_model_record(record, request.params)
+
+    try:
+        with transaction.manager:
+            # Commit transaction
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
+
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" Delete numeros"""
+@view_config(route_name='numeros', request_method='DELETE', renderer='json')
+@view_config(route_name='numeros_s', request_method='DELETE', renderer='json')
+def numeros_delete_view(request):
+    
+    # Get numero id
+    id = request.params['id'] if 'id' in request.params else None
+
+    # Get numero record
+    record = request.dbsession.query(models.Numero).filter(
+        models.Numero.id == id).first()
+
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Numero.__tablename__, id))
+    
+    try:
+        with transaction.manager:
+            request.dbsession.delete(record)
+            # Commit transaction
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Numero.__tablename__))
+
+    except DBAPIError:
+        return Response(db_err_msg, content_type='text/plain', status=500)
+    
 
 db_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem
@@ -32,3 +138,4 @@ might be caused by one of the following things:
 After you fix the problem, please restart the Pyramid application to
 try it again.
 """
+

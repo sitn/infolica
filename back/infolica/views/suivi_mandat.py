@@ -29,10 +29,9 @@ def suivis_mandats_view(request):
 """ Return suivis_mandats by id"""
 @view_config(route_name='suivi_mandat_by_id', request_method='GET', renderer='json')
 def suivis_mandats_by_id_view(request):
-    # Get controle mutation id
-    id = request.params['id'] if 'id' in request.params else None
-    
     try:
+        # Get controle mutation id    
+        id = request.id = request.matchdict['id']
         query = request.dbsession.query(models.SuiviMandat).filter(models.SuiviMandat.id == id).first()
         return Utils.serialize_one(query)
 
@@ -47,9 +46,6 @@ def suivis_mandats_new_view(request):
 
     record = models.SuiviMandat()
     record = Utils.set_model_record(record, request.params)
-    
-    from pprint import pprint
-    pprint(vars(record))
 
     try:
         with transaction.manager:
@@ -59,8 +55,6 @@ def suivis_mandats_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.SuiviMandat.__tablename__))
 
     except DBAPIError as e:
-        print("toto")
-        print(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 

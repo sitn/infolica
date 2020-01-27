@@ -49,7 +49,6 @@ def clients_view(request):
 """ Return client by id"""
 @view_config(route_name='client_by_id', request_method='GET', renderer='json')
 def client_by_id_view(request):
-    merged = None
     try:
         id = request.matchdict['id']
         query = request.dbsession.query(models.Client).filter(models.Client.id == id).first()
@@ -81,7 +80,6 @@ def clients_new_view(request):
         with transaction.manager:
             request.dbsession.add(model)
             request.dbsession.flush()
-            print("model.id = ", model.id)
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Client.__tablename__))
 
