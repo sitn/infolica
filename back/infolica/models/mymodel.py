@@ -9,10 +9,8 @@ from sqlalchemy import (
     Boolean,
     ForeignKey,
     UniqueConstraint,
-    Enum
 )
 
-import enum
 import datetime
 from .constant import Constant
 from .meta import Base
@@ -222,14 +220,11 @@ class EnvoiDocument(Base):
     document_id = Column(BigInteger, ForeignKey(Document.id), nullable=False)
 
 
-class OuiNon(enum.Enum):
-    oui = "Oui"
-    non = "Non"
-
-
-class EnOrdre(enum.Enum):
-    eo = "En ordre"
-    rem = "Remarque" 
+class SuiviMandatStatut(Base):
+    __tablename__ = 'suivi_mandat_statut'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
 
 
 class SuiviMandat(Base):
@@ -237,29 +232,29 @@ class SuiviMandat(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
-    av_11 = Column(Enum(OuiNon))  # CREATION DE L’AFFAIRE DANS INFOLICA
-    av_12 = Column(Enum(OuiNon))  # DATE CREATION DE L’AFFAIRE DANS INFOLICA
-    av_21 = Column(Enum(OuiNon))  # CREATION DE L’AFFAIRE DANSTIMELEAD
-    av_31 = Column(Enum(OuiNon))  # VERIFICATION PAR LE CHEF DE PROJET DE LA MENSURATION OFFICIELLE
+    av_11 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CREATION DE L’AFFAIRE DANS INFOLICA
+    av_12 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # DATE CREATION DE L’AFFAIRE DANS INFOLICA
+    av_21 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CREATION DE L’AFFAIRE DANSTIMELEAD
+    av_31 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # VERIFICATION PAR LE CHEF DE PROJET DE LA MENSURATION OFFICIELLE
     av_32 = Column(BigInteger, ForeignKey(Operateur.id))  # LE CHEF DE PROJET
     av_33 = Column(Date)  # DATE DE LA VERIFICATION PAR LE CHEF DE PROJET
-    av_41 = Column(Enum(OuiNon))  # REPORT DATE PREAVIS SAT OU SEA
+    av_41 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # REPORT DATE PREAVIS SAT OU SEA
     av_51 = Column(Text)  # INFORMATIONS COMPLEMENTAIRES
-    pdt_11 = Column(Enum(EnOrdre))  # CONTROLE DES DESIGNATIONS ET DE LA BALANCE
+    pdt_11 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CONTROLE DES DESIGNATIONS ET DE LA BALANCE
     pdt_12 = Column(Text)  # REMARQUE CONTROLE DES DESIGNATIONS ET DE LA BALANCE
-    pdt_21 = Column(Enum(EnOrdre))  # CONTROLE DU TABLEAU DES EMOLUMENTS ET REPORT SUR LA DEMANDE
+    pdt_21 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CONTROLE DU TABLEAU DES EMOLUMENTS ET REPORT SUR LA DEMANDE
     pdt_22 = Column(Text)  # REMARQUE CONTROLE DU TABLEAU DES EMOLUMENTS ET REPORT SUR LA DEMANDE
-    pdt_31 = Column(Enum(OuiNon))  # MATERIALISATION DIFFEREE (COPIE DU PLAN DE MUTATION)
-    pdt_41 = Column(Enum(EnOrdre))  # CONTROLE DE L'ENREGISTREMENT DE TOUS LES DOCUMENTS (COURRIEL, COURRIER, PREAVIS, PLAN, ETC…)
+    pdt_31 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # MATERIALISATION DIFFEREE (COPIE DU PLAN DE MUTATION)
+    pdt_41 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CONTROLE DE L'ENREGISTREMENT DE TOUS LES DOCUMENTS (COURRIEL, COURRIER, PREAVIS, PLAN, ETC…)
     pdt_42 = Column(Text)  # REMARQUE CONTROLE DE L'ENREGISTREMENT DE TOUS LES DOCUMENTS (COURRIEL, COURRIER, PREAVIS, PLAN, ETC…)
-    ap_11 = Column(Enum(EnOrdre))  # RESPECT DES DIRECTIVES DU SCAT, SAGR OU SERVICE URBANISME
+    ap_11 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # RESPECT DES DIRECTIVES DU SCAT, SAGR OU SERVICE URBANISME
     ap_12 = Column(Text)  # REMARQUE RESPECT DES DIRECTIVES DU SCAT, SAGR OU SERVICE URBANISME
-    ap_21 = Column(Enum(EnOrdre))  # STRUCTURE DES REPERTOIRES ET CONTENU
+    ap_21 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # STRUCTURE DES REPERTOIRES ET CONTENU
     ap_22 = Column(Text)  # REMARQUE STRUCTURE DES REPERTOIRES ET CONTENU
-    ap_31 = Column(Enum(OuiNon))  # GENERATION DE L’ETAT DESCRIPTIF POUR TERRIS
+    ap_31 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # GENERATION DE L’ETAT DESCRIPTIF POUR TERRIS
     ap_32 = Column(BigInteger, ForeignKey(Operateur.id))  # CHEF DE PROJET
     ap_33 = Column(Date)  # DATE GENERATION DE L’ETAT DESCRIPTIF POUR TERRIS
-    ap_41 = Column(Enum(OuiNon))  # CONTROLE DE LA BASE DE DONNEES
+    ap_41 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CONTROLE DE LA BASE DE DONNEES
     ap_42 = Column(Text)  # REMARQUE CONTROLE DE LA BASE DE DONNEES
     visa = Column(BigInteger, ForeignKey(Operateur.id))
     date = Column(Date)
@@ -315,27 +310,27 @@ class ControlePPE(Base):
     psit_6 = Column(Boolean)  # Droits de jouissance clairement définis (liseré traitillé même couleur que l'unité concernée) "Droit de jouissance au profit de l'unité …"
     psit_7 = Column(Boolean)  # Places de parcs extérieures numérotées (uniquement si les places ne sont pas constituées en droit de jouissance)
     pamext_1 = Column(Boolean)  # Ce plan n'est pas un document obligatoire, mais si l'architecte décide de le joindre avec le dossier le contrôle sera identique au plan de situation (Échelle ≠ 1:500)
-    pet_ = Column(Boolean)  # Nord (pas obligatoire), Échelle 1:100
-    pet_1 = Column(Boolean)  # Contrôle de l'échelle (kutch)
-    pet_2 = Column(Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …, architecte, signature, date)
-    pet_3 = Column(Boolean)  # Cotes générales
-    pet_4 = Column(Boolean)  # Informations superflues à supprimer (surfaces des pièces, matériaux, limites de bien-fonds etc.)
-    pet_5 = Column(Boolean)  # Appellations des locaux
-    pet_6 = Column(Boolean)  # Faisabilité d'unité d'étage: Un tout indépendant; Local physiquement fermé (surface minimum); Certain degré d'autonomie économique; Accès propre
-    pet_7 = Column(Boolean)  # Distribution lettres unités (de bas en haut / A, B, … Z, AA, AB etc.). Le "i" n'est pas utilisé!
-    pet_8 = Column(Boolean)  # Les annexes ont les mêmes lettres et mêmes couleurs de liserés que les unités concernées. Chiffres arabe (EX A1, B3, D1 etc.)
-    pet_9 = Column(Boolean)  # Périmètres (liserés) des unités d'étages clairement dessinés (zone tampon / éviter la couleur jaune)
-    pet_10 = Column(Boolean)  # Murs porteurs, piliers, poutres, gaines techniques etc ne font pas parties des parties exclusives -> parties communes -> liserés de couleur
-    pet_11 = Column(Boolean)  # Conditions pièce -> appellation "chambre": Surface minimum: 10m2; Surface éclairage ≥ 1/8ème surface plancher; Local physiquement fermé
-    pet_12 = Column(Boolean)  # La pièce ne peut pas être considérée comme chambre -> "disponible"
-    pet_13 = Column(Boolean)  # Y a-t-il une surface plancher sous l'escalier ou un réduit (local fermé)
-    pet_14 = Column(Boolean)  # Les vides (escaliers, vide sur chambres, etc.) doivent être hachurés avec la même couleur que l'unité concernée
-    pet_15 = Column(Boolean)  # Accès aux parties communes par des parties privées (rares exceptions -> servitude de passage)
-    pet_16 = Column(Boolean)  # Les balcons font partie de l'unité ou sont des droits de jouissance (parties construites)
-    pet_17 = Column(Boolean)  # Autres bâtiments sur le bien-fonds concerné -> plans d'étages, façades, coupes
-    pet_18 = Column(Boolean)  # Concordance des appellations sur les plans d'étages avec les formules de légende
-    pet_19 = Column(Boolean)  # Lignes de coupes sur tous les plans d'étages
-    pet_20 = Column(Boolean)  # Surfaces PDF Viewer (tolérance jusqu'à 2 %)
+    pet_1 = Column(Boolean)  # Nord (pas obligatoire), Échelle 1:100
+    pet_2 = Column(Boolean)  # Contrôle de l'échelle (kutch)
+    pet_3 = Column(Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …, architecte, signature, date)
+    pet_4 = Column(Boolean)  # Cotes générales
+    pet_5 = Column(Boolean)  # Informations superflues à supprimer (surfaces des pièces, matériaux, limites de bien-fonds etc.)
+    pet_6 = Column(Boolean)  # Appellations des locaux
+    pet_7 = Column(Boolean)  # Faisabilité d'unité d'étage: Un tout indépendant; Local physiquement fermé (surface minimum); Certain degré d'autonomie économique; Accès propre
+    pet_8 = Column(Boolean)  # Distribution lettres unités (de bas en haut / A, B, … Z, AA, AB etc.). Le "i" n'est pas utilisé!
+    pet_9 = Column(Boolean)  # Les annexes ont les mêmes lettres et mêmes couleurs de liserés que les unités concernées. Chiffres arabe (EX A1, B3, D1 etc.)
+    pet_10 = Column(Boolean)  # Périmètres (liserés) des unités d'étages clairement dessinés (zone tampon / éviter la couleur jaune)
+    pet_11 = Column(Boolean)  # Murs porteurs, piliers, poutres, gaines techniques etc ne font pas parties des parties exclusives -> parties communes -> liserés de couleur
+    pet_12 = Column(Boolean)  # Conditions pièce -> appellation "chambre": Surface minimum: 10m2; Surface éclairage ≥ 1/8ème surface plancher; Local physiquement fermé
+    pet_13 = Column(Boolean)  # La pièce ne peut pas être considérée comme chambre -> "disponible"
+    pet_14 = Column(Boolean)  # Y a-t-il une surface plancher sous l'escalier ou un réduit (local fermé)
+    pet_15 = Column(Boolean)  # Les vides (escaliers, vide sur chambres, etc.) doivent être hachurés avec la même couleur que l'unité concernée
+    pet_16 = Column(Boolean)  # Accès aux parties communes par des parties privées (rares exceptions -> servitude de passage)
+    pet_17 = Column(Boolean)  # Les balcons font partie de l'unité ou sont des droits de jouissance (parties construites)
+    pet_18 = Column(Boolean)  # Autres bâtiments sur le bien-fonds concerné -> plans d'étages, façades, coupes
+    pet_19 = Column(Boolean)  # Concordance des appellations sur les plans d'étages avec les formules de légende
+    pet_20 = Column(Boolean)  # Lignes de coupes sur tous les plans d'étages
+    pet_21 = Column(Boolean)  # Surfaces PDF Viewer (tolérance jusqu'à 2 %)
     pco_1 = Column(Boolean)  # Échelle 1:100
     pco_2 = Column(Boolean)  # Sans liseré ni lettre d'unité
     pco_3 = Column(Boolean)  # Contrôle de l'échelle (kutch)
@@ -387,7 +382,7 @@ class Numero(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
     type_id = Column(BigInteger, ForeignKey(NumeroType.id), nullable=False)
-    numero = Column(Integer, nullable=False)
+    numero = Column(BigInteger, nullable=False)
     suffixe = Column(Text)
     etat_id = Column(BigInteger, ForeignKey(NumeroEtat.id), nullable=False)
 
