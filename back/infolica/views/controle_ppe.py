@@ -35,7 +35,8 @@ def controles_ppe_by_id_view(request):
         query = request.dbsession.query(models.ControlePPE).filter(models.ControlePPE.id == id).first()
         return Utils.serialize_one(query)
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(str(e), exc_info=True)
         return Response(db_err_msg, content_type='text/plain', status=500)
     
 
@@ -55,7 +56,8 @@ def controles_ppe_new_view(request):
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ControlePPE.__tablename__))
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(str(e), exc_info=True)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
@@ -83,7 +85,8 @@ def controles_ppe_update_view(request):
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ControlePPE.__tablename__))
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(str(e), exc_info=True)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
@@ -110,7 +113,8 @@ def controles_ppe_delete_view(request):
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.ControlePPE.__tablename__))
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(str(e), exc_info=True)
         return Response(db_err_msg, content_type='text/plain', status=500)
     
 

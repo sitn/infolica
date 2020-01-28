@@ -3,7 +3,6 @@ from pyramid.response import Response
 from ..scripts.utils import Utils
 from ..models import Constant
 import transaction
-from sqlalchemy import and_, func, desc
 
 from sqlalchemy.exc import DBAPIError
 from ..exceptions.custom_error import CustomError
@@ -36,7 +35,8 @@ def numeros_by_id_view(request):
         query = request.dbsession.query(models.VNumeros).filter(models.VNumeros.id == id).first()
         return Utils.serialize_one(query)
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(str(e), exc_info=True)
         return Response(db_err_msg, content_type='text/plain', status=500)
     
 
@@ -57,16 +57,8 @@ def numeros_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
 
     except DBAPIError as e:
-        print(e)
+        log.error(str(e), exc_info=True)
         return Response(db_err_msg, content_type='text/plain', status=500)
-
-
-def next_number(request, type_id, cadastre_id, plan_id=None):
-    if plan_id is None:
-        query = request.query(models.Numero).filter(and_(models.Numero.type_id==type_id, models.Numero.cadastre_id==cadastre_id))
-    else:
-        query = request.query(models.Numero).filter(and_(models.Numero.type_id==type_id, models.Numero.cadastre_id==cadastre_id, models.Numero.plan_id==plan_id))
-    return query.order_by(desc(models.Numero.numero)).limit(1).first()
 
 
 """ Update numeros"""
@@ -93,35 +85,38 @@ def numeros_update_view(request):
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(str(e), exc_info=True)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
-""" Delete numeros"""
-@view_config(route_name='numeros', request_method='DELETE', renderer='json')
-@view_config(route_name='numeros_s', request_method='DELETE', renderer='json')
-def numeros_delete_view(request):
-    
-    # Get numero id
-    id = request.params['id'] if 'id' in request.params else None
+# """ Delete numeros"""
+# @view_config(route_name='numeros', request_method='DELETE', renderer='json')
+# @view_config(route_name='numeros_s', request_method='DELETE', renderer='json')
+# def numeros_delete_view(request):
+#     """
+#     Les numéros supprimés peuvent être des numéros abandonnés (etat_id = 3) ou supprimés (etat_id = 4).
+#     Les numéros ne sont pas supprimés de la base de données, mais mis à jour avec le bon code etat_id.
+#     """
+#     # Get numero id
+#     id = request.params['id'] if 'id' in request.params else None
 
-    # Get numero record
-    record = request.dbsession.query(models.Numero).filter(
-        models.Numero.id == id).first()
+#     # Get numero record
+#     record = request.dbsession.query(models.Numero).filter(
+#         models.Numero.id == id).first()
 
-    if not record:
-        raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Numero.__tablename__, id))
-    
-    try:
-        with transaction.manager:
-            request.dbsession.delete(record)
-            # Commit transaction
-            transaction.commit()
-            return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Numero.__tablename__))
+#     if not record:
+#         raise CustomError(
+#             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Numero.__tablename__, id))
 
-    except DBAPIError:
-        return Response(db_err_msg, content_type='text/plain', status=500)
+#     try:
+#         with transaction.manager:
+#             # Commit transaction
+#             transaction.commit()
+#             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Numero.__tablename__))
+
+#     except DBAPIError:
+#         return Response(db_err_msg, content_type='text/plain', status=500)
     
 
 db_err_msg = """\

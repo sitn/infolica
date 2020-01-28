@@ -9,6 +9,9 @@ from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
 
+import logging
+log = logging.getLogger(__name__)
+
 """ Return all affaires"""
 @view_config(route_name='affaires', request_method='GET', renderer='json')
 @view_config(route_name='affaires_s', request_method='GET', renderer='json')
@@ -16,7 +19,8 @@ def affaires_view(request):
     try:
         query = request.dbsession.query(models.Affaire).all()
         return Utils.serialize_many(query)
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(str(e), exc_info=True)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
@@ -29,7 +33,8 @@ def affaire_by_id_view(request):
         query = request.dbsession.query(models.Affaire)
         one = query.filter(models.Affaire.id == id).first()
         return Utils.serialize_one(one)
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(str(e), exc_info=True)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
@@ -43,7 +48,8 @@ def affaires_search_view(request):
         conditions = Utils.get_search_conditions(models.Affaire, request.params)
         query = request.dbsession.query(models.Affaire).filter(*conditions).all()[:search_limit]
         return Utils.serialize_many(query)
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(str(e), exc_info=True)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 """ Return all types affaires"""
@@ -53,7 +59,8 @@ def types_affaires_view(request):
     try:
         query = request.dbsession.query(models.AffaireType).all()
         return Utils.serialize_many(query)
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(str(e), exc_info=True)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
@@ -72,7 +79,8 @@ def affaires_new_view(request):
             # Commit transaction
             transaction.commit()
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(str(e), exc_info=True)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
@@ -104,7 +112,8 @@ def affaires_update_view(request):
             # Commit transaction
             transaction.commit()
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(str(e), exc_info=True)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
@@ -128,7 +137,8 @@ def affaires_delete_view(request):
             # Commit transaction
             transaction.commit()
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(str(e), exc_info=True)
         return Response(db_err_msg, content_type='text/plain', status=500)
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Affaire.__tablename__))
 
