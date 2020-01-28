@@ -30,7 +30,7 @@ def types_clients_view(request):
     try:
         query = request.dbsession.query(models.ClientType).all()
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     return Utils.serialize_many(query)
 
@@ -43,7 +43,7 @@ def clients_view(request):
     try:
         query = request.dbsession.query(models.Client).all()
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     return Utils.serialize_many(query)
 
@@ -55,7 +55,7 @@ def client_by_id_view(request):
         id = request.matchdict['id']
         query = request.dbsession.query(models.Client).filter(models.Client.id == id).first()
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     return Utils.serialize_one(query)
 
@@ -70,7 +70,7 @@ def clients_search_view(request):
         query = request.dbsession.query(models.Client).filter(*conditions).all()[:search_limit]
         return Utils.serialize_many(query)
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 """ Add new client"""
@@ -88,7 +88,7 @@ def clients_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Client.__tablename__))
 
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     
 
@@ -115,7 +115,7 @@ def clients_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Client.__tablename__))
         
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
@@ -141,7 +141,7 @@ def clients_delete_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Client.__tablename__))
 
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 

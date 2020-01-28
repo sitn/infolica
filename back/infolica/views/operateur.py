@@ -31,7 +31,7 @@ def operateurs_view(request):
     try:
         query = request.dbsession.query(models.Operateur).all()
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     return Utils.serialize_many(query)
 
@@ -44,7 +44,7 @@ def operateur_by_id_view(request):
         id = request.matchdict['id']
         query = request.dbsession.query(models.Operateur).filter(models.Operateur.id == id).first()
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     return Utils.serialize_one(query)
 
@@ -65,7 +65,7 @@ def operateurs_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Operateur.__tablename__))
 
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
     
 
@@ -92,7 +92,7 @@ def operateurs_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Operateur.__tablename__))
 
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
 
 
@@ -118,7 +118,7 @@ def operateurs_delete_view(request):
 
 
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
 
 
