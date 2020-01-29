@@ -50,5 +50,7 @@ def includeme(config):
     #Réservation de numéros
     config.add_route('reservation_numeros','/infolica/api/reservation_numeros')
     config.add_route('reservation_numeros_s','/infolica/api/reservation_numeros/')
-    # config.add_route('numero_by_id', '/infolica/api/numeros/{id}')
+    #AffairesNuméros
+    config.add_route('affaires_numeros','/infolica/api/affaires_numeros')
+    config.add_route('affaires_numeros_s','/infolica/api/affaires_numeros/')
 

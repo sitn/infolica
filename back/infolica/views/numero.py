@@ -57,7 +57,8 @@ def numeros_new_view(request, params=None):
             request.dbsession.flush()
             # Commit transaction
             transaction.commit()
-            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
+            Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
+            return record.id
 
     except DBAPIError as e:
         log.error(e)

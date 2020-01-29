@@ -53,13 +53,17 @@ def reservation_numeros_new_view(request):
             for i in range(int(request.params['bf'])):
                 c += 1
                 params = Utils._params(cadastre_id=cadastre_id, type_id=1, etat_id=1, numero=ln.numero + c)
-                numeros_new_view(request, params)
+                numero_id = numeros_new_view(request, params)
+                params = Utils._params(affaire_id=affaire_id, numero_id=numero_id, modifie=False)
+                affaire_numero_new_view(request, params)
         
         if 'ddp' in request.params:
             for i in range(int(request.params['ddp'])):
                 c += 1
                 params = Utils._params(cadastre_id=cadastre_id, type_id=2, etat_id=1, numero=ln.numero + c)
-                numeros_new_view(request, params)
+                numero_id = numeros_new_view(request, params)
+                params = Utils._params(affaire_id=affaire_id, numero_id=numero_id, modifie=False)
+                affaire_numero_new_view(request, params)
         
         if 'ppe' in request.params:
             unite_start_idx = Utils.get_index_from_unite(request.params["ppe_unite"]) if "ppe_unite" in request.params else 0
@@ -67,13 +71,17 @@ def reservation_numeros_new_view(request):
                 c += 1
                 suffixe = Utils.get_unite_from_index(unite_start_idx + i)
                 params = Utils._params(cadastre_id=cadastre_id, type_id=3, etat_id=1, numero=ln.numero + c, suffixe=suffixe)
-                numeros_new_view(request, params)
+                numero_id = numeros_new_view(request, params)
+                params = Utils._params(affaire_id=affaire_id, numero_id=numero_id, modifie=False)
+                affaire_numero_new_view(request, params)
         
         if 'pcop' in request.params:
             for i in range(int(request.params['pcop'])):
                 c += 1
                 params = Utils._params(cadastre_id=cadastre_id, type_id=4, etat_id=1, numero=ln.numero + c, suffixe="part")
-                numeros_new_view(request, params)
+                numero_id = numeros_new_view(request, params)
+                params = Utils._params(affaire_id=affaire_id, numero_id=numero_id, modifie=False)
+                affaire_numero_new_view(request, params)
 
         return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
 
@@ -110,6 +118,59 @@ def reservation_numeros_update_view(request):
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" Add new affaire-numero """
+@view_config(route_name='affaires_numeros', request_method='POST', renderer='json')
+@view_config(route_name='affaires_numeros_s', request_method='POST', renderer='json')
+def affaire_numero_new_view(request, params=None):
+    if not params: params=request.params
+    #nouveau affaire_numero
+    record = models.AffaireNumero()
+    record = Utils.set_model_record(record, params)
+    try:
+        with transaction.manager:
+            request.dbsession.add(record)
+            request.dbsession.flush()
+            # Commit transaction
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
+
+    except DBAPIError as e:
+        print(e)
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" Update affaire-numero """
+@view_config(route_name='affaires_numeros', request_method='PUT', renderer='json')
+@view_config(route_name='affaires_numeros_s', request_method='PUT', renderer='json')
+def numeros_update_view(request):
+
+    # Get numero id
+    id = request.params['id'] if 'id' in request.params else None
+
+    # Get affaire_numero record
+    record = request.dbsession.query(models.AffaireNumero).filter(
+        models.Numero.id == id).first()
+
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Numero.__tablename__, id))
+
+    record = Utils.set_model_record(record, request.params)
+
+    try:
+        with transaction.manager:
+            # Commit transaction
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
 
 
 # """ Delete numeros in affaire"""
