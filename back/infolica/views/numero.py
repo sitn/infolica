@@ -43,10 +43,13 @@ def numeros_by_id_view(request):
 """ Add new numeros"""
 @view_config(route_name='numeros', request_method='POST', renderer='json')
 @view_config(route_name='numeros_s', request_method='POST', renderer='json')
-def numeros_new_view(request):
+def numeros_new_view(request, params=None):
+    if not params: params=request.params
+    
     #nouveau numero
     record = models.Numero()
-    record = Utils.set_model_record(record, request.params)
+    # record = Utils.set_model_record(record, request.params)
+    record = Utils.set_model_record(record, params)
     
     try:
         with transaction.manager:

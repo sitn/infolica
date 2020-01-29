@@ -21,7 +21,7 @@ def factures_view(request):
         query = request.dbsession.query(models.Facture).all()
         return Utils.serialize_many(query)
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
@@ -41,7 +41,7 @@ def factures_new_view(request):
             transaction.commit()
 
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Facture.__tablename__))
@@ -75,7 +75,7 @@ def factures_update_view(request):
             transaction.commit()
 
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Facture.__tablename__))
@@ -101,7 +101,7 @@ def factures_delete_view(request):
             transaction.commit()
 
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Facture.__tablename__))
 
