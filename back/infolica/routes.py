@@ -56,4 +56,7 @@ def includeme(config):
     #Historique numéros
     config.add_route('numeros_etat_histo','/infolica/api/numeros_etat_histo')
     config.add_route('numeros_etat_histo_s','/infolica/api/numeros_etat_histo/')
+    #Remarque affaire
+    config.add_route('remarques_affaire','/infolica/api/remarques_affaire')
+    config.add_route('remarques_affaire_s','/infolica/api/remarques_affaire/')
 
