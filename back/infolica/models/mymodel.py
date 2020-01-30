@@ -386,6 +386,8 @@ class Numero(Base):
     suffixe = Column(Text)
     etat_id = Column(BigInteger, ForeignKey(NumeroEtat.id), nullable=False)
     plan_id = Column(BigInteger, ForeignKey(Plan.id))
+    
+    UniqueConstraint(cadastre_id, type_id, plan_id, numero)
 
 
 class NumeroEtatHisto(Base):

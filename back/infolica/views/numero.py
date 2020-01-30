@@ -94,6 +94,30 @@ def numeros_update_view(request):
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
+""" Add new numero_etat_histo """
+@view_config(route_name='numeros_etat_histo', request_method='POST', renderer='json')
+@view_config(route_name='numeros_etat_histo_s', request_method='POST', renderer='json')
+def numeros_etat_histo_new_view(request, params=None):
+    if not params: params=request.params
+    
+    #nouveau numero
+    record = models.NumeroEtatHisto()
+    record = Utils.set_model_record(record, params)
+    
+    try:
+        with transaction.manager:
+            request.dbsession.add(record)
+            request.dbsession.flush()
+            # Commit transaction
+            transaction.commit()
+            Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.NumeroEtatHisto.__tablename__))
+            return record.id
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
 # """ Delete numeros"""
 # @view_config(route_name='numeros', request_method='DELETE', renderer='json')
 # @view_config(route_name='numeros_s', request_method='DELETE', renderer='json')

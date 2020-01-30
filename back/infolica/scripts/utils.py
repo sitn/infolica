@@ -90,7 +90,9 @@ class Utils():
             query = query.filter(models.Numero.plan_id==plan_id)
         if affaire_id:
             query = query.filter(and_(models.AffaireNumero.affaire_id==affaire_id, models.AffaireNumero.numero_id==models.Numero.id))
-        return query.order_by(desc(models.Numero.numero)).limit(1).first()
+        result = query.order_by(desc(models.Numero.numero)).limit(1).first()
+        numero = result.numero if result else 0
+        return numero
 
 
     """ Function that creates dictionnary with specified keys and values """
