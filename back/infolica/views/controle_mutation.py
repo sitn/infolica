@@ -22,21 +22,21 @@ def controles_mutations_view(request):
         return Utils.serialize_many(query)
     
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
 """ Return controle_mutation by id"""
 @view_config(route_name='controle_mutation_by_id', request_method='GET', renderer='json')
 def controles_mutations_by_id_view(request):
-    # Get controle mutation id
-    id = request.params['id'] if 'id' in request.params else None
-    
     try:
+        # Get controle mutation id    
+        id = request.id = request.matchdict['id']
         query = request.dbsession.query(models.ControleMutation).filter(models.ControleMutation.id == id).first()
         return Utils.serialize_one(query)
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     
 
@@ -51,11 +51,13 @@ def controles_mutations_new_view(request):
     try:
         with transaction.manager:
             request.dbsession.add(record)
+            request.dbsession.flush()
             # Commit transaction
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ControleMutation.__tablename__))
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
@@ -83,7 +85,8 @@ def controles_mutations_update_view(request):
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ControleMutation.__tablename__))
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
@@ -110,7 +113,8 @@ def controles_mutations_delete_view(request):
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.ControleMutation.__tablename__))
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     
 

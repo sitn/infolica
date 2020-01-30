@@ -22,21 +22,21 @@ def controles_ppe_view(request):
         return Utils.serialize_many(query)
     
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
 """ Return controles_ppe by id"""
 @view_config(route_name='controle_ppe_by_id', request_method='GET', renderer='json')
 def controles_ppe_by_id_view(request):
-    # Get controle mutation id
-    id = request.params['id'] if 'id' in request.params else None
-    
     try:
+        # Get controle mutation id    
+        id = request.id = request.matchdict['id']
         query = request.dbsession.query(models.ControlePPE).filter(models.ControlePPE.id == id).first()
         return Utils.serialize_one(query)
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     
 
@@ -51,11 +51,13 @@ def controles_ppe_new_view(request):
     try:
         with transaction.manager:
             request.dbsession.add(record)
+            request.dbsession.flush()
             # Commit transaction
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ControlePPE.__tablename__))
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
@@ -83,7 +85,8 @@ def controles_ppe_update_view(request):
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ControlePPE.__tablename__))
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
@@ -110,7 +113,8 @@ def controles_ppe_delete_view(request):
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.ControlePPE.__tablename__))
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     
 

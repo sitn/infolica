@@ -385,6 +385,9 @@ class Numero(Base):
     numero = Column(BigInteger, nullable=False)
     suffixe = Column(Text)
     etat_id = Column(BigInteger, ForeignKey(NumeroEtat.id), nullable=False)
+    plan_id = Column(BigInteger, ForeignKey(Plan.id))
+    
+    UniqueConstraint(cadastre_id, type_id, plan_id, numero)
 
 
 class NumeroEtatHisto(Base):
@@ -424,12 +427,12 @@ class NumeroRelation(Base):
         NumeroRelationType.id), nullable=False)
 
 
-class NumeroPlan(Base):
-    __tablename__ = 'numero_plan'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    numero_id = Column(BigInteger, ForeignKey(Numero.id), nullable=False)
-    plan_id = Column(BigInteger, ForeignKey(Plan.id), nullable=False)
+# class NumeroPlan(Base):
+#     __tablename__ = 'numero_plan'
+#     __table_args__ = {'schema': 'infolica'}
+#     id = Column(BigInteger, primary_key=True, autoincrement=True)
+#     numero_id = Column(BigInteger, ForeignKey(Numero.id), nullable=False)
+#     plan_id = Column(BigInteger, ForeignKey(Plan.id), nullable=False)
 
 
 class AffaireNumero(Base):
@@ -494,6 +497,9 @@ class VNumeros(Base):
     suffixe = Column(Text)
     etat = Column(Text)
     type_numero = Column(Text)
+    diff_entree = Column(Date)
+    diff_sortie = Column(Date)
+    plan_id = Column(BigInteger)
 
 
 class VAffaire(Base):

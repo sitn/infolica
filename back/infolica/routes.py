@@ -42,5 +42,18 @@ def includeme(config):
     #Suivi_Mandat
     config.add_route('suivis_mandats','/infolica/api/suivis_mandats')
     config.add_route('suivis_mandats_s','/infolica/api/suivis_mandats/')
-    config.add_route('suivi_mandat_by_id', '/infolica/api/suivi_mandat/{id}')
+    config.add_route('suivi_mandat_by_id', '/infolica/api/suivi_mandats/{id}')
+    #Numéros
+    config.add_route('numeros','/infolica/api/numeros')
+    config.add_route('numeros_s','/infolica/api/numeros/')
+    config.add_route('numero_by_id', '/infolica/api/numeros/{id}')
+    #Réservation de numéros
+    config.add_route('reservation_numeros','/infolica/api/reservation_numeros')
+    config.add_route('reservation_numeros_s','/infolica/api/reservation_numeros/')
+    #AffairesNuméros
+    config.add_route('affaires_numeros','/infolica/api/affaires_numeros')
+    config.add_route('affaires_numeros_s','/infolica/api/affaires_numeros/')
+    #Historique numéros
+    config.add_route('numeros_etat_histo','/infolica/api/numeros_etat_histo')
+    config.add_route('numeros_etat_histo_s','/infolica/api/numeros_etat_histo/')
 

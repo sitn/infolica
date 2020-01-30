@@ -22,21 +22,21 @@ def suivis_mandats_view(request):
         return Utils.serialize_many(query)
     
     except DBAPIError as e:
-        log.error(str(e), exc_info=True)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
 """ Return suivis_mandats by id"""
 @view_config(route_name='suivi_mandat_by_id', request_method='GET', renderer='json')
 def suivis_mandats_by_id_view(request):
-    # Get controle mutation id
-    id = request.params['id'] if 'id' in request.params else None
-    
     try:
+        # Get controle mutation id    
+        id = request.id = request.matchdict['id']
         query = request.dbsession.query(models.SuiviMandat).filter(models.SuiviMandat.id == id).first()
         return Utils.serialize_one(query)
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     
 
@@ -47,20 +47,17 @@ def suivis_mandats_new_view(request):
 
     record = models.SuiviMandat()
     record = Utils.set_model_record(record, request.params)
-    
-    from pprint import pprint
-    pprint(vars(record))
 
     try:
         with transaction.manager:
             request.dbsession.add(record)
+            request.dbsession.flush()
             # Commit transaction
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.SuiviMandat.__tablename__))
 
     except DBAPIError as e:
-        print("toto")
-        print(e)
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
@@ -88,7 +85,8 @@ def suivis_mandats_update_view(request):
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.SuiviMandat.__tablename__))
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
@@ -115,7 +113,8 @@ def suivis_mandats_delete_view(request):
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.SuiviMandat.__tablename__))
 
-    except DBAPIError:
+    except DBAPIError as e:
+        log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     
 
