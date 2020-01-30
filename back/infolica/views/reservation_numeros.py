@@ -9,7 +9,7 @@ from sqlalchemy.exc import DBAPIError
 from ..exceptions.custom_error import CustomError
 
 from .. import models
-from ..views.numero import numeros_new_view, numeros_etat_histo_new_view
+from ..views.numero import numeros_new_view, affaire_numero_new_view, numeros_etat_histo_new_view
 
 import logging
 log = logging.getLogger(__name__)
@@ -148,117 +148,6 @@ def reservation_numeros_new_view(request):
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
-
-
-""" Update numeros in affaire"""
-@view_config(route_name='reservation_numeros', request_method='PUT', renderer='json')
-@view_config(route_name='reservation_numeros_s', request_method='PUT', renderer='json')
-def reservation_numeros_update_view(request):
-
-    # Get numero id
-    id = request.params['id'] if 'id' in request.params else None
-
-    # Get numero record
-    record = request.dbsession.query(models.Numero).filter(
-        models.Numero.id == id).first()
-
-    if not record:
-        raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Numero.__tablename__, id))
-
-    record = Utils.set_model_record(record, request.params)
-
-    try:
-        with transaction.manager:
-            # Commit transaction
-            transaction.commit()
-            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
-
-    except DBAPIError as e:
-        log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
-
-
-""" Add new affaire-numero """
-@view_config(route_name='affaires_numeros', request_method='POST', renderer='json')
-@view_config(route_name='affaires_numeros_s', request_method='POST', renderer='json')
-def affaire_numero_new_view(request, params=None):
-    if not params: params=request.params
-    #nouveau affaire_numero
-    record = models.AffaireNumero()
-    record = Utils.set_model_record(record, params)
-    try:
-        with transaction.manager:
-            request.dbsession.add(record)
-            request.dbsession.flush()
-            # Commit transaction
-            transaction.commit()
-            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
-
-    except DBAPIError as e:
-        log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
-
-
-""" Update affaire-numero """
-@view_config(route_name='affaires_numeros', request_method='PUT', renderer='json')
-@view_config(route_name='affaires_numeros_s', request_method='PUT', renderer='json')
-def numeros_update_view(request):
-
-    # Get numero id
-    id = request.params['id'] if 'id' in request.params else None
-
-    # Get affaire_numero record
-    record = request.dbsession.query(models.AffaireNumero).filter(
-        models.Numero.id == id).first()
-
-    if not record:
-        raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Numero.__tablename__, id))
-
-    record = Utils.set_model_record(record, request.params)
-
-    try:
-        with transaction.manager:
-            # Commit transaction
-            transaction.commit()
-            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
-
-    except DBAPIError as e:
-        log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
-
-
-
-
-# """ Delete numeros in affaire"""
-# @view_config(route_name='numeros', request_method='DELETE', renderer='json')
-# @view_config(route_name='numeros_s', request_method='DELETE', renderer='json')
-# def numeros_delete_view(request):
-#     """
-#     Les numéros supprimés peuvent être des numéros abandonnés (etat_id = 3) ou supprimés (etat_id = 4).
-#     Les numéros ne sont pas supprimés de la base de données, mais mis à jour avec le bon code etat_id.
-#     """
-#     # Get numero id
-#     id = request.params['id'] if 'id' in request.params else None
-
-#     # Get numero record
-#     record = request.dbsession.query(models.Numero).filter(
-#         models.Numero.id == id).first()
-
-#     if not record:
-#         raise CustomError(
-#             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Numero.__tablename__, id))
-#     try:
-#         with transaction.manager:
-#             # Commit transaction
-#             transaction.commit()
-#             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Numero.__tablename__))
-
-#     except DBAPIError as e:
-#         log.error(e)
-#         return Response(db_err_msg, content_type='text/plain', status=500)
-
 
 
 db_err_msg = """\

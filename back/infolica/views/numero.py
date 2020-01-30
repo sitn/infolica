@@ -81,12 +81,25 @@ def numeros_update_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Numero.__tablename__, id))
 
+    last_record_etat_id = record.etat_id
     record = Utils.set_model_record(record, request.params)
 
     try:
         with transaction.manager:
             # Commit transaction
             transaction.commit()
+
+            # Changement d'état?
+            print('numero_id = ', record.id)
+            print('etat_id = ', request.params['etat_id'])
+            
+            if 'etat_id' in request.params:
+                print("toto")
+                if request.params['etat_id'] != last_record_etat_id:
+                    print("tata")
+                    params = Utils._params(numero_id=record.id, numero_etat_id=request.params['etat_id'])
+                    numeros_etat_histo_new_view(request, params)
+                                
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
 
     except DBAPIError as e:
@@ -118,33 +131,25 @@ def numeros_etat_histo_new_view(request, params=None):
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
-# """ Delete numeros"""
-# @view_config(route_name='numeros', request_method='DELETE', renderer='json')
-# @view_config(route_name='numeros_s', request_method='DELETE', renderer='json')
-# def numeros_delete_view(request):
-#     """
-#     Les numéros supprimés peuvent être des numéros abandonnés (etat_id = 3) ou supprimés (etat_id = 4).
-#     Les numéros ne sont pas supprimés de la base de données, mais mis à jour avec le bon code etat_id.
-#     """
-#     # Get numero id
-#     id = request.params['id'] if 'id' in request.params else None
+""" Add new affaire-numero """
+@view_config(route_name='affaires_numeros', request_method='POST', renderer='json')
+@view_config(route_name='affaires_numeros_s', request_method='POST', renderer='json')
+def affaire_numero_new_view(request, params=None):
+    if not params: params=request.params
+    #nouveau affaire_numero
+    record = models.AffaireNumero()
+    record = Utils.set_model_record(record, params)
+    try:
+        with transaction.manager:
+            request.dbsession.add(record)
+            request.dbsession.flush()
+            # Commit transaction
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
 
-#     # Get numero record
-#     record = request.dbsession.query(models.Numero).filter(
-#         models.Numero.id == id).first()
-
-#     if not record:
-#         raise CustomError(
-#             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Numero.__tablename__, id))
-
-#     try:
-#         with transaction.manager:
-#             # Commit transaction
-#             transaction.commit()
-#             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Numero.__tablename__))
-
-#     except DBAPIError:
-#         return Response(db_err_msg, content_type='text/plain', status=500)
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
     
 
 db_err_msg = """\
