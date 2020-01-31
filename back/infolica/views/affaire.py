@@ -149,8 +149,8 @@ def affaires_update_view(request):
 ###########################################################
 
 """ GET remarque affaire"""
-@view_config(route_name='remarques_affaire_by_id', request_method='GET', renderer='json')
-def remarques_affaire_view(request):
+@view_config(route_name='affaires_remarques_by_affaire_id', request_method='GET', renderer='json')
+def affaires_remarques_view(request):
     affaire_id = request.matchdict['id']
 
     try:
@@ -170,9 +170,9 @@ def remarques_affaire_view(request):
 
 
 """ POST remarque affaire"""
-@view_config(route_name='remarques_affaire', request_method='POST', renderer='json')
-@view_config(route_name='remarques_affaire_s', request_method='POST', renderer='json')
-def remarques_affaire_new_view(request):
+@view_config(route_name='affaires_remarques', request_method='POST', renderer='json')
+@view_config(route_name='affaires_remarques_s', request_method='POST', renderer='json')
+def affaires_remarques_new_view(request):
 
     model = models.RemarqueAffaire()
     model = Utils.set_model_record(model, request.params)
@@ -194,8 +194,8 @@ def remarques_affaire_new_view(request):
 ###########################################################
 
 """ GET etapes affaire"""
-@view_config(route_name='etapes_affaire_by_affaire_id', request_method='GET', renderer='json')
-def remarques_affaire_view(request):
+@view_config(route_name='affaires_etapes_by_affaire_id', request_method='GET', renderer='json')
+def affaires_etapes_view(request):
     affaire_id = request.matchdict['id'] 
 
     try:
@@ -210,9 +210,9 @@ def remarques_affaire_view(request):
 
 
 """ POST remarque affaire"""
-@view_config(route_name='etapes_affaire', request_method='POST', renderer='json')
-@view_config(route_name='etapes_affaire_s', request_method='POST', renderer='json')
-def remarques_affaire_new_view(request):
+@view_config(route_name='affaires_etapes', request_method='POST', renderer='json')
+@view_config(route_name='affaires_etapes_s', request_method='POST', renderer='json')
+def affaires_etapes_new_view(request):
 
     model = models.AffaireEtape()
     model = Utils.set_model_record(model, request.params)
@@ -230,8 +230,8 @@ def remarques_affaire_new_view(request):
 
 
 """ DELETE remarque affaire"""
-@view_config(route_name='etapes_affaire_by_affaire_id', request_method='DELETE', renderer='json')
-def remarques_affaire_delete_view(request):
+@view_config(route_name='affaires_etapes_by_affaire_id', request_method='DELETE', renderer='json')
+def affaires_etapes_delete_view(request):
     affaire_etape_id = request.matchdict['id']
 
     record = request.dbsession.query(models.AffaireEtape).filter(models.AffaireEtape.id==affaire_etape_id).first()
@@ -257,7 +257,7 @@ def remarques_affaire_delete_view(request):
 ###########################################################
 
 """ GET preavis affaire"""
-@view_config(route_name='preavis_affaires_by_affaire_id', request_method='GET', renderer='json')
+@view_config(route_name='affaires_preavis_by_affaire_id', request_method='GET', renderer='json')
 def affaires_preavis_view(request):
     affaire_id = request.matchdict['id']
 
@@ -273,8 +273,8 @@ def affaires_preavis_view(request):
 
 
 """ POST preavis affaire"""
-@view_config(route_name='preavis_affaires', request_method='POST', renderer='json')
-@view_config(route_name='preavis_affaires_s', request_method='POST', renderer='json')
+@view_config(route_name='affaires_preavis', request_method='POST', renderer='json')
+@view_config(route_name='affaires_preavis_s', request_method='POST', renderer='json')
 def affaires_preavis_new_view(request):
 
     model = models.Preavis()
@@ -293,8 +293,8 @@ def affaires_preavis_new_view(request):
 
 
 """ UPDATE preavis affaire"""
-@view_config(route_name='preavis_affaires', request_method='PUT', renderer='json')
-@view_config(route_name='preavis_affaires_s', request_method='PUT', renderer='json')
+@view_config(route_name='affaires_preavis', request_method='PUT', renderer='json')
+@view_config(route_name='affaires_preavis_s', request_method='PUT', renderer='json')
 def affaires_preavis_update_view(request):
     preavis_id = request.params['id'] if 'id' in request.params else None
     print(preavis_id)
@@ -317,7 +317,7 @@ def affaires_preavis_update_view(request):
 
 
 """ DELETE preavis affaire"""
-@view_config(route_name='preavis_affaires_by_affaire_id', request_method='DELETE', renderer='json')
+@view_config(route_name='affaires_preavis_by_affaire_id', request_method='DELETE', renderer='json')
 def affaires_preavis_delete_view(request):
     preavis_id = request.matchdict['id']
 
