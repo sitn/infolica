@@ -17,9 +17,10 @@ log = logging.getLogger(__name__)
 @view_config(route_name='affaires_s', request_method='GET', renderer='json')
 def affaires_view(request):
     try:
-        query = request.dbsession.query(models.Affaire).all()
+        query = request.dbsession.query(models.VAffaire).all()
         return Utils.serialize_many(query)
     except DBAPIError as e:
+        print(e)
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
@@ -30,8 +31,8 @@ def affaires_view(request):
 def affaire_by_id_view(request):
     try:
         id = request.matchdict['id']
-        query = request.dbsession.query(models.Affaire)
-        one = query.filter(models.Affaire.id == id).first()
+        query = request.dbsession.query(models.VAffaire)
+        one = query.filter(models.VAffaire.id == id).first()
         return Utils.serialize_one(one)
     except DBAPIError as e:
         log.error(e)
@@ -45,8 +46,8 @@ def affaires_search_view(request):
     try:
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
-        conditions = Utils.get_search_conditions(models.Affaire, request.params)
-        query = request.dbsession.query(models.Affaire).filter(*conditions).all()[:search_limit]
+        conditions = Utils.get_search_conditions(models.VAffaire, request.params)
+        query = request.dbsession.query(models.VAffaire).filter(*conditions).all()[:search_limit]
         return Utils.serialize_many(query)
     except DBAPIError as e:
         log.error(e)
