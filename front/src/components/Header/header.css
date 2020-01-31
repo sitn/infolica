@@ -58,3 +58,6 @@
     font-weight: bold;
 }
 
+.header  .user i {
+    cursor: pointer;
+}

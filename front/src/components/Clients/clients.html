@@ -1,3 +1,32 @@
 <div class="clients">
-    clients
+    <div>
+        <md-table v-model="clients" md-sort="name" md-sort-order="asc" md-card>
+           <md-table-toolbar>
+              <h1 class="md-title">Clients</h1>
+           </md-table-toolbar>
+           <md-table-row slot="md-table-row" slot-scope="{ item }">
+              <md-table-cell md-label="Entreprise" md-sort-by="entreprise">{{ item.entreprise }}</md-table-cell>
+              <md-table-cell md-label="Titre" md-sort-by="titre">{{ item.titre }}</md-table-cell>
+              <md-table-cell md-label="Prénom" md-sort-by="prenom">{{ item.prenom }}</md-table-cell>
+              <md-table-cell md-label="Nom" md-sort-by="nom">{{ item.nom }}</md-table-cell>
+              <md-table-cell md-label="Par" md-sort-by="represente_par">{{ item.represente_par }}</md-table-cell>
+              <md-table-cell md-label="Adresse">{{ item.adresse }}</md-table-cell>
+              <md-table-cell md-label="NPA">{{ item.npa }}</md-table-cell>
+              <md-table-cell md-label="Localité" md-sort-by="">{{ item.localite }}</md-table-cell>
+              <md-table-cell md-label="Case postale">{{ item.case_postale }}</md-table-cell>
+              <md-table-cell md-label="Tél.Fixe">{{ item.tel_fixe }}</md-table-cell>
+              <md-table-cell md-label="Fax">{{ item.fax }}</md-table-cell>
+              <md-table-cell md-label="Tél.Portable">{{ item.tel_portable }}</md-table-cell>
+              <md-table-cell md-label="Email">{{ item.mail }}</md-table-cell>
+              <md-table-cell md-label="Actions" class="actionsColumn">
+                  <md-button class="md-icon-button">
+                    <md-icon>edit</md-icon>
+                  </md-button>
+                  <md-button class="md-icon-button">
+                    <md-icon>delete</md-icon>
+                  </md-button>
+             </md-table-cell>
+           </md-table-row>
+        </md-table>
+     </div>
 </div>
