@@ -563,6 +563,16 @@ class VEtapesAffaires(Base):
     remarque = Column(Text)
 
 
+class VAffairesPreavis(Base):
+    __tablename__ = 'v_affaires_preavis'
+    __table_args__ = {'schema': 'infolica'}
+    affaire_id = Column(BigInteger, primary_key=True)
+    service = Column(Text, primary_key=True)
+    preavis = Column(Text)
+    date_demande = Column(Date, primary_key=True)
+    date_reponse = Column(Date)
+
+
 class VAffairesBalances(Base):
     __tablename__ = 'v_affaires_balances'
     __table_args__ = {'schema': 'infolica'}

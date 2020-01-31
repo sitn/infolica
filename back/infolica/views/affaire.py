@@ -245,16 +245,98 @@ def remarques_affaire_delete_view(request):
             request.dbsession.delete(record)
             # Commit transaction
             transaction.commit()
-            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.AffaireEtape.__tablename__))
+            return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.AffaireEtape.__tablename__))
 
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
+###########################################################
+# PREAVIS AFFAIRE
+###########################################################
+
+""" GET preavis affaire"""
+@view_config(route_name='preavis_affaires_by_affaire_id', request_method='GET', renderer='json')
+def affaires_preavis_view(request):
+    affaire_id = request.matchdict['id']
+
+    try:
+        records = request.dbsession.query(models.VAffairesPreavis)\
+            .filter(models.VAffairesPreavis.affaire_id==affaire_id).all()
+
+        return Utils.serialize_many(records)
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
 
 
+""" POST preavis affaire"""
+@view_config(route_name='preavis_affaires', request_method='POST', renderer='json')
+@view_config(route_name='preavis_affaires_s', request_method='POST', renderer='json')
+def affaires_preavis_new_view(request):
 
+    model = models.Preavis()
+    model = Utils.set_model_record(model, request.params)
+    
+    try:
+        with transaction.manager:
+            request.dbsession.add(model)
+            # Commit transaction
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Preavis.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" UPDATE preavis affaire"""
+@view_config(route_name='preavis_affaires', request_method='PUT', renderer='json')
+@view_config(route_name='preavis_affaires_s', request_method='PUT', renderer='json')
+def affaires_preavis_update_view(request):
+    preavis_id = request.params['id'] if 'id' in request.params else None
+    print(preavis_id)
+    record = request.dbsession.query(models.Preavis).filter(models.Preavis.id==preavis_id).first()
+    print ("toto")
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Preavis.__tablename__, preavis_id))
+
+    record = Utils.set_model_record(record, request.params)
+    
+    try:
+        with transaction.manager:
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Preavis.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" DELETE preavis affaire"""
+@view_config(route_name='preavis_affaires_by_affaire_id', request_method='DELETE', renderer='json')
+def affaires_preavis_delete_view(request):
+    preavis_id = request.matchdict['id']
+
+    record = request.dbsession.query(models.Preavis).filter(models.Preavis.id==preavis_id).first()
+    
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Preavis.__tablename__, preavis_id))
+
+    try:
+        with transaction.manager:
+            request.dbsession.delete(record)
+            # Commit transaction
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Preavis.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
 
 
 

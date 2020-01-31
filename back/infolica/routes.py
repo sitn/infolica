@@ -66,5 +66,9 @@ def includeme(config):
     config.add_route('etapes_affaire_s','/infolica/api/etapes_affaire/')
     # Numeros affaires
     config.add_route('numero_affaires_by_numero_id','/infolica/api/numeros_affaire/{id}')
+    #Remarque affaire
+    config.add_route('preavis_affaires_by_affaire_id','/infolica/api/preavis_affaires/{id}')
+    config.add_route('preavis_affaires','/infolica/api/preavis_affaires')
+    config.add_route('preavis_affaires_s','/infolica/api/preavis_affaires/')
 
 
