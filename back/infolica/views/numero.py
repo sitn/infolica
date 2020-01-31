@@ -107,6 +107,10 @@ def numeros_update_view(request):
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
+###########################################################
+# NUMERO ETAT HISTO
+###########################################################
+
 """ Add new numero_etat_histo """
 @view_config(route_name='numeros_etat_histo', request_method='POST', renderer='json')
 @view_config(route_name='numeros_etat_histo_s', request_method='POST', renderer='json')
@@ -131,6 +135,10 @@ def numeros_etat_histo_new_view(request, params=None):
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
+###########################################################
+# AFFAIRE-NUMERO
+###########################################################
+
 """ Add new affaire-numero """
 @view_config(route_name='affaires_numeros', request_method='POST', renderer='json')
 @view_config(route_name='affaires_numeros_s', request_method='POST', renderer='json')
@@ -150,7 +158,35 @@ def affaire_numero_new_view(request, params=None):
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+###########################################################
+# NUMERO- AFFAIRE
+###########################################################
+
+""" Return all numeros"""
+@view_config(route_name='numeros_affaire_by_id', request_method='GET', renderer='json')
+def numeros_affaire_view(request):
+    numero_id = request.matchdict['id']
+
+    query = request.dbsession.query(models.VNumerosAffaires).filter(models.VNumerosAffaires.numero_id==numero_id).all()
+
+    if not query:
+        raise CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.VNumerosAffaires.__tablename__, numero_id)
+
+    try:
+        return Utils.serialize_many(query)
     
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+
+
+
+
+
 
 db_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem

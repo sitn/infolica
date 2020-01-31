@@ -502,6 +502,17 @@ class VNumeros(Base):
     plan_id = Column(BigInteger)
 
 
+class VNumerosAffaires(Base):
+    __tablename__ = 'v_numeros_affaires'
+    __table_args__ = {'schema': 'infolica'}
+    numero_id = Column(BigInteger, primary_key=True)
+    affaire_id = Column(BigInteger, primary_key=True)
+    affaire_nom = Column(Text)
+    affaire_type = Column(Text)
+    affaire_date = Column(Date)
+    affaire_information = Column(Text)
+
+
 class VAffaire(Base):
     __tablename__ = 'v_affaires'
     __table_args__ = {'schema': 'infolica'}
