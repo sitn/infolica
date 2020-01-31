@@ -1,10 +1,15 @@
-<style src="./style.css" scoped></style>
-<template src="./template.html"></template>
+<style src="./main.css" scoped></style>
+<template src="./main.html"></template>
 
 
 <script>
+import Login from '@/components/Login/Login.vue'
+
 export default {
   name: 'Main',
+  components: {
+    Login
+  },
   props: {
     msg: String
   }

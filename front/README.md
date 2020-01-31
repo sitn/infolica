@@ -32,3 +32,14 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 npm install vue-material --save
 ```
 
+### Install Vue router (to handle app routing)
+```
+npm install vue-router --save
+```
+
+### Install axios (AJAX to make requests)
+```
+npm i axios vue-axios --save
+```
+
+

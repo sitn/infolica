@@ -10,3 +10,5 @@ body{
     height: 100%;
     width: 100%; 
   }
+
+  #app .material-icons.md-light { color: #FFFFFF; }
