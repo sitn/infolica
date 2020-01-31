@@ -545,9 +545,9 @@ class VEtapesAffaires(Base):
     affaire_id = Column(BigInteger, primary_key=True)
     affaire_nom = Column(Text)
     etape = Column(Text, primary_key=True)
-    date = Column(Date, primary_key=True)
+    date_etape = Column(Date, primary_key=True)
     affaire_liee_id = Column(BigInteger)
-    nom_affaire_liee = Column(Text)
+    affaire_liee_nom = Column(Text)
     service_nom = Column(Text, primary_key=True)
     remarque = Column(Text)
 
