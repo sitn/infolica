@@ -1,5 +1,9 @@
 from datetime import time, date, datetime
-from sqlalchemy import func
+from sqlalchemy import func, and_, desc
+from .. import models
+
+
+unite_ppe_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
 class Utils():
 
@@ -72,4 +76,54 @@ class Utils():
             conditions.append(func.lower(getattr(model, param)).like(
                 '%' + func.lower(params[param]) + '%'))
         return conditions
+
+
+    """ Get number_record with the highest number in cadastre and type to continue the numerotation """
+    @classmethod
+    def last_number(cls, request, cadastre_id, type_id, plan_id=None, affaire_id=None):
+        if not isinstance(type_id, list):
+            type_id = [type_id]
+        # Filter by type and cadastre
+        query = request.dbsession.query(models.Numero).filter(and_(models.Numero.type_id.in_(type_id), models.Numero.cadastre_id==cadastre_id))
+        # If plan_id is specified, also filter by plan
+        if plan_id:
+            query = query.filter(models.Numero.plan_id==plan_id)
+        if affaire_id:
+            query = query.filter(and_(models.AffaireNumero.affaire_id==affaire_id, models.AffaireNumero.numero_id==models.Numero.id))
+        result = query.order_by(desc(models.Numero.numero)).limit(1).first()
+        numero = result.numero if result else 0
+        return numero
+
+
+    """ Function that creates dictionnary with specified keys and values """
+    @classmethod
+    def _params(cls, **kwargs):
+        params = dict()
+        for key, value in kwargs.items():
+            params[key] = value
+        return params
+
+
+    """ Get PPE unite from index """
+    @classmethod
+    def get_unite_from_index(cls, idx):
+        n = len(unite_ppe_list)
+        unite = ""
+        c = 0
+        while idx: 
+            idx, idx_ = divmod(idx-c, n)
+            unite = unite_ppe_list[idx_] + unite
+            c = 1
+        return unite
+
+    """ Get index from PPE unite """
+    @classmethod
+    def get_index_from_unite(cls, unite):
+        n = len(unite_ppe_list)
+        idx = 0
+        c = 0
+        for i, unite_i in enumerate(reversed(list(unite))):
+            idx = idx + (unite_ppe_list.index(unite_i) + c) * n**i
+            c = 1
+        return idx
 

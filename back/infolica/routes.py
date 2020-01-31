@@ -31,4 +31,29 @@ def includeme(config):
     config.add_route('operateur_by_id', '/infolica/api/operateurs/{id}')
     #Test (temp endpoint)
     config.add_route('test', '/infolica/api/test')
+    #Controle_mutation
+    config.add_route('controles_mutations','/infolica/api/controles_mutations')
+    config.add_route('controles_mutations_s','/infolica/api/controles_mutations/')
+    config.add_route('controle_mutation_by_id', '/infolica/api/controles_mutations/{id}')
+    #Controle_PPE
+    config.add_route('controles_ppe','/infolica/api/controles_ppe')
+    config.add_route('controles_ppe_s','/infolica/api/controles_ppe/')
+    config.add_route('controle_ppe_by_id', '/infolica/api/controles_ppe/{id}')
+    #Suivi_Mandat
+    config.add_route('suivis_mandats','/infolica/api/suivis_mandats')
+    config.add_route('suivis_mandats_s','/infolica/api/suivis_mandats/')
+    config.add_route('suivi_mandat_by_id', '/infolica/api/suivi_mandats/{id}')
+    #Numéros
+    config.add_route('numeros','/infolica/api/numeros')
+    config.add_route('numeros_s','/infolica/api/numeros/')
+    config.add_route('numero_by_id', '/infolica/api/numeros/{id}')
+    #Réservation de numéros
+    config.add_route('reservation_numeros','/infolica/api/reservation_numeros')
+    config.add_route('reservation_numeros_s','/infolica/api/reservation_numeros/')
+    #AffairesNuméros
+    config.add_route('affaires_numeros','/infolica/api/affaires_numeros')
+    config.add_route('affaires_numeros_s','/infolica/api/affaires_numeros/')
+    #Historique numéros
+    config.add_route('numeros_etat_histo','/infolica/api/numeros_etat_histo')
+    config.add_route('numeros_etat_histo_s','/infolica/api/numeros_etat_histo/')
 
