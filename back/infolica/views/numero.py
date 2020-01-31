@@ -164,8 +164,8 @@ def affaire_numero_new_view(request, params=None):
 # NUMERO- AFFAIRE
 ###########################################################
 
-""" Return all numeros"""
-@view_config(route_name='numeros_affaire_by_id', request_method='GET', renderer='json')
+""" Return all affaires touching one numero """
+@view_config(route_name='numero_affaires_by_numero_id', request_method='GET', renderer='json')
 def numeros_affaire_view(request):
     numero_id = request.matchdict['id']
 

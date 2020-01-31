@@ -61,11 +61,10 @@ def includeme(config):
     config.add_route('remarques_affaire','/infolica/api/remarques_affaire')
     config.add_route('remarques_affaire_s','/infolica/api/remarques_affaire/')
     #Etapes affaire
-    config.add_route('etapes_affaire_by_id','/infolica/api/etapes_affaire/{id}')
+    config.add_route('etapes_affaire_by_affaire_id','/infolica/api/etapes_affaire/{id}')
     config.add_route('etapes_affaire','/infolica/api/etapes_affaire')
     config.add_route('etapes_affaire_s','/infolica/api/etapes_affaire/')
     # Numeros affaires
-    config.add_route('numeros_affaire_by_id','/infolica/api/numeros_affaire/{id}')
-    config.add_route('numeros_affaire','/infolica/api/numeros_affaire')
-    config.add_route('numeros_affaire_s','/infolica/api/numeros_affaire/')
+    config.add_route('numero_affaires_by_numero_id','/infolica/api/numeros_affaire/{id}')
+
 

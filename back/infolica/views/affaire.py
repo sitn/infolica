@@ -194,9 +194,9 @@ def remarques_affaire_new_view(request):
 ###########################################################
 
 """ GET etapes affaire"""
-@view_config(route_name='etapes_affaire_by_id', request_method='GET', renderer='json')
+@view_config(route_name='etapes_affaire_by_affaire_id', request_method='GET', renderer='json')
 def remarques_affaire_view(request):
-    affaire_id = request.matchdict['id']
+    affaire_id = request.matchdict['id'] 
 
     try:
         records = request.dbsession.query(models.VEtapesAffaires)\
@@ -230,12 +230,12 @@ def remarques_affaire_new_view(request):
 
 
 """ DELETE remarque affaire"""
-@view_config(route_name='etapes_affaire_by_id', request_method='DELETE', renderer='json')
+@view_config(route_name='etapes_affaire_by_affaire_id', request_method='DELETE', renderer='json')
 def remarques_affaire_delete_view(request):
     affaire_etape_id = request.matchdict['id']
 
     record = request.dbsession.query(models.AffaireEtape).filter(models.AffaireEtape.id==affaire_etape_id).first()
-
+    
     if not record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.AffaireEtape.__tablename__, affaire_etape_id))
