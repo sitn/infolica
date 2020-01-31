@@ -29,6 +29,15 @@ def test_error(exc, request):
     query = Utils.set_model_record(query, request.params)
     return Utils.serialize_one(query)
 
+
+########################################################
+# Common OPTION RESPONSE
+########################################################
+@view_config(route_name='login', request_method='OPTIONS', renderer='json')
+@view_config(route_name='login_s', request_method='OPTIONS', renderer='json')
+def options_response_view(request):
+    return ''
+
 ########################################################
 # Common IntegrityError return message
 ########################################################
