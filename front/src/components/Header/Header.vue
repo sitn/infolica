@@ -1,5 +1,5 @@
-<style src="./style.css" scoped></style>
-<template src="./template.html"></template>
+<style src="./header.css" scoped></style>
+<template src="./header.html"></template>
 
 
 <script>

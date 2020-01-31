@@ -1,5 +1,5 @@
-<style src="./style.css" scoped></style>
-<template src="./template.html"></template>
+<style src="./footer.css" scoped></style>
+<template src="./footer.html"></template>
 
 
 <script>

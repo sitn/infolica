@@ -1,0 +1,13 @@
+
+import Affaires from './components/Affaires/Affaires.vue'
+import Clients from './components/Clients/Clients.vue'
+import Login from './components/Login/Login.vue'
+
+const routes = [
+    { path: '/', component: Affaires },    
+    { path: '/affaires', component: Affaires },
+    { path: '/clients', component: Clients },
+    { path: '/login', component: Login },
+];
+
+export default routes;
