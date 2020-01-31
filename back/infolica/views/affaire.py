@@ -139,20 +139,46 @@ def affaires_delete_view(request):
 
 
 """ GET remarque affaire"""
-@view_config(route_name='remarques_affaire', request_method='GET', renderer='json')
+@view_config(route_name='remarques_affaire_by_id', request_method='GET', renderer='json')
 def remarques_affaire_view(request):
-    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    # affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    affaire_id = request.matchdict['id']
+    print(affaire_id)
 
     try:
-        records = request.dbsession.query(models.Operateur.nom, models.operateur.prenom, models.RemarqueAffaire.remarque, 
-            models.RemarqueAffaire.date).filter(and_(models.RemarqueAffaire.affaire_id==affaire_id,
-            models.RemarqueAffaire.operateur_id==models.Operateur.id)).all()
+        records = request.dbsession.query(models.RemarqueAffaire, models.Operateur)\
+            .filter(models.RemarqueAffaire.affaire_id==affaire_id)\
+            .filter(models.RemarqueAffaire.operateur_id==models.Operateur.id).all()
 
-        return Utils.serialize_many(query)
+        ra_json = list()
+        for ra, op in records:
+            ra_json.append(Utils._params(nom=op.nom, prenom=op.prenom, remarque=ra.remarque, date=ra.date.isoformat()))
+
+        return ra_json
+
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
+
+""" POST remarque affaire"""
+@view_config(route_name='remarques_affaire', request_method='POST', renderer='json')
+@view_config(route_name='remarques_affaire_s', request_method='POST', renderer='json')
+def remarques_affaire_new_view(request):
+
+    model = models.RemarqueAffaire()
+    model = Utils.set_model_record(model, request.params)
+    
+    try:
+        with transaction.manager:
+            request.dbsession.add(model)
+            # Commit transaction
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.RemarqueAffaire.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
 
 
 
