@@ -60,8 +60,8 @@ def client_by_id_view(request):
     return Utils.serialize_one(query)
 
 """ Search clients"""
-@view_config(route_name='recherche_clients', request_method='GET', renderer='json')
-@view_config(route_name='recherche_clients_s', request_method='GET', renderer='json')
+@view_config(route_name='recherche_clients', request_method='POST', renderer='json')
+@view_config(route_name='recherche_clients_s', request_method='POST', renderer='json')
 def clients_search_view(request):
     try:
         settings = request.registry.settings
