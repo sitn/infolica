@@ -96,8 +96,7 @@ def factures_update_view(request):
 
 
 """ Delete facture"""
-@view_config(route_name='factures', request_method='DELETE', renderer='json')
-@view_config(route_name='factures_s', request_method='DELETE', renderer='json')
+@view_config(route_name='facture_by_id', request_method='DELETE', renderer='json')
 def factures_delete_view(request):
     try:
         id = request.matchdict['id']
