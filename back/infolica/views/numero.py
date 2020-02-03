@@ -48,7 +48,6 @@ def numeros_new_view(request, params=None):
     
     #nouveau numero
     record = models.Numero()
-    # record = Utils.set_model_record(record, request.params)
     record = Utils.set_model_record(record, params)
     
     try:

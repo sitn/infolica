@@ -435,12 +435,20 @@ class NumeroRelation(Base):
 #     plan_id = Column(BigInteger, ForeignKey(Plan.id), nullable=False)
 
 
+class AffaireNumeroType(Base):
+    __tablename__ = 'affaire_numero_type'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
+
+
 class AffaireNumero(Base):
     __tablename__ = 'affaire_numero'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     numero_id = Column(BigInteger, ForeignKey(Numero.id), nullable=False)
+    type_id = Column(BigInteger, ForeignKey(AffaireNumeroType.id)) #, nullable=False)
     modifie = Column(Boolean, default=False, nullable=False)
 
 
@@ -486,127 +494,127 @@ class RemarquePreavis(Base):
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
-# ======================== VUES ========================
+# # ======================== VUES ========================
 
-class VNumeros(Base):
-    __tablename__ = 'v_numeros'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True)
-    cadastre = Column(Text)
-    numero = Column(Text)
-    suffixe = Column(Text)
-    etat = Column(Text)
-    type_numero = Column(Text)
-    diff_entree = Column(Date)
-    diff_sortie = Column(Date)
-    plan_id = Column(BigInteger)
-
-
-class VNumerosAffaires(Base):
-    __tablename__ = 'v_numeros_affaires'
-    __table_args__ = {'schema': 'infolica'}
-    numero_id = Column(BigInteger, primary_key=True)
-    affaire_id = Column(BigInteger, primary_key=True)
-    affaire_nom = Column(Text)
-    affaire_type = Column(Text)
-    affaire_date = Column(Date)
-    affaire_information = Column(Text)
+# class VNumeros(Base):
+#     __tablename__ = 'v_numeros'
+#     __table_args__ = {'schema': 'infolica'}
+#     id = Column(BigInteger, primary_key=True)
+#     cadastre = Column(Text)
+#     numero = Column(Text)
+#     suffixe = Column(Text)
+#     etat = Column(Text)
+#     type_numero = Column(Text)
+#     diff_entree = Column(Date)
+#     diff_sortie = Column(Date)
+#     plan_id = Column(BigInteger)
 
 
-class VAffaire(Base):
-    __tablename__ = 'v_affaires'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True)
-    nom = Column(Text)
-    client_commande_entreprise = Column(Text)
-    client_commande_titre = Column(Text)
-    client_commande_nom = Column(Text)
-    client_commande_prenom = Column(Text)
-    client_commande_par_entreprise = Column(Text)
-    client_commande_par_titre = Column(Text)
-    client_commande_par_nom = Column(Text)
-    client_commande_par_prenom = Column(Text)
-    responsable_nom = Column(Text)
-    responsable_prenom = Column(Text)
-    technicien_nom = Column(Text)
-    technicien_prenom = Column(Text)
-    type_affaire = Column(Text)
-    cadastre = Column(Text)
-    information = Column(Text)
-    date_ouverture = Column(Date)
-    date_validation = Column(Date)
-    date_cloture = Column(Date)
-    localisation_e = Column(Text)
-    localisation_n = Column(Text)
+# class VNumerosAffaires(Base):
+#     __tablename__ = 'v_numeros_affaires'
+#     __table_args__ = {'schema': 'infolica'}
+#     numero_id = Column(BigInteger, primary_key=True)
+#     affaire_id = Column(BigInteger, primary_key=True)
+#     affaire_nom = Column(Text)
+#     affaire_type = Column(Text)
+#     affaire_date = Column(Date)
+#     affaire_information = Column(Text)
 
 
-class VEnvois(Base):
-    __tablename__ = 'v_envois'
-    __table_args__ = {'schema': 'infolica'}
-    affaire_id = Column(BigInteger, primary_key=True)
-    affaire_nom = Column(Text)
-    client = Column(Text, primary_key=True)
-    document_nom = Column(Text, primary_key=True)
-    date = Column(Date, primary_key=True)
+# class VAffaire(Base):
+#     __tablename__ = 'v_affaires'
+#     __table_args__ = {'schema': 'infolica'}
+#     id = Column(BigInteger, primary_key=True)
+#     nom = Column(Text)
+#     client_commande_entreprise = Column(Text)
+#     client_commande_titre = Column(Text)
+#     client_commande_nom = Column(Text)
+#     client_commande_prenom = Column(Text)
+#     client_commande_par_entreprise = Column(Text)
+#     client_commande_par_titre = Column(Text)
+#     client_commande_par_nom = Column(Text)
+#     client_commande_par_prenom = Column(Text)
+#     responsable_nom = Column(Text)
+#     responsable_prenom = Column(Text)
+#     technicien_nom = Column(Text)
+#     technicien_prenom = Column(Text)
+#     type_affaire = Column(Text)
+#     cadastre = Column(Text)
+#     information = Column(Text)
+#     date_ouverture = Column(Date)
+#     date_validation = Column(Date)
+#     date_cloture = Column(Date)
+#     localisation_e = Column(Text)
+#     localisation_n = Column(Text)
 
 
-class VEtapesAffaires(Base):
-    __tablename__ = 'v_etapes_affaires'
-    __table_args__ = {'schema': 'infolica'}
-    affaire_id = Column(BigInteger, primary_key=True)
-    affaire_nom = Column(Text)
-    etape = Column(Text, primary_key=True)
-    date_etape = Column(Date, primary_key=True)
-    affaire_liee_id = Column(BigInteger)
-    affaire_liee_nom = Column(Text)
-    service_nom = Column(Text, primary_key=True)
-    remarque = Column(Text)
+# class VEnvois(Base):
+#     __tablename__ = 'v_envois'
+#     __table_args__ = {'schema': 'infolica'}
+#     affaire_id = Column(BigInteger, primary_key=True)
+#     affaire_nom = Column(Text)
+#     client = Column(Text, primary_key=True)
+#     document_nom = Column(Text, primary_key=True)
+#     date = Column(Date, primary_key=True)
 
 
-class VAffairesPreavis(Base):
-    __tablename__ = 'v_affaires_preavis'
-    __table_args__ = {'schema': 'infolica'}
-    affaire_id = Column(BigInteger, primary_key=True)
-    service = Column(Text, primary_key=True)
-    preavis = Column(Text)
-    date_demande = Column(Date, primary_key=True)
-    date_reponse = Column(Date)
+# class VEtapesAffaires(Base):
+#     __tablename__ = 'v_etapes_affaires'
+#     __table_args__ = {'schema': 'infolica'}
+#     affaire_id = Column(BigInteger, primary_key=True)
+#     affaire_nom = Column(Text)
+#     etape = Column(Text, primary_key=True)
+#     date_etape = Column(Date, primary_key=True)
+#     affaire_liee_id = Column(BigInteger)
+#     affaire_liee_nom = Column(Text)
+#     service_nom = Column(Text, primary_key=True)
+#     remarque = Column(Text)
 
 
-class VAffairesBalances(Base):
-    __tablename__ = 'v_affaires_balances'
-    __table_args__ = {'schema': 'infolica'}
-    affaire_id = Column(BigInteger, primary_key=True)
-    numero_base_id = Column(BigInteger, primary_key=True)
-    numero_associe_id = Column(BigInteger, primary_key=True)
-    numero_relation_id = Column(BigInteger, primary_key=True)
-    affaire_nom = Column(Text)
-    numero_base_type = Column(Text)
-    numero_base = Column(Integer)
-    numero_base_suffixe = Column(Text)
-    numero_base_etat = Column(Text)
-    numero_associe_type = Column(Text)
-    numero_associe = Column(Integer)
-    numero_associe_suffixe = Column(Text)
-    numero_associe_etat = Column(Text)
-    numero_relation_type = Column(Text)
+# class VAffairesPreavis(Base):
+#     __tablename__ = 'v_affaires_preavis'
+#     __table_args__ = {'schema': 'infolica'}
+#     affaire_id = Column(BigInteger, primary_key=True)
+#     service = Column(Text, primary_key=True)
+#     preavis = Column(Text)
+#     date_demande = Column(Date, primary_key=True)
+#     date_reponse = Column(Date)
 
 
-class VTableauBord(Base):
-    __tablename__ = 'v_tableau_de_bord'
-    __table_args__ = {'schema': 'infolica'}
-    affaire_id = Column(BigInteger, primary_key=True)
-    affaire_nom = Column(Text)
-    delai = Column(Integer)
-    client_entreprise = Column(Text)
-    client_titre = Column(Text)
-    client_nom = Column(Text)
-    client_prenom = Column(Text)
-    affaire_type = Column(Text)
-    chef_nom = Column(Text)
-    chef_prenom = Column(Text)
-    technicien_nom = Column(Text)
-    technicien_prenom = Column(Text)
-    information = Column(Text)
-    cadastre = Column(Text)
-    etape = Column(Text)
+# class VAffairesBalances(Base):
+#     __tablename__ = 'v_affaires_balances'
+#     __table_args__ = {'schema': 'infolica'}
+#     affaire_id = Column(BigInteger, primary_key=True)
+#     numero_base_id = Column(BigInteger, primary_key=True)
+#     numero_associe_id = Column(BigInteger, primary_key=True)
+#     numero_relation_id = Column(BigInteger, primary_key=True)
+#     affaire_nom = Column(Text)
+#     numero_base_type = Column(Text)
+#     numero_base = Column(Integer)
+#     numero_base_suffixe = Column(Text)
+#     numero_base_etat = Column(Text)
+#     numero_associe_type = Column(Text)
+#     numero_associe = Column(Integer)
+#     numero_associe_suffixe = Column(Text)
+#     numero_associe_etat = Column(Text)
+#     numero_relation_type = Column(Text)
+
+
+# class VTableauBord(Base):
+#     __tablename__ = 'v_tableau_de_bord'
+#     __table_args__ = {'schema': 'infolica'}
+#     affaire_id = Column(BigInteger, primary_key=True)
+#     affaire_nom = Column(Text)
+#     delai = Column(Integer)
+#     client_entreprise = Column(Text)
+#     client_titre = Column(Text)
+#     client_nom = Column(Text)
+#     client_prenom = Column(Text)
+#     affaire_type = Column(Text)
+#     chef_nom = Column(Text)
+#     chef_prenom = Column(Text)
+#     technicien_nom = Column(Text)
+#     technicien_prenom = Column(Text)
+#     information = Column(Text)
+#     cadastre = Column(Text)
+#     etape = Column(Text)
