@@ -173,8 +173,8 @@ def affaires_remarques_view(request):
 
 
 """ POST remarque affaire"""
-@view_config(route_name='affaires_remarques', request_method='POST', renderer='json')
-@view_config(route_name='affaires_remarques_s', request_method='POST', renderer='json')
+@view_config(route_name='remarques_affaires', request_method='POST', renderer='json')
+@view_config(route_name='remarques_affaires_s', request_method='POST', renderer='json')
 def affaires_remarques_new_view(request):
 
     model = models.RemarqueAffaire()
@@ -192,12 +192,58 @@ def affaires_remarques_new_view(request):
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
+""" PUT remarque affaire"""
+@view_config(route_name='remarques_affaires', request_method='PUT', renderer='json')
+@view_config(route_name='remarques_affaires_s', request_method='PUT', renderer='json')
+def remarques_affaires_update_view(request):
+    remarque_affaire_id = request.params['id'] if 'id' in request.params else None
+
+    record = request.dbsession.query(models.RemarqueAffaire).filter(models.RemarqueAffaire.id==remarque_affaire_id).first() 
+
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.RemarqueAffaire.__tablename__, remarque_affaire_id))
+    
+    record = Utils.set_model_record(record, request.params)
+
+    try:
+        with transaction.manager:
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.RemarqueAffaire.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" DELETE remarque affaire"""
+@view_config(route_name='remarques_affaires_by_id', request_method='DELETE', renderer='json')
+def remarques_affaires_delete_view(request):
+    remarque_affaire_id = request.matchdict['id']
+
+    record = request.dbsession.query(models.RemarqueAffaire).filter(models.RemarqueAffaire.id==remarque_affaire_id).first() 
+
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.RemarqueAffaire.__tablename__, remarque_affaire_id))
+
+    try:
+        with transaction.manager:
+            request.dbsession.delete(record)
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.RemarqueAffaire.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
 ###########################################################
 # ETAPES AFFAIRE
 ###########################################################
 
 """ GET etapes affaire"""
-@view_config(route_name='affaires_etapes_by_affaire_id', request_method='GET', renderer='json')
+@view_config(route_name='affaire_etapes_by_affaire_id', request_method='GET', renderer='json')
 def affaires_etapes_view(request):
     affaire_id = request.matchdict['id'] 
 
@@ -213,9 +259,9 @@ def affaires_etapes_view(request):
 
 
 """ POST remarque affaire"""
-@view_config(route_name='affaires_etapes', request_method='POST', renderer='json')
-@view_config(route_name='affaires_etapes_s', request_method='POST', renderer='json')
-def affaires_etapes_new_view(request):
+@view_config(route_name='etapes', request_method='POST', renderer='json')
+@view_config(route_name='etapes_s', request_method='POST', renderer='json')
+def etapes_new_view(request):
 
     model = models.AffaireEtape()
     model = Utils.set_model_record(model, request.params)
@@ -233,8 +279,8 @@ def affaires_etapes_new_view(request):
 
 
 """ DELETE remarque affaire"""
-@view_config(route_name='affaires_etapes_by_affaire_id', request_method='DELETE', renderer='json')
-def affaires_etapes_delete_view(request):
+@view_config(route_name='etapes_by_id', request_method='DELETE', renderer='json')
+def etapes_delete_view(request):
     affaire_etape_id = request.matchdict['id']
 
     record = request.dbsession.query(models.AffaireEtape).filter(models.AffaireEtape.id==affaire_etape_id).first()
@@ -260,8 +306,8 @@ def affaires_etapes_delete_view(request):
 ###########################################################
 
 """ GET preavis affaire"""
-@view_config(route_name='affaires_preavis_by_affaire_id', request_method='GET', renderer='json')
-def affaires_preavis_view(request):
+@view_config(route_name='affaire_preavis_by_affaire_id', request_method='GET', renderer='json')
+def affaire_preavis_view(request):
     affaire_id = request.matchdict['id']
 
     try:
@@ -276,9 +322,9 @@ def affaires_preavis_view(request):
 
 
 """ POST preavis affaire"""
-@view_config(route_name='affaires_preavis', request_method='POST', renderer='json')
-@view_config(route_name='affaires_preavis_s', request_method='POST', renderer='json')
-def affaires_preavis_new_view(request):
+@view_config(route_name='preavis', request_method='POST', renderer='json')
+@view_config(route_name='preavis_s', request_method='POST', renderer='json')
+def preavis_new_view(request):
 
     model = models.Preavis()
     model = Utils.set_model_record(model, request.params)
@@ -296,9 +342,9 @@ def affaires_preavis_new_view(request):
 
 
 """ UPDATE preavis affaire"""
-@view_config(route_name='affaires_preavis', request_method='PUT', renderer='json')
-@view_config(route_name='affaires_preavis_s', request_method='PUT', renderer='json')
-def affaires_preavis_update_view(request):
+@view_config(route_name='preavis', request_method='PUT', renderer='json')
+@view_config(route_name='preavis_s', request_method='PUT', renderer='json')
+def preavis_update_view(request):
     preavis_id = request.params['id'] if 'id' in request.params else None
     print(preavis_id)
     record = request.dbsession.query(models.Preavis).filter(models.Preavis.id==preavis_id).first()
@@ -320,8 +366,8 @@ def affaires_preavis_update_view(request):
 
 
 """ DELETE preavis affaire"""
-@view_config(route_name='affaires_preavis_by_affaire_id', request_method='DELETE', renderer='json')
-def affaires_preavis_delete_view(request):
+@view_config(route_name='preavis_by_id', request_method='DELETE', renderer='json')
+def preavis_delete_view(request):
     preavis_id = request.matchdict['id']
 
     record = request.dbsession.query(models.Preavis).filter(models.Preavis.id==preavis_id).first()
@@ -347,8 +393,8 @@ def affaires_preavis_delete_view(request):
 ###########################################################
 
 """ GET documents affaire"""
-@view_config(route_name='affaires_documents_by_affaire_id', request_method='GET', renderer='json')
-def affaires_documents_view(request):
+@view_config(route_name='affaire_documents_by_affaire_id', request_method='GET', renderer='json')
+def affaire_documents_view(request):
     affaire_id = request.matchdict['id']
     
     doc_path = os.path.join(Constant.AFFAIRE_DIRECTORY, affaire_id)

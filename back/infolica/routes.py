@@ -52,25 +52,28 @@ def includeme(config):
     config.add_route('reservation_numeros','/infolica/api/reservation_numeros')
     config.add_route('reservation_numeros_s','/infolica/api/reservation_numeros/')
     #AffairesNuméros
-    config.add_route('affaires_numeros','/infolica/api/affaires_numeros')
-    config.add_route('affaires_numeros_s','/infolica/api/affaires_numeros/')
+    config.add_route('affaire_numeros','/infolica/api/affaire_numeros')
+    config.add_route('affaire_numeros_s','/infolica/api/affaire_numeros/')
     #Historique numéros
     config.add_route('numeros_etat_histo','/infolica/api/numeros_etat_histo')
     config.add_route('numeros_etat_histo_s','/infolica/api/numeros_etat_histo/')
     #Remarque affaire
-    config.add_route('affaires_remarques_by_affaire_id','/infolica/api/affaires_remarques/{id}')
-    config.add_route('affaires_remarques','/infolica/api/affaires_remarques')
-    config.add_route('affaires_remarques_s','/infolica/api/affaires_remarques/')
+    config.add_route('remarques_affaires_by_id','/infolica/api/remarques_affaires/{id}')
+    config.add_route('remarques_affaires','/infolica/api/remarques_affaires')
+    config.add_route('remarques_affaires_s','/infolica/api/remarques_affaires/')
+    config.add_route('affaires_remarques_by_affaire_id','/infolica/api/affaire_remarques_affaires/{id}')
     #Etapes affaire
-    config.add_route('affaires_etapes_by_affaire_id','/infolica/api/affaires_etapes/{id}')
-    config.add_route('affaires_etapes','/infolica/api/affaires_etapes')
-    config.add_route('affaires_etapes_s','/infolica/api/affaires/')
-    # Numeros affaires
+    config.add_route('etapes_by_id','/infolica/api/etapes/{id}')
+    config.add_route('etapes','/infolica/api/etapes')
+    config.add_route('etapes_s','/infolica/api/etapes/')
+    config.add_route('affaire_etapes_by_affaire_id','/infolica/api/affaire_etapes/{id}')
+    #Numeros affaires
     config.add_route('numero_affaires_by_numero_id','/infolica/api/numeros_affaire/{id}')
     #Remarque affaire
-    config.add_route('affaires_preavis_by_affaire_id','/infolica/api/affaires_preavis/{id}')
-    config.add_route('affaires_preavis','/infolica/api/affaires_preavis')
-    config.add_route('affaires_preavis_s','/infolica/api/affaires_preavis/')
-    #Remarque affaire
-    config.add_route('affaires_documents_by_affaire_id','/infolica/api/affaires_documents/{id}')
+    config.add_route('preavis_by_id','/infolica/api/preavis/{id}')
+    config.add_route('preavis','/infolica/api/preavis')
+    config.add_route('preavis_s','/infolica/api/preavis/')
+    config.add_route('affaire_preavis_by_affaire_id','/infolica/api/affaire_preavis/{id}')
+    #Documents affaire
+    config.add_route('affaire_documents_by_affaire_id','/infolica/api/affaire_documents/{id}')
 

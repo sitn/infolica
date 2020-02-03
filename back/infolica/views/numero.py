@@ -88,15 +88,9 @@ def numeros_update_view(request):
         with transaction.manager:
             # Commit transaction
             transaction.commit()
-
-            # Changement d'état?
-            print('numero_id = ', record.id)
-            print('etat_id = ', request.params['etat_id'])
             
             if 'etat_id' in request.params:
-                print("toto")
                 if request.params['etat_id'] != last_record_etat_id:
-                    print("tata")
                     params = Utils._params(numero_id=record.id, numero_etat_id=request.params['etat_id'])
                     numeros_etat_histo_new_view(request, params)
                                 
@@ -140,8 +134,8 @@ def numeros_etat_histo_new_view(request, params=None):
 ###########################################################
 
 """ Add new affaire-numero """
-@view_config(route_name='affaires_numeros', request_method='POST', renderer='json')
-@view_config(route_name='affaires_numeros_s', request_method='POST', renderer='json')
+@view_config(route_name='affaire_numeros', request_method='POST', renderer='json')
+@view_config(route_name='affaire_numeros_s', request_method='POST', renderer='json')
 def affaire_numero_new_view(request, params=None):
     if not params: params=request.params
     #nouveau affaire_numero
