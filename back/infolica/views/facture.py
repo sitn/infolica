@@ -25,6 +25,20 @@ def factures_view(request):
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
+""" Return all factures in affaire"""
+@view_config(route_name='affaires_factures_by_affaire_id', request_method='GET', renderer='json')
+def affaires_factures_view(request):
+    affaire_id = request.matchdict["id"]
+
+    try:
+        query = request.dbsession.query(models.Facture)\
+                    .filter(models.Facture.affaire_id==affaire_id).all()
+        return Utils.serialize_many(query)
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
 """ Add new facture"""
 @view_config(route_name='factures', request_method='POST', renderer='json')
 @view_config(route_name='factures_s', request_method='POST', renderer='json')
