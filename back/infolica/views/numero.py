@@ -132,6 +132,19 @@ def numeros_etat_histo_new_view(request, params=None):
 # AFFAIRE-NUMERO
 ###########################################################
 
+""" Return all numeros in affaire"""
+@view_config(route_name='affaire_numeros_by_affaire_id', request_method='GET', renderer='json')
+def affaire_numeros_view(request):
+    affaire_id = request.matchdict["id"]
+    try:
+        records = request.dbsession.query(models.VNumerosAffaires).filter(models.VNumerosAffaires.affaire_id==affaire_id).all()
+        return Utils.serialize_many(records)
+    
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
 """ Add new affaire-numero """
 @view_config(route_name='affaire_numeros', request_method='POST', renderer='json')
 @view_config(route_name='affaire_numeros_s', request_method='POST', renderer='json')

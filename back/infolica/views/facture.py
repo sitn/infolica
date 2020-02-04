@@ -13,6 +13,10 @@ import logging
 log = logging.getLogger(__name__)
 
 
+###########################################################
+# FACTURE
+###########################################################
+
 """ Return all factures"""
 @view_config(route_name='factures', request_method='GET', renderer='json')
 @view_config(route_name='factures_s', request_method='GET', renderer='json')
@@ -117,6 +121,15 @@ def factures_delete_view(request):
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Facture.__tablename__))
+
+
+###########################################################
+# EMOLUMENTS
+###########################################################
+
+
+
+
 
 
 
