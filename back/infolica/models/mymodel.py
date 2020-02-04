@@ -178,7 +178,7 @@ class EmolumentFacture(Base):
     facture_id = Column(BigInteger, ForeignKey(Facture.id), nullable=False)
     emolument_id = Column(BigInteger, ForeignKey(
         TableauEmoluments.id), nullable=False)
-    nombre = Column(Text, nullable=False)
+    nombre = Column(Integer, nullable=False)
     facteur_correctif = Column(Float, default=1.0, nullable=False)
     batiment = Column(Text)
     montant = Column(Float, default=0.0, nullable=False)
@@ -619,3 +619,19 @@ class VTableauBord(Base):
     information = Column(Text)
     cadastre = Column(Text)
     etape = Column(Text)
+
+
+class VEmolumentsFactures(Base):
+    __tablename__ = 'v_emoluments_factures'
+    __table_args__ = {'schema': 'infolica'}
+    facture_id = Column(BigInteger, primary_key=True)
+    domaine = Column(Text)
+    categorie = Column(Text)
+    sous_categorie = Column(Text)
+    nom = Column(Text, primary_key=True)
+    unite = Column(Text)
+    prix_unitaire = Column(Text)
+    nombre = Column(Integer, primary_key=True)
+    facteur_correctif = Column(Float)
+    batiment = Column(Text, primary_key=True)
+    montant = Column(Float)
