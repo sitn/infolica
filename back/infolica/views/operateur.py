@@ -1,3 +1,4 @@
+from datetime import datetime
 from pyramid.view import view_config
 from pyramid.response import Response
 
@@ -20,8 +21,6 @@ from ..scripts.utils import Utils
 import logging
 log = logging.getLogger(__name__)
 
-from datetime import datetime
-
 
 """ Return all operateurs"""
 @view_config(route_name='operateurs', request_method='GET', renderer='json')
@@ -42,7 +41,8 @@ def operateur_by_id_view(request):
     merged = None
     try:
         id = request.matchdict['id']
-        query = request.dbsession.query(models.Operateur).filter(models.Operateur.id == id).first()
+        query = request.dbsession.query(models.Operateur).filter(
+            models.Operateur.id == id).first()
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
@@ -67,7 +67,7 @@ def operateurs_new_view(request):
     except DBAPIError as e:
         log.error(e)
         return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
-    
+
 
 """ Update operateur"""
 @view_config(route_name='operateurs', request_method='PUT', renderer='json')
@@ -76,18 +76,20 @@ def operateurs_update_view(request):
     # Get operateur_id
     id_operateur = request.params['id'] if 'id' in request.params else None
 
-    model = request.dbsession.query(models.Operateur).filter(models.Operateur.id == id_operateur).first()
-    
+    model = request.dbsession.query(models.Operateur).filter(
+        models.Operateur.id == id_operateur).first()
+
     # If result is empty
     if not model:
-        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Operateur.__tablename__, id_operateur))
-    
+        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
+            models.Operateur.__tablename__, id_operateur))
+
     # Read params operateur
     model = Utils.set_model_record(model, request.params)
 
     try:
         with transaction.manager:
-            
+
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Operateur.__tablename__))
 
@@ -103,11 +105,13 @@ def operateurs_delete_view(request):
     # Get operateur_id
     id_operateur = request.params['id'] if 'id' in request.params else None
 
-    model = request.dbsession.query(models.Operateur).filter(models.Operateur.id == id_operateur).first()
-    
+    model = request.dbsession.query(models.Operateur).filter(
+        models.Operateur.id == id_operateur).first()
+
     # If result is empty
     if not model:
-        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Operateur.__tablename__, id_operateur))
+        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
+            models.Operateur.__tablename__, id_operateur))
 
     model.sortie = datetime.utcnow()
 
@@ -115,7 +119,6 @@ def operateurs_delete_view(request):
         with transaction.manager:
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Operateur.__tablename__))
-
 
     except DBAPIError as e:
         log.error(e)

@@ -183,7 +183,8 @@ def emolument_facture_delete_view(request):
     try:
         id = request.matchdict['id']
 
-        record = request.dbsession.query(models.EmolumentFacture).filter(models.EmolumentFacture.id == id).first()
+        record = request.dbsession.query(models.EmolumentFacture).filter(
+            models.EmolumentFacture.id == id).first()
 
         if not record:
             raise CustomError(

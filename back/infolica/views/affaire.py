@@ -33,7 +33,6 @@ def affaires_view(request):
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
-
 """ Return affaires by id"""
 @view_config(route_name='affaire_by_id', request_method='GET', renderer='json')
 def affaire_by_id_view(request):
@@ -54,12 +53,15 @@ def affaires_search_view(request):
     try:
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
-        conditions = Utils.get_search_conditions(models.VAffaire, request.params)
-        query = request.dbsession.query(models.VAffaire).filter(*conditions).all()[:search_limit]
+        conditions = Utils.get_search_conditions(
+            models.VAffaire, request.params)
+        query = request.dbsession.query(models.VAffaire).filter(
+            *conditions).all()[:search_limit]
         return Utils.serialize_many(query)
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
+
 
 """ Return all types affaires"""
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
@@ -73,14 +75,13 @@ def types_affaires_view(request):
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
-
 """ Add new affaire"""
 @view_config(route_name='affaires', request_method='POST', renderer='json')
 def affaires_new_view(request):
 
     model = models.Affaire()
     model = Utils.set_model_record(model, request.params)
-    
+
     try:
         with transaction.manager:
             request.dbsession.add(model)
@@ -109,7 +110,7 @@ def affaires_update_view(request):
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Affaire.__tablename__, id_affaire))
 
     record = Utils.set_model_record(record, request.params)
-    
+
     try:
         with transaction.manager:
             # Commit transaction
@@ -134,7 +135,7 @@ def affaires_update_view(request):
 #     if not record:
 #         raise CustomError(
 #             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Affaire.__tablename__, id_affaire))
-    
+
 #     try:
 #         with transaction.manager:
 #             request.dbsession.delete(record)
@@ -158,12 +159,13 @@ def affaires_remarques_view(request):
 
     try:
         records = request.dbsession.query(models.RemarqueAffaire, models.Operateur)\
-            .filter(models.RemarqueAffaire.affaire_id==affaire_id)\
-            .filter(models.RemarqueAffaire.operateur_id==models.Operateur.id).all()
+            .filter(models.RemarqueAffaire.affaire_id == affaire_id)\
+            .filter(models.RemarqueAffaire.operateur_id == models.Operateur.id).all()
 
         ra_json = list()
         for ra, op in records:
-            ra_json.append(Utils._params(nom=op.nom, prenom=op.prenom, remarque=ra.remarque, date=ra.date.isoformat()))
+            ra_json.append(Utils._params(nom=op.nom, prenom=op.prenom,
+                                         remarque=ra.remarque, date=ra.date.isoformat()))
 
         return ra_json
 
@@ -179,7 +181,7 @@ def affaires_remarques_new_view(request):
 
     model = models.RemarqueAffaire()
     model = Utils.set_model_record(model, request.params)
-    
+
     try:
         with transaction.manager:
             request.dbsession.add(model)
@@ -198,12 +200,13 @@ def affaires_remarques_new_view(request):
 def remarques_affaires_update_view(request):
     remarque_affaire_id = request.params['id'] if 'id' in request.params else None
 
-    record = request.dbsession.query(models.RemarqueAffaire).filter(models.RemarqueAffaire.id==remarque_affaire_id).first() 
+    record = request.dbsession.query(models.RemarqueAffaire).filter(
+        models.RemarqueAffaire.id == remarque_affaire_id).first()
 
     if not record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.RemarqueAffaire.__tablename__, remarque_affaire_id))
-    
+
     record = Utils.set_model_record(record, request.params)
 
     try:
@@ -221,7 +224,8 @@ def remarques_affaires_update_view(request):
 def remarques_affaires_delete_view(request):
     remarque_affaire_id = request.matchdict['id']
 
-    record = request.dbsession.query(models.RemarqueAffaire).filter(models.RemarqueAffaire.id==remarque_affaire_id).first() 
+    record = request.dbsession.query(models.RemarqueAffaire).filter(
+        models.RemarqueAffaire.id == remarque_affaire_id).first()
 
     if not record:
         raise CustomError(
@@ -245,11 +249,11 @@ def remarques_affaires_delete_view(request):
 """ GET etapes affaire"""
 @view_config(route_name='affaire_etapes_by_affaire_id', request_method='GET', renderer='json')
 def affaires_etapes_view(request):
-    affaire_id = request.matchdict['id'] 
+    affaire_id = request.matchdict['id']
 
     try:
         records = request.dbsession.query(models.VEtapesAffaires)\
-            .filter(models.VEtapesAffaires.affaire_id==affaire_id).all()
+            .filter(models.VEtapesAffaires.affaire_id == affaire_id).all()
 
         return Utils.serialize_many(records)
 
@@ -265,7 +269,7 @@ def etapes_new_view(request):
 
     model = models.AffaireEtape()
     model = Utils.set_model_record(model, request.params)
-    
+
     try:
         with transaction.manager:
             request.dbsession.add(model)
@@ -283,8 +287,9 @@ def etapes_new_view(request):
 def etapes_delete_view(request):
     affaire_etape_id = request.matchdict['id']
 
-    record = request.dbsession.query(models.AffaireEtape).filter(models.AffaireEtape.id==affaire_etape_id).first()
-    
+    record = request.dbsession.query(models.AffaireEtape).filter(
+        models.AffaireEtape.id == affaire_etape_id).first()
+
     if not record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.AffaireEtape.__tablename__, affaire_etape_id))
@@ -312,7 +317,7 @@ def affaire_preavis_view(request):
 
     try:
         records = request.dbsession.query(models.VAffairesPreavis)\
-            .filter(models.VAffairesPreavis.affaire_id==affaire_id).all()
+            .filter(models.VAffairesPreavis.affaire_id == affaire_id).all()
 
         return Utils.serialize_many(records)
 
@@ -328,7 +333,7 @@ def preavis_new_view(request):
 
     model = models.Preavis()
     model = Utils.set_model_record(model, request.params)
-    
+
     try:
         with transaction.manager:
             request.dbsession.add(model)
@@ -347,14 +352,15 @@ def preavis_new_view(request):
 def preavis_update_view(request):
     preavis_id = request.params['id'] if 'id' in request.params else None
     print(preavis_id)
-    record = request.dbsession.query(models.Preavis).filter(models.Preavis.id==preavis_id).first()
-    print ("toto")
+    record = request.dbsession.query(models.Preavis).filter(
+        models.Preavis.id == preavis_id).first()
+    print("toto")
     if not record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Preavis.__tablename__, preavis_id))
 
     record = Utils.set_model_record(record, request.params)
-    
+
     try:
         with transaction.manager:
             transaction.commit()
@@ -370,8 +376,9 @@ def preavis_update_view(request):
 def preavis_delete_view(request):
     preavis_id = request.matchdict['id']
 
-    record = request.dbsession.query(models.Preavis).filter(models.Preavis.id==preavis_id).first()
-    
+    record = request.dbsession.query(models.Preavis).filter(
+        models.Preavis.id == preavis_id).first()
+
     if not record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Preavis.__tablename__, preavis_id))
@@ -396,21 +403,15 @@ def preavis_delete_view(request):
 @view_config(route_name='affaire_documents_by_affaire_id', request_method='GET', renderer='json')
 def affaire_documents_view(request):
     affaire_id = request.matchdict['id']
-    
+
     doc_path = os.path.join(Constant.AFFAIRE_DIRECTORY, affaire_id)
     documents = list()
     for root, dirs, files in os.walk(doc_path):
         for file_i in files:
             file_path = os.path.join(root, file_i)
-            documents.append(Utils._params(nom=file_i, dossier=os.path.relpath(root, doc_path), chemin=file_path, creation=datetime.fromtimestamp(os.path.getctime(file_path)).strftime("%d.%m.%Y")))
-
-
+            documents.append(Utils._params(nom=file_i, dossier=os.path.relpath(root, doc_path), chemin=file_path,
+                                           creation=datetime.fromtimestamp(os.path.getctime(file_path)).strftime("%d.%m.%Y")))
     return documents
-
-
-
-
-
 
 
 db_err_msg = """\
