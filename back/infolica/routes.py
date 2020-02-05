@@ -78,6 +78,7 @@ def includeme(config):
     #Documents affaire
     config.add_route('affaire_documents_by_affaire_id','/infolica/api/affaire_documents/{id}')
     #Emoluments facture
+    config.add_route('emolument_facture_by_id','/infolica/api/emolument_facture/{id}')
     config.add_route('emolument_facture','/infolica/api/emolument_facture')
     config.add_route('emolument_facture_s','/infolica/api/emolument_facture/')
     config.add_route('facture_emoluments_by_facture_id','/infolica/api/facture_emoluments/{id}')
