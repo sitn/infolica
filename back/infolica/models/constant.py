@@ -1,6 +1,7 @@
 class Constant():
 
-
+    # Path affaire directory
+    AFFAIRE_DIRECTORY = r"C:\infolica_project\affaire_technique"
 
 
     # Data save success

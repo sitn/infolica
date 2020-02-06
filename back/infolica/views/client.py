@@ -1,3 +1,4 @@
+from datetime import datetime
 from pyramid.view import view_config
 from pyramid.response import Response
 
@@ -19,8 +20,6 @@ from ..scripts.utils import Utils
 
 import logging
 log = logging.getLogger(__name__)
-
-from datetime import datetime
 
 
 """ Return all types clients"""
@@ -53,11 +52,13 @@ def clients_view(request):
 def client_by_id_view(request):
     try:
         id = request.matchdict['id']
-        query = request.dbsession.query(models.Client).filter(models.Client.id == id).first()
+        query = request.dbsession.query(models.Client).filter(
+            models.Client.id == id).first()
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
     return Utils.serialize_one(query)
+
 
 """ Search clients"""
 @view_config(route_name='recherche_clients', request_method='POST', renderer='json')
@@ -73,6 +74,7 @@ def clients_search_view(request):
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
+
 
 """ Add new client"""
 @view_config(route_name='clients', request_method='POST', renderer='json')
@@ -91,7 +93,7 @@ def clients_new_view(request):
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
-    
+
 
 """ Update client"""
 @view_config(route_name='clients', request_method='PUT', renderer='json')
@@ -100,21 +102,23 @@ def clients_update_view(request):
     # Get client_id
     id_client = request.params['id'] if 'id' in request.params else None
 
-    model = request.dbsession.query(models.Client).filter(models.Client.id == id_client).first()
-    
+    model = request.dbsession.query(models.Client).filter(
+        models.Client.id == id_client).first()
+
     # If result is empty
     if not model:
-        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Client.__tablename__, id_client))
-    
+        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
+            models.Client.__tablename__, id_client))
+
     # Read params client
     model = Utils.set_model_record(model, request.params)
 
     try:
         with transaction.manager:
-            
+
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Client.__tablename__))
-        
+
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
@@ -127,17 +131,19 @@ def clients_delete_view(request):
     # Get client_id
     id_client = request.params['id'] if 'id' in request.params else None
 
-    model = request.dbsession.query(models.Client).filter(models.Client.id == id_client).first()
-    
+    model = request.dbsession.query(models.Client).filter(
+        models.Client.id == id_client).first()
+
     # If result is empty
     if not model:
-        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Client.__tablename__, id_client))
+        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
+            models.Client.__tablename__, id_client))
 
     model.sortie = datetime.utcnow()
 
     try:
         with transaction.manager:
-            
+
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Client.__tablename__))
 

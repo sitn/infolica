@@ -20,7 +20,7 @@ def suivis_mandats_view(request):
     try:
         query = request.dbsession.query(models.SuiviMandat).all()
         return Utils.serialize_many(query)
-    
+
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
@@ -30,15 +30,16 @@ def suivis_mandats_view(request):
 @view_config(route_name='suivi_mandat_by_id', request_method='GET', renderer='json')
 def suivis_mandats_by_id_view(request):
     try:
-        # Get controle mutation id    
+        # Get controle mutation id
         id = request.id = request.matchdict['id']
-        query = request.dbsession.query(models.SuiviMandat).filter(models.SuiviMandat.id == id).first()
+        query = request.dbsession.query(models.SuiviMandat).filter(
+            models.SuiviMandat.id == id).first()
         return Utils.serialize_one(query)
 
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
-    
+
 
 """ Add new suivis_mandats"""
 @view_config(route_name='suivis_mandats', request_method='POST', renderer='json')
@@ -94,7 +95,7 @@ def suivis_mandats_update_view(request):
 @view_config(route_name='suivis_mandats', request_method='DELETE', renderer='json')
 @view_config(route_name='suivis_mandats_s', request_method='DELETE', renderer='json')
 def suivis_mandats_delete_view(request):
-    
+
     # Get controle mutation id
     id = request.params['id'] if 'id' in request.params else None
 
@@ -105,7 +106,7 @@ def suivis_mandats_delete_view(request):
     if not record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.SuiviMandat.__tablename__, id))
-    
+
     try:
         with transaction.manager:
             request.dbsession.delete(record)
@@ -116,7 +117,7 @@ def suivis_mandats_delete_view(request):
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
-    
+
 
 db_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem
@@ -132,4 +133,3 @@ might be caused by one of the following things:
 After you fix the problem, please restart the Pyramid application to
 try it again.
 """
-

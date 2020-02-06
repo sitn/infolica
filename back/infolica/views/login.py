@@ -1,3 +1,4 @@
+from ..exceptions.custom_error import CustomError
 from pyramid.view import view_config
 from pyramid.response import Response
 from sqlalchemy.exc import DBAPIError
@@ -7,7 +8,6 @@ from ..scripts.ldap_query import LDAPQuery
 from ..models import Constant
 import logging
 log = logging.getLogger(__name__)
-from ..exceptions.custom_error import CustomError
 
 
 ########################################################
@@ -27,9 +27,10 @@ def login_view(request):
         if 'password' in request.params:
             password = request.params['password']
 
-        #Check if user exists in DB
+        # Check if user exists in DB
         query = request.dbsession.query(models.Operateur)
-        operateur = query.filter(func.lower(models.Operateur.login) == func.lower(login)).first()
+        operateur = query.filter(func.lower(
+            models.Operateur.login) == func.lower(login)).first()
 
         if not operateur:
             raise Exception(CustomError.USER_NOT_FOUND_EXCEPTION)
@@ -37,7 +38,7 @@ def login_view(request):
         response = LDAPQuery.do_login(request, login, password, operateur)
 
     except Exception as error:
-        #log.error(str(error))
+        # log.error(str(error))
         request.response.status = 403
         return {'error': 'true', 'code': 403, 'message': str(error)}
 
@@ -58,7 +59,6 @@ def logout_view(request):
         return {'error': 'true', 'code': 403, 'message': str(error)}
 
     return response
-
 
 
 db_err_msg = """\
