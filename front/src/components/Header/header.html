@@ -6,29 +6,29 @@
 
 
             <nav class="menu">
-                <md-menu md-align-trigger>
-                    <md-button md-menu-trigger v-on:click="goTo('/affaires')">affaires</md-button>
-              
-                    <md-menu-content>
-                      <md-menu-item>My Item 1</md-menu-item>
-                      <md-menu-item>My Item 2</md-menu-item>
-                    </md-menu-content>
-                  </md-menu>
-              
-                  <md-menu md-align-trigger>
-                    <md-button md-menu-trigger v-on:click="goTo('/numeros')">numéros</md-button>
-                  </md-menu>
-              
-                  <md-menu md-align-trigger>
-                    <md-button md-menu-trigger v-on:click="goTo('/clients')">clients</md-button>
-                  </md-menu>
-              
-                  <md-menu md-align-trigger>
-                    <md-button md-menu-trigger v-on:click="goTo('/about')">à propos</md-button>
-                  </md-menu>              
-                </nav>
+              <md-menu md-align-trigger>
+                  <md-button md-menu-trigger v-on:click="goTo('/affaires')">affaires</md-button>
+            
+                <md-menu-content>
+                  <md-menu-item>My Item 1</md-menu-item>
+                  <md-menu-item>My Item 2</md-menu-item>
+                </md-menu-content>
+              </md-menu>
+            
+              <md-menu md-align-trigger>
+                <md-button md-menu-trigger v-on:click="goTo('/numeros')">numéros</md-button>
+              </md-menu>
+            
+              <md-menu md-align-trigger>
+                <md-button md-menu-trigger v-on:click="goTo('/clients')">clients</md-button>
+              </md-menu>
+            
+              <md-menu md-align-trigger>
+                <md-button md-menu-trigger v-on:click="goTo('/apropos')">à propos</md-button>
+              </md-menu>              
+            </nav>
 
-                <router-view />
+            
 
             <div class="user" v-if="loggedUserName">
               <i class="material-icons md-light">account_circle</i>

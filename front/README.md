@@ -43,3 +43,7 @@ npm i axios vue-axios --save
 ```
 
 
+### Install vuelidate (form validator)
+```
+npm install vuelidate --save
+```

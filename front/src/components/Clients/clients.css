@@ -1,6 +1,7 @@
 .clients{
     width: 100%;
     float: left;
+    overflow: auto;
 }
 
 
@@ -8,4 +9,13 @@
     width: 150px !important;
     min-width: 150px !important;
 }
+
+/*
+.clients .clientsResults .md-table{
+    overflow: hidden;
+}
+
+.clients .clientsResults .md-table-content{
+    width: 100%;
+}*/
 
