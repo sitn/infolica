@@ -50,10 +50,10 @@
 
                 <router-view />
 
-            <div class="user">
+            <div class="user" v-if="loggedUserName">
               <i class="material-icons md-light">account_circle</i>
-              <span class="userName">Prénom Nom</span>
-              <i class="material-icons md-light">exit_to_app</i>
+              <span class="userName">{{loggedUserName}}</span>
+              <i class="material-icons md-light" v-on:click="callLogout" title="Déconnexion">exit_to_app</i>
             </div>
         </md-card-content>
       </md-card>
