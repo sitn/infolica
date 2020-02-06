@@ -1,5 +1,5 @@
 from pyramid.view import view_config
-from pyramid.response import Response
+import pyramid.httpexceptions as exc
 from sqlalchemy.exc import DBAPIError
 from .. import models
 from sqlalchemy import exc

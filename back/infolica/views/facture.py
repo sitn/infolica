@@ -1,5 +1,5 @@
 from pyramid.view import view_config
-from pyramid.response import Response
+import pyramid.httpexceptions as exc
 from ..scripts.utils import Utils
 from ..models import Constant
 import transaction
@@ -26,7 +26,7 @@ def factures_view(request):
         return Utils.serialize_many(query)
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
+        return exc.HTTPBadRequest(e)
 
 
 """ Return all factures in affaire"""
@@ -40,7 +40,7 @@ def affaires_factures_view(request):
         return Utils.serialize_many(query)
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
+        return exc.HTTPBadRequest(e)
 
 
 """ Add new facture"""
@@ -58,7 +58,7 @@ def factures_new_view(request):
 
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
+        return exc.HTTPBadRequest(e)
 
 
 """ Update facture"""
@@ -88,7 +88,7 @@ def factures_update_view(request):
 
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
+        return exc.HTTPBadRequest(e)
 
 
 """ Delete facture"""
@@ -111,106 +111,6 @@ def factures_delete_view(request):
 
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
+        return exc.HTTPBadRequest(e)
 
 
-###########################################################
-# EMOLUMENTS
-###########################################################
-
-""" Return all emoluments in facture"""
-@view_config(route_name='facture_emoluments_by_facture_id', request_method='GET', renderer='json')
-def facture_emoluments_view(request):
-    facture_id = request.matchdict["id"]
-
-    try:
-        query = request.dbsession.query(models.VEmolumentsFactures)\
-            .filter(models.VEmolumentsFactures.facture_id == facture_id).all()
-        return Utils.serialize_many(query)
-    except DBAPIError as e:
-        log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
-
-
-""" Add new emolument_facture"""
-@view_config(route_name='emolument_facture', request_method='POST', renderer='json')
-@view_config(route_name='emolument_facture_s', request_method='POST', renderer='json')
-def emolument_facture_new_view(request):
-
-    record = models.EmolumentFacture()
-    record = Utils.set_model_record(record, request.params)
-
-    try:
-        with transaction.manager:
-            request.dbsession.add(record)
-            transaction.commit()
-            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.EmolumentFacture.__tablename__))
-
-    except DBAPIError as e:
-        log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
-
-
-""" Update emolument_facture"""
-@view_config(route_name='emolument_facture', request_method='PUT', renderer='json')
-@view_config(route_name='emolument_facture_s', request_method='PUT', renderer='json')
-def emolument_facture_update_view(request):
-    emolument_facture_id = request.params['id'] if 'id' in request.params else None
-
-    # Get the facture
-    record = request.dbsession.query(models.EmolumentFacture).filter(
-        models.EmolumentFacture.id == emolument_facture_id).first()
-
-    if not record:
-        raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.EmolumentFacture.__tablename__, emolument_facture_id))
-
-    record = Utils.set_model_record(record, request.params)
-
-    try:
-        with transaction.manager:
-            transaction.commit()
-            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.EmolumentFacture.__tablename__))
-
-    except DBAPIError as e:
-        log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
-
-
-""" Delete emolument_facture"""
-@view_config(route_name='emolument_facture_by_id', request_method='DELETE', renderer='json')
-def emolument_facture_delete_view(request):
-    try:
-        id = request.matchdict['id']
-
-        record = request.dbsession.query(models.EmolumentFacture).filter(
-            models.EmolumentFacture.id == id).first()
-
-        if not record:
-            raise CustomError(
-                CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.EmolumentFacture.__tablename__, id))
-
-        with transaction.manager:
-            request.dbsession.delete(record)
-            transaction.commit()
-            return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.EmolumentFacture.__tablename__))
-
-    except DBAPIError as e:
-        log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
-
-
-db_err_msg = """\
-Pyramid is having a problem using your SQL database.  The problem
-might be caused by one of the following things:
-
-1.  You may need to initialize your database tables with `alembic`.
-    Check your README.txt for descriptions and try to run it.
-
-2.  Your database server may not be running.  Check that the
-    database server referred to by the "sqlalchemy.url" setting in
-    your "development.ini" file is running.
-
-After you fix the problem, please restart the Pyramid application to
-try it again.
-"""

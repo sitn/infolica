@@ -67,13 +67,17 @@ def includeme(config):
     config.add_route('etapes_by_id','/infolica/api/etapes/{id}')
     config.add_route('etapes','/infolica/api/etapes')
     config.add_route('etapes_s','/infolica/api/etapes/')
+    config.add_route('etapes_index','/infolica/api/etapes_index')
+    config.add_route('etapes_index_s','/infolica/api/etapes_index/')
     config.add_route('affaire_etapes_by_affaire_id','/infolica/api/affaire_etapes/{id}')
     #Numeros affaires
     config.add_route('numero_affaires_by_numero_id','/infolica/api/numeros_affaire/{id}')
-    #Remarque affaire
+    #Preavis affaire
     config.add_route('preavis_by_id','/infolica/api/preavis/{id}')
     config.add_route('preavis','/infolica/api/preavis')
     config.add_route('preavis_s','/infolica/api/preavis/')
+    config.add_route('preavis_type','/infolica/api/preavis_type')
+    config.add_route('preavis_type_s','/infolica/api/preavis_type/')
     config.add_route('affaire_preavis_by_affaire_id','/infolica/api/affaire_preavis/{id}')
     #Documents affaire
     config.add_route('affaire_documents_by_affaire_id','/infolica/api/affaire_documents/{id}')
@@ -86,4 +90,6 @@ def includeme(config):
     config.add_route('envois_by_id','/infolica/api/envois/{id}')
     config.add_route('envois','/infolica/api/envois')
     config.add_route('envois_s','/infolica/api/envois/')
+    config.add_route('envois_types','/infolica/api/envois_type')
+    config.add_route('envois_types_s','/infolica/api/envois_type/')
     config.add_route('affaire_envois_by_affaire_id','/infolica/api/affaire_envois/{id}')
