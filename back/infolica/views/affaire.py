@@ -414,6 +414,97 @@ def affaire_documents_view(request):
     return documents
 
 
+###########################################################
+# ENVOIS AFFAIRE
+###########################################################
+
+""" GET envois affaire"""
+@view_config(route_name='affaire_envois_by_affaire_id', request_method='GET', renderer='json')
+def affaire_preavis_view(request):
+    affaire_id = request.matchdict['id']
+
+    try:
+        records = request.dbsession.query(models.VEnvois)\
+            .filter(models.VEnvois.affaire_id == affaire_id).all()
+
+        return Utils.serialize_many(records)
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" POST envois"""
+@view_config(route_name='envois', request_method='POST', renderer='json')
+@view_config(route_name='envois_s', request_method='POST', renderer='json')
+def preavis_new_view(request):
+
+    model = models.Envoi()
+    model = Utils.set_model_record(model, request.params)
+
+    try:
+        with transaction.manager:
+            request.dbsession.add(model)
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Envoi.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+# """ UPDATE preavis affaire"""
+# @view_config(route_name='preavis', request_method='PUT', renderer='json')
+# @view_config(route_name='preavis_s', request_method='PUT', renderer='json')
+# def preavis_update_view(request):
+#     preavis_id = request.params['id'] if 'id' in request.params else None
+#     print(preavis_id)
+#     record = request.dbsession.query(models.Preavis).filter(
+#         models.Preavis.id == preavis_id).first()
+#     print("toto")
+#     if not record:
+#         raise CustomError(
+#             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Preavis.__tablename__, preavis_id))
+
+#     record = Utils.set_model_record(record, request.params)
+
+#     try:
+#         with transaction.manager:
+#             transaction.commit()
+#             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Preavis.__tablename__))
+
+#     except DBAPIError as e:
+#         log.error(e)
+#         return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+# """ DELETE preavis affaire"""
+# @view_config(route_name='preavis_by_id', request_method='DELETE', renderer='json')
+# def preavis_delete_view(request):
+#     preavis_id = request.matchdict['id']
+
+#     record = request.dbsession.query(models.Preavis).filter(
+#         models.Preavis.id == preavis_id).first()
+
+#     if not record:
+#         raise CustomError(
+#             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Preavis.__tablename__, preavis_id))
+
+#     try:
+#         with transaction.manager:
+#             request.dbsession.delete(record)
+#             # Commit transaction
+#             transaction.commit()
+#             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Preavis.__tablename__))
+
+#     except DBAPIError as e:
+#         log.error(e)
+#         return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+
+
+
 db_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem
 might be caused by one of the following things:

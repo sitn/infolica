@@ -194,12 +194,19 @@ class RemarqueAffaire(Base):
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
-class Document(Base):
+class Document(Base): ## DEPRECIE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     __tablename__ = 'document'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     chemin = Column(Text, nullable=False)
+
+
+class EnvoiType(Base):
+    __tablename__ = 'envoi_type'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
 
 
 class Envoi(Base):
@@ -209,10 +216,11 @@ class Envoi(Base):
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
     client_par_id = Column(BigInteger, ForeignKey(Client.id))
+    type_id = Column(BigInteger, ForeignKey(EnvoiType.id), nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
-class EnvoiDocument(Base):
+class EnvoiDocument(Base): ## DEPRECIE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     __tablename__ = 'envoi_document'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
@@ -554,8 +562,13 @@ class VEnvois(Base):
     __table_args__ = {'schema': 'infolica'}
     affaire_id = Column(BigInteger, primary_key=True)
     affaire_nom = Column(Text)
-    client = Column(Text, primary_key=True)
+    client_id = Column(BigInteger, primary_key=True)
+    client_entreprise = Column(Text)
+    client_titre = Column(Text)
+    client_nom = Column(Text)
+    client_prenom = Column(Text)
     document_nom = Column(Text, primary_key=True)
+    document_chemin = Column(Text, primary_key=True)
     date = Column(Date, primary_key=True)
 
 
