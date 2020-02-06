@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 from pyramid.response import Response
-from sqlalchemy import func
+from sqlalchemy import func, and_
 from sqlalchemy.exc import DBAPIError
 
 from .. import models
@@ -9,20 +9,28 @@ from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
 
+import os
+from datetime import datetime
+
 import logging
 log = logging.getLogger(__name__)
+
+
+###########################################################
+# AFFAIRE
+###########################################################
 
 """ Return all affaires"""
 @view_config(route_name='affaires', request_method='GET', renderer='json')
 @view_config(route_name='affaires_s', request_method='GET', renderer='json')
 def affaires_view(request):
     try:
-        query = request.dbsession.query(models.Affaire).all()
+        query = request.dbsession.query(models.VAffaire).all()
         return Utils.serialize_many(query)
     except DBAPIError as e:
+        print(e)
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
-
 
 
 """ Return affaires by id"""
@@ -30,8 +38,8 @@ def affaires_view(request):
 def affaire_by_id_view(request):
     try:
         id = request.matchdict['id']
-        query = request.dbsession.query(models.Affaire)
-        one = query.filter(models.Affaire.id == id).first()
+        query = request.dbsession.query(models.VAffaire)
+        one = query.filter(models.VAffaire.id == id).first()
         return Utils.serialize_one(one)
     except DBAPIError as e:
         log.error(e)
@@ -45,12 +53,15 @@ def affaires_search_view(request):
     try:
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
-        conditions = Utils.get_search_conditions(models.Affaire, request.params)
-        query = request.dbsession.query(models.Affaire).filter(*conditions).all()[:search_limit]
+        conditions = Utils.get_search_conditions(
+            models.VAffaire, request.params)
+        query = request.dbsession.query(models.VAffaire).filter(
+            *conditions).all()[:search_limit]
         return Utils.serialize_many(query)
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
+
 
 """ Return all types affaires"""
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
@@ -64,83 +75,343 @@ def types_affaires_view(request):
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
-
 """ Add new affaire"""
 @view_config(route_name='affaires', request_method='POST', renderer='json')
 def affaires_new_view(request):
+
+    model = models.Affaire()
+    model = Utils.set_model_record(model, request.params)
+
     try:
-
-        model = models.Affaire()
-        model = Utils.set_model_record(model, request.params)
-
         with transaction.manager:
             request.dbsession.add(model)
-
             # Commit transaction
             transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
 
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
 
 """ Update affaire"""
 @view_config(route_name='affaires', request_method='PUT', renderer='json')
 @view_config(route_name='affaires_s', request_method='PUT', renderer='json')
 def affaires_update_view(request):
+    # id_affaire
+    id_affaire = request.params['id_affaire'] if 'id_affaire' in request.params else None
+
+    # Get the affaire
+    record = request.dbsession.query(models.Affaire).filter(
+        models.Affaire.id == id_affaire).first()
+
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Affaire.__tablename__, id_affaire))
+
+    record = Utils.set_model_record(record, request.params)
+
     try:
-
-        # id_affaire
-        id_affaire = None
-
-        if 'id_affaire' in request.params:
-            id_affaire = request.params['id_affaire']
-
-        # Get the affaire
-        affaire_record = request.dbsession.query(models.Affaire).filter(
-            models.Affaire.id == id_affaire).first()
-
-        if not affaire_record:
-            raise CustomError(
-                CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Affaire.__tablename__, id_affaire))
-
-        affaire_record = Utils.set_model_record(affaire_record, request.params)
-
         with transaction.manager:
-
             # Commit transaction
             transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
 
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
 
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
+
+# """ Delete affaire"""
+# @view_config(route_name='affaire_by_id', request_method='DELETE', renderer='json')
+# def affaires_delete_view(request):
+#     # id_affaire
+#     id_affaire = request.params['id_affaire'] if 'id_affaire' in request.params else None
+
+#     # Get the affaire
+#     record = request.dbsession.query(models.Affaire).filter(
+#         models.Affaire.id == id_affaire).first()
+
+#     if not record:
+#         raise CustomError(
+#             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Affaire.__tablename__, id_affaire))
+
+#     try:
+#         with transaction.manager:
+#             request.dbsession.delete(record)
+#             # Commit transaction
+#             transaction.commit()
+#             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Affaire.__tablename__))
+
+#     except DBAPIError as e:
+#         log.error(e)
+#         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
-""" Delete affaire"""
-@view_config(route_name='affaire_by_id', request_method='DELETE', renderer='json')
-def affaires_delete_view(request):
+###########################################################
+# REMARQUES AFFAIRE
+###########################################################
+
+""" GET remarque affaire"""
+@view_config(route_name='affaires_remarques_by_affaire_id', request_method='GET', renderer='json')
+def affaires_remarques_view(request):
+    affaire_id = request.matchdict['id']
+
     try:
-        id = request.matchdict['id']
+        records = request.dbsession.query(models.RemarqueAffaire, models.Operateur)\
+            .filter(models.RemarqueAffaire.affaire_id == affaire_id)\
+            .filter(models.RemarqueAffaire.operateur_id == models.Operateur.id).all()
 
-        query = request.dbsession.query(models.Affaire)
-        affaire = query.filter(models.Affaire.id == id).first()
+        ra_json = list()
+        for ra, op in records:
+            ra_json.append(Utils._params(nom=op.nom, prenom=op.prenom,
+                                         remarque=ra.remarque, date=ra.date.isoformat()))
 
-        if not affaire:
-            raise CustomError(
-                CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Affaire.__tablename__, id))
-
-        with transaction.manager:
-            request.dbsession.delete(affaire)
-            # Commit transaction
-            transaction.commit()
+        return ra_json
 
     except DBAPIError as e:
         log.error(e)
         return Response(db_err_msg, content_type='text/plain', status=500)
-    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Affaire.__tablename__))
+
+
+""" POST remarque affaire"""
+@view_config(route_name='remarques_affaires', request_method='POST', renderer='json')
+@view_config(route_name='remarques_affaires_s', request_method='POST', renderer='json')
+def affaires_remarques_new_view(request):
+
+    model = models.RemarqueAffaire()
+    model = Utils.set_model_record(model, request.params)
+
+    try:
+        with transaction.manager:
+            request.dbsession.add(model)
+            # Commit transaction
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.RemarqueAffaire.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" PUT remarque affaire"""
+@view_config(route_name='remarques_affaires', request_method='PUT', renderer='json')
+@view_config(route_name='remarques_affaires_s', request_method='PUT', renderer='json')
+def remarques_affaires_update_view(request):
+    remarque_affaire_id = request.params['id'] if 'id' in request.params else None
+
+    record = request.dbsession.query(models.RemarqueAffaire).filter(
+        models.RemarqueAffaire.id == remarque_affaire_id).first()
+
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.RemarqueAffaire.__tablename__, remarque_affaire_id))
+
+    record = Utils.set_model_record(record, request.params)
+
+    try:
+        with transaction.manager:
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.RemarqueAffaire.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" DELETE remarque affaire"""
+@view_config(route_name='remarques_affaires_by_id', request_method='DELETE', renderer='json')
+def remarques_affaires_delete_view(request):
+    remarque_affaire_id = request.matchdict['id']
+
+    record = request.dbsession.query(models.RemarqueAffaire).filter(
+        models.RemarqueAffaire.id == remarque_affaire_id).first()
+
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.RemarqueAffaire.__tablename__, remarque_affaire_id))
+
+    try:
+        with transaction.manager:
+            request.dbsession.delete(record)
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.RemarqueAffaire.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+###########################################################
+# ETAPES AFFAIRE
+###########################################################
+
+""" GET etapes affaire"""
+@view_config(route_name='affaire_etapes_by_affaire_id', request_method='GET', renderer='json')
+def affaires_etapes_view(request):
+    affaire_id = request.matchdict['id']
+
+    try:
+        records = request.dbsession.query(models.VEtapesAffaires)\
+            .filter(models.VEtapesAffaires.affaire_id == affaire_id).all()
+
+        return Utils.serialize_many(records)
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" POST remarque affaire"""
+@view_config(route_name='etapes', request_method='POST', renderer='json')
+@view_config(route_name='etapes_s', request_method='POST', renderer='json')
+def etapes_new_view(request):
+
+    model = models.AffaireEtape()
+    model = Utils.set_model_record(model, request.params)
+
+    try:
+        with transaction.manager:
+            request.dbsession.add(model)
+            # Commit transaction
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.AffaireEtape.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" DELETE remarque affaire"""
+@view_config(route_name='etapes_by_id', request_method='DELETE', renderer='json')
+def etapes_delete_view(request):
+    affaire_etape_id = request.matchdict['id']
+
+    record = request.dbsession.query(models.AffaireEtape).filter(
+        models.AffaireEtape.id == affaire_etape_id).first()
+
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.AffaireEtape.__tablename__, affaire_etape_id))
+
+    try:
+        with transaction.manager:
+            request.dbsession.delete(record)
+            # Commit transaction
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.AffaireEtape.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+###########################################################
+# PREAVIS AFFAIRE
+###########################################################
+
+""" GET preavis affaire"""
+@view_config(route_name='affaire_preavis_by_affaire_id', request_method='GET', renderer='json')
+def affaire_preavis_view(request):
+    affaire_id = request.matchdict['id']
+
+    try:
+        records = request.dbsession.query(models.VAffairesPreavis)\
+            .filter(models.VAffairesPreavis.affaire_id == affaire_id).all()
+
+        return Utils.serialize_many(records)
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" POST preavis affaire"""
+@view_config(route_name='preavis', request_method='POST', renderer='json')
+@view_config(route_name='preavis_s', request_method='POST', renderer='json')
+def preavis_new_view(request):
+
+    model = models.Preavis()
+    model = Utils.set_model_record(model, request.params)
+
+    try:
+        with transaction.manager:
+            request.dbsession.add(model)
+            # Commit transaction
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Preavis.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" UPDATE preavis affaire"""
+@view_config(route_name='preavis', request_method='PUT', renderer='json')
+@view_config(route_name='preavis_s', request_method='PUT', renderer='json')
+def preavis_update_view(request):
+    preavis_id = request.params['id'] if 'id' in request.params else None
+    print(preavis_id)
+    record = request.dbsession.query(models.Preavis).filter(
+        models.Preavis.id == preavis_id).first()
+    print("toto")
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Preavis.__tablename__, preavis_id))
+
+    record = Utils.set_model_record(record, request.params)
+
+    try:
+        with transaction.manager:
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Preavis.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+""" DELETE preavis affaire"""
+@view_config(route_name='preavis_by_id', request_method='DELETE', renderer='json')
+def preavis_delete_view(request):
+    preavis_id = request.matchdict['id']
+
+    record = request.dbsession.query(models.Preavis).filter(
+        models.Preavis.id == preavis_id).first()
+
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Preavis.__tablename__, preavis_id))
+
+    try:
+        with transaction.manager:
+            request.dbsession.delete(record)
+            # Commit transaction
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Preavis.__tablename__))
+
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
+
+
+###########################################################
+# DOCUMENTS (LISTE) AFFAIRE
+###########################################################
+
+""" GET documents affaire"""
+@view_config(route_name='affaire_documents_by_affaire_id', request_method='GET', renderer='json')
+def affaire_documents_view(request):
+    affaire_id = request.matchdict['id']
+
+    doc_path = os.path.join(Constant.AFFAIRE_DIRECTORY, affaire_id)
+    documents = list()
+    for root, dirs, files in os.walk(doc_path):
+        for file_i in files:
+            file_path = os.path.join(root, file_i)
+            documents.append(Utils._params(nom=file_i, dossier=os.path.relpath(root, doc_path), chemin=file_path,
+                                           creation=datetime.fromtimestamp(os.path.getctime(file_path)).strftime("%d.%m.%Y")))
+    return documents
 
 
 db_err_msg = """\

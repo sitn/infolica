@@ -78,7 +78,6 @@ def noreference_error(exc, request):
     return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
 
 
-
 ########################################################
 # Common InvalidRequestError, return message
 ########################################################
@@ -109,7 +108,6 @@ def sqlalchemy_error(exc, request):
     return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
 
 
-
 ########################################################
 # Common HTTPForbidden return message
 ########################################################
@@ -118,4 +116,3 @@ def http_forbidden_error(exc, request):
     log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
     request.response.status = 403
     return {'error': 'true', 'code': 403, 'message': CustomError.NOT_AUTHORIZED_EXCEPTION}
-
