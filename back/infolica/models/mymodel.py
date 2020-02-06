@@ -560,16 +560,16 @@ class VAffaire(Base):
 class VEnvois(Base):
     __tablename__ = 'v_envois'
     __table_args__ = {'schema': 'infolica'}
-    affaire_id = Column(BigInteger, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
+    affaire_id = Column(BigInteger)
     affaire_nom = Column(Text)
-    client_id = Column(BigInteger, primary_key=True)
+    client_id = Column(BigInteger)
     client_entreprise = Column(Text)
     client_titre = Column(Text)
     client_nom = Column(Text)
     client_prenom = Column(Text)
-    document_nom = Column(Text, primary_key=True)
-    document_chemin = Column(Text, primary_key=True)
-    date = Column(Date, primary_key=True)
+    envoi_type = Column(BigInteger)
+    date = Column(Date)
 
 
 class VEtapesAffaires(Base):

@@ -420,7 +420,7 @@ def affaire_documents_view(request):
 
 """ GET envois affaire"""
 @view_config(route_name='affaire_envois_by_affaire_id', request_method='GET', renderer='json')
-def affaire_preavis_view(request):
+def affaire_envois_view(request):
     affaire_id = request.matchdict['id']
 
     try:
@@ -437,7 +437,7 @@ def affaire_preavis_view(request):
 """ POST envois"""
 @view_config(route_name='envois', request_method='POST', renderer='json')
 @view_config(route_name='envois_s', request_method='POST', renderer='json')
-def preavis_new_view(request):
+def envois_new_view(request):
 
     model = models.Envoi()
     model = Utils.set_model_record(model, request.params)
@@ -453,29 +453,29 @@ def preavis_new_view(request):
         return Response(db_err_msg, content_type='text/plain', status=500)
 
 
-# """ UPDATE preavis affaire"""
-# @view_config(route_name='preavis', request_method='PUT', renderer='json')
-# @view_config(route_name='preavis_s', request_method='PUT', renderer='json')
-# def preavis_update_view(request):
-#     preavis_id = request.params['id'] if 'id' in request.params else None
-#     print(preavis_id)
-#     record = request.dbsession.query(models.Preavis).filter(
-#         models.Preavis.id == preavis_id).first()
-#     print("toto")
-#     if not record:
-#         raise CustomError(
-#             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Preavis.__tablename__, preavis_id))
+""" UPDATE envoi"""
+@view_config(route_name='envois', request_method='PUT', renderer='json')
+@view_config(route_name='envois_s', request_method='PUT', renderer='json')
+def envois_update_view(request):
+    
+    envoi_id = request.params['id'] if 'id' in request.params else None
+    record = request.dbsession.query(models.Envoi).filter(
+        models.Envoi.id == envoi_id).first()
+    
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Envoi.__tablename__, preavis_id))
 
-#     record = Utils.set_model_record(record, request.params)
+    record = Utils.set_model_record(record, request.params)
 
-#     try:
-#         with transaction.manager:
-#             transaction.commit()
-#             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Preavis.__tablename__))
+    try:
+        with transaction.manager:
+            transaction.commit()
+            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Envoi.__tablename__))
 
-#     except DBAPIError as e:
-#         log.error(e)
-#         return Response(db_err_msg, content_type='text/plain', status=500)
+    except DBAPIError as e:
+        log.error(e)
+        return Response(db_err_msg, content_type='text/plain', status=500)
 
 
 # """ DELETE preavis affaire"""
