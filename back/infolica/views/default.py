@@ -25,6 +25,8 @@ def test_error(exc, request):
 ########################################################
 @view_config(route_name='login', request_method='OPTIONS', renderer='json')
 @view_config(route_name='login_s', request_method='OPTIONS', renderer='json')
+@view_config(route_name='recherche_clients', request_method='OPTIONS', renderer='json')
+@view_config(route_name='recherche_clients_s', request_method='OPTIONS', renderer='json')
 def options_response_view(request):
     return ''
 
