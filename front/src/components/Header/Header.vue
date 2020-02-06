@@ -32,6 +32,14 @@ export default {
      */
     callLogout(){
       this.$root.$emit('infolica_user_logout');
+    },
+
+     /**
+     * Go to route
+     */
+    goTo(route){
+      if(this.$router && this.$router.currentRoute && this.$router.currentRoute.path != route)
+        this.$router.push(route);
     }
   },
 

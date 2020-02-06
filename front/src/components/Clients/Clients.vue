@@ -3,6 +3,8 @@
 
 
 <script>
+import {checkLogged} from '@/services/helper'
+
 export default {
   name: 'Clients',
   props: {},
@@ -39,6 +41,7 @@ export default {
   },
 
   mounted: function(){
+    checkLogged();
     this.searchClients();
   }
 }
