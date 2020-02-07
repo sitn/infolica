@@ -9,7 +9,6 @@ import 'vue-material/dist/vue-material.css'
 import VueRouter from 'vue-router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-
 import routes from './routes';
 
 Vue.config.productionTip = false;
@@ -23,6 +22,7 @@ const router = new VueRouter({
   mode: 'history',
   routes: routes
 });
+
 
 
 new Vue({
