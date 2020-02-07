@@ -30,7 +30,7 @@ def affaires_remarques_view(request):
             .filter(models.RemarqueAffaire.affaire_id == affaire_id)\
             .filter(models.RemarqueAffaire.operateur_id == models.Operateur.id).all()
 
-        ra_json = clist()
+        ra_json = list()
         for ra, op in records:
             ra_json.append(Utils._params(nom=op.nom, prenom=op.prenom,
                                          remarque=ra.remarque, date=ra.date.isoformat()))
