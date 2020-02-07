@@ -44,7 +44,7 @@ export default {
             this.$http.get(
               process.env.VUE_APP_API_URL + process.env.VUE_APP_LOGOUT_ENDPOINT, 
               {
-                //withCredentials: true,
+                withCredentials: true,
                 headers: {'Accept': 'application/json'}
               }
             )
@@ -56,6 +56,7 @@ export default {
               alert("error : " + err.message);  
             })
           },
+
 
           /**
            * Process login
@@ -78,7 +79,7 @@ export default {
     mounted: function(){
 
       //Chek a user is logged in
-      this.$root.$on('infolica_check_user_logged_in', () =>{
+      /*this.$root.$on('infolica_check_user_logged_in', () =>{
         var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
 
         if(!session_user){
@@ -86,9 +87,9 @@ export default {
           this.processLogout();  
         }
         else{
-          this.processLogout(session_user);
+          this.processLogin(session_user);
         }
-      });
+      });*/
 
       //Logout
       this.$root.$on('infolica_user_logout', () =>{        
