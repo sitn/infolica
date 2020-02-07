@@ -72,7 +72,9 @@ export default {
           processLogout () {
             localStorage.setItem('infolica_user', null);
             this.$root.$emit('infolica_user_logged_out');
-            this.$router.push('/login');
+
+            if(this.$router && this.$router.currentRoute && this.$router.currentRoute.path != '/login')
+              this.$router.push('/login');
           }
     },
 

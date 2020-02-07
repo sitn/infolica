@@ -9,8 +9,8 @@ import { validationMixin } from 'vuelidate'
   import {
     required,
     email,
-    minLength,
-    maxLength
+    date,
+    minLength
   } from 'vuelidate/lib/validators'
 
   export default {
@@ -18,35 +18,45 @@ import { validationMixin } from 'vuelidate'
     mixins: [validationMixin],
     data: () => ({
       form: {
-        firstName: null,
-        lastName: null,
-        gender: null,
-        age: null,
-        email: null,
+        type_client: null,
+        entreprise: null,
+        titre: null,
+        nom: null,
+        prenom: null,
+        represente_par: null,
+        adresse: null,
+        npa: null,
+        localite: null,
+        case_postale: null,
+        tel_fixe: null,
+        fax: null,
+        tel_portable: null,
+        mail: null,
+        entree: null,
+        no_sap: null,
+        no_bdp_bdee: null
       },
+
       userSaved: false,
       sending: false,
       lastUser: null
     }),
     validations: {
       form: {
-        firstName: {
-          required,
-          minLength: minLength(3)
-        },
-        lastName: {
-          required,
-          minLength: minLength(3)
-        },
-        age: {
-          required,
-          maxLength: maxLength(3)
-        },
-        gender: {
+        type_client: {
           required
         },
-        email: {
+        nom: {          
+          minLength: minLength(3)
+        },
+        prenom: {
+          minLength: minLength(3)
+        },
+        entree: {
           required,
+          date
+        },
+        email: {
           email
         }
       }
@@ -64,11 +74,23 @@ import { validationMixin } from 'vuelidate'
       },
       clearForm () {
         this.$v.$reset()
-        this.form.firstName = null
-        this.form.lastName = null
-        this.form.age = null
-        this.form.gender = null
-        this.form.email = null
+        this.form.type_client = null;
+        this.form.entreprise = null;
+        this.form.titre = null;
+        this.form.nom = null;
+        this.form.prenom = null;
+        this.form.represente_par = null;
+        this.form.adresse = null;
+        this.form.npa = null;
+        this.form.localite = null;
+        this.form.case_postale = null;
+        this.form.tel_fixe = null;
+        this.form.fax = null;
+        this.form.tel_portable = null;
+        this.form.mail = null;
+        this.form.entree = null;
+        this.form.no_sap = null;
+        this.form.no_bdp_bdee = null;
       },
       saveUser () {
         this.sending = true

@@ -13,7 +13,9 @@ export default {
       search: {
         nom: null,
         prenom: null,
+        entreprise: null,
         adresse: null,
+        localite: null,
         mail: null
       }
   }),
@@ -22,17 +24,28 @@ export default {
          * Search clients
         */
         async searchClients () {
-          /*var formData = new FormData();
-          formData.append("login", this.$refs.username.value);
-          formData.append("password", this.$refs.userpass.value);*/
+          var formData = new FormData();
+          if(this.search.nom)
+            formData.append("nom", this.search.nom);
+
+          if(this.search.prenom)
+            formData.append("prenom", this.search.prenom);
+
+          if(this.search.entreprise)
+            formData.append("entreprise", this.search.entreprise);
+
+          if(this.search.adresse)
+            formData.append("adresse", this.search.adresse);
+
+          if(this.search.localite)
+            formData.append("localite", this.search.localite);
+
+          if(this.search.mail)
+            formData.append("mail", this.search.mail);
 
           this.$http.post(
             process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_ENDPOINT, 
-            {nom: 'Marc'},
-            {
-              //withCredentials: true,
-              headers: {'Accept': 'application/json'}
-            }
+            formData
           )
           .then(response =>{
             if(response && response.data){
@@ -46,11 +59,16 @@ export default {
         },
 
         /**
-         * Redirect to new client form
+         * Clear the form
          */
-        launchNewClient(){
-          this.$router.push('/clients/new');
-        }
+        clearForm () {
+          this.search.nom = null;
+          this.search.prenom = null;
+          this.search.entreprise = null;
+          this.search.adresse = null;
+          this.search.localite = null;
+          this.search.mail = null;
+        },
   },
 
   mounted: function(){
