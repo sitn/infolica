@@ -1,15 +1,6 @@
 from datetime import datetime
-from pyramid.view import view_config
-from pyramid.response import Response
-
-from pyramid.view import exception_view_config
-
-from pyramid.httpexceptions import (
-    HTTPOk,
-    HTTPException,
-    HTTPBadRequest
-)
-
+from pyramid.view import view_config, exception_view_config
+import pyramid.httpexceptions as exc
 from sqlalchemy.exc import DBAPIError
 
 from .. import models
@@ -28,10 +19,11 @@ log = logging.getLogger(__name__)
 def types_clients_view(request):
     try:
         query = request.dbsession.query(models.ClientType).all()
+        return Utils.serialize_many(query)
+
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
-    return Utils.serialize_many(query)
+        return exc.HTTPBadRequest(e)
 
 
 """ Return all clients"""
@@ -41,10 +33,11 @@ def clients_view(request):
     result = []
     try:
         query = request.dbsession.query(models.Client).all()
+        return Utils.serialize_many(query)
+
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
-    return Utils.serialize_many(query)
+        return exc.HTTPBadRequest(e)
 
 
 """ Return client by id"""
@@ -54,10 +47,11 @@ def client_by_id_view(request):
         id = request.matchdict['id']
         query = request.dbsession.query(models.Client).filter(
             models.Client.id == id).first()
+        return Utils.serialize_one(query)
+
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
-    return Utils.serialize_one(query)
+        return exc.HTTPBadRequest(e)
 
 
 """ Search clients"""
@@ -71,9 +65,10 @@ def clients_search_view(request):
         query = request.dbsession.query(models.Client).order_by(models.Client.nom, models.Client.prenom).filter(
             *conditions).all()[:search_limit]
         return Utils.serialize_many(query)
+
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
+        return exc.HTTPBadRequest(e)
 
 
 """ Add new client"""
@@ -92,7 +87,7 @@ def clients_new_view(request):
 
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
+        return exc.HTTPBadRequest(e)
 
 
 """ Update client"""
@@ -121,7 +116,7 @@ def clients_update_view(request):
 
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
+        return exc.HTTPBadRequest(e)
 
 
 """ Delete client"""
@@ -149,20 +144,5 @@ def clients_delete_view(request):
 
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
+        return exc.HTTPBadRequest(e)
 
-
-db_err_msg = """\
-Pyramid is having a problem using your SQL database.  The problem
-might be caused by one of the following things:
-
-1.  You may need to initialize your database tables with `alembic`.
-    Check your README.txt for descriptions and try to run it.
-
-2.  Your database server may not be running.  Check that the
-    database server referred to by the "sqlalchemy.url" setting in
-    your "development.ini" file is running.
-
-After you fix the problem, please restart the Pyramid application to
-try it again.
-"""

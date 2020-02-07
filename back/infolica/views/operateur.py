@@ -1,15 +1,6 @@
 from datetime import datetime
-from pyramid.view import view_config
-from pyramid.response import Response
-
-from pyramid.view import exception_view_config
-
-from pyramid.httpexceptions import (
-    HTTPOk,
-    HTTPException,
-    HTTPBadRequest
-)
-
+from pyramid.view import view_config, exception_view_config
+import pyramid.httpexceptions as exc
 from sqlalchemy.exc import DBAPIError
 
 from .. import models
@@ -29,11 +20,12 @@ def operateurs_view(request):
     result = []
     try:
         query = request.dbsession.query(models.Operateur).all()
+        return Utils.serialize_many(query)
+
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
-    return Utils.serialize_many(query)
-
+        return exc.HTTPBadRequest(e)
+    
 
 """ Return operateur by id"""
 @view_config(route_name='operateur_by_id', request_method='GET', renderer='json')
@@ -43,10 +35,11 @@ def operateur_by_id_view(request):
         id = request.matchdict['id']
         query = request.dbsession.query(models.Operateur).filter(
             models.Operateur.id == id).first()
+        return Utils.serialize_one(query)
+
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
-    return Utils.serialize_one(query)
+        return exc.HTTPBadRequest(e)
 
 
 """ Add new operateur"""
@@ -66,7 +59,7 @@ def operateurs_new_view(request):
 
     except DBAPIError as e:
         log.error(e)
-        return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+        return exc.HTTPBadRequest(e)
 
 
 """ Update operateur"""
@@ -95,7 +88,7 @@ def operateurs_update_view(request):
 
     except DBAPIError as e:
         log.error(e)
-        return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+        return exc.HTTPBadRequest(e)
 
 
 """ Delete operateur"""
@@ -122,20 +115,5 @@ def operateurs_delete_view(request):
 
     except DBAPIError as e:
         log.error(e)
-        return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+        return exc.HTTPBadRequest(e)
 
-
-db_err_msg = """\
-Pyramid is having a problem using your SQL database.  The problem
-might be caused by one of the following things:
-
-1.  You may need to initialize your database tables with `alembic`.
-    Check your README.txt for descriptions and try to run it.
-
-2.  Your database server may not be running.  Check that the
-    database server referred to by the "sqlalchemy.url" setting in
-    your "development.ini" file is running.
-
-After you fix the problem, please restart the Pyramid application to
-try it again.
-"""
