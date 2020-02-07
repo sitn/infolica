@@ -3,6 +3,7 @@ import pyramid.httpexceptions as exc
 from ..scripts.utils import Utils
 from ..models import Constant
 import transaction
+from sqlalchemy import desc
 
 from sqlalchemy.exc import DBAPIError
 from ..exceptions.custom_error import CustomError
@@ -35,6 +36,23 @@ def numeros_by_id_view(request):
         query = request.dbsession.query(models.VNumeros).filter(
             models.VNumeros.id == id).first()
         return Utils.serialize_one(query)
+
+    except DBAPIError as e:
+        log.error(e)
+        return exc.HTTPBadRequest(e)
+
+
+""" Search numeros"""
+@view_config(route_name='recherche_numeros', request_method='POST', renderer='json')
+@view_config(route_name='recherche_numeros_s', request_method='POST', renderer='json')
+def numeros_search_view(request):
+    try:
+        settings = request.registry.settings
+        search_limit = int(settings['search_limit'])
+        conditions = Utils.get_search_conditions(models.VNumeros, request.params)
+        query = request.dbsession.query(models.VNumeros).order_by(models.VNumeros.cadastre, desc(models.VNumeros.numero)).filter(
+            *conditions).all()[:search_limit]
+        return Utils.serialize_many(query)
 
     except DBAPIError as e:
         log.error(e)

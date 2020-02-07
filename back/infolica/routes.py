@@ -47,6 +47,8 @@ def includeme(config):
     #Numéros
     config.add_route('numeros','/infolica/api/numeros')
     config.add_route('numeros_s','/infolica/api/numeros/')
+    config.add_route('recherche_numeros','/infolica/api/recherche_numeros')
+    config.add_route('recherche_numeros_s','/infolica/api/recherche_numeros/')
     config.add_route('numero_by_id', '/infolica/api/numeros/{id}')
     #Réservation de numéros
     config.add_route('reservation_numeros','/infolica/api/reservation_numeros')
