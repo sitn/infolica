@@ -1,4 +1,15 @@
-.numeros{
+.numeros {
     width: 100%;
     float: left;
+}
+
+.numeros .actionsColumn {
+    width: 150px !important;
+    min-width: 150px !important;
+}
+
+.numeros .expandCollapseBtn {
+    position: absolute;
+    left: 115px;
+    top: 22px;
 }

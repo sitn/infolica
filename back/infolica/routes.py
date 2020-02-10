@@ -47,6 +47,10 @@ def includeme(config):
     #Numéros
     config.add_route('numeros','/infolica/api/numeros')
     config.add_route('numeros_s','/infolica/api/numeros/')
+    config.add_route('types_numeros','/infolica/api/types_numeros')
+    config.add_route('types_numeros_s','/infolica/api/types_numeros/')
+    config.add_route('etats_numeros','/infolica/api/etats_numeros')
+    config.add_route('etats_numeros_s','/infolica/api/etats_numeros/')
     config.add_route('recherche_numeros','/infolica/api/recherche_numeros')
     config.add_route('recherche_numeros_s','/infolica/api/recherche_numeros/')
     config.add_route('numero_by_id', '/infolica/api/numeros/{id}')
@@ -95,3 +99,6 @@ def includeme(config):
     config.add_route('envois_types','/infolica/api/envois_type')
     config.add_route('envois_types_s','/infolica/api/envois_type/')
     config.add_route('affaire_envois_by_affaire_id','/infolica/api/affaire_envois/{id}')
+    #Cadastres
+    config.add_route('cadastres','/infolica/api/cadastres')
+    config.add_route('cadastres_s','/infolica/api/cadastres/')
