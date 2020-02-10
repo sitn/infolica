@@ -1,3 +1,39 @@
 <div class="numeros">
     numeros
+
+
+
+    <!-- Results -->
+   <div class="numerosResults">
+
+    <md-card>  
+       <!-- Results Header -->
+       <md-card-header>
+          <div class="md-title">Résultats</div>
+        </md-card-header>
+ 
+       <!-- Results Content --> 
+       <md-card-content>          
+          <md-table v-model="numeros" md-sort="name" md-sort-order="desc"> 
+             <md-table-row slot="md-table-row" slot-scope="{ item }">
+                <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
+                <md-table-cell md-label="Type" md-sort-by="type">{{ item.type_numero }}</md-table-cell>
+                <md-table-cell md-label="Numero" md-sort-by="numero">{{ item.numero }}</md-table-cell>
+                <md-table-cell md-label="Suffixe" md-sort-by="suffixe">{{ item.suffixe }}</md-table-cell>
+                <md-table-cell md-label="Etat" md-sort-by="etat">{{ item.etat }}</md-table-cell>
+                <md-table-cell md-label="Actions" class="actionsColumn">
+                   <md-button class="md-icon-button">
+                      <md-icon>edit</md-icon>
+                   </md-button>
+                   <md-button class="md-icon-button">
+                      <md-icon>delete</md-icon>
+                   </md-button>
+                </md-table-cell>
+             </md-table-row>
+          </md-table>
+       </md-card-content>
+       </md-card-content>   
+     </md-card>
+
+ </div>
 </div>
