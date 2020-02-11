@@ -62,7 +62,7 @@
 
             <!-- Results Content -->
             <md-card-content>
-                <md-table v-model="numeros" md-sort="name" md-sort-order="desc">
+                <md-table v-model="numeros" md-sort="numero" md-sort-order="desc">
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
                         <md-table-cell md-label="Type" md-sort-by="type">{{ item.type_numero }}</md-table-cell>
