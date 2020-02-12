@@ -7,8 +7,6 @@ import { checkLogged } from "@/services/helper";
 // import { getCadastres, getEtatsNumeros, getTypesNumeros } from "@/services/helper";
 // import { getCadastres } from "@/services/helper";
 
-
-
 export default {
   name: "Numeros",
   props: {},
@@ -42,16 +40,17 @@ export default {
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_RECHERCHE_NUMEROS_ENDPOINT,
           formData
-        ).then(response => {
+        )
+        .then(response => {
           if (response && response.data) {
             this.numeros = response.data;
           }
-        }).catch(err => {
+        })
+        .catch(err => {
           alert("error : " + err.message);
         });
     },
-    
-    
+
     /*
      * Get Cadastres
      */
@@ -132,9 +131,9 @@ export default {
 
   mounted: function() {
     checkLogged();
+    this.getCadastres();
     this.getTypesNumeros();
     this.getEtatsNumeros();
-    this.getCadastres();
     // this.cadastre_liste = getCadastres();
     // getTypesNumeros();
     // getEtatsNumeros();

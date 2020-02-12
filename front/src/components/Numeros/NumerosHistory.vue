@@ -5,13 +5,16 @@
 <script>
 import { checkLogged } from "@/services/helper";
 
-//console.log(this.$route);
-
 export default {
   name: "NumerosHistory",
   props: {},
   data: () => ({
-    numero: []
+    cadastre_liste: [],
+    numero: [],
+    search: {
+      cadastre: null,
+      numero: null,
+    }
   }),
 
   methods: {
@@ -21,41 +24,50 @@ export default {
     async getNumeroById() {
       this.$http
         .get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT + this.$route.params.id
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
+            this.$route.params.id
         )
 
         .then(response => {
           if (response && response.data) {
             this.numero = response.data;
+            this.search.cadastre = this.numero.cadastre;
+            this.search.numero = this.numero.numero;
+            this.numero.diff = "Non"
+            if (this.numero.diff_entree && !this.numero.diff_sortie) {
+                this.numero.diff = "Oui"
+
+            }
           }
         })
 
         .catch(err => {
           alert("error: " + err.message);
         });
-      }
-      
-    // /*
-    //  * Get Cadastres
-    //  */
-    // async getCadastres() {
-    //   this.$http
-    //     .get(
-    //       process.env.VUE_APP_API_URL + process.env.VUE_APP_CADASTRES_ENDPOINT
-    //     )
+    },
 
-    //     .then(response => {
-    //       if (response && response.data) {
-    //         this.cadastre_liste = response.data.map(function(obj) {
-    //           return obj.nom;
-    //         });
-    //       }
-    //     })
+    /*
+     * Get Cadastres
+     */
+    async getCadastres() {
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_CADASTRES_ENDPOINT
+        )
 
-    //     .catch(err => {
-    //       alert("error: " + err.message);
-    //     });
-    // },
+        .then(response => {
+          if (response && response.data) {
+            this.cadastre_liste = response.data.map(function(obj) {
+              return obj.nom;
+            });
+          }
+        })
+
+        .catch(err => {
+          alert("error: " + err.message);
+        });
+    },
 
     // /*
     //  * Get Types Numeros
@@ -103,12 +115,21 @@ export default {
     //     });
     // },
 
+    /*
+     * Clear the form
+     */
+    // clearForm() {
+    //   this.search.cadastre = null;
+    //   this.search.numero = null;
+    // }
 
   },
 
   mounted: function() {
     checkLogged();
     this.getNumeroById();
+    this.getCadastres();
+
   }
 };
 </script>

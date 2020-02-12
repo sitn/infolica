@@ -9,9 +9,68 @@
                 <div class="md-title">Consultation d'immeuble</div>
             </md-card-header>
 
-            <!-- Results Content -->
+
+            <!-- Search Content -->
+
             <md-card-content>
-                <md-table v-model="paul" md-sort="numero" md-sort-order="desc">
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-small-size-30">
+                        <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste">
+                            <label>Cadastre</label>
+                        </md-autocomplete>
+                    </div>
+
+                    <div class="md-layout-item md-small-size-30">
+                        <md-field>
+                            <label>Numéro</label>
+                            <md-input v-model="search.numero" type="number"></md-input>
+                        </md-field>
+                    </div>
+
+                </div>
+
+
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-small-size-30">
+                        <md-field>
+                            <label>Type</label>
+                            <md-input v-model="numero.type_numero" readonly></md-input>
+                        </md-field>
+                    </div>
+                    <div class="md-layout-item md-small-size-30">
+                        <md-field>
+                            <label>Suffixe</label>
+                            <md-input v-model="numero.suffixe" readonly></md-input>
+                        </md-field>
+
+                    </div>
+                </div>
+
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-small-size-30">
+                        <md-field>
+                            <label>Etat</label>
+                            <md-input v-model="numero.etat" readonly></md-input>
+                        </md-field>
+                    </div>
+                    <div class="md-layout-item md-small-size-30">
+                        <md-field>
+                            <label>Différé</label>
+                            <md-input v-model="numero.diff" readonly></md-input>
+                        </md-field>
+
+                    </div>
+                </div>
+
+                <!-- Search Actions -->
+                <!-- <md-card-actions>
+                    <md-button class="md-raised" v-bind:disabled="!search.cadastre && !search.numero" v-on:click="clearForm">Réinitialiser</md-button>
+                    <md-button class="md-raised md-primary" v-on:click="getNumeroById">Rechercher</md-button>
+                </md-card-actions> -->
+            </md-card-content>
+            <!-- Results Content -->
+            <!-- <md-card-content>
+                <md-table v-model="numero" md-sort="numero" md-sort-order="desc">
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
                         <md-table-cell md-label="Type" md-sort-by="type">{{ item.type_numero }}</md-table-cell>
@@ -20,7 +79,7 @@
                         <md-table-cell md-label="Etat" md-sort-by="etat">{{ item.etat }}</md-table-cell>
                     </md-table-row>
                 </md-table>
-            </md-card-content>
+            </md-card-content> -->
         </md-card>
 
     </div>
