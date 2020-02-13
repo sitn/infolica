@@ -22,7 +22,7 @@
 
                     <div class="md-layout-item md-small-size-30">
                         <md-field>
-                            <label>Numéro</label>
+                            <label>Immeuble</label>
                             <md-input v-model="search.numero" type="number"></md-input>
                         </md-field>
                     </div>
@@ -65,13 +65,13 @@
                     <div class="md-layout-item md-small-size-30">
                         <md-field>
                             <label>Provenance</label>
-                            <!-- <md-input v-model="" readonly></md-input> -->
+                            <md-input v-model="numero_provenance" readonly></md-input>
                         </md-field>
                     </div>
                     <div class="md-layout-item md-small-size-30">
                         <md-field>
                             <label>Destination</label>
-                            <!-- <md-input v-model="" readonly></md-input> -->
+                            <md-input v-model="numero_destination" readonly></md-input>
                         </md-field>
                     </div>
                 </div>
@@ -95,7 +95,8 @@
                         <md-table-cell md-label="Index" md-sort-by="cadastre">{{ item.affaire_id }}</md-table-cell>
                         <md-table-cell md-label="Affaire" md-sort-by="suffixe">{{ item.affaire_nom }}</md-table-cell>
                         <md-table-cell md-label="Type" md-sort-by="numero">{{ item.affaire_type }}</md-table-cell>
-                        <md-table-cell md-label="Informaitons" md-sort-by="type">{{ item.affaire_information }}</md-table-cell>
+                        <md-table-cell md-label="Informations" md-sort-by="type">{{ item.affaire_information }}</md-table-cell>
+                        <md-table-cell md-label="Date" md-sort-by="date">{{ item.affaire_date }}</md-table-cell>
                     </md-table-row>
                 </md-table>
             </md-card-content>

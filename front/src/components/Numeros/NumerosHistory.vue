@@ -12,6 +12,8 @@ export default {
     cadastre_liste: [],
     numero: [],
     numero_affaires: [],
+    numero_provenance: [],
+    numero_destination: [],
     search: {
       cadastre: null,
       numero: null
@@ -80,30 +82,57 @@ export default {
         }).catch(err => {
           alert("error" + err.message);
         })
-    }
+    },
 
-    // /*
-    //  * Get Types Numeros
-    //  */
-    // async getTypesNumeros() {
-    //   this.$http
-    //     .get(
-    //       process.env.VUE_APP_API_URL +
-    //         process.env.VUE_APP_TYPES_NUMEROS_ENDPOINT
-    //     )
+    /*
+     * Get Numero_provenance
+     */
+    async getNumeroProvenance() {
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_NUMERO_RELATIONS_BASE_ENDPOINT +
+            this.$route.params.id
+        )
 
-    //     .then(response => {
-    //       if (response && response.data) {
-    //         this.types_numeros = response.data.map(function(obj) {
-    //           return obj.nom;
-    //         });
-    //       }
-    //     })
+        .then(response => {
+          if (response && response.data) {
+            this.numero_provenance = response.data.map(function(obj) {
+              return obj.numero_base_numero;
+            });
+            this.numero_provenance.join(", ")
+          }
+        })
 
-    //     .catch(err => {
-    //       alert("error: " + err.message);
-    //     });
-    // },
+        .catch(() => {
+          this.numero_provenance = "-";
+        });
+    },
+
+    /*
+     * Get Numero_destination
+     */
+    async getNumeroDestination() {
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_NUMERO_RELATIONS_ASSOCIE_ENDPOINT +
+            this.$route.params.id
+        )
+
+        .then(response => {
+          if (response && response.data) {
+            this.numero_destination = response.data.map(function(obj) {
+              return obj.numero_associe_numero;
+            });
+            this.numero_destination.join(", ")
+          }
+        })
+
+        .catch(() => {
+          this.numero_destination = "-"
+        });
+    },
 
     // /*
     //  * Get Etats Numeros
@@ -142,6 +171,8 @@ export default {
     this.getNumeroById();
     this.getCadastres();
     this.getNumeroAffaires();
+    this.getNumeroProvenance();
+    this.getNumeroDestination();
   }
 };
 </script>
