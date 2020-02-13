@@ -4,12 +4,12 @@
 
 <script>
 import {checkLogged} from '@/services/helper'
+import moment from 'moment'
 
 import { validationMixin } from 'vuelidate'
   import {
     required,
     email,
-    date,
     minLength
   } from 'vuelidate/lib/validators'
 
@@ -17,6 +17,7 @@ import { validationMixin } from 'vuelidate'
     name: 'FormValidation',
     mixins: [validationMixin],
     data: () => ({
+      types_clients_list: [],
       form: {
         type_client: null,
         entreprise: null,
@@ -37,10 +38,12 @@ import { validationMixin } from 'vuelidate'
         no_bdp_bdee: null
       },
 
-      userSaved: false,
+      dataSaved: false,
       sending: false,
-      lastUser: null
+      lastRecord: null
     }),
+
+    // Validations
     validations: {
       form: {
         type_client: {
@@ -53,10 +56,9 @@ import { validationMixin } from 'vuelidate'
           minLength: minLength(3)
         },
         entree: {
-          required,
-          date
+          required
         },
-        email: {
+        mail: {
           email
         }
       }
@@ -72,6 +74,10 @@ import { validationMixin } from 'vuelidate'
           }
         }
       },
+
+      /**
+       * Clear the form
+       */
       clearForm () {
         this.$v.$reset()
         this.form.type_client = null;
@@ -92,28 +98,90 @@ import { validationMixin } from 'vuelidate'
         this.form.no_sap = null;
         this.form.no_bdp_bdee = null;
       },
-      saveUser () {
+
+      /*
+      * Init types clients list
+      */
+      initTypesClientsList() {
+        this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_TYPES_CLIENTS_ENDPOINT,
+        )
+        .then(response =>{
+          if (response && response.data) {
+            this.types_clients_list = response.data;
+          }
+        })
+        //Error 
+        .catch(err => {
+          alert("error : " + err.message);  
+        });
+      },
+      
+      /**
+       * Save data
+       */
+      saveData () {
         this.sending = true
 
-        // Instead of this timeout, here you can call your API
+        var formData = new FormData();
+        formData.append("type_client", this.form.type_client.id);
+        formData.append("entreprise", this.form.entreprise);
+        formData.append("titre", this.form.titre);
+        formData.append("nom", this.form.nom);
+        formData.append("prenom", this.form.prenom);
+        formData.append("represente_par", this.form.represente_par);
+        formData.append("adresse", this.form.adresse);
+        formData.append("npa", this.form.npa);
+        formData.append("localite", this.form.localite);
+        formData.append("case_postale", this.form.case_postale);
+        formData.append("tel_fixe", this.form.tel_fixe);
+        formData.append("fax", this.form.fax);
+        formData.append("tel_portable", this.form.tel_portable);
+        formData.append("mail", this.form.mail);
+        formData.append("entree", moment(new Date(this.form.entree)).format('yyyy-mm-dd'));
+        formData.append("no_sap", this.form.no_sap);
+        formData.append("no_bdp_bdee", this.form.no_bdp_bdee);
+        
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT, 
+          formData
+        )
+        .then(response =>{
+          if(response && response.data){
+            var a = "1";
+            alert(a);
+          }
+        })
+        //Error 
+        .catch(err => {
+          alert("error : " + err.message);  
+        });
+
+
         window.setTimeout(() => {
-          this.lastUser = `${this.form.firstName} ${this.form.lastName}`
-          this.userSaved = true
+          this.lastRecord = `${this.form.prenom} ${this.form.nom}`
+          this.dataSaved = true
           this.sending = false
           this.clearForm()
         }, 1500)
       },
-      validateUser () {
+
+      /**
+       * Validate form
+       */
+      validateForm () {
         this.$v.$touch()
 
         if (!this.$v.$invalid) {
-          this.saveUser()
+          this.saveData()
         }
       }
     },
 
     mounted: function(){
       checkLogged();
+
+      this.initTypesClientsList();
       
     }
   }
