@@ -1,3 +1,6 @@
+
+import axios from 'axios';
+
 /**
  * Check if the user is logged in
  */
@@ -13,16 +16,10 @@ export const checkLogged = function() {
  * Get Cadastres
  */
 export const getCadastres = async function() {
-    return this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_CADASTRES_ENDPOINT
-    ).then(response => {
-        if (response && response.data) {
-            this.cadastre_liste = response.data.map(function(obj) {
-                return obj.nom;
-            });
-        }
-    }).catch(err => {
-        alert("error: " + err.message);
+    return new Promise((resolve, reject) => {
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CADASTRES_ENDPOINT)
+        .then(response => resolve(response))
+        .catch(() => reject)
     });
 };
 
@@ -30,17 +27,10 @@ export const getCadastres = async function() {
  * Get Types Numeros
  */
 export const getTypesNumeros = async function() {
-    return this.$http.get(
-        process.env.VUE_APP_API_URL +
-        process.env.VUE_APP_TYPES_NUMEROS_ENDPOINT
-    ).then(response => {
-        if (response && response.data) {
-            this.types_numeros = response.data.map(function(obj) {
-                return obj.nom;
-            });
-        }
-    }).catch(err => {
-        alert("error: " + err.message);
+    return new Promise((resolve, reject) => {
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_NUMEROS_ENDPOINT)
+        .then(response => resolve(response))
+        .catch(() => reject)
     });
 };
 
@@ -49,17 +39,9 @@ export const getTypesNumeros = async function() {
  * Get Etats Numeros
  */
 export const getEtatsNumeros = async function() {
-    return this.$http
-        .get(
-            process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_ETATS_NUMEROS_ENDPOINT
-        ).then(response => {
-            if (response && response.data) {
-                this.etats_numeros = response.data.map(function(obj) {
-                    return obj.nom;
-                });
-            }
-        }).catch(err => {
-            alert("error: " + err.message);
-        });
+    return new Promise((resolve, reject) => {
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_ETATS_NUMEROS_ENDPOINT)
+        .then(response => resolve(response))
+        .catch(() => reject)
+    });
 };
