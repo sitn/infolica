@@ -1,7 +1,6 @@
-
-body{
-  height: 100% !important;
-  overflow: hidden;
+body {
+    height: 100% !important;
+    overflow: hidden;
 }
 
 #app {
@@ -9,11 +8,13 @@ body{
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     height: 100%;
-    width: 100%; 
-  }
+    width: 100%;
+}
 
-  #app .material-icons.md-light { color: #FFFFFF; }
+#app .material-icons.md-light {
+    color: #FFFFFF;
+}
 
-  .md-card .md-title{
+.md-card .md-title {
     font-size: 20px !important;
-  }
+}

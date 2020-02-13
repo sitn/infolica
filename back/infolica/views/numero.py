@@ -27,6 +27,32 @@ def numeros_view(request):
         return exc.HTTPBadRequest(e)
 
 
+""" Return all types_numeros"""
+@view_config(route_name='types_numeros', request_method='GET', renderer='json')
+@view_config(route_name='types_numeros_s', request_method='GET', renderer='json')
+def types_numeros_view(request):
+    try:
+        query = request.dbsession.query(models.NumeroType).all()
+        return Utils.serialize_many(query)
+
+    except DBAPIError as e:
+        log.error(e)
+        return exc.HTTPBadRequest(e)
+
+
+""" Return all etats_numeros"""
+@view_config(route_name='etats_numeros', request_method='GET', renderer='json')
+@view_config(route_name='etats_numeros_s', request_method='GET', renderer='json')
+def etats_numeros_view(request):
+    try:
+        query = request.dbsession.query(models.NumeroEtat).all()
+        return Utils.serialize_many(query)
+
+    except DBAPIError as e:
+        log.error(e)
+        return exc.HTTPBadRequest(e)
+
+
 """ Return numeros by id"""
 @view_config(route_name='numero_by_id', request_method='GET', renderer='json')
 def numeros_by_id_view(request):

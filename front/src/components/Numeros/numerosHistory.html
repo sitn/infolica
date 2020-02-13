@@ -1,0 +1,105 @@
+<div class="numerosHistory">
+
+    <!-- Results -->
+    <div class="numerosResults">
+
+        <md-card>
+            <!-- Results Header -->
+            <md-card-header>
+                <div class="md-title">Consultation d'immeuble</div>
+            </md-card-header>
+
+
+            <!-- Search Content -->
+            <!-- Cadastre et Numéro -->
+            <md-card-content>
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-small-size-30">
+                        <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste">
+                            <label>Cadastre</label>
+                        </md-autocomplete>
+                    </div>
+
+                    <div class="md-layout-item md-small-size-30">
+                        <md-field>
+                            <label>Numéro</label>
+                            <md-input v-model="search.numero" type="number"></md-input>
+                        </md-field>
+                    </div>
+                </div>
+
+                <!-- Type et Suffixe -->
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-small-size-30">
+                        <md-field>
+                            <label>Type</label>
+                            <md-input v-model="numero.type_numero" readonly></md-input>
+                        </md-field>
+                    </div>
+                    <div class="md-layout-item md-small-size-30">
+                        <md-field>
+                            <label>Suffixe/Unité</label>
+                            <md-input v-model="numero.suffixe" readonly></md-input>
+                        </md-field>
+                    </div>
+                </div>
+
+                <!-- Etat et Différé -->
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-small-size-30">
+                        <md-field>
+                            <label>Etat</label>
+                            <md-input v-model="numero.etat" readonly></md-input>
+                        </md-field>
+                    </div>
+                    <div class="md-layout-item md-small-size-30">
+                        <md-field>
+                            <label>Différé</label>
+                            <md-input v-model="numero.diff" readonly></md-input>
+                        </md-field>
+                    </div>
+                </div>
+
+                <!-- Provenance et Destination -->
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-small-size-30">
+                        <md-field>
+                            <label>Provenance</label>
+                            <!-- <md-input v-model="" readonly></md-input> -->
+                        </md-field>
+                    </div>
+                    <div class="md-layout-item md-small-size-30">
+                        <md-field>
+                            <label>Destination</label>
+                            <!-- <md-input v-model="" readonly></md-input> -->
+                        </md-field>
+                    </div>
+                </div>
+
+                <!-- Search Actions -->
+                <!-- <md-card-actions>
+                    <md-button class="md-raised" v-bind:disabled="!search.cadastre && !search.numero" v-on:click="clearForm">Réinitialiser</md-button>
+                    <md-button class="md-raised md-primary" v-on:click="getNumeroById">Rechercher</md-button>
+                </md-card-actions> -->
+            </md-card-content>
+
+
+            <!-- Affaires Content -->
+            <md-card-header>
+                <div class="md-title">Affaires</div>
+            </md-card-header>
+
+            <md-card-content>
+                <md-table v-model="numero_affaires" md-sort="affaire_date" md-sort-order="desc">
+                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                        <md-table-cell md-label="Index" md-sort-by="cadastre">{{ item.affaire_id }}</md-table-cell>
+                        <md-table-cell md-label="Affaire" md-sort-by="suffixe">{{ item.affaire_nom }}</md-table-cell>
+                        <md-table-cell md-label="Type" md-sort-by="numero">{{ item.affaire_type }}</md-table-cell>
+                        <md-table-cell md-label="Informaitons" md-sort-by="type">{{ item.affaire_information }}</md-table-cell>
+                    </md-table-row>
+                </md-table>
+            </md-card-content>
+        </md-card>
+
+    </div>
+</div>
