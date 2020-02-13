@@ -3,9 +3,7 @@
 
 
 <script>
-import { checkLogged } from "@/services/helper";
-// import { getCadastres, getEtatsNumeros, getTypesNumeros } from "@/services/helper";
-// import { getCadastres } from "@/services/helper";
+import { checkLogged, getCadastres, getTypesNumeros, getEtatsNumeros } from "@/services/helper";
 
 export default {
   name: "Numeros",
@@ -52,71 +50,57 @@ export default {
     },
 
     /*
-     * Get Cadastres
+     * Init Cadastres list
      */
-    async getCadastres() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_CADASTRES_ENDPOINT
-        )
+    initCadastresList() {
+      getCadastres()
+      .then(response => {
+        if (response && response.data) {
+          this.cadastre_liste = response.data.map(function(obj) {
+            return obj.nom;
+          });
+        }
+      })
 
-        .then(response => {
-          if (response && response.data) {
-            this.cadastre_liste = response.data.map(function(obj) {
-              return obj.nom;
-            });
-          }
-        })
-
-        .catch(err => {
-          alert("error: " + err.message);
-        });
+      .catch(err => {
+        alert("error: " + err.message);
+      });
     },
 
     /*
-     * Get Types Numeros
+     * Init Types Numeros list
      */
-    async getTypesNumeros() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_TYPES_NUMEROS_ENDPOINT
-        )
+    async initTypesNumerosList() {
+      getTypesNumeros()
+      .then(response => {
+        if (response && response.data) {
+          this.types_numeros = response.data.map(function(obj) {
+            return obj.nom;
+          });
+        }
+      })
 
-        .then(response => {
-          if (response && response.data) {
-            this.types_numeros = response.data.map(function(obj) {
-              return obj.nom;
-            });
-          }
-        })
-
-        .catch(err => {
-          alert("error: " + err.message);
-        });
+      .catch(err => {
+        alert("error: " + err.message);
+      });
     },
 
     /*
-     * Get Etats Numeros
+     * Init Etats Numeros list
      */
-    async getEtatsNumeros() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_ETATS_NUMEROS_ENDPOINT
-        )
+    async initEtatsNumerosList() {
+      getEtatsNumeros()
+      .then(response => {
+        if (response && response.data) {
+          this.etats_numeros = response.data.map(function(obj) {
+            return obj.nom;
+          });
+        }
+      })
 
-        .then(response => {
-          if (response && response.data) {
-            this.etats_numeros = response.data.map(function(obj) {
-              return obj.nom;
-            });
-          }
-        })
-
-        .catch(err => {
-          alert("error: " + err.message);
-        });
+      .catch(err => {
+        alert("error: " + err.message);
+      });
     },
 
     /**
@@ -131,9 +115,9 @@ export default {
 
   mounted: function() {
     checkLogged();
-    this.getCadastres();
-    this.getTypesNumeros();
-    this.getEtatsNumeros();
+    this.initCadastresList();
+    this.initTypesNumerosList();
+    this.initEtatsNumerosList();
     // this.cadastre_liste = getCadastres();
     // getTypesNumeros();
     // getEtatsNumeros();
