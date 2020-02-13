@@ -509,7 +509,7 @@ class VNumeros(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True)
     cadastre = Column(Text)
-    numero = Column(Text)
+    numero = Column(BigInteger)
     suffixe = Column(Text)
     etat = Column(Text)
     type_numero = Column(Text)
@@ -648,3 +648,23 @@ class VEmolumentsFactures(Base):
     facteur_correctif = Column(Float)
     batiment = Column(Text, primary_key=True)
     montant = Column(Float)
+
+
+class VNumerosRelations(Base):
+    __tablename__ = 'v_numeros_relations'
+    __table_args__ = {'schema': 'infolica'}
+    numero_base_id = Column(BigInteger, primary_key=True)
+    numero_base_cadastre = Column(Text)
+    numero_base_type = Column(Text)
+    numero_base_numero = Column(BigInteger)
+    numero_base_suffixe = Column(Text)
+    numero_base_etat = Column(Text)
+    numero_base_plan_id = Column(Text)
+    numero_associe_id = Column(BigInteger, primary_key=True)
+    numero_associe_cadastre = Column(Text)
+    numero_associe_type = Column(Text)
+    numero_associe_numero = Column(BigInteger)
+    numero_associe_suffixe = Column(Text)
+    numero_associe_etat = Column(Text)
+    numero_associe_plan_id = Column(Text)
+    relation_type = Column(Text, primary_key=True)

@@ -54,6 +54,7 @@ def includeme(config):
     config.add_route('recherche_numeros','/infolica/api/recherche_numeros')
     config.add_route('recherche_numeros_s','/infolica/api/recherche_numeros/')
     config.add_route('numero_by_id', '/infolica/api/numeros/{id}')
+    config.add_route('numero_base_relation_by_id', '/infolica/api/numeros_base_relation/{id}')
     #Réservation de numéros
     config.add_route('reservation_numeros','/infolica/api/reservation_numeros')
     config.add_route('reservation_numeros_s','/infolica/api/reservation_numeros/')
@@ -77,7 +78,7 @@ def includeme(config):
     config.add_route('etapes_index_s','/infolica/api/etapes_index/')
     config.add_route('affaire_etapes_by_affaire_id','/infolica/api/affaire_etapes/{id}')
     #Numeros affaires
-    config.add_route('numero_affaires_by_numero_id','/infolica/api/numeros_affaire/{id}')
+    config.add_route('numero_affaires_by_numero_id','/infolica/api/numero_affaires/{id}')
     #Preavis affaire
     config.add_route('preavis_by_id','/infolica/api/preavis/{id}')
     config.add_route('preavis','/infolica/api/preavis')

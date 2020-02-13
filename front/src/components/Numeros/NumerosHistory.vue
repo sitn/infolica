@@ -11,9 +11,10 @@ export default {
   data: () => ({
     cadastre_liste: [],
     numero: [],
+    numero_affaires: [],
     search: {
       cadastre: null,
-      numero: null,
+      numero: null
     }
   }),
 
@@ -27,22 +28,20 @@ export default {
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
             this.$route.params.id
-        )
-
-        .then(response => {
+        ).then(response => {
           if (response && response.data) {
             this.numero = response.data;
             this.search.cadastre = this.numero.cadastre;
             this.search.numero = this.numero.numero;
-            this.numero.diff = "Non"
+            this.numero.diff = "Non";
             if (this.numero.diff_entree && !this.numero.diff_sortie) {
-                this.numero.diff = "Oui"
-
+              this.numero.diff = "Oui";
+            }
+            if (!this.numero.suffixe){
+              this.numero.suffixe = "-"
             }
           }
-        })
-
-        .catch(err => {
+        }).catch(err => {
           alert("error: " + err.message);
         });
     },
@@ -54,20 +53,34 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_CADASTRES_ENDPOINT
-        )
-
-        .then(response => {
+        ).then(response => {
           if (response && response.data) {
             this.cadastre_liste = response.data.map(function(obj) {
               return obj.nom;
             });
           }
-        })
-
-        .catch(err => {
+        }).catch(err => {
           alert("error: " + err.message);
         });
     },
+
+    /*
+     * Get affaires par numéro
+     */
+    async getNumeroAffaires() {
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL +
+          process.env.VUE_APP_NUMERO_AFFAIRES_ENDPOINT +
+          this.$route.params.id
+        ).then(response => {
+          if (response && response.data) {
+            this.numero_affaires = response.data;
+          }
+        }).catch(err => {
+          alert("error" + err.message);
+        })
+    }
 
     // /*
     //  * Get Types Numeros
@@ -122,14 +135,13 @@ export default {
     //   this.search.cadastre = null;
     //   this.search.numero = null;
     // }
-
   },
 
   mounted: function() {
     checkLogged();
     this.getNumeroById();
     this.getCadastres();
-
+    this.getNumeroAffaires();
   }
 };
 </script>
