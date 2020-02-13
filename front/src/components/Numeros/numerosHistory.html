@@ -15,15 +15,16 @@
             <md-card-content>
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-30">
-                        <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste">
+                        <md-field>
                             <label>Cadastre</label>
-                        </md-autocomplete>
+                            <md-input v-model="numero.cadastre" readonly></md-input>
+                        </md-field>
                     </div>
 
                     <div class="md-layout-item md-small-size-30">
                         <md-field>
                             <label>Immeuble</label>
-                            <md-input v-model="search.numero" type="number"></md-input>
+                            <md-input v-model="numero.numero" readonly></md-input>
                         </md-field>
                     </div>
                 </div>

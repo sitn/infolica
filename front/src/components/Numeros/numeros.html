@@ -64,13 +64,14 @@
             <md-card-content>
                 <md-table v-model="numeros" md-sort="numero" md-sort-order="desc">
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
+                        <md-table-cell md-label="Id" md-sort-by="id">{{ item.id }}</md-table-cell>
                         <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
                         <md-table-cell md-label="Type" md-sort-by="type">{{ item.type_numero }}</md-table-cell>
                         <md-table-cell md-label="Immeuble" md-sort-by="numero">{{ item.numero }}</md-table-cell>
                         <md-table-cell md-label="Suffixe" md-sort-by="suffixe">{{ item.suffixe }}</md-table-cell>
                         <md-table-cell md-label="Etat" md-sort-by="etat">{{ item.etat }}</md-table-cell>
                         <md-table-cell md-label="Actions" class="actionsColumn">
-                            <md-button class="md-icon-button md-raised md-primary">
+                            <md-button class="md-icon-button md-raised md-primary" v-on:click="doOpenNumero">
                                 <md-icon>open_in_new</md-icon>
                             </md-button>
                         </md-table-cell>

@@ -3,7 +3,12 @@
 
 
 <script>
-import { checkLogged, getCadastres, getTypesNumeros, getEtatsNumeros } from "@/services/helper";
+import {
+  checkLogged,
+  getCadastres,
+  getTypesNumeros,
+  getEtatsNumeros
+} from "@/services/helper";
 
 export default {
   name: "Numeros",
@@ -54,17 +59,17 @@ export default {
      */
     initCadastresList() {
       getCadastres()
-      .then(response => {
-        if (response && response.data) {
-          this.cadastre_liste = response.data.map(function(obj) {
-            return obj.nom;
-          });
-        }
-      })
+        .then(response => {
+          if (response && response.data) {
+            this.cadastre_liste = response.data.map(function(obj) {
+              return obj.nom;
+            });
+          }
+        })
 
-      .catch(err => {
-        alert("error: " + err.message);
-      });
+        .catch(err => {
+          alert("error: " + err.message);
+        });
     },
 
     /*
@@ -72,17 +77,17 @@ export default {
      */
     async initTypesNumerosList() {
       getTypesNumeros()
-      .then(response => {
-        if (response && response.data) {
-          this.types_numeros = response.data.map(function(obj) {
-            return obj.nom;
-          });
-        }
-      })
+        .then(response => {
+          if (response && response.data) {
+            this.types_numeros = response.data.map(function(obj) {
+              return obj.nom;
+            });
+          }
+        })
 
-      .catch(err => {
-        alert("error: " + err.message);
-      });
+        .catch(err => {
+          alert("error: " + err.message);
+        });
     },
 
     /*
@@ -90,17 +95,17 @@ export default {
      */
     async initEtatsNumerosList() {
       getEtatsNumeros()
-      .then(response => {
-        if (response && response.data) {
-          this.etats_numeros = response.data.map(function(obj) {
-            return obj.nom;
-          });
-        }
-      })
+        .then(response => {
+          if (response && response.data) {
+            this.etats_numeros = response.data.map(function(obj) {
+              return obj.nom;
+            });
+          }
+        })
 
-      .catch(err => {
-        alert("error: " + err.message);
-      });
+        .catch(err => {
+          alert("error: " + err.message);
+        });
     },
 
     /**
@@ -110,6 +115,15 @@ export default {
       this.search.cadastre = null;
       this.search.type = null;
       this.search.etat = null;
+    },
+
+
+    doOpenNumero() {
+
+      this.$router.push("/numeros/20864");
+      // let routeData = this.$router.resolve({name: '/numeros/20864', query: {data: "someData"}}); 
+      // window.open(routeData.href, '_blank');
+
     }
   },
 
