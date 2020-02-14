@@ -31,12 +31,9 @@ export default {
      */
     async searchNumeros() {
       var formData = new FormData();
-      if (this.search.cadastre)
-        formData.append("cadastre", this.search.cadastre);
-
-      if (this.search.type) formData.append("type_numero", this.search.type.id);
-
-      if (this.search.etat) formData.append("etat", this.search.etat);
+      if (this.search.cadastre) formData.append("cadastre_id", this.search.cadastre.id);
+      if (this.search.type) formData.append("type_numero_id", this.search.type.id);
+      if (this.search.etat) formData.append("etat_id", this.search.etat.id);
 
       this.$http
         .post(
@@ -61,9 +58,12 @@ export default {
       getCadastres()
         .then(response => {
           if (response && response.data) {
-            this.cadastre_liste = response.data.map(function(obj) {
-              return obj.nom;
-            });
+            this.cadastre_liste = response.data.map(x => ({
+              id: x.id,
+              nom: x.nom,
+              toLowerCase: () => x.nom.toLowerCase(),
+              toString: () => x.nom
+            }));
           }
         })
 
@@ -79,9 +79,12 @@ export default {
       getTypesNumeros()
         .then(response => {
           if (response && response.data) {
-            this.types_numeros = response.data/*.map(function(obj) {
-              return obj.nom;
-            });*/
+            this.types_numeros = response.data.map(x => ({
+              id: x.id,
+              nom: x.nom,
+              toLowerCase: () => x.nom.toLowerCase(),
+              toString: () => x.nom
+            }));
           }
         })
 
@@ -97,9 +100,12 @@ export default {
       getEtatsNumeros()
         .then(response => {
           if (response && response.data) {
-            this.etats_numeros = response.data.map(function(obj) {
-              return obj.nom;
-            });
+            this.etats_numeros = response.data.map(x => ({
+              id: x.id,
+              nom: x.nom,
+              toLowerCase: () => x.nom.toLowerCase(),
+              toString: () => x.nom
+            }));
           }
         })
 
@@ -121,9 +127,9 @@ export default {
      * Open numéro in new tab
      */
     doOpenNumero(id) {
-      window.setTimeout
-      let routeData = this.$router.resolve('/numeros/' + id);
-      window.open(routeData.href, '_blank');
+      window.setTimeout;
+      let routeData = this.$router.resolve("/numeros/" + id);
+      window.open(routeData.href, "_blank");
     }
   },
 

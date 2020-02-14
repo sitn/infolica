@@ -19,35 +19,31 @@
             <md-card-expand-content>
                 <md-card-content>
                     <div class="md-layout md-gutter">
+                        <!-- Cadastre -->
                         <div class="md-layout-item md-small-size-30">
                             <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste">
                                 <label>Cadastre</label>
-                            </md-autocomplete>
-                        </div>
-
-                        <div class="md-layout-item md-small-size-30">
-                            
-
-                            <md-autocomplete
-                                v-model="search.type"
-                                :md-options="types_numeros.map(x=>({
-                                    'id':x.id,
-                                    'nom':x.nom,
-                                    'toLowerCase':()=>x.nom.toLowerCase(),
-                                    'toString':()=>x.nom
-                                }))"
-                                >
-                                <label>Type</label>
-
-                                <template slot="md-autocomplete-item" slot-scope="{ item, term }">
+                                <template slot="md-autocomplete-item" slot-scope="{ item }">
                                     {{ item.nom }}
                                 </template>
                             </md-autocomplete>
                         </div>
-
+                        <!-- Type -->
+                        <div class="md-layout-item md-small-size-30">
+                            <md-autocomplete v-model="search.type" :md-options="types_numeros">
+                                <label>Type</label>
+                                <template slot="md-autocomplete-item" slot-scope="{ item }">
+                                    {{ item.nom }}
+                                </template>
+                            </md-autocomplete>
+                        </div>
+                        <!-- Etat -->
                         <div class="md-layout-item md-small-size-30">
                             <md-autocomplete v-model="search.etat" :md-options="etats_numeros">
                                 <label>Etat</label>
+                                <template slot="md-autocomplete-item" slot-scope="{ item }">
+                                    {{ item.nom }}
+                                </template>
                             </md-autocomplete>
                         </div>
                     </div>
