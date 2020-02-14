@@ -5,11 +5,11 @@ import axios from 'axios';
  * Check if the user is logged in
  */
 export const checkLogged = function() {
-    var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+    /*var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
 
     if (!session_user) {
         window.location.href = "/login"
-    }
+    }*/
 };
 
 /*
@@ -34,6 +34,16 @@ export const getTypesNumeros = async function() {
     });
 };
 
+/*
+ * Get Types Affaires
+ */
+export const getTypesAffaires = async function() {
+    return new Promise((resolve, reject) => {
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_AFFAIRES_ENDPOINT)
+        .then(response => resolve(response))
+        .catch(() => reject)
+    });
+};
 
 /*
  * Get Etats Numeros

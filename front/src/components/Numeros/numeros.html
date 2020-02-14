@@ -26,8 +26,22 @@
                         </div>
 
                         <div class="md-layout-item md-small-size-30">
-                            <md-autocomplete v-model="search.type" :md-options="types_numeros">
+                            
+
+                            <md-autocomplete
+                                v-model="search.type"
+                                :md-options="types_numeros.map(x=>({
+                                    'id':x.id,
+                                    'nom':x.nom,
+                                    'toLowerCase':()=>x.nom.toLowerCase(),
+                                    'toString':()=>x.nom
+                                }))"
+                                >
                                 <label>Type</label>
+
+                                <template slot="md-autocomplete-item" slot-scope="{ item, term }">
+                                    {{ item.nom }}
+                                </template>
                             </md-autocomplete>
                         </div>
 

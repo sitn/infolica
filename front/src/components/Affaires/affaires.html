@@ -1,3 +1,78 @@
 <div class="affaires">
-    Affaires
+
+
+    <!-- Search -->
+    <md-card>
+        <!-- Search Header -->
+        <md-card-header>
+            <div class="md-title">Recherche</div>
+        </md-card-header>
+
+        <md-card-expand-trigger>
+            <md-button class="md-icon-button expandCollapseBtn">
+                <md-icon>keyboard_arrow_down</md-icon>
+            </md-button>
+        </md-card-expand-trigger>
+
+        <!-- Search Content -->
+        <md-card-expand>
+            <md-card-expand-content>
+                <md-card-content>
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-small-size-30">
+                            <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste">
+                                <label>Cadastre</label>
+                            </md-autocomplete>
+                        </div>
+
+                        <div class="md-layout-item md-small-size-30">
+                            <md-autocomplete v-model="search.type" :md-options="types_affaires">
+                                <label>Type</label>
+                            </md-autocomplete>
+                        </div>
+                    </div>
+
+                    <!-- Search Actions -->
+                    <md-card-actions>
+                        <md-button class="md-raised" v-bind:disabled="!search.cadastre && !search.type" v-on:click="clearForm">Réinitialiser</md-button>
+                        <!-- <md-button class="md-raised md-primary" v-on:click="searchAffaires">Rechercher</md-button> -->
+                    </md-card-actions>
+                </md-card-content>
+            </md-card-expand-content>
+        </md-card-expand>
+    </md-card>
+
+    </br>
+
+
+    <!-- Results -->
+    <div class="affairesResults">
+
+        <md-card>
+            <!-- Results Header -->
+            <md-card-header>
+                <div class="md-title">Résultats</div>
+            </md-card-header>
+
+            <!-- Results Content -->
+            <!-- <md-card-content>
+                <md-table v-model="numeros" md-sort="numero" md-sort-order="desc">
+                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                        <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
+                        <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
+                        <md-table-cell md-label="Type" md-sort-by="type">{{ item.type_numero }}</md-table-cell>
+                        <md-table-cell md-label="Immeuble" md-sort-by="numero">{{ item.numero }}</md-table-cell>
+                        <md-table-cell md-label="Suffixe/Unité" md-sort-by="suffixe">{{ item.suffixe }}</md-table-cell>
+                        <md-table-cell md-label="Etat" md-sort-by="etat">{{ item.etat }}</md-table-cell>
+                        <md-table-cell md-label="Actions" class="actionsColumn">
+                            <md-button class="md-icon-button md-raised md-primary" v-on:click="doOpenNumero(item.id)">
+                                <md-icon>open_in_new</md-icon>
+                            </md-button>
+                        </md-table-cell>
+                    </md-table-row>
+                </md-table>
+            </md-card-content> -->
+        </md-card>
+
+    </div>
 </div>

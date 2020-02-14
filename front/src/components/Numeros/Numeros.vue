@@ -34,7 +34,7 @@ export default {
       if (this.search.cadastre)
         formData.append("cadastre", this.search.cadastre);
 
-      if (this.search.type) formData.append("type_numero", this.search.type);
+      if (this.search.type) formData.append("type_numero", this.search.type.id);
 
       if (this.search.etat) formData.append("etat", this.search.etat);
 
@@ -79,9 +79,9 @@ export default {
       getTypesNumeros()
         .then(response => {
           if (response && response.data) {
-            this.types_numeros = response.data.map(function(obj) {
+            this.types_numeros = response.data/*.map(function(obj) {
               return obj.nom;
-            });
+            });*/
           }
         })
 
@@ -132,9 +132,6 @@ export default {
     this.initCadastresList();
     this.initTypesNumerosList();
     this.initEtatsNumerosList();
-    // this.cadastre_liste = getCadastres();
-    // getTypesNumeros();
-    // getEtatsNumeros();
     this.searchNumeros();
   }
 };
