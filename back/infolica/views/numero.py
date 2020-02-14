@@ -27,6 +27,29 @@ def numeros_view(request):
         return exc.HTTPBadRequest(e)
 
 
+""" Return all numeros by params"""
+@view_config(route_name='numeros', request_method='POST', renderer='json')
+@view_config(route_name='numeros_s', request_method='POST', renderer='json')
+def numeros_by_params_view(request):
+    query = request.dbsession.query(models.VNumeros)
+
+    if "cadastre" in request.params:
+        query = query.filter(models.VNumeros.cadastre == request.params["cadastre"])
+    if "numero" in request.params:
+        query = query.filter(models.VNumeros.numero == request.params["numero"])
+    # if "plan" in request.params:
+    #     query = query.filter(models.VNumeros.plan_id == request.params["plan_id"])
+
+    records = query.first()
+
+    try:
+        return Utils.serialize_many(records)
+
+    except DBAPIError as e:
+        log.error(e)
+        return exc.HTTPBadRequest(e)
+
+
 """ Return all types_numeros"""
 @view_config(route_name='types_numeros', request_method='GET', renderer='json')
 @view_config(route_name='types_numeros_s', request_method='GET', renderer='json')
