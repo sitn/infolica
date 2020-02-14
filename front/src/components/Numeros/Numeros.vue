@@ -117,13 +117,13 @@ export default {
       this.search.etat = null;
     },
 
-
-    doOpenNumero() {
-
-      this.$router.push("/numeros/20864");
-      // let routeData = this.$router.resolve({name: '/numeros/20864', query: {data: "someData"}}); 
-      // window.open(routeData.href, '_blank');
-
+    /*
+     * Open numéro in new tab
+     */
+    doOpenNumero(id) {
+      window.setTimeout
+      let routeData = this.$router.resolve('/numeros/' + id);
+      window.open(routeData.href, '_blank');
     }
   },
 
