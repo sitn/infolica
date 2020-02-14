@@ -13,7 +13,7 @@
               <md-field :class="getValidationClass('type_client')">
                 <label for="type_client">Type client</label>
                 <md-select name="type_client" id="type_client" v-model="form.type_client" :disabled="sending">
-                  <md-option v-for="item in types_clients_list" :key="item.id" :value="item">{{item.nom}}</md-option>
+                  <md-option v-for="item in types_clients_list" :key="item.id" :value="item.id">{{item.nom}}</md-option>
                 </md-select>
                 <span class="md-error" v-if="!$v.form.type_client.required">Le type client est obligatoire</span>
               </md-field>
@@ -138,13 +138,10 @@
               </md-field>
             </div>
 
-            <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('entree')">
-                <md-datepicker v-model="form.entree" md-immediately>
+            <div class="md-layout-item md-small-size-100">              
+                <md-datepicker v-model="form.entree" md-immediately :class="getValidationClass('entree')">
                   <label>Date d'entrée</label>
                 </md-datepicker>
-                <span class="md-error" v-if="!$v.form.entree.required">La date d'entrée est obligatoire</span>
-              </md-field>
             </div>
 
           </div>
@@ -154,11 +151,11 @@
         <md-progress-bar md-mode="indeterminate" v-if="sending" />
 
         <md-card-actions>
-          <md-button class="md-raised" :disabled="sending">Annuler</md-button>
+          <md-button class="md-raised" :disabled="sending" v-on:click="cancelEdit">Annuler</md-button>
           <md-button type="submit" class="md-raised md-primary" :disabled="sending">Enregistrer</md-button>
         </md-card-actions>
       </md-card>
 
-      <md-snackbar :md-active.sync="userSaved">The user {{ lastRecord }} was saved with success!</md-snackbar>
+      <md-snackbar :md-active.sync="dataSaved">Le client {{ lastRecord }} a été enregistré avec succès</md-snackbar>
     </form>
 </div>

@@ -50,5 +50,5 @@ npm install vuelidate --save
 
 ### Install moment (to handle dates)
 ```
-npm install moment --save
+npm install --save moment-timezone vue-moment
 ```
