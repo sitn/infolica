@@ -33,7 +33,7 @@ import { validationMixin } from 'vuelidate'
         fax: null,
         tel_portable: null,
         mail: null,
-        entree: null,
+        entree: new Date(),
         no_sap: null,
         no_bdp_bdee: null
       },

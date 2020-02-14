@@ -76,6 +76,38 @@
             
           </div>
 
+
+          <div class="md-layout md-gutter">           
+
+            <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="npa">Npa</label>
+                <md-input name="npa" id="npa" v-model="form.npa" :disabled="sending" />
+              </md-field>
+            </div>
+
+            <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="localite">Localité</label>
+                <md-input name="localite" id="localite" v-model="form.localite" :disabled="sending" />
+              </md-field>
+            </div>
+
+             <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="case_postale">Case postale</label>
+                <md-input name="case_postale" id="case_postale" v-model="form.case_postale" :disabled="sending" />
+              </md-field>
+            </div>
+
+            <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="adresse">Adresse</label>
+                <md-input name="adresse" id="adresse" v-model="form.adresse" :disabled="sending" />
+              </md-field>
+            </div>
+          </div>
+
           <div class="md-layout md-gutter">
             <div class="md-layout-item md-small-size-100">
               <md-field :class="getValidationClass('mail')">
@@ -115,37 +147,6 @@
               </md-field>
             </div>
 
-          </div>
-
-          <div class="md-layout md-gutter">           
-
-            <div class="md-layout-item md-small-size-100">
-              <md-field>
-                <label for="npa">Npa</label>
-                <md-input name="npa" id="npa" v-model="form.npa" :disabled="sending" />
-              </md-field>
-            </div>
-
-            <div class="md-layout-item md-small-size-100">
-              <md-field>
-                <label for="localite">Localité</label>
-                <md-input name="localite" id="localite" v-model="form.localite" :disabled="sending" />
-              </md-field>
-            </div>
-
-             <div class="md-layout-item md-small-size-100">
-              <md-field>
-                <label for="case_postale">Case postale</label>
-                <md-input name="case_postale" id="case_postale" v-model="form.case_postale" :disabled="sending" />
-              </md-field>
-            </div>
-
-            <div class="md-layout-item md-small-size-100">
-              <md-field>
-                <label for="adresse">Adresse</label>
-                <md-input name="adresse" id="adresse" v-model="form.adresse" :disabled="sending" />
-              </md-field>
-            </div>
           </div>
 
         </md-card-content>
