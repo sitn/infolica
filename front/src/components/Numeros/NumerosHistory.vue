@@ -3,7 +3,7 @@
 
 
 <script>
-import { checkLogged } from "@/services/helper";
+import { checkLogged, getCadastres } from "@/services/helper";
 
 export default {
   name: "NumerosHistory",
@@ -12,6 +12,8 @@ export default {
     cadastre_liste: [],
     numero: [],
     numero_affaires: [],
+    numero_provenance: [],
+    numero_destination: [],
     search: {
       cadastre: null,
       numero: null
@@ -19,6 +21,7 @@ export default {
   }),
 
   methods: {
+
     /*
      * Get Numero_by_id
      */
@@ -46,23 +49,23 @@ export default {
         });
     },
 
+
     /*
-     * Get Cadastres
+     * Init Cadastres list
      */
-    async getCadastres() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_CADASTRES_ENDPOINT
-        ).then(response => {
-          if (response && response.data) {
-            this.cadastre_liste = response.data.map(function(obj) {
-              return obj.nom;
-            });
-          }
-        }).catch(err => {
-          alert("error: " + err.message);
-        });
+    initCadastresList() {
+      getCadastres()
+      .then(response => {
+        if (response && response.data) {
+          this.cadastre_liste = response.data.map(function(obj) {
+            return obj.nom;
+          });
+        }
+      }).catch(err => {
+        alert("error: " + err.message);
+      });
     },
+
 
     /*
      * Get affaires par numéro
@@ -80,39 +83,59 @@ export default {
         }).catch(err => {
           alert("error" + err.message);
         })
-    }
+    },
+
+
+    /*
+     * Get Numero_provenance
+     */
+    async getNumeroProvenance() {
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_NUMERO_RELATIONS_BASE_ENDPOINT +
+            this.$route.params.id
+        ).then(response => {
+          if (response && response.data) {
+            this.numero_provenance = response.data.map(function(obj) {
+              return obj.numero_base_numero;
+            });
+          }
+        }).catch(() => {
+          this.numero_provenance = "-";
+        });
+    },
+
+
+    /*
+     * Get Numero_destination
+     */
+    async getNumeroDestination() {
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_NUMERO_RELATIONS_ASSOCIE_ENDPOINT +
+            this.$route.params.id
+        ).then(response => {
+          if (response && response.data) {
+            this.numero_destination = response.data.map(function(obj) {
+              return obj.numero_associe_numero;
+            });
+          }
+        }).catch(() => {
+          this.numero_destination = "-"
+        });
+    },
 
     // /*
-    //  * Get Types Numeros
+    //  * Get searchNumero
     //  */
-    // async getTypesNumeros() {
+    // async searchNumero() {
+      
     //   this.$http
     //     .get(
     //       process.env.VUE_APP_API_URL +
-    //         process.env.VUE_APP_TYPES_NUMEROS_ENDPOINT
-    //     )
-
-    //     .then(response => {
-    //       if (response && response.data) {
-    //         this.types_numeros = response.data.map(function(obj) {
-    //           return obj.nom;
-    //         });
-    //       }
-    //     })
-
-    //     .catch(err => {
-    //       alert("error: " + err.message);
-    //     });
-    // },
-
-    // /*
-    //  * Get Etats Numeros
-    //  */
-    // async getEtatsNumeros() {
-    //   this.$http
-    //     .get(
-    //       process.env.VUE_APP_API_URL +
-    //         process.env.VUE_APP_ETATS_NUMEROS_ENDPOINT
+    //         process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT
     //     )
 
     //     .then(response => {
@@ -128,9 +151,9 @@ export default {
     //     });
     // },
 
-    /*
-     * Clear the form
-     */
+    // /*
+    //  * Clear the form
+    //  */
     // clearForm() {
     //   this.search.cadastre = null;
     //   this.search.numero = null;
@@ -140,8 +163,10 @@ export default {
   mounted: function() {
     checkLogged();
     this.getNumeroById();
-    this.getCadastres();
+    this.initCadastresList();
     this.getNumeroAffaires();
+    this.getNumeroProvenance();
+    this.getNumeroDestination();
   }
 };
 </script>
