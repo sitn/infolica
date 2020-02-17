@@ -509,10 +509,13 @@ class VNumeros(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True)
     cadastre = Column(Text)
+    cadastre_id = Column(BigInteger)
     numero = Column(BigInteger)
     suffixe = Column(Text)
     etat = Column(Text)
+    etat_id = Column(BigInteger)
     type_numero = Column(Text)
+    type_numero_id = Column(BigInteger)
     diff_entree = Column(Date)
     diff_sortie = Column(Date)
     plan_id = Column(BigInteger)

@@ -73,8 +73,12 @@ class Utils():
         conditions = list()
 
         for param in params:
-            conditions.append(func.lower(getattr(model, param)).like(
-                '%' + func.lower(params[param]) + '%'))
+            if params[param].isdigit():
+                tmp = int(params[param])
+                conditions.append(getattr(model, param) == tmp)
+            else:
+                conditions.append(func.lower(getattr(model, param)).like(
+                    '%' + func.lower(params[param]) + '%'))
         return conditions
 
 

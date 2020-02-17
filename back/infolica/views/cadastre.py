@@ -25,7 +25,7 @@ log = logging.getLogger(__name__)
 @view_config(route_name='cadastres_s', request_method='GET', renderer='json')
 def cadastre_view(request):
     try:
-        records = request.dbsession.query(models.Cadastre).all()
+        records = request.dbsession.query(models.Cadastre).order_by(models.Cadastre.nom).all()
         return Utils.serialize_many(records)
 
     except DBAPIError as e:

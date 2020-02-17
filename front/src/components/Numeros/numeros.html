@@ -19,21 +19,31 @@
             <md-card-expand-content>
                 <md-card-content>
                     <div class="md-layout md-gutter">
+                        <!-- Cadastre -->
                         <div class="md-layout-item md-small-size-30">
                             <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste">
                                 <label>Cadastre</label>
+                                <template slot="md-autocomplete-item" slot-scope="{ item }">
+                                    {{ item.nom }}
+                                </template>
                             </md-autocomplete>
                         </div>
-
+                        <!-- Type -->
                         <div class="md-layout-item md-small-size-30">
                             <md-autocomplete v-model="search.type" :md-options="types_numeros">
                                 <label>Type</label>
+                                <template slot="md-autocomplete-item" slot-scope="{ item }">
+                                    {{ item.nom }}
+                                </template>
                             </md-autocomplete>
                         </div>
-
+                        <!-- Etat -->
                         <div class="md-layout-item md-small-size-30">
                             <md-autocomplete v-model="search.etat" :md-options="etats_numeros">
                                 <label>Etat</label>
+                                <template slot="md-autocomplete-item" slot-scope="{ item }">
+                                    {{ item.nom }}
+                                </template>
                             </md-autocomplete>
                         </div>
                     </div>
@@ -64,14 +74,14 @@
             <md-card-content>
                 <md-table v-model="numeros" md-sort="numero" md-sort-order="desc">
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
-                        <md-table-cell md-label="Id" md-sort-by="id">{{ item.id }}</md-table-cell>
+                        <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                         <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
                         <md-table-cell md-label="Type" md-sort-by="type">{{ item.type_numero }}</md-table-cell>
                         <md-table-cell md-label="Immeuble" md-sort-by="numero">{{ item.numero }}</md-table-cell>
-                        <md-table-cell md-label="Suffixe" md-sort-by="suffixe">{{ item.suffixe }}</md-table-cell>
+                        <md-table-cell md-label="Suffixe/Unité" md-sort-by="suffixe">{{ item.suffixe }}</md-table-cell>
                         <md-table-cell md-label="Etat" md-sort-by="etat">{{ item.etat }}</md-table-cell>
                         <md-table-cell md-label="Actions" class="actionsColumn">
-                            <md-button class="md-icon-button md-raised md-primary" v-on:click="doOpenNumero">
+                            <md-button class="md-icon-button md-raised md-primary" v-on:click="doOpenNumero(item.id)">
                                 <md-icon>open_in_new</md-icon>
                             </md-button>
                         </md-table-cell>
