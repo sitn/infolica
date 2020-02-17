@@ -13,3 +13,8 @@
     left: 115px;
     top: 22px;
 }
+
+.affaires .newAffaireBtn {
+    right: 25px;
+    position: absolute;
+}

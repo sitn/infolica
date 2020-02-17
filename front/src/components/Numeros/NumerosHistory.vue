@@ -130,6 +130,14 @@ export default {
           alert("error" + err);
         });
     },
+
+    /*
+     * Open numéro in new tab
+     */
+    doOpenAffaire(id) {
+      let routeData = this.$router.resolve('/affaires/' + id);
+      window.open(routeData.href, '_blank');
+    }
   },
 
   mounted: function() {

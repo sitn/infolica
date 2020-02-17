@@ -1,0 +1,15 @@
+.affairesDashboard {
+    width: 80%;
+    margin: auto;
+}
+
+.affairesDashboard .actionsColumn {
+    width: 150px !important;
+    min-width: 150px !important;
+}
+
+.affairesDashboard .expandCollapseBtn {
+    position: absolute;
+    left: 115px;
+    top: 22px;
+}

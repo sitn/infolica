@@ -62,7 +62,6 @@ def affaires_search_view(request):
         return Utils.serialize_many(query)
 
     except DBAPIError as e:
-        print(e)
         log.error(e)
         return exc.HTTPBadRequest(e)
 

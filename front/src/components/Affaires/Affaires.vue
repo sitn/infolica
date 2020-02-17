@@ -86,14 +86,13 @@ export default {
         });
     },
 
-    // /*
-    //  * Open numéro in new tab
-    //  */
-    // doOpenNumero(id) {
-    //   window.setTimeout
-    //   let routeData = this.$router.resolve('/numeros/' + id);
-    //   window.open(routeData.href, '_blank');
-    // }
+    /*
+     * Open numéro in new tab
+     */
+    doOpenAffaire(id) {
+      let routeData = this.$router.resolve('/affaires/' + id);
+      window.open(routeData.href, '_blank');
+    }
   },
 
   mounted: function() {
