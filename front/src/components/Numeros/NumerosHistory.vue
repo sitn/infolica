@@ -101,7 +101,7 @@ export default {
               return obj.numero_base_numero;
             });
           } else {
-            this.numero_destination = "-"
+            this.numero_provenance = "-"
           }
         }).catch(err => {
           alert("error" + err);
