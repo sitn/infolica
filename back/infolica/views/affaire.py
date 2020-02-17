@@ -2,6 +2,7 @@ from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 from sqlalchemy import func, and_
 from sqlalchemy.exc import DBAPIError
+from sqlalchemy import desc
 
 from .. import models
 import transaction
@@ -48,8 +49,8 @@ def affaire_by_id_view(request):
 
 
 """ Search affaires"""
-@view_config(route_name='recherche_affaires', request_method='GET', renderer='json')
-@view_config(route_name='recherche_affaires_s', request_method='GET', renderer='json')
+@view_config(route_name='recherche_affaires', request_method='POST', renderer='json')
+@view_config(route_name='recherche_affaires_s', request_method='POST', renderer='json')
 def affaires_search_view(request):
     try:
         settings = request.registry.settings
@@ -57,10 +58,11 @@ def affaires_search_view(request):
         conditions = Utils.get_search_conditions(
             models.VAffaire, request.params)
         query = request.dbsession.query(models.VAffaire).filter(
-            *conditions).all()[:search_limit]
+            *conditions).order_by(desc(models.VAffaire.date_ouverture)).all()[:search_limit]
         return Utils.serialize_many(query)
 
     except DBAPIError as e:
+        print(e)
         log.error(e)
         return exc.HTTPBadRequest(e)
 

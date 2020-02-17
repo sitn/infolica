@@ -558,6 +558,8 @@ class VAffaire(Base):
     date_cloture = Column(Date)
     localisation_e = Column(Text)
     localisation_n = Column(Text)
+    cadastre_id = Column(BigInteger)
+    type_id = Column(BigInteger)
 
 
 class VEnvois(Base):

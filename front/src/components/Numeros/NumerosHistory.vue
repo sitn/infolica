@@ -96,13 +96,15 @@ export default {
             process.env.VUE_APP_NUMERO_RELATIONS_BASE_ENDPOINT +
             this.$route.params.id
         ).then(response => {
-          if (response && response.data) {
+          if (response.data) {
             this.numero_provenance = response.data.map(function(obj) {
               return obj.numero_base_numero;
             });
+          } else {
+            this.numero_destination = "-"
           }
-        }).catch(() => {
-          this.numero_provenance = "-";
+        }).catch(err => {
+          alert("error" + err);
         });
     },
 
@@ -117,47 +119,17 @@ export default {
             process.env.VUE_APP_NUMERO_RELATIONS_ASSOCIE_ENDPOINT +
             this.$route.params.id
         ).then(response => {
-          if (response && response.data) {
+          if (response.data) {
             this.numero_destination = response.data.map(function(obj) {
               return obj.numero_associe_numero;
             });
+          } else {
+            this.numero_destination = "-"
           }
-        }).catch(() => {
-          this.numero_destination = "-"
+        }).catch(err => {
+          alert("error" + err);
         });
     },
-
-    // /*
-    //  * Get searchNumero
-    //  */
-    // async searchNumero() {
-      
-    //   this.$http
-    //     .get(
-    //       process.env.VUE_APP_API_URL +
-    //         process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT
-    //     )
-
-    //     .then(response => {
-    //       if (response && response.data) {
-    //         this.etats_numeros = response.data.map(function(obj) {
-    //           return obj.nom;
-    //         });
-    //       }
-    //     })
-
-    //     .catch(err => {
-    //       alert("error: " + err.message);
-    //     });
-    // },
-
-    // /*
-    //  * Clear the form
-    //  */
-    // clearForm() {
-    //   this.search.cadastre = null;
-    //   this.search.numero = null;
-    // }
   },
 
   mounted: function() {

@@ -15,6 +15,7 @@ export default {
   data: () => ({
     cadastre_liste: [],
     types_affaires: [],
+    affaires: [],
     search: {
       cadastre: null,
       type: null,
@@ -22,30 +23,6 @@ export default {
   }),
 
   methods: {
-    /*
-     * SEARCH AFFAIRE
-     */
-    // async searchAffaires() {
-    //   var formData = new FormData();
-    //   if (this.search.cadastre) formData.append("cadastre", this.search.cadastre);
-
-    //   if (this.search.type) formData.append("type_numero", this.search.type);
-
-    //   this.$http
-    //     .post(
-    //       process.env.VUE_APP_API_URL +
-    //         process.env.VUE_APP_RECHERCHE_NUMEROS_ENDPOINT,
-    //       formData
-    //     )
-    //     .then(response => {
-    //       if (response && response.data) {
-    //         this.numeros = response.data;
-    //       }
-    //     })
-    //     .catch(err => {
-    //       alert("error : " + err.message);
-    //     });
-    // },
 
     /*
      * Init Cadastres list
@@ -58,9 +35,7 @@ export default {
               return obj.nom;
             });
           }
-        })
-
-        .catch(err => {
+        }).catch(err => {
           alert("error: " + err.message);
         });
     },
@@ -76,30 +51,10 @@ export default {
               return obj.nom;
             });
           }
-        })
-
-        .catch(err => {
+        }).catch(err => {
           alert("error: " + err.message);
         });
     },
-
-    // /*
-    //  * Init Etats Numeros list
-    //  */
-    // async initEtatsNumerosList() {
-    //   getEtatsNumeros()
-    //     .then(response => {
-    //       if (response && response.data) {
-    //         this.etats_numeros = response.data.map(function(obj) {
-    //           return obj.nom;
-    //         });
-    //       }
-    //     })
-
-    //     .catch(err => {
-    //       alert("error: " + err.message);
-    //     });
-    // },
 
     /**
      * Clear the form
@@ -107,6 +62,28 @@ export default {
     clearForm() {
       this.search.cadastre = null;
       this.search.type = null;
+    },
+    
+    /*
+     * SEARCH AFFAIRE
+     */
+    async searchAffaires() {
+      var formData = new FormData();
+      if (this.search.cadastre) formData.append("cadastre", this.search.cadastre);
+      if (this.search.type) formData.append("type_affaire", this.search.type);
+
+      this.$http
+        .post(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_RECHERCHE_AFFAIRES_ENDPOINT,
+          formData
+        ).then(response => {
+          if (response && response.data) {
+            this.affaires = response.data;
+          }
+        }).catch(err => {
+          alert("error : " + err.message);
+        });
     },
 
     // /*
@@ -123,8 +100,7 @@ export default {
     checkLogged();
     this.initCadastresList();
     this.initTypesAffairesList();
-    // this.initEtatsNumerosList();
-    // this.searchAffaires();
+    this.searchAffaires();
   }
 };
 </script>

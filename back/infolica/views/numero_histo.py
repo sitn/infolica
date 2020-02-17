@@ -27,14 +27,13 @@ def numero_base_relations_view(request):
     try:
         record = request.dbsession.query(models.VNumerosRelations).filter(models.VNumerosRelations.numero_associe_id == numero_id).all()
 
-        if not record:
-            raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.VNumerosRelations.__tablename__, numero_id))
-
-        return Utils.serialize_many(record)
+        if record:
+            return Utils.serialize_many(record)
+        else:
+            return None
 
     except Exception as e:
         log.error(e)
-        print(e)
         request.response.status = 500
         return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
         
@@ -48,14 +47,13 @@ def numero_associe_relations_view(request):
     try:
         record = request.dbsession.query(models.VNumerosRelations).filter(models.VNumerosRelations.numero_base_id == numero_id).all()
 
-        if not record:
-            raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.VNumerosRelations.__tablename__, numero_id))
-
-        return Utils.serialize_many(record)
+        if record:
+            return Utils.serialize_many(record)
+        else:
+            return None
 
     except Exception as e:
         log.error(e)
-        print(e)
         request.response.status = 500
         return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
         
