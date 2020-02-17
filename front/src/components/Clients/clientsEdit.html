@@ -1,6 +1,6 @@
 <div class="clientsEdit">
    
-   <form novalidate class="md-layout" @submit.prevent="validateUser">
+   <form novalidate class="md-layout" @submit.prevent="validateForm">
       <md-card class="md-layout-item md-size-100 md-small-size-100">
         <md-card-header>
           <div class="md-title">Client</div>
@@ -10,66 +10,152 @@
           <div class="md-layout md-gutter">
 
             <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('gender')">
+              <md-field :class="getValidationClass('type_client')">
                 <label for="type_client">Type client</label>
-                <md-select name="type_client" id="type_client" v-model="form.type_client" md-dense :disabled="sending">
-                  <md-option></md-option>
-                  <md-option value="M">M</md-option>
-                  <md-option value="F">F</md-option>
+                <md-select name="type_client" id="type_client" v-model="form.type_client" :disabled="sending">
+                  <md-option v-for="item in types_clients_list" :key="item.id" :value="item.id">{{item.nom}}</md-option>
                 </md-select>
-                <span class="md-error">Le type client est obligatoire</span>
+                <span class="md-error" v-if="!$v.form.type_client.required">Le type client est obligatoire</span>
               </md-field>
             </div>
 
             <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('firstName')">
+              <md-field :class="getValidationClass('nom')">
                 <label for="nom">Nom</label>
-                <md-input name="nom" id="nom" autocomplete="nom" v-model="form.nom" :disabled="sending" />
+                <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending" />
                 <span class="md-error" v-if="!$v.form.nom.minlength">Nom invalide</span>
               </md-field>
             </div>
 
             <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('lastName')">
+              <md-field :class="getValidationClass('prenom')">
                 <label for="prenom">Prénom</label>
-                <md-input name="prenom" id="prenom" autocomplete="prenom" v-model="form.prenom" :disabled="sending" />
+                <md-input name="prenom" id="prenom" v-model="form.prenom" :disabled="sending" />
                 <span class="md-error" v-if="!$v.form.prenom.minlength">Prénom invalide</span>
               </md-field>
             </div>
+
+            <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="entreprise">Entreprise</label>
+                <md-input name="entreprise" id="entreprise" v-model="form.entreprise" :disabled="sending" />
+              </md-field>
+            </div>
+
           </div>
 
           <div class="md-layout md-gutter">            
 
             <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('firstName')">
-                <label for="entreprise">Entreprise</label>
-                <md-input name="entreprise" id="entreprise" autocomplete="entreprise" v-model="form.entreprise" :disabled="sending" />
+              <md-field>
+                <label for="titre">Titre</label>
+                <md-input name="titre" id="titre" v-model="form.titre" :disabled="sending" />
               </md-field>
             </div>
 
             <div class="md-layout-item md-small-size-100">
-              <md-field :class="getValidationClass('mail')">
-                <label for="mail">Email</label>
-                <md-input type="mail" name="mail" id="mail" autocomplete="mail" v-model="form.mail" :disabled="sending" />
-                <span class="md-error" v-if="!$v.form.email.email">Adresse mail invalide</span>
+              <md-field>
+                <label for="represente_par">Représenté par</label>
+                <md-input name="represente_par" id="represente_par" v-model="form.represente_par" :disabled="sending" />
               </md-field>
             </div>
 
+            <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="no_sap">No SAP</label>
+                <md-input name="no_sap" id="no_sap" v-model="form.no_sap" :disabled="sending" />
+              </md-field>
+            </div>
 
+             <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="no_bdp_bdee">No BDP BDEE</label>
+                <md-input name="no_bdp_bdee" id="no_bdp_bdee" v-model="form.no_bdp_bdee" :disabled="sending" />
+              </md-field>
+            </div>
             
           </div>
 
-          
+
+          <div class="md-layout md-gutter">           
+
+            <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="npa">Npa</label>
+                <md-input name="npa" id="npa" v-model="form.npa" :disabled="sending" />
+              </md-field>
+            </div>
+
+            <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="localite">Localité</label>
+                <md-input name="localite" id="localite" v-model="form.localite" :disabled="sending" />
+              </md-field>
+            </div>
+
+             <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="case_postale">Case postale</label>
+                <md-input name="case_postale" id="case_postale" v-model="form.case_postale" :disabled="sending" />
+              </md-field>
+            </div>
+
+            <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="adresse">Adresse</label>
+                <md-input name="adresse" id="adresse" v-model="form.adresse" :disabled="sending" />
+              </md-field>
+            </div>
+          </div>
+
+          <div class="md-layout md-gutter">
+            <div class="md-layout-item md-small-size-100">
+              <md-field :class="getValidationClass('mail')">
+                <label for="mail">Email</label>
+                <md-input type="mail" name="mail" id="mail" v-model="form.mail" :disabled="sending" />
+                <span class="md-error" v-if="!$v.form.mail.email">Adresse mail invalide</span>
+              </md-field>
+            </div>
+
+            <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="tel_fixe">Télphone fixe</label>
+                <md-input name="tel_fixe" id="tel_fixe" v-model="form.tel_fixe" :disabled="sending" />
+              </md-field>
+            </div>
+
+            <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="fax">Fax</label>
+                <md-input name="fax" id="fax" v-model="form.fax" :disabled="sending" />
+              </md-field>
+            </div>
+
+            <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="tel_portable">Téléphone portable</label>
+                <md-input name="tel_portable" id="tel_portable" v-model="form.tel_portable" :disabled="sending" />
+              </md-field>
+            </div>
+
+            <div class="md-layout-item md-small-size-100">              
+                <md-datepicker v-model="form.entree" md-immediately :class="getValidationClass('entree')">
+                  <label>Date d'entrée</label>
+                </md-datepicker>
+            </div>
+
+          </div>
+
         </md-card-content>
 
         <md-progress-bar md-mode="indeterminate" v-if="sending" />
 
         <md-card-actions>
-          <md-button class="md-raised" :disabled="sending">Annuler</md-button>
+          <md-button class="md-raised" :disabled="sending" v-on:click="cancelEdit">Annuler</md-button>
           <md-button type="submit" class="md-raised md-primary" :disabled="sending">Enregistrer</md-button>
         </md-card-actions>
       </md-card>
 
-      <md-snackbar :md-active.sync="userSaved">The user {{ lastUser }} was saved with success!</md-snackbar>
+      <md-snackbar :md-active.sync="dataSaved">Le client {{ lastRecord }} a été enregistré avec succès</md-snackbar>
     </form>
 </div>

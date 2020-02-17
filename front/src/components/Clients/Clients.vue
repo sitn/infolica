@@ -10,6 +10,8 @@ export default {
   props: {},
   data: () => ({
       clients: [],
+      deleteClientActive: false,
+      deleteMessage: '',
       search: {
         nom: null,
         prenom: null,
@@ -69,6 +71,41 @@ export default {
           this.search.localite = null;
           this.search.mail = null;
         },
+
+
+        /**
+         * Call edit client
+         */
+        callEditClient (id) {
+         this.$router.push('/clients/edit/' + id) ; 
+        },
+        
+        /**
+         * Call delete client
+         */
+        callDeleteClient (id, nom, prenom, entreprise) {
+          this.deleteMessage = prenom + ' ' + nom;
+
+          if(entreprise){
+            this.deleteMessage = entreprise;
+          }
+
+          this.deleteClientActive = true;
+        },
+
+        /**
+         * Delete client
+         */
+        deletClient (id) {
+          alert(id)
+        },
+
+        /**
+       * Delete client
+        */
+        onConfirmDeletClient () {
+        
+        }
   },
 
   mounted: function(){

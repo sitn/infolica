@@ -47,3 +47,8 @@ npm i axios vue-axios --save
 ```
 npm install vuelidate --save
 ```
+
+### Install moment (to handle dates)
+```
+npm install --save moment-timezone vue-moment
+```
