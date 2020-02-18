@@ -58,7 +58,7 @@ def affaires_search_view(request):
         conditions = Utils.get_search_conditions(
             models.VAffaire, request.params)
         query = request.dbsession.query(models.VAffaire).filter(
-            *conditions).order_by(desc(models.VAffaire.date_ouverture)).all()[:search_limit]
+            *conditions).order_by(models.VAffaire.date_ouverture.desc()).limit(search_limit).all()
         return Utils.serialize_many(query)
 
     except DBAPIError as e:

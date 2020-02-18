@@ -103,6 +103,7 @@ class Affaire(Base):
     date_cloture = Column(Date)
     localisation_E = Column(Integer, nullable=False)
     localisation_N = Column(Integer, nullable=False)
+    vref = Column(Text)
 
 
 class AffaireEtapeIndex(Base):
@@ -560,6 +561,7 @@ class VAffaire(Base):
     localisation_n = Column(Text)
     cadastre_id = Column(BigInteger)
     type_id = Column(BigInteger)
+    vref = Column(Text)
 
 
 class VEnvois(Base):

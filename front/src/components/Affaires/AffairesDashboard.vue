@@ -67,7 +67,12 @@ export default {
             this.$route.params.id
         ).then(response => {
           if (response.data) {
-            this.affaire = response.data;
+            // this.affaire = response.data
+            var obj = response.data;
+            Object.keys(obj).forEach(function(key) {
+              if (obj[key] === null) obj[key] = "-";
+            })
+            this.affaire = obj
           }
         }).catch(err => {
           alert("error : " + err.message);
