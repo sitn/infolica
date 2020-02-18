@@ -13,3 +13,8 @@
     left: 115px;
     top: 22px;
 }
+
+.leftColumn {
+    float: left;
+    width: 50%;
+}

@@ -72,7 +72,7 @@ export default {
             Object.keys(obj).forEach(function(key) {
               if (obj[key] === null) obj[key] = "-";
             })
-            this.affaire = obj
+            this.affaire = obj;
           }
         }).catch(err => {
           alert("error : " + err.message);
