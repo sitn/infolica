@@ -18,3 +18,7 @@ body {
 .md-card .md-title {
     font-size: 20px !important;
 }
+
+.md-snackbar{
+    background-color: #267F00 !important;
+}

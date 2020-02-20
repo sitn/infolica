@@ -1,30 +1,30 @@
-.clients{
+.operateurs{
     width: 100%;
     float: left;
     overflow: auto;
 }
 
 
-.clients .actionsColumn{
+.operateurs .actionsColumn{
     width: 150px !important;
     min-width: 150px !important;
 }
 
 /*
-.clients .clientsResults .md-table{
+.operateurs .operateursResults .md-table{
     overflow: hidden;
 }
 
-.clients .clientsResults .md-table-content{
+.operateurs .operateursResults .md-table-content{
     width: 100%;
 }*/
 
-.clients .newClientBtn{
+.operateurs .newOperateurBtn{
     right: 25px;
     position: absolute;
 }
 
-.clients .expandCollapseBtn{
+.operateurs .expandCollapseBtn{
     position: absolute;
     left: 115px;
     top: 22px;

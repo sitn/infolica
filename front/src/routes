@@ -3,6 +3,8 @@ import Affaires from './components/Affaires/Affaires.vue'
 import AffairesDashboard from './components/Affaires/AffairesDashboard.vue'
 import Clients from './components/Clients/Clients.vue'
 import ClientsEdit from './components/Clients/ClientsEdit.vue'
+import Operateurs from './components/Operateurs/Operateurs.vue'
+import OperateursEdit from './components/Operateurs/OperateursEdit.vue'
 import Numeros from './components/Numeros/Numeros.vue'
 import NumerosHistory from './components/Numeros/NumerosHistory.vue'
 import About from './components/About/About.vue'
@@ -15,6 +17,9 @@ const routes = [
     { path: '/clients', component: Clients },
     { path: '/clients/new', component: ClientsEdit },
     { path: '/clients/edit/:id', component: ClientsEdit },
+    { path: '/operateurs', component: Operateurs },
+    { path: '/operateurs/new', component: OperateursEdit },
+    { path: '/operateurs/edit/:id', component: OperateursEdit },
     { path: '/login', component: Login },
     { path: '/numeros', component: Numeros },
     { path: '/numeros/:id', component: NumerosHistory },
