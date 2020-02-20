@@ -1,5 +1,6 @@
 
 import Affaires from './components/Affaires/Affaires.vue'
+import AffairesDashboard from './components/Affaires/AffairesDashboard.vue'
 import Clients from './components/Clients/Clients.vue'
 import ClientsEdit from './components/Clients/ClientsEdit.vue'
 import Numeros from './components/Numeros/Numeros.vue'
@@ -10,6 +11,7 @@ import Login from './components/Login/Login.vue'
 const routes = [
     { path: '/', component: Affaires, redirect:'/affaires' },    
     { path: '/affaires', component: Affaires },
+    { path: '/affaires/:id', component: AffairesDashboard },
     { path: '/clients', component: Clients },
     { path: '/clients/new', component: ClientsEdit },
     { path: '/clients/edit/:id', component: ClientsEdit },

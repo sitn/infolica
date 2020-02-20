@@ -15,6 +15,7 @@ export default {
   data: () => ({
     cadastre_liste: [],
     types_affaires: [],
+    affaires: [],
     search: {
       cadastre: null,
       type: null,
@@ -22,30 +23,6 @@ export default {
   }),
 
   methods: {
-    /*
-     * SEARCH AFFAIRE
-     */
-    // async searchAffaires() {
-    //   var formData = new FormData();
-    //   if (this.search.cadastre) formData.append("cadastre", this.search.cadastre);
-
-    //   if (this.search.type) formData.append("type_numero", this.search.type);
-
-    //   this.$http
-    //     .post(
-    //       process.env.VUE_APP_API_URL +
-    //         process.env.VUE_APP_RECHERCHE_NUMEROS_ENDPOINT,
-    //       formData
-    //     )
-    //     .then(response => {
-    //       if (response && response.data) {
-    //         this.numeros = response.data;
-    //       }
-    //     })
-    //     .catch(err => {
-    //       alert("error : " + err.message);
-    //     });
-    // },
 
     /*
      * Init Cadastres list
@@ -54,12 +31,14 @@ export default {
       getCadastres()
         .then(response => {
           if (response && response.data) {
-            this.cadastre_liste = response.data.map(function(obj) {
-              return obj.nom;
-            });
+            this.cadastre_liste = response.data.map(x => ({
+              id: x.id,
+              nom: x.nom,
+              toLowerCase: () => x.nom.toLowerCase(),
+              toString: () => x.nom
+            }));
           }
         })
-
         .catch(err => {
           alert("error: " + err.message);
         });
@@ -72,34 +51,19 @@ export default {
       getTypesAffaires()
         .then(response => {
           if (response && response.data) {
-            this.types_affaires = response.data.map(function(obj) {
-              return obj.nom;
-            });
+            this.types_affaires = response.data.map(x => ({
+              id: x.id,
+              nom: x.nom,
+              toLowerCase: () => x.nom.toLowerCase(),
+              toString: () => x.nom
+            }));
           }
         })
-
         .catch(err => {
           alert("error: " + err.message);
         });
     },
-
-    // /*
-    //  * Init Etats Numeros list
-    //  */
-    // async initEtatsNumerosList() {
-    //   getEtatsNumeros()
-    //     .then(response => {
-    //       if (response && response.data) {
-    //         this.etats_numeros = response.data.map(function(obj) {
-    //           return obj.nom;
-    //         });
-    //       }
-    //     })
-
-    //     .catch(err => {
-    //       alert("error: " + err.message);
-    //     });
-    // },
+   
 
     /**
      * Clear the form
@@ -108,23 +72,43 @@ export default {
       this.search.cadastre = null;
       this.search.type = null;
     },
+    
+    /*
+     * SEARCH AFFAIRE
+     */
+    async searchAffaires() {
+      var formData = new FormData();
+      if (this.search.cadastre) formData.append("cadastre", this.search.cadastre);
+      if (this.search.type) formData.append("type_affaire", this.search.type);
 
-    // /*
-    //  * Open numéro in new tab
-    //  */
-    // doOpenNumero(id) {
-    //   window.setTimeout
-    //   let routeData = this.$router.resolve('/numeros/' + id);
-    //   window.open(routeData.href, '_blank');
-    // }
+      this.$http
+        .post(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_RECHERCHE_AFFAIRES_ENDPOINT,
+          formData
+        ).then(response => {
+          if (response && response.data) {
+            this.affaires = response.data;
+          }
+        }).catch(err => {
+          alert("error : " + err.message);
+        });
+    },
+
+    /*
+     * Open numéro in new tab
+     */
+    doOpenAffaire(id) {
+      let routeData = this.$router.resolve('/affaires/' + id);
+      window.open(routeData.href, '_blank');
+    }
   },
 
   mounted: function() {
     checkLogged();
     this.initCadastresList();
     this.initTypesAffairesList();
-    // this.initEtatsNumerosList();
-    // this.searchAffaires();
+    this.searchAffaires();
   }
 };
 </script>

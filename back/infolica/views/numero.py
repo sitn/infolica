@@ -3,7 +3,6 @@ import pyramid.httpexceptions as exc
 from ..scripts.utils import Utils
 from ..models import Constant
 import transaction
-from sqlalchemy import desc
 
 from sqlalchemy.exc import DBAPIError
 from ..exceptions.custom_error import CustomError
@@ -99,8 +98,8 @@ def numeros_search_view(request):
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
         conditions = Utils.get_search_conditions(models.VNumeros, request.params)
-        query = request.dbsession.query(models.VNumeros).order_by(models.VNumeros.cadastre, desc(models.VNumeros.numero)).filter(
-            *conditions).all()[:search_limit]
+        query = request.dbsession.query(models.VNumeros).order_by(models.VNumeros.cadastre, models.VNumeros.numero.desc()).filter(
+            *conditions).limit(search_limit).all()
         return Utils.serialize_many(query)
 
     except DBAPIError as e:

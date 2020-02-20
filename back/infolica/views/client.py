@@ -63,7 +63,7 @@ def clients_search_view(request):
         search_limit = int(settings['search_limit'])
         conditions = Utils.get_search_conditions(models.Client, request.params)
         query = request.dbsession.query(models.Client).order_by(models.Client.nom, models.Client.prenom).filter(
-            *conditions).all()[:search_limit]
+            *conditions).limit(search_limit).all()
         return Utils.serialize_many(query)
 
     except DBAPIError as e:

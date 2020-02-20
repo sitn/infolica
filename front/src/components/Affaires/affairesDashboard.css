@@ -1,0 +1,42 @@
+.affairesDashboard {
+    width: 100%;
+    float: left;
+}
+
+.affairesDashboard .actionsColumn {
+    width: 150px !important;
+    min-width: 150px !important;
+}
+
+.affairesDashboard .expandCollapseBtn {
+    position: absolute;
+    left: 115px;
+    top: 22px;
+}
+
+.leftColumn {
+    float: left;
+    width: 49.8%;
+}
+
+.rightColumn {
+    float: right;
+    width: 49.6%;
+}
+
+#map {
+    width: 100%;
+    height: 468px;
+    background-color: grey;
+  }
+ 
+.test {
+    height: 500px;
+}
+
+.md-card {
+    width: 100%;
+    display: inline-block;
+    vertical-align: top;
+    margin: 4px;
+}

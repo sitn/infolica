@@ -1,4 +1,4 @@
-.affaires{
+.affaires {
     width: 100%;
     float: left;
 }
@@ -12,4 +12,9 @@
     position: absolute;
     left: 115px;
     top: 22px;
+}
+
+.affaires .newAffaireBtn {
+    right: 25px;
+    position: absolute;
 }

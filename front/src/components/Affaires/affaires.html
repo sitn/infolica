@@ -1,6 +1,13 @@
 <div class="affaires">
 
-
+    <md-card>
+        <!-- <md-button class="md-raised md-accent newClientBtn" @click="$router.push('/clients/new')">Nouveau client</md-button> -->
+        <md-button class="md-raised md-accent newAffaireBtn">Nouvelle affaire</md-button>
+    </md-card>
+    </br>
+    </br>
+    </br>
+    
     <!-- Search -->
     <md-card>
         <!-- Search Header -->
@@ -19,23 +26,31 @@
             <md-card-expand-content>
                 <md-card-content>
                     <div class="md-layout md-gutter">
+                        <!-- Cadastre -->
                         <div class="md-layout-item md-small-size-30">
                             <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste">
                                 <label>Cadastre</label>
+                                <template slot="md-autocomplete-item" slot-scope="{ item }">
+                                    {{ item.nom }}
+                                </template>
                             </md-autocomplete>
                         </div>
-
+                        <!-- Type -->
                         <div class="md-layout-item md-small-size-30">
                             <md-autocomplete v-model="search.type" :md-options="types_affaires">
                                 <label>Type</label>
+                                <template slot="md-autocomplete-item" slot-scope="{ item }">
+                                    {{ item.nom }}
+                                </template>
                             </md-autocomplete>
                         </div>
                     </div>
 
                     <!-- Search Actions -->
                     <md-card-actions>
-                        <md-button class="md-raised" v-bind:disabled="!search.cadastre && !search.type" v-on:click="clearForm">Réinitialiser</md-button>
-                        <!-- <md-button class="md-raised md-primary" v-on:click="searchAffaires">Rechercher</md-button> -->
+                        <md-button class="md-raised" v-bind:disabled="!search.cadastre && !search.type"
+                            v-on:click="clearForm">Réinitialiser</md-button>
+                        <md-button class="md-raised md-primary" v-on:click="searchAffaires">Rechercher</md-button>
                     </md-card-actions>
                 </md-card-content>
             </md-card-expand-content>
@@ -55,23 +70,31 @@
             </md-card-header>
 
             <!-- Results Content -->
-            <!-- <md-card-content>
-                <md-table v-model="numeros" md-sort="numero" md-sort-order="desc">
+            <md-card-content>
+                <md-table v-model="affaires" md-sort="date_ouverture" md-sort-order="desc">
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
-                        <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
+                        <md-table-cell md-label="Id" md-sort-by="id">{{ item.id }}</md-table-cell>
                         <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
-                        <md-table-cell md-label="Type" md-sort-by="type">{{ item.type_numero }}</md-table-cell>
-                        <md-table-cell md-label="Immeuble" md-sort-by="numero">{{ item.numero }}</md-table-cell>
-                        <md-table-cell md-label="Suffixe/Unité" md-sort-by="suffixe">{{ item.suffixe }}</md-table-cell>
-                        <md-table-cell md-label="Etat" md-sort-by="etat">{{ item.etat }}</md-table-cell>
+                        <md-table-cell md-label="Nom" md-sort-by="nom">{{ item.nom }}</md-table-cell>
+                        <md-table-cell md-label="Type" md-sort-by="type_affaire">{{ item.type_affaire }}</md-table-cell>
+                        <md-table-cell md-label="Client" md-sort-by="client_commande_nom">{{ item.client_commande_nom }}
+                        </md-table-cell>
+                        <md-table-cell md-label="Responsable" md-sort-by="responsable_nom">{{ item.responsable_prenom }}
+                            {{ item.responsable_nom }}</md-table-cell>
+                        <md-table-cell md-label="Technicien" md-sort-by="technicien_nom">{{ item.technicien_prenom }}
+                            {{ item.technicien_nom }}</md-table-cell>
+                        <md-table-cell md-label="Informations" md-sort-by="information">{{ item.information }}
+                        </md-table-cell>
+                        <md-table-cell md-label="Date d'ouverture" md-sort-by="date_ouverture">{{ item.date_ouverture }}
+                        </md-table-cell>
                         <md-table-cell md-label="Actions" class="actionsColumn">
-                            <md-button class="md-icon-button md-raised md-primary" v-on:click="doOpenNumero(item.id)">
+                            <md-button class="md-icon-button md-raised md-primary" v-on:click="doOpenAffaire(item.id)">
                                 <md-icon>open_in_new</md-icon>
                             </md-button>
                         </md-table-cell>
                     </md-table-row>
                 </md-table>
-            </md-card-content> -->
+            </md-card-content>
         </md-card>
 
     </div>
