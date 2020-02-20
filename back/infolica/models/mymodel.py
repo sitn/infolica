@@ -527,11 +527,17 @@ class VNumerosAffaires(Base):
     __table_args__ = {'schema': 'infolica'}
     numero_id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger, primary_key=True)
+    affaire_numero_type_id = Column(BigInteger)
     affaire_nom = Column(Text)
     affaire_type = Column(Text)
     affaire_date = Column(Date)
     affaire_information = Column(Text)
-    affaire_numero_type = Column(BigInteger)
+    numero_cadastre = Column(Text)
+    numero_type = Column(Text)
+    numero = Column(BigInteger)
+    numero_suffixe = Column(Text)
+    numero_etat = Column(Text)
+    affaire_numero_type = Column(Text)
 
 
 class VAffaire(Base):

@@ -11,51 +11,13 @@ export default {
   name: "AffairesDashboard",
   props: {},
   data: () => ({
-    affaire: [],
+    affaire: {},
+    affaire_numeros: {},
+    affaire_remarques: {},
   }),
 
   methods: {
 
-    // /*
-    //  * Init Cadastres list
-    //  */
-    // initCadastresList() {
-    //   getCadastres()
-    //     .then(response => {
-    //       if (response && response.data) {
-    //         this.cadastre_liste = response.data.map(function(obj) {
-    //           return obj.nom;
-    //         });
-    //       }
-    //     }).catch(err => {
-    //       alert("error: " + err.message);
-    //     });
-    // },
-
-    // /*
-    //  * Init Types affaires list
-    //  */
-    // async initTypesAffairesList() {
-    //   getTypesAffaires()
-    //     .then(response => {
-    //       if (response && response.data) {
-    //         this.types_affaires = response.data.map(function(obj) {
-    //           return obj.nom;
-    //         });
-    //       }
-    //     }).catch(err => {
-    //       alert("error: " + err.message);
-    //     });
-    // },
-
-    // /**
-    //  * Clear the form
-    //  */
-    // clearForm() {
-    //   this.search.cadastre = null;
-    //   this.search.type = null;
-    // },
-    
     /*
      * SEARCH AFFAIRE
      */
@@ -78,11 +40,58 @@ export default {
           alert("error : " + err.message);
         });
     },
+
+    /*
+     * SEARCH AFFAIRE NUMEROS
+     */
+    async searchAffaireNumeros() {
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
+            this.$route.params.id
+        ).then(response => {
+          if (response.data) {
+            this.affaire_numeros = response.data
+          }
+        }).catch(err => {
+          alert("error : " + err.message);
+        });
+    },
+
+    /*
+     * SEARCH AFFAIRE NUMEROS
+     */
+    async searchAffaireRemarques() {
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_AFFAIRE_REMARQUES_ENDPOINT +
+            this.$route.params.id
+        ).then(response => {
+          if (response.data) {
+            this.affaire_remarques = response.data
+          }
+        }).catch(err => {
+          alert("error : " + err.message);
+        });
+    },
+
+    /*
+     * Open numéro in new tab
+     */
+    doOpenNumero(id) {
+      window.setTimeout;
+      let routeData = this.$router.resolve("/numeros/" + id);
+      window.open(routeData.href, "_blank");
+    },    
   },
 
   mounted: function() {
     checkLogged();
     this.searchAffaire();
+    this.searchAffaireNumeros();
+    this.searchAffaireRemarques();
   }
 };
 </script>

@@ -215,7 +215,7 @@ def affaire_numeros_view(request):
 
     except DBAPIError as e:
         log.error(e)
-        return Response(db_err_msg, content_type='text/plain', status=500)
+        return exc.HTTPBadRequest(e)
 
 
 """ Add new affaire-numero """
