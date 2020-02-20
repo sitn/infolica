@@ -115,12 +115,38 @@
             </md-card-content>
         </md-card>
     </div>
+
     <!-- NUMEROS -->
-    <md-card>
-        <md-card-content>
-            Numeros
-        </md-card-content>
-    </md-card>
+    <div class="affairesDashboard">
+
+        <md-card>
+            <!-- Results Header -->
+            <md-card-header>
+                <div class="md-title">Immeubles concernés par l'affaire</div>
+            </md-card-header>
+
+            <!-- Results Content -->
+            <md-card-content>
+                <md-table v-model="affaire_numeros" md-sort="id" md-sort-order="desc">
+                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                        <md-table-cell md-label="Id" md-sort-by="numero_id">{{ item.numero_id }}</md-table-cell>
+                        <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
+                        <md-table-cell md-label="Type" md-sort-by="numero_type">{{ item.numero_type }}</md-table-cell>
+                        <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}</md-table-cell>
+                        <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">{{ item.numero_suffixe }}</md-table-cell>
+                        <md-table-cell md-label="Etat" md-sort-by="numero_etat">{{ item.numero_etat }}</md-table-cell>
+                        <md-table-cell md-label="Statut" md-sort-by="affaire_numero_type">{{ item.affaire_numero_type }}</md-table-cell>
+                        <md-table-cell md-label="Actions" class="actionsColumn">
+                            <md-button class="md-icon-button md-raised md-primary" v-on:click="doOpenNumero(item.numero_id)">
+                                <md-icon>open_in_new</md-icon>
+                            </md-button>
+                        </md-table-cell>
+                    </md-table-row>
+                </md-table>
+            </md-card-content>
+        </md-card>
+
+    </div>
 
     <!-- DOCUMENTS -->
 
@@ -138,7 +164,24 @@
 
 
     <!-- REMARQUE -->
+    <div class="affairesDashboard">
+        <md-card>
+             <!-- Results Header -->
+             <md-card-header>
+                <div class="md-title">Remarques</div>
+            </md-card-header>
 
+            <md-card-content>
+                <md-table v-model="affaire_remarques" md-sort="date" md-sort-order="desc">
+                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                        <md-table-cell md-label="Opérateur" md-sort-by="nom">{{ item.prenom }} {{ item.nom }}</md-table-cell>
+                        <md-table-cell md-label="Date" md-sort-by="date">{{ item.date }}</md-table-cell>
+                        <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}</md-table-cell>
+                    </md-table-row>
+                </md-table>
+            </md-card-content>
+        </md-card>
+    </div>
 
     <!-- SUIVI DU MANDAT -->
 
