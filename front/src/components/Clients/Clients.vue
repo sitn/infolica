@@ -103,12 +103,6 @@ export default {
           this.deleteClientActive = true;
         },
 
-        /**
-         * Delete client
-         */
-        deletClient (id) {
-          alert(id)
-        },
 
         /**
         * Delete client
