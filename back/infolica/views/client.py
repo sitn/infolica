@@ -66,7 +66,7 @@ def clients_search_view(request):
         #Check date_sortie is null
         conditions = [] if not conditions or len(conditions) == 0 else conditions
 
-        conditions.append(models.Client.sortie is None)
+        conditions.append(models.Client.sortie == None)
 
         query = request.dbsession.query(models.Client).order_by(models.Client.nom, models.Client.prenom).filter(
             *conditions).limit(search_limit).all()
