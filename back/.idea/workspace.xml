@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="51a38106-afd0-4071-a97e-7937b616b656" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../front/src/components/Clients/Clients.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Clients/Clients.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../front/src/components/Clients/clients.html" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Clients/clients.html" afterDir="false" />
-    </list>
+    <list default="true" id="51a38106-afd0-4071-a97e-7937b616b656" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,15 +10,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/development.ini.template">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1258">
-              <caret line="74" column="17" selection-start-line="74" selection-start-column="17" selection-end-line="74" selection-end-column="17" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/infolica/views/default.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -64,11 +52,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/infolica/views/client.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="68" column="49" selection-start-line="68" selection-start-column="49" selection-end-line="68" selection-end-column="49" />
+            <state relative-caret-position="646">
+              <caret line="76" column="36" lean-forward="true" selection-start-line="56" selection-end-line="76" selection-end-column="36" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/infolica/views/operateur.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="497">
+              <caret line="53" column="112" selection-start-line="53" selection-start-column="112" selection-end-line="53" selection-end-column="112" />
             </state>
           </provider>
         </entry>
@@ -106,8 +103,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/infolica/routes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="5" column="68" selection-start-line="5" selection-start-column="55" selection-end-line="5" selection-end-column="68" />
+            <state relative-caret-position="401">
+              <caret line="33" column="82" selection-start-line="33" selection-start-column="82" selection-end-line="33" selection-end-column="82" />
             </state>
           </provider>
         </entry>
@@ -123,7 +120,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>const</find>
       <find>forei</find>
       <find>NumeroType</find>
       <find>type_numero</find>
@@ -153,6 +149,7 @@
       <find>id = Column(BigInteger, primary_key=True)</find>
       <find>facture</find>
       <find>add_cors_headers_response_callback</find>
+      <find>oper</find>
     </findStrings>
     <replaceStrings>
       <replace>TypeAffaire</replace>
@@ -195,13 +192,13 @@
         <option value="$PROJECT_DIR$/development.ini.template" />
         <option value="$PROJECT_DIR$/infolica/views/affaire.py" />
         <option value="$PROJECT_DIR$/infolica/scripts/ldap_query.py" />
-        <option value="$PROJECT_DIR$/infolica/routes.py" />
         <option value="$PROJECT_DIR$/infolica/scripts/utils.py" />
-        <option value="$PROJECT_DIR$/infolica/views/operateur.py" />
         <option value="$PROJECT_DIR$/infolica/views/login.py" />
         <option value="$PROJECT_DIR$/development.ini" />
         <option value="$PROJECT_DIR$/infolica/views/default.py" />
         <option value="$PROJECT_DIR$/infolica/views/client.py" />
+        <option value="$PROJECT_DIR$/infolica/routes.py" />
+        <option value="$PROJECT_DIR$/infolica/views/operateur.py" />
       </list>
     </option>
   </component>
@@ -385,13 +382,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/infolica/views/operateur.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1666">
-          <caret line="118" column="33" selection-start-line="118" selection-start-column="33" selection-end-line="118" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/infolica/scripts/ldap_query.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
@@ -464,13 +454,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/infolica/routes.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="68" selection-start-line="5" selection-start-column="55" selection-end-line="5" selection-end-column="68" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/infolica/scripts/utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="262">
@@ -493,8 +476,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/infolica/views/client.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="68" column="49" selection-start-line="68" selection-start-column="49" selection-end-line="68" selection-end-column="49" />
+        <state relative-caret-position="646">
+          <caret line="76" column="36" lean-forward="true" selection-start-line="56" selection-end-line="76" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/infolica/routes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="401">
+          <caret line="33" column="82" selection-start-line="33" selection-start-column="82" selection-end-line="33" selection-end-column="82" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/infolica/views/operateur.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="497">
+          <caret line="53" column="112" selection-start-line="53" selection-start-column="112" selection-end-line="53" selection-end-column="112" />
         </state>
       </provider>
     </entry>
