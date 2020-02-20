@@ -26,15 +26,22 @@
             <md-card-expand-content>
                 <md-card-content>
                     <div class="md-layout md-gutter">
+                        <!-- Cadastre -->
                         <div class="md-layout-item md-small-size-30">
                             <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste">
                                 <label>Cadastre</label>
+                                <template slot="md-autocomplete-item" slot-scope="{ item }">
+                                    {{ item.nom }}
+                                </template>
                             </md-autocomplete>
                         </div>
-
+                        <!-- Type -->
                         <div class="md-layout-item md-small-size-30">
                             <md-autocomplete v-model="search.type" :md-options="types_affaires">
                                 <label>Type</label>
+                                <template slot="md-autocomplete-item" slot-scope="{ item }">
+                                    {{ item.nom }}
+                                </template>
                             </md-autocomplete>
                         </div>
                     </div>

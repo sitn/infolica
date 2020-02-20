@@ -31,11 +31,15 @@ export default {
       getCadastres()
         .then(response => {
           if (response && response.data) {
-            this.cadastre_liste = response.data.map(function(obj) {
-              return obj.nom;
-            });
+            this.cadastre_liste = response.data.map(x => ({
+              id: x.id,
+              nom: x.nom,
+              toLowerCase: () => x.nom.toLowerCase(),
+              toString: () => x.nom
+            }));
           }
-        }).catch(err => {
+        })
+        .catch(err => {
           alert("error: " + err.message);
         });
     },
@@ -47,14 +51,19 @@ export default {
       getTypesAffaires()
         .then(response => {
           if (response && response.data) {
-            this.types_affaires = response.data.map(function(obj) {
-              return obj.nom;
-            });
+            this.types_affaires = response.data.map(x => ({
+              id: x.id,
+              nom: x.nom,
+              toLowerCase: () => x.nom.toLowerCase(),
+              toString: () => x.nom
+            }));
           }
-        }).catch(err => {
+        })
+        .catch(err => {
           alert("error: " + err.message);
         });
     },
+   
 
     /**
      * Clear the form
