@@ -42,6 +42,27 @@ def operateur_by_id_view(request):
         return exc.HTTPBadRequest(e)
 
 
+""" Search operateurs"""
+@view_config(route_name='recherche_operateurs', request_method='POST', renderer='json')
+@view_config(route_name='recherche_operateurs_s', request_method='POST', renderer='json')
+def operateurs_search_view(request):
+    try:
+        settings = request.registry.settings
+        search_limit = int(settings['search_limit'])
+        conditions = Utils.get_search_conditions(models.Operateur, request.params)
+
+        # Check date_sortie is null
+        conditions = [] if not conditions or len(conditions) == 0 else conditions
+        conditions.append(models.Operateur.sortie == None)
+
+        query = request.dbsession.query(models.Operateur).order_by(models.Operateur.nom, models.Operateur.prenom).filter(
+            *conditions).limit(search_limit).all()
+        return Utils.serialize_many(query)
+
+    except DBAPIError as e:
+        log.error(e)
+        return exc.HTTPBadRequest(e)
+
 """ Add new operateur"""
 @view_config(route_name='operateurs', request_method='POST', renderer='json')
 @view_config(route_name='operateurs_s', request_method='POST', renderer='json')

@@ -62,6 +62,12 @@ def clients_search_view(request):
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
         conditions = Utils.get_search_conditions(models.Client, request.params)
+
+        #Check date_sortie is null
+        conditions = [] if not conditions or len(conditions) == 0 else conditions
+
+        conditions.append(models.Client.sortie == None)
+
         query = request.dbsession.query(models.Client).order_by(models.Client.nom, models.Client.prenom).filter(
             *conditions).limit(search_limit).all()
         return Utils.serialize_many(query)

@@ -1,32 +1,29 @@
-<style src="./clients.css" scoped></style>
-<template src="./clients.html"></template>
+<style src="./operateurs.css" scoped></style>
+<template src="./operateurs.html"></template>
 
 
 <script>
 import {checkLogged} from '@/services/helper'
 
 export default {
-  name: 'Clients',
+  name: 'Operateurs',
   props: {},
   data: () => ({
-      clients: [],
-      deleteClientActive: false,
+      operateurs: [],
+      deleteOperateurActive: false,
       deleteMessage: '',
       currentDeleteId: null,
       search: {
         nom: null,
         prenom: null,
-        entreprise: null,
-        adresse: null,
-        localite: null,
-        mail: null
+        login: null
       }
   }),
   methods: {
         /**
-         * Search clients
+         * Search operateurs
         */
-        async searchClients () {
+        async searchOperateurs () {
           var formData = new FormData();
           if(this.search.nom)
             formData.append("nom", this.search.nom);
@@ -34,25 +31,17 @@ export default {
           if(this.search.prenom)
             formData.append("prenom", this.search.prenom);
 
-          if(this.search.entreprise)
-            formData.append("entreprise", this.search.entreprise);
+          if(this.search.login)
+            formData.append("login", this.search.login);
 
-          if(this.search.adresse)
-            formData.append("adresse", this.search.adresse);
-
-          if(this.search.localite)
-            formData.append("localite", this.search.localite);
-
-          if(this.search.mail)
-            formData.append("mail", this.search.mail);
 
           this.$http.post(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_ENDPOINT, 
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_OPERATEURS_ENDPOINT, 
             formData
           )
           .then(response =>{
             if(response && response.data){
-              this.clients = response.data;
+              this.operateurs = response.data;
             }
           })
           //Error 
@@ -67,24 +56,21 @@ export default {
         clearForm () {
           this.search.nom = null;
           this.search.prenom = null;
-          this.search.entreprise = null;
-          this.search.adresse = null;
-          this.search.localite = null;
-          this.search.mail = null;
+          this.search.login = null;
         },
 
 
         /**
-         * Call edit client
+         * Call edit operateur
          */
-        callEditClient (id) {
-         this.$router.push('/clients/edit/' + id) ; 
+        callEditOperateur (id) {
+         this.$router.push('/operateurs/edit/' + id) ; 
         },
         
         /**
-         * Call delete client
+         * Call delete operateur
          */
-        callDeleteClient (id, nom, prenom, entreprise) {
+        callDeleteOperateur (id, nom, prenom) {
           this.currentDeleteId = id;
 
           if(prenom && nom)
@@ -94,18 +80,13 @@ export default {
           else
             this.deleteMessage = "-";
 
-          if(entreprise){
-            this.deleteMessage = entreprise;
-          }
+          this.deleteMessage = "Confirmer la suppression de l'operateur '<strong>" + this.deleteMessage + "<strong>' ?";
 
-          this.deleteMessage = "Confirmer la suppression du client '<strong>" + this.deleteMessage + "<strong>' ?";
-
-          this.deleteClientActive = true;
+          this.deleteOperateurActive = true;
         },
 
-
         /**
-        * Delete client
+        * Delete operateur
         */
         onConfirmDelete () {
 
@@ -115,12 +96,12 @@ export default {
             formData.append("id", this.currentDeleteId);
 
           this.$http.delete(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT, 
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT, 
             {data:formData}
           )
           .then(response =>{
             if(response && response.data){
-              this.searchClients();
+              this.searchOperateurs();
             }
           })
           //Error 
@@ -130,7 +111,7 @@ export default {
         },
 
         /**
-        * Delete client
+        * Delete operateur
         */
         onCancelDelete () {
           this.currentDeleteId = null;
@@ -139,7 +120,7 @@ export default {
 
   mounted: function(){
     checkLogged();
-    this.searchClients();
+    this.searchOperateurs();
   }
 }
 </script>
