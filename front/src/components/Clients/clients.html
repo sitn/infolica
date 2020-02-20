@@ -126,9 +126,10 @@
     <md-dialog-confirm
       :md-active.sync="deleteClientActive"
       md-title="Supprimer le client"
-      md-content="Confirmer la suppression du client ?" 
+      :md-content="deleteMessage"
       md-confirm-text="Confirmer"
       md-cancel-text="Annuler"
-      @md-confirm="onConfirmDelete" />    
+      @md-confirm="onConfirmDelete" 
+      @md-cancel="onCancelDelete"/>    
   </div>
 </div>

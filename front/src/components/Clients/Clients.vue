@@ -12,6 +12,7 @@ export default {
       clients: [],
       deleteClientActive: false,
       deleteMessage: '',
+      currentDeleteId: null,
       search: {
         nom: null,
         prenom: null,
@@ -84,11 +85,20 @@ export default {
          * Call delete client
          */
         callDeleteClient (id, nom, prenom, entreprise) {
-          this.deleteMessage = prenom + ' ' + nom;
+          this.currentDeleteId = id;
+
+          if(prenom && nom)
+            this.deleteMessage = prenom + ' ' + nom;
+          else if(nom)
+            this.deleteMessage = nom;
+          else
+            this.deleteMessage = "-";
 
           if(entreprise){
             this.deleteMessage = entreprise;
           }
+
+          this.deleteMessage = "Confirmer la suppression du client '<strong>" + this.deleteMessage + "<strong>' ?";
 
           this.deleteClientActive = true;
         },
@@ -101,10 +111,35 @@ export default {
         },
 
         /**
-       * Delete client
+        * Delete client
         */
-        onConfirmDeletClient () {
-        
+        onConfirmDelete () {
+
+          var formData = new FormData();
+          
+          if(this.currentDeleteId)
+            formData.append("id", this.currentDeleteId);
+
+          this.$http.delete(
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT, 
+            {data:formData}
+          )
+          .then(response =>{
+            if(response && response.data){
+              this.searchClients();
+            }
+          })
+          //Error 
+          .catch(err => {
+            alert("error : " + err.message);  
+          })
+        },
+
+        /**
+        * Delete client
+        */
+        onCancelDelete () {
+          this.currentDeleteId = null;
         }
   },
 
