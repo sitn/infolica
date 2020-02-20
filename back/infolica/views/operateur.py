@@ -51,6 +51,10 @@ def operateurs_search_view(request):
         search_limit = int(settings['search_limit'])
         conditions = Utils.get_search_conditions(models.Operateur, request.params)
 
+        # Check date_sortie is null
+        conditions = [] if not conditions or len(conditions) == 0 else conditions
+        conditions.append(models.Operateur.sortie == None)
+
         query = request.dbsession.query(models.Operateur).order_by(models.Operateur.nom, models.Operateur.prenom).filter(
             *conditions).limit(search_limit).all()
         return Utils.serialize_many(query)
