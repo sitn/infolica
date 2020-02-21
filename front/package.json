@@ -18,6 +18,7 @@
     "vue-material": "^1.0.0-beta-11",
     "vue-moment": "^4.1.0",
     "vue-router": "^3.1.5",
+    "vuelayers": "^0.11.21",
     "vuelidate": "^0.7.5"
   },
   "devDependencies": {
@@ -38,7 +39,7 @@
       "plugin:vue/essential",
       "eslint:recommended"
     ],
-    "rules": {},
+    "rules": {"no-console": "off"},
     "parserOptions": {
       "parser": "babel-eslint"
     }

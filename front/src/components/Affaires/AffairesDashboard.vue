@@ -8,9 +8,14 @@ import {
   checkLogged,
 } from "@/services/helper";
 
+import MapHandler from '@/components/MapHandler/MapHandler.vue';
+
 export default {
   name: "AffairesDashboard",
   props: {},
+  components: {
+    MapHandler
+  },
   data: () => ({
     affaire: {},
     affaire_numeros: [],
