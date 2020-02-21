@@ -52,3 +52,8 @@ npm install vuelidate --save
 ```
 npm install --save moment-timezone vue-moment
 ```
+
+# install VueLayers  (to handle maps)
+```
+npm install vuelayers --save
+```
