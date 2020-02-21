@@ -1,0 +1,23 @@
+<div class="map">
+    <vl-map ref="map" :load-tiles-while-animating="true" 
+    :load-tiles-while-interacting="true"  
+    @singleclick="onMapClick" 
+    @mounted="onMapMounted" 
+    style="height: 468px">
+        <vl-view ref="view" :zoom.sync="zoom" :center.sync="center" ></vl-view>        
+    
+        <!--<vl-layer-tile id="osm">
+            <vl-source-osm></vl-source-osm>
+        </vl-layer-tile>
+
+        <vl-layer-tile id="wmts">
+            <vl-source-wmts :attributions="attribution" :url="url" :layer-name="layerName" :matrix-set="matrixSet" :format="format" 
+                            :style-name="styleName"></vl-source-wmts>
+          </vl-layer-tile>
+        </vl-map>-->
+
+        <vl-layer-tile id="wms">
+          <vl-source-wms ref="wmsSource" :url="url" :layers="layers" :cr="cr"></vl-source-wms>
+        </vl-layer-tile>
+      </vl-map>
+</div>
