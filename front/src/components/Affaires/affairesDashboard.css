@@ -34,9 +34,16 @@
     height: 500px;
 }
 
-.md-card {
+.affairesDashboard .md-card {
     width: 100%;
     display: inline-block;
     vertical-align: top;
     margin: 4px;
 }
+
+.affairesDashboard .md-table {
+    width: 70%;
+    margin: auto;
+}
+
+

@@ -3,6 +3,7 @@
 
 
 <script>
+var numeral = require("numeral");
 import {
   checkLogged,
 } from "@/services/helper";
@@ -12,8 +13,9 @@ export default {
   props: {},
   data: () => ({
     affaire: {},
-    affaire_numeros: {},
-    affaire_remarques: {},
+    affaire_numeros: [],
+    affaire_remarques: [],
+    affaire_factures: [],
   }),
 
   methods: {
@@ -60,17 +62,43 @@ export default {
     },
 
     /*
+     * SEARCH AFFAIRE FACTURES
+     */
+    async searchAffaireFactures() {
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_AFFAIRE_FACTURES_ENDPOINT +
+            this.$route.params.id
+        ).then(response => {
+          if (response && response.data) {
+            this.affaire_factures = response.data.map(x => ({
+              date: x.date,
+              client_id: x.client_id,
+              montant_mo: numeral(x.montant_mo).format('0.00'),
+              montant_mat_diff: numeral(x.montant_mat_diff).format('0.00'),
+              montant_rf: numeral(x.montant_rf).format('0.00'),
+              montant_tva: numeral(x.montant_tva).format('0.00'),
+              montant_total: numeral(x.montant_total).format('0.00'),
+            }))
+          }
+        }).catch(err => {
+          alert("error : " + err.message);
+        });
+    },
+
+    /*
      * SEARCH AFFAIRE NUMEROS
      */
     async searchAffaireRemarques() {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_REMARQUES_ENDPOINT +
+            process.env.VUE_APP_AFFAIRE_FACTURES_ENDPOINT +
             this.$route.params.id
         ).then(response => {
           if (response.data) {
-            this.affaire_remarques = response.data
+            this.affaire_factures = response.data
           }
         }).catch(err => {
           alert("error : " + err.message);
@@ -84,7 +112,10 @@ export default {
       window.setTimeout;
       let routeData = this.$router.resolve("/numeros/" + id);
       window.open(routeData.href, "_blank");
-    },    
+    },
+
+    
+
   },
 
   mounted: function() {
@@ -92,6 +123,7 @@ export default {
     this.searchAffaire();
     this.searchAffaireNumeros();
     this.searchAffaireRemarques();
+    this.searchAffaireFactures();
   }
 };
 </script>
