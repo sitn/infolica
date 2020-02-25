@@ -57,3 +57,8 @@ npm install --save moment-timezone vue-moment
 ```
 npm install vuelayers --save
 ```
+
+# install Numeral  (number formatting)
+```
+npm install numeral --save
+```

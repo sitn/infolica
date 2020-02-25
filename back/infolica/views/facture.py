@@ -68,8 +68,8 @@ def factures_update_view(request):
     # id_facture
     id_facture = None
 
-    if 'id_facture' in request.params:
-        id_facture = request.params['id_facture']
+    if 'id' in request.params:
+        id_facture = request.params['id']
 
     # Get the facture
     facture_record = request.dbsession.query(models.Facture).filter(
@@ -92,13 +92,13 @@ def factures_update_view(request):
 
 
 """ Delete facture"""
-@view_config(route_name='facture_by_id', request_method='DELETE', renderer='json')
+@view_config(route_name='factures', request_method='DELETE', renderer='json')
+@view_config(route_name='factures_s', request_method='DELETE', renderer='json')
 def factures_delete_view(request):
 
-    id = request.matchdict['id']
+    id = request.params['id'] if 'id' in request.params else None
 
-    query = request.dbsession.query(models.Facture)
-    facture = query.filter(models.Facture.id == id).first()
+    facture = request.dbsession.query(models.Facture).filter(models.Facture.id == id).first()
 
     if not facture:
         raise CustomError(

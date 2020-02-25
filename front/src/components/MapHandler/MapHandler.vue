@@ -15,8 +15,8 @@ export default {
       zoom: 15,
       center: [6.93, 46.99],
       cr: 'EPSG:4326',
-      _url: 'https://sitn.ne.ch/mapproxy95/service',
-      _layers: 'plan_cadastral',
+      // url: 'https://sitn.ne.ch/mapproxy95/service',
+      // layers: 'plan_cadastral',
       url: 'https://sitn.ne.ch/ogc-sitn95-open/wms',
       layers: 'plan_cadastral_1860'
   }),

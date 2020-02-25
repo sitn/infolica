@@ -1,0 +1,21 @@
+.facturation {
+    width: 100%;
+    float: left;
+}
+
+.facturation .actionsColumn {
+    width: 150px !important;
+    min-width: 150px !important;
+}
+ 
+.facturation .md-card {
+    width: 100%;
+    display: inline-block;
+    vertical-align: top;
+    margin: 4px;
+}
+
+.facturation .md-table {
+    width: 70%;
+    margin: auto;
+}

@@ -30,6 +30,7 @@ Vue.use(VueMoment, {
 //Vue layers components
 Vue.use(Map, {
   dataProjection: 'EPSG:4326',
+  // dataProjection: 'EPSG:2056',
 })
 Vue.use(TileLayer)
 Vue.use(WmtsSource)
