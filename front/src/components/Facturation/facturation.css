@@ -7,15 +7,16 @@
     width: 150px !important;
     min-width: 150px !important;
 }
- 
-.facturation .md-card {
-    width: 100%;
-    display: inline-block;
-    vertical-align: top;
-    margin: 4px;
-}
 
 .facturation .md-table {
-    width: 70%;
+    width: 100%;
     margin: auto;
+}
+
+.md-dialog {
+    width: 400px;
+}
+
+.md-dialog .currency {
+    text-align: right;
 }

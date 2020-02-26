@@ -1,5 +1,5 @@
 <div class="facturation">
-    <md-card>
+    <!-- <md-card> -->
         <md-card-header>
             <div class="md-title">Facturation</div>
         </md-card-header>
@@ -11,7 +11,7 @@
                         <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                         <md-table-cell md-label="SAP" md-sort-by="sap">{{ item.sap }}</md-table-cell>
                         <md-table-cell md-label="Date" md-sort-by="date">{{ item.date }}</md-table-cell>
-                        <md-table-cell md-label="Client" md-sort-by="client_id">{{ item.client_id }}
+                        <md-table-cell md-label="Client" md-sort-by="client_obj.nom">{{ item.client_obj.entreprise }} {{ item.client_obj.titre }} {{ item.client_obj.nom }} {{ item.client_obj.prenom }}
                         </md-table-cell>
                         <md-table-cell md-label="MO" md-sort-by="montant_mo" type="number" value="0.00"
                             text-align="center !important">CHF
@@ -23,6 +23,8 @@
                         <md-table-cell md-label="TVA" md-sort-by="montant_tva">CHF {{ item.montant_tva }}
                         </md-table-cell>
                         <md-table-cell md-label="Total" md-sort-by="montant_total">CHF {{ item.montant_total }}
+                        </md-table-cell>
+                        <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}
                         </md-table-cell>
                         <md-table-cell md-label="Actions" class="actionsColumn">
                             <md-button class="md-icon-button md-raised md-primary" @click="openFactureEdition(item)">
@@ -39,7 +41,7 @@
                 <i>Aucune facture</i>
             </div>
         </md-card-content>
-    </md-card>
+    <!-- </md-card> -->
 
     <md-dialog :md-active.sync="showFactureDialog" md-confirm-text="Enregistrer" md-cancel-text="Annuler"
         md-title="Edition facture">
@@ -55,27 +57,31 @@
             </md-field>
             <md-field>
                 <label>Client</label>
-                <md-input v-model="selectedFacture.client_id"></md-input>
+                <md-input v-model="[selectedFacture.client_obj.entreprise, selectedFacture.client_obj.titre, selectedFacture.client_obj.nom, selectedFacture.client_obj.prenom].filter(Boolean).join(' ')" readonly></md-input>
             </md-field>
             <md-field>
                 <label>Montant MO</label>
-                <md-input v-model="selectedFacture.montant_mo"></md-input>
+                <md-input class="currency" v-model="selectedFacture.montant_mo" v-on:keyup="computeTotal()"></md-input>
             </md-field>
             <md-field>
                 <label>Montant mat diff</label>
-                <md-input v-model="selectedFacture.montant_mat_diff"></md-input>
+                <md-input class="currency" v-model="selectedFacture.montant_mat_diff" v-on:keyup="computeTotal()"></md-input>
             </md-field>
             <md-field>
                 <label>Montant RF</label>
-                <md-input v-model="selectedFacture.montant_rf"></md-input>
+                <md-input class="currency" v-model="selectedFacture.montant_rf" v-on:keyup="computeTotal()"></md-input>
             </md-field>
             <md-field>
                 <label>TVA</label>
-                <md-input v-model="selectedFacture.montant_tva"></md-input>
+                <md-input class="currency" v-model="selectedFacture.montant_tva" v-on:keyup="computeTotal()"></md-input>
             </md-field>
             <md-field>
                 <label>Total</label>
-                <md-input v-model="selectedFacture.montant_total"></md-input>
+                <md-input class="currency" v-model="selectedFacture.montant_total" readonly></md-input>
+            </md-field>
+            <md-field>
+                <label>Remarque</label>
+                <md-textarea v-model="selectedFacture.remarque" md-autogrow></md-textarea>
             </md-field>
         </md-dialog-content>
         <md-dialog-actions>

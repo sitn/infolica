@@ -175,118 +175,15 @@
 
     <!-- FACTURATION -->
     <div class="affairesDashboard">
-        <Facturation />
-        <!-- <md-card>
-            <md-card-header>
-                <div class="md-title">Facturation</div>
-            </md-card-header>
-
-            <md-card-content>
-                <div v-if="affaire_factures[0]">
-                    <md-table v-model="affaire_factures" md-sort="id" md-sort-order="desc">
-                        <md-table-row slot="md-table-row" slot-scope="{ item }">
-                            <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
-                            <md-table-cell md-label="SAP" md-sort-by="sap">{{ item.sap }}</md-table-cell>
-                            <md-table-cell md-label="Date" md-sort-by="date">{{ item.date }}</md-table-cell>
-                            <md-table-cell md-label="Client" md-sort-by="client_id">{{ item.client_id }}
-                            </md-table-cell>
-                            <md-table-cell md-label="MO" md-sort-by="montant_mo" type="number" value="0.00" text-align="center !important">CHF
-                                {{ item.montant_mo }}</md-table-cell>
-                            <md-table-cell md-label="Mat Diff" md-sort-by="montant_mat_diff" value="0.00">CHF
-                                {{ item.montant_mat_diff }}</md-table-cell>
-                            <md-table-cell md-label="RF" md-sort-by="montant_rf" value="0.00">CHF {{ item.montant_rf }}
-                            </md-table-cell>
-                            <md-table-cell md-label="TVA" md-sort-by="montant_tva">CHF {{ item.montant_tva }}
-                            </md-table-cell>
-                            <md-table-cell md-label="Total" md-sort-by="montant_total">CHF {{ item.montant_total }}
-                            </md-table-cell>
-                            <md-table-cell md-label="Actions" class="actionsColumn">
-                                <md-button class="md-icon-button md-raised md-primary"
-                                    @click="openFactureEdition(item)">
-                                    <md-icon>edit</md-icon>
-                                </md-button>
-                                <md-button class="md-icon-button md-raised md-accent"
-                                    v-on:click="doDeleteFacture(item.id)">
-                                    <md-icon>delete</md-icon>
-                                </md-button>
-                            </md-table-cell>
-                        </md-table-row>
-                    </md-table>
-                </div>
-                <div v-else>
-                    <i>Aucune facture</i>
-                </div>
-            </md-card-content>
-        </md-card> -->
+        <md-card>
+            <Facturation />
+        </md-card>
     </div>
-
-    <!-- <md-dialog :md-active.sync="showFactureDialog" md-confirm-text="Enregistrer" md-cancel-text="Annuler"
-        md-title="Edition facture">
-        <md-dialog-title>Edition facture</md-dialog-title>
-        <md-dialog-content>
-            <md-field>
-                <label>ID</label>
-                <md-input v-model="selectedFacture.id" readonly />
-            </md-field>
-            <md-field>
-                <label>SAP</label>
-                <md-input v-model="selectedFacture.sap" type="number"></md-input>
-            </md-field>
-            <md-field>
-                <label>Client</label>
-                <md-input v-model="selectedFacture.client_id"></md-input>
-            </md-field>
-            <md-field>
-                <label>Montant MO</label>
-                <md-input v-model="selectedFacture.montant_mo"></md-input>
-            </md-field>
-            <md-field>
-                <label>Montant mat diff</label>
-                <md-input v-model="selectedFacture.montant_mat_diff"></md-input>
-            </md-field>
-            <md-field>
-                <label>Montant RF</label>
-                <md-input v-model="selectedFacture.montant_rf"></md-input>
-            </md-field>
-            <md-field>
-                <label>TVA</label>
-                <md-input v-model="selectedFacture.montant_tva"></md-input>
-            </md-field>
-            <md-field>
-                <label>Total</label>
-                <md-input v-model="selectedFacture.montant_total"></md-input>
-            </md-field>
-        </md-dialog-content>
-        <md-dialog-actions>
-            <md-button class="md-primary" @click="onCancelEditFacture">Annuler</md-button>
-            <md-button class="md-primary" @click="onConfirmEditFacture">Enregistrer</md-button>
-        </md-dialog-actions>
-    </md-dialog> -->
-
 
     <!-- REMARQUE -->
     <div class="affairesDashboard">
         <md-card>
-            <!-- Results Header -->
-            <md-card-header>
-                <div class="md-title">Remarques</div>
-            </md-card-header>
-
-            <md-card-content>
-                <div v-if="affaire_remarques[0]">
-                    <md-table v-model="affaire_remarques" md-sort="date" md-sort-order="desc">
-                        <md-table-row slot="md-table-row" slot-scope="{ item }">
-                            <md-table-cell md-label="Opérateur" md-sort-by="nom">{{ item.prenom }} {{ item.nom }}
-                            </md-table-cell>
-                            <md-table-cell md-label="Date" md-sort-by="date">{{ item.date }}</md-table-cell>
-                            <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}</md-table-cell>
-                        </md-table-row>
-                    </md-table>
-                </div>
-                <div v-else>
-                    <i>Aucune remarque</i>
-                </div>
-            </md-card-content>
+            <Remarques />
         </md-card>
     </div>
 

@@ -5,11 +5,11 @@ import axios from 'axios';
  * Check if the user is logged in
  */
 export const checkLogged = function() {
-    /*var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+    var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
 
     if (!session_user) {
         window.location.href = "/login"
-    }*/
+    }
 };
 
 /*
@@ -51,6 +51,17 @@ export const getTypesAffaires = async function() {
 export const getEtatsNumeros = async function() {
     return new Promise((resolve, reject) => {
         axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_ETATS_NUMEROS_ENDPOINT)
+        .then(response => resolve(response))
+        .catch(() => reject)
+    });
+};
+
+/*
+ * Get clients
+ */
+export const getClients = async function() {
+    return new Promise((resolve, reject) => {
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT)
         .then(response => resolve(response))
         .catch(() => reject)
     });
