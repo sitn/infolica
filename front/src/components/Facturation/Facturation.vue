@@ -14,9 +14,11 @@ export default {
     clients: [],
     affaire_factures: [],
     showFactureDialog: false,
+    createClient: false,
     selectedFacture: {
       id: null,
       sap: null,
+      date: null,
       client_id: null,
       client_obj: {},
       montant_mo: null,
@@ -47,9 +49,11 @@ export default {
               sap: x.sap,
               date: x.date,
               client_id: x.client_id,
-              client_obj: this.clients.filter( (obj) => {
-                return obj.id === x.client_id
-                }).pop(),
+              client_obj: this.clients
+                .filter(obj => {
+                  return obj.id === x.client_id;
+                })
+                .pop(),
               montant_mo: numeral(x.montant_mo).format("0.00"),
               montant_mat_diff: numeral(x.montant_mat_diff).format("0.00"),
               montant_rf: numeral(x.montant_rf).format("0.00"),
@@ -115,16 +119,23 @@ export default {
         );
       if (this.selectedFacture.remarque)
         formData.append("remarque", this.selectedFacture.remarque);
-      // formData.append("indice_tva", undefined);
-      // formData.append("indice_application_mo", undefined);
       formData.append("affaire_id", this.$route.params.id);
 
-      this.$http
-        .put(
+      // Type de requête selon si c'est une création ou une modification de facture
+      if (this.createClient) {
+        this.$http.post(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_ENDPOINT,
           formData,
           { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-        )
+        );
+      } else {
+        var req = this.$http.put(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_ENDPOINT,
+          formData,
+          { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+        );
+      }
+      req
         .then(response => {
           if (response.data) {
             this.searchAffaireFactures();
@@ -134,6 +145,8 @@ export default {
           alert("error: " + err);
         });
 
+      alert("test")
+      this.createClient = false;
       this.showFactureDialog = false;
     },
 
@@ -141,6 +154,7 @@ export default {
      * Annuler l'édition de la facture
      */
     onCancelEditFacture: function() {
+      this.createClient = false;
       this.showFactureDialog = false;
     },
 
@@ -166,25 +180,49 @@ export default {
         });
     },
 
-
     /**
      * Lier le nom du client à son id (facture.client_id)
      */
     async searchClients() {
       this.$http
-        .get(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_CLIENTS_ENDPOINT
-        ).then(response => {
+        .get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT)
+        .then(response => {
           if (response.data) {
-            this.clients = response.data
-            this.searchAffaireFactures()
+            this.clients = response.data;
+            this.searchAffaireFactures();
           }
-        }).catch(err => {
+        })
+        .catch(err => {
           alert("error : " + err.message);
         });
-    }
+    },
 
+    newFacture() {
+      // Get today's date in "input date"-format
+      var today = new Date();
+      var date =
+        today.getFullYear() +
+        "-" +
+        ("0" + (today.getMonth() + 1)).slice(-2) +
+        "-" +
+        ("0" + today.getDate()).slice(-2);
+
+      this.selectedFacture = {
+        id: null,
+        sap: null,
+        date: date,
+        client_id: null,
+        client_obj: {},
+        montant_mo: null,
+        montant_mat_diff: null,
+        montant_rf: null,
+        montant_tva: null,
+        montant_total: null,
+        remarque: null
+      };
+      this.showFactureDialog = true;
+      this.createClient = true;
+    }
   },
 
   mounted: function() {

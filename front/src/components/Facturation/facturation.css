@@ -20,3 +20,18 @@
 .md-dialog .currency {
     text-align: right;
 }
+
+.facturation .newFactureBtn {
+    right: 25px;
+    position: absolute;
+}
+
+/* Suppression molette input type number */ 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance:textfield;
+}
