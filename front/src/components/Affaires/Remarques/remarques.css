@@ -7,3 +7,8 @@
     width: 100%;
     margin: auto;
 }
+
+.affaireRemarques .newRemarqueBtn {
+    right: 25px;
+    position: absolute;
+}

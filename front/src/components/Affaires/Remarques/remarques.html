@@ -1,13 +1,31 @@
 <div class="affaireRemarques">
     <!-- Results Header -->
     <md-card-header>
-        <div class="md-title">Remarques</div>
+        <div class="md-title">Remarques
+        <!-- <md-button class="md-raised md-accent newRemarqueBtn" v-on:click="addRemarque()">Nouvelle remarque</md-button> -->
+        <md-button class="md-icon-button md-raised md-primary newRemarqueBtn" v-on:click="addRemarque()"><md-icon>add</md-icon></md-button>
+        </div>
     </md-card-header>
 
     <md-card-content>
+        <div v-if="new_remarque.showDiv">
+            <md-field>
+                <label>Remarque</label>
+                <md-textarea v-model="new_remarque.remarque"></md-textarea>
+            </md-field>
+            <md-button class="md-default md-raised" v-on:click="cancelNewRemarque()">
+                Annuler
+            </md-button>
+            <md-button class="md-primary md-raised" v-on:click="saveNewRemarque()">
+                Enregistrer
+            </md-button>
+        </div>
+
+
         <div v-if="affaire_remarques[0]">
-            <md-table v-model="affaire_remarques" md-sort="date" md-sort-order="desc">
+            <md-table v-model="affaire_remarques" md-sort="id" md-sort-order="desc">
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
+                    <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                     <md-table-cell md-label="Opérateur" md-sort-by="nom">{{ item.prenom }} {{ item.nom }}
                     </md-table-cell>
                     <md-table-cell md-label="Date" md-sort-by="date">{{ item.date }}</md-table-cell>

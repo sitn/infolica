@@ -32,7 +32,7 @@ def affaires_remarques_view(request):
 
         ra_json = list()
         for ra, op in records:
-            ra_json.append(Utils._params(nom=op.nom, prenom=op.prenom,
+            ra_json.append(Utils._params(id=ra.id, nom=op.nom, prenom=op.prenom,
                                          remarque=ra.remarque, date=ra.date.isoformat()))
 
         return ra_json

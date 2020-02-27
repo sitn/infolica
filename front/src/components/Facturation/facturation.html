@@ -1,14 +1,14 @@
 <div class="facturation">
-    <!-- <md-card> -->
     <md-card-header>
-        <div class="md-title">Facturation</div>
-        <md-button class="md-raised md-accent newFactureBtn" v-on:click="newFacture()">Nouvelle facture</md-button>
-        <br>
+        <div class="md-title">Facturation
+            <!-- <md-button class="md-raised md-accent newFactureBtn" v-on:click="newFacture()">Nouvelle facture</md-button> -->
+            <md-button class="md-icon-button md-raised md-primary newFactureBtn" v-on:click="newFacture()"><md-icon>add</md-icon></md-button>
+        </div>
     </md-card-header>
 
     <md-card-content>
         <div v-if="affaire_factures[0]">
-            <md-table v-model="affaire_factures" md-sort="id" md-sort-order="desc">
+            <md-table v-model="affaire_factures" md-sort="date" md-sort-order="desc">
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                     <md-table-cell md-label="SAP" md-sort-by="sap">{{ item.sap }}</md-table-cell>
@@ -16,13 +16,10 @@
                     <md-table-cell md-label="Client" md-sort-by="client_obj.nom">{{ item.client_obj.entreprise }}
                         {{ item.client_obj.titre }} {{ item.client_obj.nom }} {{ item.client_obj.prenom }}
                     </md-table-cell>
-                    <md-table-cell md-label="MO" md-sort-by="montant_mo" type="number" value="0.00"
-                        text-align="center !important">CHF
-                        {{ item.montant_mo }}</md-table-cell>
-                    <md-table-cell md-label="Mat Diff" md-sort-by="montant_mat_diff" value="0.00">CHF
-                        {{ item.montant_mat_diff }}</md-table-cell>
-                    <md-table-cell md-label="RF" md-sort-by="montant_rf" value="0.00">CHF {{ item.montant_rf }}
+                    <md-table-cell md-label="MO" md-sort-by="montant_mo">CHF {{ item.montant_mo }}</md-table-cell>
+                    <md-table-cell md-label="Mat Diff" md-sort-by="montant_mat_diff">CHF{{ item.montant_mat_diff }}
                     </md-table-cell>
+                    <md-table-cell md-label="RF" md-sort-by="montant_rf">CHF {{ item.montant_rf }}</md-table-cell>
                     <md-table-cell md-label="TVA" md-sort-by="montant_tva">CHF {{ item.montant_tva }}
                     </md-table-cell>
                     <md-table-cell md-label="Total" md-sort-by="montant_total">CHF {{ item.montant_total }}
@@ -44,7 +41,6 @@
             <i>Aucune facture</i>
         </div>
     </md-card-content>
-    <!-- </md-card> -->
 
     <md-dialog :md-active.sync="showFactureDialog" md-confirm-text="Enregistrer" md-cancel-text="Annuler"
         md-title="Edition facture">
@@ -58,17 +54,23 @@
                 <label>Date</label>
                 <md-input v-model="selectedFacture.date" type="date"></md-input>
             </md-field>
-            <md-field v-if="createClient">
-                <label>Client</label>
-                <md-input v-model="selectedFacture.client_id">
-                </md-input>
-            </md-field>
-            <md-field v-else>
-                <label>Client</label>
-                <md-input
-                    v-model="[selectedFacture.client_obj.entreprise, selectedFacture.client_obj.titre, selectedFacture.client_obj.nom, selectedFacture.client_obj.prenom].filter(Boolean).join(' ')"
-                    readonly></md-input>
-            </md-field>
+            <div v-if="createFacture">
+                <md-autocomplete v-model="txtSearchClient" :md-options="clients_liste_select"
+                    @md-changed="getClientSearch">
+                    <label>Client</label>
+                    <template slot="md-autocomplete-item" slot-scope="{ item }">
+                        {{ item.nom }}
+                    </template>
+                </md-autocomplete>
+            </div>
+            <div v-else>
+                <md-field>
+                    <label>Client</label>
+                    <md-input
+                        v-model="[selectedFacture.client_obj.entreprise, selectedFacture.client_obj.titre, selectedFacture.client_obj.nom, selectedFacture.client_obj.prenom].filter(Boolean).join(' ')"
+                        readonly></md-input>
+                </md-field>
+            </div>
             <md-field>
                 <label>Montant MO</label>
                 <md-input class="currency" v-model="selectedFacture.montant_mo" v-on:keyup="computeTotal()"

@@ -4,17 +4,19 @@
 
 <script>
 var numeral = require("numeral");
-// import axios from 'axios';
-import { checkLogged } from "@/services/helper";
+import { checkLogged, getCurrentDate } from "@/services/helper";
 
 export default {
   name: "Facturation",
   props: {},
   data: () => ({
-    clients: [],
+    cadastre_liste: [],
+    clients_liste: [],
+    clients_liste_select: [],
     affaire_factures: [],
     showFactureDialog: false,
-    createClient: false,
+    createFacture: false,
+    txtSearchClient: null,
     selectedFacture: {
       id: null,
       sap: null,
@@ -31,11 +33,11 @@ export default {
   }),
 
   methods: {
+
     /*
      * SEARCH AFFAIRE FACTURES
      */
     async searchAffaireFactures() {
-      // alert(this.clients)
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
@@ -49,7 +51,7 @@ export default {
               sap: x.sap,
               date: x.date,
               client_id: x.client_id,
-              client_obj: this.clients
+              client_obj: this.clients_liste
                 .filter(obj => {
                   return obj.id === x.client_id;
                 })
@@ -68,6 +70,52 @@ export default {
         });
     },
 
+
+    /**
+     * Lier le nom du client à son id (facture.client_id)
+     */
+    async searchClients() {
+      this.$http
+        .get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT)
+        .then(response => {
+          if (response.data) {
+            this.clients_liste = response.data;
+            this.searchAffaireFactures();
+          }
+        })
+        .catch(err => {
+          alert("error : " + err.message);
+        });
+    },
+
+
+    /**
+     * Crée la liste de sélection du client lors de la création de facture
+     */
+    getClientSearch() {
+      this.clients_liste_select = [];
+      if (this.txtSearchClient != null) {
+        if (this.txtSearchClient.length < 3) {
+          return
+        } else {
+          this.clients_liste_select = this.clients_liste
+            .filter(data => {
+              return data.nom.toLowerCase().includes(this.txtSearchClient.toLowerCase());
+            })
+            .map(x => ({
+              id: x.id,
+              nom: x.nom,
+              toLowerCase: () => x.nom.toLowerCase(),
+              toString: () => x.nom
+            }));
+        }
+      }
+    },
+
+
+    /**
+     * Calcul le montant total de la facture à la volée lors de l'édition
+     */
     computeTotal() {
       this.selectedFacture.montant_total =
         Number(this.selectedFacture.montant_mo) +
@@ -122,17 +170,16 @@ export default {
       formData.append("affaire_id", this.$route.params.id);
 
       // Type de requête selon si c'est une création ou une modification de facture
-      if (this.createClient) {
-        this.$http.post(
+      if (this.createFacture) {
+        var req;
+        req = this.$http.post(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_ENDPOINT,
-          formData,
-          { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+          formData
         );
       } else {
-        var req = this.$http.put(
+        req = this.$http.put(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_ENDPOINT,
-          formData,
-          { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+          formData
         );
       }
       req
@@ -144,9 +191,7 @@ export default {
         .catch(err => {
           alert("error: " + err);
         });
-
-      alert("test")
-      this.createClient = false;
+      this.createFacture = false;
       this.showFactureDialog = false;
     },
 
@@ -154,7 +199,7 @@ export default {
      * Annuler l'édition de la facture
      */
     onCancelEditFacture: function() {
-      this.createClient = false;
+      this.createFacture = false;
       this.showFactureDialog = false;
     },
 
@@ -181,54 +226,30 @@ export default {
     },
 
     /**
-     * Lier le nom du client à son id (facture.client_id)
+     * Créer une nouvelle facture
      */
-    async searchClients() {
-      this.$http
-        .get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT)
-        .then(response => {
-          if (response.data) {
-            this.clients = response.data;
-            this.searchAffaireFactures();
-          }
-        })
-        .catch(err => {
-          alert("error : " + err.message);
-        });
-    },
-
     newFacture() {
-      // Get today's date in "input date"-format
-      var today = new Date();
-      var date =
-        today.getFullYear() +
-        "-" +
-        ("0" + (today.getMonth() + 1)).slice(-2) +
-        "-" +
-        ("0" + today.getDate()).slice(-2);
-
       this.selectedFacture = {
         id: null,
         sap: null,
-        date: date,
+        date: getCurrentDate(),
         client_id: null,
         client_obj: {},
-        montant_mo: null,
-        montant_mat_diff: null,
-        montant_rf: null,
-        montant_tva: null,
-        montant_total: null,
+        montant_mo: 0,
+        montant_mat_diff: 0,
+        montant_rf: 0,
+        montant_tva: 0,
+        montant_total: 0,
         remarque: null
       };
       this.showFactureDialog = true;
-      this.createClient = true;
+      this.createFacture = true;
     }
   },
 
   mounted: function() {
     checkLogged();
     this.searchClients();
-    // this.searchAffaireFactures();
   }
 };
 </script>
