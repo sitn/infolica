@@ -15,6 +15,7 @@
 
 .md-dialog {
     width: 400px;
+    z-index: 6; /* Le dialogue apparaît sous le div de suggestions du md-autocomplete pour la recherche de clients*/
 }
 
 .md-dialog .currency {
@@ -26,12 +27,19 @@
     position: absolute;
 }
 
-/* Suppression molette input type number */ 
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+/* display autocomplete options in front of dialog -- NE FONCTIONNE PAS! */ 
+/* .md-menu-content {
+    z-index: 10000;
+    width: 500px;
+    max-width: 500px;
+} */
+
+/* Suppression molette input type number */
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
+
 input[type=number] {
-  -moz-appearance:textfield;
+    -moz-appearance: textfield;
 }

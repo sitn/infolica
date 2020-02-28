@@ -2,7 +2,9 @@
     <md-card-header>
         <div class="md-title">Facturation
             <!-- <md-button class="md-raised md-accent newFactureBtn" v-on:click="newFacture()">Nouvelle facture</md-button> -->
-            <md-button class="md-icon-button md-raised md-primary newFactureBtn" v-on:click="newFacture()"><md-icon>add</md-icon></md-button>
+            <md-button class="md-icon-button md-raised md-primary newFactureBtn" v-on:click="newFacture()">
+                <md-icon>add</md-icon>
+            </md-button>
         </div>
     </md-card-header>
 
@@ -55,7 +57,7 @@
                 <md-input v-model="selectedFacture.date" type="date"></md-input>
             </md-field>
             <div v-if="createFacture">
-                <md-autocomplete v-model="txtSearchClient" :md-options="clients_liste_select"
+                <md-autocomplete v-model="txtSearchClient"  :md-options="clients_liste_select"
                     @md-changed="getClientSearch">
                     <label>Client</label>
                     <template slot="md-autocomplete-item" slot-scope="{ item }">

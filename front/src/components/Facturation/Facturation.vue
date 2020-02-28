@@ -10,7 +10,6 @@ export default {
   name: "Facturation",
   props: {},
   data: () => ({
-    cadastre_liste: [],
     clients_liste: [],
     clients_liste_select: [],
     affaire_factures: [],
@@ -29,7 +28,7 @@ export default {
       montant_tva: null,
       montant_total: null,
       remarque: null
-    }
+    },
   }),
 
   methods: {
@@ -70,7 +69,6 @@ export default {
         });
     },
 
-
     /**
      * Lier le nom du client à son id (facture.client_id)
      */
@@ -87,7 +85,6 @@ export default {
           alert("error : " + err.message);
         });
     },
-
 
     /**
      * Crée la liste de sélection du client lors de la création de facture
@@ -111,7 +108,6 @@ export default {
         }
       }
     },
-
 
     /**
      * Calcul le montant total de la facture à la volée lors de l'édition
@@ -143,8 +139,8 @@ export default {
         formData.append("sap", this.selectedFacture.sap);
       if (this.selectedFacture.date)
         formData.append("date", this.selectedFacture.date);
-      if (this.selectedFacture.client_id)
-        formData.append("client_id", this.selectedFacture.client_id);
+      if (this.clients_liste_select[0].id)
+        formData.append("client_id", this.clients_liste_select[0].id);
       if (this.selectedFacture.montant_mo)
         formData.append("montant_mo", this.selectedFacture.montant_mo);
       if (this.selectedFacture.montant_mat_diff)
