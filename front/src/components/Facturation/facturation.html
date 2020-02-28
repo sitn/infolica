@@ -32,7 +32,7 @@
                         <md-button class="md-icon-button md-raised md-primary" @click="openFactureEdition(item)">
                             <md-icon>edit</md-icon>
                         </md-button>
-                        <md-button class="md-icon-button md-raised md-accent" v-on:click="doDeleteFacture(item.id)">
+                        <md-button class="md-icon-button md-raised md-accent" v-on:click="callDeleteFacture(item)">
                             <md-icon>delete</md-icon>
                         </md-button>
                     </md-table-cell>
@@ -107,4 +107,16 @@
             <md-button class="md-primary" @click="onConfirmEditFacture">Enregistrer</md-button>
         </md-dialog-actions>
     </md-dialog>
+
+    <!-- Dialogue confirmation suppression facture -->
+    <div>
+        <md-dialog-confirm
+          :md-active.sync="deleteFactureActive"
+          md-title="Supprimer la facture"
+          :md-content="deleteFactureMessage"
+          md-confirm-text="Confirmer"
+          md-cancel-text="Annuler"
+          @md-confirm="onConfirmDelete" 
+          @md-cancel="onCancelDelete"/>    
+      </div>
 </div>

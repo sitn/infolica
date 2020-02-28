@@ -10,6 +10,9 @@ export default {
   name: "Facturation",
   props: {},
   data: () => ({
+    deleteFactureActive: false,
+    deleteFactureMessage: "",
+    deleteFactureId: null,
     clients_liste: [],
     clients_liste_select: [],
     affaire_factures: [],
@@ -28,11 +31,10 @@ export default {
       montant_tva: null,
       montant_total: null,
       remarque: null
-    },
+    }
   }),
 
   methods: {
-
     /*
      * SEARCH AFFAIRE FACTURES
      */
@@ -93,11 +95,13 @@ export default {
       this.clients_liste_select = [];
       if (this.txtSearchClient != null) {
         if (this.txtSearchClient.length < 3) {
-          return
+          return;
         } else {
           this.clients_liste_select = this.clients_liste
             .filter(data => {
-              return data.nom.toLowerCase().includes(this.txtSearchClient.toLowerCase());
+              return data.nom
+                .toLowerCase()
+                .includes(this.txtSearchClient.toLowerCase());
             })
             .map(x => ({
               id: x.id,
@@ -132,6 +136,14 @@ export default {
      * Confirmer l'édition de la facture et l'enregistrer
      */
     onConfirmEditFacture() {
+      // Récupère l'id du client selon si il provient d'une modif de facture ou d'une création de facture
+      var client_id
+      if (this.clients_liste_select[0]) {
+        client_id = this.clients_liste_select[0].id;
+      } else {
+        client_id = this.selectedFacture.client_id
+      }
+
       var formData = new FormData();
       if (this.selectedFacture.id)
         formData.append("id", this.selectedFacture.id);
@@ -139,8 +151,8 @@ export default {
         formData.append("sap", this.selectedFacture.sap);
       if (this.selectedFacture.date)
         formData.append("date", this.selectedFacture.date);
-      if (this.clients_liste_select[0].id)
-        formData.append("client_id", this.clients_liste_select[0].id);
+      if (client_id)
+        formData.append("client_id", client_id);
       if (this.selectedFacture.montant_mo)
         formData.append("montant_mo", this.selectedFacture.montant_mo);
       if (this.selectedFacture.montant_mat_diff)
@@ -187,8 +199,7 @@ export default {
         .catch(err => {
           alert("error: " + err);
         });
-      this.createFacture = false;
-      this.showFactureDialog = false;
+      this.onCancelEditFacture();
     },
 
     /**
@@ -197,14 +208,27 @@ export default {
     onCancelEditFacture: function() {
       this.createFacture = false;
       this.showFactureDialog = false;
+      this.txtSearchClient = null;
+    },
+
+    /**
+     * Confirmer suppression facture
+     */
+    callDeleteFacture(facture) {
+      this.deleteFactureActive = true;
+      this.deleteFactureMessage =
+        "Confirmer la suppression de la facture SAP '<strong>" +
+        facture.sap +
+        "<strong>' ?";
+      this.deleteFactureId = facture.id;
     },
 
     /**
      * Delete facture
      */
-    doDeleteFacture(facture_id) {
+    onConfirmDelete() {
       var formData = new FormData();
-      formData.append("id", facture_id);
+      formData.append("id", this.deleteFactureId);
 
       this.$http
         .delete(
@@ -219,6 +243,14 @@ export default {
         .catch(err => {
           alert("error: " + err);
         });
+      this.deleteFactureId = null;
+    },
+
+    /**
+     * Annuler la suppression de facture
+     */
+    onCancelDelete() {
+      this.deleteFactureId = null;
     },
 
     /**
