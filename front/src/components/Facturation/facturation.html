@@ -13,18 +13,18 @@
             <md-table v-model="affaire_factures" md-sort="date" md-sort-order="desc">
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
-                    <md-table-cell md-label="SAP" md-sort-by="sap">{{ item.sap }}</md-table-cell>
+                    <md-table-cell class="alignRight" md-label="SAP" md-sort-by="sap">{{ item.sap }}</md-table-cell>
                     <md-table-cell md-label="Date" md-sort-by="date">{{ item.date }}</md-table-cell>
                     <md-table-cell md-label="Client" md-sort-by="client_obj.nom">{{ item.client_obj.entreprise }}
                         {{ item.client_obj.titre }} {{ item.client_obj.nom }} {{ item.client_obj.prenom }}
                     </md-table-cell>
-                    <md-table-cell md-label="MO" md-sort-by="montant_mo">CHF {{ item.montant_mo }}</md-table-cell>
-                    <md-table-cell md-label="Mat Diff" md-sort-by="montant_mat_diff">CHF{{ item.montant_mat_diff }}
+                    <md-table-cell class="alignRight" md-label="MO" md-sort-by="montant_mo">CHF {{ item.montant_mo }}</md-table-cell>
+                    <md-table-cell class="alignRight" md-label="Mat Diff" md-sort-by="montant_mat_diff">CHF{{ item.montant_mat_diff }}
                     </md-table-cell>
-                    <md-table-cell md-label="RF" md-sort-by="montant_rf">CHF {{ item.montant_rf }}</md-table-cell>
-                    <md-table-cell md-label="TVA" md-sort-by="montant_tva">CHF {{ item.montant_tva }}
+                    <md-table-cell class="alignRight" md-label="RF" md-sort-by="montant_rf">CHF {{ item.montant_rf }}</md-table-cell>
+                    <md-table-cell class="alignRight" md-label="TVA" md-sort-by="montant_tva">CHF {{ item.montant_tva }}
                     </md-table-cell>
-                    <md-table-cell md-label="Total" md-sort-by="montant_total">CHF {{ item.montant_total }}
+                    <md-table-cell class="alignRight" md-label="Total" md-sort-by="montant_total">CHF {{ item.montant_total }}
                     </md-table-cell>
                     <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}
                     </md-table-cell>
