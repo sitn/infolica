@@ -19,9 +19,11 @@ export default {
     types_numeros: [],
     etats_numeros: [],
     search: {
-      cadastre: null,
-      type: null,
-      etat: null
+      numero: null,
+      suffixe: null,
+      cadastre: "",
+      type: "",
+      etat: "",
     }
   }),
 
@@ -31,6 +33,8 @@ export default {
      */
     async searchNumeros() {
       var formData = new FormData();
+      if (this.search.numero) formData.append("numero", this.search.numero);
+      if (this.search.suffixe) formData.append("suffixe", this.search.suffixe);
       if (this.search.cadastre) formData.append("cadastre_id", this.search.cadastre.id);
       if (this.search.type) formData.append("type_numero_id", this.search.type.id);
       if (this.search.etat) formData.append("etat_id", this.search.etat.id);
@@ -118,9 +122,11 @@ export default {
      * Clear the form
      */
     clearForm() {
-      this.search.cadastre = null;
-      this.search.type = null;
-      this.search.etat = null;
+      this.search.numero = null;
+      this.search.suffixe = null;
+      this.search.cadastre = "";
+      this.search.type = "";
+      this.search.etat = "";
     },
 
     /*

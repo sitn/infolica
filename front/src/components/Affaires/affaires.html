@@ -26,11 +26,29 @@
             <md-card-expand-content>
                 <md-card-content>
                     <div class="md-layout md-gutter">
+                        <!-- id -->
+                        <div class="md-layout-item md-small-size-30">
+                            <md-field>
+                                <label>ID</label>
+                                <md-input type="number" v-model="search.id"></md-input>
+                            </md-field>
+                        </div>
+                        
+                        <!-- nom -->
+                        <div class="md-layout-item md-small-size-30">
+                            <md-field>
+                                <label>Nom</label>
+                                <md-input v-model="search.nom"></md-input>
+                            </md-field>
+                        </div>
+                    </div>
+                    
+                    <div class="md-layout md-gutter">
                         <!-- Cadastre -->
                         <div class="md-layout-item md-small-size-30">
                             <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste">
                                 <label>Cadastre</label>
-                                <template slot="md-autocomplete-item" slot-scope="{ item }">
+                                <template slot="md-autocomplete-item" scope="{ item }">
                                     {{ item.nom }}
                                 </template>
                             </md-autocomplete>
@@ -48,8 +66,7 @@
 
                     <!-- Search Actions -->
                     <md-card-actions>
-                        <md-button class="md-raised" v-bind:disabled="!search.cadastre && !search.type"
-                            v-on:click="clearForm">Réinitialiser</md-button>
+                        <md-button class="md-raised" v-bind:disabled="!search.id && !search.nom && !search.cadastre && !search.type" v-on:click="clearForm">Réinitialiser</md-button>
                         <md-button class="md-raised md-primary" v-on:click="searchAffaires">Rechercher</md-button>
                     </md-card-actions>
                 </md-card-content>
