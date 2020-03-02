@@ -1,0 +1,19 @@
+.numerosAffaire {
+    width: 100%;
+    float: left;
+}
+
+.numerosAffaire .actionsColumn {
+    width: 150px !important;
+    min-width: 150px !important;
+}
+
+.numerosAffaire .md-table {
+    width: 70%;
+    margin: auto;
+}
+
+.numerosAffaire .newNumerosBtn {
+    right: 25px;
+    position: absolute;
+}

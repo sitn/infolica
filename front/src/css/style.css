@@ -22,3 +22,10 @@ body {
 .md-snackbar{
     background-color: #267F00 !important;
 }
+
+.md-card {
+    width: 100%;
+    display: inline-block;
+    vertical-align: top;
+    margin: 4px;
+}

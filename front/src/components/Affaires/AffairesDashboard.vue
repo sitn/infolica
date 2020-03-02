@@ -5,6 +5,7 @@
 <script>
 import {checkLogged} from '@/services/helper'
 import MapHandler from '@/components/MapHandler/MapHandler.vue';
+import NumerosAffaire from '@/components/Affaires/NumerosAffaire/NumerosAffaire.vue';
 import Facturation from '@/components/Facturation/Facturation.vue';
 import Remarques from '@/components/Affaires/Remarques/Remarques.vue';
 
@@ -13,6 +14,7 @@ export default {
   props: {},
   components: {
     MapHandler,
+    NumerosAffaire,
     Facturation,
     Remarques,
   },
@@ -48,41 +50,11 @@ export default {
         });
     },
 
-    /*
-     * SEARCH AFFAIRE NUMEROS
-     */
-    async searchAffaireNumeros() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
-            this.$route.params.id
-        ).then(response => {
-          if (response.data) {
-            this.affaire_numeros = response.data
-          }
-        }).catch(err => {
-          alert("error : " + err.message);
-        });
-    },
-
-
-    /*
-     * Open numéro in new tab
-     */
-    doOpenNumero(id) {
-      window.setTimeout;
-      let routeData = this.$router.resolve("/numeros/" + id);
-      window.open(routeData.href, "_blank");
-    },
-
   },
 
   mounted: function() {
     checkLogged();
     this.searchAffaire();
-    this.searchAffaireNumeros();
-    // this.searchAffaireRemarques();
   }
 };
 </script>

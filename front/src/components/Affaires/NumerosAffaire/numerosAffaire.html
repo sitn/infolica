@@ -1,0 +1,51 @@
+<div class="numerosAffaire">
+    <md-card>
+        <!-- Numéros concernés par l'affaire -->
+        <md-card-header>
+            <div class="md-title">Immeubles concernés par l'affaire
+                <md-button class="md-icon-button md-raised md-primary newNumerosBtn" v-on:click="addNumeros()">
+                    <md-icon>add</md-icon>
+                </md-button>
+            </div>
+        </md-card-header>
+
+        <!-- Tableau des numéros concernés par l'affaire -->
+        <md-card-content>
+            <div v-if="affaire_numeros[0]">
+                <md-table v-model="affaire_numeros" md-sort="id" md-sort-order="desc">
+                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                        <md-table-cell md-label="Id" md-sort-by="numero_id">{{ item.numero_id }}</md-table-cell>
+                        <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}
+                        </md-table-cell>
+                        <md-table-cell md-label="Type" md-sort-by="numero_type">{{ item.numero_type }}
+                        </md-table-cell>
+                        <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}</md-table-cell>
+                        <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">
+                            {{ item.numero_suffixe }}
+                        </md-table-cell>
+                        <md-table-cell md-label="Etat" md-sort-by="numero_etat">{{ item.numero_etat }}
+                        </md-table-cell>
+                        <md-table-cell md-label="Statut" md-sort-by="affaire_numero_type">
+                            {{ item.affaire_numero_type }}
+                        </md-table-cell>
+                        <md-table-cell md-label="Actions" class="actionsColumn">
+                            <md-button class="md-icon-button md-raised md-primary"
+                                v-on:click="doOpenNumero(item.numero_id)">
+                                <md-icon>open_in_new</md-icon>
+                            </md-button>
+                        </md-table-cell>
+                    </md-table-row>
+                </md-table>
+            </div>
+            <div v-else>
+                <i>Aucun numéro</i>
+            </div>
+        </md-card-content>
+    </md-card>
+
+    <!-- Réservation de numéros  -->
+    <!-- <div v-if="newNumeros.show">
+
+    </div> -->
+
+</div>
