@@ -21,4 +21,4 @@ yarn-error.log*
 *.sw?
 
 # sitnlayers (for dev)
-src\assets\sitnlayers-master\
+src/assets/sitnlayers-master/
