@@ -17,7 +17,7 @@ export default {
     dataProjection: "EPSG:2056", // vl-map
     zoom: 18,
     center: [], // vl-view
-    affaire_coord: [], // vl-view
+    affaire_coord: [0, 0], // vl-view
     center_str: "", // vl-view
     projection: "EPSG:2056", // vl-view
     // center: [6.93, 46.99], // vl-view

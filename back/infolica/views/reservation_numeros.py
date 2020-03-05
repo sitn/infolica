@@ -80,7 +80,7 @@ def reservation_numeros_new_view(request):
 
         if 'ppe' in request.params:
             unite_start_idx = Utils.get_index_from_unite(
-                request.params["ppe_unite"]) if "ppe_unite" in request.params else 0
+                request.params["ppe_unite"].upper()) if "ppe_unite" in request.params else 0
             for i in range(int(request.params['ppe'])):
                 c += 1
                 # enregistrer un nouveau numéro

@@ -3,16 +3,22 @@
 
 
 <script>
-import {checkLogged} from '@/services/helper'
+import { checkLogged } from "@/services/helper";
+import ReservationNumeros from "@/components/ReservationNumeros/ReservationNumeros.vue";
 
 export default {
   name: "NumerosAffaire",
   props: {},
-  components: {},
-  data: () => ({
-    affaire_numeros: [],
-
-  }),
+  components: {
+    ReservationNumeros
+  },
+  data: () => {
+    return {
+      affaire_id: null,
+      affaire_numeros: [],
+      showReservationDialog: false
+    };
+  },
 
   methods: {
     /*
@@ -24,15 +30,16 @@ export default {
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
             this.$route.params.id
-        ).then(response => {
+        )
+        .then(response => {
           if (response.data) {
-            this.affaire_numeros = response.data
+            this.affaire_numeros = response.data;
           }
-        }).catch(err => {
+        })
+        .catch(err => {
           alert("error : " + err.message);
         });
     },
-
 
     /*
      * Open numéro in new tab
@@ -43,6 +50,28 @@ export default {
       window.open(routeData.href, "_blank");
     },
 
+    /**
+     * Ouvrir la boîte de dialogue de réservation de numéros
+     */
+    openReservationDialog() {
+      this.affaire_id = Number(this.$route.params.id);
+      this.showReservationDialog = true;
+    },
+
+    /**
+     * Sauver la réservation de numéros
+     */
+    confirmReserveNumeros() {
+      this.searchAffaireNumeros()
+      this.showReservationDialog = false
+    },
+
+    /**
+     * Annuler la réservation de numéros
+     */
+    closeReservationDialog() {
+      this.showReservationDialog = false
+    },
   },
 
   mounted: function() {

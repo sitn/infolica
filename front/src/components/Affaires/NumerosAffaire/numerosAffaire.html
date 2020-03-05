@@ -3,18 +3,19 @@
         <!-- Numéros concernés par l'affaire -->
         <md-card-header>
             <div class="md-title">Immeubles concernés par l'affaire
-                <md-button class="md-icon-button md-raised md-primary newNumerosBtn" v-on:click="addNumeros()">
+                <md-button class="md-icon-button md-raised md-primary newNumerosBtn" v-on:click="openReservationDialog">
                     <md-icon>add</md-icon>
                 </md-button>
             </div>
         </md-card-header>
-
+        
+        
         <!-- Tableau des numéros concernés par l'affaire -->
         <md-card-content>
             <div v-if="affaire_numeros[0]">
                 <md-table v-model="affaire_numeros" md-sort="id" md-sort-order="desc">
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
-                        <md-table-cell md-label="Id" md-sort-by="numero_id">{{ item.numero_id }}</md-table-cell>
+                        <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">{{ item.numero_id }}</md-table-cell>
                         <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}
                         </md-table-cell>
                         <md-table-cell md-label="Type" md-sort-by="numero_type">{{ item.numero_type }}
@@ -30,22 +31,20 @@
                         </md-table-cell>
                         <md-table-cell md-label="Actions" class="actionsColumn">
                             <md-button class="md-icon-button md-raised md-primary"
-                                v-on:click="doOpenNumero(item.numero_id)">
-                                <md-icon>open_in_new</md-icon>
-                            </md-button>
-                        </md-table-cell>
-                    </md-table-row>
-                </md-table>
-            </div>
-            <div v-else>
-                <i>Aucun numéro</i>
-            </div>
-        </md-card-content>
-    </md-card>
+                            v-on:click="doOpenNumero(item.numero_id)">
+                            <md-icon>open_in_new</md-icon>
+                        </md-button>
+                    </md-table-cell>
+                </md-table-row>
+            </md-table>
+        </div>
+        <div v-else>
+            <i>Aucun numéro</i>
+        </div>
+    </md-card-content>
+</md-card>    
 
-    <!-- Réservation de numéros  -->
-    <!-- <div v-if="newNumeros.show">
-
-    </div> -->
+<!-- Réservation de numéros -->
+<ReservationNumeros :showReservationDialog="showReservationDialog" :affaire_id="affaire_id" v-on:confirmReserveNumeros="confirmReserveNumeros" v-on:closeReservationDialog="closeReservationDialog"></ReservationNumeros>
 
 </div>

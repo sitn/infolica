@@ -16,12 +16,12 @@
 
 .affairesDashboard .leftColumn {
     float: left;
-    width: 49.8%;
+    width: 49.7%;
 }
 
 .affairesDashboard .rightColumn {
     float: right;
-    width: 49.6%;
+    width: 49.7%;
 }
 
 #mapContainer {
