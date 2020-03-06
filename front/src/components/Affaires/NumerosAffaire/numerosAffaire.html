@@ -3,7 +3,7 @@
         <!-- Numéros concernés par l'affaire -->
         <md-card-header>
             <div class="md-title">Immeubles concernés par l'affaire
-                <md-button class="md-icon-button md-raised md-primary newNumerosBtn" v-on:click="openReservationDialog">
+                <md-button class="md-icon-button md-raised md-primary newNumerosBtn" v-on:click="callOpenReservationDialog">
                     <md-icon>add</md-icon>
                 </md-button>
             </div>
@@ -45,6 +45,6 @@
 </md-card>    
 
 <!-- Réservation de numéros -->
-<ReservationNumeros :showReservationDialog="showReservationDialog" :affaire_id="affaire_id" v-on:confirmReserveNumeros="confirmReserveNumeros" v-on:closeReservationDialog="closeReservationDialog"></ReservationNumeros>
+<ReservationNumeros ref="form" />
 
 </div>

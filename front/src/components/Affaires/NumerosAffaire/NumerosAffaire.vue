@@ -53,24 +53,9 @@ export default {
     /**
      * Ouvrir la boîte de dialogue de réservation de numéros
      */
-    openReservationDialog() {
+    callOpenReservationDialog() {
       this.affaire_id = Number(this.$route.params.id);
-      this.showReservationDialog = true;
-    },
-
-    /**
-     * Sauver la réservation de numéros
-     */
-    confirmReserveNumeros() {
-      this.searchAffaireNumeros()
-      this.showReservationDialog = false
-    },
-
-    /**
-     * Annuler la réservation de numéros
-     */
-    closeReservationDialog() {
-      this.showReservationDialog = false
+      this.$refs.form.openReservationDialog()
     },
   },
 

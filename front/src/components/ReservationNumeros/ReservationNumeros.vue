@@ -8,16 +8,15 @@ import { checkLogged, getCadastres } from "@/services/helper";
 export default {
   name: "ReservationNumeros",
   props: {
-    showReservationDialog: Boolean,
-    affaire_id: Number
   },
   components: {},
   data: () => {
     return {
+      showReservationDialog: false,
       cadastre_liste: [],
-      types_numeros: [],
-      etats_numeros: [],
+
       reservation: {
+        affaire_id: null,
         cadastre: "",
         nb_bf: 0,
         nb_ddp: 0,
@@ -56,13 +55,20 @@ export default {
     },
 
     /**
+     * Open reservation numéros dialog
+     */
+    openReservationDialog() {
+      this.showReservationDialog = true;
+    },
+
+    /**
      * Create numeros
      */
     onConfirmReservationNumeros() {
       var formData = new FormData();
       if (this.reservation.cadastre.id)
         formData.append("cadastre_id", this.reservation.cadastre.id);
-      if (this.affaire_id) formData.append("affaire_id", this.affaire_id);
+      formData.append("affaire_id", this.$route.params.id);
       if (this.reservation.nb_bf) formData.append("bf", this.reservation.nb_bf);
       if (this.reservation.nb_ddp)
         formData.append("ddp", this.reservation.nb_ddp);
@@ -91,19 +97,28 @@ export default {
         )
         .then(response => {
           if (response.data) {
-            this.$emit("confirmReserveNumeros");
+            this.$parent.searchAffaireNumeros();
           }
         })
         .catch(err => {
           alert("error: " + err);
         });
-      this.onCancelReservationNumeros();
+      this.showReservationDialog = false;
+      this.initializeForm();
     },
 
     /**
-     * Cancel creation of numeros
+     * Annuler la réservation de uméros
      */
     onCancelReservationNumeros() {
+      this.showReservationDialog = false;
+      this.initializeForm();
+    },
+
+    /**
+     * Initialise le formulaire de réservation de numéros
+     */
+    initializeForm() {
       this.reservation.cadastre = "";
       this.reservation.nb_bf = 0;
       this.reservation.nb_ppe = 0;
@@ -114,7 +129,6 @@ export default {
       this.reservation.nb_bat = 0;
       this.reservation.nb_pcs = 0;
       this.reservation.plan_id = null;
-      this.$emit("closeReservationDialog");
     }
   },
 
