@@ -53,9 +53,9 @@ npm install vuelidate --save
 npm install --save moment-timezone vue-moment
 ```
 
-# install VueLayers  (to handle maps)
+# install openlayers  (to handle maps)
 ```
-npm install vuelayers --save
+npm install ol --save
 ```
 
 # install Numeral  (number formatting)
