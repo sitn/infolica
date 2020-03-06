@@ -14,14 +14,14 @@
     top: 22px;
 }
 
-.leftColumn {
+.affairesDashboard .leftColumn {
     float: left;
-    width: 49.8%;
+    width: 49.7%;
 }
 
-.rightColumn {
+.affairesDashboard .rightColumn {
     float: right;
-    width: 49.6%;
+    width: 49.7%;
 }
 
 #mapContainer {
@@ -30,13 +30,6 @@
     background-color: grey;
   }
  
-.test {
+.affairesDashboard .mapHeight {
     height: 500px;
-}
-
-.md-card {
-    width: 100%;
-    display: inline-block;
-    vertical-align: top;
-    margin: 4px;
 }

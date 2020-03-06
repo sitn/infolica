@@ -78,7 +78,7 @@ class Utils():
                 conditions.append(getattr(model, param) == tmp)
             else:
                 conditions.append(func.lower(getattr(model, param)).like(
-                    '%' + func.lower(params[param]) + '%'))
+                    '%' + func.lower(params[param].replace('"','')) + '%'))
         return conditions
 
 
@@ -111,13 +111,16 @@ class Utils():
     """ Get PPE unite from index """
     @classmethod
     def get_unite_from_index(cls, idx):
-        n = len(unite_ppe_list)
-        unite = ""
-        c = 0
-        while idx: 
-            idx, idx_ = divmod(idx-c, n)
-            unite = unite_ppe_list[idx_] + unite
-            c = 1
+        if idx == 0:
+            unite = "A"
+        else:
+            n = len(unite_ppe_list)
+            unite = ""
+            c = 0
+            while idx: 
+                idx, idx_ = divmod(idx-c, n)
+                unite = unite_ppe_list[idx_] + unite
+                c = 1
         return unite
 
     """ Get index from PPE unite """

@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "debug": "vue-cli-service inspect",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -12,6 +13,8 @@
     "core-js": "^3.4.4",
     "mdbvue": "^6.4.0",
     "moment-timezone": "^0.5.27",
+    "numeral": "^2.0.6",
+    "proj4": "^2.6.0",
     "vue": "^2.6.10",
     "vue-axios": "^2.1.5",
     "vue-material": "^1.0.0-beta-11",
@@ -38,7 +41,9 @@
       "plugin:vue/essential",
       "eslint:recommended"
     ],
-    "rules": {"no-console": "off"},
+    "rules": {
+      "no-console": "off"
+    },
     "parserOptions": {
       "parser": "babel-eslint"
     }

@@ -17,8 +17,10 @@ export default {
     types_affaires: [],
     affaires: [],
     search: {
-      cadastre: null,
-      type: null,
+      id: null,
+      nom: null,
+      cadastre: "",
+      type: "",
     }
   }),
 
@@ -69,8 +71,10 @@ export default {
      * Clear the form
      */
     clearForm() {
-      this.search.cadastre = null;
-      this.search.type = null;
+      this.search.id = null;
+      this.search.nom = null;
+      this.search.cadastre = "";
+      this.search.type = "";
     },
     
     /*
@@ -78,6 +82,8 @@ export default {
      */
     async searchAffaires() {
       var formData = new FormData();
+      if (this.search.id) formData.append("id", this.search.id);
+      if (this.search.nom) formData.append("nom", this.search.nom);
       if (this.search.cadastre) formData.append("cadastre", this.search.cadastre);
       if (this.search.type) formData.append("type_affaire", this.search.type);
 

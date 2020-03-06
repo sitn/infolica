@@ -3,22 +3,26 @@
 
 
 <script>
-import {
-  checkLogged,
-} from "@/services/helper";
-
+import {checkLogged} from '@/services/helper'
 import MapHandler from '@/components/MapHandler/MapHandler.vue';
+import NumerosAffaire from '@/components/Affaires/NumerosAffaire/NumerosAffaire.vue';
+import Facturation from '@/components/Facturation/Facturation.vue';
+import Remarques from '@/components/Affaires/Remarques/Remarques.vue';
 
 export default {
   name: "AffairesDashboard",
   props: {},
   components: {
-    MapHandler
+    MapHandler,
+    NumerosAffaire,
+    Facturation,
+    Remarques,
   },
   data: () => ({
     affaire: {},
-    affaire_numeros: {},
-    affaire_remarques: {},
+    affaire_numeros: [],
+    // affaire_remarques: [],
+
   }),
 
   methods: {
@@ -46,57 +50,11 @@ export default {
         });
     },
 
-    /*
-     * SEARCH AFFAIRE NUMEROS
-     */
-    async searchAffaireNumeros() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
-            this.$route.params.id
-        ).then(response => {
-          if (response.data) {
-            this.affaire_numeros = response.data
-          }
-        }).catch(err => {
-          alert("error : " + err.message);
-        });
-    },
-
-    /*
-     * SEARCH AFFAIRE NUMEROS
-     */
-    async searchAffaireRemarques() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_REMARQUES_ENDPOINT +
-            this.$route.params.id
-        ).then(response => {
-          if (response.data) {
-            this.affaire_remarques = response.data
-          }
-        }).catch(err => {
-          alert("error : " + err.message);
-        });
-    },
-
-    /*
-     * Open numéro in new tab
-     */
-    doOpenNumero(id) {
-      window.setTimeout;
-      let routeData = this.$router.resolve("/numeros/" + id);
-      window.open(routeData.href, "_blank");
-    },    
   },
 
   mounted: function() {
     checkLogged();
     this.searchAffaire();
-    this.searchAffaireNumeros();
-    this.searchAffaireRemarques();
   }
 };
 </script>
