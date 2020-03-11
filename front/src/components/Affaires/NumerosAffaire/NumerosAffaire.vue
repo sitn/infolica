@@ -41,6 +41,41 @@ export default {
         });
     },
 
+    /**
+     * Supprimer un numéro
+     */
+    doDeleteNumero(numero_id) {
+      // get numéro pour le put
+      var numero_ = {}
+      alert(process.env.VUE_APP_API_URL +
+        process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
+        numero_id)
+      this.$http.get(process.env.VUE_APP_API_URL +
+        process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
+        numero_id
+        ).then(response => {
+          if (response.data) {
+            numero_ = response.data
+          }
+        }).catch(err => {
+          alert("error: " + err.message)
+        });
+        alert(numero_.cadastre_id)
+
+      // var formData = new FormData();
+      // formData.append()
+      // var req = this.$http.put(
+      //   process.env.VUE_APP_API_URL +
+      //   process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
+      //   numero_id
+      // );
+      // // Abandon d'un nouveau numéro
+      // if (numero.affaire_numero_type === "Nouveau") {
+      //   formData
+      //   req.
+      // }
+    },
+
     /*
      * Open numéro in new tab
      */
