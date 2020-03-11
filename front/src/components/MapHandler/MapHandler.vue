@@ -5,6 +5,18 @@
 
 <script>
 import { checkLogged } from "@/services/helper";
+import 'ol/ol.css';
+import Map from 'ol/Map';
+import View from 'ol/View';
+//import {defaults as defaultControls, ScaleLine} from 'ol/control';
+import TileLayer from 'ol/layer/Tile';
+import TileWMS from 'ol/source/TileWMS';
+import VectorLayer from 'ol/layer/Vector';
+import VectorSource from 'ol/source/Vector';
+import Feature from 'ol/Feature'
+//import Point from 'ol/geom/Point'
+import Circle from 'ol/geom/Circle'
+//import {transform} from 'ol/proj';
 
 export default {
   name: "MapHandler",
@@ -14,51 +26,103 @@ export default {
   data: () => ({
     affaire_data: {},
     map: null,
-    dataProjection: "EPSG:2056", // vl-map
-    zoom: 18,
-    center: [], // vl-view
-    affaire_coord: [0, 0], // vl-view
-    center_str: "", // vl-view
-    projection: "EPSG:2056", // vl-view
-    // center: [6.93, 46.99], // vl-view
-    // center: [2548125, 1204613], // vl-view
-    // url: "https://sitn.ne.ch/mapproxy95/service/", // vl-source-wmts
-    // layerName: "plan_cadastral", // vl-source-wmts
-    // matrixSet: "EPSG2056", // vl-source-wmts
-    // format: "image/png", // vl-source-wmts
-    // styleName: "default",  // vl-source-wmts
-    // cr: 'EPSG:2056', // vl-layer-tile
-    // url: 'https://sitn.ne.ch/ogc-sitn95-open/wms', // vl-layer-tile
-    // layers: 'plan_cadastral_1860', // vl-layer-tile
+    vectorLayer: null,
+    vectorSource: null
   }),
 
   methods: {
+
+    /**
+     * Init map
+     */
+    initMap: function(center) {
+
+      //WMS
+      var wmsSource = new TileWMS({
+        url: process.env.VUE_APP_WMS_URL,
+        params: {
+          'LAYERS': 'plan_cadastral_couleur',
+          'TILED': false
+        }
+      });
+
+      var wmsLayer = new TileLayer({
+        source: wmsSource
+      });
+
+
+      // Vector layer
+      this.vectorSource = new VectorSource({
+        projection: process.env.VUE_APP_MAP_PROJECTION,
+      })
+      this.vectorLayer = new VectorLayer({
+        source: this.vectorSource
+      });
+
+      // Map layers
+      var layers = [wmsLayer, this.vectorLayer];
+
+      if(!this.map){
+        this.map = new Map({
+          layers: layers,
+          target: 'mapDiv',
+          view: new View({
+            projection: process.env.VUE_APP_MAP_PROJECTION,
+            center: center ? [center.x, center.y] : process.env.VUE_APP_MAP_DEFAULT_CENTER,
+            zoom: process.env.VUE_APP_MAP_DEFAULT_ZOOM
+          })
+        });
+
+        // Add click listener
+        this.map.on('click', this.onMapClick);
+      }
+      else{
+        this.map.getView().setCenter(center ? [center.x, center.y] : process.env.VUE_APP_MAP_DEFAULT_CENTER)
+      }
+
+      // Add marker
+      this.addMarker(center.x, center.y);
+    },
+
+
     /**
      * Handle map click event
      */
     onMapClick: function(evt) {
       console.log(evt);
       //var viewResolution = this.$refs.view.getResolution();
-      var url = this.$refs.wmsSource.getFeatureInfoUrl(
+      /*var url = this.$refs.wmsSource.getFeatureInfoUrl(
         evt.coordinate,
-        null /*viewResolution*/,
+        null, //viewResolution,
         "EPSG:2056",
         { INFO_FORMAT: "text/html" }
       );
-      console.log(url);
+      console.log(url);*/
     },
 
     /**
      * Handle map mounted event
      */
-    onMapMounted: function() {
+    /*onMapMounted: function() {
       console.log(this.$refs.map);
+    },*/
+
+    /**
+     * Add marker
+     */
+    addMarker: function(x, y) {
+      var marker = new Feature({
+        geometry: new Circle([x, y], 2)
+      });
+
+      this.vectorSource.addFeature(marker);
     },
 
     /**
      * Récupère les coordonnées de l'affaire
      */
     async searchAffaire() {
+      return new Promise((resolve, reject) => {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
@@ -66,19 +130,21 @@ export default {
             this.$route.params.id
         ).then(response => {
           if (response.data) {
-            this.center = [response.data.localisation_e, response.data.localisation_n];
-            this.affaire_coord = [response.data.localisation_e, response.data.localisation_n];
-            // alert(this.center)
+            resolve({x: response.data.localisation_e, y: response.data.localisation_n});
           }
-        }).catch(err => {
-          alert("error : " + err.message);
-        });
-    },
+        })
+        .catch(() => reject)
+      });
+    }
   },
 
   mounted: function() {
     checkLogged();
-    this.searchAffaire();
+    let _this = this;
+    this.searchAffaire().then(function(center){
+      _this.initMap(center);
+    });
+    
   }
 };
 </script>

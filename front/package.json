@@ -14,13 +14,13 @@
     "mdbvue": "^6.4.0",
     "moment-timezone": "^0.5.27",
     "numeral": "^2.0.6",
+    "ol": "^6.2.1",
     "proj4": "^2.6.0",
     "vue": "^2.6.10",
     "vue-axios": "^2.1.5",
     "vue-material": "^1.0.0-beta-11",
     "vue-moment": "^4.1.0",
     "vue-router": "^3.1.5",
-    "vuelayers": "^0.11.21",
     "vuelidate": "^0.7.5"
   },
   "devDependencies": {
