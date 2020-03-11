@@ -38,6 +38,7 @@ def test_error(exc, request):
 @view_config(route_name='operateurs_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='factures', request_method='OPTIONS', renderer='json')
 @view_config(route_name='factures_s', request_method='OPTIONS', renderer='json')
+@view_config(route_name='numero_by_id', request_method='OPTIONS', renderer='json')
 def options_response_view(request):
     return ''
 

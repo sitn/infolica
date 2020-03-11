@@ -44,36 +44,37 @@ export default {
     /**
      * Supprimer un numéro
      */
-    doDeleteNumero(numero_id) {
-      // get numéro pour le put
+    async doDeleteNumero(numero_id) {
+      // get numéro pour l'update
       var numero_ = {}
-      alert(process.env.VUE_APP_API_URL +
-        process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
-        numero_id)
       this.$http.get(process.env.VUE_APP_API_URL +
         process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
         numero_id
         ).then(response => {
           if (response.data) {
             numero_ = response.data
+            this.updateNumero(numero_)
           }
         }).catch(err => {
           alert("error: " + err.message)
         });
-        alert(numero_.cadastre_id)
+    },
 
-      // var formData = new FormData();
-      // formData.append()
-      // var req = this.$http.put(
-      //   process.env.VUE_APP_API_URL +
-      //   process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
-      //   numero_id
-      // );
-      // // Abandon d'un nouveau numéro
-      // if (numero.affaire_numero_type === "Nouveau") {
-      //   formData
-      //   req.
-      // }
+    /**
+     * Update Numero
+     */
+    async updateNumero(numero_) {
+      this.$http.delete(
+        process.env.VUE_APP_API_URL +
+        process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
+        numero_.id
+      ).then(response => {
+        if (response.data) {
+          this.searchAffaireNumeros()
+        }
+      }).catch(err =>{
+        alert("error: " + err.message)
+      })
     },
 
     /*
