@@ -9,11 +9,23 @@
 }
 
 .numerosAffaire .md-table {
-    width: 80%;
+    width: 100%;
     margin: auto;
 }
 
 .numerosAffaire .newNumerosBtn {
     right: 25px;
     position: absolute;
+}
+
+.numerosAffaire .halfLeft {
+    position: relative;
+    width: 49.7%;
+    float: left;
+}
+
+.numerosAffaire .halfRight {
+    position: relative;
+    width: 49.7%;
+    float: right;
 }
