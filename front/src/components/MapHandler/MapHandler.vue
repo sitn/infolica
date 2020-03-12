@@ -14,8 +14,8 @@ import TileWMS from 'ol/source/TileWMS';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Feature from 'ol/Feature'
-//import Point from 'ol/geom/Point'
-import Circle from 'ol/geom/Circle'
+// import Circle from 'ol/geom/Circle'
+import Point from 'ol/geom/Point';
 //import {transform} from 'ol/proj';
 
 export default {
@@ -112,7 +112,7 @@ export default {
      */
     addMarker: function(x, y) {
       var marker = new Feature({
-        geometry: new Circle([x, y], 2)
+        geometry: new Point([x, y]) //, 2)
       });
 
       this.vectorSource.addFeature(marker);

@@ -41,6 +41,42 @@ export default {
         });
     },
 
+    /**
+     * Supprimer un numéro
+     */
+    async doDeleteNumero(numero_id) {
+      // get numéro pour l'update
+      var numero_ = {}
+      this.$http.get(process.env.VUE_APP_API_URL +
+        process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
+        numero_id
+        ).then(response => {
+          if (response.data) {
+            numero_ = response.data
+            this.updateNumero(numero_)
+          }
+        }).catch(err => {
+          alert("error: " + err.message)
+        });
+    },
+
+    /**
+     * Update Numero
+     */
+    async updateNumero(numero_) {
+      this.$http.delete(
+        process.env.VUE_APP_API_URL +
+        process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
+        numero_.id
+      ).then(response => {
+        if (response.data) {
+          this.searchAffaireNumeros()
+        }
+      }).catch(err =>{
+        alert("error: " + err.message)
+      })
+    },
+
     /*
      * Open numéro in new tab
      */
@@ -53,24 +89,9 @@ export default {
     /**
      * Ouvrir la boîte de dialogue de réservation de numéros
      */
-    openReservationDialog() {
+    callOpenReservationDialog() {
       this.affaire_id = Number(this.$route.params.id);
-      this.showReservationDialog = true;
-    },
-
-    /**
-     * Sauver la réservation de numéros
-     */
-    confirmReserveNumeros() {
-      this.searchAffaireNumeros()
-      this.showReservationDialog = false
-    },
-
-    /**
-     * Annuler la réservation de numéros
-     */
-    closeReservationDialog() {
-      this.showReservationDialog = false
+      this.$refs.form.openReservationDialog()
     },
   },
 
