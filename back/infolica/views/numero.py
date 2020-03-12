@@ -170,6 +170,29 @@ def numeros_update_view(request):
         return exc.HTTPBadRequest(e)
 
 
+""" Supprimer/abandonner numeros by id"""
+@view_config(route_name='numero_by_id', request_method='DELETE', renderer='json')
+def numeros_by_id_delete_view(request):
+    try:
+        # Get numero by id
+        id = request.matchdict['id']
+        query = request.dbsession.query(models.Numero).filter(
+            models.Numero.id == id).first()
+        
+        if query:
+            if query.etat_id == 1:
+                query.etat_id = 3
+            elif query.etat_id == 2:
+                query.etat_id = 4
+
+            with transaction.manager:
+                transaction.commit()
+
+    except DBAPIError as e:
+        log.error(e)
+        return exc.HTTPBadRequest(e)
+
+
 ###########################################################
 # NUMERO ETAT HISTO
 ###########################################################
