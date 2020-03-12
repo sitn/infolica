@@ -54,9 +54,10 @@
             <!-- Numéros concernés par l'affaire -->
             <md-card-header>
                 <div class="md-title">Immeubles réservés
-                    <md-button class="md-icon-button md-raised md-primary newNumerosBtn"
+                    <md-button class="md-primary newNumerosBtn"
                         v-on:click="callOpenReservationDialog">
-                        <md-icon>add</md-icon>
+                        <!-- <md-icon>add</md-icon> -->
+                        Réservation
                     </md-button>
                 </div>
             </md-card-header>
@@ -68,7 +69,7 @@
                     <md-table v-model="affaire_numeros_nouveaux" md-sort="id" md-sort-order="desc">
                         <md-table-row slot="md-table-row" slot-scope="{ item }">
                             <md-table-cell md-label="" class="actionsColumn">
-                                <md-switch v-model="item.active" @change="doDeleteNumero(item.numero_id)"></md-switch>
+                                <md-switch v-model="item.active" @change="doDeleteNumero(item.numero_id)" class="md-primary"></md-switch>
                             </md-table-cell>
                             <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">{{ item.numero_id }}
                             </md-table-cell>
