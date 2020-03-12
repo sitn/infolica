@@ -10,6 +10,7 @@ export default {
   name: "Facturation",
   props: {},
   data: () => ({
+    showNewFactureBtn: false,
     deleteFactureActive: false,
     deleteFactureMessage: "",
     deleteFactureId: null,
@@ -137,11 +138,11 @@ export default {
      */
     onConfirmEditFacture() {
       // Récupère l'id du client selon si il provient d'une modif de facture ou d'une création de facture
-      var client_id
+      var client_id;
       if (this.clients_liste_select[0]) {
         client_id = this.clients_liste_select[0].id;
       } else {
-        client_id = this.selectedFacture.client_id
+        client_id = this.selectedFacture.client_id;
       }
 
       var formData = new FormData();
@@ -151,8 +152,7 @@ export default {
         formData.append("sap", this.selectedFacture.sap);
       if (this.selectedFacture.date)
         formData.append("date", this.selectedFacture.date);
-      if (client_id)
-        formData.append("client_id", client_id);
+      if (client_id) formData.append("client_id", client_id);
       if (this.selectedFacture.montant_mo)
         formData.append("montant_mo", this.selectedFacture.montant_mo);
       if (this.selectedFacture.montant_mat_diff)

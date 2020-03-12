@@ -3,24 +3,24 @@
 
 
 <script>
-import { checkLogged, getCurrentDate } from '@/services/helper'
+import { checkLogged, getCurrentDate } from "@/services/helper";
 
 export default {
-  name: "AffairesDashboard",
+  name: "affaireRemarques",
   props: {},
   components: {},
   data: () => ({
     affaire_remarques: [],
+    showNewRemarqueBtn: false,
     new_remarque: {
       showDiv: false,
       remarque: null,
       date: null,
-      operateur: null,
+      operateur: null
     }
   }),
 
   methods: {
-
     /*
      * SEARCH AFFAIRE REMARQUES
      */
@@ -30,11 +30,13 @@ export default {
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_AFFAIRE_REMARQUES_ENDPOINT +
             this.$route.params.id
-        ).then(response => {
+        )
+        .then(response => {
           if (response.data) {
-            this.affaire_remarques = response.data
+            this.affaire_remarques = response.data;
           }
-        }).catch(err => {
+        })
+        .catch(err => {
           alert("error : " + err.message);
         });
     },
@@ -52,21 +54,29 @@ export default {
     saveNewRemarque: function() {
       if (this.new_remarque.remarque != null) {
         var formData = new FormData();
-        if (this.new_remarque.remarque) formData.append("remarque", this.new_remarque.remarque);
+        if (this.new_remarque.remarque)
+          formData.append("remarque", this.new_remarque.remarque);
         formData.append("date", getCurrentDate());
-        formData.append("operateur_id", JSON.parse(localStorage.getItem('infolica_user')).id);
+        formData.append(
+          "operateur_id",
+          JSON.parse(localStorage.getItem("infolica_user")).id
+        );
         formData.append("affaire_id", this.$route.params.id);
 
-        this.$http.post(process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_REMARQUES_ENDPOINT,
+        this.$http
+          .post(
+            process.env.VUE_APP_API_URL +
+              process.env.VUE_APP_REMARQUES_ENDPOINT,
             formData
-            ).then(response => {
-              if (response.data) {
-                this.searchAffaireRemarques()
-              }
-            }).catch(err => {
-              alert("error: " + err)
-            })
+          )
+          .then(response => {
+            if (response.data) {
+              this.searchAffaireRemarques();
+            }
+          })
+          .catch(err => {
+            alert("error: " + err);
+          });
       }
       this.new_remarque.showDiv = false;
       this.new_remarque.remarque = null;
