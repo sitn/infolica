@@ -56,7 +56,8 @@ export default {
         projection: process.env.VUE_APP_MAP_PROJECTION,
       })
       this.vectorLayer = new VectorLayer({
-        source: this.vectorSource
+        source: this.vectorSource,
+        isFixed : true
       });
 
       // Map layers
