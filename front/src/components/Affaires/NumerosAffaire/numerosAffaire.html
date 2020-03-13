@@ -1,6 +1,5 @@
 <div class="numerosAffaire">
 
-    <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
     <md-card>
         <md-card-header>
             <div class="md-title">
@@ -12,11 +11,12 @@
                 Immeubles et numéros MO
             </div>
         </md-card-header>
-
+        
         <md-card-expand>
-            <md-card-expand-content>
-                <div class="halfLeft">
-                    <!-- Numéros concernés par l'affaire -->
+
+            <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
+            <md-card-expand-content class="halfLeft">
+                <md-card class="md-elevation-0">
                     <md-card-header>
                         <div class="md-title">Immeubles mutés/Biens-fonds de base
                             <!-- <md-button class="md-icon-button md-raised md-primary newNumerosBtn"
@@ -47,11 +47,11 @@
                                     <md-table-cell md-label="Etat" md-sort-by="numero_etat">{{ item.numero_etat }}
                                     </md-table-cell>
                                     <!-- <md-table-cell md-label="" class="actionsColumn">
-                            <md-button class="md-icon-button md-primary"
-                                v-on:click="doOpenNumero(item.id)">
-                                <md-icon>open_in_new</md-icon>
-                            </md-button>
-                        </md-table-cell> -->
+                                        <md-button class="md-icon-button md-primary"
+                                            v-on:click="doOpenNumero(item.id)">
+                                            <md-icon>open_in_new</md-icon>
+                                        </md-button>
+                                    </md-table-cell> -->
                                 </md-table-row>
                             </md-table>
                         </div>
@@ -59,17 +59,17 @@
                             <i>Aucun numéro</i>
                         </div>
                     </md-card-content>
-                    <!-- </md-card> -->
-                </div>
+                </md-card>
+                <!-- </div> -->
+            </md-card-expand-content>
 
-                <!-- NUMEROS RESERVES (nouveaux numéros) -->
-                <!-- <md-card class="halfRight"> -->
-                <div class="halfRight">
-                    <!-- Numéros concernés par l'affaire -->
+
+            <!-- NUMEROS RESERVES (nouveaux numéros) -->
+            <md-card-expand-content class="halfRight">
+                <md-card class="md-elevation-0">
                     <md-card-header>
                         <div class="md-title">Immeubles réservés
                             <md-button class="md-primary newNumerosBtn" v-on:click="callOpenReservationDialog">
-                                <!-- <md-icon>add</md-icon> -->
                                 Réservation
                             </md-button>
                         </div>
@@ -101,10 +101,10 @@
                                     <md-table-cell md-label="Etat" md-sort-by="numero_etat">{{ item.numero_etat }}
                                     </md-table-cell>
                                     <!-- <md-table-cell md-label="" class="actionsColumn">
-                                <md-button class="md-icon-button md-primary" v-on:click="doOpenNumero(item.id)">
-                                    <md-icon>open_in_new</md-icon>
-                                </md-button>
-                            </md-table-cell> -->
+                                        <md-button class="md-icon-button md-primary" v-on:click="doOpenNumero(item.id)">
+                                            <md-icon>open_in_new</md-icon>
+                                        </md-button>
+                                    </md-table-cell> -->
                                 </md-table-row>
                             </md-table>
                         </div>
@@ -112,8 +112,7 @@
                             <i>Aucun numéro</i>
                         </div>
                     </md-card-content>
-                </div>
-
+                </md-card>
             </md-card-expand-content>
         </md-card-expand>
     </md-card>
