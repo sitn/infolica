@@ -12,9 +12,6 @@ import VueAxios from 'vue-axios';
 import routes from './routes';
 import VueMoment from 'vue-moment';
 import moment from 'moment-timezone';
-/*import VueLayers from 'vuelayers'
-import { TileLayer, WmtsSource, WmsSource, OsmSource, PointGeom, StyleBox } from 'vuelayers';
-import 'vuelayers/lib/style.css' // needs css-loader*/
 import proj4 from 'proj4';
 import {register} from 'ol/proj/proj4';
 
@@ -29,22 +26,11 @@ Vue.config.productionTip = false;
 Vue.use(VueMaterial)
 Vue.use(VueRouter)
 Vue.use(VueAxios, axios)
-//Vue.use(VueLayers)
 
 Vue.use(VueMoment, {
   moment,
 })
 
-//Vue layers components
-/* Vue.use(VueLayers, {
-  dataProjection: 'EPSG:2056',
-}) 
-Vue.use(TileLayer)
-Vue.use(WmtsSource)
-Vue.use(WmsSource)
-Vue.use(OsmSource)
-Vue.use(PointGeom)
-Vue.use(StyleBox)*/
 const router = new VueRouter({
   mode: 'history',
   routes: routes
