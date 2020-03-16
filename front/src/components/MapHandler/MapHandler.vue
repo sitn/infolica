@@ -16,7 +16,7 @@ import VectorSource from 'ol/source/Vector';
 import Feature from 'ol/Feature'
 // import Circle from 'ol/geom/Circle'
 import Point from 'ol/geom/Point';
-//import {transform} from 'ol/proj';
+import {Style, Circle, Fill, Stroke} from 'ol/style';
 
 export default {
   name: "MapHandler",
@@ -27,7 +27,8 @@ export default {
     affaire_data: {},
     map: null,
     vectorLayer: null,
-    vectorSource: null
+    vectorSource: null,
+    markerStyle: null,
   }),
 
   methods: {
@@ -35,7 +36,12 @@ export default {
     /**
      * Init map
      */
-    initMap: function(center) {
+    initMap: function(center, zoom) {
+
+      let _this = this;
+
+      //Init marker style
+      this.initMarkerStyle();
 
       //WMS
       var wmsSource = new TileWMS({
@@ -53,7 +59,7 @@ export default {
 
       // Vector layer
       this.vectorSource = new VectorSource({
-        projection: process.env.VUE_APP_MAP_PROJECTION,
+        projection: process.env.VUE_APP_MAP_PROJECTION
       })
       this.vectorLayer = new VectorLayer({
         source: this.vectorSource
@@ -62,43 +68,81 @@ export default {
       // Map layers
       var layers = [wmsLayer, this.vectorLayer];
 
-      if(!this.map){
+      //View
+      var view = new View({
+        projection: process.env.VUE_APP_MAP_PROJECTION,
+        center: center ? [center.x, center.y] : process.env.VUE_APP_MAP_DEFAULT_CENTER,
+        zoom: zoom
+      });
+
+        if(!this.map){
         this.map = new Map({
           layers: layers,
           target: 'mapDiv',
-          view: new View({
-            projection: process.env.VUE_APP_MAP_PROJECTION,
-            center: center ? [center.x, center.y] : process.env.VUE_APP_MAP_DEFAULT_CENTER,
-            zoom: process.env.VUE_APP_MAP_DEFAULT_ZOOM
-          })
+          view: view
+        });
+
+        //Workaround to draw markers in the good position
+        this.vectorLayer.once('postrender', function() {
+          _this.setCanvasTransform();
+        });
+        window.onresize = function(){
+          setTimeout( function() {_this.setCanvasTransform();}, 500);
+        }
+        view.on('change:resolution', function() {
+          _this.setCanvasTransform();
         });
 
         // Add click listener
-        this.map.on('click', this.onMapClick);
+        //this.map.on('click', this.onMapClick);
       }
       else{
         this.map.getView().setCenter(center ? [center.x, center.y] : process.env.VUE_APP_MAP_DEFAULT_CENTER)
       }
 
       // Add marker
-      this.addMarker(center.x, center.y);
+      //this.addMarker(center.x, center.y);
     },
-
 
     /**
      * Handle map click event
      */
-    onMapClick: function(evt) {
+    setCanvasTransform: function() {
+        var canvas = document.getElementById("mapDiv").querySelectorAll("canvas"); 
+
+        if(canvas && canvas.length > 1)
+          canvas[1].style.transform = "inherit";  
+    },
+
+    /**
+     * Init marker style
+     */
+    initMarkerStyle: function() {
+      this.markerStyle = new Style({
+        image: new Circle({
+          radius: 7,
+          fill: new Fill({color: 'yellow'}),
+          stroke: new Stroke({
+            color: [0,0,0], width: 2
+          })
+        })
+      });
+    },
+
+    /**
+     * Handle map click event
+     */
+    /*onMapClick: function(evt) {
       console.log(evt);
       //var viewResolution = this.$refs.view.getResolution();
-      /*var url = this.$refs.wmsSource.getFeatureInfoUrl(
+      var url = this.$refs.wmsSource.getFeatureInfoUrl(
         evt.coordinate,
         null, //viewResolution,
         "EPSG:2056",
         { INFO_FORMAT: "text/html" }
       );
-      console.log(url);*/
-    },
+      console.log(url);
+    },*/
 
     /**
      * Handle map mounted event
@@ -112,10 +156,17 @@ export default {
      */
     addMarker: function(x, y) {
       var marker = new Feature({
-        geometry: new Point([x, y]) //, 2)
+        geometry: new Point([x, y])
       });
-
+      marker.setStyle(this.markerStyle);
       this.vectorSource.addFeature(marker);
+    },
+
+    /**
+     * Clear markers
+     */
+    clearMarkers: function() {
+      this.vectorSource.clear();
     },
 
     /**
@@ -141,10 +192,12 @@ export default {
   mounted: function() {
     checkLogged();
     let _this = this;
-    this.searchAffaire().then(function(center){
-      _this.initMap(center);
-    });
-    
+
+    if(this.$route.params.id){
+      this.searchAffaire().then(function(center){
+        _this.initMap(center, process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM);
+      });
+    }
   }
 };
 </script>
