@@ -120,7 +120,7 @@ import { validationMixin } from 'vuelidate'
       },
 
       /**
-      * Handle save data success
+      * Create formData
       */
       initPostData () {
         var formData = new FormData();
