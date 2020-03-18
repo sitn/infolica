@@ -1,0 +1,86 @@
+<div class="suivi">
+    <md-card>
+        <!-- Results Header -->
+        <md-card-header>
+            <div class="md-title">
+                <md-card-expand-trigger>
+                    <md-button class="md-icon-button expandCollapseBtn"
+                        @click.native="showNewEtapeBtn = !showNewEtapeBtn">
+                        <md-icon>keyboard_arrow_down</md-icon>
+                    </md-button>
+                </md-card-expand-trigger>
+                Étapes réalisées
+                <md-button class="md-primary newEtapeBtn" v-on:click="showEtapeDialog = !showEtapeDialog"
+                    v-if="showNewEtapeBtn">
+                    Nouvelle étape</md-button>
+                <!-- <md-button class="md-icon-button md-raised md-primary newEtapeBtn" v-on:click="addRemarque()">
+                    <md-icon>add</md-icon>
+                </md-button> -->
+            </div>
+        </md-card-header>
+
+        <md-card-expand>
+            <md-card-expand-content>
+
+                <md-card-content>
+                    <div v-if="affaire_suivi[0]">
+                        <md-table v-model="affaire_suivi" md-sort="date_etape" md-sort-order="desc">
+                            <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
+                                <md-table-cell md-label="Étape" md-sort-by="etape">{{ item.etape }}
+                                </md-table-cell>
+                                <md-table-cell md-label="Date" md-sort-by="date_etape">{{ item.date_etape }}
+                                </md-table-cell>
+                                <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}
+                                </md-table-cell>
+                            </md-table-row>
+                        </md-table>
+                    </div>
+                    <div v-else>
+                        <i>Aucune étape</i>
+                    </div>
+                </md-card-content>
+
+
+                <md-dialog :md-active.sync="showEtapeDialog" md-confirm-text="Enregistrer" md-cancel-text="Annuler"
+                    md-title="Édition d'étape">
+                    <md-dialog-title>Édition d'étape</md-dialog-title>
+                    <md-dialog-content>
+                        <md-autocomplete v-model="new_etape.etape" :md-options="etapes_list"
+                            :class="getValidationClass('etape')">
+                            <label>Étape</label>
+                            <template slot="md-autocomplete-item" slot-scope="{ item }">
+                                {{ item.nom }}
+                            </template>
+                            <span class="md-error" v-if="!$v.new_etape.etape.required">L'étape est obligatoire</span>
+                        </md-autocomplete>
+
+                        <md-field :class="getValidationClass('date')">
+                            <label>Date</label>
+                            <md-input v-model="new_etape.date" type="date" />
+                            <span class="md-error" v-if="!$v.new_etape.date.required">La date est obligatoire</span>
+                        </md-field>
+
+                        <md-field>
+                            <label>Remarque</label>
+                            <md-textarea v-model="new_etape.remarque"></md-textarea>
+                        </md-field>
+                    </md-dialog-content>
+                    <md-dialog-actions>
+                        <md-button class="md-accent" @click="onCancelEditEtape">Annuler</md-button>
+                        <md-button class="md-primary" @click="onConfirmEditEtape">Enregistrer</md-button>
+
+                    </md-dialog-actions>
+                </md-dialog>
+
+
+                <md-snackbar :md-active.sync="dataSaved">L'étape '{{ lastRecord }}' a été enregistrée avec succès
+                </md-snackbar>
+                <!-- <md-dialog-alert :md-active.sync="alertErrorActive" md-title="Erreur!"
+                    md-content="Une erreur est survenue lors de l'enregistrement des données" /> -->
+
+            </md-card-expand-content>
+        </md-card-expand>
+
+    </md-card>
+</div>
