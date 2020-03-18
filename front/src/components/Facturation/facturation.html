@@ -62,28 +62,35 @@
                     </div>
                 </md-card-content>
 
+                <!-- Edition de factures -->
                 <md-dialog :md-active.sync="showFactureDialog" md-confirm-text="Enregistrer" md-cancel-text="Annuler"
                     md-title="Edition facture">
                     <md-dialog-title>Edition facture</md-dialog-title>
                     <md-dialog-content>
-                        <md-field>
+
+                        <md-field :class="getValidationClass('sap')">
                             <label>SAP</label>
                             <md-input v-model="selectedFacture.sap" type="number"></md-input>
+                            <span class="md-error" v-if="!$v.selectedFacture.sap.required">Le numéro SAP est obligatoire</span>
                         </md-field>
+
                         <md-field>
                             <label>Date</label>
                             <md-input v-model="selectedFacture.date" type="date"></md-input>
                         </md-field>
-                        <div v-if="createFacture">
-                            <md-autocomplete v-model="txtSearchClient" :md-options="clients_liste_select"
-                                @md-changed="getClientSearch">
+
+                        <div v-if="createFacture"> <!-- Création de facture -->
+                            <md-autocomplete v-model="selectedFacture.txtSearchClient" :md-options="clients_liste_select"
+                                @md-changed="getClientSearch" :class="getValidationClass('txtSearchClient')">
                                 <label>Client</label>
                                 <template slot="md-autocomplete-item" slot-scope="{ item }">
                                     {{ item.nom }}
                                 </template>
+                                <span class="md-error" v-if="!$v.selectedFacture.txtSearchClient.required">Le client est obligatoire</span>
+                                <!-- <span class="md-error" v-if="!$v.selectedFacture.txtSearchClient.minLength">Client invalide</span> -->
                             </md-autocomplete>
                         </div>
-                        <div v-else>
+                        <div v-else> <!-- Modification de facture -->
                             <md-field>
                                 <label>Client</label>
                                 <md-input
@@ -91,35 +98,46 @@
                                     readonly></md-input>
                             </md-field>
                         </div>
-                        <md-field>
+
+                        <md-field :class="getValidationClass('montant_mo')">
                             <label>Montant MO</label>
                             <md-input class="currency" v-model="selectedFacture.montant_mo" v-on:keyup="computeTotal()"
                                 type="number" min="0.00" step="0.05"></md-input>
+                                <span class="md-error" v-if="!$v.selectedFacture.montant_mo.required">Le montant MO est obligatoire</span>
                         </md-field>
-                        <md-field>
+
+                        <md-field :class="getValidationClass('montant_mat_diff')">
                             <label>Montant mat diff</label>
                             <md-input class="currency" v-model="selectedFacture.montant_mat_diff"
                                 v-on:keyup="computeTotal()" type="number" min="0.00" step="0.05"></md-input>
+                                <span class="md-error" v-if="!$v.selectedFacture.montant_mat_diff.required">Le montant mat diff est obligatoire</span>
                         </md-field>
-                        <md-field>
+
+                        <md-field :class="getValidationClass('montant_rf')">
                             <label>Montant RF</label>
                             <md-input class="currency" v-model="selectedFacture.montant_rf" v-on:keyup="computeTotal()"
                                 type="number" min="0.00" step="0.05"></md-input>
+                                <span class="md-error" v-if="!$v.selectedFacture.montant_rf.required">Le montant RF est obligatoire</span>
                         </md-field>
-                        <md-field>
+
+                        <md-field :class="getValidationClass('montant_tva')">
                             <label>TVA</label>
                             <md-input class="currency" v-model="selectedFacture.montant_tva" v-on:keyup="computeTotal()"
                                 type="number" min="0.00" step="0.05"></md-input>
+                                <span class="md-error" v-if="!$v.selectedFacture.montant_tva.required">Le montant de TVA est obligatoire</span>
                         </md-field>
+
                         <md-field>
                             <label>Total</label>
                             <md-input class="currency" v-model="selectedFacture.montant_total" type="number" min="0.00"
                                 step="0.05" readonly></md-input>
                         </md-field>
+
                         <md-field>
                             <label>Remarque</label>
                             <md-textarea v-model="selectedFacture.remarque" md-autogrow></md-textarea>
                         </md-field>
+
                     </md-dialog-content>
                     <md-dialog-actions>
                         <md-button class="md-accent" @click="onCancelEditFacture">Annuler</md-button>
@@ -134,6 +152,7 @@
                         @md-confirm="onConfirmDelete" @md-cancel="onCancelDelete" />
                 </div>
 
+                <md-snackbar :md-active.sync="dataSaved">La facture {{ lastRecordSAP }} a été enregistrée avec succès</md-snackbar>
 
             </md-card-expand-content>
         </md-card-expand>
