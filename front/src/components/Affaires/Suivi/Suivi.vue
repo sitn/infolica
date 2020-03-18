@@ -171,17 +171,6 @@ export default {
           "md-invalid": field.$invalid && field.$dirty
         };
       }
-    },
-
-    /**
-     * Validate form
-     */
-    validateForm() {
-      this.$v.$touch();
-
-      if (!this.$v.$invalid) {
-        this.onConfirmEditEtape();
-      }
     }
   },
 
