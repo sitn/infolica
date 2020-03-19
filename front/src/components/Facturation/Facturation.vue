@@ -5,11 +5,15 @@
 <script>
 var numeral = require("numeral");
 import { checkLogged, getCurrentDate } from "@/services/helper";
+import { validationMixin } from "vuelidate";
+import { required, minLength } from "vuelidate/lib/validators";
 
 export default {
   name: "Facturation",
+  mixins: [validationMixin],
   props: {},
   data: () => ({
+    showNewFactureBtn: false,
     deleteFactureActive: false,
     deleteFactureMessage: "",
     deleteFactureId: null,
@@ -18,11 +22,13 @@ export default {
     affaire_factures: [],
     showFactureDialog: false,
     createFacture: false,
-    txtSearchClient: null,
+    lastRecordSAP: null,
+    dataSaved: null,
     selectedFacture: {
       id: null,
       sap: null,
       date: null,
+      txtSearchClient: null,
       client_id: null,
       client_obj: {},
       montant_mo: null,
@@ -33,6 +39,23 @@ export default {
       remarque: null
     }
   }),
+
+  // Validations
+  validations: {
+    selectedFacture: {
+      sap: { required },
+      date: { required },
+      txtSearchClient: {
+        required,
+        minLength: minLength(3)
+      },
+      montant_mo: { required },
+      montant_mat_diff: { required },
+      montant_rf: { required },
+      montant_tva: { required },
+      montant_total: { required }
+    }
+  },
 
   methods: {
     /*
@@ -93,15 +116,16 @@ export default {
      */
     getClientSearch() {
       this.clients_liste_select = [];
-      if (this.txtSearchClient != null) {
-        if (this.txtSearchClient.length < 3) {
+      if (this.selectedFacture.txtSearchClient != null) {
+        if (this.selectedFacture.txtSearchClient.length < 3) {
           return;
         } else {
           this.clients_liste_select = this.clients_liste
-            .filter(data => {
-              return data.nom
+            .filter(client_i => {
+              return [client_i.entreprise, client_i.prenom, client_i.nom]
+                .join(" ")
                 .toLowerCase()
-                .includes(this.txtSearchClient.toLowerCase());
+                .includes(this.selectedFacture.txtSearchClient.toLowerCase());
             })
             .map(x => ({
               id: x.id,
@@ -133,15 +157,61 @@ export default {
     },
 
     /**
+     * Créer une nouvelle facture
+     */
+    newFacture() {
+      this.selectedFacture = {
+        id: null,
+        sap: null,
+        date: getCurrentDate(),
+        txtSearchClient: null,
+        client_id: null,
+        client_obj: {},
+        montant_mo: 0,
+        montant_mat_diff: 0,
+        montant_rf: 0,
+        montant_tva: 0,
+        montant_total: 0,
+        remarque: null
+      };
+      this.showFactureDialog = true;
+      this.createFacture = true;
+    },
+
+    /**
+     * Get validation class par fieldname
+     */
+    getValidationClass(fieldName) {
+      const field = this.$v.selectedFacture[fieldName];
+
+      if (field) {
+        return {
+          "md-invalid": field.$invalid && field.$dirty
+        };
+      }
+    },
+
+    /**
      * Confirmer l'édition de la facture et l'enregistrer
      */
     onConfirmEditFacture() {
+      this.$v.$touch();
+
+      if (!this.$v.$invalid) {
+        this.saveData();
+      }
+    },
+
+    /**
+     * Save data
+     */
+    saveData() {
       // Récupère l'id du client selon si il provient d'une modif de facture ou d'une création de facture
-      var client_id
+      var client_id;
       if (this.clients_liste_select[0]) {
         client_id = this.clients_liste_select[0].id;
       } else {
-        client_id = this.selectedFacture.client_id
+        client_id = this.selectedFacture.client_id;
       }
 
       var formData = new FormData();
@@ -151,8 +221,7 @@ export default {
         formData.append("sap", this.selectedFacture.sap);
       if (this.selectedFacture.date)
         formData.append("date", this.selectedFacture.date);
-      if (client_id)
-        formData.append("client_id", client_id);
+      if (client_id) formData.append("client_id", client_id);
       if (this.selectedFacture.montant_mo)
         formData.append("montant_mo", this.selectedFacture.montant_mo);
       if (this.selectedFacture.montant_mat_diff)
@@ -193,6 +262,8 @@ export default {
       req
         .then(response => {
           if (response.data) {
+            this.lastRecordSAP = this.selectedFacture.sap;
+            this.dataSaved = true;
             this.searchAffaireFactures();
           }
         })
@@ -208,7 +279,8 @@ export default {
     onCancelEditFacture: function() {
       this.createFacture = false;
       this.showFactureDialog = false;
-      this.txtSearchClient = null;
+      this.selectedFacture.txtSearchClient = null;
+      this.$v.$reset();
     },
 
     /**
@@ -251,27 +323,6 @@ export default {
      */
     onCancelDelete() {
       this.deleteFactureId = null;
-    },
-
-    /**
-     * Créer une nouvelle facture
-     */
-    newFacture() {
-      this.selectedFacture = {
-        id: null,
-        sap: null,
-        date: getCurrentDate(),
-        client_id: null,
-        client_obj: {},
-        montant_mo: 0,
-        montant_mat_diff: 0,
-        montant_rf: 0,
-        montant_tva: 0,
-        montant_total: 0,
-        remarque: null
-      };
-      this.showFactureDialog = true;
-      this.createFacture = true;
     }
   },
 

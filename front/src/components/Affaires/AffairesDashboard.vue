@@ -6,6 +6,7 @@
 import {checkLogged} from '@/services/helper'
 import MapHandler from '@/components/MapHandler/MapHandler.vue';
 import NumerosAffaire from '@/components/Affaires/NumerosAffaire/NumerosAffaire.vue';
+import Suivi from '@/components/Affaires/Suivi/Suivi.vue';
 import Facturation from '@/components/Facturation/Facturation.vue';
 import Remarques from '@/components/Affaires/Remarques/Remarques.vue';
 
@@ -15,14 +16,13 @@ export default {
   components: {
     MapHandler,
     NumerosAffaire,
+    Suivi,
     Facturation,
     Remarques,
   },
   data: () => ({
     affaire: {},
     affaire_numeros: [],
-    // affaire_remarques: [],
-
   }),
 
   methods: {
@@ -38,7 +38,6 @@ export default {
             this.$route.params.id
         ).then(response => {
           if (response.data) {
-            // this.affaire = response.data
             var obj = response.data;
             Object.keys(obj).forEach(function(key) {
               if (obj[key] === null) obj[key] = "-";

@@ -180,10 +180,12 @@ def numeros_by_id_delete_view(request):
             models.Numero.id == id).first()
         
         if query:
-            if query.etat_id == 1:
+            if query.etat_id == 1: # projet
                 query.etat_id = 3
-            elif query.etat_id == 2:
-                query.etat_id = 4
+            elif query.etat_id == 3: # abandonné
+                query.etat_id = 1
+            # elif query.etat_id == 2: # vigueur
+            #     query.etat_id = 4
 
             with transaction.manager:
                 transaction.commit()
