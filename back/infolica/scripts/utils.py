@@ -134,3 +134,37 @@ class Utils():
             c = 1
         return idx
 
+    """ Return fonctions roles by role id"""
+
+    @classmethod
+    def get_fonctions_roles_by_id(cls, request, role_id):
+        results = []
+        try:
+            query = request.dbsession.query(models.Fonction, models.Role, models.FonctionRole).filter(
+                models.Role.id == role_id).filter(models.Role.id == models.FonctionRole.role_id).filter(
+                models.Fonction.id == models.FonctionRole.fonction_id).all()
+
+            for f, r, fr in query:
+                one_item = {}
+                one_item["id"] = f.id
+                one_item["nom"] = f.nom
+
+                results.append(one_item)
+
+            return results
+
+        except Exception as e:
+            raise e
+
+    @classmethod
+    def has_permission(cls, request, role_id, fonction_name):
+
+        try:
+            fonctions = cls.get_fonctions_roles_by_id(request, role_id)
+            fonctions_names = [x for x in fonctions if x["nom"] == fonction_name]
+            return len(fonctions_names) > 0
+
+        except Exception as e:
+            raise e
+
+

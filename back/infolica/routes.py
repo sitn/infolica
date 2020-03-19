@@ -106,3 +106,9 @@ def includeme(config):
     #Cadastres
     config.add_route('cadastres','/infolica/api/cadastres')
     config.add_route('cadastres_s','/infolica/api/cadastres/')
+    # Fonctions & roles
+    config.add_route('fonctions', '/infolica/api/fonctions')
+    config.add_route('fonctions_s', '/infolica/api/fonctions/')
+    config.add_route('roles', '/infolica/api/roles')
+    config.add_route('roles_s', '/infolica/api/roles/')
+    config.add_route('fonctions_roles_by_id', '/infolica/api/fonctions_roles/{id}')

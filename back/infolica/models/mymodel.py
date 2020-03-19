@@ -681,3 +681,22 @@ class VNumerosRelations(Base):
     numero_associe_etat = Column(Text)
     numero_associe_plan_id = Column(BigInteger)
     relation_type = Column(Text, primary_key=True)
+
+class Fonction(Base):
+    __tablename__ = 'fonction'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
+
+class Role(Base):
+    __tablename__ = 'role'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
+
+class FonctionRole(Base):
+    __tablename__ = 'fonction_role'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    fonction_id = Column(BigInteger, ForeignKey(Fonction.id), nullable=False)
+    role_id = Column(BigInteger, ForeignKey(Role.id), nullable=False)
