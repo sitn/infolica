@@ -26,6 +26,7 @@ export default {
   data: () => ({
     affaire_data: {},
     map: null,
+    view: null,
     vectorLayer: null,
     vectorSource: null,
     markerStyle: null,
@@ -37,8 +38,6 @@ export default {
      * Init map
      */
     initMap: function(center, zoom) {
-
-      let _this = this;
 
       //Init marker style
       this.initMarkerStyle();
@@ -69,7 +68,7 @@ export default {
       var layers = [wmsLayer, this.vectorLayer];
 
       //View
-      var view = new View({
+      this.view = new View({
         projection: process.env.VUE_APP_MAP_PROJECTION,
         center: center ? [center.x, center.y] : process.env.VUE_APP_MAP_DEFAULT_CENTER,
         zoom: zoom
@@ -79,19 +78,11 @@ export default {
         this.map = new Map({
           layers: layers,
           target: 'mapDiv',
-          view: view
+          view: this.view
         });
 
         //Workaround to draw markers in the good position
-        this.vectorLayer.once('postrender', function() {
-          _this.setCanvasTransform();
-        });
-        window.onresize = function(){
-          setTimeout( function() {_this.setCanvasTransform();}, 500);
-        }
-        view.on('change:resolution', function() {
-          _this.setCanvasTransform();
-        });
+        this.makeWorkaroundCanvasTransform();
 
         // Add click listener
         //this.map.on('click', this.onMapClick);
@@ -102,6 +93,26 @@ export default {
 
       // Add marker
       //this.addMarker(center.x, center.y);
+    },
+
+    /**
+     * Make work around canvas transform
+     */
+    makeWorkaroundCanvasTransform: function() {
+      let _this = this;
+
+      this.vectorSource.once('addfeature', function() {
+        _this.setCanvasTransform();
+      });
+      this.vectorLayer.once('postrender', function() {
+        _this.setCanvasTransform();
+      });
+      window.onresize = function(){
+        setTimeout( function() {_this.setCanvasTransform();}, 500);
+      }
+      this.view.on('change:resolution', function() {
+        _this.setCanvasTransform();
+      });
     },
 
     /**
@@ -167,37 +178,11 @@ export default {
      */
     clearMarkers: function() {
       this.vectorSource.clear();
-    },
-
-    /**
-     * Récupère les coordonnées de l'affaire
-     */
-    async searchAffaire() {
-      return new Promise((resolve, reject) => {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_BY_ID_ENDPOINT +
-            this.$route.params.id
-        ).then(response => {
-          if (response.data) {
-            resolve({x: response.data.localisation_e, y: response.data.localisation_n});
-          }
-        })
-        .catch(() => reject)
-      });
     }
   },
 
   mounted: function() {
     checkLogged();
-    let _this = this;
-
-    if(this.$route.params.id){
-      this.searchAffaire().then(function(center){
-        _this.initMap(center, process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM);
-      });
-    }
   }
 };
 </script>
