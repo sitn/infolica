@@ -101,8 +101,8 @@ class Affaire(Base):
         Date, default=datetime.datetime.utcnow, nullable=False)
     date_validation = Column(Date)
     date_cloture = Column(Date)
-    localisation_E = Column(Integer, nullable=False)
-    localisation_N = Column(Integer, nullable=False)
+    localisation_E = Column(Float, nullable=False)
+    localisation_N = Column(Float, nullable=False)
     vref = Column(Text)
 
 
@@ -488,7 +488,7 @@ class Preavis(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     service_id = Column(BigInteger, ForeignKey(Service.id), nullable=False)
-    preavis_id = Column(BigInteger, ForeignKey(PreavisType.id))
+    preavis_type_id = Column(BigInteger, ForeignKey(PreavisType.id))
     date_demande = Column(
         Date, default=datetime.datetime.utcnow, nullable=False)
     date_reponse = Column(Date)
@@ -563,8 +563,8 @@ class VAffaire(Base):
     date_ouverture = Column(Date)
     date_validation = Column(Date)
     date_cloture = Column(Date)
-    localisation_e = Column(Text)
-    localisation_n = Column(Text)
+    localisation_e = Column(Float)
+    localisation_n = Column(Float)
     cadastre_id = Column(BigInteger)
     type_id = Column(BigInteger)
     vref = Column(Text)
