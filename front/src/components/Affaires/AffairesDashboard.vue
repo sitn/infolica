@@ -31,29 +31,37 @@ export default {
      * SEARCH AFFAIRE
      */
     async searchAffaire() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_BY_ID_ENDPOINT +
-            this.$route.params.id
-        ).then(response => {
-          if (response.data) {
-            var obj = response.data;
-            Object.keys(obj).forEach(function(key) {
-              if (obj[key] === null) obj[key] = "-";
+      return new Promise((resolve, reject) => {
+          this.$http
+            .get(
+              process.env.VUE_APP_API_URL +
+                process.env.VUE_APP_AFFAIRE_BY_ID_ENDPOINT +
+                this.$route.params.id
+            ).then(response => {
+              if (response.data) {
+                var obj = response.data;
+                Object.keys(obj).forEach(function(key) {
+                  if (obj[key] === null) obj[key] = "-";
+                })
+                this.affaire = obj;
+                resolve({x: response.data.localisation_e, y: response.data.localisation_n});
+              }
             })
-            this.affaire = obj;
-          }
-        }).catch(err => {
-          alert("error : " + err.message);
-        });
-    },
-
+            .catch(() => reject)
+          });
+    }
   },
 
   mounted: function() {
     checkLogged();
-    this.searchAffaire();
+    let _this = this;
+    this.searchAffaire().then(function(center){
+      _this.$refs.mapHandler.initMap(center, process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM);
+      
+      setTimeout(function(){
+        _this.$refs.mapHandler.addMarker(center.x, center.y);
+      }, 1000);
+    });
   }
 };
 </script>
