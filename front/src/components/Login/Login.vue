@@ -21,7 +21,7 @@ export default {
               process.env.VUE_APP_API_URL + process.env.VUE_APP_LOGIN_ENDPOINT, 
               formData,
               {
-                //withCredentials: true,
+                withCredentials: true,
                 headers: {'Accept': 'application/json'}
               }
             )

@@ -1,5 +1,6 @@
 from datetime import datetime
-from pyramid.view import view_config, exception_view_config
+from pyramid.view import view_config
+from pyramid.httpexceptions import HTTPForbidden
 import pyramid.httpexceptions as exc
 from sqlalchemy.exc import DBAPIError
 
@@ -19,6 +20,11 @@ log = logging.getLogger(__name__)
 def operateurs_view(request):
     result = []
     try:
+
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['consulter_operateur']):
+            raise HTTPForbidden()
+
         query = request.dbsession.query(models.Operateur).all()
         return Utils.serialize_many(query)
 
@@ -32,6 +38,11 @@ def operateurs_view(request):
 def operateur_by_id_view(request):
     merged = None
     try:
+
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['consulter_operateur']):
+            raise HTTPForbidden()
+
         id = request.matchdict['id']
         query = request.dbsession.query(models.Operateur).filter(
             models.Operateur.id == id).first()
@@ -47,6 +58,11 @@ def operateur_by_id_view(request):
 @view_config(route_name='recherche_operateurs_s', request_method='POST', renderer='json')
 def operateurs_search_view(request):
     try:
+
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['consulter_operateur']):
+            raise HTTPForbidden()
+
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
         conditions = Utils.get_search_conditions(models.Operateur, request.params)
@@ -67,6 +83,11 @@ def operateurs_search_view(request):
 @view_config(route_name='operateurs', request_method='POST', renderer='json')
 @view_config(route_name='operateurs_s', request_method='POST', renderer='json')
 def operateurs_new_view(request):
+
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['editer_operateur']):
+        raise HTTPForbidden()
+
     # Get operateur instance
     model = Utils.set_model_record(models.Operateur(), request.params)
 
@@ -87,6 +108,11 @@ def operateurs_new_view(request):
 @view_config(route_name='operateurs', request_method='PUT', renderer='json')
 @view_config(route_name='operateurs_s', request_method='PUT', renderer='json')
 def operateurs_update_view(request):
+
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['editer_operateur']):
+        raise HTTPForbidden()
+
     # Get operateur_id
     id_operateur = request.params['id'] if 'id' in request.params else None
 
@@ -116,6 +142,11 @@ def operateurs_update_view(request):
 @view_config(route_name='operateurs', request_method='DELETE', renderer='json')
 @view_config(route_name='operateurs_s', request_method='DELETE', renderer='json')
 def operateurs_delete_view(request):
+
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['editer_operateur']):
+        raise HTTPForbidden()
+
     # Get operateur_id
     id_operateur = request.params['id'] if 'id' in request.params else None
 

@@ -1,5 +1,6 @@
 from datetime import datetime
-from pyramid.view import view_config, exception_view_config
+from pyramid.view import view_config
+from pyramid.httpexceptions import HTTPForbidden
 import pyramid.httpexceptions as exc
 from sqlalchemy.exc import DBAPIError
 
@@ -32,6 +33,10 @@ def types_clients_view(request):
 def clients_view(request):
     result = []
     try:
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['consulter_client']):
+            raise HTTPForbidden()
+
         query = request.dbsession.query(models.Client).all()
         return Utils.serialize_many(query)
 
@@ -44,6 +49,11 @@ def clients_view(request):
 @view_config(route_name='client_by_id', request_method='GET', renderer='json')
 def client_by_id_view(request):
     try:
+
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['consulter_client']):
+            raise HTTPForbidden()
+
         id = request.matchdict['id']
         query = request.dbsession.query(models.Client).filter(
             models.Client.id == id).first()
@@ -59,6 +69,11 @@ def client_by_id_view(request):
 @view_config(route_name='recherche_clients_s', request_method='POST', renderer='json')
 def clients_search_view(request):
     try:
+
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['consulter_client']):
+            raise HTTPForbidden()
+
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
         conditions = Utils.get_search_conditions(models.Client, request.params)
@@ -81,6 +96,11 @@ def clients_search_view(request):
 @view_config(route_name='clients', request_method='POST', renderer='json')
 @view_config(route_name='clients_s', request_method='POST', renderer='json')
 def clients_new_view(request):
+
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['editer_client']):
+        raise HTTPForbidden()
+
     # Get client instance
     model = Utils.set_model_record(models.Client(), request.params)
 
@@ -100,6 +120,11 @@ def clients_new_view(request):
 @view_config(route_name='clients', request_method='PUT', renderer='json')
 @view_config(route_name='clients_s', request_method='PUT', renderer='json')
 def clients_update_view(request):
+
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['editer_client']):
+        raise HTTPForbidden()
+
     # Get client_id
     id_client = request.params['id'] if 'id' in request.params else None
 
@@ -129,6 +154,11 @@ def clients_update_view(request):
 @view_config(route_name='clients', request_method='DELETE', renderer='json')
 @view_config(route_name='clients_s', request_method='DELETE', renderer='json')
 def clients_delete_view(request):
+
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['editer_client']):
+        raise HTTPForbidden()
+
     # Get client_id
     id_client = request.params['id'] if 'id' in request.params else None
 

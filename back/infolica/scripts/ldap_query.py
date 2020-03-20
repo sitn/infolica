@@ -6,14 +6,14 @@ from pyramid_ldap3 import (
 from pyramid.security import remember, forget
 from pyramid.response import Response
 import json
-from ..scripts.utils import Utils
+
 
 class LDAPQuery():
 
 
     @classmethod
-    def do_login(cls, request, login, password, operateur):
-        response = None
+    def do_login(cls, request, login, password):
+        resp_json = None
         try:
             headers = forget(request)
 
@@ -24,15 +24,13 @@ class LDAPQuery():
             if data is not None:
                 dn = data[0]
 
-                headers = remember(request, dn)
+                if dn == 'null':
+                    raise Exception('Invalid credentials')
 
-                if operateur :
-                    operateur_json = Utils.serialize_one(operateur)
+                resp_json = {}
 
-                operateur_json_json = json.dumps(operateur_json) if operateur else ''
-
-                response = Response(operateur_json_json,
-                                    content_type='application/json; charset=UTF-8', headers=headers)
+                resp_json['role_name'] = cls.get_user_group_by_dn(request, dn)
+                resp_json['dn'] = dn
 
             else:
                 raise Exception('Invalid credentials')
@@ -40,7 +38,7 @@ class LDAPQuery():
         except Exception as error:
             raise error
 
-        return response
+        return resp_json
 
 
     @classmethod
@@ -49,7 +47,7 @@ class LDAPQuery():
         try:
             headers = forget(request)
             response = Response('{"error": "false", "code": 200, "message": "User logged out"}', headers=headers)
-            response.headerlist.extend(headers)
+            #response.headerlist.extend(headers)
 
         except Exception as error:
             raise error
@@ -87,3 +85,38 @@ class LDAPQuery():
 
         return cls.format_json_attributes(result) if result else {}
 
+    @classmethod
+    def get_user_group_by_dn(cls, request, dn):
+        groups = []
+        output_json = []
+        try:
+            connector = get_ldap_connector(request)
+            result = connector.user_groups(dn)
+
+            if result is not None:
+                for r in result:
+                    if r and len(r) > 1:
+                        groups.append(cls.format_json_attributes(json.loads(json.dumps(dict(r[1])))))
+
+                if groups and len(groups) > 0:
+                    cn_attribute = request.registry.settings['ldap_group_attribute_id']
+                    infolica_group_prefix = request.registry.settings['infolica_groups_prefix']
+
+                    for group in groups:
+                        group_name = group[cn_attribute]
+
+                        if group_name.startswith(infolica_group_prefix):
+                            return group_name
+
+        except Exception as error:
+            raise error
+
+        return None
+
+    @classmethod
+    def format_json_attributes(cls, json_obj):
+        for key in json_obj:
+            if isinstance(json_obj[key], list) and len(json_obj[key]) > 0:
+                json_obj[key] = json_obj[key][0]
+
+        return json_obj
