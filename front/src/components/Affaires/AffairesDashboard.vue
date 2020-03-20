@@ -7,6 +7,7 @@ import {checkLogged} from '@/services/helper'
 import MapHandler from '@/components/MapHandler/MapHandler.vue';
 import NumerosAffaire from '@/components/Affaires/NumerosAffaire/NumerosAffaire.vue';
 import Suivi from '@/components/Affaires/Suivi/Suivi.vue';
+import Preavis from '@/components/Affaires/Preavis/Preavis.vue';
 import Facturation from '@/components/Facturation/Facturation.vue';
 import Remarques from '@/components/Affaires/Remarques/Remarques.vue';
 
@@ -17,6 +18,7 @@ export default {
     MapHandler,
     NumerosAffaire,
     Suivi,
+    Preavis,
     Facturation,
     Remarques,
   },

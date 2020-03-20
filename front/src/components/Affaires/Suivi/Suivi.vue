@@ -22,8 +22,8 @@ export default {
       showEtapeDialog: false,
       new_etape: {
         etape: null,
-        date: getCurrentDate(),
-        remarque: ""
+        date_demande: getCurrentDate(),
+        remarque: null
       }
     };
   },
@@ -98,7 +98,7 @@ export default {
         if (this.new_etape.etape.id) {
           formData.append("etape_id", this.new_etape.etape.id);
           this.lastRecord = this.new_etape.etape.nom;
-          }
+        }
         if (this.new_etape.date) formData.append("date", this.new_etape.date);
         if (this.new_etape.remarque)
           formData.append("remarque", this.new_etape.remarque);
@@ -144,12 +144,11 @@ export default {
      * Clear form
      */
     clearForm() {
-      this.saveNewEtape();
-        this.$v.$reset();
-        this.showEtapeDialog = false;
-        this.new_etape.etape = null;
-        this.new_etape.date = getCurrentDate();
-        this.new_etape.remarque = "";
+      this.$v.$reset();
+      this.showEtapeDialog = false;
+      this.new_etape.etape = null;
+      this.new_etape.date = getCurrentDate();
+      this.new_etape.remarque = null;
     },
 
     // /**
