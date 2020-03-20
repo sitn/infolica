@@ -12,8 +12,70 @@ pyramid.debug_notfound = false
 pyramid.debug_routematch = false
 pyramid.default_locale_name = en
 
-## CHANGER ICI
-sqlalchemy.url = postgresql://username:password@host:port/database
+#############################################
+# Les informations de connexion à la BD
+#############################################
+sqlalchemy.url = postgresql://postgres:secret@chge-neinfolica/infolica
+
+#############################################
+# Les informations de connexion au LDAP
+#############################################
+# L'URL de LDAP et le numéro de port
+ldap_url = ldap://chge-neinfolica:389
+
+# Le bind utilisé par la connexion
+ldap_bind= cn=Manager,dc=maxcrc,dc=com
+
+# Le mot de passe du bind utilisé par la connexion
+ldap_passwd= Spir@le712
+
+
+###########################################################
+# La configuration de la recherche des logins dans LDAP
+###########################################################
+
+# Le DN de base de la recherche des logins
+ldap_login_query_base_dn= ou=infolicaUsers,ou=People,dc=maxcrc,dc=com
+
+# Le filtre de la recherche des logins
+ldap_login_query_filter_tmpl= (uid=%%(login)s)
+
+# Les attributs à retourner
+ldap_login_query_attributes= uid, givenName, sn, mail, telephoneNumber, mobile
+
+# Le scope de la recherche (LEVEL, SUBTREE)
+ldap_login_query_scope= SUBTREE
+
+
+###########################################################
+# La configuration de la recherche des groupes dans LDAP
+###########################################################
+
+# Le DN de base de la recherche des groupes
+ldap_group_query_base_dn= ou=infolicaGroups,ou=People,dc=maxcrc,dc=com
+
+# Le filtre de la recherche des groupes
+ldap_group_query_filter_tmpl= (&(objectClass=groupOfNames)(cn=INFOLICA*)(member=%%(userdn)s))
+
+# Le nombre de secondes du cache de la recherche des groupes
+ldap_group_query_cache_period=600
+
+# Le scope de la recherche (LEVEL, SUBTREE)
+ldap_group_query_scope=SUBTREE
+
+# Les attributs à retourner
+ldap_group_attributes=cn, ou,member
+
+# Les attributs qui correspondent à l'identifiant d'un groupe LDAP
+ldap_group_attribute_id= cn
+
+# Les informations de recherche d'un utilisateur LDAP
+ldap_search_user_filter=(objectClass=person)
+
+######################################################################################
+# Le nombre max des résultats retournés par la recherche
+######################################################################################
+search_limit = 20
 
 retry.attempts = 3
 

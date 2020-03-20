@@ -1,6 +1,7 @@
 from datetime import time, date, datetime
 from sqlalchemy import func, and_, desc
 from .. import models
+from ..scripts.ldap_query import LDAPQuery
 
 
 unite_ppe_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -134,3 +135,82 @@ class Utils():
             c = 1
         return idx
 
+    """ Return fonctions roles by role id"""
+
+    @classmethod
+    def get_fonctions_roles_by_id(cls, request, role_id):
+        results = []
+        try:
+            query = request.dbsession.query(models.Fonction, models.Role, models.FonctionRole).filter(
+                models.Role.id == role_id).filter(models.Role.id == models.FonctionRole.role_id).filter(
+                models.Fonction.id == models.FonctionRole.fonction_id).all()
+
+            for f, r, fr in query:
+                one_item = {}
+                one_item["id"] = f.id
+                one_item["nom"] = f.nom
+
+                results.append(one_item)
+
+            return results
+
+        except Exception as e:
+            raise e
+
+    @classmethod
+    def get_fonctions_roles_by_name(cls, request, role_name):
+        results = []
+        try:
+            query = request.dbsession.query(models.Fonction, models.Role, models.FonctionRole).filter(
+                models.Role.nom == role_name).filter(models.Role.id == models.FonctionRole.role_id).filter(
+                models.Fonction.id == models.FonctionRole.fonction_id).all()
+
+            for f, r, fr in query:
+                one_item = {}
+                one_item["id"] = f.id
+                one_item["nom"] = f.nom
+
+                results.append(one_item)
+
+            return results
+
+        except Exception as e:
+            raise e
+    @classmethod
+    def has_permission(cls, request, fonction_name):
+
+        try:
+            auth_tkt = request.cookies.get('auth_tkt', default=None)
+
+            if not auth_tkt:
+                return False
+
+            user_dn = request.authenticated_userid
+
+            if not user_dn:
+                return False
+
+            role_name = LDAPQuery.get_user_group_by_dn(request, user_dn)
+
+            fonctions = cls.get_fonctions_roles_by_name(request, role_name)
+            fonctions_names = [x for x in fonctions if x["nom"] == fonction_name]
+            return len(fonctions_names) > 0
+
+        except Exception as e:
+            raise e
+
+
+    @classmethod
+    def get_role_id_by_name(cls, request, role_name):
+        results = []
+        try:
+            query = request.dbsession.query(models.Role).filter(
+                models.Role.nom == role_name).first()
+
+            if query:
+                return query.id
+
+        except Exception as e:
+            raise e
+
+        return None
