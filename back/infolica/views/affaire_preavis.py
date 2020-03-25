@@ -1,16 +1,13 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from sqlalchemy import func, and_
+from pyramid.httpexceptions import HTTPForbidden
 from sqlalchemy.exc import DBAPIError
-
 from .. import models
 import transaction
 from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
 
-import os
-from datetime import datetime
 
 import logging
 log = logging.getLogger(__name__)
@@ -53,6 +50,9 @@ def affaire_preavis_view(request):
 @view_config(route_name='preavis', request_method='POST', renderer='json')
 @view_config(route_name='preavis_s', request_method='POST', renderer='json')
 def preavis_new_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['demander_preavis']):
+        raise HTTPForbidden()
 
     model = models.Preavis()
     model = Utils.set_model_record(model, request.params)
@@ -73,6 +73,10 @@ def preavis_new_view(request):
 @view_config(route_name='preavis', request_method='PUT', renderer='json')
 @view_config(route_name='preavis_s', request_method='PUT', renderer='json')
 def preavis_update_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['demander_preavis']):
+        raise HTTPForbidden()
+
     preavis_id = request.params['id'] if 'id' in request.params else None
 
     record = request.dbsession.query(models.Preavis).filter(

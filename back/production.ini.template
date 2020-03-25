@@ -66,16 +66,49 @@ ldap_group_query_scope=SUBTREE
 # Les attributs à retourner
 ldap_group_attributes=cn, ou,member
 
-# Les attributs qui correspondent à l'identifiant d'un groupe LDAP
+# L'attribut qui correspond à l'identifiant d'un groupe LDAP
 ldap_group_attribute_id= cn
 
 # Les informations de recherche d'un utilisateur LDAP
 ldap_search_user_filter=(objectClass=person)
 
+# Le préfixe des groupes infolica
+infolica_groups_prefix= INFOLICA_
+
 ######################################################################################
 # Le nombre max des résultats retournés par la recherche
 ######################################################################################
 search_limit = 20
+
+
+######################################################################################
+# Les différentes permissions (fonctions)
+######################################################################################
+editer_affaire_ppe = EDITER_AFFAIRE_PPE
+editer_affaire_autre = EDITER_AFFAIRE_AUTRE
+consulter_affaire = CONSULTER_AFFAIRE
+demander_preavis = DEMANDER_PREAVIS
+saisie_preavis = SAISIE_PREAVIS
+facturation = FACTURATION
+envoi_plan = ENVOI_PLAN
+suivi_affaire_mo = SUIVI_AFFAIRE_MO
+suivi_affaire_rf = SUIVI_AFFAIRE_RF
+suivi_preavis = SUIVI_PREAVIS
+option_statistiques = OPTION_STATISTIQUES
+editer_client = EDITER_CLIENT
+consulter_client = CONSULTER_CLIENT
+editer_operateur = EDITER_OPERATEUR
+consulter_operateur = CONSULTER_OPERATEUR
+
+######################################################################################
+# Affaire type PPE id
+######################################################################################
+affaire_type_ppe_id = 3
+
+######################################################################################
+# Access-Control-Allow-Origin
+######################################################################################
+access_control_allow_origin = http://127.0.0.1:8080
 
 retry.attempts = 3
 

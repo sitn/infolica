@@ -48,7 +48,11 @@ export default {
 
           this.$http.post(
             process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_ENDPOINT, 
-            formData
+            formData,
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            }
           )
           .then(response =>{
             if(response && response.data){

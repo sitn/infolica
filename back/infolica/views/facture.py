@@ -1,5 +1,6 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
+from pyramid.httpexceptions import HTTPForbidden
 from ..scripts.utils import Utils
 from ..models import Constant
 import transaction
@@ -47,6 +48,10 @@ def affaires_factures_view(request):
 @view_config(route_name='factures', request_method='POST', renderer='json')
 @view_config(route_name='factures_s', request_method='POST', renderer='json')
 def factures_new_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['facturation']):
+        raise HTTPForbidden()
+
     model = models.Facture()
     model = Utils.set_model_record(model, request.params)
 
@@ -65,6 +70,10 @@ def factures_new_view(request):
 @view_config(route_name='factures', request_method='PUT', renderer='json')
 @view_config(route_name='factures_s', request_method='PUT', renderer='json')
 def factures_update_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['facturation']):
+        raise HTTPForbidden()
+
     # id_facture
     id_facture = None
 
@@ -95,6 +104,9 @@ def factures_update_view(request):
 @view_config(route_name='factures', request_method='DELETE', renderer='json')
 @view_config(route_name='factures_s', request_method='DELETE', renderer='json')
 def factures_delete_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['facturation']):
+        raise HTTPForbidden()
 
     id = request.params['id'] if 'id' in request.params else None
 
