@@ -241,35 +241,30 @@ class SuiviMandat(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
-    av_11 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CREATION DE L’AFFAIRE DANS INFOLICA
-    av_12 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # DATE CREATION DE L’AFFAIRE DANS INFOLICA
-    av_21 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CREATION DE L’AFFAIRE DANSTIMELEAD
-    av_31 = Column(BigInteger,
-                   ForeignKey(SuiviMandatStatut.id))  # VERIFICATION PAR LE CHEF DE PROJET DE LA MENSURATION OFFICIELLE
+    av_11 = Column(Boolean)  # CREATION DE L’AFFAIRE DANS INFOLICA
+    av_12 = Column(Date)  # DATE CREATION DE L’AFFAIRE DANS INFOLICA
+    av_21 = Column(Boolean)  # CREATION DE L’AFFAIRE DANSTIMELEAD
+    av_31 = Column(Boolean)  # VERIFICATION PAR LE CHEF DE PROJET DE LA MENSURATION OFFICIELLE
     av_32 = Column(BigInteger, ForeignKey(Operateur.id))  # LE CHEF DE PROJET
     av_33 = Column(Date)  # DATE DE LA VERIFICATION PAR LE CHEF DE PROJET
-    av_41 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # REPORT DATE PREAVIS SAT OU SEA
+    av_41 = Column(Boolean)  # REPORT DATE PREAVIS SAT OU SEA
     av_51 = Column(Text)  # INFORMATIONS COMPLEMENTAIRES
-    pdt_11 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CONTROLE DES DESIGNATIONS ET DE LA BALANCE
+    pdt_11 = Column(Boolean)  # CONTROLE DES DESIGNATIONS ET DE LA BALANCE
     pdt_12 = Column(Text)  # REMARQUE CONTROLE DES DESIGNATIONS ET DE LA BALANCE
-    pdt_21 = Column(BigInteger,
-                    ForeignKey(SuiviMandatStatut.id))  # CONTROLE DU TABLEAU DES EMOLUMENTS ET REPORT SUR LA DEMANDE
+    pdt_21 = Column(Boolean)  # CONTROLE DU TABLEAU DES EMOLUMENTS ET REPORT SUR LA DEMANDE
     pdt_22 = Column(Text)  # REMARQUE CONTROLE DU TABLEAU DES EMOLUMENTS ET REPORT SUR LA DEMANDE
-    pdt_31 = Column(BigInteger,
-                    ForeignKey(SuiviMandatStatut.id))  # MATERIALISATION DIFFEREE (COPIE DU PLAN DE MUTATION)
-    pdt_41 = Column(BigInteger, ForeignKey(
-        SuiviMandatStatut.id))  # CONTROLE DE L'ENREGISTREMENT DE TOUS LES DOCUMENTS (COURRIEL, COURRIER, PREAVIS, PLAN, ETC…)
+    pdt_31 = Column(Boolean)  # MATERIALISATION DIFFEREE (COPIE DU PLAN DE MUTATION)
+    pdt_41 = Column(Boolean)  # CONTROLE DE L'ENREGISTREMENT DE TOUS LES DOCUMENTS (COURRIEL, COURRIER, PREAVIS, PLAN, ETC…)
     pdt_42 = Column(
         Text)  # REMARQUE CONTROLE DE L'ENREGISTREMENT DE TOUS LES DOCUMENTS (COURRIEL, COURRIER, PREAVIS, PLAN, ETC…)
-    ap_11 = Column(BigInteger,
-                   ForeignKey(SuiviMandatStatut.id))  # RESPECT DES DIRECTIVES DU SCAT, SAGR OU SERVICE URBANISME
+    ap_11 = Column(Boolean)  # RESPECT DES DIRECTIVES DU SCAT, SAGR OU SERVICE URBANISME
     ap_12 = Column(Text)  # REMARQUE RESPECT DES DIRECTIVES DU SCAT, SAGR OU SERVICE URBANISME
-    ap_21 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # STRUCTURE DES REPERTOIRES ET CONTENU
+    ap_21 = Column(Boolean)  # STRUCTURE DES REPERTOIRES ET CONTENU
     ap_22 = Column(Text)  # REMARQUE STRUCTURE DES REPERTOIRES ET CONTENU
-    ap_31 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # GENERATION DE L’ETAT DESCRIPTIF POUR TERRIS
+    ap_31 = Column(Boolean)  # GENERATION DE L’ETAT DESCRIPTIF POUR TERRIS
     ap_32 = Column(BigInteger, ForeignKey(Operateur.id))  # CHEF DE PROJET
     ap_33 = Column(Date)  # DATE GENERATION DE L’ETAT DESCRIPTIF POUR TERRIS
-    ap_41 = Column(BigInteger, ForeignKey(SuiviMandatStatut.id))  # CONTROLE DE LA BASE DE DONNEES
+    ap_41 = Column(Boolean)  # CONTROLE DE LA BASE DE DONNEES
     ap_42 = Column(Text)  # REMARQUE CONTROLE DE LA BASE DE DONNEES
     visa = Column(BigInteger, ForeignKey(Operateur.id))
     date = Column(Date)

@@ -13,10 +13,10 @@ import logging
 log = logging.getLogger(__name__)
 
 
-""" Return all suivis_mandats"""
-@view_config(route_name='suivis_mandats', request_method='GET', renderer='json')
-@view_config(route_name='suivis_mandats_s', request_method='GET', renderer='json')
-def suivis_mandats_view(request):
+""" Return all suivi_mandats"""
+@view_config(route_name='suivi_mandats', request_method='GET', renderer='json')
+@view_config(route_name='suivi_mandats_s', request_method='GET', renderer='json')
+def suivi_mandats_view(request):
     try:
         query = request.dbsession.query(models.SuiviMandat).all()
         return Utils.serialize_many(query)
@@ -26,9 +26,9 @@ def suivis_mandats_view(request):
         return exc.HTTPBadRequest(e)
 
 
-""" Return suivis_mandats by id"""
+""" Return suivi_mandats by id"""
 @view_config(route_name='suivi_mandat_by_id', request_method='GET', renderer='json')
-def suivis_mandats_by_id_view(request):
+def suivi_mandats_by_id_view(request):
     try:
         # Get controle mutation id
         id = request.id = request.matchdict['id']
@@ -41,10 +41,25 @@ def suivis_mandats_by_id_view(request):
         return exc.HTTPBadRequest(e)
 
 
-""" Add new suivis_mandats"""
-@view_config(route_name='suivis_mandats', request_method='POST', renderer='json')
-@view_config(route_name='suivis_mandats_s', request_method='POST', renderer='json')
-def suivis_mandats_new_view(request):
+""" Return suivi_mandats by affaire_id"""
+@view_config(route_name='affaire_suivi_mandats_by_affaire_id', request_method='GET', renderer='json')
+def affaire_suivi_mandats_by_affaire_id_view(request):
+    try:
+        # Get controle mutation id
+        affaire_id = request.id = request.matchdict['id']
+        query = request.dbsession.query(models.SuiviMandat).filter(
+            models.SuiviMandat.affaire_id == affaire_id).first()
+        return Utils.serialize_one(query)
+
+    except DBAPIError as e:
+        log.error(e)
+        return exc.HTTPBadRequest(e)
+
+
+""" Add new suivi_mandats"""
+@view_config(route_name='suivi_mandats', request_method='POST', renderer='json')
+@view_config(route_name='suivi_mandats_s', request_method='POST', renderer='json')
+def suivi_mandats_new_view(request):
 
     record = models.SuiviMandat()
     record = Utils.set_model_record(record, request.params)
@@ -62,10 +77,10 @@ def suivis_mandats_new_view(request):
         return exc.HTTPBadRequest(e)
 
 
-""" Update suivis_mandats"""
-@view_config(route_name='suivis_mandats', request_method='PUT', renderer='json')
-@view_config(route_name='suivis_mandats_s', request_method='PUT', renderer='json')
-def suivis_mandats_update_view(request):
+""" Update suivi_mandats"""
+@view_config(route_name='suivi_mandats', request_method='PUT', renderer='json')
+@view_config(route_name='suivi_mandats_s', request_method='PUT', renderer='json')
+def suivi_mandats_update_view(request):
 
     # Get controle mutation id
     id = request.params['id'] if 'id' in request.params else None
@@ -91,10 +106,10 @@ def suivis_mandats_update_view(request):
         return exc.HTTPBadRequest(e)
 
 
-""" Delete suivis_mandats"""
-@view_config(route_name='suivis_mandats', request_method='DELETE', renderer='json')
-@view_config(route_name='suivis_mandats_s', request_method='DELETE', renderer='json')
-def suivis_mandats_delete_view(request):
+""" Delete suivi_mandats"""
+@view_config(route_name='suivi_mandats', request_method='DELETE', renderer='json')
+@view_config(route_name='suivi_mandats_s', request_method='DELETE', renderer='json')
+def suivi_mandats_delete_view(request):
 
     # Get controle mutation id
     id = request.params['id'] if 'id' in request.params else None

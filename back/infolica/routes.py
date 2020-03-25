@@ -42,10 +42,6 @@ def includeme(config):
     config.add_route('controles_ppe','/infolica/api/controles_ppe')
     config.add_route('controles_ppe_s','/infolica/api/controles_ppe/')
     config.add_route('controle_ppe_by_id', '/infolica/api/controles_ppe/{id}')
-    #Suivi_Mandat
-    config.add_route('suivis_mandats','/infolica/api/suivis_mandats')
-    config.add_route('suivis_mandats_s','/infolica/api/suivis_mandats/')
-    config.add_route('suivi_mandat_by_id', '/infolica/api/suivi_mandats/{id}')
     #Numéros
     config.add_route('numeros','/infolica/api/numeros')
     config.add_route('numeros_s','/infolica/api/numeros/')
@@ -103,6 +99,11 @@ def includeme(config):
     config.add_route('envois_types','/infolica/api/envois_type')
     config.add_route('envois_types_s','/infolica/api/envois_type/')
     config.add_route('affaire_envois_by_affaire_id','/infolica/api/affaire_envois/{id}')
+    #Suivi Mandat
+    config.add_route('suivi_mandat_by_id','/infolica/api/suivi_mandats/{id}')
+    config.add_route('suivi_mandats','/infolica/api/suivi_mandats')
+    config.add_route('suivi_mandats_s','/infolica/api/suivi_mandats/')
+    config.add_route('affaire_suivi_mandats_by_affaire_id','/infolica/api/affaire_suivi_mandats/{id}')
     #Cadastres
     config.add_route('cadastres','/infolica/api/cadastres')
     config.add_route('cadastres_s','/infolica/api/cadastres/')
