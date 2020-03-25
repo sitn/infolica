@@ -95,7 +95,7 @@ export default {
     },
 
     /**
-     * Lier le nom du client à son id (facture.client_id)
+     * Lier le nom du client à son id (facture.client_id) dans le tableau
      */
     async searchClients() {
       this.$http

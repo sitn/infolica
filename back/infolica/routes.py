@@ -112,3 +112,8 @@ def includeme(config):
     config.add_route('roles', '/infolica/api/roles')
     config.add_route('roles_s', '/infolica/api/roles/')
     config.add_route('fonctions_roles_by_id', '/infolica/api/fonctions_roles/{id}')
+    #Services
+    config.add_route('service_by_id','/infolica/api/services/{id}')
+    config.add_route('services','/infolica/api/services')
+    config.add_route('services_s','/infolica/api/services/')
+
