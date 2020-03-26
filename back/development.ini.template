@@ -17,19 +17,19 @@ pyramid.includes =
 #############################################
 # Les informations de connexion à la BD
 #############################################
-sqlalchemy.url = postgresql://postgres:secret@chge-neinfolica/infolica
+sqlalchemy.url = postgresql://users:password@host/infolica
 
 #############################################
 # Les informations de connexion au LDAP
 #############################################
 # L'URL de LDAP et le numéro de port
-ldap_url = ldap://chge-neinfolica:389
+ldap_url = ldap://host:port
 
 # Le bind utilisé par la connexion
 ldap_bind= cn=Manager,dc=maxcrc,dc=com
 
 # Le mot de passe du bind utilisé par la connexion
-ldap_passwd= Spir@le712
+ldap_passwd= password
 
 
 ###########################################################
@@ -86,26 +86,31 @@ search_limit = 20
 ######################################################################################
 # Les différentes permissions (fonctions)
 ######################################################################################
-editer_affaire_ppe = EDITER_AFFAIRE_PPE
-editer_affaire_autre = EDITER_AFFAIRE_AUTRE
-consulter_affaire = CONSULTER_AFFAIRE
-demander_preavis = DEMANDER_PREAVIS
-saisie_preavis = SAISIE_PREAVIS
-facturation = FACTURATION
-envoi_plan = ENVOI_PLAN
-suivi_affaire_mo = SUIVI_AFFAIRE_MO
-suivi_affaire_rf = SUIVI_AFFAIRE_RF
-suivi_preavis = SUIVI_PREAVIS
-option_statistiques = OPTION_STATISTIQUES
-editer_client = EDITER_CLIENT
-consulter_client = CONSULTER_CLIENT
-editer_operateur = EDITER_OPERATEUR
-consulter_operateur = CONSULTER_OPERATEUR
+fonction_admin = fonction_admin
+affaire_consultation = affaire_consultation
+affaire_edition = affaire_edition
+affaire_ppe_edition = affaire_ppe_edition
+affaire_revision_abornement_edition = affaire_revision_abornement_edition
+affaire_cadastration_edition = affaire_cadastration_edition
+affaire_envois_edition = affaire_envois_edition
+affaire_controle_edition = affaire_controle_edition
+affaire_suivi_edition = affaire_suivi_edition
+affaire_remarque_edition = affaire_remarque_edition
+affaire_etape_edition = affaire_etape_edition
+affaire_facture_edition = affaire_facture_edition
+affaire_preavis_edition = affaire_preavis_edition
+affaire_numero_edition = affaire_numero_edition
+numero_consultation = numero_consultation
+operateur_consultation = operateur_consultation
+client_consultation = client_consultation
+client_edition = client_edition
 
 ######################################################################################
-# Affaire type PPE id
+# Affaire types id
 ######################################################################################
+affaire_type_cadastration_id = 2
 affaire_type_ppe_id = 3
+affaire_type_revision_abornement_id = 4
 
 ######################################################################################
 # Access-Control-Allow-Origin
