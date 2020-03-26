@@ -17,7 +17,11 @@ export const checkLogged = function () {
  */
 export const getCadastres = async function () {
     return new Promise((resolve, reject) => {
-        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CADASTRES_ENDPOINT)
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CADASTRES_ENDPOINT,
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            })
             .then(response => resolve(response))
             .catch(() => reject)
     });
@@ -61,7 +65,11 @@ export const getEtatsNumeros = async function () {
  */
 export const getClients = async function () {
     return new Promise((resolve, reject) => {
-        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT)
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            })
             .then(response => resolve(response))
             .catch(() => reject)
     });
