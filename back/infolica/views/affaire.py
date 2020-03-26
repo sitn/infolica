@@ -22,8 +22,8 @@ log = logging.getLogger(__name__)
 @view_config(route_name='affaires_s', request_method='GET', renderer='json')
 def affaires_view(request):
     try:
-        # Check authorization
-        if not Utils.has_permission(request, request.registry.settings['consulter_affaire']):
+        # Check connected
+        if not Utils.check_connected(request):
             raise HTTPForbidden()
 
         query = request.dbsession.query(models.VAffaire).all()
@@ -38,8 +38,8 @@ def affaires_view(request):
 @view_config(route_name='affaire_by_id', request_method='GET', renderer='json')
 def affaire_by_id_view(request):
     try:
-        # Check authorization
-        if not Utils.has_permission(request, request.registry.settings['consulter_affaire']):
+       # Check connected
+        if not Utils.check_connected(request):
             raise HTTPForbidden()
 
         id = request.matchdict['id']
@@ -57,8 +57,8 @@ def affaire_by_id_view(request):
 @view_config(route_name='recherche_affaires_s', request_method='POST', renderer='json')
 def affaires_search_view(request):
     try:
-        # Check authorization
-        if not Utils.has_permission(request, request.registry.settings['consulter_affaire']):
+        # Check connected
+        if not Utils.check_connected(request):
             raise HTTPForbidden()
 
         settings = request.registry.settings

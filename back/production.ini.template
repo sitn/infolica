@@ -15,19 +15,19 @@ pyramid.default_locale_name = en
 #############################################
 # Les informations de connexion à la BD
 #############################################
-sqlalchemy.url = postgresql://postgres:secret@chge-neinfolica/infolica
+sqlalchemy.url = postgresql://users:password@host/infolica
 
 #############################################
 # Les informations de connexion au LDAP
 #############################################
 # L'URL de LDAP et le numéro de port
-ldap_url = ldap://chge-neinfolica:389
+ldap_url = ldap://host:port
 
 # Le bind utilisé par la connexion
 ldap_bind= cn=Manager,dc=maxcrc,dc=com
 
 # Le mot de passe du bind utilisé par la connexion
-ldap_passwd= Spir@le712
+ldap_passwd= password
 
 
 ###########################################################
