@@ -16,21 +16,7 @@ import logging
 log = logging.getLogger(__name__)
 
 
-""" Return all numeros in affaire"""
-@view_config(route_name='reservation_numeros', request_method='GET', renderer='json')
-@view_config(route_name='reservation_numeros_s', request_method='GET', renderer='json')
-def reservation_numeros_view(request):
-    # Get affaire_id
-    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
 
-    try:
-        query = request.dbsession.query(models.VNumeros).filter(and_(
-            models.AffaireNumero.affaire_id == affaire_id, models.VNumeros.id == models.AffaireNumero.numero_id)).all()
-        return Utils.serialize_many(query)
-
-    except DBAPIError as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
 
 
 """ Add new numeros in affaire"""

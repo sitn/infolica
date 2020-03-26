@@ -99,7 +99,13 @@ export default {
      */
     async searchClients() {
       this.$http
-        .get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT)
+        .get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
+        )
         .then(response => {
           if (response.data) {
             this.clients_liste = response.data;
