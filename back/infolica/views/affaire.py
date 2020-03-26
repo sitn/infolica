@@ -1,17 +1,13 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from sqlalchemy import func, and_
+from pyramid.httpexceptions import HTTPForbidden
 from sqlalchemy.exc import DBAPIError
-from sqlalchemy import desc
 
 from .. import models
 import transaction
 from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
-
-import os
-from datetime import datetime
 
 import logging
 log = logging.getLogger(__name__)
@@ -26,6 +22,10 @@ log = logging.getLogger(__name__)
 @view_config(route_name='affaires_s', request_method='GET', renderer='json')
 def affaires_view(request):
     try:
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['consulter_affaire']):
+            raise HTTPForbidden()
+
         query = request.dbsession.query(models.VAffaire).all()
         return Utils.serialize_many(query)
 
@@ -38,6 +38,10 @@ def affaires_view(request):
 @view_config(route_name='affaire_by_id', request_method='GET', renderer='json')
 def affaire_by_id_view(request):
     try:
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['consulter_affaire']):
+            raise HTTPForbidden()
+
         id = request.matchdict['id']
         query = request.dbsession.query(models.VAffaire)
         one = query.filter(models.VAffaire.id == id).first()
@@ -53,6 +57,10 @@ def affaire_by_id_view(request):
 @view_config(route_name='recherche_affaires_s', request_method='POST', renderer='json')
 def affaires_search_view(request):
     try:
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['consulter_affaire']):
+            raise HTTPForbidden()
+
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
         conditions = Utils.get_search_conditions(
@@ -82,6 +90,14 @@ def types_affaires_view(request):
 """ Add new affaire"""
 @view_config(route_name='affaires', request_method='POST', renderer='json')
 def affaires_new_view(request):
+    # Get role depending on affaire type
+    affaire_type = request.params['type_id'] if 'type_id' in request.params else None
+    role = request.registry.settings['editer_affaire_ppe'] if affaire_type == request.registry.settings[
+        'affaire_type_ppe_id'] else request.registry.settings['editer_affaire_autre']
+
+    # Check authorization
+    if not Utils.has_permission(request, role):
+        raise HTTPForbidden()
 
     model = models.Affaire()
     model = Utils.set_model_record(model, request.params)
@@ -112,6 +128,14 @@ def affaires_update_view(request):
     if not record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Affaire.__tablename__, id_affaire))
+
+    # Get role depending on affaire type
+    affaire_type = request.params['type_id'] if 'type_id' in request.params else record.type_id
+    role = request.registry.settings['editer_affaire_ppe'] if affaire_type == request.registry.settings['affaire_type_ppe_id'] else request.registry.settings['editer_affaire_autre']
+
+    # Check authorization
+    if not Utils.has_permission(request, role):
+        raise HTTPForbidden()
 
     record = Utils.set_model_record(record, request.params)
 

@@ -48,7 +48,11 @@ export default {
 
           this.$http.post(
             process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_ENDPOINT, 
-            formData
+            formData,
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            }
           )
           .then(response =>{
             if(response && response.data){
@@ -115,8 +119,8 @@ export default {
             formData.append("id", this.currentDeleteId);
 
           this.$http.delete(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT, 
-            {data:formData}
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT + "?id=" +  this.currentDeleteId, 
+            {withCredentials: true,}
           )
           .then(response =>{
             if(response && response.data){

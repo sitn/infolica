@@ -10,10 +10,12 @@ from ..exceptions.custom_error import CustomError
 from .. import models
 
 import logging
+
 log = logging.getLogger(__name__)
 
-
 """ Return all numeros"""
+
+
 @view_config(route_name='numeros', request_method='GET', renderer='json')
 @view_config(route_name='numeros_s', request_method='GET', renderer='json')
 def numeros_view(request):
@@ -40,6 +42,8 @@ def types_numeros_view(request):
 
 
 """ Return all etats_numeros"""
+
+
 @view_config(route_name='etats_numeros', request_method='GET', renderer='json')
 @view_config(route_name='etats_numeros_s', request_method='GET', renderer='json')
 def etats_numeros_view(request):
@@ -53,6 +57,8 @@ def etats_numeros_view(request):
 
 
 """ Return numeros by id"""
+
+
 @view_config(route_name='numero_by_id', request_method='GET', renderer='json')
 def numeros_by_id_view(request):
     try:
@@ -68,6 +74,8 @@ def numeros_by_id_view(request):
 
 
 """ Search numeros"""
+
+
 @view_config(route_name='recherche_numeros', request_method='POST', renderer='json')
 @view_config(route_name='recherche_numeros_s', request_method='POST', renderer='json')
 def numeros_search_view(request):
@@ -75,7 +83,8 @@ def numeros_search_view(request):
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
         conditions = Utils.get_search_conditions(models.VNumeros, request.params)
-        query = request.dbsession.query(models.VNumeros).order_by(models.VNumeros.cadastre, models.VNumeros.numero.desc()).filter(
+        query = request.dbsession.query(models.VNumeros).order_by(models.VNumeros.cadastre,
+                                                                  models.VNumeros.numero.desc()).filter(
             *conditions).limit(search_limit).all()
         return Utils.serialize_many(query)
 
@@ -111,10 +120,11 @@ def numeros_new_view(request, params=None):
 
 
 """ Update numeros"""
+
+
 @view_config(route_name='numeros', request_method='PUT', renderer='json')
 @view_config(route_name='numeros_s', request_method='PUT', renderer='json')
 def numeros_update_view(request):
-
     # Get numero id
     id = request.params['id'] if 'id' in request.params else None
 
@@ -148,6 +158,8 @@ def numeros_update_view(request):
 
 
 """ Supprimer/abandonner numeros by id"""
+
+
 @view_config(route_name='numero_by_id', request_method='DELETE', renderer='json')
 def numeros_by_id_delete_view(request):
     try:
@@ -155,11 +167,11 @@ def numeros_by_id_delete_view(request):
         id = request.matchdict['id']
         query = request.dbsession.query(models.Numero).filter(
             models.Numero.id == id).first()
-        
+
         if query:
-            if query.etat_id == 1: # projet
+            if query.etat_id == 1:  # projet
                 query.etat_id = 3
-            elif query.etat_id == 3: # abandonné
+            elif query.etat_id == 3:  # abandonné
                 query.etat_id = 1
             # elif query.etat_id == 2: # vigueur
             #     query.etat_id = 4
@@ -177,6 +189,8 @@ def numeros_by_id_delete_view(request):
 ###########################################################
 
 """ Add new numero_etat_histo """
+
+
 @view_config(route_name='numeros_etat_histo', request_method='POST', renderer='json')
 @view_config(route_name='numeros_etat_histo_s', request_method='POST', renderer='json')
 def numeros_etat_histo_new_view(request, params=None):
@@ -207,6 +221,8 @@ def numeros_etat_histo_new_view(request, params=None):
 ###########################################################
 
 """ Return all numeros in affaire"""
+
+
 @view_config(route_name='affaire_numeros_by_affaire_id', request_method='GET', renderer='json')
 def affaire_numeros_view(request):
     affaire_id = request.matchdict["id"]
@@ -221,6 +237,8 @@ def affaire_numeros_view(request):
 
 
 """ Add new affaire-numero """
+
+
 @view_config(route_name='affaire_numeros', request_method='POST', renderer='json')
 @view_config(route_name='affaire_numeros_s', request_method='POST', renderer='json')
 def affaire_numero_new_view(request, params=None):
@@ -247,6 +265,8 @@ def affaire_numero_new_view(request, params=None):
 ###########################################################
 
 """ Return all affaires touching one numero """
+
+
 @view_config(route_name='numero_affaires_by_numero_id', request_method='GET', renderer='json')
 def numeros_affaire_view(request):
     numero_id = request.matchdict['id']

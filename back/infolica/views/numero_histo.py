@@ -1,11 +1,6 @@
 from pyramid.view import view_config
-import pyramid.httpexceptions as exc
+from pyramid.httpexceptions import HTTPForbidden
 from ..scripts.utils import Utils
-from ..models import Constant
-import transaction
-from sqlalchemy import desc
-
-from sqlalchemy.exc import DBAPIError
 from ..exceptions.custom_error import CustomError
 
 from .. import models
@@ -21,10 +16,14 @@ log = logging.getLogger(__name__)
 """ Get new numero_base_relations """
 @view_config(route_name='numero_base_relations_by_id', request_method='GET', renderer='json')
 def numero_base_relations_view(request):
-    numero_id = request.matchdict["id"]
-    
     # get data
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise HTTPForbidden()
+
+        numero_id = request.matchdict["id"]
+
         record = request.dbsession.query(models.VNumerosRelations).filter(models.VNumerosRelations.numero_associe_id == numero_id).all()
 
         if record:
@@ -41,10 +40,14 @@ def numero_base_relations_view(request):
 """ Get new numero_associe_relations """
 @view_config(route_name='numero_associe_relations_by_id', request_method='GET', renderer='json')
 def numero_associe_relations_view(request):
-    numero_id = request.matchdict["id"]
-    
     # get data
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise HTTPForbidden()
+
+        numero_id = request.matchdict["id"]
+
         record = request.dbsession.query(models.VNumerosRelations).filter(models.VNumerosRelations.numero_base_id == numero_id).all()
 
         if record:

@@ -43,7 +43,11 @@ export default {
         .post(
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_RECHERCHE_NUMEROS_ENDPOINT,
-          formData
+          formData,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         )
         .then(response => {
           if (response && response.data) {

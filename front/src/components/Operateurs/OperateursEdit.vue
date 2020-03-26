@@ -88,7 +88,11 @@ import { validationMixin } from 'vuelidate'
         if(this.mode === 'new'){
           this.$http.post(
             url, 
-            formData
+            formData,
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            }
           )
           .then(response =>{
             this.handleSaveDataSuccess(response);
@@ -106,7 +110,10 @@ import { validationMixin } from 'vuelidate'
           this.$http.put(
             url, 
             formData,
-            {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}
+            { 
+              withCredentials: true,
+              headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            }
           )
           .then(response =>{
             this.handleSaveDataSuccess(response);
@@ -175,7 +182,11 @@ import { validationMixin } from 'vuelidate'
       initEditData (id) {
         
         this.$http.get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT + '/' + id
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT + '/' + id,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         )
         .then(response =>{
           if(response && response.data){
