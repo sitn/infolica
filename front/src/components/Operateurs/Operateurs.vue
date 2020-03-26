@@ -94,14 +94,14 @@ export default {
         */
         onConfirmDelete () {
 
-          var formData = new FormData();
+          /*var formData = new FormData();
           
           if(this.currentDeleteId)
-            formData.append("id", this.currentDeleteId);
+            formData.append("id", this.currentDeleteId);*/
 
           this.$http.delete(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT, 
-            {data:formData}
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT + "?id=" +  this.currentDeleteId, 
+            {withCredentials: true,}
           )
           .then(response =>{
             if(response && response.data){

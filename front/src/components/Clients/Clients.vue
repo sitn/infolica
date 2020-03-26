@@ -119,8 +119,8 @@ export default {
             formData.append("id", this.currentDeleteId);
 
           this.$http.delete(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT, 
-            {data:formData}
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT + "?id=" +  this.currentDeleteId, 
+            {withCredentials: true,}
           )
           .then(response =>{
             if(response && response.data){
