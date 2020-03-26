@@ -75,7 +75,7 @@ export default {
     /**
      * Création d'un nouveau suivi
      */
-    newSuiviMutation() {
+    newSuiviMandat() {
       var formData = new FormData();
       formData.append("affaire_id", this.$route.params.id);
 
