@@ -22,6 +22,10 @@ log = logging.getLogger(__name__)
 @view_config(route_name='factures', request_method='GET', renderer='json')
 @view_config(route_name='factures_s', request_method='GET', renderer='json')
 def factures_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+
     try:
         query = request.dbsession.query(models.Facture).all()
         return Utils.serialize_many(query)
@@ -33,6 +37,10 @@ def factures_view(request):
 """ Return all factures in affaire"""
 @view_config(route_name='affaires_factures_by_affaire_id', request_method='GET', renderer='json')
 def affaires_factures_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+
     affaire_id = request.matchdict["id"]
 
     try:

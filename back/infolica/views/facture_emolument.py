@@ -1,5 +1,6 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
+from pyramid.httpexceptions import HTTPForbidden
 from ..scripts.utils import Utils
 from ..models import Constant
 import transaction
@@ -20,6 +21,10 @@ log = logging.getLogger(__name__)
 """ Return all emoluments in facture"""
 @view_config(route_name='facture_emoluments_by_facture_id', request_method='GET', renderer='json')
 def facture_emoluments_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+
     facture_id = request.matchdict["id"]
 
     try:
@@ -36,6 +41,9 @@ def facture_emoluments_view(request):
 @view_config(route_name='emolument_facture', request_method='POST', renderer='json')
 @view_config(route_name='emolument_facture_s', request_method='POST', renderer='json')
 def emolument_facture_new_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['facturation']):
+        raise HTTPForbidden()
 
     record = models.EmolumentFacture()
     record = Utils.set_model_record(record, request.params)
@@ -55,6 +63,10 @@ def emolument_facture_new_view(request):
 @view_config(route_name='emolument_facture', request_method='PUT', renderer='json')
 @view_config(route_name='emolument_facture_s', request_method='PUT', renderer='json')
 def emolument_facture_update_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['facturation']):
+        raise HTTPForbidden()
+
     emolument_facture_id = request.params['id'] if 'id' in request.params else None
 
     # Get the facture
@@ -81,6 +93,10 @@ def emolument_facture_update_view(request):
 @view_config(route_name='emolument_facture_by_id', request_method='DELETE', renderer='json')
 def emolument_facture_delete_view(request):
     try:
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['facturation']):
+            raise HTTPForbidden()
+
         id = request.matchdict['id']
 
         record = request.dbsession.query(models.EmolumentFacture).filter(

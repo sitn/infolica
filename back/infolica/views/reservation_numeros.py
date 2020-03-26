@@ -1,13 +1,11 @@
-from copy import copy
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
+from pyramid.httpexceptions import HTTPForbidden
 from ..scripts.utils import Utils
 from ..models import Constant
-import transaction
-from sqlalchemy import and_, desc
+from sqlalchemy import and_
 
 from sqlalchemy.exc import DBAPIError
-from ..exceptions.custom_error import CustomError
 
 from .. import models
 from ..views.numero import numeros_new_view, affaire_numero_new_view, numeros_etat_histo_new_view
@@ -20,10 +18,14 @@ log = logging.getLogger(__name__)
 @view_config(route_name='reservation_numeros', request_method='GET', renderer='json')
 @view_config(route_name='reservation_numeros_s', request_method='GET', renderer='json')
 def reservation_numeros_view(request):
-    # Get affaire_id
-    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
-
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise HTTPForbidden()
+
+        # Get affaire_id
+        affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+
         query = request.dbsession.query(models.VNumeros).filter(and_(
             models.AffaireNumero.affaire_id == affaire_id, models.VNumeros.id == models.AffaireNumero.numero_id)).all()
         return Utils.serialize_many(query)

@@ -1,5 +1,6 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
+from pyramid.httpexceptions import HTTPForbidden
 from ..scripts.utils import Utils
 from ..models import Constant
 import transaction
@@ -18,6 +19,10 @@ log = logging.getLogger(__name__)
 @view_config(route_name='controles_mutations_s', request_method='GET', renderer='json')
 def controles_mutations_view(request):
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise HTTPForbidden()
+
         query = request.dbsession.query(models.ControleMutation).all()
         return Utils.serialize_many(query)
 
@@ -30,6 +35,10 @@ def controles_mutations_view(request):
 @view_config(route_name='controle_mutation_by_id', request_method='GET', renderer='json')
 def controles_mutations_by_id_view(request):
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise HTTPForbidden()
+
         # Get controle mutation id
         id = request.id = request.matchdict['id']
         query = request.dbsession.query(models.ControleMutation).filter(

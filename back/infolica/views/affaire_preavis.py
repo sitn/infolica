@@ -33,6 +33,10 @@ def preavis_type_view(request):
 """ GET preavis affaire"""
 @view_config(route_name='affaire_preavis_by_affaire_id', request_method='GET', renderer='json')
 def affaire_preavis_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+
     affaire_id = request.matchdict['id']
 
     try:
@@ -101,6 +105,10 @@ def preavis_update_view(request):
 """ DELETE preavis affaire"""
 @view_config(route_name='preavis_by_id', request_method='DELETE', renderer='json')
 def preavis_delete_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['demander_preavis']):
+        raise HTTPForbidden()
+
     preavis_id = request.matchdict['id']
 
     record = request.dbsession.query(models.Preavis).filter(

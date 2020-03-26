@@ -199,6 +199,20 @@ class Utils():
         except Exception as e:
             raise e
 
+    @classmethod
+    def check_connected(cls, request):
+
+        try:
+            auth_tkt = request.cookies.get('auth_tkt', default=None)
+
+            if not auth_tkt:
+                return False
+
+            return True
+
+        except Exception as e:
+            raise e
+
 
     @classmethod
     def get_role_id_by_name(cls, request, role_name):

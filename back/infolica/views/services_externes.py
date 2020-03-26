@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from sqlalchemy import func, and_
+from pyramid.httpexceptions import HTTPForbidden
 from sqlalchemy.exc import DBAPIError
 
 from .. import models
@@ -23,9 +23,13 @@ log = logging.getLogger(__name__)
 """ GET service by id"""
 @view_config(route_name='service_by_id', request_method='GET', renderer='json')
 def service_by_id_view(request):
-    service_id = request.matchdict['id']
-
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise HTTPForbidden()
+
+        service_id = request.matchdict['id']
+
         record = request.dbsession.query(models.Service)\
             .filter(models.Service.id==service_id).first()
 
@@ -41,6 +45,10 @@ def service_by_id_view(request):
 @view_config(route_name='services_s', request_method='GET', renderer='json')
 def services_view(request):
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise HTTPForbidden()
+
         records = request.dbsession.query(models.Service).all()
 
         return Utils.serialize_many(records)

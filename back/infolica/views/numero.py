@@ -1,5 +1,6 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
+from pyramid.httpexceptions import HTTPForbidden
 from ..scripts.utils import Utils
 from ..models import Constant
 import transaction
@@ -18,6 +19,10 @@ log = logging.getLogger(__name__)
 @view_config(route_name='numeros_s', request_method='GET', renderer='json')
 def numeros_view(request):
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise HTTPForbidden()
+
         query = request.dbsession.query(models.VNumeros).all()
         return Utils.serialize_many(query)
 
@@ -30,6 +35,10 @@ def numeros_view(request):
 @view_config(route_name='numeros', request_method='POST', renderer='json')
 @view_config(route_name='numeros_s', request_method='POST', renderer='json')
 def numeros_by_params_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+
     query = request.dbsession.query(models.VNumeros)
 
     if "cadastre" in request.params:
@@ -79,6 +88,10 @@ def etats_numeros_view(request):
 @view_config(route_name='numero_by_id', request_method='GET', renderer='json')
 def numeros_by_id_view(request):
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise HTTPForbidden()
+
         # Get controle mutation id
         id = request.id = request.matchdict['id']
         query = request.dbsession.query(models.VNumeros).filter(
@@ -95,6 +108,10 @@ def numeros_by_id_view(request):
 @view_config(route_name='recherche_numeros_s', request_method='POST', renderer='json')
 def numeros_search_view(request):
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise HTTPForbidden()
+
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
         conditions = Utils.get_search_conditions(models.VNumeros, request.params)
@@ -232,8 +249,12 @@ def numeros_etat_histo_new_view(request, params=None):
 """ Return all numeros in affaire"""
 @view_config(route_name='affaire_numeros_by_affaire_id', request_method='GET', renderer='json')
 def affaire_numeros_view(request):
-    affaire_id = request.matchdict["id"]
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise HTTPForbidden()
+
+        affaire_id = request.matchdict["id"]
         records = request.dbsession.query(models.VNumerosAffaires).filter(
             models.VNumerosAffaires.affaire_id == affaire_id).all()
         return Utils.serialize_many(records)
@@ -272,16 +293,20 @@ def affaire_numero_new_view(request, params=None):
 """ Return all affaires touching one numero """
 @view_config(route_name='numero_affaires_by_numero_id', request_method='GET', renderer='json')
 def numeros_affaire_view(request):
-    numero_id = request.matchdict['id']
-
-    query = request.dbsession.query(models.VNumerosAffaires).filter(
-        models.VNumerosAffaires.numero_id == numero_id).all()
-
-    if not query:
-        raise CustomError.RECORD_WITH_ID_NOT_FOUND.format(
-            models.VNumerosAffaires.__tablename__, numero_id)
-
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise HTTPForbidden()
+
+        numero_id = request.matchdict['id']
+
+        query = request.dbsession.query(models.VNumerosAffaires).filter(
+            models.VNumerosAffaires.numero_id == numero_id).all()
+
+        if not query:
+            raise CustomError.RECORD_WITH_ID_NOT_FOUND.format(
+                models.VNumerosAffaires.__tablename__, numero_id)
+
         return Utils.serialize_many(query)
 
     except DBAPIError as e:
