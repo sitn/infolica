@@ -41,6 +41,8 @@ def test_error(exc, request):
 @view_config(route_name='numero_by_id', request_method='OPTIONS', renderer='json')
 @view_config(route_name='preavis', request_method='OPTIONS', renderer='json')
 @view_config(route_name='preavis_s', request_method='OPTIONS', renderer='json')
+@view_config(route_name='suivi_mandats', request_method='OPTIONS', renderer='json')
+@view_config(route_name='suivi_mandats_s', request_method='OPTIONS', renderer='json')
 def options_response_view(request):
     return ''
 

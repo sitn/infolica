@@ -29,8 +29,6 @@ def numeros_view(request):
 
 
 """ Return all types_numeros"""
-
-
 @view_config(route_name='types_numeros', request_method='GET', renderer='json')
 @view_config(route_name='types_numeros_s', request_method='GET', renderer='json')
 def types_numeros_view(request):
@@ -96,8 +94,6 @@ def numeros_search_view(request):
 
 
 """ Add new numeros"""
-
-
 @view_config(route_name='numeros', request_method='POST', renderer='json')
 @view_config(route_name='numeros_s', request_method='POST', renderer='json')
 def numeros_new_view(request, params=None):

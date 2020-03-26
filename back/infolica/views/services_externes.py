@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 
 ###########################################################
-# PREAVIS AFFAIRE
+# SERVICES EXTERNES 
 ###########################################################
 
 """ GET service by id"""
