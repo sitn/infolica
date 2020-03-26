@@ -10,6 +10,7 @@ import Suivi from '@/components/Affaires/Suivi/Suivi.vue';
 import Preavis from '@/components/Affaires/Preavis/Preavis.vue';
 import Facturation from '@/components/Facturation/Facturation.vue';
 import Remarques from '@/components/Affaires/Remarques/Remarques.vue';
+import SuiviMandat from '@/components/SuiviMandat/SuiviMandat.vue';
 
 export default {
   name: "AffairesDashboard",
@@ -21,6 +22,7 @@ export default {
     Preavis,
     Facturation,
     Remarques,
+    SuiviMandat,
   },
   data: () => ({
     affaire: {},
