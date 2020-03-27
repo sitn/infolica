@@ -176,6 +176,7 @@ class Utils():
 
         except Exception as e:
             raise e
+        
     @classmethod
     def has_permission(cls, request, fonction_name):
 

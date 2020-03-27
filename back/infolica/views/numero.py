@@ -19,6 +19,10 @@ log = logging.getLogger(__name__)
 @view_config(route_name='numeros', request_method='GET', renderer='json')
 @view_config(route_name='numeros_s', request_method='GET', renderer='json')
 def numeros_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+
     try:
         query = request.dbsession.query(models.VNumeros).all()
         return Utils.serialize_many(query)
@@ -32,6 +36,10 @@ def numeros_view(request):
 @view_config(route_name='types_numeros', request_method='GET', renderer='json')
 @view_config(route_name='types_numeros_s', request_method='GET', renderer='json')
 def types_numeros_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+
     try:
         query = request.dbsession.query(models.NumeroType).all()
         return Utils.serialize_many(query)
@@ -42,11 +50,13 @@ def types_numeros_view(request):
 
 
 """ Return all etats_numeros"""
-
-
 @view_config(route_name='etats_numeros', request_method='GET', renderer='json')
 @view_config(route_name='etats_numeros_s', request_method='GET', renderer='json')
 def etats_numeros_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+
     try:
         query = request.dbsession.query(models.NumeroEtat).all()
         return Utils.serialize_many(query)
@@ -57,10 +67,12 @@ def etats_numeros_view(request):
 
 
 """ Return numeros by id"""
-
-
 @view_config(route_name='numero_by_id', request_method='GET', renderer='json')
 def numeros_by_id_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+    
     try:
         # Get controle mutation id
         id = request.id = request.matchdict['id']
@@ -74,11 +86,13 @@ def numeros_by_id_view(request):
 
 
 """ Search numeros"""
-
-
 @view_config(route_name='recherche_numeros', request_method='POST', renderer='json')
 @view_config(route_name='recherche_numeros_s', request_method='POST', renderer='json')
 def numeros_search_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+
     try:
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
@@ -97,6 +111,10 @@ def numeros_search_view(request):
 @view_config(route_name='numeros', request_method='POST', renderer='json')
 @view_config(route_name='numeros_s', request_method='POST', renderer='json')
 def numeros_new_view(request, params=None):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise HTTPForbidden()
+
     if not params:
         params = request.params
 
@@ -120,11 +138,13 @@ def numeros_new_view(request, params=None):
 
 
 """ Update numeros"""
-
-
 @view_config(route_name='numeros', request_method='PUT', renderer='json')
 @view_config(route_name='numeros_s', request_method='PUT', renderer='json')
 def numeros_update_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise HTTPForbidden()
+
     # Get numero id
     id = request.params['id'] if 'id' in request.params else None
 
@@ -158,10 +178,12 @@ def numeros_update_view(request):
 
 
 """ Supprimer/abandonner numeros by id"""
-
-
 @view_config(route_name='numero_by_id', request_method='DELETE', renderer='json')
 def numeros_by_id_delete_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise HTTPForbidden()
+
     try:
         # Get numero by id
         id = request.matchdict['id']
@@ -189,11 +211,13 @@ def numeros_by_id_delete_view(request):
 ###########################################################
 
 """ Add new numero_etat_histo """
-
-
 @view_config(route_name='numeros_etat_histo', request_method='POST', renderer='json')
 @view_config(route_name='numeros_etat_histo_s', request_method='POST', renderer='json')
 def numeros_etat_histo_new_view(request, params=None):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise HTTPForbidden()
+
     if not params:
         params = request.params
 
@@ -221,10 +245,12 @@ def numeros_etat_histo_new_view(request, params=None):
 ###########################################################
 
 """ Return all numeros in affaire"""
-
-
 @view_config(route_name='affaire_numeros_by_affaire_id', request_method='GET', renderer='json')
 def affaire_numeros_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+
     affaire_id = request.matchdict["id"]
     try:
         records = request.dbsession.query(models.VNumerosAffaires).filter(
@@ -237,11 +263,13 @@ def affaire_numeros_view(request):
 
 
 """ Add new affaire-numero """
-
-
 @view_config(route_name='affaire_numeros', request_method='POST', renderer='json')
 @view_config(route_name='affaire_numeros_s', request_method='POST', renderer='json')
 def affaire_numero_new_view(request, params=None):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise HTTPForbidden()
+
     if not params:
         params = request.params
     # nouveau affaire_numero
@@ -265,10 +293,12 @@ def affaire_numero_new_view(request, params=None):
 ###########################################################
 
 """ Return all affaires touching one numero """
-
-
 @view_config(route_name='numero_affaires_by_numero_id', request_method='GET', renderer='json')
 def numeros_affaire_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+
     numero_id = request.matchdict['id']
 
     query = request.dbsession.query(models.VNumerosAffaires).filter(

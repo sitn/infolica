@@ -57,7 +57,7 @@ def affaires_factures_view(request):
 @view_config(route_name='factures_s', request_method='POST', renderer='json')
 def factures_new_view(request):
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['facturation']):
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise HTTPForbidden()
 
     model = models.Facture()
@@ -79,7 +79,7 @@ def factures_new_view(request):
 @view_config(route_name='factures_s', request_method='PUT', renderer='json')
 def factures_update_view(request):
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['facturation']):
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise HTTPForbidden()
 
     # id_facture
@@ -113,7 +113,7 @@ def factures_update_view(request):
 @view_config(route_name='factures_s', request_method='DELETE', renderer='json')
 def factures_delete_view(request):
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['facturation']):
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise HTTPForbidden()
 
     id = request.params['id'] if 'id' in request.params else None

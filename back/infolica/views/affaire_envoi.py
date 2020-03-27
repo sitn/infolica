@@ -22,6 +22,11 @@ log = logging.getLogger(__name__)
 @view_config(route_name='envois_types', request_method='GET', renderer='json')
 @view_config(route_name='envois_types_s', request_method='GET', renderer='json')
 def envois_types_view(request):
+    
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+    
     try:
         records = request.dbsession.query(models.EnvoiType).all()
         return Utils.serialize_many(records)
@@ -34,6 +39,7 @@ def envois_types_view(request):
 """ GET envois affaire"""
 @view_config(route_name='affaire_envois_by_affaire_id', request_method='GET', renderer='json')
 def affaire_envois_view(request):
+
     # Check connected
     if not Utils.check_connected(request):
         raise HTTPForbidden()
@@ -56,6 +62,10 @@ def affaire_envois_view(request):
 @view_config(route_name='envois_s', request_method='POST', renderer='json')
 def envois_new_view(request):
 
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_envois_edition']):
+        raise HTTPForbidden()
+
     model = models.Envoi()
     model = Utils.set_model_record(model, request.params)
 
@@ -75,6 +85,10 @@ def envois_new_view(request):
 @view_config(route_name='envois_s', request_method='PUT', renderer='json')
 def envois_update_view(request):
     
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_envois_edition']):
+        raise HTTPForbidden()
+
     record_id = request.params['id'] if 'id' in request.params else None
     record = request.dbsession.query(models.Envoi).filter(
         models.Envoi.id == record_id).first()
@@ -98,6 +112,11 @@ def envois_update_view(request):
 """ DELETE envois"""
 @view_config(route_name='envois_by_id', request_method='DELETE', renderer='json')
 def envois_delete_view(request):
+
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_envois_edition']):
+        raise HTTPForbidden()
+
     record_id = request.matchdict['id']
 
     record = request.dbsession.query(models.Envoi).filter(

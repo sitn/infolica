@@ -55,6 +55,10 @@ def controles_mutations_by_id_view(request):
 @view_config(route_name='controles_mutations_s', request_method='POST', renderer='json')
 def controles_mutations_new_view(request):
 
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
+        raise HTTPForbidden()
+
     record = models.ControleMutation()
     record = Utils.set_model_record(record, request.params)
 
@@ -75,6 +79,10 @@ def controles_mutations_new_view(request):
 @view_config(route_name='controles_mutations', request_method='PUT', renderer='json')
 @view_config(route_name='controles_mutations_s', request_method='PUT', renderer='json')
 def controles_mutations_update_view(request):
+
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
+        raise HTTPForbidden()
 
     # Get controle mutation id
     id = request.params['id'] if 'id' in request.params else None
@@ -104,6 +112,10 @@ def controles_mutations_update_view(request):
 @view_config(route_name='controles_mutations', request_method='DELETE', renderer='json')
 @view_config(route_name='controles_mutations_s', request_method='DELETE', renderer='json')
 def controles_mutations_delete_view(request):
+
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
+        raise HTTPForbidden()
 
     # Get controle mutation id
     id = request.params['id'] if 'id' in request.params else None

@@ -21,8 +21,8 @@ def operateurs_view(request):
     result = []
     try:
 
-        # Check authorization
-        if not Utils.has_permission(request, request.registry.settings['consulter_operateur']):
+        # Check connected
+        if not Utils.check_connected(request):
             raise HTTPForbidden()
 
         query = request.dbsession.query(models.Operateur).all()
@@ -39,8 +39,8 @@ def operateur_by_id_view(request):
     merged = None
     try:
 
-        # Check authorization
-        if not Utils.has_permission(request, request.registry.settings['consulter_operateur']):
+        # Check connected
+        if not Utils.check_connected(request):
             raise HTTPForbidden()
 
         id = request.matchdict['id']
@@ -59,8 +59,8 @@ def operateur_by_id_view(request):
 def operateurs_search_view(request):
     try:
 
-        # Check authorization
-        if not Utils.has_permission(request, request.registry.settings['consulter_operateur']):
+        # Check connected
+        if not Utils.check_connected(request):
             raise HTTPForbidden()
 
         settings = request.registry.settings
@@ -85,7 +85,7 @@ def operateurs_search_view(request):
 def operateurs_new_view(request):
 
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['editer_operateur']):
+    if not Utils.has_permission(request, request.registry.settings['fonction_admin']):
         raise HTTPForbidden()
 
     # Get operateur instance
@@ -110,7 +110,7 @@ def operateurs_new_view(request):
 def operateurs_update_view(request):
 
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['editer_operateur']):
+    if not Utils.has_permission(request, request.registry.settings['fonction_admin']):
         raise HTTPForbidden()
 
     # Get operateur_id
@@ -144,7 +144,7 @@ def operateurs_update_view(request):
 def operateurs_delete_view(request):
 
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['editer_operateur']):
+    if not Utils.has_permission(request, request.registry.settings['fonction_admin']):
         raise HTTPForbidden()
 
     # Get operateur_id
