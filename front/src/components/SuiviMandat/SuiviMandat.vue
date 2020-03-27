@@ -5,6 +5,8 @@
 <script>
 import { checkLogged } from "@/services/helper";
 
+const moment = require('moment')
+
 export default {
   name: "SuiviMandat",
   props: {},
@@ -162,8 +164,8 @@ export default {
         formData.append("ap_41", this.suiviMandat.ap_41);
       if (this.suiviMandat.ap_42)
         formData.append("ap_42", this.suiviMandat.ap_42);
-      if (this.suiviMandat.visa) formData.append("visa", this.suiviMandat.visa);
-      if (this.suiviMandat.date) formData.append("date", this.suiviMandat.date);
+      if (this.suiviMandat.visa) formData.append("visa", this.suiviMandat.visa.id);
+      if (this.suiviMandat.date) formData.append("date", moment(new Date(new Date(this.suiviMandat.date))).format('YYYY-MM-DD'));
 
       this.$http
         .put(
