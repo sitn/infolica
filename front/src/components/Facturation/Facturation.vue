@@ -65,8 +65,12 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_FACTURES_ENDPOINT +
-            this.$route.params.id
+          process.env.VUE_APP_AFFAIRE_FACTURES_ENDPOINT +
+          this.$route.params.id,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         )
         .then(response => {
           if (response && response.data) {
@@ -257,12 +261,20 @@ export default {
         var req;
         req = this.$http.post(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_ENDPOINT,
-          formData
+          formData,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         );
       } else {
         req = this.$http.put(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_ENDPOINT,
-          formData
+          formData,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         );
       }
       req
@@ -311,7 +323,11 @@ export default {
       this.$http
         .delete(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_ENDPOINT,
-          { data: formData }
+          { data: formData },
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         )
         .then(response => {
           if (response.data) {

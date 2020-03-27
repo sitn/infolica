@@ -26,8 +26,12 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_SUIVI_MANDAT_ENDPOINT +
-            this.$route.params.id
+          process.env.VUE_APP_AFFAIRE_SUIVI_MANDAT_ENDPOINT +
+          this.$route.params.id,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         )
         .then(response => {
           if (response && response.data) {
@@ -83,7 +87,11 @@ export default {
         .post(
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_SUIVI_MANDAT_ENDPOINT,
-          formData
+          formData,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         )
         .then(response => {
           if (response) {
@@ -161,7 +169,11 @@ export default {
         .put(
           process.env.VUE_APP_API_URL +
           process.env.VUE_APP_SUIVI_MANDAT_ENDPOINT,
-          formData
+          formData,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         )
         .then(response => {
           if (response) {

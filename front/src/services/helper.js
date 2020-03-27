@@ -32,7 +32,11 @@ export const getCadastres = async function () {
  */
 export const getTypesNumeros = async function () {
     return new Promise((resolve, reject) => {
-        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_NUMEROS_ENDPOINT)
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_NUMEROS_ENDPOINT,
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            })
             .then(response => resolve(response))
             .catch(() => reject)
     });
@@ -43,7 +47,11 @@ export const getTypesNumeros = async function () {
  */
 export const getTypesAffaires = async function () {
     return new Promise((resolve, reject) => {
-        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_AFFAIRES_ENDPOINT)
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_AFFAIRES_ENDPOINT,
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            })
             .then(response => resolve(response))
             .catch(() => reject)
     });
@@ -54,7 +62,11 @@ export const getTypesAffaires = async function () {
  */
 export const getEtatsNumeros = async function () {
     return new Promise((resolve, reject) => {
-        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_ETATS_NUMEROS_ENDPOINT)
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_ETATS_NUMEROS_ENDPOINT,
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            })
             .then(response => resolve(response))
             .catch(() => reject)
     });

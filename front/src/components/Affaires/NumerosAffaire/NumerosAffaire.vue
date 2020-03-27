@@ -30,7 +30,11 @@ export default {
         .get(
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
-            this.$route.params.id
+            this.$route.params.id,
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            }
         )
         .then(response => {
           if (response && response.data) {
@@ -61,7 +65,11 @@ export default {
         .get(
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
-            numero_id
+            numero_id,
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            }
         )
         .then(response => {
           if (response.data) {
@@ -81,8 +89,12 @@ export default {
       this.$http
         .delete(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
-            numero_.id
+          process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
+          numero_.id,
+        {
+          withCredentials: true,
+          headers: {'Accept': 'application/json'}
+        }
         )
         .then(response => {
           if (response && response.status === 200) {

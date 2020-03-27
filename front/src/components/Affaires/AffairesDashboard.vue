@@ -10,6 +10,7 @@ import Suivi from '@/components/Affaires/Suivi/Suivi.vue';
 import Preavis from '@/components/Affaires/Preavis/Preavis.vue';
 import Facturation from '@/components/Facturation/Facturation.vue';
 import Remarques from '@/components/Affaires/Remarques/Remarques.vue';
+import ControlePPE from '@/components/Affaires/ControlePPE/ControlePPE.vue';
 import SuiviMandat from '@/components/SuiviMandat/SuiviMandat.vue';
 
 export default {
@@ -22,6 +23,7 @@ export default {
     Preavis,
     Facturation,
     Remarques,
+    ControlePPE,
     SuiviMandat,
   },
   data: () => ({
@@ -39,8 +41,12 @@ export default {
           this.$http
             .get(
               process.env.VUE_APP_API_URL +
-                process.env.VUE_APP_AFFAIRE_BY_ID_ENDPOINT +
-                this.$route.params.id
+              process.env.VUE_APP_AFFAIRE_BY_ID_ENDPOINT +
+              this.$route.params.id,
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            }
             ).then(response => {
               if (response.data) {
                 var obj = response.data;

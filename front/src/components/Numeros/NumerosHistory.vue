@@ -29,8 +29,12 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
-            this.$route.params.id
+          process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
+          this.$route.params.id,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         ).then(response => {
           if (response && response.data) {
             this.numero = response.data;
@@ -75,7 +79,11 @@ export default {
         .get(
           process.env.VUE_APP_API_URL +
           process.env.VUE_APP_NUMERO_AFFAIRES_ENDPOINT +
-          this.$route.params.id
+          this.$route.params.id,
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            }
         ).then(response => {
           if (response && response.data) {
             this.numero_affaires = response.data;
@@ -93,8 +101,12 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_NUMERO_RELATIONS_BASE_ENDPOINT +
-            this.$route.params.id
+          process.env.VUE_APP_NUMERO_RELATIONS_BASE_ENDPOINT +
+          this.$route.params.id,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         ).then(response => {
           if (response.data) {
             this.numero_provenance = response.data.map(function(obj) {
@@ -116,8 +128,12 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_NUMERO_RELATIONS_ASSOCIE_ENDPOINT +
-            this.$route.params.id
+          process.env.VUE_APP_NUMERO_RELATIONS_ASSOCIE_ENDPOINT +
+          this.$route.params.id,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         ).then(response => {
           if (response.data) {
             this.numero_destination = response.data.map(function(obj) {
