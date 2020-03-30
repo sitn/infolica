@@ -43,6 +43,8 @@ def test_error(exc, request):
 @view_config(route_name='preavis_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='suivi_mandats', request_method='OPTIONS', renderer='json')
 @view_config(route_name='suivi_mandats_s', request_method='OPTIONS', renderer='json')
+@view_config(route_name='controles_mutations', request_method='OPTIONS', renderer='json')
+@view_config(route_name='controles_mutations_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='controles_ppe', request_method='OPTIONS', renderer='json')
 @view_config(route_name='controles_ppe_s', request_method='OPTIONS', renderer='json')
 def options_response_view(request):

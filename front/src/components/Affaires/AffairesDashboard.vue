@@ -10,6 +10,7 @@ import Suivi from '@/components/Affaires/Suivi/Suivi.vue';
 import Preavis from '@/components/Affaires/Preavis/Preavis.vue';
 import Facturation from '@/components/Facturation/Facturation.vue';
 import Remarques from '@/components/Affaires/Remarques/Remarques.vue';
+import ControleMutation from '@/components/Affaires/ControleMutation/ControleMutation.vue';
 import ControlePPE from '@/components/Affaires/ControlePPE/ControlePPE.vue';
 import SuiviMandat from '@/components/SuiviMandat/SuiviMandat.vue';
 
@@ -23,6 +24,7 @@ export default {
     Preavis,
     Facturation,
     Remarques,
+    ControleMutation,
     ControlePPE,
     SuiviMandat,
   },

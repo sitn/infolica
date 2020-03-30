@@ -50,6 +50,25 @@ def controles_mutations_by_id_view(request):
         return exc.HTTPBadRequest(e)
 
 
+""" Return controle_mutation by affaire_id"""
+@view_config(route_name='controle_mutation_by_affaire_id', request_method='GET', renderer='json')
+def controles_mutations_by_affaire_id_view(request):
+    try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise HTTPForbidden()
+
+        # Get controle mutation id
+        affaire_id = request.id = request.matchdict['id']
+        query = request.dbsession.query(models.ControleMutation).filter(
+            models.ControleMutation.affaire_id == affaire_id).first()
+        return Utils.serialize_one(query)
+
+    except DBAPIError as e:
+        log.error(e)
+        return exc.HTTPBadRequest(e)
+
+
 """ Add new controle_mutation"""
 @view_config(route_name='controles_mutations', request_method='POST', renderer='json')
 @view_config(route_name='controles_mutations_s', request_method='POST', renderer='json')
