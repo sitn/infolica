@@ -8,6 +8,8 @@ import { checkLogged, getCurrentDate } from "@/services/helper";
 import { validationMixin } from "vuelidate";
 import { required, minLength } from "vuelidate/lib/validators";
 
+const moment = require('moment')
+
 export default {
   name: "Facturation",
   mixins: [validationMixin],
@@ -28,9 +30,8 @@ export default {
       id: null,
       sap: null,
       date: null,
-      txtSearchClient: null,
+      client: null,
       client_id: null,
-      client_obj: {},
       montant_mo: null,
       montant_mat_diff: null,
       montant_rf: null,
@@ -45,7 +46,7 @@ export default {
     selectedFacture: {
       sap: { required },
       date: { required },
-      txtSearchClient: {
+      client: {
         required,
         minLength: minLength(3)
       },
@@ -62,6 +63,7 @@ export default {
      * SEARCH AFFAIRE FACTURES
      */
     async searchAffaireFactures() {
+      await this.searchClients();
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
@@ -79,11 +81,10 @@ export default {
               sap: x.sap,
               date: x.date,
               client_id: x.client_id,
-              client_obj: this.clients_liste
+              client: this.clients_liste
                 .filter(obj => {
                   return obj.id === x.client_id;
-                })
-                .pop(),
+                }).pop(),
               montant_mo: numeral(x.montant_mo).format("0.00"),
               montant_mat_diff: numeral(x.montant_mat_diff).format("0.00"),
               montant_rf: numeral(x.montant_rf).format("0.00"),
@@ -102,23 +103,28 @@ export default {
      * Lier le nom du client à son id (facture.client_id) dans le tableau
      */
     async searchClients() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
-          {
-            withCredentials: true,
-            headers: {'Accept': 'application/json'}
-          }
-        )
-        .then(response => {
-          if (response.data) {
-            this.clients_liste = response.data;
-            this.searchAffaireFactures();
-          }
-        })
-        .catch(err => {
-          alert("error : " + err.message);
-        });
+      return new Promise((resolve, reject) => {
+        this.$http
+          .get(
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            }
+          )
+          .then(response => {
+            if (response.data) {
+              this.clients_liste = response.data.map(x => ({
+                id: x.id,
+                nom: [x.entreprise, x.prenom, x.nom].filter(Boolean).join(" "),
+                toLowerCase: () => x.nom.toLowerCase(),
+                toString: () => x.nom
+              }));
+              resolve(this.client_liste)
+            }
+          })
+          .catch(() => reject);
+      });
     },
 
     /**
@@ -126,23 +132,16 @@ export default {
      */
     getClientSearch() {
       this.clients_liste_select = [];
-      if (this.selectedFacture.txtSearchClient != null) {
-        if (this.selectedFacture.txtSearchClient.length < 3) {
+      if (this.selectedFacture.client != null) {
+        if (this.selectedFacture.client.length < 3) {
           return;
         } else {
           this.clients_liste_select = this.clients_liste
             .filter(client_i => {
-              return [client_i.entreprise, client_i.prenom, client_i.nom]
-                .join(" ")
+              return client_i.nom
                 .toLowerCase()
-                .includes(this.selectedFacture.txtSearchClient.toLowerCase());
-            })
-            .map(x => ({
-              id: x.id,
-              nom: x.nom,
-              toLowerCase: () => x.nom.toLowerCase(),
-              toString: () => x.nom
-            }));
+                .includes(this.selectedFacture.client.toLowerCase());
+            });
         }
       }
     },
@@ -164,6 +163,10 @@ export default {
     openFactureEdition(data) {
       this.showFactureDialog = true;
       this.selectedFacture = data;
+      console.log(this.selectedFacture)
+      this.selectedFacture.client = this.clients_liste.filter(x => {
+        return x.id === this.selectedFacture.client_id
+      }).pop();
     },
 
     /**
@@ -174,9 +177,7 @@ export default {
         id: null,
         sap: null,
         date: getCurrentDate(),
-        txtSearchClient: null,
-        client_id: null,
-        client_obj: {},
+        client: null,
         montant_mo: 0,
         montant_mat_diff: 0,
         montant_rf: 0,
@@ -216,22 +217,14 @@ export default {
      * Save data
      */
     saveData() {
-      // Récupère l'id du client selon si il provient d'une modif de facture ou d'une création de facture
-      var client_id;
-      if (this.clients_liste_select[0]) {
-        client_id = this.clients_liste_select[0].id;
-      } else {
-        client_id = this.selectedFacture.client_id;
-      }
-
       var formData = new FormData();
       if (this.selectedFacture.id)
         formData.append("id", this.selectedFacture.id);
       if (this.selectedFacture.sap)
         formData.append("sap", this.selectedFacture.sap);
       if (this.selectedFacture.date)
-        formData.append("date", this.selectedFacture.date);
-      if (client_id) formData.append("client_id", client_id);
+        formData.append("date", moment(new Date(new Date(this.selectedFacture.date))).format("YYYY-MM-DD"));
+      if (this.selectedFacture.client.id) formData.append("client_id", this.selectedFacture.client.id);
       if (this.selectedFacture.montant_mo)
         formData.append("montant_mo", this.selectedFacture.montant_mo);
       if (this.selectedFacture.montant_mat_diff)
@@ -297,7 +290,6 @@ export default {
     onCancelEditFacture: function() {
       this.createFacture = false;
       this.showFactureDialog = false;
-      this.selectedFacture.txtSearchClient = null;
       this.$v.$reset();
     },
 
@@ -323,8 +315,8 @@ export default {
       this.$http
         .delete(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_ENDPOINT,
-          { data: formData },
-          {
+          { 
+            data: formData,
             withCredentials: true,
             headers: {'Accept': 'application/json'}
           }
@@ -351,6 +343,7 @@ export default {
   mounted: function() {
     checkLogged();
     this.searchClients();
+    this.searchAffaireFactures();
   }
 };
 </script>
