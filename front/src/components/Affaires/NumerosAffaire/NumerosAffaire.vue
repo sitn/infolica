@@ -4,12 +4,14 @@
 
 <script>
 import { checkLogged } from "@/services/helper";
+import ReferenceNumeros from "@/components/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/ReservationNumeros/ReservationNumeros.vue";
 
 export default {
   name: "NumerosAffaire",
   props: {},
   components: {
+    ReferenceNumeros,
     ReservationNumeros
   },
   data: () => {
@@ -29,12 +31,12 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
-            this.$route.params.id,
-            {
-              withCredentials: true,
-              headers: {'Accept': 'application/json'}
-            }
+          process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
+          this.$route.params.id,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         )
         .then(response => {
           if (response && response.data) {
@@ -64,7 +66,7 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
+            process.env.VUE_APP_NUMEROS_ENDPOINT +
             numero_id,
             {
               withCredentials: true,
@@ -89,7 +91,7 @@ export default {
       this.$http
         .delete(
           process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_NUMERO_BY_ID_ENDPOINT +
+          process.env.VUE_APP_NUMEROS_ENDPOINT +
           numero_.id,
         {
           withCredentials: true,
@@ -116,11 +118,18 @@ export default {
     },
 
     /**
+     * Ouvrir la boîte de dialogue de référence de numéros
+     */
+    callOpenReferenceDialog() {
+      this.$refs.formReference.openReferenceDialog();
+    },
+
+    /**
      * Ouvrir la boîte de dialogue de réservation de numéros
      */
     callOpenReservationDialog() {
       this.affaire_id = Number(this.$route.params.id);
-      this.$refs.form.openReservationDialog();
+      this.$refs.formReservation.openReservationDialog();
     }
   },
 

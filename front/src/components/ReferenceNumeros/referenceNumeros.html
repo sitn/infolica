@@ -1,0 +1,99 @@
+<div class="referenceNumeros">
+
+    <md-dialog :md-active.sync="showReferenceDialog" md-confirm-text="Enregistrer" md-cancel-text="Annuler"
+        md-title="Référencer des numéros" :md-close-on-esc="true" :md-click-outside-to-close="true">
+        <md-dialog-title>Référencer des numéros</md-dialog-title>
+        <md-dialog-content>
+
+
+            <md-card class="md-elevation-0 simple">
+                <md-card-content>
+                    <div class="md-layout md-gutter">
+                        <!-- Cadastre -->
+                        <div class="md-layout-item">
+                            <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste">
+                                <label>Cadastre</label>
+                                <template slot="md-autocomplete-item" scope="{ item }">
+                                    {{ item.nom }}
+                                </template>
+                            </md-autocomplete>
+                        </div>
+                        <!-- Numéro -->
+                        <div class="md-layout-item">
+                            <md-field>
+                                <label>Numéro</label>
+                                    <md-input v-model="search.numero" type="number"></md-input>
+                            </md-field>
+                        </div>
+                    </div>
+
+                    <div class="md-layout md-gutter">
+                        <!-- Type -->
+                        <div class="md-layout-item">
+                            <md-autocomplete v-model="search.type" :md-options="numeros_types_liste">
+                                <label>Type</label>
+                                <template slot="md-autocomplete-item" scope="{ item }">
+                                    {{ item.nom }}
+                                </template>
+                            </md-autocomplete>
+                        </div>
+                        <!-- Etat -->
+                        <div class="md-layout-item">
+                            <md-autocomplete v-model="search.etat" :md-options="numeros_etats_liste">
+                                <label>Etat</label>
+                                <template slot="md-autocomplete-item" scope="{ item }">
+                                    {{ item.nom }}
+                                </template>
+                            </md-autocomplete>
+                        </div>
+                    </div>
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout md-alignment-bottom-right">
+                            <md-button v-on:click="initNumerosList">
+                                Rechercher
+                            </md-button>
+                        </div>
+                    </div>
+                </md-card-content>
+
+                <md-divider />
+
+                <md-card-content>
+                    <!-- Table des biens-fonds -->
+                    <md-table v-model="numeros_liste" md-sort="numero" md-sort-order="desc" @md-selected="onSelect">
+                        <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" class="md-primary md-raised" md-auto-select>
+                            <!-- <md-table-cell md-label="Id" md-sort-by="id" v-if="false">
+                                {{ item.id }}
+                            </md-table-cell> -->
+                            <md-table-cell md-label="Cadastre" md-sort-by="cadastre">
+                                {{ item.cadastre }}
+                            </md-table-cell>
+                            <md-table-cell md-label="Type" md-sort-by="type_numero">
+                                {{ item.type_numero }}
+                            </md-table-cell>
+                            <md-table-cell md-label="Numéro" md-sort-by="numero">
+                                {{ item.numero }}
+                            </md-table-cell>
+                            <md-table-cell md-label="Suffixe/Unité" md-sort-by="suffixe">
+                                {{ item.suffixe }}
+                            </md-table-cell>
+                            <md-table-cell md-label="État" md-sort-by="etat">
+                                {{ item.etat }}
+                            </md-table-cell>
+                        </md-table-row>
+                    </md-table>  
+                </md-card-content>
+            </md-card>
+
+            <md-divider />
+
+
+            <md-dialog-actions>
+                <md-button class="md-accent" @click="onCancelReferenceNumeros">Annuler</md-button>
+                <md-button class="md-primary" @click="onConfirmReferenceNumeros">Enregistrer</md-button>
+            </md-dialog-actions>
+
+        </md-dialog-content>
+    </md-dialog>
+
+</div>

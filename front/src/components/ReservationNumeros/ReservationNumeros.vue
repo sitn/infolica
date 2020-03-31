@@ -7,8 +7,7 @@ import { checkLogged, getCadastres } from "@/services/helper";
 
 export default {
   name: "ReservationNumeros",
-  props: {
-  },
+  props: {},
   components: {},
   data: () => {
     return {

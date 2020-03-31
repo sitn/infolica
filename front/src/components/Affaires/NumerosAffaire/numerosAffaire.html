@@ -13,100 +13,120 @@
         </md-card-header>
 
         <md-card-expand>
+            <md-card-expand-content>
+                <div class="md-layout md-gutter">
+                    <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
+                    <div class="md-layout-item md-size-50">
+                        <md-card-content>
 
-            <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
-            <md-card-expand-content class="halfLeft">
-                <md-card-content>
+                            <div class="md-layout md-gutter">
+                                <div class="md-layout-item md-size-60">
+                                    <div class="md-title">
+                                        Immeubles mutée / biens-fonds de base
+                                    </div>
+                                </div>
+                                <div class="md-layout md-alignment-bottom-right">
+                                    <md-button class="md-primary" v-on:click="callOpenReferenceDialog">
+                                        Référencer un bien-fond
+                                    </md-button>
+                                </div>
+                            </div>
 
-                    <div class="md-title">Immeubles mutée / biens-fonds de base</div>
-
-                    <!-- Tableau des numéros concernés par l'affaire -->
-                    <div v-if="affaire_numeros_anciens[0]">
-                        <md-table v-model="affaire_numeros_anciens" md-sort="id" md-sort-order="desc">
-                            <md-table-row slot="md-table-row" slot-scope="{ item }">
-                                <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
-                                    {{ item.numero_id }}
-                                </md-table-cell>
-                                <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">
-                                    {{ item.numero_cadastre }}
-                                </md-table-cell>
-                                <md-table-cell md-label="Type" md-sort-by="numero_type">{{ item.numero_type }}
-                                </md-table-cell>
-                                <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}
-                                </md-table-cell>
-                                <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">
-                                    {{ item.numero_suffixe }}
-                                </md-table-cell>
-                                <md-table-cell md-label="Etat" md-sort-by="numero_etat">{{ item.numero_etat }}
-                                </md-table-cell>
-                                <!-- <md-table-cell md-label="" class="actionsColumn">
+                            <!-- Tableau des numéros concernés par l'affaire -->
+                            <div v-if="affaire_numeros_anciens[0]">
+                                <md-table v-model="affaire_numeros_anciens" md-sort="id" md-sort-order="desc">
+                                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                        <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
+                                            {{ item.numero_id }}
+                                        </md-table-cell>
+                                        <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">
+                                            {{ item.numero_cadastre }}
+                                        </md-table-cell>
+                                        <md-table-cell md-label="Type" md-sort-by="numero_type">{{ item.numero_type }}
+                                        </md-table-cell>
+                                        <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}
+                                        </md-table-cell>
+                                        <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">
+                                            {{ item.numero_suffixe }}
+                                        </md-table-cell>
+                                        <md-table-cell md-label="Etat" md-sort-by="numero_etat">{{ item.numero_etat }}
+                                        </md-table-cell>
+                                        <!-- <md-table-cell md-label="" class="actionsColumn">
                                         <md-button class="md-icon-button md-primary"
                                             v-on:click="doOpenNumero(item.id)">
                                             <md-icon>open_in_new</md-icon>
                                         </md-button>
                                     </md-table-cell> -->
-                            </md-table-row>
-                        </md-table>
-                    </div>
-                    <div v-else>
-                        <i>Aucun numéro</i>
-                    </div>
-                </md-card-content>
-            </md-card-expand-content>
+                                    </md-table-row>
+                                </md-table>
+                            </div>
+                            <div v-else>
+                                <i>Aucun numéro</i>
+                            </div>
+                        </md-card-content>
 
-
-            <!-- NUMEROS RESERVES (nouveaux numéros) -->
-            <md-card-expand-content class="halfRight">
-                <md-card-content>
-
-                    <div class="md-title">Immeubles réservés
-                        <md-button class="md-primary newNumerosBtn" v-on:click="callOpenReservationDialog">
-                            Réservation
-                        </md-button>
                     </div>
 
+                    <!-- NUMEROS RESERVES (nouveaux numéros) -->
+                    <div class="md-layout-item md-size-50">
+                        <md-card-content>
 
-                    <!-- Tableau des numéros concernés par l'affaire -->
-                    <div v-if="affaire_numeros_nouveaux[0]">
-                        <md-table v-model="affaire_numeros_nouveaux" md-sort="id" md-sort-order="desc">
-                            <md-table-row slot="md-table-row" slot-scope="{ item }">
-                                <md-table-cell md-label="" class="actionsColumn">
-                                    <md-switch v-model="item.active" @change="doDeleteNumero(item.numero_id)"
-                                        class="md-primary"></md-switch>
-                                </md-table-cell>
-                                <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
-                                    {{ item.numero_id }}
-                                </md-table-cell>
-                                <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">
-                                    {{ item.numero_cadastre }}
-                                </md-table-cell>
-                                <md-table-cell md-label="Type" md-sort-by="numero_type">{{ item.numero_type }}
-                                </md-table-cell>
-                                <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}
-                                </md-table-cell>
-                                <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">
-                                    {{ item.numero_suffixe }}
-                                </md-table-cell>
-                                <md-table-cell md-label="Etat" md-sort-by="numero_etat">{{ item.numero_etat }}
-                                </md-table-cell>
-                                <!-- <md-table-cell md-label="" class="actionsColumn">
-                                        <md-button class="md-icon-button md-primary" v-on:click="doOpenNumero(item.id)">
-                                            <md-icon>open_in_new</md-icon>
-                                        </md-button>
-                                    </md-table-cell> -->
-                            </md-table-row>
-                        </md-table>
+                            <div class="md-layout md-gutter">
+                                <div class="md-layout-item md-size-60">
+                                    <div class="md-title">Immeubles réservés</div>
+                                </div>
+                                <div class="md-layout md-alignment-bottom-right">
+                                    <md-button class="md-primary" v-on:click="callOpenReservationDialog">
+                                        Réservation
+                                    </md-button>
+                                </div>
+                            </div>
+
+                            <!-- Tableau des numéros concernés par l'affaire -->
+                            <div v-if="affaire_numeros_nouveaux[0]">
+                                <md-table v-model="affaire_numeros_nouveaux" md-sort="id" md-sort-order="desc">
+                                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                        <md-table-cell md-label="" class="actionsColumn">
+                                            <md-switch v-model="item.active" @change="doDeleteNumero(item.numero_id)"
+                                                class="md-primary"></md-switch>
+                                        </md-table-cell>
+                                        <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
+                                            {{ item.numero_id }}
+                                        </md-table-cell>
+                                        <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">
+                                            {{ item.numero_cadastre }}
+                                        </md-table-cell>
+                                        <md-table-cell md-label="Type" md-sort-by="numero_type">{{ item.numero_type }}
+                                        </md-table-cell>
+                                        <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}
+                                        </md-table-cell>
+                                        <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">
+                                            {{ item.numero_suffixe }}
+                                        </md-table-cell>
+                                        <md-table-cell md-label="Etat" md-sort-by="numero_etat">{{ item.numero_etat }}
+                                        </md-table-cell>
+                                        <!-- <md-table-cell md-label="" class="actionsColumn">
+                                    <md-button class="md-icon-button md-primary" v-on:click="doOpenNumero(item.id)">
+                                        <md-icon>open_in_new</md-icon>
+                                    </md-button>
+                                </md-table-cell> -->
+                                    </md-table-row>
+                                </md-table>
+                            </div>
+                            <div v-else>
+                                <i>Aucun numéro</i>
+                            </div>
+                        </md-card-content>
                     </div>
-                    <div v-else>
-                        <i>Aucun numéro</i>
-                    </div>
-                </md-card-content>
+                </div>
             </md-card-expand-content>
 
         </md-card-expand>
     </md-card>
 
+    <!-- Référence de numéros -->
+    <ReferenceNumeros ref="formReference"/>
     <!-- Réservation de numéros -->
-    <ReservationNumeros ref="form" />
+    <ReservationNumeros ref="formReservation" />
 
 </div>
