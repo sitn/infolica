@@ -58,9 +58,40 @@ export default {
     },
 
     /**
-     * Supprimer un numéro
+     * Supprimer numéro référencé
      */
-    doDeleteNumero(numero_id) {
+    onDeleteReferenceNumero(numero_id) {
+      // var formData = new FormData()
+      // formData.append("affaire_id", this.$route.params.id)
+      // formData.append("numero_id", numero_id)
+
+
+
+      this.$http
+        .delete(
+          process.env.VUE_APP_API_URL +
+          process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT + "?affaire_id=" + this.$route.params.id + "&numero_id=" + numero_id,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        )
+        .then(response => {
+          if (response.data) {
+            this.searchAffaireNumeros();
+          }
+        })
+        .catch(err => {
+          alert("error: " + err);
+        });
+    },
+
+
+
+    /**
+     * Abandonner/rétablir un numéro réservé
+     */
+    onDeleteReserveNumero(numero_id) {
       // get numéro pour l'update
       var numero_ = {};
       this.$http

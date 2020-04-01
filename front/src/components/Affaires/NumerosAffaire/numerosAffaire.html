@@ -51,12 +51,11 @@
                                         </md-table-cell>
                                         <md-table-cell md-label="Etat" md-sort-by="numero_etat">{{ item.numero_etat }}
                                         </md-table-cell>
-                                        <!-- <md-table-cell md-label="" class="actionsColumn">
-                                        <md-button class="md-icon-button md-primary"
-                                            v-on:click="doOpenNumero(item.id)">
-                                            <md-icon>open_in_new</md-icon>
-                                        </md-button>
-                                    </md-table-cell> -->
+                                        <md-table-cell class="actionsColumn">
+                                            <md-button class="md-accent" v-on:click="onDeleteReferenceNumero(item.numero_id)">
+                                                <md-icon>delete</md-icon>
+                                            </md-button>
+                                        </md-table-cell>
                                     </md-table-row>
                                 </md-table>
                             </div>
@@ -87,7 +86,7 @@
                                 <md-table v-model="affaire_numeros_nouveaux" md-sort="id" md-sort-order="desc">
                                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                                         <md-table-cell md-label="" class="actionsColumn">
-                                            <md-switch v-model="item.active" @change="doDeleteNumero(item.numero_id)"
+                                            <md-switch v-model="item.active" @change="onDeleteReserveNumero(item.numero_id)"
                                                 class="md-primary"></md-switch>
                                         </md-table-cell>
                                         <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
@@ -105,11 +104,6 @@
                                         </md-table-cell>
                                         <md-table-cell md-label="Etat" md-sort-by="numero_etat">{{ item.numero_etat }}
                                         </md-table-cell>
-                                        <!-- <md-table-cell md-label="" class="actionsColumn">
-                                    <md-button class="md-icon-button md-primary" v-on:click="doOpenNumero(item.id)">
-                                        <md-icon>open_in_new</md-icon>
-                                    </md-button>
-                                </md-table-cell> -->
                                     </md-table-row>
                                 </md-table>
                             </div>
