@@ -1,8 +1,5 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from pyramid.httpexceptions import HTTPForbidden
-from sqlalchemy.exc import DBAPIError
-
 from .. import models
 import transaction
 from ..models import Constant
@@ -11,7 +8,6 @@ from ..scripts.utils import Utils
 
 import logging
 log = logging.getLogger(__name__)
-
 
 ###########################################################
 # AFFAIRE
@@ -24,12 +20,12 @@ def affaires_view(request):
     try:
         # Check connected
         if not Utils.check_connected(request):
-            raise HTTPForbidden()
+            raise exc.HTTPForbidden()
 
         query = request.dbsession.query(models.VAffaire).all()
         return Utils.serialize_many(query)
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -40,14 +36,14 @@ def affaire_by_id_view(request):
     try:
        # Check connected
         if not Utils.check_connected(request):
-            raise HTTPForbidden()
+            raise exc.HTTPForbidden()
 
         id = request.matchdict['id']
         query = request.dbsession.query(models.VAffaire)
         one = query.filter(models.VAffaire.id == id).first()
         return Utils.serialize_one(one)
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -59,7 +55,7 @@ def affaires_search_view(request):
     try:
         # Check connected
         if not Utils.check_connected(request):
-            raise HTTPForbidden()
+            raise exc.HTTPForbidden()
 
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
@@ -69,7 +65,7 @@ def affaires_search_view(request):
             *conditions).order_by(models.VAffaire.date_ouverture.desc()).limit(search_limit).all()
         return Utils.serialize_many(query)
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -78,16 +74,11 @@ def affaires_search_view(request):
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
 @view_config(route_name='types_affaires_s', request_method='GET', renderer='json')
 def types_affaires_view(request):
-
-    # Check connected
-    if not Utils.check_connected(request):
-        raise HTTPForbidden()
-
     try:
         query = request.dbsession.query(models.AffaireType).all()
         return Utils.serialize_many(query)
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -95,35 +86,37 @@ def types_affaires_view(request):
 """ Add new affaire"""
 @view_config(route_name='affaires', request_method='POST', renderer='json')
 def affaires_new_view(request):
-    
-    # Affaire de cadastration
-    if affaire_type == request.registry.settings['affaire_type_cadastration_id']:
-        role = request.registry.settings['affaire_cadastration_edition']
-    # Affaire de PPE
-    elif affaire_type == request.registry.settings['affaire_type_ppe_id']:
-        role = request.registry.settings['affaire_ppe_edition']
-    # Affaire de révision d'abornement
-    elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
-        role = request.registry.settings['affaire_revision_abornement_edition']
-    # Tout autre type d'affaire
-    else:
-        request.registry.settings['affaire_edition']
-
-    # Check authorization
-    if not Utils.has_permission(request, role):
-        raise HTTPForbidden()
-
-    model = models.Affaire()
-    model = Utils.set_model_record(model, request.params)
-
     try:
+        # Get role depending on affaire type
+        affaire_type = request.params['type_id'] if 'type_id' in request.params else None
+
+        # Permission (fonction) par défaut
+        permission = request.registry.settings['affaire_edition']
+
+        # Affaire de cadastration
+        if affaire_type == request.registry.settings['affaire_type_cadastration_id']:
+            permission = request.registry.settings['affaire_cadastration_edition']
+        # Affaire de PPE
+        elif affaire_type == request.registry.settings['affaire_type_ppe_id']:
+            permission = request.registry.settings['affaire_ppe_edition']
+        # Affaire de révision d'abornement
+        elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
+            permission = request.registry.settings['affaire_revision_abornement_edition']
+
+        # Check authorization
+        if not Utils.has_permission(request, permission):
+            raise exc.HTTPForbidden()
+
+        model = models.Affaire()
+        model = Utils.set_model_record(model, request.params)
+
         with transaction.manager:
             request.dbsession.add(model)
             # Commit transaction
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -132,52 +125,46 @@ def affaires_new_view(request):
 @view_config(route_name='affaires', request_method='PUT', renderer='json')
 @view_config(route_name='affaires_s', request_method='PUT', renderer='json')
 def affaires_update_view(request):
-
-    # Affaire de cadastration
-    if affaire_type == request.registry.settings['affaire_type_cadastration_id']:
-        role = request.registry.settings['affaire_cadastration_edition']
-    # Affaire de PPE
-    elif affaire_type == request.registry.settings['affaire_type_ppe_id']:
-        role = request.registry.settings['affaire_ppe_edition']
-    # Affaire de révision d'abornement
-    elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
-        role = request.registry.settings['affaire_revision_abornement_edition']
-    # Tout autre type d'affaire
-    else:
-        request.registry.settings['affaire_edition']
-
-    # Check authorization
-    if not Utils.has_permission(request, role):
-        raise HTTPForbidden()
-
-    # id_affaire
-    id_affaire = request.params['id_affaire'] if 'id_affaire' in request.params else None
-
-    # Get the affaire
-    record = request.dbsession.query(models.Affaire).filter(
-        models.Affaire.id == id_affaire).first()
-
-    if not record:
-        raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Affaire.__tablename__, id_affaire))
-
-    # Get role depending on affaire type
-    affaire_type = request.params['type_id'] if 'type_id' in request.params else record.type_id
-    role = request.registry.settings['editer_affaire_ppe'] if affaire_type == request.registry.settings['affaire_type_ppe_id'] else request.registry.settings['editer_affaire_autre']
-
-    # Check authorization
-    if not Utils.has_permission(request, role):
-        raise HTTPForbidden()
-
-    record = Utils.set_model_record(record, request.params)
-
     try:
+        # id_affaire
+        id_affaire = request.params['id_affaire'] if 'id_affaire' in request.params else None
+
+        # Get the affaire
+        record = request.dbsession.query(models.Affaire).filter(
+            models.Affaire.id == id_affaire).first()
+
+        if not record:
+            raise CustomError(
+                CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Affaire.__tablename__, id_affaire))
+
+        # Get role depending on affaire type
+        affaire_type = request.params['type_id'] if 'type_id' in request.params else record.type_id
+
+        # Permission (fonction) par défaut
+        permission = request.registry.settings['affaire_edition']
+
+        # Affaire de cadastration
+        if affaire_type == request.registry.settings['affaire_type_cadastration_id']:
+            permission = request.registry.settings['affaire_cadastration_edition']
+        # Affaire de PPE
+        elif affaire_type == request.registry.settings['affaire_type_ppe_id']:
+            permission = request.registry.settings['affaire_ppe_edition']
+        # Affaire de révision d'abornement
+        elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
+            permission = request.registry.settings['affaire_revision_abornement_edition']
+
+        # Check authorization
+        if not Utils.has_permission(request, permission):
+            raise exc.HTTPForbidden()
+
+        record = Utils.set_model_record(record, request.params)
+
         with transaction.manager:
             # Commit transaction
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -203,7 +190,7 @@ def affaires_update_view(request):
 #             transaction.commit()
 #             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Affaire.__tablename__))
 
-#     except DBAPIError as e:
+#     except Exception as e:
 #         log.error(e)
 #         return Response(db_err_msg, content_type='text/plain', status=500)
 
