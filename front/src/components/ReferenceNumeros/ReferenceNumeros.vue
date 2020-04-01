@@ -16,7 +16,7 @@ export default {
       numeros_liste: [],
       numeros_etats_liste: [],
       numeros_types_liste: [],
-      selectedNumeros: null,
+      selectedNumeros: [],
       search: {
         cadastre: null,
         numero: null,
@@ -62,6 +62,11 @@ export default {
      * Init Numeros list
      */
     async initNumerosList() {
+      // Récupère les id des numéros référencés dans l'affaire
+      var numerosReferencesId = this.$parent.affaire_numeros_anciens.map(x => {
+        return x.numero_id
+      });
+
       var formData = new FormData();
       if (this.search.cadastre)
         formData.append("cadastre_id", this.search.cadastre.id);
@@ -69,6 +74,7 @@ export default {
         formData.append("type_numero_id", this.search.type.id);
       if (this.search.etat) formData.append("etat_id", this.search.etat.id);
       if (this.search.numero) formData.append("numero", this.search.numero);
+      if (numerosReferencesId) formData.append("_id", JSON.stringify(numerosReferencesId))
 
       this.$http
         .post(
@@ -183,33 +189,13 @@ export default {
      */
     onConfirmReferenceNumeros() {
       var formData = new FormData();
-      // if (this.reservation.cadastre.id)
-      //   formData.append("cadastre_id", this.reservation.cadastre.id);
-      // formData.append("affaire_id", this.$route.params.id);
-      // if (this.reservation.nb_bf) formData.append("bf", this.reservation.nb_bf);
-      // if (this.reservation.nb_ddp)
-      //   formData.append("ddp", this.reservation.nb_ddp);
-      // if (this.reservation.nb_ppe)
-      //   formData.append("ppe", this.reservation.nb_ppe);
-      // if (this.reservation.ppe_suffixe_start)
-      //   formData.append("ppe_unite", this.reservation.ppe_suffixe_start);
-      // if (this.reservation.nb_pcop)
-      //   formData.append("pcop", this.reservation.nb_pcop);
-      // if (this.reservation.nb_pfp3)
-      //   formData.append("pfp3", this.reservation.nb_pfp3);
-      // if (this.reservation.nb_paux)
-      //   formData.append("paux", this.reservation.nb_paux);
-      // if (this.reservation.nb_bat)
-      //   formData.append("bat", this.reservation.nb_bat);
-      // if (this.reservation.nb_pcs)
-      //   formData.append("pcs", this.reservation.nb_pcs);
-      // if (this.reservation.plan_id)
-      //   formData.append("plan_id", this.reservation.plan_id);
+      formData.append("affaire_id", this.$route.params.id)
+      if (this.selectedNumeros) formData.append("numeros_liste", JSON.stringify(this.selectedNumeros))
 
       this.$http
         .post(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_RESERVATION_NUMEROS_ENDPOINT,
+            process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT,
           formData,
           {
             withCredentials: true,
@@ -263,7 +249,10 @@ export default {
      * Enregistrer la sélection des biens-fonds référencés
      */
     onSelect(items) {
-      this.selectedNumeros = items;
+      this.selectedNumeros = items.map(x => ({
+        numero_id: x.id,
+        etat_id: x.etat_id
+      }));
     },
 
   },
