@@ -145,7 +145,7 @@ class Facture(Base):
     __tablename__ = 'facture'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    sap = Column(Text, nullable=False)
+    sap = Column(Text)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
     client_par_id = Column(BigInteger, ForeignKey(Client.id))
