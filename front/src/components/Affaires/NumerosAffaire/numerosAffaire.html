@@ -52,7 +52,7 @@
                                         <md-table-cell md-label="Etat" md-sort-by="numero_etat">{{ item.numero_etat }}
                                         </md-table-cell>
                                         <md-table-cell class="actionsColumn">
-                                            <md-button class="md-accent" v-on:click="onDeleteReferenceNumero(item.numero_id)">
+                                            <md-button class="md-icon-button md-accent" v-on:click="onDeleteReferenceNumero(item.numero_id)">
                                                 <md-icon>delete</md-icon>
                                             </md-button>
                                         </md-table-cell>
@@ -83,9 +83,9 @@
 
                             <!-- Tableau des numéros concernés par l'affaire -->
                             <div v-if="affaire_numeros_nouveaux[0]">
-                                <md-table v-model="affaire_numeros_nouveaux" md-sort="id" md-sort-order="desc">
+                                <md-table v-model="affaire_numeros_nouveaux" md-sort="numero_etat" md-sort-order="desc">
                                     <md-table-row slot="md-table-row" slot-scope="{ item }">
-                                        <md-table-cell md-label="" class="actionsColumn">
+                                        <md-table-cell class="actionsColumn" >
                                             <md-switch v-model="item.active" @change="onDeleteReserveNumero(item.numero_id)"
                                                 class="md-primary"></md-switch>
                                         </md-table-cell>

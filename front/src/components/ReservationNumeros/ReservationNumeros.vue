@@ -16,7 +16,7 @@ export default {
 
       reservation: {
         affaire_id: null,
-        cadastre: "",
+        cadastre: null,
         nb_bf: 0,
         nb_ddp: 0,
         nb_ppe: 0,
@@ -53,10 +53,43 @@ export default {
         });
     },
 
+    /*
+     * Init default cadastre
+     */
+    async initDefaultCadastre() {
+      return new Promise((resolve, reject) => {
+        var affaire_cadastre;
+
+        this.$http
+          .get(
+            process.env.VUE_APP_API_URL +
+              process.env.VUE_APP_AFFAIRES_ENDPOINT +
+              this.$route.params.id,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          )
+          .then(response => {
+            if (response && response.data) {
+              affaire_cadastre = {
+                id: response.data.cadastre_id,
+                nom: response.data.cadastre,
+                toLowerCase: () => response.data.cadastre.toLowerCase(),
+                toString: () => response.data.cadastre
+              };
+            }
+            resolve(affaire_cadastre);
+          })
+          .catch(() => reject);
+      });
+    },
+
     /**
      * Open reservation numéros dialog
      */
     openReservationDialog() {
+      this.initializeForm();
       this.showReservationDialog = true;
     },
 
@@ -121,8 +154,8 @@ export default {
     /**
      * Initialise le formulaire de réservation de numéros
      */
-    initializeForm() {
-      this.reservation.cadastre = "";
+    async initializeForm() {
+      this.reservation.cadastre = await this.initDefaultCadastre();
       this.reservation.nb_bf = 0;
       this.reservation.nb_ppe = 0;
       this.reservation.ppe_suffixe_start = null;
