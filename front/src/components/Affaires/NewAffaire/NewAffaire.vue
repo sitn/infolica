@@ -120,6 +120,10 @@ export default {
     initTypesAffairesList() {
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_AFFAIRES_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {'Accept': 'application/json'}
+        }
       )
       .then(response =>{
         if (response && response.data) {
@@ -138,6 +142,10 @@ export default {
     initClientsList() {
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {'Accept': 'application/json'}
+        }
       )
       .then(response => {
         if (response && response.data) {
@@ -161,6 +169,10 @@ export default {
     initOperateursList() {
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {'Accept': 'application/json'}
+        }
       )
       .then(response =>{
         if (response && response.data) {
@@ -179,6 +191,10 @@ export default {
     initCadastresList() {
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_CADASTRES_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {'Accept': 'application/json'}
+        }
       )
       .then(response =>{
         if (response && response.data) {
@@ -202,7 +218,11 @@ export default {
 
       this.$http.post(
           url, 
-          formData
+          formData,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         )
         .then(response =>{
           this.handleSaveDataSuccess(response);

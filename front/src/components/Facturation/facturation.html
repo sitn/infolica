@@ -25,14 +25,13 @@
                                 <md-table-cell class="alignRight" md-label="SAP" md-sort-by="sap">{{ item.sap }}
                                 </md-table-cell>
                                 <md-table-cell md-label="Date" md-sort-by="date">{{ item.date }}</md-table-cell>
-                                <md-table-cell md-label="Client" md-sort-by="client_obj.nom">
-                                    {{ item.client_obj.entreprise }}
-                                    {{ item.client_obj.titre }} {{ item.client_obj.nom }} {{ item.client_obj.prenom }}
+                                <md-table-cell md-label="Client" md-sort-by="client.nom">
+                                    {{ item.client.nom }}
                                 </md-table-cell>
                                 <md-table-cell class="alignRight" md-label="MO" md-sort-by="montant_mo">CHF
                                     {{ item.montant_mo }}</md-table-cell>
                                 <md-table-cell class="alignRight" md-label="Mat Diff" md-sort-by="montant_mat_diff">
-                                    CHF{{ item.montant_mat_diff }}
+                                    CHF {{ item.montant_mat_diff }}
                                 </md-table-cell>
                                 <md-table-cell class="alignRight" md-label="RF" md-sort-by="montant_rf">CHF
                                     {{ item.montant_rf }}</md-table-cell>
@@ -74,30 +73,18 @@
                             <span class="md-error" v-if="!$v.selectedFacture.sap.required">Le numéro SAP est obligatoire</span>
                         </md-field>
 
-                        <md-field>
+                        <md-datepicker v-model="selectedFacture.date">
                             <label>Date</label>
-                            <md-input v-model="selectedFacture.date" type="date"></md-input>
-                        </md-field>
+                        </md-datepicker>
 
-                        <div v-if="createFacture"> <!-- Création de facture -->
-                            <md-autocomplete v-model="selectedFacture.txtSearchClient" :md-options="clients_liste_select"
-                                @md-changed="getClientSearch" :class="getValidationClass('txtSearchClient')">
-                                <label>Client</label>
-                                <template slot="md-autocomplete-item" slot-scope="{ item }">
-                                    {{ item.nom }}
-                                </template>
-                                <span class="md-error" v-if="!$v.selectedFacture.txtSearchClient.required">Le client est obligatoire</span>
-                                <!-- <span class="md-error" v-if="!$v.selectedFacture.txtSearchClient.minLength">Client invalide</span> -->
-                            </md-autocomplete>
-                        </div>
-                        <div v-else> <!-- Modification de facture -->
-                            <md-field>
-                                <label>Client</label>
-                                <md-input
-                                    v-model="[selectedFacture.client_obj.entreprise, selectedFacture.client_obj.titre, selectedFacture.client_obj.nom, selectedFacture.client_obj.prenom].filter(Boolean).join(' ')"
-                                    readonly></md-input>
-                            </md-field>
-                        </div>
+                        <md-autocomplete v-model="selectedFacture.client" :md-options="clients_liste_select"
+                        @md-changed="getClientSearch" :class="getValidationClass('client')">
+                            <label>Client</label>
+                            <template slot="md-autocomplete-item" slot-scope="{ item }">
+                                {{ item.nom }}
+                            </template>
+                        </md-autocomplete>
+                        <span class="md-error" v-if="!$v.selectedFacture.client.required">Le client est obligatoire</span>
 
                         <md-field :class="getValidationClass('montant_mo')">
                             <label>Montant MO</label>

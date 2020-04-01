@@ -37,6 +37,7 @@ def etapes_index_view(request):
 """ GET etapes affaire"""
 @view_config(route_name='affaire_etapes_by_affaire_id', request_method='GET', renderer='json')
 def affaires_etapes_view(request):
+
     # Check connected
     if not Utils.check_connected(request):
         raise HTTPForbidden()
@@ -59,6 +60,10 @@ def affaires_etapes_view(request):
 @view_config(route_name='etapes_s', request_method='POST', renderer='json')
 def etapes_new_view(request):
 
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_etape_edition']):
+        raise HTTPForbidden()
+
     model = models.AffaireEtape()
     model = Utils.set_model_record(model, request.params)
 
@@ -77,6 +82,11 @@ def etapes_new_view(request):
 """ DELETE remarque affaire"""
 @view_config(route_name='etapes_by_id', request_method='DELETE', renderer='json')
 def etapes_delete_view(request):
+
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_etape_edition']):
+        raise HTTPForbidden()
+
     affaire_etape_id = request.matchdict['id']
 
     record = request.dbsession.query(models.AffaireEtape).filter(

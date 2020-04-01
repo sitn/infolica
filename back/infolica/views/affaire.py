@@ -78,6 +78,11 @@ def affaires_search_view(request):
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
 @view_config(route_name='types_affaires_s', request_method='GET', renderer='json')
 def types_affaires_view(request):
+
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+
     try:
         query = request.dbsession.query(models.AffaireType).all()
         return Utils.serialize_many(query)
@@ -90,10 +95,19 @@ def types_affaires_view(request):
 """ Add new affaire"""
 @view_config(route_name='affaires', request_method='POST', renderer='json')
 def affaires_new_view(request):
-    # Get role depending on affaire type
-    affaire_type = request.params['type_id'] if 'type_id' in request.params else None
-    role = request.registry.settings['editer_affaire_ppe'] if affaire_type == request.registry.settings[
-        'affaire_type_ppe_id'] else request.registry.settings['editer_affaire_autre']
+    
+    # Affaire de cadastration
+    if affaire_type == request.registry.settings['affaire_type_cadastration_id']:
+        role = request.registry.settings['affaire_cadastration_edition']
+    # Affaire de PPE
+    elif affaire_type == request.registry.settings['affaire_type_ppe_id']:
+        role = request.registry.settings['affaire_ppe_edition']
+    # Affaire de révision d'abornement
+    elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
+        role = request.registry.settings['affaire_revision_abornement_edition']
+    # Tout autre type d'affaire
+    else:
+        request.registry.settings['affaire_edition']
 
     # Check authorization
     if not Utils.has_permission(request, role):
@@ -118,6 +132,24 @@ def affaires_new_view(request):
 @view_config(route_name='affaires', request_method='PUT', renderer='json')
 @view_config(route_name='affaires_s', request_method='PUT', renderer='json')
 def affaires_update_view(request):
+
+    # Affaire de cadastration
+    if affaire_type == request.registry.settings['affaire_type_cadastration_id']:
+        role = request.registry.settings['affaire_cadastration_edition']
+    # Affaire de PPE
+    elif affaire_type == request.registry.settings['affaire_type_ppe_id']:
+        role = request.registry.settings['affaire_ppe_edition']
+    # Affaire de révision d'abornement
+    elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
+        role = request.registry.settings['affaire_revision_abornement_edition']
+    # Tout autre type d'affaire
+    else:
+        request.registry.settings['affaire_edition']
+
+    # Check authorization
+    if not Utils.has_permission(request, role):
+        raise HTTPForbidden()
+
     # id_affaire
     id_affaire = request.params['id_affaire'] if 'id_affaire' in request.params else None
 

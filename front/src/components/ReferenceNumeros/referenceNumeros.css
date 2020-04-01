@@ -1,0 +1,16 @@
+.referenceNumeros{
+    width: 80%;
+    margin: auto;
+}
+
+.referenceNumeros .md-card .simple {
+    width: 100%;
+    display: inline-block;
+    vertical-align: top;
+    margin: 0px;
+}
+
+.md-dialog {
+    width: 1000px;
+    z-index: 6; 
+}

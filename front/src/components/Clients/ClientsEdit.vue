@@ -112,6 +112,10 @@ import { validationMixin } from 'vuelidate'
       initTypesClientsList() {
         this.$http.get(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_TYPES_CLIENTS_ENDPOINT,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         )
         .then(response =>{
           if (response && response.data) {

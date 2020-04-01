@@ -18,6 +18,11 @@ log = logging.getLogger(__name__)
 @view_config(route_name='types_clients', request_method='GET', renderer='json')
 @view_config(route_name='types_clients_s', request_method='GET', renderer='json')
 def types_clients_view(request):
+
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+
     try:
         query = request.dbsession.query(models.ClientType).all()
         return Utils.serialize_many(query)
@@ -33,8 +38,8 @@ def types_clients_view(request):
 def clients_view(request):
     result = []
     try:
-        # Check authorization
-        if not Utils.has_permission(request, request.registry.settings['consulter_client']):
+        # Check connected
+        if not Utils.check_connected(request):
             raise HTTPForbidden()
 
         query = request.dbsession.query(models.Client).all()
@@ -49,9 +54,8 @@ def clients_view(request):
 @view_config(route_name='client_by_id', request_method='GET', renderer='json')
 def client_by_id_view(request):
     try:
-
-        # Check authorization
-        if not Utils.has_permission(request, request.registry.settings['consulter_client']):
+        # Check connected
+        if not Utils.check_connected(request):
             raise HTTPForbidden()
 
         id = request.matchdict['id']
@@ -69,17 +73,17 @@ def client_by_id_view(request):
 @view_config(route_name='recherche_clients_s', request_method='POST', renderer='json')
 def clients_search_view(request):
     try:
-
-        # Check authorization
-        if not Utils.has_permission(request, request.registry.settings['consulter_client']):
+         # Check connected
+        if not Utils.check_connected(request):
             raise HTTPForbidden()
 
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
         conditions = Utils.get_search_conditions(models.Client, request.params)
 
-        #Check date_sortie is null
-        conditions = [] if not conditions or len(conditions) == 0 else conditions
+        # Check date_sortie is null
+        conditions = [] if not conditions or len(
+            conditions) == 0 else conditions
 
         conditions.append(models.Client.sortie == None)
 
@@ -98,7 +102,7 @@ def clients_search_view(request):
 def clients_new_view(request):
 
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['editer_client']):
+    if not Utils.has_permission(request, request.registry.settings['client_edition']):
         raise HTTPForbidden()
 
     # Get client instance
@@ -122,7 +126,7 @@ def clients_new_view(request):
 def clients_update_view(request):
 
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['editer_client']):
+    if not Utils.has_permission(request, request.registry.settings['client_edition']):
         raise HTTPForbidden()
 
     # Get client_id
@@ -156,7 +160,7 @@ def clients_update_view(request):
 def clients_delete_view(request):
 
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['editer_client']):
+    if not Utils.has_permission(request, request.registry.settings['client_edition']):
         raise HTTPForbidden()
 
     # Get client_id
@@ -181,4 +185,3 @@ def clients_delete_view(request):
     except DBAPIError as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
-

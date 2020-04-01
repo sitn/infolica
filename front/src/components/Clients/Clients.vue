@@ -120,7 +120,10 @@ export default {
 
           this.$http.delete(
             process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT + "?id=" +  this.currentDeleteId, 
-            {withCredentials: true,}
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            }
           )
           .then(response =>{
             if(response && response.data){

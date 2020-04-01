@@ -23,6 +23,10 @@ log = logging.getLogger(__name__)
 @view_config(route_name='reservation_numeros', request_method='POST', renderer='json')
 @view_config(route_name='reservation_numeros_s', request_method='POST', renderer='json')
 def reservation_numeros_new_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise HTTPForbidden()
+
     # Get affaire_id
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     cadastre_id = request.params['cadastre_id'] if 'cadastre_id' in request.params else None

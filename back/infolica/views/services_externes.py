@@ -58,10 +58,13 @@ def services_view(request):
         return exc.HTTPBadRequest(e)
 
 
-""" POST preavis affaire"""
+""" Add preavis affaire"""
 @view_config(route_name='services', request_method='POST', renderer='json')
 @view_config(route_name='services_s', request_method='POST', renderer='json')
 def services_new_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['fonction_admin']):
+        raise HTTPForbidden()
 
     model = models.Service()
     model = Utils.set_model_record(model, request.params)
@@ -82,6 +85,10 @@ def services_new_view(request):
 @view_config(route_name='services', request_method='PUT', renderer='json')
 @view_config(route_name='services_s', request_method='PUT', renderer='json')
 def services_update_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['fonction_admin']):
+        raise HTTPForbidden()
+
     service_id = request.params['id'] if 'id' in request.params else None
     record = request.dbsession.query(models.Service).filter(
         models.Service.id == service_id).first()
@@ -105,6 +112,10 @@ def services_update_view(request):
 # """ DELETE preavis affaire"""
 # @view_config(route_name='preavis_by_id', request_method='DELETE', renderer='json')
 # def preavis_delete_view(request):
+    # Check authorization
+    # if not Utils.has_permission(request, request.registry.settings['fonction_admin']):
+    #     raise HTTPForbidden()
+
 #     service_id = request.matchdict['id']
 
 #     record = request.dbsession.query(models.Service).filter(

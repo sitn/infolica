@@ -42,7 +42,7 @@ def facture_emoluments_view(request):
 @view_config(route_name='emolument_facture_s', request_method='POST', renderer='json')
 def emolument_facture_new_view(request):
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['facturation']):
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise HTTPForbidden()
 
     record = models.EmolumentFacture()
@@ -64,7 +64,7 @@ def emolument_facture_new_view(request):
 @view_config(route_name='emolument_facture_s', request_method='PUT', renderer='json')
 def emolument_facture_update_view(request):
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['facturation']):
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise HTTPForbidden()
 
     emolument_facture_id = request.params['id'] if 'id' in request.params else None
@@ -94,7 +94,7 @@ def emolument_facture_update_view(request):
 def emolument_facture_delete_view(request):
     try:
         # Check authorization
-        if not Utils.has_permission(request, request.registry.settings['facturation']):
+        if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
             raise HTTPForbidden()
 
         id = request.matchdict['id']

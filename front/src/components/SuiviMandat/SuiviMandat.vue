@@ -5,6 +5,8 @@
 <script>
 import { checkLogged } from "@/services/helper";
 
+const moment = require('moment')
+
 export default {
   name: "SuiviMandat",
   props: {},
@@ -26,8 +28,12 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_SUIVI_MANDAT_ENDPOINT +
-            this.$route.params.id
+          process.env.VUE_APP_AFFAIRE_SUIVI_MANDAT_ENDPOINT +
+          this.$route.params.id,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         )
         .then(response => {
           if (response && response.data) {
@@ -83,7 +89,11 @@ export default {
         .post(
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_SUIVI_MANDAT_ENDPOINT,
-          formData
+          formData,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         )
         .then(response => {
           if (response) {
@@ -154,14 +164,18 @@ export default {
         formData.append("ap_41", this.suiviMandat.ap_41);
       if (this.suiviMandat.ap_42)
         formData.append("ap_42", this.suiviMandat.ap_42);
-      if (this.suiviMandat.visa) formData.append("visa", this.suiviMandat.visa);
-      if (this.suiviMandat.date) formData.append("date", this.suiviMandat.date);
+      if (this.suiviMandat.visa) formData.append("visa", this.suiviMandat.visa.id);
+      if (this.suiviMandat.date) formData.append("date", moment(new Date(new Date(this.suiviMandat.date))).format('YYYY-MM-DD'));
 
       this.$http
         .put(
           process.env.VUE_APP_API_URL +
           process.env.VUE_APP_SUIVI_MANDAT_ENDPOINT,
-          formData
+          formData,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         )
         .then(response => {
           if (response) {

@@ -110,7 +110,7 @@
         <md-card class="mapHeight">
             <md-card-content>
                 <div id="mapContainer">
-                    <MapHandler ref="mapHandler"/>
+                    <MapHandler ref="mapHandler" />
                 </div>
             </md-card-content>
         </md-card>
@@ -128,13 +128,13 @@
     <div class="affairesDashboard">
         <suivi />
     </div>
-    
+
     <!-- PREAVIS -->
     <div class="affairesDashboard">
         <preavis />
     </div>
-    
-    
+
+
     <!-- ENVOIS DE DOCUMENTS -->
 
 
@@ -147,13 +147,20 @@
     <div class="affairesDashboard">
         <Remarques />
     </div>
+    
+    <!-- CONTROLE TECHNIQUE MUTATION -->
+    <div class="affairesDashboard">
+        <ControleMutation v-if="affaire.type_id==1" />
+    </div>
+
+    <!-- CONTROLE TECHNIQUE PPE -->
+    <div class="affairesDashboard">
+        <ControlePPE v-if="affaire.type_id==3" />
+    </div>
 
     <!-- SUIVI DU MANDAT -->
     <div class="affairesDashboard">
         <SuiviMandat />
     </div>
-
-
-    <!-- CONTROLE TECHNIQUE -->
 
 </div>

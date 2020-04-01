@@ -50,10 +50,34 @@ def controles_ppe_by_id_view(request):
         return exc.HTTPBadRequest(e)
 
 
+""" Return controles_ppe by affaire_id"""
+@view_config(route_name='controle_ppe_by_affaire_id', request_method='GET', renderer='json')
+def controles_ppe_by_affaire_id_view(request):
+
+    # Check connected
+    if not Utils.check_connected(request):
+        raise HTTPForbidden()
+
+    try:
+        # Get controle mutation id
+        affaire_id = request.id = request.matchdict['id']
+        query = request.dbsession.query(models.ControlePPE).filter(
+            models.ControlePPE.affaire_id == affaire_id).first()
+        return Utils.serialize_one(query)
+
+    except DBAPIError as e:
+        log.error(e)
+        return exc.HTTPBadRequest(e)
+
+
 """ Add new controles_ppe"""
 @view_config(route_name='controles_ppe', request_method='POST', renderer='json')
 @view_config(route_name='controles_ppe_s', request_method='POST', renderer='json')
 def controles_ppe_new_view(request):
+
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
+        raise HTTPForbidden()
 
     record = models.ControlePPE()
     record = Utils.set_model_record(record, request.params)
@@ -75,6 +99,10 @@ def controles_ppe_new_view(request):
 @view_config(route_name='controles_ppe', request_method='PUT', renderer='json')
 @view_config(route_name='controles_ppe_s', request_method='PUT', renderer='json')
 def controles_ppe_update_view(request):
+
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
+        raise HTTPForbidden()
 
     # Get controle mutation id
     id = request.params['id'] if 'id' in request.params else None
@@ -104,6 +132,10 @@ def controles_ppe_update_view(request):
 @view_config(route_name='controles_ppe', request_method='DELETE', renderer='json')
 @view_config(route_name='controles_ppe_s', request_method='DELETE', renderer='json')
 def controles_ppe_delete_view(request):
+
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
+        raise HTTPForbidden()
 
     # Get controle mutation id
     id = request.params['id'] if 'id' in request.params else None

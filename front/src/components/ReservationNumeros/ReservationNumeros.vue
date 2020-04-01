@@ -7,8 +7,7 @@ import { checkLogged, getCadastres } from "@/services/helper";
 
 export default {
   name: "ReservationNumeros",
-  props: {
-  },
+  props: {},
   components: {},
   data: () => {
     return {
@@ -93,7 +92,11 @@ export default {
         .post(
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_RESERVATION_NUMEROS_ENDPOINT,
-          formData
+          formData,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         )
         .then(response => {
           if (response.data) {

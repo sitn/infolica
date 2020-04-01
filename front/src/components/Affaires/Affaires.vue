@@ -90,8 +90,12 @@ export default {
       this.$http
         .post(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_RECHERCHE_AFFAIRES_ENDPOINT,
-          formData
+          process.env.VUE_APP_RECHERCHE_AFFAIRES_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+          }
         ).then(response => {
           if (response && response.data) {
             this.affaires = response.data;
