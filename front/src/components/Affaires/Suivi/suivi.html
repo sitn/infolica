@@ -55,11 +55,12 @@
                             <span class="md-error" v-if="!$v.new_etape.etape.required">L'étape est obligatoire</span>
                         </md-autocomplete>
 
-                        <md-field :class="getValidationClass('date')">
-                            <label>Date</label>
-                            <md-input v-model="new_etape.date" type="date" />
-                            <span class="md-error" v-if="!$v.new_etape.date.required">La date est obligatoire</span>
-                        </md-field>
+                        <div class="md-layout">
+                            <md-datepicker v-model="new_etape.date" :class="getValidationClass('date')">
+                                <label>Date</label>
+                                <span class="md-error" v-if="!$v.new_etape.date.required">La date est obligatoire</span>
+                            </md-datepicker>
+                        </div>
 
                         <md-field>
                             <label>Remarque</label>
