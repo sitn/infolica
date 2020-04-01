@@ -1,7 +1,5 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from pyramid.httpexceptions import HTTPForbidden
-from sqlalchemy.exc import DBAPIError
 
 from .. import models
 from ..scripts.utils import Utils
@@ -9,9 +7,8 @@ from ..scripts.utils import Utils
 import logging
 log = logging.getLogger(__name__)
 
-
 ###########################################################
-# PREAVIS AFFAIRE
+# Cadastre
 ###########################################################
 
 """ GET cadastre"""
@@ -20,13 +17,13 @@ log = logging.getLogger(__name__)
 def cadastre_view(request):
     try:
         # Check connected
-        if not Utils.check_connected(request):
-            raise HTTPForbidden()
+        #if not Utils.check_connected(request):
+            #raise exc.HTTPForbidden()
 
         records = request.dbsession.query(models.Cadastre).order_by(models.Cadastre.nom).all()
         return Utils.serialize_many(records)
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 

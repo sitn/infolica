@@ -1,6 +1,4 @@
 from pyramid.view import view_config
-import pyramid.httpexceptions as exc
-from sqlalchemy.exc import DBAPIError
 from .. import models
 from sqlalchemy import exc
 from ..exceptions.custom_error import CustomError
@@ -18,7 +16,6 @@ def test_error(exc, request):
     query = request.dbsession.query(models.Client).first()
     query = Utils.set_model_record(query, request.params)
     return Utils.serialize_one(query)
-
 
 ########################################################
 # Common OPTION RESPONSE

@@ -3,8 +3,6 @@ import pyramid.httpexceptions as exc
 from ..scripts.utils import Utils
 from ..models import Constant
 import transaction
-
-from sqlalchemy.exc import DBAPIError
 from ..exceptions.custom_error import CustomError
 
 from .. import models
@@ -15,19 +13,18 @@ log = logging.getLogger(__name__)
 
 """ Return all numeros"""
 
-
 @view_config(route_name='numeros', request_method='GET', renderer='json')
 @view_config(route_name='numeros_s', request_method='GET', renderer='json')
 def numeros_view(request):
-    # Check connected
-    if not Utils.check_connected(request):
-        raise HTTPForbidden()
-
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise exc.HTTPForbidden()
+
         query = request.dbsession.query(models.VNumeros).all()
         return Utils.serialize_many(query)
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -36,15 +33,11 @@ def numeros_view(request):
 @view_config(route_name='types_numeros', request_method='GET', renderer='json')
 @view_config(route_name='types_numeros_s', request_method='GET', renderer='json')
 def types_numeros_view(request):
-    # Check connected
-    if not Utils.check_connected(request):
-        raise HTTPForbidden()
-
     try:
         query = request.dbsession.query(models.NumeroType).all()
         return Utils.serialize_many(query)
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -53,15 +46,11 @@ def types_numeros_view(request):
 @view_config(route_name='etats_numeros', request_method='GET', renderer='json')
 @view_config(route_name='etats_numeros_s', request_method='GET', renderer='json')
 def etats_numeros_view(request):
-    # Check connected
-    if not Utils.check_connected(request):
-        raise HTTPForbidden()
-
     try:
         query = request.dbsession.query(models.NumeroEtat).all()
         return Utils.serialize_many(query)
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -69,18 +58,18 @@ def etats_numeros_view(request):
 """ Return numeros by id"""
 @view_config(route_name='numero_by_id', request_method='GET', renderer='json')
 def numeros_by_id_view(request):
-    # Check connected
-    if not Utils.check_connected(request):
-        raise HTTPForbidden()
-    
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise exc.HTTPForbidden()
+
         # Get controle mutation id
         id = request.id = request.matchdict['id']
         query = request.dbsession.query(models.VNumeros).filter(
             models.VNumeros.id == id).first()
         return Utils.serialize_one(query)
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -89,11 +78,11 @@ def numeros_by_id_view(request):
 @view_config(route_name='recherche_numeros', request_method='POST', renderer='json')
 @view_config(route_name='recherche_numeros_s', request_method='POST', renderer='json')
 def numeros_search_view(request):
-    # Check connected
-    if not Utils.check_connected(request):
-        raise HTTPForbidden()
-
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise exc.HTTPForbidden()
+
         settings = request.registry.settings
         search_limit = int(settings['search_limit'])
         conditions = Utils.get_search_conditions(models.VNumeros, request.params)
@@ -102,7 +91,7 @@ def numeros_search_view(request):
             *conditions).limit(search_limit).all()
         return Utils.serialize_many(query)
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -111,18 +100,18 @@ def numeros_search_view(request):
 @view_config(route_name='numeros', request_method='POST', renderer='json')
 @view_config(route_name='numeros_s', request_method='POST', renderer='json')
 def numeros_new_view(request, params=None):
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
-        raise HTTPForbidden()
-
-    if not params:
-        params = request.params
-
-    # nouveau numero
-    record = models.Numero()
-    record = Utils.set_model_record(record, params)
-
     try:
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+            raise exc.HTTPForbidden()
+
+        if not params:
+            params = request.params
+
+        # nouveau numero
+        record = models.Numero()
+        record = Utils.set_model_record(record, params)
+
         with transaction.manager:
             request.dbsession.add(record)
             request.dbsession.flush()
@@ -132,7 +121,7 @@ def numeros_new_view(request, params=None):
                 Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
             return record.id
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -141,25 +130,25 @@ def numeros_new_view(request, params=None):
 @view_config(route_name='numeros', request_method='PUT', renderer='json')
 @view_config(route_name='numeros_s', request_method='PUT', renderer='json')
 def numeros_update_view(request):
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
-        raise HTTPForbidden()
-
-    # Get numero id
-    id = request.params['id'] if 'id' in request.params else None
-
-    # Get numero record
-    record = request.dbsession.query(models.Numero).filter(
-        models.Numero.id == id).first()
-
-    if not record:
-        raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Numero.__tablename__, id))
-
-    last_record_etat_id = record.etat_id
-    record = Utils.set_model_record(record, request.params)
-
     try:
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+            raise exc.HTTPForbidden()
+
+        # Get numero id
+        id = request.params['id'] if 'id' in request.params else None
+
+        # Get numero record
+        record = request.dbsession.query(models.Numero).filter(
+            models.Numero.id == id).first()
+
+        if not record:
+            raise CustomError(
+                CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Numero.__tablename__, id))
+
+        last_record_etat_id = record.etat_id
+        record = Utils.set_model_record(record, request.params)
+
         with transaction.manager:
             # Commit transaction
             transaction.commit()
@@ -172,7 +161,7 @@ def numeros_update_view(request):
 
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -180,11 +169,11 @@ def numeros_update_view(request):
 """ Supprimer/abandonner numeros by id"""
 @view_config(route_name='numero_by_id', request_method='DELETE', renderer='json')
 def numeros_by_id_delete_view(request):
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
-        raise HTTPForbidden()
-
     try:
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+            raise exc.HTTPForbidden()
+
         # Get numero by id
         id = request.matchdict['id']
         query = request.dbsession.query(models.Numero).filter(
@@ -201,7 +190,7 @@ def numeros_by_id_delete_view(request):
             with transaction.manager:
                 transaction.commit()
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -214,18 +203,18 @@ def numeros_by_id_delete_view(request):
 @view_config(route_name='numeros_etat_histo', request_method='POST', renderer='json')
 @view_config(route_name='numeros_etat_histo_s', request_method='POST', renderer='json')
 def numeros_etat_histo_new_view(request, params=None):
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
-        raise HTTPForbidden()
-
-    if not params:
-        params = request.params
-
-    # nouveau numero
-    record = models.NumeroEtatHisto()
-    record = Utils.set_model_record(record, params)
-
     try:
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+            raise exc.HTTPForbidden()
+
+        if not params:
+            params = request.params
+
+        # nouveau numero
+        record = models.NumeroEtatHisto()
+        record = Utils.set_model_record(record, params)
+
         with transaction.manager:
             request.dbsession.add(record)
             request.dbsession.flush()
@@ -235,7 +224,7 @@ def numeros_etat_histo_new_view(request, params=None):
                 models.NumeroEtatHisto.__tablename__))
             return record.id
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -247,17 +236,18 @@ def numeros_etat_histo_new_view(request, params=None):
 """ Return all numeros in affaire"""
 @view_config(route_name='affaire_numeros_by_affaire_id', request_method='GET', renderer='json')
 def affaire_numeros_view(request):
-    # Check connected
-    if not Utils.check_connected(request):
-        raise HTTPForbidden()
-
-    affaire_id = request.matchdict["id"]
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise exc.HTTPForbidden()
+
+        affaire_id = request.matchdict["id"]
+
         records = request.dbsession.query(models.VNumerosAffaires).filter(
             models.VNumerosAffaires.affaire_id == affaire_id).all()
         return Utils.serialize_many(records)
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -266,16 +256,17 @@ def affaire_numeros_view(request):
 @view_config(route_name='affaire_numeros', request_method='POST', renderer='json')
 @view_config(route_name='affaire_numeros_s', request_method='POST', renderer='json')
 def affaire_numero_new_view(request, params=None):
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
-        raise HTTPForbidden()
-
-    if not params:
-        params = request.params
-    # nouveau affaire_numero
-    record = models.AffaireNumero()
-    record = Utils.set_model_record(record, params)
     try:
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+            raise exc.HTTPForbidden()
+
+        if not params:
+            params = request.params
+        # nouveau affaire_numero
+        record = models.AffaireNumero()
+        record = Utils.set_model_record(record, params)
+
         with transaction.manager:
             request.dbsession.add(record)
             request.dbsession.flush()
@@ -283,7 +274,7 @@ def affaire_numero_new_view(request, params=None):
             transaction.commit()
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
@@ -295,23 +286,23 @@ def affaire_numero_new_view(request, params=None):
 """ Return all affaires touching one numero """
 @view_config(route_name='numero_affaires_by_numero_id', request_method='GET', renderer='json')
 def numeros_affaire_view(request):
-    # Check connected
-    if not Utils.check_connected(request):
-        raise HTTPForbidden()
-
-    numero_id = request.matchdict['id']
-
-    query = request.dbsession.query(models.VNumerosAffaires).filter(
-        models.VNumerosAffaires.numero_id == numero_id).all()
-
-    if not query:
-        raise CustomError.RECORD_WITH_ID_NOT_FOUND.format(
-            models.VNumerosAffaires.__tablename__, numero_id)
-
     try:
+        # Check connected
+        if not Utils.check_connected(request):
+            raise exc.HTTPForbidden()
+
+        numero_id = request.matchdict['id']
+
+        query = request.dbsession.query(models.VNumerosAffaires).filter(
+            models.VNumerosAffaires.numero_id == numero_id).all()
+
+        if not query:
+            raise CustomError.RECORD_WITH_ID_NOT_FOUND.format(
+                models.VNumerosAffaires.__tablename__, numero_id)
+
         return Utils.serialize_many(query)
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
