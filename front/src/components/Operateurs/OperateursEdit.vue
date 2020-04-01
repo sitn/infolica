@@ -7,8 +7,7 @@ import {checkLogged} from '@/services/helper'
 
 import { validationMixin } from 'vuelidate'
   import {
-    required,
-    minLength
+    required
   } from 'vuelidate/lib/validators'
 
   const moment = require('moment')
@@ -36,13 +35,15 @@ import { validationMixin } from 'vuelidate'
     validations: {
       form: {
         nom: {          
-          minLength: minLength(3),
           required
         },
         prenom: {
-          minLength: minLength(3)
+          required
         },
         entree: {
+          required
+        },
+        responsable: {
           required
         }
       }

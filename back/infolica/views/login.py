@@ -3,16 +3,12 @@ from pyramid.response import Response
 from pyramid.security import remember
 import json
 from pyramid.view import view_config
-import pyramid.httpexceptions as exc
-from sqlalchemy.exc import DBAPIError
-from sqlalchemy import exc, func
+from sqlalchemy import func
 from .. import models
 from ..scripts.ldap_query import LDAPQuery
-from ..models import Constant
 import logging
 log = logging.getLogger(__name__)
 from ..scripts.utils import Utils
-
 
 ########################################################
 # Login

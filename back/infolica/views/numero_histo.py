@@ -1,5 +1,5 @@
 from pyramid.view import view_config
-from pyramid.httpexceptions import HTTPForbidden
+import pyramid.httpexceptions as exc
 from ..scripts.utils import Utils
 from ..exceptions.custom_error import CustomError
 
@@ -7,7 +7,6 @@ from .. import models
 
 import logging
 log = logging.getLogger(__name__)
-
 
 ###########################################################
 # NUMERO ETAT HISTO
@@ -20,7 +19,7 @@ def numero_base_relations_view(request):
     try:
         # Check connected
         if not Utils.check_connected(request):
-            raise HTTPForbidden()
+            raise exc.HTTPForbidden()
 
         numero_id = request.matchdict["id"]
 
@@ -44,7 +43,7 @@ def numero_associe_relations_view(request):
     try:
         # Check connected
         if not Utils.check_connected(request):
-            raise HTTPForbidden()
+            raise exc.HTTPForbidden()
 
         numero_id = request.matchdict["id"]
 

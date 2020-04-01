@@ -16,19 +16,17 @@
 
             <div class="md-layout-item md-small-size-100">
               <md-field :class="getValidationClass('nom')">
-                <label for="nom">Nom</label>
+                <label for="nom">Nom *</label>
                 <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending" />
-                <span class="md-error" v-if="!$v.form.nom.minlength">Nom invalide</span>
                 <span class="md-error" v-if="!$v.form.nom.required">Le nom est obligatoire</span>
               </md-field>
             </div>
 
             <div class="md-layout-item md-small-size-100">
               <md-field :class="getValidationClass('prenom')">
-                <label for="prenom">Prénom</label>
+                <label for="prenom">Prénom *</label>
                 <md-input name="prenom" id="prenom" v-model="form.prenom" :disabled="sending" />
-                <span class="md-error" v-if="!$v.form.prenom.minlength">Prénom invalide</span>
-                <span class="md-error" v-if="!$v.form.prenom.required">Le nom est obligatoire</span>
+                <span class="md-error" v-if="!$v.form.prenom.required">Le prénom est obligatoire</span>
               </md-field>
             </div>
           </div>
@@ -44,12 +42,12 @@
 
             <div class="md-layout-item md-small-size-100">              
               <md-datepicker v-model="form.entree" md-immediately :class="getValidationClass('entree')">
-                <label>Date d'entrée</label>
+                <label>Date d'entrée *</label>
               </md-datepicker>
             </div>
 
             <div class="md-layout-item md-small-size-100">
-              <md-checkbox name="responsable" id="responsable" v-model="form.responsable" :disabled="sending">Responsable</md-checkbox>
+              <md-checkbox name="responsable" id="responsable" v-model="form.responsable" :disabled="sending">Responsable *</md-checkbox>
             </div>
           </div>
         </md-card-content>

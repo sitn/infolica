@@ -1,43 +1,31 @@
-from copy import copy
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 from ..scripts.utils import Utils
 from ..models import Constant
-import transaction
-from sqlalchemy import and_, desc
-
-from sqlalchemy.exc import DBAPIError
-from ..exceptions.custom_error import CustomError
-
 from .. import models
 from ..views.numero import numeros_new_view, affaire_numero_new_view, numeros_etat_histo_new_view
-
 import logging
 log = logging.getLogger(__name__)
-
-
-
-
 
 """ Add new numeros in affaire"""
 @view_config(route_name='reservation_numeros', request_method='POST', renderer='json')
 @view_config(route_name='reservation_numeros_s', request_method='POST', renderer='json')
 def reservation_numeros_new_view(request):
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
-        raise HTTPForbidden()
-
-    # Get affaire_id
-    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
-    cadastre_id = request.params['cadastre_id'] if 'cadastre_id' in request.params else None
-    plan_id = request.params['plan_id'] if 'plan_id' in request.params else None
-
-    # Get first available number (BF, DDP, PPE, PCOP)
-    ln = Utils.last_number(request, cadastre_id, [1, 2, 3, 4])
-
-    c = 0
-    # Biens-fonds
     try:
+        # Check authorization
+        if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+            raise exc.HTTPForbidden()
+
+        # Get affaire_id
+        affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+        cadastre_id = request.params['cadastre_id'] if 'cadastre_id' in request.params else None
+        plan_id = request.params['plan_id'] if 'plan_id' in request.params else None
+
+        # Get first available number (BF, DDP, PPE, PCOP)
+        ln = Utils.last_number(request, cadastre_id, [1, 2, 3, 4])
+
+        c = 0
+        # Biens-fonds
         if 'bf' in request.params:
             for i in range(int(request.params['bf'])):
                 c += 1
@@ -151,7 +139,7 @@ def reservation_numeros_new_view(request):
 
         return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
 
-    except DBAPIError as e:
+    except Exception as e:
         log.error(e)
         return exc.HTTPBadRequest(e)
 
