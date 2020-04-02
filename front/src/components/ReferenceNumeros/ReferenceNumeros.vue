@@ -13,7 +13,7 @@ export default {
   props: {},
   mixins: [validationMixin],
   components: {},
-  data: () => {
+  data() {
     return {
       showReferenceDialog: false,
       numeros_liste: [],
@@ -21,6 +21,8 @@ export default {
       numeros_etats_liste: [],
       numeros_types_liste: [],
       selectedNumeros: [],
+      isModeCreate: false,
+      isModeCreatePPE: false,
       search: {
         cadastre: null,
         numero: null,
@@ -36,13 +38,28 @@ export default {
   },
 
   // Validations
-  validations: {
-    search: {
-      cadastre: { required },
-      numero: { required },
-      suffixe: { required },
-      etat: { required },
-      type: { required }
+  validations() {
+    if (!this.isModeCreatePPE) {
+      // formulaire pour les biens-fonds autre que unité de PPE
+      return {
+        search: {
+          cadastre: { required },
+          numero: { required },
+          etat: { required },
+          type: { required }
+        }
+      };
+    } else {
+      // formulaire pour les unités de PPE
+      return {
+        search: {
+          cadastre: { required },
+          numero: { required },
+          suffixe: { required },
+          etat: { required },
+          type: { required }
+        }
+      };
     }
   },
 
@@ -81,6 +98,9 @@ export default {
      * Init Numeros list
      */
     async initNumerosList() {
+      this.isModeCreate = false;
+      this.isModeCreatePPE = false;
+
       // Récupère les id des numéros référencés dans l'affaire
       var numerosReferencesId = this.$parent.affaire_numeros_anciens.map(x => {
         return x.numero_id;
@@ -327,12 +347,18 @@ export default {
      * Get validation class par fieldname
      */
     getValidationClass(fieldName) {
-      const field = this.$v.search[fieldName];
+      // ne pas effectuer les contrôles pour la recherche de numéros
+      // seulement pour enregistrer un nouveau numéro
+      if (this.isModeCreate) {
+        const field = this.$v.search[fieldName];
 
-      if (field) {
-        return {
-          "md-invalid": field.$invalid && field.$dirty
-        };
+        if (field) {
+          return {
+            "md-invalid": field.$invalid && field.$dirty
+          };
+        }
+      } else {
+        return { "md-invalid": false };
       }
     },
 
@@ -340,12 +366,22 @@ export default {
      * Validate form
      */
     validateForm() {
+      this.isModeCreate = true;
+
+      // ne pas signaler le champ "unité vide" si le type de numéro n'est pas unité de PPE
+      if (this.search.type) {
+        if (this.search.type.id == 3) {
+          this.isModeCreatePPE = true;
+        }
+      }
+
       this.$v.$touch();
 
       if (!this.$v.$invalid) {
+        if (this.search.type.id !== 3) this.search.suffixe = null;
         this.onConfirmCreateNumero();
       }
-    },
+    }
   },
 
   mounted: function() {

@@ -26,7 +26,7 @@
                                 <template slot="md-autocomplete-item" scope="{ item }">
                                     {{ item.nom }}
                                 </template>
-                                <span class="md-error" v-if="!$v.search.cadastre.required">Le cadastre est obligatoire</span>
+                                <span class="md-error" v-if="isModeCreate && !$v.search.cadastre.required">Le cadastre est obligatoire</span>
                             </md-autocomplete>
                         </div>
                         <!-- Numéro -->
@@ -34,16 +34,16 @@
                             <md-field :class="getValidationClass('numero')">
                                 <label>Numéro</label>
                                 <md-input v-model="search.numero" type="number"></md-input>
-                                <span class="md-error" v-if="!$v.search.numero.required">Le numéro est obligatoire</span>
-                                
+                                <span class="md-error" v-if="isModeCreate && !$v.search.numero.required">Le numéro est obligatoire</span>
                             </md-field>
                         </div>
                         <!-- SUFFIXE -->
                         <!-- INTEGRER LA VALIDATION -->
                         <div class="md-layout-item md-size-25">
-                            <md-field>
+                            <md-field :class="getValidationClass('suffixe')">
                                 <label>Unité</label>
                                 <md-input v-model="search.suffixe"></md-input>
+                                <span class="md-error" v-if="isModeCreate && !$v.search.suffixe.required">Le numéro est obligatoire</span>
                             </md-field>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                                 <template slot="md-autocomplete-item" scope="{ item }">
                                     {{ item.nom }}
                                 </template>
-                                <span class="md-error" v-if="!$v.search.type.required">Le type est obligatoire</span>
+                                <span class="md-error" v-if="isModeCreate && !$v.search.type.required">Le type est obligatoire</span>
                             </md-autocomplete>
                         </div>
                         <!-- Etat -->
@@ -66,7 +66,7 @@
                                 <template slot="md-autocomplete-item" scope="{ item }">
                                     {{ item.nom }}
                                 </template>
-                                <span class="md-error" v-if="!$v.search.etat.required">L'état est obligatoire</span>
+                                <span class="md-error" v-if="isModeCreate && !$v.search.etat.required">L'état est obligatoire</span>
                             </md-autocomplete>
                         </div>
                     </div>
