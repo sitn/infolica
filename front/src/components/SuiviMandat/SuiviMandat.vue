@@ -3,7 +3,7 @@
 
 
 <script>
-import { checkLogged } from "@/services/helper";
+//import { checkLogged } from "@/services/helper";
 
 const moment = require('moment')
 
@@ -190,7 +190,7 @@ export default {
   },
 
   mounted: function() {
-    checkLogged();
+    //checkLogged();
     this.searchSuiviMandat();
     this.searchOperateurs();
   }

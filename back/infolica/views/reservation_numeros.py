@@ -4,8 +4,6 @@ from ..scripts.utils import Utils
 from ..models import Constant
 from .. import models
 from ..views.numero import numeros_new_view, affaire_numero_new_view, numeros_etat_histo_new_view
-import logging
-log = logging.getLogger(__name__)
 
 """ Add new numeros in affaire"""
 @view_config(route_name='reservation_numeros', request_method='POST', renderer='json')
@@ -140,6 +138,5 @@ def reservation_numeros_new_view(request):
         return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 

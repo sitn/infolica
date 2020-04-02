@@ -5,8 +5,6 @@ import transaction
 from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
-import logging
-log = logging.getLogger(__name__)
 
 
 ###########################################################
@@ -22,9 +20,7 @@ def envois_types_view(request):
         return Utils.serialize_many(records)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
-
+        raise e
 
 """ GET envois affaire"""
 @view_config(route_name='affaire_envois_by_affaire_id', request_method='GET', renderer='json')
@@ -42,8 +38,7 @@ def affaire_envois_view(request):
         return Utils.serialize_many(records)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ POST envois"""
@@ -64,8 +59,7 @@ def envois_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Envoi.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ UPDATE envoi"""
@@ -92,8 +86,7 @@ def envois_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Envoi.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ DELETE envois"""
@@ -119,6 +112,5 @@ def envois_delete_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Envoi.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 

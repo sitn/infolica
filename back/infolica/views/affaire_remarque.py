@@ -6,9 +6,6 @@ from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
 
-import logging
-log = logging.getLogger(__name__)
-
 ###########################################################
 # REMARQUES AFFAIRE
 ###########################################################
@@ -35,8 +32,7 @@ def affaires_remarques_view(request):
         return ra_json
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ POST remarque affaire"""
@@ -58,8 +54,7 @@ def affaires_remarques_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.RemarqueAffaire.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ PUT remarque affaire"""
@@ -87,8 +82,7 @@ def remarques_affaires_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.RemarqueAffaire.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ DELETE remarque affaire"""
@@ -114,5 +108,4 @@ def remarques_affaires_delete_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.RemarqueAffaire.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e

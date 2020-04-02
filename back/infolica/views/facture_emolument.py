@@ -5,8 +5,6 @@ from ..models import Constant
 import transaction
 from ..exceptions.custom_error import CustomError
 from .. import models
-import logging
-log = logging.getLogger(__name__)
 
 ###########################################################
 # EMOLUMENTS
@@ -27,8 +25,7 @@ def facture_emoluments_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Add new emolument_facture"""
@@ -49,8 +46,7 @@ def emolument_facture_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.EmolumentFacture.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Update emolument_facture"""
@@ -79,8 +75,7 @@ def emolument_facture_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.EmolumentFacture.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Delete emolument_facture"""
@@ -106,5 +101,4 @@ def emolument_facture_delete_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.EmolumentFacture.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e

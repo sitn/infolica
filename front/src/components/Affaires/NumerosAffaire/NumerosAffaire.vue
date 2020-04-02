@@ -3,7 +3,7 @@
 
 
 <script>
-import { checkLogged } from "@/services/helper";
+//import { checkLogged } from "@/services/helper";
 import ReferenceNumeros from "@/components/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/ReservationNumeros/ReservationNumeros.vue";
 
@@ -165,7 +165,7 @@ export default {
   },
 
   mounted: function() {
-    checkLogged();
+    //checkLogged();
     this.searchAffaireNumeros();
   }
 };

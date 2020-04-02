@@ -6,9 +6,6 @@ from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
 
-import logging
-log = logging.getLogger(__name__)
-
 ###########################################################
 # PREAVIS AFFAIRE
 ###########################################################
@@ -22,8 +19,7 @@ def preavis_type_view(request):
         return Utils.serialize_many(records)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ GET preavis affaire"""
@@ -42,8 +38,7 @@ def affaire_preavis_view(request):
         return Utils.serialize_many(records)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ POST preavis affaire"""
@@ -65,8 +60,7 @@ def preavis_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Preavis.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ UPDATE preavis affaire"""
@@ -94,8 +88,7 @@ def preavis_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Preavis.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ DELETE preavis affaire"""
@@ -122,8 +115,7 @@ def preavis_delete_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Preavis.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 

@@ -6,9 +6,6 @@ from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
 
-import logging
-log = logging.getLogger(__name__)
-
 ###########################################################
 # AFFAIRE
 ###########################################################
@@ -26,8 +23,7 @@ def affaires_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Return affaires by id"""
@@ -44,8 +40,7 @@ def affaire_by_id_view(request):
         return Utils.serialize_one(one)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Search affaires"""
@@ -66,8 +61,7 @@ def affaires_search_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Return all types affaires"""
@@ -79,8 +73,7 @@ def types_affaires_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Add new affaire"""
@@ -117,8 +110,7 @@ def affaires_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Update affaire"""
@@ -165,8 +157,7 @@ def affaires_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 # """ Delete affaire"""

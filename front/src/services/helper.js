@@ -8,7 +8,8 @@ export const checkLogged = function () {
     var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
 
     if (!session_user) {
-        window.location.href = "/login"
+        if(window.location.href.indexOf("/login") === -1)
+            window.location.href = "/login";
     }
 };
 

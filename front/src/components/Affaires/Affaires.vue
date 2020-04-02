@@ -4,7 +4,7 @@
 
 <script>
 import {
-  checkLogged,
+  //checkLogged,
   getCadastres,
   getTypesAffaires,
 } from "@/services/helper";
@@ -115,7 +115,7 @@ export default {
   },
 
   mounted: function() {
-    checkLogged();
+    //checkLogged();
     this.initCadastresList();
     this.initTypesAffairesList();
     this.searchAffaires();

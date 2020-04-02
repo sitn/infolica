@@ -12,7 +12,7 @@
               <md-tab md-label="Opérateurs" to="operateurs"></md-tab>
               <md-tab md-label="À propos" to="apropos"></md-tab>
             </md-tabs> -->
-            <nav class="menu">
+            <nav class="menu" v-if="$route.path !== '/login'">
               <md-menu md-align-trigger>
                   <md-button md-menu-trigger v-on:click="goTo('/affaires')">Affaires</md-button>
               </md-menu>

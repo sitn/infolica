@@ -3,7 +3,7 @@
 
 
 <script>
-import { checkLogged } from "@/services/helper";
+//import { checkLogged } from "@/services/helper";
 import MapHandler from '@/components/MapHandler/MapHandler.vue';
 import { validationMixin } from 'vuelidate'
 import {required} from 'vuelidate/lib/validators'
@@ -324,7 +324,7 @@ export default {
   },
 
   mounted: function() {
-    checkLogged();
+    //checkLogged();
 
     //Init map component
     this.callInitMap();

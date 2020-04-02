@@ -5,8 +5,6 @@ from ..models import Constant
 import transaction
 from ..exceptions.custom_error import CustomError
 from .. import models
-import logging
-log = logging.getLogger(__name__)
 
 """ Return all controles_mutations"""
 @view_config(route_name='controles_mutations', request_method='GET', renderer='json')
@@ -21,8 +19,7 @@ def controles_mutations_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Return controle_mutation by id"""
@@ -40,8 +37,7 @@ def controles_mutations_by_id_view(request):
         return Utils.serialize_one(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Return controle_mutation by affaire_id"""
@@ -59,8 +55,7 @@ def controles_mutations_by_affaire_id_view(request):
         return Utils.serialize_one(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Add new controle_mutation"""
@@ -83,8 +78,7 @@ def controles_mutations_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ControleMutation.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Update controle_mutation"""
@@ -115,8 +109,7 @@ def controles_mutations_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ControleMutation.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Delete controle_mutation"""
@@ -146,5 +139,4 @@ def controles_mutations_delete_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.ControleMutation.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e

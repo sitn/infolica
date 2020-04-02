@@ -3,7 +3,7 @@
 
 
 <script>
-import { checkLogged, getCadastres } from "@/services/helper";
+import { /*checkLogged,*/ getCadastres } from "@/services/helper";
 
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -349,7 +349,7 @@ export default {
   },
 
   mounted: function() {
-    checkLogged();
+    //checkLogged();
     this.initCadastresList();
     this.initNumerosEtatsList();
     this.initNumerosTypesList();

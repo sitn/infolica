@@ -3,7 +3,7 @@
 
 
 <script>
-import {checkLogged} from '@/services/helper'
+import {handleException} from '@/services/exceptionsHandler'
 
 export default {
   name: 'Operateurs',
@@ -34,7 +34,6 @@ export default {
           if(this.search.login)
             formData.append("login", this.search.login);
 
-
           this.$http.post(
             process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_OPERATEURS_ENDPOINT, 
             formData,
@@ -50,7 +49,7 @@ export default {
           })
           //Error 
           .catch(err => {
-            alert("error : " + err.message);  
+            handleException(err, this);  
           })
         },
 
@@ -113,7 +112,7 @@ export default {
           })
           //Error 
           .catch(err => {
-            alert("error : " + err.message);  
+            handleException(err, this);  
           })
         },
 
@@ -126,7 +125,7 @@ export default {
   },
 
   mounted: function(){
-    checkLogged();
+    //checkLogged();
     this.searchOperateurs();
   }
 }
