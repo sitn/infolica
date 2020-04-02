@@ -12,16 +12,21 @@ export default {
   data: () => {
     return {
       showReferenceDialog: false,
-      cadastre_liste: [],
       numeros_liste: [],
+      cadastre_liste: [],
       numeros_etats_liste: [],
       numeros_types_liste: [],
       selectedNumeros: [],
       search: {
         cadastre: null,
         numero: null,
+        suffixe: null,
         etat: null,
         type: null
+      },
+      success: {
+        check: false,
+        txt: null
       }
     };
   },
@@ -31,31 +36,30 @@ export default {
      * Open référence numéros dialog
      */
     async openReferenceDialog() {
-
       await this.initializeForm().then(() => {
         this.initNumerosList();
         this.showReferenceDialog = true;
-        });
+      });
     },
 
     /*
      * Init Cadastres list
      */
     async initCadastresList() {
-        getCadastres()
-          .then(response => {
-            if (response && response.data) {
-              this.cadastre_liste = response.data.map(x => ({
-                id: x.id,
-                nom: x.nom,
-                toLowerCase: () => x.nom.toLowerCase(),
-                toString: () => x.nom
-              }));
-            }
-          })
-          .catch(err => {
-            alert("error: " + err.message)
-          });
+      getCadastres()
+        .then(response => {
+          if (response && response.data) {
+            this.cadastre_liste = response.data.map(x => ({
+              id: x.id,
+              nom: x.nom,
+              toLowerCase: () => x.nom.toLowerCase(),
+              toString: () => x.nom
+            }));
+          }
+        })
+        .catch(err => {
+          alert("error: " + err.message);
+        });
     },
 
     /*
@@ -64,7 +68,7 @@ export default {
     async initNumerosList() {
       // Récupère les id des numéros référencés dans l'affaire
       var numerosReferencesId = this.$parent.affaire_numeros_anciens.map(x => {
-        return x.numero_id
+        return x.numero_id;
       });
 
       var formData = new FormData();
@@ -74,7 +78,8 @@ export default {
         formData.append("type_numero_id", this.search.type.id);
       if (this.search.etat) formData.append("etat_id", this.search.etat.id);
       if (this.search.numero) formData.append("numero", this.search.numero);
-      if (numerosReferencesId) formData.append("_id", JSON.stringify(numerosReferencesId))
+      if (numerosReferencesId)
+        formData.append("_id", JSON.stringify(numerosReferencesId));
 
       this.$http
         .post(
@@ -100,56 +105,56 @@ export default {
      * Init Numeros etat liste
      */
     async initNumerosEtatsList() {
-        this.$http
-          .get(
-            process.env.VUE_APP_API_URL +
-              process.env.VUE_APP_ETATS_NUMEROS_ENDPOINT,
-            {
-              withCredentials: true,
-              headers: { Accept: "application/json" }
-            }
-          )
-          .then(response => {
-            if (response && response.data) {
-              this.numeros_etats_liste = response.data.map(x => ({
-                id: x.id,
-                nom: x.nom,
-                toLowerCase: () => x.nom.toLowerCase(),
-                toString: () => x.nom.toString()
-              }));
-            }
-          })
-          .catch(err => {
-            alert("error: " + err.message)
-          });
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_ETATS_NUMEROS_ENDPOINT,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        )
+        .then(response => {
+          if (response && response.data) {
+            this.numeros_etats_liste = response.data.map(x => ({
+              id: x.id,
+              nom: x.nom,
+              toLowerCase: () => x.nom.toLowerCase(),
+              toString: () => x.nom.toString()
+            }));
+          }
+        })
+        .catch(err => {
+          alert("error: " + err.message);
+        });
     },
 
     /*
      * Init Numeros type liste
      */
     async initNumerosTypesList() {
-        this.$http
-          .get(
-            process.env.VUE_APP_API_URL +
-              process.env.VUE_APP_TYPES_NUMEROS_ENDPOINT,
-            {
-              withCredentials: true,
-              headers: { Accept: "application/json" }
-            }
-          )
-          .then(response => {
-            if (response && response.data) {
-              this.numeros_types_liste = response.data.map(x => ({
-                id: x.id,
-                nom: x.nom,
-                toLowerCase: () => x.nom.toLowerCase(),
-                toString: () => x.nom.toString()
-              }));
-            }
-          })
-          .catch(err => {
-            alert("error: " + err.message)
-          });
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_TYPES_NUMEROS_ENDPOINT,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        )
+        .then(response => {
+          if (response && response.data) {
+            this.numeros_types_liste = response.data.map(x => ({
+              id: x.id,
+              nom: x.nom,
+              toLowerCase: () => x.nom.toLowerCase(),
+              toString: () => x.nom.toString()
+            }));
+          }
+        })
+        .catch(err => {
+          alert("error: " + err.message);
+        });
     },
 
     /*
@@ -185,17 +190,18 @@ export default {
     },
 
     /**
-     * Create numeros
+     * Référencer des numéros
      */
     onConfirmReferenceNumeros() {
       var formData = new FormData();
-      formData.append("affaire_id", this.$route.params.id)
-      if (this.selectedNumeros) formData.append("numeros_liste", JSON.stringify(this.selectedNumeros))
+      formData.append("affaire_id", this.$route.params.id);
+      if (this.selectedNumeros)
+        formData.append("numeros_liste", JSON.stringify(this.selectedNumeros));
 
       this.$http
         .post(
           process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT,
+            process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT,
           formData,
           {
             withCredentials: true,
@@ -215,7 +221,7 @@ export default {
     },
 
     /**
-     * Annuler la réservation de uméros
+     * Annuler la réservation de numéros
      */
     onCancelReferenceNumeros() {
       this.showReferenceDialog = false;
@@ -226,27 +232,33 @@ export default {
      * Initialise le formulaire de réservation de numéros
      */
     async initializeForm() {
-      this.search.cadastre = await this.initDefaultCadastre();
+      // Attendre que le cadastre par défaut soit récupéré
+      const cadastre = await this.initDefaultCadastre();
 
       return new Promise(resolve => {
-        this.search.etat = {
-          id: 2,
-          nom: "Vigueur",
-          toLowerCase: () => "Vigueur".toLowerCase(),
-          toString: () => "Vigueur"
-        };
-        this.search.type = {
-          id: 1,
-          nom: "Bien-fonds",
-          toLowerCase: () => "Bien-fonds".toLowerCase(),
-          toString: () => "Bien-fonds"
+        this.search = {
+          cadastre: cadastre,
+          etat: {
+            id: 2,
+            nom: "Vigueur",
+            toLowerCase: () => "Vigueur".toLowerCase(),
+            toString: () => "Vigueur"
+          },
+          type: {
+            id: 1,
+            nom: "Bien-fonds",
+            toLowerCase: () => "Bien-fonds".toLowerCase(),
+            toString: () => "Bien-fonds"
+          },
+          numero: null,
+          suffixe: null
         };
         resolve(this.search);
       });
     },
 
     /**
-     * Enregistrer la sélection des biens-fonds référencés
+     * Récupérer la sélection des biens-fonds à référencer
      */
     onSelect(items) {
       this.selectedNumeros = items.map(x => ({
@@ -255,6 +267,46 @@ export default {
       }));
     },
 
+    /**
+     * Créer le nouveau numéro dans la base
+     */
+    onConfirmCreateNumero() {
+      var formData = new FormData();
+      if (this.search.cadastre)
+        formData.append("cadastre_id", this.search.cadastre.id);
+      if (this.search.numero) formData.append("numero", this.search.numero);
+      if (this.search.suffixe) formData.append("suffixe", this.search.suffixe);
+      if (this.search.type) formData.append("type_id", this.search.type.id);
+      if (this.search.etat) formData.append("etat_id", this.search.etat.id);
+
+      // Enregistrer le numéro
+      this.$http
+        .post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        )
+        .then(response => {
+          if (response.data) {
+            this.success = {
+              check: true,
+              txt:
+                "Le numéro " +
+                this.search.numero +
+                " a été créé sur le cadastre de " +
+                this.search.cadastre.nom +
+                " avec succès"
+            };
+            this.initNumerosList();
+          }
+        })
+        .catch(err => {
+          alert("error: " + err);
+        });
+    },
   },
 
   mounted: function() {

@@ -12,3 +12,8 @@
     width: 100%;
     margin: auto;
 }
+
+.md-switch {
+    display: flex;
+    margin: 0;
+}
