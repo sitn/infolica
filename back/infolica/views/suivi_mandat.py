@@ -52,6 +52,10 @@ def affaire_suivi_mandats_by_affaire_id_view(request):
         affaire_id = request.id = request.matchdict['id']
         query = request.dbsession.query(models.SuiviMandat).filter(
             models.SuiviMandat.affaire_id == affaire_id).first()
+
+        if query is None:
+            return None
+
         return Utils.serialize_one(query)
 
     except Exception as e:

@@ -53,6 +53,10 @@ def controles_ppe_by_affaire_id_view(request):
         affaire_id = request.id = request.matchdict['id']
         query = request.dbsession.query(models.ControlePPE).filter(
             models.ControlePPE.affaire_id == affaire_id).first()
+
+        if query is None:
+            return None
+
         return Utils.serialize_one(query)
 
     except Exception as e:
@@ -111,6 +115,7 @@ def controles_ppe_update_view(request):
 
     except Exception as e:
         raise e
+
 
 """ Delete controles_ppe"""
 @view_config(route_name='controles_ppe', request_method='DELETE', renderer='json')

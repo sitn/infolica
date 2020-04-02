@@ -10,7 +10,7 @@
                 </md-card-expand-trigger>
                 Contrôle PPE
                 <md-button class="md-primary newControlePPEBtn" v-on:click="newControlePPE()"
-                    v-if="controlePPEExists && showNewControlePPEBtn">Créer le contrôle</md-button>
+                    v-if="needToCreateControlePPE && showNewControlePPEBtn">Créer le contrôle</md-button>
             </div>
         </md-card-header>
 

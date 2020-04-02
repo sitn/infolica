@@ -13,7 +13,7 @@ export default {
   data: () => ({
     showNewControlePPEBtn: false,
     showModifiedControlePPE: false,
-    controlePPEExists: false,
+    needToCreateControlePPE: false,
     chefsProjetMO_liste: [],
     showCreatedControlePPE: false,
     controlePPE: {}
@@ -43,11 +43,13 @@ export default {
               return x.id == this.controlePPE.visa
               })[0];
             }
+          } else {
+            // Il n'existe pas encore de suivi de mandat pour cette affaire
+            this.needToCreateControlePPE = true;
           }
         })
-        .catch(() => {
-          // Il n'existe pas encore de suivi de mandat pour cette affaire
-          this.controlePPEExists = true;
+        .catch(err => {
+          alert("error: " + err.message)
         });
     },
 
@@ -104,7 +106,7 @@ export default {
           if (response) {
             this.showCreatedControlePPE = true;
             this.searchControlePPE();
-            this.controlePPEExists = false;
+            this.needToCreateControlePPE = false;
           }
         })
         .catch(err => {
