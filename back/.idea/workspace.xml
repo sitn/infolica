@@ -3,34 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="51a38106-afd0-4071-a97e-7937b616b656" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/scripts/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/scripts/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/affaire.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/affaire.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/affaire_document.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/affaire_document.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/affaire_envoi.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/affaire_envoi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/affaire_etape.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/affaire_etape.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/affaire_preavis.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/affaire_preavis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/affaire_remarque.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/affaire_remarque.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/cadastre.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/cadastre.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/controle_mutation.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/controle_mutation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/controle_ppe.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/controle_ppe.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/default.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/default.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/facture.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/facture.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/facture_emolument.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/facture_emolument.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/fonction_role.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/fonction_role.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/login.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/login.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/numero.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/numero.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/numero_histo.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/numero_histo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/operateur.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/operateur.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/reservation_numeros.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/reservation_numeros.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/services_externes.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/services_externes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infolica/views/suivi_mandat.py" beforeDir="false" afterPath="$PROJECT_DIR$/infolica/views/suivi_mandat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../front/src/components/Clients/ClientsEdit.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Clients/ClientsEdit.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../front/src/components/Clients/clients.css" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Clients/clients.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../front/src/components/Clients/clientsEdit.html" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Clients/clientsEdit.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../front/src/components/Operateurs/OperateursEdit.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Operateurs/OperateursEdit.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../front/src/components/Operateurs/operateurs.css" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Operateurs/operateurs.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../front/src/components/Operateurs/operateursEdit.html" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Operateurs/operateursEdit.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -40,14 +12,41 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/infolica/views/affaire.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+            <state relative-caret-position="340">
+              <caret line="20" column="25" lean-forward="true" selection-start-line="20" selection-start-column="25" selection-end-line="20" selection-end-column="25" />
               <folding>
                 <element signature="e#0#36#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/development.ini.template">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="367">
+              <caret line="88" column="31" selection-start-line="88" selection-start-column="31" selection-end-line="88" selection-end-column="31" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/development.ini">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="401">
+              <caret line="89" column="31" selection-start-line="89" selection-start-column="31" selection-end-line="89" selection-end-column="31" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/production.ini.template">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="408">
+              <caret line="99" column="31" selection-start-line="99" selection-start-column="31" selection-end-line="99" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -63,11 +62,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>handler_filelog</find>
-      <find>affairety</find>
-      <find>pertu</find>
-      <find>perturb</find>
-      <find>id = Column(BigInteger, primary_key=True)</find>
       <find>facture</find>
       <find>add_cors_headers_response_callback</find>
       <find>oper</find>
@@ -93,6 +87,11 @@
       <find>HTTPForbidden</find>
       <find>cadastres</find>
       <find>DBAPIError</find>
+      <find>operateur</find>
+      <find>affaire_consultation</find>
+      <find>operateur_consultation</find>
+      <find>client_consultation</find>
+      <find>client_edition</find>
     </findStrings>
     <replaceStrings>
       <replace>TypeAffaire</replace>
@@ -134,9 +133,6 @@
         <option value="$PROJECT_DIR$/infolica/routes.py" />
         <option value="$PROJECT_DIR$/infolica/models/mymodel.py" />
         <option value="$PROJECT_DIR$/infolica/__init__.py" />
-        <option value="$PROJECT_DIR$/development.ini.template" />
-        <option value="$PROJECT_DIR$/production.ini.template" />
-        <option value="$PROJECT_DIR$/development.ini" />
         <option value="$PROJECT_DIR$/infolica/scripts/utils.py" />
         <option value="$PROJECT_DIR$/infolica/views/affaire_document.py" />
         <option value="$PROJECT_DIR$/infolica/views/affaire_envoi.py" />
@@ -159,6 +155,9 @@
         <option value="$PROJECT_DIR$/infolica/views/services_externes.py" />
         <option value="$PROJECT_DIR$/infolica/views/suivi_mandat.py" />
         <option value="$PROJECT_DIR$/infolica/views/affaire.py" />
+        <option value="$PROJECT_DIR$/development.ini.template" />
+        <option value="$PROJECT_DIR$/development.ini" />
+        <option value="$PROJECT_DIR$/production.ini.template" />
       </list>
     </option>
   </component>
@@ -256,7 +255,7 @@
     <frame x="147" y="-8" width="1781" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25798956" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26089483" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -336,13 +335,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/production.ini.template">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="595">
-          <caret line="110" column="51" selection-start-line="110" selection-start-column="51" selection-end-line="110" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/infolica/models/mymodel.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="12087">
@@ -360,24 +352,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/development.ini">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="622">
-          <caret line="106" column="31" selection-start-line="106" selection-start-column="31" selection-end-line="106" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/infolica/routes.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="602">
           <caret line="113" column="54" lean-forward="true" selection-start-line="113" selection-start-column="54" selection-end-line="113" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/development.ini.template">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="588">
-          <caret line="105" column="31" lean-forward="true" selection-start-line="88" selection-end-line="105" selection-end-column="31" />
         </state>
       </provider>
     </entry>
@@ -593,11 +571,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/infolica/views/affaire.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+        <state relative-caret-position="340">
+          <caret line="20" column="25" lean-forward="true" selection-start-line="20" selection-start-column="25" selection-end-line="20" selection-end-column="25" />
           <folding>
             <element signature="e#0#36#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/development.ini.template">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="367">
+          <caret line="88" column="31" selection-start-line="88" selection-start-column="31" selection-end-line="88" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/development.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="401">
+          <caret line="89" column="31" selection-start-line="89" selection-start-column="31" selection-end-line="89" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/production.ini.template">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="99" column="31" selection-start-line="99" selection-start-column="31" selection-end-line="99" selection-end-column="31" />
         </state>
       </provider>
     </entry>
