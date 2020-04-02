@@ -5,9 +5,13 @@
 <script>
 import { checkLogged, getCadastres } from "@/services/helper";
 
+import { validationMixin } from "vuelidate";
+import { required } from "vuelidate/lib/validators";
+
 export default {
   name: "ReferenceNumeros",
   props: {},
+  mixins: [validationMixin],
   components: {},
   data: () => {
     return {
@@ -29,6 +33,17 @@ export default {
         txt: null
       }
     };
+  },
+
+  // Validations
+  validations: {
+    search: {
+      cadastre: { required },
+      numero: { required },
+      suffixe: { required },
+      etat: { required },
+      type: { required }
+    }
   },
 
   methods: {
@@ -306,6 +321,30 @@ export default {
         .catch(err => {
           alert("error: " + err);
         });
+    },
+
+    /**
+     * Get validation class par fieldname
+     */
+    getValidationClass(fieldName) {
+      const field = this.$v.search[fieldName];
+
+      if (field) {
+        return {
+          "md-invalid": field.$invalid && field.$dirty
+        };
+      }
+    },
+
+    /**
+     * Validate form
+     */
+    validateForm() {
+      this.$v.$touch();
+
+      if (!this.$v.$invalid) {
+        this.onConfirmCreateNumero();
+      }
     },
   },
 
