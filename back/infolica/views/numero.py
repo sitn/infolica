@@ -4,12 +4,8 @@ from ..scripts.utils import Utils
 from ..models import Constant
 import transaction
 from ..exceptions.custom_error import CustomError
-
 from .. import models
 
-import logging
-
-log = logging.getLogger(__name__)
 
 """ Return all numeros"""
 
@@ -25,8 +21,7 @@ def numeros_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Return all types_numeros"""
@@ -38,8 +33,7 @@ def types_numeros_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Return all etats_numeros"""
@@ -51,8 +45,7 @@ def etats_numeros_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Return numeros by id"""
@@ -70,8 +63,7 @@ def numeros_by_id_view(request):
         return Utils.serialize_one(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Search numeros"""
@@ -92,8 +84,7 @@ def numeros_search_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Add new numeros"""
@@ -122,8 +113,7 @@ def numeros_new_view(request, params=None):
             return record.id
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Update numeros"""
@@ -162,8 +152,7 @@ def numeros_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Supprimer/abandonner numeros by id"""
@@ -191,8 +180,7 @@ def numeros_by_id_delete_view(request):
                 transaction.commit()
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 ###########################################################
@@ -225,8 +213,7 @@ def numeros_etat_histo_new_view(request, params=None):
             return record.id
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 ###########################################################
@@ -248,8 +235,7 @@ def affaire_numeros_view(request):
         return Utils.serialize_many(records)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Add new affaire-numero """
@@ -275,8 +261,7 @@ def affaire_numero_new_view(request, params=None):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 ###########################################################
@@ -303,6 +288,5 @@ def numeros_affaire_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 

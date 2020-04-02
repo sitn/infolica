@@ -1,11 +1,8 @@
 from pyramid.view import view_config
-import pyramid.httpexceptions as exc
-
+#import pyramid.httpexceptions as exc
 from .. import models
 from ..scripts.utils import Utils
 
-import logging
-log = logging.getLogger(__name__)
 
 ###########################################################
 # Cadastre
@@ -24,6 +21,5 @@ def cadastre_view(request):
         return Utils.serialize_many(records)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 

@@ -51,6 +51,15 @@ def options_response_view(request):
 
 
 ########################################################
+# Common Exception return message
+########################################################
+@view_config(context=Exception, renderer='json')
+def general_error(exc, request):
+    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    request.response.status = 500
+    return {'error': 'true', 'code': 500, 'messagee': CustomError.GENERAL_EXCEPTION}
+
+########################################################
 # Common IntegrityError return message
 ########################################################
 @view_config(context=exc.IntegrityError, renderer='json')

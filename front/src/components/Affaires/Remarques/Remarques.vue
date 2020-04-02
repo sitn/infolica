@@ -3,7 +3,7 @@
 
 
 <script>
-import { checkLogged, getCurrentDate } from "@/services/helper";
+import { /*checkLogged,*/ getCurrentDate } from "@/services/helper";
 
 export default {
   name: "affaireRemarques",
@@ -100,7 +100,7 @@ export default {
   },
 
   mounted: function() {
-    checkLogged();
+    //checkLogged();
     this.searchAffaireRemarques();
   }
 };

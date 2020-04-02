@@ -3,7 +3,7 @@
 
 
 <script>
-import { checkLogged, getCadastres } from "@/services/helper";
+import { /*checkLogged,*/ getCadastres } from "@/services/helper";
 
 export default {
   name: "NumerosHistory",
@@ -157,7 +157,7 @@ export default {
   },
 
   mounted: function() {
-    checkLogged();
+    //checkLogged();
     this.getNumeroById();
     this.initCadastresList();
     this.getNumeroAffaires();

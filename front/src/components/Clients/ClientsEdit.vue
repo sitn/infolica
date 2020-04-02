@@ -3,7 +3,7 @@
 
 
 <script>
-import {checkLogged} from '@/services/helper'
+//import {checkLogged} from '@/services/helper'
 
 import { validationMixin } from 'vuelidate'
   import {
@@ -286,7 +286,7 @@ import { validationMixin } from 'vuelidate'
     },
 
     mounted: function(){
-      checkLogged();
+      //checkLogged();
       this.initTypesClientsList();
 
       //Mode (new or edit)      

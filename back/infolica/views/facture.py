@@ -5,8 +5,6 @@ from ..models import Constant
 import transaction
 from ..exceptions.custom_error import CustomError
 from .. import models
-import logging
-log = logging.getLogger(__name__)
 
 
 ###########################################################
@@ -25,8 +23,7 @@ def factures_view(request):
         query = request.dbsession.query(models.Facture).all()
         return Utils.serialize_many(query)
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Return all factures in affaire"""
@@ -43,8 +40,7 @@ def affaires_factures_view(request):
             .filter(models.Facture.affaire_id == affaire_id).all()
         return Utils.serialize_many(query)
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Add new facture"""
@@ -65,8 +61,7 @@ def factures_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Facture.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Update facture"""
@@ -99,8 +94,7 @@ def factures_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Facture.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 """ Delete facture"""
 @view_config(route_name='factures', request_method='DELETE', renderer='json')
@@ -125,7 +119,6 @@ def factures_delete_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Facture.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 

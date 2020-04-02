@@ -84,21 +84,21 @@ search_limit = 20
 ######################################################################################
 # Les différentes permissions (fonctions)
 ######################################################################################
-editer_affaire_ppe = EDITER_AFFAIRE_PPE
-editer_affaire_autre = EDITER_AFFAIRE_AUTRE
-consulter_affaire = CONSULTER_AFFAIRE
-demander_preavis = DEMANDER_PREAVIS
-saisie_preavis = SAISIE_PREAVIS
-facturation = FACTURATION
-envoi_plan = ENVOI_PLAN
-suivi_affaire_mo = SUIVI_AFFAIRE_MO
-suivi_affaire_rf = SUIVI_AFFAIRE_RF
-suivi_preavis = SUIVI_PREAVIS
-option_statistiques = OPTION_STATISTIQUES
-editer_client = EDITER_CLIENT
-consulter_client = CONSULTER_CLIENT
-editer_operateur = EDITER_OPERATEUR
-consulter_operateur = CONSULTER_OPERATEUR
+fonction_admin = fonction_admin
+affaire_edition = affaire_edition
+affaire_ppe_edition = affaire_ppe_edition
+affaire_revision_abornement_edition = affaire_revision_abornement_edition
+affaire_cadastration_edition = affaire_cadastration_edition
+affaire_envois_edition = affaire_envois_edition
+affaire_controle_edition = affaire_controle_edition
+affaire_suivi_edition = affaire_suivi_edition
+affaire_remarque_edition = affaire_remarque_edition
+affaire_etape_edition = affaire_etape_edition
+affaire_facture_edition = affaire_facture_edition
+affaire_preavis_edition = affaire_preavis_edition
+affaire_numero_edition = affaire_numero_edition
+client_edition = client_edition
+
 
 ######################################################################################
 # Affaire type PPE id
