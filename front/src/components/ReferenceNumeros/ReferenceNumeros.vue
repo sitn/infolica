@@ -113,6 +113,7 @@ export default {
         formData.append("type_numero_id", this.search.type.id);
       if (this.search.etat) formData.append("etat_id", this.search.etat.id);
       if (this.search.numero) formData.append("numero", this.search.numero);
+      if (this.search.suffixe) formData.append("suffixe", this.search.suffixe);
       if (numerosReferencesId)
         formData.append("_id", JSON.stringify(numerosReferencesId));
 

@@ -38,12 +38,17 @@
                             </md-field>
                         </div>
                         <!-- SUFFIXE -->
-                        <!-- INTEGRER LA VALIDATION -->
                         <div class="md-layout-item md-size-25">
-                            <md-field :class="getValidationClass('suffixe')">
+                            <!-- Dans le cas d'une édition de nouvelle unité de PPE -->
+                            <md-field :class="getValidationClass('suffixe')" v-if="isModeCreatePPE">
                                 <label>Unité</label>
                                 <md-input v-model="search.suffixe"></md-input>
                                 <span class="md-error" v-if="isModeCreate && !$v.search.suffixe.required">Le numéro est obligatoire</span>
+                            </md-field>
+                            <!-- Hors mode création de nouvelle unité de PPE -->
+                            <md-field v-else>
+                                <label>Unité</label>
+                                <md-input v-model="search.suffixe"></md-input>
                             </md-field>
                         </div>
                     </div>
