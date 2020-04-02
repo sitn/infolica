@@ -3,7 +3,7 @@
 
 
 <script>
-import { checkLogged, getCurrentDate } from "@/services/helper";
+import { /*checkLogged,*/ getCurrentDate } from "@/services/helper";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 
@@ -277,7 +277,7 @@ export default {
   },
 
   mounted: function() {
-    checkLogged();
+    //checkLogged();
     this.searchAffairePreavis();
     this.searchPreavisType();
     this.searchServices();

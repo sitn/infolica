@@ -4,8 +4,6 @@ from ..models import Constant
 from ..scripts.utils import Utils
 import os
 from datetime import datetime
-import logging
-log = logging.getLogger(__name__)
 
 
 ###########################################################
@@ -32,5 +30,4 @@ def affaire_documents_view(request):
         return documents
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e

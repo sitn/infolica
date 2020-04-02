@@ -6,9 +6,6 @@ from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
 
-import logging
-log = logging.getLogger(__name__)
-
 
 ###########################################################
 # ETAPES AFFAIRE
@@ -27,8 +24,7 @@ def etapes_index_view(request):
         return Utils.serialize_many(records)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ GET etapes affaire"""
@@ -47,8 +43,7 @@ def affaires_etapes_view(request):
         return Utils.serialize_many(records)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ POST remarque affaire"""
@@ -70,8 +65,7 @@ def etapes_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.AffaireEtape.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ DELETE remarque affaire"""
@@ -98,6 +92,5 @@ def etapes_delete_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.AffaireEtape.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 

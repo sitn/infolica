@@ -4,7 +4,7 @@
 
 <script>
 import {
-  checkLogged,
+  /*checkLogged,*/
   getCadastres,
   getTypesNumeros,
   getEtatsNumeros
@@ -144,7 +144,7 @@ export default {
   },
 
   mounted: function() {
-    checkLogged();
+    //checkLogged();
     this.initCadastresList();
     this.initTypesNumerosList();
     this.initEtatsNumerosList();

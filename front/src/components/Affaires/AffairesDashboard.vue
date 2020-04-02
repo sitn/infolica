@@ -3,7 +3,7 @@
 
 
 <script>
-import {checkLogged} from '@/services/helper'
+//import {checkLogged} from '@/services/helper'
 import MapHandler from '@/components/MapHandler/MapHandler.vue';
 import NumerosAffaire from '@/components/Affaires/NumerosAffaire/NumerosAffaire.vue';
 import Suivi from '@/components/Affaires/Suivi/Suivi.vue';
@@ -65,7 +65,7 @@ export default {
   },
 
   mounted: function() {
-    checkLogged();
+    //checkLogged();
     let _this = this;
     this.searchAffaire().then(function(center){
       _this.$refs.mapHandler.initMap(center, process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM);

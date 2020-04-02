@@ -7,9 +7,6 @@ from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
 
-import logging
-log = logging.getLogger(__name__)
-
 """ Return all types clients"""
 @view_config(route_name='types_clients', request_method='GET', renderer='json')
 @view_config(route_name='types_clients_s', request_method='GET', renderer='json')
@@ -19,8 +16,7 @@ def types_clients_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Return all clients"""
@@ -36,8 +32,7 @@ def clients_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Return client by id"""
@@ -54,8 +49,7 @@ def client_by_id_view(request):
         return Utils.serialize_one(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Search clients"""
@@ -82,8 +76,7 @@ def clients_search_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Add new client"""
@@ -105,8 +98,7 @@ def clients_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Client.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Update client"""
@@ -138,8 +130,7 @@ def clients_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Client.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Delete client"""
@@ -170,5 +161,4 @@ def clients_delete_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Client.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e

@@ -3,7 +3,7 @@
 
 
 <script>
-import {checkLogged} from '@/services/helper'
+//import {checkLogged} from '@/services/helper'
 
 import { validationMixin } from 'vuelidate'
   import {
@@ -207,7 +207,7 @@ import { validationMixin } from 'vuelidate'
     },
 
     mounted: function(){
-      checkLogged();
+      //checkLogged();
 
       //Mode (new or edit)      
       if(this.$router && this.$router.currentRoute && this.$router.currentRoute.path === '/operateurs/new')

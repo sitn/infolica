@@ -5,8 +5,6 @@ from ..models import Constant
 import transaction
 from ..exceptions.custom_error import CustomError
 from .. import models
-import logging
-log = logging.getLogger(__name__)
 
 
 """ Return all controles_ppe"""
@@ -22,8 +20,7 @@ def controles_ppe_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Return controles_ppe by id"""
@@ -41,8 +38,7 @@ def controles_ppe_by_id_view(request):
         return Utils.serialize_one(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Return controles_ppe by affaire_id"""
@@ -60,8 +56,7 @@ def controles_ppe_by_affaire_id_view(request):
         return Utils.serialize_one(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Add new controles_ppe"""
@@ -84,8 +79,7 @@ def controles_ppe_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ControlePPE.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Update controles_ppe"""
@@ -116,8 +110,7 @@ def controles_ppe_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ControlePPE.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 """ Delete controles_ppe"""
 @view_config(route_name='controles_ppe', request_method='DELETE', renderer='json')
@@ -146,5 +139,4 @@ def controles_ppe_delete_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.ControlePPE.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e

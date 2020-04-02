@@ -5,8 +5,6 @@ from ..models import Constant
 import transaction
 from ..exceptions.custom_error import CustomError
 from .. import models
-import logging
-log = logging.getLogger(__name__)
 
 """ Return all suivi_mandats"""
 @view_config(route_name='suivi_mandats', request_method='GET', renderer='json')
@@ -21,8 +19,7 @@ def suivi_mandats_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Return suivi_mandats by id"""
@@ -40,8 +37,7 @@ def suivi_mandats_by_id_view(request):
         return Utils.serialize_one(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Return suivi_mandats by affaire_id"""
@@ -59,8 +55,7 @@ def affaire_suivi_mandats_by_affaire_id_view(request):
         return Utils.serialize_one(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Add new suivi_mandats"""
@@ -83,8 +78,7 @@ def suivi_mandats_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.SuiviMandat.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Update suivi_mandats"""
@@ -115,8 +109,7 @@ def suivi_mandats_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.SuiviMandat.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Delete suivi_mandats"""
@@ -146,5 +139,4 @@ def suivi_mandats_delete_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.SuiviMandat.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e

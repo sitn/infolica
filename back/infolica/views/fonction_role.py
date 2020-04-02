@@ -17,8 +17,7 @@ def fonctions_view(request):
         query = request.dbsession.query(models.Fonction).all()
         return Utils.serialize_many(query)
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 """
 
 """ Return all roles
@@ -29,8 +28,7 @@ def roles_view(request):
         query = request.dbsession.query(models.Role).all()
         return Utils.serialize_many(query)
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 """
 
 """ Return fonctions roles by role id
@@ -41,8 +39,7 @@ def fonctions_roles_by_id_view(request):
         return Utils.get_fonctions_roles_by_id(request, id)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 """
 
 

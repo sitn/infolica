@@ -3,7 +3,7 @@
 
 
 <script>
-import {checkLogged} from '@/services/helper'
+//import {checkLogged} from '@/services/helper'
 
 export default {
   name: 'Clients',
@@ -145,7 +145,7 @@ export default {
   },
 
   mounted: function(){
-    checkLogged();
+    //checkLogged();
     this.searchClients();
   }
 }

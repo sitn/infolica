@@ -1,22 +1,12 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from pyramid.httpexceptions import HTTPForbidden
-
 from ..scripts.utils import Utils
 from ..models import Constant
 import transaction
-from sqlalchemy import and_, desc
-
+from sqlalchemy import and_
 import json
-
-from sqlalchemy.exc import DBAPIError
-from ..exceptions.custom_error import CustomError
-
 from .. import models
-from ..views.numero import affaire_numero_new_view, numeros_etat_histo_new_view
-
-import logging
-log = logging.getLogger(__name__)
+from ..views.numero import affaire_numero_new_view
 
 
 """ Add numéro muté in affaire"""
@@ -26,7 +16,7 @@ def reference_numeros_new_view(request):
     try:
         # Check authorization
         if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
-            raise HTTPForbidden()
+            raise exc.HTTPForbidden()
 
         # Get affaire_id
         affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
@@ -41,9 +31,8 @@ def reference_numeros_new_view(request):
 
         return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
 
-    except DBAPIError as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+    except Exception as e:
+        raise e
 
 
 """ Delete numéro muté in affaire"""
@@ -53,7 +42,7 @@ def reference_numeros_delete_view(request):
     try:
         # Check authorization
         if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
-            raise HTTPForbidden()
+            raise exc.HTTPForbidden()
 
         # Get affaire_id and numero_id
         affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
@@ -69,6 +58,5 @@ def reference_numeros_delete_view(request):
 
         return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
 
-    except DBAPIError as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+    except Exception as e:
+        raise e

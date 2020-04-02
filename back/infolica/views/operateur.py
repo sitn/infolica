@@ -1,15 +1,11 @@
 from datetime import datetime
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-
 from .. import models
 import transaction
 from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
-
-import logging
-log = logging.getLogger(__name__)
 
 """ Return all operateurs"""
 @view_config(route_name='operateurs', request_method='GET', renderer='json')
@@ -25,8 +21,7 @@ def operateurs_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
     
 
 """ Return operateur by id"""
@@ -44,8 +39,7 @@ def operateur_by_id_view(request):
         return Utils.serialize_one(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Search operateurs"""
@@ -71,8 +65,7 @@ def operateurs_search_view(request):
         return Utils.serialize_many(query)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 """ Add new operateur"""
 @view_config(route_name='operateurs', request_method='POST', renderer='json')
@@ -94,8 +87,7 @@ def operateurs_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Operateur.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Update operateur"""
@@ -127,8 +119,7 @@ def operateurs_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Operateur.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Delete operateur"""
@@ -138,7 +129,7 @@ def operateurs_delete_view(request):
     try:
         # Check authorization
         if not Utils.has_permission(request, request.registry.settings['fonction_admin']):
-            raise HTTPForbidden()
+            raise exc.HTTPForbidden()
 
         # Get operateur_id
         id_operateur = request.params['id'] if 'id' in request.params else None
@@ -158,6 +149,5 @@ def operateurs_delete_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Operateur.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 

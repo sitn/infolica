@@ -4,6 +4,7 @@
 
 <script>
 import Login from '@/components/Login/Login.vue'
+import {checkLogged} from '@/services/helper'
 
 export default {
   name: 'Main',
@@ -12,6 +13,9 @@ export default {
   },
   props: {
     msg: String
+  },
+  mounted: function(){
+    checkLogged();
   }
 }
 </script>

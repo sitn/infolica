@@ -5,8 +5,6 @@ import transaction
 from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
-import logging
-log = logging.getLogger(__name__)
 
 ###########################################################
 # SERVICES EXTERNES 
@@ -28,8 +26,7 @@ def service_by_id_view(request):
         return Utils.serialize_one(record)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ GET services"""
@@ -46,8 +43,7 @@ def services_view(request):
         return Utils.serialize_many(records)
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ Add preavis affaire"""
@@ -69,8 +65,7 @@ def services_new_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Service.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 """ UPDATE service """
@@ -97,8 +92,7 @@ def services_update_view(request):
             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Service.__tablename__))
 
     except Exception as e:
-        log.error(e)
-        return exc.HTTPBadRequest(e)
+        raise e
 
 
 # """ DELETE preavis affaire"""
@@ -125,5 +119,4 @@ def services_update_view(request):
 #             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Service.__tablename__))
 
 #     except Exception as e:
-#         log.error(e)
-#         return exc.HTTPBadRequest(e)
+#         raise e
