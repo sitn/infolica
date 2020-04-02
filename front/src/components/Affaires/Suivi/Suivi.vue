@@ -90,13 +90,6 @@ export default {
     },
 
     /**
-     * Ouvrir div nouvel étape
-     */
-    addEtape: function() {
-      this.new_etape.showDiv = !this.new_remarque.showDiv;
-    },
-
-    /**
      * Enregistrer une nouvelle étape
      */
     saveNewEtape: function() {
@@ -141,7 +134,7 @@ export default {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         this.saveNewEtape();
-        this.clearForm();
+        this.initForm();
       }
     },
 
@@ -149,13 +142,13 @@ export default {
      * Annuler l'édition d'état
      */
     onCancelEditEtape: function() {
-      this.clearForm();
+      this.initForm();
     },
 
     /**
      * Clear form
      */
-    clearForm() {
+    initForm() {
       this.$v.$reset();
       this.showEtapeDialog = false;
       this.new_etape.etape = null;
@@ -189,6 +182,7 @@ export default {
     checkLogged();
     this.searchAffaireSuivi();
     this.searchEtapes();
+    this.initForm();
   }
 };
 </script>

@@ -44,7 +44,7 @@ export default {
   // Validations
   validations: {
     selectedFacture: {
-      sap: { required },
+      // sap: { required },
       date: { required },
       client: {
         required,

@@ -2,6 +2,7 @@ from datetime import time, date, datetime
 from sqlalchemy import func, and_, desc
 from .. import models
 from ..scripts.ldap_query import LDAPQuery
+import json
 
 
 unite_ppe_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -72,14 +73,23 @@ class Utils():
     @classmethod
     def get_search_conditions(cls, model, params):
         conditions = list()
+        condition_not_in = False # pour les conditions NOT IN, p. ex. référencement numéros à affaire
 
         for param in params:
-            if params[param].isdigit():
-                tmp = int(params[param])
-                conditions.append(getattr(model, param) == tmp)
+            if param.startswith('_'):
+                param = param[1:]
+                condition_not_in = True
+            
+            if condition_not_in:
+                conditions.append(~getattr(model, param).in_(json.loads(params["_"+param])))
+                condition_not_in = False
             else:
-                conditions.append(func.lower(getattr(model, param)).like(
-                    '%' + func.lower(params[param].replace('"','')) + '%'))
+                if params[param].isdigit():
+                    tmp = int(params[param])
+                    conditions.append(getattr(model, param) == tmp)
+                else:
+                    conditions.append(func.lower(getattr(model, param)).like(
+                        '%' + func.lower(params[param].replace('"','')) + '%'))
         return conditions
 
 

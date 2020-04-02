@@ -36,6 +36,8 @@ def test_error(exc, request):
 @view_config(route_name='factures', request_method='OPTIONS', renderer='json')
 @view_config(route_name='factures_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='numero_by_id', request_method='OPTIONS', renderer='json')
+@view_config(route_name='reference_numeros', request_method='OPTIONS', renderer='json')
+@view_config(route_name='reference_numeros_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='preavis', request_method='OPTIONS', renderer='json')
 @view_config(route_name='preavis_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='suivi_mandats', request_method='OPTIONS', renderer='json')
