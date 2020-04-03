@@ -28,12 +28,15 @@
                             <label>Remarque</label>
                             <md-textarea v-model="new_remarque.remarque"></md-textarea>
                         </md-field>
-                        <md-button class="md-default md-raised" v-on:click="cancelNewRemarque()">
-                            Annuler
-                        </md-button>
-                        <md-button class="md-primary md-raised" v-on:click="saveNewRemarque()">
-                            Enregistrer
-                        </md-button>
+                        <!-- Boutons annuler et enregistrer -->
+                        <div class="md-layout md-alignment-bottom-right">
+                            <md-button class="md-accent md-raised" v-on:click="cancelNewRemarque()">
+                                Annuler
+                            </md-button>
+                            <md-button class="md-primary md-raised" v-on:click="saveNewRemarque()">
+                                Enregistrer
+                            </md-button>
+                        </div>
                     </div>
 
 
