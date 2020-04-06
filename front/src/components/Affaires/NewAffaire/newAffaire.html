@@ -48,7 +48,7 @@
                             <md-option v-for="item in clients_list" :key="item.id" :value="item.id">{{item.nom}}</md-option>
                             </md-select> -->
 
-                            <md-autocomplete id="client_commande_id" v-model="form.client_commande_id" :md-options="clients_list" md-dense :md-open-on-focus="false">
+                            <md-autocomplete id="client_commande_id" v-model="form.client_commande_id" :md-options="search_clients_list" md-dense  @md-changed="searchClients(form.client_commande_id)">
                                 <label>Client commande</label>
                             </md-autocomplete>
                             <span class="md-error" v-if="!$v.form.client_commande_id.required">Le client commande est obligatoire</span>
@@ -60,7 +60,7 @@
                             <!-- <label for="client_commande_par_id">Client commande par.</label>
                             <md-select name="client_commande_par_id" id="client_commande_par_id" v-model="form.client_commande_par_id" :disabled="sending">
                             -->
-                            <md-autocomplete id="client_commande_par_id" v-model="form.client_commande_par_id" :md-options="clients_list" md-dense :md-open-on-focus="false">
+                            <md-autocomplete id="client_commande_par_id" v-model="form.client_commande_par_id" :md-options="search_clients_list" md-dense  @md-changed="searchClients(form.client_commande_par_id)">
                                 <label>Client commande par.</label>
                             </md-autocomplete>
                             </md-select>
@@ -73,7 +73,7 @@
                         <md-field :class="getValidationClass('responsable_id')">
                             <label for="responsable_id">Responsable</label>
                             <md-select name="responsable_id" id="responsable_id" v-model="form.responsable_id" :disabled="sending">
-                            <md-option v-for="item in operateurs_list" :key="item.id" :value="item.id">{{item.nom}}</md-option>
+                            <md-option v-for="item in responsables_list" :key="item.id" :value="item.id">{{item.nom}}</md-option>
                             </md-select>
                             <span class="md-error" v-if="!$v.form.responsable_id.required">Le responsable est obligatoire</span>
                         </md-field>

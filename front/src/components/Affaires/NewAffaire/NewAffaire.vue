@@ -7,6 +7,7 @@ import MapHandler from '@/components/MapHandler/MapHandler.vue';
 import { validationMixin } from 'vuelidate'
 import {handleException} from '@/services/exceptionsHandler'
 import {required} from 'vuelidate/lib/validators'
+import { getCurrentDate } from "@/services/helper";
 
 const moment = require('moment')
 
@@ -21,7 +22,9 @@ export default {
     return {
       types_affaires_list: [],
       clients_list: [],
+      search_clients_list: [],
       operateurs_list: [],
+      responsables_list: [],
       cadastres_list: [],
 
       form: {
@@ -33,7 +36,7 @@ export default {
         type_id: null,
         cadastre_id: null,
         information: null,
-        date_ouverture: null,
+        date_ouverture: getCurrentDate(),
         date_validation: null,
         date_cloture: null,
         localisation_E: null,
@@ -177,6 +180,7 @@ export default {
       .then(response =>{
         if (response && response.data) {
           this.operateurs_list = response.data;
+          this.responsables_list = response.data.filter(x => x.responsable);
         }
       })
       //Error 
@@ -207,6 +211,19 @@ export default {
       });
     },
 
+    /**
+     * Search Client par after 3 letters
+     */
+    searchClients (value) {
+      let tmp = [];
+      if (value !== null) {
+        if (value.length >= 3) {
+          tmp = this.clients_list.filter(x => x.nom.toLowerCase().includes(value.toLowerCase()));
+        }
+      }
+      this.search_clients_list = tmp;
+    },
+
      /**
      * Save data
      */
@@ -226,6 +243,7 @@ export default {
         )
         .then(response =>{
           this.handleSaveDataSuccess(response);
+          this.$router.push('/affaires/' + response.data)
         })
         //Error 
         .catch(err => {
@@ -263,8 +281,8 @@ export default {
         formData.append("vref", this.form.vref);
       if(this.form.date_ouverture)
         formData.append("date_ouverture", moment(new Date(new Date(this.form.date_ouverture))).format('YYYY-MM-DD'));      
-      if(this.form.date_ouverture)
-        formData.append("date_ouverture", moment(new Date(new Date(this.form.date_ouverture))).format('YYYY-MM-DD'));
+      if(this.form.date_validation)
+        formData.append("date_validation", moment(new Date(new Date(this.form.date_validation))).format('YYYY-MM-DD'));
       if(this.form.date_cloture)
         formData.append("date_cloture", moment(new Date(new Date(this.form.date_cloture))).format('YYYY-MM-DD'));
 
@@ -314,7 +332,7 @@ export default {
         this.form.nomtype_id = null;
         this.form.nomcadastre_id = null;
         this.form.nominformation = null;
-        this.form.nomdate_ouverture = null;
+        this.form.nomdate_ouverture = getCurrentDate();
         this.form.nomdate_validation = null;
         this.form.nomdate_cloture = null;
         this.form.nomlocalisation_E = null;

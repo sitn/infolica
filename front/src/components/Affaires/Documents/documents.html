@@ -1,0 +1,48 @@
+<div class="Documents">
+    <md-card>
+        <!-- Results Header -->
+        <md-card-header>
+            <div class="md-title">
+                <md-card-expand-trigger>
+                    <md-button class="md-icon-button expandCollapseBtn">
+                        <md-icon>keyboard_arrow_down</md-icon>
+                    </md-button>
+                </md-card-expand-trigger>
+                Documents
+            </div>
+        </md-card-header>
+
+        <md-card-expand>
+            <md-card-expand-content>
+
+                <md-card-content>
+                    <div v-if="documents[0]">
+                        <md-table v-model="documents" md-sort="" md-sort-order="desc">
+                            <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                <md-table-cell md-label="Nom" md-sort-by="nom">{{ item.nom }}</md-table-cell>
+                                <md-table-cell md-label="Dossier" md-sort-by="dossier">{{ item.dossier }}
+                                </md-table-cell>
+                                <md-table-cell md-label="Création" md-sort-by="creation">{{ item.creation }}
+                                </md-table-cell>
+                                <md-table-cell md-label="Télécharger">
+                                    <md-button class="md-icon-button md-dense md-primary">
+                                        <!-- Lier au webservice pour télécharger les documents! -->
+                                        <!-- <a :href="'require('+ item.chemin +')'" :download="item.chemin"> -->
+                                        <a :href="item.chemin" @click.prevent="downloadItem(item)" target="_blank">
+                                            <md-icon>save_alt</md-icon>
+                                        </a>
+                                    </md-button>
+                                </md-table-cell>
+                            </md-table-row>
+                        </md-table>
+                    </div>
+                    <div v-else>
+                        <i>Aucun document</i>
+                    </div>
+                </md-card-content>
+
+            </md-card-expand-content>
+        </md-card-expand>
+
+    </md-card>
+</div>

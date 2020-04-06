@@ -99,11 +99,18 @@ affaire_preavis_edition = affaire_preavis_edition
 affaire_numero_edition = affaire_numero_edition
 client_edition = client_edition
 
+######################################################################################
+# Affaire types id
+######################################################################################
+affaire_type_cadastration_id = 2
+affaire_type_ppe_id = 3
+affaire_type_revision_abornement_id = 4
 
 ######################################################################################
-# Affaire type PPE id
+# Chemins dossiers affaires
 ######################################################################################
-affaire_type_ppe_id = 3
+affaireTemplateDir = 
+affaireParDir = 
 
 ######################################################################################
 # Access-Control-Allow-Origin

@@ -1,0 +1,14 @@
+.documents {
+    width: 100%;
+    float: left;
+}
+
+.documents .md-table {
+    width: 100%;
+    margin: auto;
+}
+
+.documents .newRemarqueBtn {
+    right: 25px;
+    position: absolute;
+}

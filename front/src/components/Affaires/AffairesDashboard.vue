@@ -3,9 +3,9 @@
 
 
 <script>
-//import {checkLogged} from '@/services/helper'
 import MapHandler from '@/components/MapHandler/MapHandler.vue';
 import NumerosAffaire from '@/components/Affaires/NumerosAffaire/NumerosAffaire.vue';
+import Documents from '@/components/Affaires/Documents/Documents.vue';
 import Suivi from '@/components/Affaires/Suivi/Suivi.vue';
 import Preavis from '@/components/Affaires/Preavis/Preavis.vue';
 import Facturation from '@/components/Facturation/Facturation.vue';
@@ -20,6 +20,7 @@ export default {
   components: {
     MapHandler,
     NumerosAffaire,
+    Documents,
     Suivi,
     Preavis,
     Facturation,
@@ -65,7 +66,6 @@ export default {
   },
 
   mounted: function() {
-    //checkLogged();
     let _this = this;
     this.searchAffaire().then(function(center){
       _this.$refs.mapHandler.initMap(center, process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM);

@@ -116,13 +116,18 @@
         </md-card>
     </div>
 
+    <!-- DOCUMENTS -->
+    <div class="affairesDashboard">
+        <Documents />
+    </div>
+
+    <!-- ENVOIS DE DOCUMENTS -->
+    
+
     <!-- NUMEROS -->
     <div class="affairesDashboard">
         <numerosAffaire />
     </div>
-
-    <!-- DOCUMENTS -->
-
 
     <!-- SUIVI D'AFFAIRE -->
     <div class="affairesDashboard">
@@ -134,10 +139,6 @@
         <preavis />
     </div>
 
-
-    <!-- ENVOIS DE DOCUMENTS -->
-
-
     <!-- FACTURATION -->
     <div class="affairesDashboard">
         <Facturation />
@@ -147,7 +148,7 @@
     <div class="affairesDashboard">
         <Remarques />
     </div>
-    
+
     <!-- CONTROLE TECHNIQUE MUTATION -->
     <div class="affairesDashboard">
         <ControleMutation v-if="affaire.type_id==1" />
