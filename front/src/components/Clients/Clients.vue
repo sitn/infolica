@@ -3,7 +3,7 @@
 
 
 <script>
-//import {checkLogged} from '@/services/helper'
+import {handleException} from '@/services/exceptionsHandler'
 
 export default {
   name: 'Clients',
@@ -61,7 +61,7 @@ export default {
           })
           //Error 
           .catch(err => {
-            alert("error : " + err.message);  
+            handleException(err, this); 
           })
         },
 
@@ -132,7 +132,7 @@ export default {
           })
           //Error 
           .catch(err => {
-            alert("error : " + err.message);  
+            handleException(err, this);
           })
         },
 
@@ -145,7 +145,6 @@ export default {
   },
 
   mounted: function(){
-    //checkLogged();
     this.searchClients();
   }
 }

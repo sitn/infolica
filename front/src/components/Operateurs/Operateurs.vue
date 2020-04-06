@@ -125,7 +125,6 @@ export default {
   },
 
   mounted: function(){
-    //checkLogged();
     this.searchOperateurs();
   }
 }

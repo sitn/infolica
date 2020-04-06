@@ -3,7 +3,7 @@
 
 
 <script>
-//import { checkLogged } from "@/services/helper";
+import {handleException} from '@/services/exceptionsHandler'
 
 const moment = require('moment')
 
@@ -49,7 +49,7 @@ export default {
           }
         })
         .catch(err => {
-          alert("error: " + err.message)
+          handleException(err, this);
         });
     },
 
@@ -110,7 +110,7 @@ export default {
           }
         })
         .catch(err => {
-          alert("error : " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -200,13 +200,12 @@ export default {
           }
         })
         .catch(err => {
-          alert("error : " + err.message);
+          handleException(err, this);
         });
     },
   },
 
   mounted: function() {
-    //checkLogged();
     this.searchControlePPE();
     this.searchOperateurs();
   }

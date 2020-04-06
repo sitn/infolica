@@ -3,9 +3,9 @@
 
 
 <script>
-//import { checkLogged } from "@/services/helper";
 import MapHandler from '@/components/MapHandler/MapHandler.vue';
 import { validationMixin } from 'vuelidate'
+import {handleException} from '@/services/exceptionsHandler'
 import {required} from 'vuelidate/lib/validators'
 
 const moment = require('moment')
@@ -132,7 +132,7 @@ export default {
       })
       //Error 
       .catch(err => {
-        alert("error : " + err.message);  
+        handleException(err, this);
       });
     },
 
@@ -159,7 +159,7 @@ export default {
       })
       //Error 
       .catch(err => {
-        alert("error : " + err.message);  
+        handleException(err, this);  
       });
     },
 
@@ -181,7 +181,7 @@ export default {
       })
       //Error 
       .catch(err => {
-        alert("error : " + err.message);  
+        handleException(err, this); 
       });
     },
     
@@ -203,7 +203,7 @@ export default {
       })
       //Error 
       .catch(err => {
-        alert("error : " + err.message);  
+        handleException(err, this);
       });
     },
 
@@ -230,7 +230,7 @@ export default {
         //Error 
         .catch(err => {
           this.sending = false
-          alert("error : " + err.message);  
+          handleException(err, this); 
         });
     },
 
@@ -324,7 +324,6 @@ export default {
   },
 
   mounted: function() {
-    //checkLogged();
 
     //Init map component
     this.callInitMap();
