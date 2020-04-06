@@ -3,7 +3,7 @@
 
 
 <script>
-//import { checkLogged } from "@/services/helper";
+import {handleException} from '@/services/exceptionsHandler'
 
 const moment = require('moment')
 
@@ -13,7 +13,7 @@ export default {
   data: () => ({
     showNewControlePPEBtn: false,
     showModifiedControlePPE: false,
-    controlePPEExists: false,
+    needToCreateControlePPE: false,
     chefsProjetMO_liste: [],
     showCreatedControlePPE: false,
     controlePPE: {}
@@ -43,11 +43,13 @@ export default {
               return x.id == this.controlePPE.visa
               })[0];
             }
+          } else {
+            // Il n'existe pas encore de suivi de mandat pour cette affaire
+            this.needToCreateControlePPE = true;
           }
         })
-        .catch(() => {
-          // Il n'existe pas encore de suivi de mandat pour cette affaire
-          this.controlePPEExists = true;
+        .catch(err => {
+          handleException(err, this);
         });
     },
 
@@ -104,11 +106,11 @@ export default {
           if (response) {
             this.showCreatedControlePPE = true;
             this.searchControlePPE();
-            this.controlePPEExists = false;
+            this.needToCreateControlePPE = false;
           }
         })
         .catch(err => {
-          alert("error : " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -198,13 +200,12 @@ export default {
           }
         })
         .catch(err => {
-          alert("error : " + err.message);
+          handleException(err, this);
         });
     },
   },
 
   mounted: function() {
-    //checkLogged();
     this.searchControlePPE();
     this.searchOperateurs();
   }

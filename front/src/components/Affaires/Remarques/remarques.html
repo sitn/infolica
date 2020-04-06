@@ -24,16 +24,26 @@
                 <md-card-content>
                     <!-- <md-button class="md-primary newRemarqueBtn" v-on:click="addRemarque()">Nouvelle remarque</md-button> -->
                     <div v-if="new_remarque.showDiv">
-                        <md-field>
-                            <label>Remarque</label>
-                            <md-textarea v-model="new_remarque.remarque"></md-textarea>
-                        </md-field>
-                        <md-button class="md-default md-raised" v-on:click="cancelNewRemarque()">
-                            Annuler
-                        </md-button>
-                        <md-button class="md-primary md-raised" v-on:click="saveNewRemarque()">
-                            Enregistrer
-                        </md-button>
+                        <md-card>
+                            <md-card-header>
+                                <div class="md-title">Nouvelle remarque</div>
+                            </md-card-header>
+                            <md-card-content>
+                                <md-field>
+                                    <label>Remarque</label>
+                                    <md-textarea v-model="new_remarque.remarque"></md-textarea>
+                                </md-field>
+                                <!-- Boutons annuler et enregistrer -->
+                                <div class="md-layout md-alignment-bottom-right">
+                                    <md-button class="md-accent md-raised" v-on:click="cancelNewRemarque()">
+                                        Annuler
+                                    </md-button>
+                                    <md-button class="md-primary md-raised" v-on:click="saveNewRemarque()">
+                                        Enregistrer
+                                    </md-button>
+                                </div>
+                            </md-card-content>
+                        </md-card>
                     </div>
 
 

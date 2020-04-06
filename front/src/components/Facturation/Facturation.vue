@@ -4,7 +4,8 @@
 
 <script>
 var numeral = require("numeral");
-import { /*checkLogged,*/ getCurrentDate } from "@/services/helper";
+import { getCurrentDate } from "@/services/helper";
+import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required, minLength } from "vuelidate/lib/validators";
 
@@ -95,7 +96,7 @@ export default {
           }
         })
         .catch(err => {
-          alert("error : " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -279,7 +280,7 @@ export default {
           }
         })
         .catch(err => {
-          alert("error: " + err);
+          handleException(err, this);
         });
       this.onCancelEditFacture();
     },
@@ -327,7 +328,7 @@ export default {
           }
         })
         .catch(err => {
-          alert("error: " + err);
+          handleException(err, this);
         });
       this.deleteFactureId = null;
     },
@@ -341,7 +342,6 @@ export default {
   },
 
   mounted: function() {
-    //checkLogged();
     this.searchClients();
     this.searchAffaireFactures();
   }

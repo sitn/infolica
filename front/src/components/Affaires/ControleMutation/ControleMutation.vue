@@ -3,7 +3,7 @@
 
 
 <script>
-//import { checkLogged } from "@/services/helper";
+import {handleException} from '@/services/exceptionsHandler'
 
 const moment = require('moment')
 
@@ -13,7 +13,7 @@ export default {
   data: () => ({
     showNewControleMutationBtn: false,
     showModifiedControleMutation: false,
-    controleMutationExists: false,
+    needToCreateControleMutation: false,
     chefsProjetMO_liste: [],
     showCreatedControleMutation: false,
     controleMutation: {}
@@ -44,11 +44,13 @@ export default {
               return x.id == this.controleMutation.visa
               })[0];
             }
+          } else {
+            // Il n'existe pas encore de suivi de mandat pour cette affaire
+            this.needToCreateControleMutation = true;
           }
         })
-        .catch(() => {
-          // Il n'existe pas encore de suivi de mandat pour cette affaire
-          this.controleMutationExists = true;
+        .catch(err => {
+          handleException(err, this);
         });
     },
 
@@ -105,11 +107,11 @@ export default {
           if (response) {
             this.showCreatedControleMutation = true;
             this.searchControleMutation();
-            this.controleMutationExists = false;
+            this.needToCreateControleMutation = false;
           }
         })
         .catch(err => {
-          alert("error : " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -167,13 +169,12 @@ export default {
           }
         })
         .catch(err => {
-          alert("error : " + err.message);
+          handleException(err, this);
         });
     },
   },
 
   mounted: function() {
-    //checkLogged();
     this.searchControleMutation();
     this.searchOperateurs();
   }

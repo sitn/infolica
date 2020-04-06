@@ -4,10 +4,10 @@
 
 <script>
 import {
-  //checkLogged,
   getCadastres,
   getTypesAffaires,
 } from "@/services/helper";
+import {handleException} from '@/services/exceptionsHandler'
 
 export default {
   name: "Affaires",
@@ -42,7 +42,7 @@ export default {
           }
         })
         .catch(err => {
-          alert("error: " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -62,7 +62,7 @@ export default {
           }
         })
         .catch(err => {
-          alert("error: " + err.message);
+          handleException(err, this);
         });
     },
    
@@ -101,7 +101,7 @@ export default {
             this.affaires = response.data;
           }
         }).catch(err => {
-          alert("error : " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -115,7 +115,6 @@ export default {
   },
 
   mounted: function() {
-    //checkLogged();
     this.initCadastresList();
     this.initTypesAffairesList();
     this.searchAffaires();

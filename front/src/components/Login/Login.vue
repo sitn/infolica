@@ -3,6 +3,8 @@
 
 
 <script>
+import {handleException} from '@/services/exceptionsHandler'
+
 export default {
   name: 'Login',
   props: {
@@ -33,7 +35,7 @@ export default {
             })
             //Error 
             .catch(err => {
-              alert("error : " + err.message);  
+              handleException(err, this);
             })
           },
           
@@ -53,7 +55,7 @@ export default {
             })
             //Error 
             .catch(err => {
-              alert("error : " + err.message);  
+              handleException(err, this);
             })
           },
 

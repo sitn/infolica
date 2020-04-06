@@ -10,7 +10,7 @@
                 </md-card-expand-trigger>
                 Contrôle Mutation
                 <md-button class="md-primary newControleMutationBtn" v-on:click="newControleMutation()"
-                    v-if="controleMutationExists && showNewControleMutationBtn">Créer le contrôle</md-button>
+                    v-if="needToCreateControleMutation && showNewControleMutationBtn">Créer le contrôle</md-button>
             </div>
         </md-card-header>
 

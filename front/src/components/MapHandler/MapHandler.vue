@@ -4,7 +4,6 @@
 
 
 <script>
-//import { checkLogged } from "@/services/helper";
 import 'ol/ol.css';
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -182,7 +181,6 @@ export default {
   },
 
   mounted: function() {
-    //checkLogged();
   }
 };
 </script>

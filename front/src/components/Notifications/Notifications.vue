@@ -3,7 +3,6 @@
 
 
 <script>
-//import {checkLogged} from '@/services/helper'
 
 export default {
   name: 'Notifications',

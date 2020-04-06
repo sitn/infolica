@@ -3,9 +3,9 @@
 
 
 <script>
-//import { checkLogged } from "@/services/helper";
+import {handleException} from '@/services/exceptionsHandler'
 
-const moment = require('moment')
+const moment = require("moment");
 
 export default {
   name: "SuiviMandat",
@@ -13,7 +13,7 @@ export default {
   data: () => ({
     showNewSuiviMandatBtn: false,
     showModifiedSuiviMandat: false,
-    suiviMandatExists: false,
+    needToCreateSuiviMandat: false,
     operateurs_liste: [],
     chefsProjetMO_liste: [],
     showCreatedSuiviMandat: false,
@@ -28,21 +28,23 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_AFFAIRE_SUIVI_MANDAT_ENDPOINT +
-          this.$route.params.id,
+            process.env.VUE_APP_AFFAIRE_SUIVI_MANDAT_ENDPOINT +
+            this.$route.params.id,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
         )
         .then(response => {
           if (response && response.data) {
             this.suiviMandat = response.data;
+          } else {
+            // Il n'existe pas encore de suivi de mandat pour cette affaire
+            this.needToCreateSuiviMandat = true;
           }
         })
-        .catch(() => {
-          // Il n'existe pas encore de suivi de mandat pour cette affaire
-          this.suiviMandatExists = true;
+        .catch(err => {
+          handleException(err, this);
         });
     },
 
@@ -55,7 +57,7 @@ export default {
           process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
         )
         .then(response => {
@@ -74,7 +76,7 @@ export default {
           }
         })
         .catch(err => {
-          alert("error : " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -92,18 +94,18 @@ export default {
           formData,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
         )
         .then(response => {
           if (response) {
             this.showCreatedSuiviMandat = true;
             this.searchSuiviMandat();
-            this.suiviMandatExists = false;
+            this.needToCreateSuiviMandat = false;
           }
         })
         .catch(err => {
-          alert("error : " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -164,17 +166,22 @@ export default {
         formData.append("ap_41", this.suiviMandat.ap_41);
       if (this.suiviMandat.ap_42)
         formData.append("ap_42", this.suiviMandat.ap_42);
-      if (this.suiviMandat.visa) formData.append("visa", this.suiviMandat.visa.id);
-      if (this.suiviMandat.date) formData.append("date", moment(new Date(new Date(this.suiviMandat.date))).format('YYYY-MM-DD'));
+      if (this.suiviMandat.visa)
+        formData.append("visa", this.suiviMandat.visa.id);
+      if (this.suiviMandat.date)
+        formData.append(
+          "date",
+          moment(new Date(new Date(this.suiviMandat.date))).format("YYYY-MM-DD")
+        );
 
       this.$http
         .put(
           process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_SUIVI_MANDAT_ENDPOINT,
+            process.env.VUE_APP_SUIVI_MANDAT_ENDPOINT,
           formData,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
         )
         .then(response => {
@@ -186,11 +193,10 @@ export default {
         .catch(err => {
           alert("error : " + err.message);
         });
-    },
+    }
   },
 
   mounted: function() {
-    //checkLogged();
     this.searchSuiviMandat();
     this.searchOperateurs();
   }

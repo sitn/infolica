@@ -3,7 +3,7 @@
 
 
 <script>
-//import {checkLogged} from '@/services/helper'
+import {handleException} from '@/services/exceptionsHandler'
 
 import { validationMixin } from 'vuelidate'
   import {
@@ -117,7 +117,7 @@ import { validationMixin } from 'vuelidate'
         })
         //Error 
         .catch(err => {
-          alert("error : " + err.message);  
+          handleException(err, this);
         });
       },
       
@@ -145,7 +145,7 @@ import { validationMixin } from 'vuelidate'
           //Error 
           .catch(err => {
             this.sending = false
-            alert("error : " + err.message);  
+            handleException(err, this);
           });
         }
         else{
@@ -166,7 +166,7 @@ import { validationMixin } from 'vuelidate'
           //Error 
           .catch(err => {
             this.sending = false
-            alert("error : " + err.message);  
+            handleException(err, this);
           });
         }
       },
@@ -280,13 +280,12 @@ import { validationMixin } from 'vuelidate'
         //Error 
         .catch(err => {
           this.sending = false
-          alert("error : " + err.message);  
+          handleException(err, this);  
         });
       }
     },
 
     mounted: function(){
-      //checkLogged();
       this.initTypesClientsList();
 
       //Mode (new or edit)      

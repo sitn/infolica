@@ -3,7 +3,8 @@
 
 
 <script>
-import { /*checkLogged,*/ getCurrentDate } from "@/services/helper";
+import { getCurrentDate } from "@/services/helper";
+import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 
@@ -57,7 +58,7 @@ export default {
           }
         })
         .catch(err => {
-          alert("error : " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -85,7 +86,7 @@ export default {
           }
         })
         .catch(err => {
-          alert("error : " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -122,7 +123,7 @@ export default {
             }
           })
           .catch(err => {
-            alert("error: " + err);
+            handleException(err, this);
           });
       }
     },
@@ -156,14 +157,6 @@ export default {
       this.new_etape.remarque = null;
     },
 
-    // /**
-    //   * Handle save data success
-    //   */
-    //   handleSaveDataSuccess () {
-    //     this.lastRecord = this.new_etape.etape;
-    //     this.dataSaved = true;
-    //   },
-
     /*
      * Get validation class par fieldname
      */
@@ -179,7 +172,6 @@ export default {
   },
 
   mounted: function() {
-    //checkLogged();
     this.searchAffaireSuivi();
     this.searchEtapes();
     this.initForm();

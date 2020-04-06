@@ -3,7 +3,7 @@
 
 
 <script>
-//import { checkLogged } from "@/services/helper";
+import {handleException} from '@/services/exceptionsHandler'
 import ReferenceNumeros from "@/components/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/ReservationNumeros/ReservationNumeros.vue";
 
@@ -53,7 +53,7 @@ export default {
           }
         })
         .catch(err => {
-          alert("error : " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -61,12 +61,6 @@ export default {
      * Supprimer numéro référencé
      */
     onDeleteReferenceNumero(numero_id) {
-      // var formData = new FormData()
-      // formData.append("affaire_id", this.$route.params.id)
-      // formData.append("numero_id", numero_id)
-
-
-
       this.$http
         .delete(
           process.env.VUE_APP_API_URL +
@@ -82,11 +76,9 @@ export default {
           }
         })
         .catch(err => {
-          alert("error: " + err);
+          handleException(err, this);
         });
     },
-
-
 
     /**
      * Abandonner/rétablir un numéro réservé
@@ -111,7 +103,7 @@ export default {
           }
         })
         .catch(err => {
-          alert("error: " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -135,7 +127,7 @@ export default {
           }
         })
         .catch(err => {
-          alert("error: " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -165,7 +157,6 @@ export default {
   },
 
   mounted: function() {
-    //checkLogged();
     this.searchAffaireNumeros();
   }
 };

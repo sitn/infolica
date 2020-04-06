@@ -4,11 +4,11 @@
 
 <script>
 import {
-  /*checkLogged,*/
   getCadastres,
   getTypesNumeros,
   getEtatsNumeros
 } from "@/services/helper";
+import {handleException} from '@/services/exceptionsHandler'
 
 export default {
   name: "Numeros",
@@ -55,7 +55,7 @@ export default {
           }
         })
         .catch(err => {
-          alert("error : " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -76,7 +76,7 @@ export default {
         })
 
         .catch(err => {
-          alert("error: " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -97,7 +97,7 @@ export default {
         })
 
         .catch(err => {
-          alert("error: " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -118,7 +118,7 @@ export default {
         })
 
         .catch(err => {
-          alert("error: " + err.message);
+          handleException(err, this);
         });
     },
 
@@ -144,7 +144,6 @@ export default {
   },
 
   mounted: function() {
-    //checkLogged();
     this.initCadastresList();
     this.initTypesNumerosList();
     this.initEtatsNumerosList();
