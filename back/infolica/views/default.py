@@ -23,6 +23,8 @@ def test_error(exc, request):
 @view_config(route_name='login', request_method='OPTIONS', renderer='json')
 @view_config(route_name='login_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='logout', request_method='OPTIONS', renderer='json')
+@view_config(route_name='affaires', request_method='OPTIONS', renderer='json')
+@view_config(route_name='affaires_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='recherche_clients', request_method='OPTIONS', renderer='json')
 @view_config(route_name='recherche_clients_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='recherche_affaires', request_method='OPTIONS', renderer='json')

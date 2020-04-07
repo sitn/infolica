@@ -43,14 +43,13 @@ export default {
      * Télécharger le document en local
      */
     downloadItem(item) {
-      axios.get(item.chemin, { responseType: "blob" })
+      alert(item.chemin.replace(/\\/g, "/"))
+      axios.get(item.chemin.replace(/\\/g, "/"), { responseType: "blob" })
         .then(response => {
           const blob = new Blob([response.data], { type: "application/pdf" });
           const link = document.createElement("a");
           link.href = URL.createObjectURL(blob);
-          link.download = item.nom;
-          link.click();
-          URL.revokeObjectURL(link.href);
+          window.open(link.href)
         })
         .catch(console.error);
     }

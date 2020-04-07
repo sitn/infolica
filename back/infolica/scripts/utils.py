@@ -52,7 +52,7 @@ class Utils():
         atts = cls.get_model_record_attributes(record)
 
         for att in atts:
-            val = params[att] if att in params else None
+            val = params[att] if att in params else getattr(record, att)
 
             #Chek boolean
             if val == 'true':
