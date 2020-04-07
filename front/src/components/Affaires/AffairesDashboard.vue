@@ -114,7 +114,6 @@ export default {
      */
     onConfirmEdit() {
       var formData = new FormData();
-      alert(this.affaire.id)
       formData.append("id_affaire", this.affaire.id);
       if (this.affaire.nom && this.affaire.nom !== "-") formData.append("nom", this.affaire.nom);
       if (this.affaire.information && this.affaire.information !== "-")
