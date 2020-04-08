@@ -68,17 +68,13 @@ export default {
           withCredentials: true,
           headers: { Accept: "application/json" }
         }
-      ).then(response =>{
-        alert("success")
-        alert(response)
+      ).then(() => { //response =>{
           // this.handleSaveDataSuccess(response);
           this.readonly = true;
           this.$parent.searchAffaire();
         })
         //Error 
         .catch(err => {
-        alert("error")
-        alert(err.message)
           handleException(err, this); 
         });
     }
