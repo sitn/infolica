@@ -3,6 +3,7 @@
 
 
 <script>
+import InfosGenerales from "@/components/Affaires/InfosGenerales/InfosGenerales.vue";
 import MapHandler from "@/components/MapHandler/MapHandler.vue";
 import NumerosAffaire from "@/components/Affaires/NumerosAffaire/NumerosAffaire.vue";
 import Documents from "@/components/Affaires/Documents/Documents.vue";
@@ -13,14 +14,13 @@ import Remarques from "@/components/Affaires/Remarques/Remarques.vue";
 import ControleMutation from "@/components/Affaires/ControleMutation/ControleMutation.vue";
 import ControlePPE from "@/components/Affaires/ControlePPE/ControlePPE.vue";
 import SuiviMandat from "@/components/SuiviMandat/SuiviMandat.vue";
-import {handleException} from '@/services/exceptionsHandler'
 
-const moment = require("moment");
 
 export default {
   name: "AffairesDashboard",
   props: {},
   components: {
+    InfosGenerales,
     MapHandler,
     NumerosAffaire,
     Documents,
@@ -35,9 +35,7 @@ export default {
   data() {
     return {
       affaire: {},
-      affaire_backup: {},
-      affaire_numeros: [],
-      readonly: true
+
     };
   },
 
@@ -90,7 +88,6 @@ export default {
                   obj[key] = "-";
               });
               this.affaire = obj;
-              Object.assign(this.affaire_backup, obj);
               resolve({
                 x: response.data.localisation_e,
                 y: response.data.localisation_n
@@ -100,56 +97,6 @@ export default {
           .catch(() => reject);
       });
     },
-
-    /**
-     * Annuler l'édition du formulaire
-     */
-    onCancelEdit() {
-      Object.assign(this.affaire, this.affaire_backup);
-      this.readonly = true;
-    },
-
-    /**
-     * Enregistrer les modifications
-     */
-    onConfirmEdit() {
-      var formData = new FormData();
-      formData.append("id_affaire", this.affaire.id);
-      if (this.affaire.nom && this.affaire.nom !== "-") formData.append("nom", this.affaire.nom);
-      if (this.affaire.information && this.affaire.information !== "-")
-        formData.append("information", this.affaire.information);
-      if (this.affaire.vref && this.affaire.vref !== "-") formData.append("vref", this.affaire.vref);
-      if (this.affaire.date_validation && this.affaire.date_validation !== "-")
-        formData.append(
-          "date_validation",
-          moment(new Date(new Date(this.affaire.date_validation))).format(
-            "YYYY-MM-DD"
-          )
-        );
-      if (this.affaire.date_cloture && this.affaire.date_cloture !== "-")
-        formData.append(
-          "date_cloture",
-          moment(new Date(new Date(this.affaire.date_cloture))).format(
-            "YYYY-MM-DD"
-          )
-        );
-
-      this.$http.put(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
-        formData,
-        {
-          withCredentials: true,
-          headers: { Accept: "application/json" }
-        }
-      ).then(response =>{
-          this.handleSaveDataSuccess(response);
-          this.searchAffaire()
-        })
-        //Error 
-        .catch(err => {
-          handleException(err, this); 
-        });
-    }
   },
 
   mounted: function() {

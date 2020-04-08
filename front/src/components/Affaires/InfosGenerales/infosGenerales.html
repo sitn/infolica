@@ -1,0 +1,131 @@
+<div class="infosGenerales">
+    <!-- INFORMATIONS GENERALES -->
+    <md-card class="mapHeight">
+        <md-card-content>
+            <div class="md-layout md-gutter ">
+                <div class="md-layout-item md-size-50 md-small-size-100">
+                    <md-field>
+                        <label>Cadastre</label>
+                        <md-input v-model="affaire.cadastre" readonly></md-input>
+                    </md-field>
+                </div>
+
+                <div class="md-layout-item md-size-50 md-small-size-100">
+                    <md-field>
+                        <label>Type</label>
+                        <md-input v-model="affaire.type_affaire" readonly></md-input>
+                    </md-field>
+                </div>
+            </div>
+
+            <div class="md-layout md-gutter ">
+                <div class="md-layout-item md-size-50 md-small-size-100">
+                    <md-field>
+                        <label>Opérateur</label>
+                        <md-input v-model="affaire.technicien" readonly>
+                        </md-input>
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-50 md-small-size-100">
+                    <md-field>
+                        <label>Validation</label>
+                        <md-input v-model="affaire.responsable" readonly>
+                        </md-input>
+                    </md-field>
+                </div>
+            </div>
+
+            <div class="md-layout md-gutter ">
+                <div class="md-layout-item md-size-50 md-small-size-100">
+                    <md-field>
+                        <label>Client</label>
+                        <md-input v-model="affaire.client" readonly></md-input>
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-50 md-small-size-100">
+                    <md-field>
+                        <label>Représenté par</label>
+                        <md-input v-model="affaire.client_par" readonly></md-input>
+                    </md-field>
+                </div>
+            </div>
+
+            <div class="md-layout md-gutter ">
+                <div class="md-layout-item md-size-50 md-small-size-100">
+                    <md-field>
+                        <label v-if="readonly">Nom de l'affaire</label>
+                        <label v-else><strong style="color: blue">Nom de l'affaire</strong></label>
+                        <md-input v-model="affaire.nom" :readonly="readonly"></md-input>
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-50 md-small-size-100">
+                    <md-field>
+                        <label v-if="readonly">v/ref</label>
+                        <label v-else><strong style="color: blue">v/ref</strong></label>
+                        <md-input v-model="affaire.vref" :readonly="readonly"></md-input>
+                    </md-field>
+                </div>
+            </div>
+
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item md-size-25 md-small-size-100">
+                    <md-field>
+                        <label>Date de la demande</label>
+                        <md-input v-model="affaire.date_ouverture"></md-input>
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-25 md-small-size-100">
+                    <!-- Affiche la date de validation en mode readonly -->
+                    <md-field v-if="readonly">
+                        <label>Date de la validation</label>
+                        <md-input v-model="affaire.date_validation" readonly></md-input>
+                    </md-field>
+                    <!-- Affiche la date de validation en mode édition -->
+                    <md-datepicker v-model="affaire.date_validation" v-else>
+                        <label><strong style="color: blue">Date de la validation</strong></label>
+                    </md-datepicker>
+                </div>
+                <div class="md-layout-item md-size-25 md-small-size-100">
+                    <!-- Affiche la date de clôture en mode readonly -->
+                    <md-field v-if="readonly">
+                        <label>Date de clôture</label>
+                        <md-input v-model="affaire.date_cloture" readonly></md-input>
+                    </md-field>
+                    <!-- Affiche la date de clôture en mode édition -->
+                    <md-datepicker v-model="affaire.date_cloture" v-else>
+                        <label><strong style="color: blue">Date de la clôture</strong></label>
+                    </md-datepicker>
+                </div>
+            </div>
+
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item md-size-100 md-small-size-100">
+                    <md-field>
+                        <label v-if="readonly">Informations</label>
+                        <label v-else><strong style="color: blue">Informations</strong></label>
+                        <md-textarea v-model="affaire.information" :readonly="readonly" md-autogrow>
+                        </md-textarea>
+                    </md-field>
+                </div>
+            </div>
+
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item">
+                    <div class="md-layout md-alignment-bottom-right">
+                        <div v-if="readonly">
+                            <md-button class="md-elevation-5 md-dense md-primary" @click="readonly=!readonly">Modifier
+                            </md-button>
+                        </div>
+                        <div v-else>
+                            <md-button class="md-raised md-dense md-accent" @click="onCancelEdit">Annuler
+                            </md-button>
+                            <md-button class="md-raised md-dense md-primary" @click="onConfirmEdit">Enregistrer
+                            </md-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </md-card-content>
+    </md-card>
+</div>
