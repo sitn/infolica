@@ -1,4 +1,22 @@
 <div class="map">
-  <div id="mapDiv" style="height: 468px;height: 100%;"></div>
+
+
+  <md-card class="mapHeight">
+    <md-card-content>
+      <!-- Afficher les oordonnées -->
+      <div class="md-layout md-gutter">
+        <div class="md-layout-item md-size-50">
+          <md-field>
+            <label>Coordonnées</label>
+            <md-input v-model="[affaire.localisation_e | 0, affaire.localisation_n | 0].join(' / ')" readonly>
+            </md-input>
+          </md-field>
+        </div>
+      </div>
+      <div id="mapContainer">
+        <div id="mapDiv" style="height: 468px;height: 100%;"></div>
+      </div>
+    </md-card-content>
+  </md-card>
 
 </div>

@@ -15,7 +15,6 @@ import ControleMutation from "@/components/Affaires/ControleMutation/ControleMut
 import ControlePPE from "@/components/Affaires/ControlePPE/ControlePPE.vue";
 import SuiviMandat from "@/components/SuiviMandat/SuiviMandat.vue";
 
-
 export default {
   name: "AffairesDashboard",
   props: {},
@@ -34,8 +33,7 @@ export default {
   },
   data() {
     return {
-      affaire: {},
-
+      affaire: null
     };
   },
 
@@ -87,27 +85,23 @@ export default {
                 )
                   obj[key] = "-";
               });
-              this.affaire = obj;
-              resolve({
-                x: response.data.localisation_e,
-                y: response.data.localisation_n
-              });
+              resolve(obj);
             }
           })
           .catch(() => reject);
       });
     },
+
+    /**
+     * Set affaire
+     */
+    async setAffaire() {
+      this.affaire = await this.searchAffaire();
+    }
   },
 
   mounted: function() {
-    let _this = this;
-    this.searchAffaire().then(function(center) {
-      _this.$refs.mapHandler.initMap(
-        center,
-        process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM
-      );
-      _this.$refs.mapHandler.addMarker(center.x, center.y);
-    });
+    this.setAffaire();
   }
 };
 </script>
