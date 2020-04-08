@@ -3,194 +3,188 @@
 
 
 <script>
-import {handleException} from '@/services/exceptionsHandler'
+import { handleException } from "@/services/exceptionsHandler";
+import { getCurrentDate } from "@/services/helper";
 
-import { validationMixin } from 'vuelidate'
-  import {
-    required
-  } from 'vuelidate/lib/validators'
+import { validationMixin } from "vuelidate";
+import { required } from "vuelidate/lib/validators";
 
-  const moment = require('moment')
+const moment = require("moment");
 
-  export default {
-    name: 'OperateursEdit',
-    mixins: [validationMixin],
-    data: () => ({
-      //Mode : new or edit
-      mode: 'new',
-      form: {
-        nom: null,
-        prenom: null,
-        login: null,
-        responsable: false,
-        entree: null
+export default {
+  name: "OperateursEdit",
+  mixins: [validationMixin],
+  data: () => ({
+    //Mode : new or edit
+    mode: "new",
+    form: {
+      nom: null,
+      prenom: null,
+      login: null,
+      responsable: false,
+      entree: getCurrentDate()
+    },
+
+    dataSaved: false,
+    sending: false,
+    lastRecord: null
+  }),
+
+  // Validations
+  validations: {
+    form: {
+      nom: {
+        required
       },
+      prenom: {
+        required
+      },
+      entree: {
+        required
+      },
+      responsable: {
+        required
+      }
+    }
+  },
 
-      dataSaved: false,
-      sending: false,
-      lastRecord: null
-    }),
+  methods: {
+    /**
+     * Get validation class par fieldname
+     */
+    getValidationClass(fieldName) {
+      const field = this.$v.form[fieldName];
 
-    // Validations
-    validations: {
-      form: {
-        nom: {          
-          required
-        },
-        prenom: {
-          required
-        },
-        entree: {
-          required
-        },
-        responsable: {
-          required
-        }
+      if (field) {
+        return {
+          "md-invalid": field.$invalid && field.$dirty
+        };
       }
     },
-    
-    methods: {
 
-      /**
-       * Get validation class par fieldname
-       */
-      getValidationClass (fieldName) {
-        const field = this.$v.form[fieldName]
+    /**
+     * Clear the form
+     */
+    clearForm() {
+      this.$v.$reset();
+      this.form.nom = null;
+      this.form.prenom = null;
+      this.form.login = null;
+      this.form.responsable = false;
+      this.form.entree = getCurrentDate();
+    },
 
-        if (field) {
-          return {
-            'md-invalid': field.$invalid && field.$dirty
-          }
-        }
-      },
+    /**
+     * Save data
+     */
+    saveData() {
+      this.sending = true;
+      var formData = this.initPostData();
 
-      /**
-       * Clear the form
-       */
-      clearForm () {
-        this.$v.$reset()
-        this.form.nom = null;
-        this.form.prenom = null;
-        this.form.login = null;
-        this.form.responsable = false;
-        this.form.entree = null;
-      },
+      var url =
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT;
 
-     
-      /**
-       * Save data
-       */
-      saveData () {
-        this.sending = true;
-        var formData = this.initPostData();
-        
-        var url = process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT;
-
-        if(this.mode === 'new'){
-          this.$http.post(
-            url, 
-            formData,
-            {
-              withCredentials: true,
-              headers: {'Accept': 'application/json'}
-            }
-          )
-          .then(response =>{
+      if (this.mode === "new") {
+        this.$http
+          .post(url, formData, {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          })
+          .then(response => {
             this.handleSaveDataSuccess(response);
           })
-          //Error 
+          //Error
           .catch(err => {
-            this.sending = false
-            handleException(err, this); 
-          });
-        }
-        else{
-          var id = this.$route.params.id;
-          formData.append("id", id);
-          
-          this.$http.put(
-            url, 
-            formData,
-            { 
-              withCredentials: true,
-              headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-            }
-          )
-          .then(response =>{
-            this.handleSaveDataSuccess(response);
-          })
-          //Error 
-          .catch(err => {
-            this.sending = false
+            this.sending = false;
             handleException(err, this);
           });
-        }
-      },
+      } else {
+        var id = this.$route.params.id;
+        formData.append("id", id);
 
-      /**
-      * Create formData
-      */
-      initPostData () {
-        var formData = new FormData();
+        this.$http
+          .put(url, formData, {
+            withCredentials: true,
+            headers: { "Content-Type": "application/x-www-form-urlencoded" }
+          })
+          .then(response => {
+            this.handleSaveDataSuccess(response);
+          })
+          //Error
+          .catch(err => {
+            this.sending = false;
+            handleException(err, this);
+          });
+      }
+    },
 
-        if(this.form.nom)
-          formData.append("nom", this.form.nom);
-        if(this.form.prenom)
-          formData.append("prenom", this.form.prenom);
-        if(this.form.login)
-          formData.append("login", this.form.login);
-        if(this.form.responsable !== null && this.form.responsable !== undefined)
-          formData.append("responsable", this.form.responsable);
-        if(this.form.entree)
-          formData.append("entree", moment(new Date(new Date(this.form.entree))).format('YYYY-MM-DD'));
+    /**
+     * Create formData
+     */
+    initPostData() {
+      var formData = new FormData();
 
-        return formData;
-      },
+      if (this.form.nom) formData.append("nom", this.form.nom);
+      if (this.form.prenom) formData.append("prenom", this.form.prenom);
+      if (this.form.login) formData.append("login", this.form.login);
+      if (this.form.responsable !== null && this.form.responsable !== undefined)
+        formData.append("responsable", this.form.responsable);
+      if (this.form.entree)
+        formData.append(
+          "entree",
+          moment(new Date(new Date(this.form.entree))).format("YYYY-MM-DD")
+        );
 
-      /**
-      * Handle save data success
-      */
-      handleSaveDataSuccess (response) {
-        if(response && response.data){
-          this.lastRecord = `${this.form.prenom} ${this.form.nom}`;
-          this.dataSaved = true;
-          this.sending = false;
-          this.clearForm();
-        }
-      },
+      return formData;
+    },
 
-      /**
-       * Validate form
-       */
-      validateForm () {
-        this.$v.$touch()
+    /**
+     * Handle save data success
+     */
+    handleSaveDataSuccess(response) {
+      if (response && response.data) {
+        this.lastRecord = `${this.form.prenom} ${this.form.nom}`;
+        this.dataSaved = true;
+        this.sending = false;
+        this.clearForm();
+      }
+    },
 
-        if (!this.$v.$invalid) {
-          this.saveData()
-        }
-      },
-      
-      /**
-       * Cancel edit
-       */
-      cancelEdit () {
-        this.$router.push('/operateurs');
-      },
-      
-      /**
-       * Init edit data
-       */
-      initEditData (id) {
-        
-        this.$http.get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT + '/' + id,
+    /**
+     * Validate form
+     */
+    validateForm() {
+      this.$v.$touch();
+
+      if (!this.$v.$invalid) {
+        this.saveData();
+      }
+    },
+
+    /**
+     * Cancel edit
+     */
+    cancelEdit() {
+      this.$router.push("/operateurs");
+    },
+
+    /**
+     * Init edit data
+     */
+    initEditData(id) {
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_OPERATEURS_ENDPOINT +
+            "/" +
+            id,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
         )
-        .then(response =>{
-          if(response && response.data){
+        .then(response => {
+          if (response && response.data) {
             this.form.nom = response.data.nom;
             this.form.prenom = response.data.prenom;
             this.form.login = response.data.login;
@@ -198,30 +192,30 @@ import { validationMixin } from 'vuelidate'
             this.form.entree = response.data.entree;
           }
         })
-        //Error 
+        //Error
         .catch(err => {
-          this.sending = false
-          handleException(err, this); 
+          this.sending = false;
+          handleException(err, this);
         });
-      }
-    },
+    }
+  },
 
-    mounted: function(){
+  mounted: function() {
+    //Mode (new or edit)
+    if (
+      this.$router &&
+      this.$router.currentRoute &&
+      this.$router.currentRoute.path === "/operateurs/new"
+    )
+      this.mode = "new";
+    else this.mode = "edit";
 
-      //Mode (new or edit)      
-      if(this.$router && this.$router.currentRoute && this.$router.currentRoute.path === '/operateurs/new')
-        this.mode = 'new';
-      else
-        this.mode = 'edit';
-
-
-      //If mode = edit, get the operateur
-      if(this.mode === 'edit'){
-        var id = this.$route.params.id;
-        this.initEditData(id);
-      }
+    //If mode = edit, get the operateur
+    if (this.mode === "edit") {
+      var id = this.$route.params.id;
+      this.initEditData(id);
     }
   }
-
+};
 </script>
 
