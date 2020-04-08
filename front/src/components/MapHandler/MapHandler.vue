@@ -21,14 +21,12 @@ export default {
   name: "MapHandler",
   props: {
     msg: String,
-    affaire: Object
   },
   data: () => ({
-    // affaire: {},
+    affaire: {},
     affaire_data: {},
     map: null,
-    center: {},
-    // center: { x: null, y: null },
+    center: { x: null, y: null },
     view: null,
     vectorLayer: null,
     vectorSource: null,
@@ -193,14 +191,13 @@ export default {
      * Get affaire data before showing the map
      */
     async getAffaireData() {
-      // this.affaire = await this.$parent.searchAffaire();
+      this.affaire = await this.$parent.searchAffaire();
 
       this.center = {
         x: this.affaire.localisation_e,
         y: this.affaire.localisation_n
       },
 
-      // alert(this.center.x + " , " + this.center.y),
       this.initMap(this.center, process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM),
       this.addMarker(this.center.x, this.center.y);
     }

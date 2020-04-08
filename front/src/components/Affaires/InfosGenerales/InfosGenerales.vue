@@ -42,23 +42,23 @@ export default {
     onConfirmEdit() {
       var formData = new FormData();
       formData.append("id_affaire", this.affaire.id);
-      if (this.affaire.nom !== "-") formData.append("nom", this.affaire.nom);
+      if (this.affaire.nom !== "-") formData.append("nom", this.affaire.nom || null);
       if (this.affaire.information !== "-")
-        formData.append("information", this.affaire.information);
-      if (this.affaire.vref !== "-") formData.append("vref", this.affaire.vref);
+        formData.append("information", this.affaire.information || null);
+      if (this.affaire.vref !== "-") formData.append("vref", this.affaire.vref || null);
       if (this.affaire.date_validation !== "-")
         formData.append(
           "date_validation",
           moment(new Date(new Date(this.affaire.date_validation))).format(
             "YYYY-MM-DD"
-          )
+          ) || null
         );
       if (this.affaire.date_cloture !== "-")
         formData.append(
           "date_cloture",
           moment(new Date(new Date(this.affaire.date_cloture))).format(
             "YYYY-MM-DD"
-          )
+          ) || null
         );
 
       this.$http.put(
