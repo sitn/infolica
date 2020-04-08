@@ -97,6 +97,19 @@ export default {
      */
     async setAffaire() {
       this.affaire = await this.searchAffaire();
+      this.getAffaireData()
+    },
+
+    /**
+     * Get affaire data before showing the map
+     */
+    async getAffaireData() {
+      this.center = {
+        x: this.affaire.localisation_e,
+        y: this.affaire.localisation_n
+      };
+      this.$refs.mapHandler.initMap(this.center, process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM);
+      this.$refs.mapHandler.addMarker(this.center.x, this.center.y);
     }
   },
 

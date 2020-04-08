@@ -28,7 +28,24 @@
 
     <!-- MAP -->
     <div class="rightColumn">
-        <MapHandler />
+        <md-card class="mapHeight">
+            <md-card-content>
+                <!-- Afficher les oordonnées -->
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-size-50">
+                        <md-field>
+                            <label>Coordonnées</label>
+                            <md-input v-model="[affaire.localisation_e | 0, affaire.localisation_n | 0].join(' / ')"
+                                readonly>
+                            </md-input>
+                        </md-field>
+                    </div>
+                </div>
+                <div id="mapContainer">
+                    <MapHandler ref="mapHandler" />
+                </div>
+            </md-card-content>
+        </md-card>
     </div>
 
     <!-- DOCUMENTS -->

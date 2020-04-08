@@ -4,11 +4,3 @@
     float: left;
 }
 
-#mapContainer {
-    width: 100%;
-    height: 430px;
-  }
- 
-.map .mapHeight {
-    height: 550px;
-}

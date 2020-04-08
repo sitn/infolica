@@ -186,26 +186,9 @@ export default {
     clearMarkers: function() {
       this.vectorSource.clear();
     },
-
-    /**
-     * Get affaire data before showing the map
-     */
-    async getAffaireData() {
-      this.affaire = await this.$parent.searchAffaire();
-
-      this.center = {
-        x: this.affaire.localisation_e,
-        y: this.affaire.localisation_n
-      },
-
-      this.initMap(this.center, process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM),
-      this.addMarker(this.center.x, this.center.y);
-    }
-
   },
 
   mounted: function() {
-    this.getAffaireData();
   }
 };
 </script>
