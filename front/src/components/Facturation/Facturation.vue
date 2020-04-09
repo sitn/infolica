@@ -224,7 +224,7 @@ export default {
       if (this.selectedFacture.sap)
         formData.append("sap", this.selectedFacture.sap);
       if (this.selectedFacture.date)
-        formData.append("date", moment(new Date(new Date(this.selectedFacture.date))).format("YYYY-MM-DD"));
+        formData.append("date", moment(this.selectedFacture.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       if (this.selectedFacture.client.id) formData.append("client_id", this.selectedFacture.client.id);
       if (this.selectedFacture.montant_mo)
         formData.append("montant_mo", this.selectedFacture.montant_mo);

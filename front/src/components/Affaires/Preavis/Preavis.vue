@@ -4,9 +4,10 @@
 
 <script>
 import { getCurrentDate } from "@/services/helper";
-import {handleException} from '@/services/exceptionsHandler'
+import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
+import moment from "moment";
 
 export default {
   name: "preavis",
@@ -50,11 +51,11 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_AFFAIRE_PREAVIS_ENDPOINT +
-          this.$route.params.id,
+            process.env.VUE_APP_AFFAIRE_PREAVIS_ENDPOINT +
+            this.$route.params.id,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
         )
         .then(response => {
@@ -74,10 +75,10 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_PREAVIS_TYPE_ENDPOINT,
+            process.env.VUE_APP_PREAVIS_TYPE_ENDPOINT,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
         )
         .then(response => {
@@ -104,7 +105,7 @@ export default {
           process.env.VUE_APP_API_URL + process.env.VUE_APP_SERVICES_ENDPOINT,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
         )
         .then(response => {
@@ -180,7 +181,7 @@ export default {
           formData,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
         );
       } else {
@@ -190,7 +191,7 @@ export default {
           formData,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
         );
       }
@@ -220,9 +221,13 @@ export default {
       if (this.new_preavis.preavis)
         formData.append("preavis_type_id", this.new_preavis.preavis.id);
       if (this.new_preavis.date_demande)
-        formData.append("date_demande", this.new_preavis.date_demande);
+        formData.append(
+          "date_demande",
+          moment(this.new_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       if (this.new_preavis.date_reponse)
-        formData.append("date_reponse", this.new_preavis.date_reponse);
+        formData.append(
+          "date_reponse",
+          moment(this.new_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       if (this.new_preavis.remarque)
         formData.append("remarque", this.new_preavis.remarque);
       if (this.new_preavis.id) formData.append("id", this.new_preavis.id);

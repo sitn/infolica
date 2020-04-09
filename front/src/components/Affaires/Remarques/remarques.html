@@ -53,7 +53,7 @@
                                 <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                                 <md-table-cell md-label="Opérateur" md-sort-by="nom">{{ item.prenom }} {{ item.nom }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Date" md-sort-by="date">{{ item.date }}</md-table-cell>
+                                <md-table-cell md-label="Date" md-sort-by="date">{{ item.date | formatDate }}</md-table-cell>
                                 <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}
                                 </md-table-cell>
                             </md-table-row>

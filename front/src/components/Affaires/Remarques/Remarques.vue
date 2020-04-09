@@ -5,6 +5,7 @@
 <script>
 import { getCurrentDate } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
+import moment from "moment"
 
 export default {
   name: "affaireRemarques",
@@ -61,7 +62,7 @@ export default {
         var formData = new FormData();
         if (this.new_remarque.remarque)
           formData.append("remarque", this.new_remarque.remarque);
-        formData.append("date", getCurrentDate());
+        formData.append("date", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
         formData.append(
           "operateur_id",
           JSON.parse(localStorage.getItem("infolica_user")).id

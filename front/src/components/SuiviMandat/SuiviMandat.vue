@@ -171,8 +171,7 @@ export default {
       if (this.suiviMandat.date)
         formData.append(
           "date",
-          moment(new Date(new Date(this.suiviMandat.date))).format("YYYY-MM-DD")
-        );
+          moment(this.suiviMandat.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
 
       this.$http
         .put(

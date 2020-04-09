@@ -4,9 +4,11 @@
 
 <script>
 import { getCurrentDate } from "@/services/helper";
-import {handleException} from '@/services/exceptionsHandler'
+import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
+
+import moment from "moment";
 
 export default {
   name: "suivi",
@@ -45,11 +47,11 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_AFFAIRE_SUIVI_ENDPOINT +
-          this.$route.params.id,
+            process.env.VUE_APP_AFFAIRE_SUIVI_ENDPOINT +
+            this.$route.params.id,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
         )
         .then(response => {
@@ -69,10 +71,10 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_ETAPES_INDEX_ENDPOINT,
+            process.env.VUE_APP_ETAPES_INDEX_ENDPOINT,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
         )
         .then(response => {
@@ -94,38 +96,43 @@ export default {
      * Enregistrer une nouvelle étape
      */
     saveNewEtape: function() {
-      if (this.new_etape.etape != null && this.new_etape.date != null) {
-        var formData = new FormData();
-        formData.append("affaire_id", this.$route.params.id);
-        if (this.new_etape.etape.id) {
-          formData.append("etape_id", this.new_etape.etape.id);
-          this.lastRecord = this.new_etape.etape.nom;
-        }
-        if (this.new_etape.date) formData.append("date", this.new_etape.date);
-        if (this.new_etape.remarque)
-          formData.append("remarque", this.new_etape.remarque);
+      var formData = new FormData();
+      formData.append("affaire_id", this.$route.params.id);
+      if (this.new_etape.etape.id) {
+        formData.append("etape_id", this.new_etape.etape.id);
+        this.lastRecord = this.new_etape.etape.nom;
+      }
+      if (this.new_etape.date)
+        formData.append(
+          "date",
+          moment(
+            this.new_etape.date,
+            process.env.VUE_APP_DATEFORMAT_CLIENT
+          ).format(process.env.VUE_APP_DATEFORMAT_WS)
+        );
+      if (this.new_etape.remarque)
+        formData.append("remarque", this.new_etape.remarque);
 
-        this.$http
-          .post(
-            process.env.VUE_APP_API_URL +
-              process.env.VUE_APP_AFFAIRE_ETAPES_ENDPOINT,
-            formData,
+      this.$http
+        .post(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_AFFAIRE_ETAPES_ENDPOINT,
+          formData,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
-          )
-          .then(response => {
-            if (response.data) {
-              this.searchAffaireSuivi();
-              // handle success
-              this.dataSaved = true;
-            }
-          })
-          .catch(err => {
-            handleException(err, this);
-          });
-      }
+        )
+        .then(response => {
+          if (response.data) {
+            this.searchAffaireSuivi();
+            // handle success
+            this.dataSaved = true;
+          }
+        })
+        .catch(err => {
+          handleException(err, this);
+        });
     },
 
     /**

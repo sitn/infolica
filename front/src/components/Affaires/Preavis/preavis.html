@@ -29,9 +29,9 @@
                                 <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                                 <md-table-cell md-label="Service" md-sort-by="service">{{ item.service }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Demande" md-sort-by="date_demande">{{ item.date_demande }}
+                                <md-table-cell md-label="Demande" md-sort-by="date_demande">{{ item.date_demande | formatDate }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Réponse" md-sort-by="date_reponse">{{ item.date_reponse }}
+                                <md-table-cell md-label="Réponse" md-sort-by="date_reponse">{{ item.date_reponse | formatDate }}
                                 </md-table-cell>
                                 <md-table-cell md-label="Préavis" md-sort-by="preavis">{{ item.preavis }}
                                 </md-table-cell>
@@ -100,8 +100,6 @@
 
                 <md-snackbar :md-active.sync="dataSaved">Le préavis au '{{ lastRecord }}' a été enregistrée avec succès
                 </md-snackbar>
-                <!-- <md-dialog-alert :md-active.sync="alertErrorActive" md-title="Erreur!"
-                    md-content="Une erreur est survenue lors de l'enregistrement des données" /> -->
 
             </md-card-expand-content>
         </md-card-expand>

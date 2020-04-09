@@ -92,7 +92,7 @@
                         <md-table-cell md-label="Affaire" md-sort-by="suffixe">{{ item.affaire_nom }}</md-table-cell>
                         <md-table-cell md-label="Type" md-sort-by="numero">{{ item.affaire_type }}</md-table-cell>
                         <md-table-cell md-label="Informations" md-sort-by="type">{{ item.affaire_information }}</md-table-cell>
-                        <md-table-cell md-label="Date" md-sort-by="date">{{ item.affaire_date }}</md-table-cell>
+                        <md-table-cell md-label="Date" md-sort-by="date">{{ item.affaire_date | formatDate }}</md-table-cell>
                         <md-table-cell md-label="Actions" class="actionsColumn">
                             <md-button class="md-icon-button md-raised md-primary" v-on:click="doOpenAffaire(item.affaire_id)">
                                 <md-icon>open_in_new</md-icon>

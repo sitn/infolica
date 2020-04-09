@@ -24,7 +24,7 @@
                                 <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                                 <md-table-cell class="alignRight" md-label="SAP" md-sort-by="sap">{{ item.sap }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Date" md-sort-by="date">{{ item.date }}</md-table-cell>
+                                <md-table-cell md-label="Date" md-sort-by="date">{{ item.date | formatDate }}</md-table-cell>
                                 <md-table-cell md-label="Client" md-sort-by="client.nom">
                                     {{ item.client.nom }}
                                 </md-table-cell>

@@ -300,24 +300,15 @@ export default {
       if (this.form.date_ouverture)
         formData.append(
           "date_ouverture",
-          moment(new Date(new Date(this.form.date_ouverture))).format(
-            "YYYY-MM-DD"
-          )
-        );
+          moment(this.form.date_ouverture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       if (this.form.date_validation)
         formData.append(
           "date_validation",
-          moment(new Date(new Date(this.form.date_validation))).format(
-            "YYYY-MM-DD"
-          )
-        );
+          moment(this.form.date_validation, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       if (this.form.date_cloture)
         formData.append(
           "date_cloture",
-          moment(new Date(new Date(this.form.date_cloture))).format(
-            "YYYY-MM-DD"
-          )
-        );
+          moment(this.form.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
 
       return formData;
     },

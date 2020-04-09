@@ -205,7 +205,7 @@ import { validationMixin } from 'vuelidate'
         if(this.form.mail)
           formData.append("mail", this.form.mail);
         if(this.form.entree)
-          formData.append("entree", moment(new Date(new Date(this.form.entree))).format('YYYY-MM-DD'));
+          formData.append("entree", moment(this.form.entree, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
         if(this.form.no_sap)
           formData.append("no_sap", this.form.no_sap);
         if(this.form.no_bdp_bdee)

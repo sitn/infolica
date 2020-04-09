@@ -14,8 +14,19 @@ export default {
   props: {
     msg: String
   },
+  methods: {
+    /**
+     * Set default date format in datepicker
+     */
+    setDefaultDateFormat() {
+      this.$material.locale.dateFormat = "dd.MM.yyyy";
+      this.$material.locale.firstDayOfAWeek = 1;
+    }
+
+  },
   mounted: function(){
-    checkLogged(this);
+    checkLogged();
+    this.setDefaultDateFormat();
   }
 }
 </script>
