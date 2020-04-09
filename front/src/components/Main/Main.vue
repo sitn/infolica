@@ -15,7 +15,7 @@ export default {
     msg: String
   },
   mounted: function(){
-    checkLogged();
+    checkLogged(this);
   }
 }
 </script>

@@ -4,13 +4,12 @@ import axios from 'axios';
 /**
  * Check if the user is logged in
  */
-export const checkLogged = function () {
+export const checkLogged = function (component) {
     var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
 
-    if (!session_user) {
-        if(window.location.href.indexOf("/login") === -1)
-            window.location.href = "/login";
-    }
+    if(!session_user && component.$router && component.$router.currentRoute && component.$router.currentRoute.path != '/login')
+        component.$router.push('/login');
+    
 };
 
 /*

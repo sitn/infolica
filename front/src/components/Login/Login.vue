@@ -51,7 +51,7 @@ export default {
               }
             )
             .then(() =>{
-              
+              localStorage.removeItem('infolica_user');
             })
             //Error 
             .catch(err => {
