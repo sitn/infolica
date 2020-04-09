@@ -88,7 +88,6 @@ class LDAPQuery():
     @classmethod
     def get_user_group_by_dn(cls, request, dn):
         groups = []
-        output_json = []
         try:
             connector = get_ldap_connector(request)
             result = connector.user_groups(dn)

@@ -47,7 +47,7 @@
                         <div class="md-layout-item md-small-size-30">
                             <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste">
                                 <label>Cadastre</label>
-                                <template slot="md-autocomplete-item" scope="{ item }">
+                                <template slot="md-autocomplete-item" slot-scope="{ item }">
                                     {{ item.nom }}
                                 </template>
                             </md-autocomplete>

@@ -146,6 +146,7 @@ export default {
         this.lastRecord = `${this.form.prenom} ${this.form.nom}`;
         this.dataSaved = true;
         this.sending = false;
+        this.$root.$emit("ShowMessage", "L'opérateursss " + this. lastRecord + " a été enregistré avec succès");
         this.clearForm();
       }
     },
