@@ -16,7 +16,11 @@ def cadastre_view(request):
     #if not Utils.check_connected(request):
         #raise exc.HTTPForbidden()
 
-    records = request.dbsession.query(models.Cadastre).order_by(models.Cadastre.nom).all()
-    return Utils.serialize_many(records)
+  records = request.dbsession.query(models.Cadastre).order_by(models.Cadastre.nom).all()
+  cadastres = Utils.serialize_many(records)
+
+  # Supprimer l'entrée "CADASTRE CANTONAL" de la liste
+  cadastres.pop(9)
+  return cadastres
 
 
