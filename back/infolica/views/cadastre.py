@@ -17,6 +17,9 @@ def cadastre_view(request):
         #raise exc.HTTPForbidden()
 
     records = request.dbsession.query(models.Cadastre).order_by(models.Cadastre.nom).all()
-    return Utils.serialize_many(records)
+    cadastres = Utils.serialize_many(records)
 
+    # Supprimer l'entrée "CADASTRE CANTONAL" de la liste
+    cadastres.pop(9)
+    return cadastres
 

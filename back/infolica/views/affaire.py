@@ -59,9 +59,12 @@ def affaires_search_view(request):
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
 @view_config(route_name='types_affaires_s', request_method='GET', renderer='json')
 def types_affaires_view(request):
-    
     query = request.dbsession.query(models.AffaireType).all()
-    return Utils.serialize_many(query)
+    types_affaires = Utils.serialize_many(query)
+
+    # Supprimer type d'affaire "NE PLUS UTILISER"
+    types_affaires.pop(5)
+    return types_affaires
 
 """ Add new affaire"""
 @view_config(route_name='affaires', request_method='POST', renderer='json')
