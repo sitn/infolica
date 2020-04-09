@@ -1,0 +1,9 @@
+.infosGenerales {
+    width: 100%;
+    float: left;
+}
+
+
+.infosGenerales .mapHeight {
+    height: 550px;
+}

@@ -78,13 +78,13 @@
                         </md-datepicker>
 
                         <md-autocomplete v-model="selectedFacture.client" :md-options="clients_liste_select"
-                        @md-changed="getClientSearch" :class="getValidationClass('client')">
+                        @md-changed="getClientSearch" md-dense :class="getValidationClass('client')">
                             <label>Client</label>
                             <template slot="md-autocomplete-item" slot-scope="{ item }">
                                 {{ item.nom }}
                             </template>
+                            <span class="md-error" v-if="!$v.selectedFacture.client.required">Le client est obligatoire</span>
                         </md-autocomplete>
-                        <span class="md-error" v-if="!$v.selectedFacture.client.required">Le client est obligatoire</span>
 
                         <md-field :class="getValidationClass('montant_mo')">
                             <label>Montant MO</label>
@@ -122,7 +122,7 @@
 
                         <md-field>
                             <label>Remarque</label>
-                            <md-textarea v-model="selectedFacture.remarque" md-autogrow></md-textarea>
+                            <md-textarea v-model="selectedFacture.remarque"></md-textarea>
                         </md-field>
 
                     </md-dialog-content>

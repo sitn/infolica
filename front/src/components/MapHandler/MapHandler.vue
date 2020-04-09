@@ -4,40 +4,40 @@
 
 
 <script>
-import 'ol/ol.css';
-import Map from 'ol/Map';
-import View from 'ol/View';
+import "ol/ol.css";
+import Map from "ol/Map";
+import View from "ol/View";
 //import {defaults as defaultControls, ScaleLine} from 'ol/control';
-import TileLayer from 'ol/layer/Tile';
-import TileWMS from 'ol/source/TileWMS';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import Feature from 'ol/Feature'
+import TileLayer from "ol/layer/Tile";
+import TileWMS from "ol/source/TileWMS";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
+import Feature from "ol/Feature";
 // import Circle from 'ol/geom/Circle'
-import Point from 'ol/geom/Point';
-import {Style, Circle, Fill, Stroke} from 'ol/style';
+import Point from "ol/geom/Point";
+import { Style, Circle, Fill, Stroke } from "ol/style";
 
 export default {
   name: "MapHandler",
   props: {
-    msg: String
+    msg: String,
   },
   data: () => ({
+    affaire: {},
     affaire_data: {},
     map: null,
+    center: { x: null, y: null },
     view: null,
     vectorLayer: null,
     vectorSource: null,
-    markerStyle: null,
+    markerStyle: null
   }),
 
   methods: {
-
     /**
      * Init map
      */
     initMap: function(center, zoom) {
-
       //Init marker style
       this.initMarkerStyle();
 
@@ -45,8 +45,8 @@ export default {
       var wmsSource = new TileWMS({
         url: process.env.VUE_APP_WMS_URL,
         params: {
-          'LAYERS': 'plan_cadastral_couleur',
-          'TILED': false
+          LAYERS: "plan_cadastral_couleur",
+          TILED: false
         }
       });
 
@@ -54,11 +54,10 @@ export default {
         source: wmsSource
       });
 
-
       // Vector layer
       this.vectorSource = new VectorSource({
         projection: process.env.VUE_APP_MAP_PROJECTION
-      })
+      });
       this.vectorLayer = new VectorLayer({
         source: this.vectorSource
       });
@@ -69,14 +68,16 @@ export default {
       //View
       this.view = new View({
         projection: process.env.VUE_APP_MAP_PROJECTION,
-        center: center ? [center.x, center.y] : process.env.VUE_APP_MAP_DEFAULT_CENTER,
+        center: center
+          ? [center.x, center.y]
+          : process.env.VUE_APP_MAP_DEFAULT_CENTER,
         zoom: zoom
       });
 
-        if(!this.map){
+      if (!this.map) {
         this.map = new Map({
           layers: layers,
-          target: 'mapDiv',
+          target: "mapDiv",
           view: this.view
         });
 
@@ -85,9 +86,14 @@ export default {
 
         // Add click listener
         //this.map.on('click', this.onMapClick);
-      }
-      else{
-        this.map.getView().setCenter(center ? [center.x, center.y] : process.env.VUE_APP_MAP_DEFAULT_CENTER)
+      } else {
+        this.map
+          .getView()
+          .setCenter(
+            center
+              ? [center.x, center.y]
+              : process.env.VUE_APP_MAP_DEFAULT_CENTER
+          );
       }
 
       // Add marker
@@ -100,16 +106,18 @@ export default {
     makeWorkaroundCanvasTransform: function() {
       let _this = this;
 
-      this.vectorSource.once('addfeature', function() {
+      this.vectorSource.once("addfeature", function() {
         _this.setCanvasTransform();
       });
-      this.vectorLayer.once('postrender', function() {
+      this.vectorLayer.once("postrender", function() {
         _this.setCanvasTransform();
       });
-      window.onresize = function(){
-        setTimeout( function() {_this.setCanvasTransform();}, 500);
-      }
-      this.view.on('change:resolution', function() {
+      window.onresize = function() {
+        setTimeout(function() {
+          _this.setCanvasTransform();
+        }, 500);
+      };
+      this.view.on("change:resolution", function() {
         _this.setCanvasTransform();
       });
     },
@@ -118,10 +126,9 @@ export default {
      * Handle map click event
      */
     setCanvasTransform: function() {
-        var canvas = document.getElementById("mapDiv").querySelectorAll("canvas"); 
+      var canvas = document.getElementById("mapDiv").querySelectorAll("canvas");
 
-        if(canvas && canvas.length > 1)
-          canvas[1].style.transform = "inherit";  
+      if (canvas && canvas.length > 1) canvas[1].style.transform = "inherit";
     },
 
     /**
@@ -131,9 +138,10 @@ export default {
       this.markerStyle = new Style({
         image: new Circle({
           radius: 7,
-          fill: new Fill({color: 'yellow'}),
+          fill: new Fill({ color: "yellow" }),
           stroke: new Stroke({
-            color: [0,0,0], width: 2
+            color: [0, 0, 0],
+            width: 2
           })
         })
       });
@@ -177,7 +185,7 @@ export default {
      */
     clearMarkers: function() {
       this.vectorSource.clear();
-    }
+    },
   },
 
   mounted: function() {

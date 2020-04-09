@@ -104,6 +104,7 @@ class Affaire(Base):
     localisation_E = Column(Float, nullable=False)
     localisation_N = Column(Float, nullable=False)
     vref = Column(Text)
+    chemin = Column(Text)
 
 
 class AffaireEtapeIndex(Base):

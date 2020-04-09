@@ -3,105 +3,26 @@
     <!-- TITRE -->
     <md-card>
         <md-card-header>
-            <div class="md-title ">Affaire {{ affaire.id }} <span v-if="affaire.nom != '-'">[{{ affaire.nom }}]</span>
+            <div class="md-gutter md-layout">
+                <div class="md-layout-item md-size-50">
+                    <div class="md-title">
+                        Affaire {{ affaire.id }}
+                        <span v-if="affaire.nom != '-'">[{{ affaire.nom }}]</span>
+                    </div>
+                </div>
+                <div class="md-layout-item ma-size-50">
+                    <div class="md-layout md-alignment-center-right">
+                        <md-button class="md-primary md-raised" v-on:click="">Dupliquer</md-button>
+                        <md-button class="md-accent md-raised" v-on:click="">Clore</md-button>
+                    </div>
+                </div>
             </div>
         </md-card-header>
     </md-card>
 
     <!-- INFORMATIONS GENERALES -->
     <div class="leftColumn">
-        <md-card class="mapHeight">
-            <md-card-content>
-                <div class="md-layout md-gutter ">
-                    <div class="md-layout-item md-small-size-30">
-                        <md-field>
-                            <label>Cadastre</label>
-                            <md-input v-model="affaire.cadastre" readonly></md-input>
-                        </md-field>
-                    </div>
-
-                    <div class="md-layout-item md-small-size-30">
-                        <md-field>
-                            <label>Type</label>
-                            <md-input v-model="affaire.type_affaire" readonly></md-input>
-                        </md-field>
-                    </div>
-                </div>
-
-                <div class="md-layout md-gutter ">
-                    <div class="md-layout-item md-small-size-30">
-                        <md-field>
-                            <label>Client</label>
-                            <md-input v-model="[affaire.client_commande_nom].join(' ')" readonly></md-input>
-                        </md-field>
-                    </div>
-                    <div class="md-layout-item md-small-size-30">
-                        <md-field>
-                            <label>Représenté par</label>
-                            <md-input v-model="[affaire.client_commande_par_nom].join(' ')" readonly></md-input>
-                        </md-field>
-                    </div>
-                </div>
-
-                <div class="md-layout md-gutter ">
-                    <div class="md-layout-item md-small-size-30">
-                        <md-field>
-                            <label>v/ref</label>
-                            <md-input v-model="affaire.vref" readonly></md-input>
-                        </md-field>
-                    </div>
-                    <div class="md-layout-item md-small-size-30"></div>
-                </div>
-
-                <div class="md-layout md-gutter ">
-                    <div class="md-layout-item md-small-size-30">
-                        <md-field>
-                            <label>Technicien</label>
-                            <md-input v-model="[affaire.technicien_prenom, affaire.technicien_nom].join(' ')" readonly>
-                            </md-input>
-                        </md-field>
-                    </div>
-                    <div class="md-layout-item md-small-size-30">
-                        <md-field>
-                            <label>Responsable</label>
-                            <md-input v-model="[affaire.responsable_prenom, affaire.responsable_nom].join(' ')"
-                                readonly>
-                            </md-input>
-                        </md-field>
-                    </div>
-                </div>
-
-                <div class="md-layout md-gutter ">
-                    <div class="md-layout-item md-small-size-30">
-                        <md-field>
-                            <label>Date de la demande</label>
-                            <md-input v-model="affaire.date_ouverture" readonly></md-input>
-                        </md-field>
-                    </div>
-                    <!-- <div class="md-layout-item md-small-size-30">
-                            <md-field>
-                                <label>Date de la validation</label>
-                                <md-input v-model="affaire.date_validation" readonly></md-input>
-                            </md-field>
-                        </div> -->
-                    <div class="md-layout-item md-small-size-30">
-                        <md-field>
-                            <label>Date de clôture</label>
-                            <md-input v-model="affaire.date_cloture" readonly></md-input>
-                        </md-field>
-                    </div>
-                </div>
-
-                <div class="md-layout md-gutter ">
-                    <div class="md-layout-item md-small-size-30">
-                        <md-field>
-                            <label>Informations</label>
-                            <md-input v-model="affaire.information" readonly></md-input>
-                        </md-field>
-                    </div>
-                </div>
-            </md-card-content>
-        </md-card>
+        <InfosGenerales :affaire="affaire" />
     </div>
 
 
@@ -109,6 +30,17 @@
     <div class="rightColumn">
         <md-card class="mapHeight">
             <md-card-content>
+                <!-- Afficher les oordonnées -->
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-size-50">
+                        <md-field>
+                            <label>Coordonnées</label>
+                            <md-input v-model="[affaire.localisation_e | 0, affaire.localisation_n | 0].join(' / ')"
+                                readonly>
+                            </md-input>
+                        </md-field>
+                    </div>
+                </div>
                 <div id="mapContainer">
                     <MapHandler ref="mapHandler" />
                 </div>
@@ -116,13 +48,18 @@
         </md-card>
     </div>
 
+    <!-- DOCUMENTS -->
+    <div class="affairesDashboard">
+        <Documents />
+    </div>
+
+    <!-- ENVOIS DE DOCUMENTS -->
+
+
     <!-- NUMEROS -->
     <div class="affairesDashboard">
         <numerosAffaire />
     </div>
-
-    <!-- DOCUMENTS -->
-
 
     <!-- SUIVI D'AFFAIRE -->
     <div class="affairesDashboard">
@@ -134,10 +71,6 @@
         <preavis />
     </div>
 
-
-    <!-- ENVOIS DE DOCUMENTS -->
-
-
     <!-- FACTURATION -->
     <div class="affairesDashboard">
         <Facturation />
@@ -147,7 +80,7 @@
     <div class="affairesDashboard">
         <Remarques />
     </div>
-    
+
     <!-- CONTROLE TECHNIQUE MUTATION -->
     <div class="affairesDashboard">
         <ControleMutation v-if="affaire.type_id==1" />

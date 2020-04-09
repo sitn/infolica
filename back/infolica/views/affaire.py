@@ -5,6 +5,8 @@ import transaction
 from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
+from distutils.dir_util import copy_tree
+import os
 
 ###########################################################
 # AFFAIRE
@@ -78,7 +80,9 @@ def types_affaires_view(request):
 
 """ Add new affaire"""
 @view_config(route_name='affaires', request_method='POST', renderer='json')
+@view_config(route_name='affaires_s', request_method='POST', renderer='json')
 def affaires_new_view(request):
+    print("toto")
     try:
         # Get role depending on affaire type
         affaire_type = request.params['type_id'] if 'type_id' in request.params else None
@@ -105,9 +109,19 @@ def affaires_new_view(request):
 
         with transaction.manager:
             request.dbsession.add(model)
-            # Commit transaction
+            # Récupèrer l'id de la nouvelle affaire 
+            request.dbsession.flush()
+
+            # Créer le chemin du dossier de l'affaire          
+            model.chemin = os.path.join(request.registry.settings['affaireParDir'], str(model.id))
+
+            # commit
             transaction.commit()
-            return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
+
+            # Copier le dossier __template pour une nouvelle affaire
+            copy_tree(request.registry.settings['affaireTemplateDir'], model.chemin)
+            return [model.id]
+
 
     except Exception as e:
         raise e
@@ -184,4 +198,3 @@ def affaires_update_view(request):
 #     except Exception as e:
 #         log.error(e)
 #         return Response(db_err_msg, content_type='text/plain', status=500)
-
