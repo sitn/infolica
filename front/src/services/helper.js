@@ -6,10 +6,38 @@ import axios from 'axios';
  */
 export const checkLogged = function (component) {
     var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
-
+    
     if(!session_user && component.$router && component.$router.currentRoute && component.$router.currentRoute.path != '/login')
         component.$router.push('/login');
     
+    //Set current user functions
+    if(session_user)
+        setCurrentUserFunctions();
+    
+};
+
+/*
+ * Set current user functions
+ */
+export const setCurrentUserFunctions = async function () {    
+    axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CURRENT_USERS_FUNCTIONS_ENDPOINT,
+        {
+            withCredentials: true,
+            headers: {'Accept': 'application/json'}
+        })
+        .then(response =>{
+            if(response && response.data){
+                var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+    
+                if(session_user){
+                    session_user.fonctions = response.data.fonctions;
+                    localStorage.setItem('infolica_user', JSON.stringify(session_user));
+                }
+            }
+            })
+        .catch(() => {
+            //To do message
+        })
 };
 
 /*

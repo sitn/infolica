@@ -3,7 +3,8 @@
 
 
 <script>
-import {handleException} from '@/services/exceptionsHandler'
+import {handleException} from '@/services/exceptionsHandler';
+import {setCurrentUserFunctions} from '@/services/helper';
 
 export default {
   name: 'Login',
@@ -65,6 +66,7 @@ export default {
            */
           processLogin (data) {
             localStorage.setItem('infolica_user', JSON.stringify(data));
+            setCurrentUserFunctions();
             this.$root.$emit('infolica_user_logged_in', data);
           },
 

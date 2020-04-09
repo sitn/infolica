@@ -38,7 +38,7 @@ def fonctions_roles_current_user_view(request):
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
-    
+
     operateur_json = {}
     role_name = LDAPQuery.get_user_group_by_dn(request, request.authenticated_userid)
     operateur_json['role_id'] = Utils.get_role_id_by_name(request, role_name)
