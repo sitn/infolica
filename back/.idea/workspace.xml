@@ -3,10 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="51a38106-afd0-4071-a97e-7937b616b656" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../front/src/components/Header/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Header/header.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../front/src/components/Login/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Login/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../front/src/components/Operateurs/Operateurs.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Operateurs/Operateurs.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../front/src/services/helper.js" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/services/helper.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,20 +15,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/infolica/views/affaire.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="24" column="25" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="25" />
-              <folding>
-                <element signature="e#0#36#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/infolica/views/default.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2231">
-              <caret line="147" column="33" lean-forward="true" selection-start-line="147" selection-start-column="30" selection-end-line="147" selection-end-column="33" />
+            <state relative-caret-position="370">
+              <caret line="71" column="58" selection-start-line="71" selection-start-column="58" selection-end-line="71" selection-end-column="58" />
               <folding>
                 <element signature="e#0#36#0" expanded="true" />
               </folding>
@@ -41,10 +25,22 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/infolica/views/default.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="507">
+              <caret line="59" column="51" selection-start-line="59" selection-start-column="51" selection-end-line="59" selection-end-column="51" />
+              <folding>
+                <element signature="e#0#36#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/infolica/views/fonction_role.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="156">
-              <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="11" />
+            <state relative-caret-position="357">
+              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
               <folding>
                 <element signature="e#0#36#0" expanded="true" />
               </folding>
@@ -55,8 +51,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/development.ini">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="103" lean-forward="true" selection-start-line="89" selection-end-line="103" />
+            <state relative-caret-position="1751">
+              <caret line="103" selection-start-line="89" selection-end-line="103" />
             </state>
           </provider>
         </entry>
@@ -148,8 +144,6 @@
         <option value="$PROJECT_DIR$/development.ini.template" />
         <option value="$PROJECT_DIR$/development.ini" />
         <option value="$PROJECT_DIR$/production.ini.template" />
-        <option value="$PROJECT_DIR$/infolica/views/default.py" />
-        <option value="$PROJECT_DIR$/infolica/views/affaire.py" />
         <option value="$PROJECT_DIR$/infolica/views/affaire_document.py" />
         <option value="$PROJECT_DIR$/infolica/views/affaire_envoi.py" />
         <option value="$PROJECT_DIR$/infolica/views/affaire_etape.py" />
@@ -169,6 +163,8 @@
         <option value="$PROJECT_DIR$/infolica/views/reservation_numeros.py" />
         <option value="$PROJECT_DIR$/infolica/views/services_externes.py" />
         <option value="$PROJECT_DIR$/infolica/views/suivi_mandat.py" />
+        <option value="$PROJECT_DIR$/infolica/views/affaire.py" />
+        <option value="$PROJECT_DIR$/infolica/views/default.py" />
       </list>
     </option>
   </component>
@@ -228,7 +224,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../../8056_GE - NE-SPCH Refonte PerturbTrafic/Production/2 - Realisation/ws/perturbtrafic_api" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -266,7 +262,7 @@
     <frame x="147" y="-8" width="1781" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26089483" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2667054" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -585,15 +581,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/development.ini">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="103" lean-forward="true" selection-start-line="89" selection-end-line="103" />
+        <state relative-caret-position="1751">
+          <caret line="103" selection-start-line="89" selection-end-line="103" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/infolica/views/fonction_role.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/infolica/views/affaire.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="24" column="25" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="25" />
+        <state relative-caret-position="370">
+          <caret line="71" column="58" selection-start-line="71" selection-start-column="58" selection-end-line="71" selection-end-column="58" />
           <folding>
             <element signature="e#0#36#0" expanded="true" />
           </folding>
@@ -602,18 +608,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/infolica/views/default.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2231">
-          <caret line="147" column="33" lean-forward="true" selection-start-line="147" selection-start-column="30" selection-end-line="147" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/infolica/views/fonction_role.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="11" />
+        <state relative-caret-position="507">
+          <caret line="59" column="51" selection-start-line="59" selection-start-column="51" selection-end-line="59" selection-end-column="51" />
           <folding>
             <element signature="e#0#36#0" expanded="true" />
           </folding>
