@@ -43,11 +43,11 @@ def login_view(request):
 
             if operateur:
                 operateur_json = Utils.serialize_one(operateur)
-
+                """
                 operateur_json['role_id'] = Utils.get_role_id_by_name(request, resp_json['role_name'])
                 operateur_json['role_name'] = resp_json['role_name']
                 operateur_json['fonctions'] = Utils.get_fonctions_roles_by_id(request, operateur_json['role_id'])
-                operateur_json['fonctions'] = [x["nom"] for x in operateur_json['fonctions']]
+                operateur_json['fonctions'] = [x["nom"] for x in operateur_json['fonctions']]"""
 
                 operateur_json = json.dumps(operateur_json) if operateur else ''
 
