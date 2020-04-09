@@ -72,7 +72,11 @@ def affaires_search_view(request):
 def types_affaires_view(request):
     try:
         query = request.dbsession.query(models.AffaireType).all()
-        return Utils.serialize_many(query)
+        types_affaires = Utils.serialize_many(query)
+        
+        # Supprimer type d'affaire "NE PLUS UTILISER"
+        types_affaires.pop(5)
+        return types_affaires
 
     except Exception as e:
         raise e
