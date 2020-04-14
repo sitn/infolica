@@ -61,6 +61,8 @@ export default {
         .then(response => {
           if (response.data) {
             this.affaire_preavis = response.data;
+            if (this.affaire_preavis.date_demande) this.affaire_preavis.date_demande = moment(this.affaire_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            if (this.affaire_preavis.date_reponse) this.affaire_preavis.date_reponse = moment(this.affaire_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
           }
         })
         .catch(err => {
@@ -128,11 +130,14 @@ export default {
      */
     onModifyPreavis: function(curr_preavis) {
       this.new_preavis.id = curr_preavis.id;
-      this.new_preavis.date_demande = curr_preavis.date_demande;
-      if (!curr_preavis.date_reponse)
+      this.new_preavis.date_demande = moment(curr_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+      if (curr_preavis.date_reponse) {
+        moment(curr_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+      } else {
         // si pas de date de réponse, proposition défaut aujourd'hui
         curr_preavis.date_reponse = getCurrentDate();
-      this.new_preavis.date_reponse = curr_preavis.date_reponse;
+        }
+      // this.new_preavis.date_reponse = curr_preavis.date_reponse;
       this.new_preavis.remarque = curr_preavis.remarque;
       this.new_preavis.service = this.services_liste
         .filter(data => data.nom === curr_preavis.service)

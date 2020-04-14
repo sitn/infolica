@@ -25,7 +25,7 @@ export default {
       showEtapeDialog: false,
       new_etape: {
         etape: null,
-        date_demande: getCurrentDate(),
+        date: getCurrentDate(),
         remarque: null
       }
     };

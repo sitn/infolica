@@ -80,7 +80,7 @@ export default {
             this.affaire_factures = response.data.map(x => ({
               id: x.id,
               sap: x.sap,
-              date: x.date,
+              date: moment(x.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
               client_id: x.client_id,
               client: this.clients_liste
                 .filter(obj => {

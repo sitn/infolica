@@ -38,6 +38,7 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.suiviMandat = response.data;
+            if (this.suiviMandat.date) this.suiviMandat.date = moment(this.suiviMandat.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT)
           } else {
             // Il n'existe pas encore de suivi de mandat pour cette affaire
             this.needToCreateSuiviMandat = true;

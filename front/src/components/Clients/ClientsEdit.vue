@@ -273,7 +273,7 @@ import { validationMixin } from 'vuelidate'
             this.form.fax = response.data.fax;
             this.form.tel_portable = response.data.tel_portable;
             this.form.mail = response.data.mail;
-            this.form.entree = response.data.entree;
+            this.form.entree = moment(response.data.entree, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
             this.form.no_sap = response.data.no_sap;
             this.form.no_bdp_bdee = response.data.no_bdp_bdee;
           }

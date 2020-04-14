@@ -31,7 +31,7 @@ Vue.use(VueMoment, {
   moment,
 })
 
-// Vue.material.locale.dateFormat = 'DD/MM/YYYY'
+// Vue.material.locale.dateFormat = 'DD.MM.YYYY'
 Vue.filter('formatDate', function(value) {
   if (value) {
     return moment(String(value)).format(process.env.VUE_APP_DATEFORMAT_CLIENT)

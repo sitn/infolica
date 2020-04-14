@@ -90,7 +90,7 @@ export default {
                 } 
                 // Formater la date en DD.MM.YYYY
                 if (key.includes("date") && obj[key] !== null && obj[key] !== "") {
-                  obj[key] = String(moment(obj[key], process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT))
+                  obj[key] = moment(obj[key], process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
                 }
               });
               resolve(obj);

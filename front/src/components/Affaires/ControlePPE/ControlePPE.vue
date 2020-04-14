@@ -43,6 +43,7 @@ export default {
               return x.id == this.controlePPE.visa
               })[0];
             }
+            if (this.controlePPE.date) this.controlePPE.date = moment(this.controlePPE.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
           } else {
             // Il n'existe pas encore de suivi de mandat pour cette affaire
             this.needToCreateControlePPE = true;
