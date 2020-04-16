@@ -44,6 +44,7 @@ export default {
               return x.id == this.controleMutation.visa
               })[0];
             }
+            if (this.controleMutation.date) this.controleMutation.date = moment(this.controleMutation.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
           } else {
             // Il n'existe pas encore de suivi de mandat pour cette affaire
             this.needToCreateControleMutation = true;
@@ -150,7 +151,7 @@ export default {
       if (this.controleMutation.div_2) formData.append("div_2", this.controleMutation.div_2);
       if (this.controleMutation.div_3) formData.append("div_3", this.controleMutation.div_3);
       if (this.controleMutation.visa) formData.append("visa", this.controleMutation.visa.id);
-      if (this.controleMutation.date) formData.append("date", moment(new Date(new Date(this.controleMutation.date))).format('YYYY-MM-DD'));
+      if (this.controleMutation.date) formData.append("date", moment(this.controleMutation.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
 
       this.$http
         .put(

@@ -80,7 +80,7 @@ export default {
             this.affaire_factures = response.data.map(x => ({
               id: x.id,
               sap: x.sap,
-              date: x.date,
+              date: moment(x.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
               client_id: x.client_id,
               client: this.clients_liste
                 .filter(obj => {
@@ -224,7 +224,7 @@ export default {
       if (this.selectedFacture.sap)
         formData.append("sap", this.selectedFacture.sap);
       if (this.selectedFacture.date)
-        formData.append("date", moment(new Date(new Date(this.selectedFacture.date))).format("YYYY-MM-DD"));
+        formData.append("date", moment(this.selectedFacture.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       if (this.selectedFacture.client.id) formData.append("client_id", this.selectedFacture.client.id);
       if (this.selectedFacture.montant_mo)
         formData.append("montant_mo", this.selectedFacture.montant_mo);

@@ -15,6 +15,8 @@ import ControleMutation from "@/components/Affaires/ControleMutation/ControleMut
 import ControlePPE from "@/components/Affaires/ControlePPE/ControlePPE.vue";
 import SuiviMandat from "@/components/SuiviMandat/SuiviMandat.vue";
 
+import moment from "moment";
+
 export default {
   name: "AffairesDashboard",
   props: {},
@@ -79,11 +81,17 @@ export default {
                 .filter(Boolean)
                 .join(" ");
               Object.keys(obj).forEach(function(key) {
+                // Mettre un tiret à toutes les entrées nulles sauf les dates
                 if (
                   (obj[key] === null || obj[key] === "") &&
                   !key.includes("date")
-                )
+                ) {
                   obj[key] = "-";
+                } 
+                // Formater la date en DD.MM.YYYY
+                if (key.includes("date") && obj[key] !== null && obj[key] !== "") {
+                  obj[key] = moment(obj[key], process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+                }
               });
               resolve(obj);
             }
@@ -97,7 +105,7 @@ export default {
      */
     async setAffaire() {
       this.affaire = await this.searchAffaire();
-      this.getAffaireData()
+      this.getAffaireData();
     },
 
     /**
@@ -108,7 +116,10 @@ export default {
         x: this.affaire.localisation_e,
         y: this.affaire.localisation_n
       };
-      this.$refs.mapHandler.initMap(this.center, process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM);
+      this.$refs.mapHandler.initMap(
+        this.center,
+        process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM
+      );
       this.$refs.mapHandler.addMarker(this.center.x, this.center.y);
     }
   },

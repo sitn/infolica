@@ -43,6 +43,7 @@ export default {
               return x.id == this.controlePPE.visa
               })[0];
             }
+            if (this.controlePPE.date) this.controlePPE.date = moment(this.controlePPE.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
           } else {
             // Il n'existe pas encore de suivi de mandat pour cette affaire
             this.needToCreateControlePPE = true;
@@ -181,7 +182,7 @@ export default {
       if (this.controlePPE.fact_6) formData.append("fact_6", this.controlePPE.fact_6);
       if (this.controlePPE.fact_7) formData.append("fact_7", this.controlePPE.fact_7);
       if (this.controlePPE.visa) formData.append("visa", this.controlePPE.visa.id);
-      if (this.controlePPE.date) formData.append("date", moment(new Date(new Date(this.controlePPE.date))).format('YYYY-MM-DD'));
+      if (this.controlePPE.date) formData.append("date", moment(this.controlePPE.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
 
       this.$http
         .put(
