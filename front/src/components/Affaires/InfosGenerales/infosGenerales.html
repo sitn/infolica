@@ -70,14 +70,15 @@
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-25 md-small-size-100">
                     <md-field>
-                        <label>Date de la demande</label>
+                        <label>Date d'ouverture</label>
                         <md-input v-model="affaire.date_ouverture" readonly></md-input>
                     </md-field>
                 </div>
+                <!-- <span>{{ affaire.date_ouverture | formatDate }}</span> -->
                 <div class="md-layout-item md-size-25 md-small-size-100">
                     <!-- Affiche la date de validation en mode readonly -->
                     <md-field v-if="readonly">
-                        <label>Date de la validation</label>
+                        <label>Date de validation</label>
                         <md-input v-model="affaire.date_validation" readonly></md-input>
                     </md-field>
                     <!-- Affiche la date de validation en mode édition -->

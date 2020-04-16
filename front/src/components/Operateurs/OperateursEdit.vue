@@ -190,7 +190,7 @@ export default {
             this.form.prenom = response.data.prenom;
             this.form.login = response.data.login;
             this.form.responsable = response.data.responsable;
-            this.form.entree = response.data.entree;
+            this.form.entree = moment(response.data.entree, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
           }
         })
         //Error

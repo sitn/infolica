@@ -29,7 +29,7 @@
                                 <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                                 <md-table-cell md-label="Étape" md-sort-by="etape">{{ item.etape }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Date" md-sort-by="date_etape">{{ item.date_etape }}
+                                <md-table-cell md-label="Date" md-sort-by="date_etape">{{ item.date_etape | formatDate }}
                                 </md-table-cell>
                                 <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}
                                 </md-table-cell>
@@ -56,7 +56,7 @@
                         </md-autocomplete>
 
                         <div class="md-layout">
-                            <md-datepicker v-model="new_etape.date" :class="getValidationClass('date')">
+                            <md-datepicker v-model="new_etape.date" :class="getValidationClass('date')" md-immediately>
                                 <label>Date</label>
                                 <span class="md-error" v-if="!$v.new_etape.date.required">La date est obligatoire</span>
                             </md-datepicker>

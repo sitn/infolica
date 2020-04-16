@@ -17,10 +17,14 @@ def cadastre_view(request):
         #raise exc.HTTPForbidden()
 
   records = request.dbsession.query(models.Cadastre).order_by(models.Cadastre.nom).all()
-  cadastres = Utils.serialize_many(records)
-
+  cadastres = list()
+  
   # Supprimer l'entrée "CADASTRE CANTONAL" de la liste
-  cadastres.pop(9)
+  for record_i in records:
+      if not record_i.nom == "CADASTRE CANTONAL":
+          cadastres.append(record_i)
+
+  cadastres = Utils.serialize_many(cadastres)
   return cadastres
 
 

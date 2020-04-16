@@ -39,27 +39,21 @@ export default {
     /**
      * Enregistrer les modifications
      */
-    onConfirmEdit() {
+    async onConfirmEdit() {
       var formData = new FormData();
       formData.append("id_affaire", this.affaire.id);
       if (this.affaire.nom !== "-") formData.append("nom", this.affaire.nom || null);
       if (this.affaire.information !== "-")
         formData.append("information", this.affaire.information || null);
       if (this.affaire.vref !== "-") formData.append("vref", this.affaire.vref || null);
-      if (this.affaire.date_validation !== "-")
+      if (this.affaire.date_validation)
         formData.append(
-          "date_validation",
-          moment(new Date(new Date(this.affaire.date_validation))).format(
-            "YYYY-MM-DD"
-          ) || null
-        );
-      if (this.affaire.date_cloture !== "-")
+          "date_validation", this.affaire.date_validation?
+          moment(this.affaire.date_validation, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
+      if (this.affaire.date_cloture)
         formData.append(
-          "date_cloture",
-          moment(new Date(new Date(this.affaire.date_cloture))).format(
-            "YYYY-MM-DD"
-          ) || null
-        );
+          "date_cloture", this.affaire.date_cloture? 
+          moment(this.affaire.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
 
       this.$http.put(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
@@ -71,7 +65,8 @@ export default {
       ).then(() => { //response =>{
           // this.handleSaveDataSuccess(response);
           this.readonly = true;
-          this.$parent.searchAffaire();
+          this.$parent.setAffaire();
+          this.copyAffaire();
         })
         //Error 
         .catch(err => {
