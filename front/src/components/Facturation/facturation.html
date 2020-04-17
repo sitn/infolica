@@ -79,7 +79,7 @@
 
                         <md-autocomplete v-model="selectedFacture.client" :md-options="clients_liste_select"
                         @md-changed="getClientSearch" md-dense :class="getValidationClass('client')">
-                            <label>Client</label>
+                            <label>Client *</label>
                             <template slot="md-autocomplete-item" slot-scope="{ item }">
                                 {{ item.nom }}
                             </template>
@@ -87,28 +87,28 @@
                         </md-autocomplete>
 
                         <md-field :class="getValidationClass('montant_mo')">
-                            <label>Montant MO</label>
+                            <label>Montant MO *</label>
                             <md-input class="currency" v-model="selectedFacture.montant_mo" v-on:keyup="computeTotal()"
                                 type="number" min="0.00" step="0.05"></md-input>
                                 <span class="md-error" v-if="!$v.selectedFacture.montant_mo.required">Le montant MO est obligatoire</span>
                         </md-field>
 
                         <md-field :class="getValidationClass('montant_mat_diff')">
-                            <label>Montant mat diff</label>
+                            <label>Montant mat diff *</label>
                             <md-input class="currency" v-model="selectedFacture.montant_mat_diff"
                                 v-on:keyup="computeTotal()" type="number" min="0.00" step="0.05"></md-input>
                                 <span class="md-error" v-if="!$v.selectedFacture.montant_mat_diff.required">Le montant mat diff est obligatoire</span>
                         </md-field>
 
                         <md-field :class="getValidationClass('montant_rf')">
-                            <label>Montant RF</label>
+                            <label>Montant RF *</label>
                             <md-input class="currency" v-model="selectedFacture.montant_rf" v-on:keyup="computeTotal()"
                                 type="number" min="0.00" step="0.05"></md-input>
                                 <span class="md-error" v-if="!$v.selectedFacture.montant_rf.required">Le montant RF est obligatoire</span>
                         </md-field>
 
                         <md-field :class="getValidationClass('montant_tva')">
-                            <label>TVA</label>
+                            <label>TVA *</label>
                             <md-input class="currency" v-model="selectedFacture.montant_tva" v-on:keyup="computeTotal()"
                                 type="number" min="0.00" step="0.05"></md-input>
                                 <span class="md-error" v-if="!$v.selectedFacture.montant_tva.required">Le montant de TVA est obligatoire</span>
