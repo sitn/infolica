@@ -4,7 +4,7 @@
 
 <script>
 import { getCadastres } from "@/services/helper";
-import {handleException} from '@/services/exceptionsHandler'
+import { handleException } from "@/services/exceptionsHandler";
 
 export default {
   name: "ReservationNumeros",
@@ -14,15 +14,22 @@ export default {
     return {
       showReservationDialog: false,
       cadastre_liste: [],
-
+      affaire_numeros_base: {
+        DDP: null,
+        PPE: null,
+        PCOP: null
+      },
       reservation: {
         affaire_id: null,
         cadastre: null,
         nb_bf: 0,
         nb_ddp: 0,
+        ddp_base: null,
         nb_ppe: 0,
         ppe_suffixe_start: null,
+        ppe_base: 0,
         nb_pcop: 0,
+        pcop_base: 0,
         nb_pfp3: 0,
         nb_paux: 0,
         nb_bat: 0,
@@ -86,6 +93,27 @@ export default {
       });
     },
 
+    /*
+     * Retourne tous les numéros concernés par l'affaire
+     * Possibilité de filtrer en fonction du type de numéros
+     */
+    filterAffaireNumeros() {
+      this.affaire_numeros = this.$parent.affaire_numeros_all;
+
+      // Pour les DDP
+      this.affaire_numeros_base.DDP = this.affaire_numeros.filter(x => {
+        return x.numero_type === "Bien-fonds";
+      });
+      // Pour les PPE
+      this.affaire_numeros_base.PPE = this.affaire_numeros.filter(x => {
+        return x.numero_type === "Bien-fonds" | x.numero_type === "Droit distinct et permanent (DDP)";
+      });
+      // Pour les PCOP
+      this.affaire_numeros_base.PCOP = this.affaire_numeros.filter(x => {
+        return x.numero_type === "Bien-fonds" | x.numero_type === "Droit distinct et permanent (DDP)" | x.numero_type === "Unité de PPE";
+      });
+    },
+
     /**
      * Open reservation numéros dialog
      */
@@ -105,12 +133,18 @@ export default {
       if (this.reservation.nb_bf) formData.append("bf", this.reservation.nb_bf);
       if (this.reservation.nb_ddp)
         formData.append("ddp", this.reservation.nb_ddp);
+      if (this.reservation.ddp_base)
+        formData.append("ddp_base", this.reservation.ddp_base);
       if (this.reservation.nb_ppe)
         formData.append("ppe", this.reservation.nb_ppe);
       if (this.reservation.ppe_suffixe_start)
         formData.append("ppe_unite", this.reservation.ppe_suffixe_start);
+      if (this.reservation.ppe_base)
+        formData.append("ppe_base", this.reservation.ppe_base);
       if (this.reservation.nb_pcop)
         formData.append("pcop", this.reservation.nb_pcop);
+      if (this.reservation.pcop_base)
+        formData.append("pcop_base", this.reservation.pcop_base);
       if (this.reservation.nb_pfp3)
         formData.append("pfp3", this.reservation.nb_pfp3);
       if (this.reservation.nb_paux)
@@ -129,7 +163,7 @@ export default {
           formData,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
         )
         .then(response => {
@@ -148,6 +182,7 @@ export default {
      * Annuler la réservation de uméros
      */
     onCancelReservationNumeros() {
+      alert(this.reservation.ddp_base)
       this.showReservationDialog = false;
       this.initializeForm();
     },
@@ -158,14 +193,19 @@ export default {
     async initializeForm() {
       this.reservation.cadastre = await this.initDefaultCadastre();
       this.reservation.nb_bf = 0;
+      this.reservation.nb_ddp = 0;
+      this.reservation.ddp_base = null;
       this.reservation.nb_ppe = 0;
       this.reservation.ppe_suffixe_start = null;
+      this.reservation.ppe_base = null;
       this.reservation.nb_pcop = 0;
+      this.reservation.pcop_base = null;
       this.reservation.nb_pfp3 = 0;
       this.reservation.nb_paux = 0;
       this.reservation.nb_bat = 0;
       this.reservation.nb_pcs = 0;
       this.reservation.plan_id = null;
+      this.filterAffaireNumeros();
     }
   },
 

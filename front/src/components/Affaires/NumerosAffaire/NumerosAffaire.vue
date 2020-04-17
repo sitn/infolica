@@ -17,6 +17,7 @@ export default {
   data: () => {
     return {
       affaire_id: null,
+      affaire_numeros_all: [],
       affaire_numeros_anciens: [],
       affaire_numeros_nouveaux: [],
       showReservationDialog: false
@@ -40,6 +41,7 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
+            this.affaire_numeros_all = response.data;
             this.affaire_numeros_nouveaux = response.data.filter(
               x => x.affaire_numero_type === "Nouveau"
             );

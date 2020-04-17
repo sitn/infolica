@@ -122,6 +122,9 @@
                                                 <md-table-cell md-label="Etat" md-sort-by="numero_etat">
                                                     {{ item.numero_etat }}
                                                 </md-table-cell>
+                                                <md-table-cell md-label="Immeuble de base" md-sort-by="numero_base">
+                                                    {{ item.numero_base }}<span v-if="item.numero_base_suffixe"> / {{ item.numero_base_suffixe }}</span>
+                                                </md-table-cell>
                                             </md-table-row>
                                         </md-table>
                                     </div>
