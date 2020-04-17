@@ -5,11 +5,14 @@
 <script>
 import { getCadastres } from "@/services/helper";
 import { handleException } from "@/services/exceptionsHandler";
+import { validationMixin } from "vuelidate";
+import { required } from "vuelidate/lib/validators";
 
 export default {
   name: "ReservationNumeros",
   props: {},
   components: {},
+  mixins: [validationMixin],
   data: () => {
     return {
       showReservationDialog: false,
@@ -37,6 +40,22 @@ export default {
         plan_id: null
       }
     };
+  },
+
+  // Validations
+  validations() {
+    var reservation = {
+      cadastre: { required }
+    };
+    
+    if (this.reservation.nb_ddp > 0) reservation.ddp_base = { required };
+    if (this.reservation.nb_ppe > 0) {
+      reservation.ppe_base = { required };
+      reservation.ppe_suffixe_start = { required };
+    }
+    if (this.reservation.nb_pcop > 0) reservation.pcop_base = { required };
+
+    return { reservation };
   },
 
   methods: {
@@ -106,11 +125,18 @@ export default {
       });
       // Pour les PPE
       this.affaire_numeros_base.PPE = this.affaire_numeros.filter(x => {
-        return x.numero_type === "Bien-fonds" | x.numero_type === "Droit distinct et permanent (DDP)";
+        return (
+          (x.numero_type === "Bien-fonds") |
+          (x.numero_type === "Droit distinct et permanent (DDP)")
+        );
       });
       // Pour les PCOP
       this.affaire_numeros_base.PCOP = this.affaire_numeros.filter(x => {
-        return x.numero_type === "Bien-fonds" | x.numero_type === "Droit distinct et permanent (DDP)" | x.numero_type === "Unité de PPE";
+        return (
+          (x.numero_type === "Bien-fonds") |
+          (x.numero_type === "Droit distinct et permanent (DDP)") |
+          (x.numero_type === "Unité de PPE")
+        );
       });
     },
 
@@ -125,7 +151,7 @@ export default {
     /**
      * Create numeros
      */
-    onConfirmReservationNumeros() {
+    saveReservationNumeros() {
       var formData = new FormData();
       if (this.reservation.cadastre.id)
         formData.append("cadastre_id", this.reservation.cadastre.id);
@@ -182,7 +208,7 @@ export default {
      * Annuler la réservation de uméros
      */
     onCancelReservationNumeros() {
-      alert(this.reservation.ddp_base)
+      alert(this.reservation.ddp_base);
       this.showReservationDialog = false;
       this.initializeForm();
     },
@@ -206,6 +232,30 @@ export default {
       this.reservation.nb_pcs = 0;
       this.reservation.plan_id = null;
       this.filterAffaireNumeros();
+    },
+
+    /**
+     * Get validation class par fieldname
+     */
+    getValidationClass(fieldName) {
+      const field = this.$v.reservation[fieldName];
+
+      if (field) {
+        return {
+          "md-invalid": field.$invalid && field.$dirty
+        };
+      }
+    },
+
+    /**
+     * Confirmer l'édition de la facture et l'enregistrer
+     */
+    onConfirmReservationNumeros() {
+      this.$v.$touch();
+
+      if (!this.$v.$invalid) {
+        this.saveReservationNumeros();
+      }
     }
   },
 
