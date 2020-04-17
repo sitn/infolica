@@ -48,6 +48,16 @@ ldap_login_query_attributes= uid, givenName, sn, mail, telephoneNumber, mobile
 # Le scope de la recherche (LEVEL, SUBTREE)
 ldap_login_query_scope= SUBTREE
 
+# L'attribut qui correspond au login d'un utilisateur LDAP
+ldap_user_attribute_login= uid
+
+# Les autres attributs d'un utilisateur LDAP
+ldap_user_attribute_firstname= givenName
+ldap_user_attribute_lastname= sn
+ldap_user_attribute_telephone= telephoneNumber
+ldap_user_attribute_mail= mail
+ldap_user_attribute_mobile= mobile
+
 
 ###########################################################
 # La configuration de la recherche des groupes dans LDAP

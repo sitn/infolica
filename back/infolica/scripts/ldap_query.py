@@ -119,3 +119,32 @@ class LDAPQuery():
                 json_obj[key] = json_obj[key][0]
 
         return json_obj
+
+    @classmethod
+    def get_users_infolica_users(cls, request):
+        users = []
+        try:
+            connector = get_ldap_connector(request)
+
+            with connector.manager.connection() as conn:
+                ret = conn.search(
+                    search_scope=request.registry.settings['ldap_login_query_scope'],
+                    attributes=request.registry.settings['ldap_login_query_attributes'].replace(', ', ',').replace(
+                        ' , ', ',').replace(' ,', ',').split(','),
+                    search_base=request.registry.settings['ldap_login_query_base_dn'],
+                    search_filter=request.registry.settings['ldap_search_user_filter']
+                )
+                result, ret = conn.get_response(ret)
+
+            if result is not None:
+                for r in result:
+
+                    if 'dn' in r:
+                        user_json = cls.format_json_attributes(json.loads(json.dumps(dict(r['attributes']))))
+                        user_json['dn'] = r['dn']
+                        users.append(user_json)
+
+        except Exception as error:
+            raise error
+
+        return users if users else {}

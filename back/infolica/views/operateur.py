@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from datetime import datetime
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
@@ -122,4 +123,42 @@ def operateurs_delete_view(request):
     with transaction.manager:
         transaction.commit()
         return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Operateur.__tablename__))
+
+
+""" Add nouveaux operateurs AD"""
+@view_config(route_name='add_operateurs_ad', request_method='GET', renderer='json')
+@view_config(route_name='add_operateurs_ad_s', request_method='GET', renderer='json')
+def operateur_by_id_view(request):
+    settings = request.registry.settings
+    login_attr = settings['ldap_user_attribute_login']
+
+    # Operateurs from AD
+    op_ad = Utils.get_nouveaux_operateurs_ad(request)
+
+    # Logins from DB
+    op_bd_logins = []
+    op_bd_logins_query = request.dbsession.query(models.Operateur).distinct(models.Operateur.login).filter(
+        models.Operateur.login.isnot(None)).all()
+    for c in op_bd_logins_query:
+        op_bd_logins.append(c.login.upper())
+
+
+
+    with transaction.manager:
+        for one_ad_op in op_ad:
+            one_ad_op_login = one_ad_op[login_attr] if login_attr in one_ad_op else None
+
+            if one_ad_op_login and one_ad_op_login.upper() not in op_bd_logins:
+                one_op_model = models.Operateur(
+                    login=one_ad_op[settings['ldap_user_attribute_login']],
+                    nom=one_ad_op[settings['ldap_user_attribute_lastname']],
+                    prenom=one_ad_op[settings['ldap_user_attribute_firstname']],
+                    entree=func.now())
+
+                request.dbsession.add(one_op_model)
+
+        transaction.commit()
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Operateur.__tablename__))
+
+
 
