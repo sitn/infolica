@@ -121,9 +121,12 @@ export default {
 
       // Pour les DDP
       this.affaire_numeros_base.DDP = this.affaire_numeros.filter(x => {
-        return x.numero_type === "Bien-fonds";
+        return (
+          (x.numero_type === "Bien-fonds") |
+          (x.numero_type === "Droit distinct et permanent (DDP)")
+        );
       });
-      // Pour les PPE
+      // Pour les PPE et les DDP
       this.affaire_numeros_base.PPE = this.affaire_numeros.filter(x => {
         return (
           (x.numero_type === "Bien-fonds") |

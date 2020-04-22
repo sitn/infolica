@@ -3,9 +3,11 @@
 
 
 <script>
-import {handleException} from '@/services/exceptionsHandler'
+import { handleException } from "@/services/exceptionsHandler";
+import { getCurrentDate } from "@/services/helper";
 import ReferenceNumeros from "@/components/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/ReservationNumeros/ReservationNumeros.vue";
+const moment = require("moment");
 
 export default {
   name: "NumerosAffaire",
@@ -32,11 +34,11 @@ export default {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
-          this.$route.params.id,
+            process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
+            this.$route.params.id,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: { Accept: "application/json" }
           }
         )
         .then(response => {
@@ -66,7 +68,11 @@ export default {
       this.$http
         .delete(
           process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT + "?affaire_id=" + this.$route.params.id + "&numero_id=" + numero_id,
+            process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT +
+            "?affaire_id=" +
+            this.$route.params.id +
+            "&numero_id=" +
+            numero_id,
           {
             withCredentials: true,
             headers: { Accept: "application/json" }
@@ -93,10 +99,10 @@ export default {
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_NUMEROS_ENDPOINT +
             numero_id,
-            {
-              withCredentials: true,
-              headers: {'Accept': 'application/json'}
-            }
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
         )
         .then(response => {
           if (response.data) {
@@ -116,12 +122,12 @@ export default {
       this.$http
         .delete(
           process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_NUMEROS_ENDPOINT +
-          numero_.id,
-        {
-          withCredentials: true,
-          headers: {'Accept': 'application/json'}
-        }
+            process.env.VUE_APP_NUMEROS_ENDPOINT +
+            numero_.id,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
         )
         .then(response => {
           if (response && response.status === 200) {
@@ -155,7 +161,75 @@ export default {
     callOpenReservationDialog() {
       this.affaire_id = Number(this.$route.params.id);
       this.$refs.formReservation.openReservationDialog();
-    }
+    },
+
+    /**
+     * Créer Différer un numéro
+     */
+    doCreateDiffererNumero(numero) {
+      var formData = new FormData();
+      formData.append("numero_id", numero);
+      formData.append(
+        "date_entree",
+        moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(
+          process.env.VUE_APP_DATEFORMAT_WS
+        )
+      );
+
+      this.$http
+        .post(
+          process.env.VUE_APP_API_URL +
+          process.env.VUE_APP_NUMEROS_DIFFERES_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        )
+        .then(response => {
+          if (response && response.data) {
+            this.searchAffaireNumeros();
+          }
+        })
+        .catch(err => {
+          handleException(err, this);
+        });
+    },
+
+    /**
+     * Mettre à jour Différer un numéro
+     */
+    doUpdateDiffererNumero(numero) {
+      var formData = new FormData();
+      formData.append("numero_diff_id", numero.numero_diff_id);
+      formData.append("numero_id", numero.numero_id);
+      formData.append("date_entree", numero.numero_diff_entree);
+      formData.append("date_sortie",
+        moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(
+          process.env.VUE_APP_DATEFORMAT_WS
+        )
+      );
+
+      this.$http
+        .put(
+          process.env.VUE_APP_API_URL +
+          process.env.VUE_APP_NUMEROS_DIFFERES_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        )
+        .then(response => {
+          if (response && response.data) {
+            this.searchAffaireNumeros();
+          }
+        })
+        .catch(err => {
+          handleException(err, this);
+        });
+    },
+
   },
 
   mounted: function() {
