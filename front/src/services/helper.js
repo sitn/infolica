@@ -16,6 +16,20 @@ export const checkLogged = function (component) {
     
 };
 
+
+/**
+ * Check permission
+ */
+export const checkPermission = function (fonction) {
+    var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+
+    if(session_user && session_user.fonctions && session_user.fonctions.indexOf(fonction) > -1){
+        return true;
+    }
+
+    return false;
+};
+
 /*
  * Set current user functions
  */
@@ -123,4 +137,4 @@ export const getCurrentDate = function () {
     var date =
         ("0" + today.getDate()).slice(-2) + "." + ("0" + (today.getMonth() + 1)).slice(-2) + "." + today.getFullYear();
     return date
-}
+};

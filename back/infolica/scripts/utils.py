@@ -240,4 +240,4 @@ class Utils():
 
     @classmethod
     def get_nouveaux_operateurs_ad(cls, request):
-        return LDAPQuery.get_users_infolica_users(request)
+        return LDAPQuery.get_infolica_users(request)
