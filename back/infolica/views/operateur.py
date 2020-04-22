@@ -128,9 +128,10 @@ def operateurs_delete_view(request):
 """ Add nouveaux operateurs AD"""
 @view_config(route_name='add_operateurs_ad', request_method='GET', renderer='json')
 @view_config(route_name='add_operateurs_ad_s', request_method='GET', renderer='json')
-def operateur_by_id_view(request):
+def add_operateurs_ad_view(request):
     settings = request.registry.settings
     login_attr = settings['ldap_user_attribute_login']
+    op_added = 0
 
     # Operateurs from AD
     op_ad = Utils.get_nouveaux_operateurs_ad(request)
@@ -142,13 +143,12 @@ def operateur_by_id_view(request):
     for c in op_bd_logins_query:
         op_bd_logins.append(c.login.upper())
 
-
-
     with transaction.manager:
         for one_ad_op in op_ad:
             one_ad_op_login = one_ad_op[login_attr] if login_attr in one_ad_op else None
 
             if one_ad_op_login and one_ad_op_login.upper() not in op_bd_logins:
+
                 one_op_model = models.Operateur(
                     login=one_ad_op[settings['ldap_user_attribute_login']],
                     nom=one_ad_op[settings['ldap_user_attribute_lastname']],
@@ -156,9 +156,16 @@ def operateur_by_id_view(request):
                     entree=func.now())
 
                 request.dbsession.add(one_op_model)
+                op_added = op_added + 1
 
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Operateur.__tablename__))
+
+        if op_added > 0:
+            save_response = Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Operateur.__tablename__))
+            save_response['count'] = op_added
+            return save_response
+        else:
+            raise exc.HTTPNoContent
 
 
 

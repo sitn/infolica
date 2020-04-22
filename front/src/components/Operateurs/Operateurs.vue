@@ -116,8 +116,35 @@ export default {
           })
         },
 
+
         /**
-        * Delete operateur
+        * Import AD users
+        */
+        importAdUsers () {
+          this.$http.get(
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_ADD_OPERATEURS_AD_ENDPOINT, 
+            {
+              withCredentials: true,
+              headers: {'Accept': 'application/json'}
+            }
+          )
+          .then(response =>{
+            if(response && response.data && response.data.count && response.data.count > 0){
+              this.$root.$emit("ShowMessage", response.data.count + " opérateurs importés avec succès depuis l'AD");
+              this.searchOperateurs();
+            }
+            else{
+              handleException(response, this);  
+            }
+          })
+          //Error 
+          .catch(err => {
+            handleException(err, this);  
+          })
+        },
+
+        /**
+        * Cancel Delete operateur
         */
         onCancelDelete () {
           this.currentDeleteId = null;
