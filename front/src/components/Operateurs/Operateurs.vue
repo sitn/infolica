@@ -4,6 +4,7 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler'
+import {checkPermission} from '@/services/helper'
 
 export default {
   name: 'Operateurs',
@@ -13,6 +14,7 @@ export default {
       deleteOperateurActive: false,
       deleteMessage: '',
       currentDeleteId: null,
+      editionOperateursAllowed: false,
       search: {
         nom: null,
         prenom: null,
@@ -120,7 +122,7 @@ export default {
         /**
         * Import AD users
         */
-        importAdUsers () {
+        importADUsers () {
           this.$http.get(
             process.env.VUE_APP_API_URL + process.env.VUE_APP_ADD_OPERATEURS_AD_ENDPOINT, 
             {
@@ -153,6 +155,7 @@ export default {
 
   mounted: function(){
     this.searchOperateurs();
+    this.editionOperateursAllowed = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
   }
 }
 </script>

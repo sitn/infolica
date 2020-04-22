@@ -129,6 +129,10 @@ def operateurs_delete_view(request):
 @view_config(route_name='add_operateurs_ad', request_method='GET', renderer='json')
 @view_config(route_name='add_operateurs_ad_s', request_method='GET', renderer='json')
 def add_operateurs_ad_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['fonction_admin']):
+        raise exc.HTTPForbidden()
+    
     settings = request.registry.settings
     login_attr = settings['ldap_user_attribute_login']
     op_added = 0
