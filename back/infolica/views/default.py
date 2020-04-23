@@ -2,11 +2,25 @@ from pyramid.view import view_config
 from .. import models
 from sqlalchemy import exc
 from ..exceptions.custom_error import CustomError
-from pyramid.httpexceptions import HTTPForbidden
+from pyramid.httpexceptions import HTTPForbidden, HTTPNoContent
 from ..scripts.utils import Utils
 import logging
+import os
+import shutil
 log = logging.getLogger(__name__)
 
+
+########################################################
+# Upload file
+########################################################
+@view_config(route_name='upload_file', request_method='POST', renderer='json')
+def upload_file_view(exc, request):
+    filename = request.POST['file'].filename
+    input_file = request.POST['file'].file
+    file_path = os.path.join('D:/................/infolica/back/tmp', filename)
+    with open(file_path, 'wb') as output_file:
+        shutil.copyfileobj(input_file, output_file)
+    return filename
 
 ########################################################
 # Test (temp endpoint)
@@ -151,3 +165,11 @@ def http_forbidden_error(exc, request):
     log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
     request.response.status = 403
     return {'error': 'true', 'code': 403, 'message': CustomError.NOT_AUTHORIZED_EXCEPTION}
+
+########################################################
+# Common HTTPNoContent return message
+########################################################
+@view_config(context=HTTPNoContent, renderer='json')
+def http_no_content_error(exc, request):
+    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    request.response.status = 204

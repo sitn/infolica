@@ -121,7 +121,7 @@ class LDAPQuery():
         return json_obj
 
     @classmethod
-    def get_users_infolica_users(cls, request):
+    def get_infolica_users(cls, request):
         users = []
         try:
             connector = get_ldap_connector(request)
