@@ -4,14 +4,6 @@
             <img class="logo" alt="ne.ch" src="@/assets/logo.png">
             <h2>Infolica</h2>
 
-
-            <!-- <md-tabs class="menu" md-alignment="center">
-              <md-tab md-label="Affaires" to="affaires"></md-tab>
-              <md-tab md-label="Numéros" to="numeros"></md-tab>
-              <md-tab md-label="Clients" to="clients"></md-tab>
-              <md-tab md-label="Opérateurs" to="operateurs"></md-tab>
-              <md-tab md-label="À propos" to="apropos"></md-tab>
-            </md-tabs> -->
             <nav class="menu" v-if="$route.path !== '/login'">
               <md-menu md-align-trigger>
                   <md-button md-menu-trigger v-on:click="goTo('/affaires')">Affaires</md-button>
@@ -32,11 +24,9 @@
               <md-menu md-align-trigger>
                 <md-button md-menu-trigger v-on:click="goTo('/apropos')">à propos</md-button>
               </md-menu>              
-            </nav>
+            </nav>           
 
-            
-
-            <div class="user" v-if="loggedUserName">
+            <div class="user" v-if="$route.path !== '/login'">
               <i class="material-icons md-light">account_circle</i>
               <span class="userName">{{loggedUserName}}</span>
               <i class="material-icons md-light" v-on:click="callLogout" title="Déconnexion">exit_to_app</i>

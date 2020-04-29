@@ -12,20 +12,20 @@ import About from './components/About/About.vue'
 import Login from './components/Login/Login.vue'
 
 const routes = [
-    { path: '/', component: Affaires, redirect:'/affaires' },    
-    { path: '/affaires', component: Affaires },
-    { path: '/affaires/:id', component: AffairesDashboard },
-    { path: '/affaires_new', component: NewAffaire },
-    { path: '/clients', component: Clients },
-    { path: '/clients/new', component: ClientsEdit },
-    { path: '/clients/edit/:id', component: ClientsEdit },
-    { path: '/operateurs', component: Operateurs },
-    { path: '/operateurs/new', component: OperateursEdit },
-    { path: '/operateurs/edit/:id', component: OperateursEdit },
-    { path: '/login', component: Login },
-    { path: '/numeros', component: Numeros },
-    { path: '/numeros/:id', component: NumerosHistory },
-    { path: '/apropos', component: About }
+    { path: '/', component: Affaires, redirect:'/affaires', name: 'Home' },    
+    { path: '/affaires', component: Affaires, name: 'Affaires' },
+    { path: '/affaires/:id', component: AffairesDashboard, name: 'AffairesDashboard' },
+    { path: '/affaires_new', component: NewAffaire, name: 'NewAffaire' },
+    { path: '/clients', component: Clients, name: 'Clients' },
+    { path: '/clients/new', component: ClientsEdit, name: 'ClientsNew' },
+    { path: '/clients/edit/:id', component: ClientsEdit, name: 'ClientsEdit' },
+    { path: '/operateurs', component: Operateurs, name: 'Operateurs' },
+    { path: '/operateurs/new', component: OperateursEdit, name: 'OperateursNew' },
+    { path: '/operateurs/edit/:id', component: OperateursEdit, name: 'OperateursEdit' },
+    { path: '/login', component: Login, name: 'Login' },
+    { path: '/numeros', component: Numeros, name: 'Numeros' },
+    { path: '/numeros/:id', component: NumerosHistory, name: 'NumerosHistory' },
+    { path: '/apropos', component: About, name: 'About' }
 ];
 
 export default routes;

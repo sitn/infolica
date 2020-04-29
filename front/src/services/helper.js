@@ -4,16 +4,18 @@ import axios from 'axios';
 /**
  * Check if the user is logged in
  */
-export const checkLogged = function (component) {
+export const checkLogged = function () {
     var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
     
-    if(!session_user && component.$router && component.$router.currentRoute && component.$router.currentRoute.path != '/login')
+    /*if(!session_user && component.$router && component.$router.currentRoute && component.$router.currentRoute.path != '/login')
         component.$router.push('/login');
-    
+    */
+
     //Set current user functions
     if(session_user)
         setCurrentUserFunctions();
     
+    return session_user !== null;
 };
 
 

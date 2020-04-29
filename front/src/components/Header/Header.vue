@@ -24,7 +24,6 @@ export default {
 
       else
         this.loggedUserName = null;
-      //this.userNameVisible = (typeof this.loggedUserName === "string" && this.loggedUserName.length > 0);
     },
 
     /**
