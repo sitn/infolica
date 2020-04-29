@@ -580,6 +580,7 @@ class VNumerosAffaires(Base):
     numero_diff_id = Column(Date)
     numero_diff_entree = Column(Date)
     numero_diff_sortie = Column(Date)
+    numero_plan_id = Column(BigInteger)
     numero_base_id = Column(BigInteger)
     numero_base_type = Column(Text)
     numero_base = Column(BigInteger)

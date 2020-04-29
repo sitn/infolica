@@ -136,11 +136,11 @@ def reservation_numeros_new_view(request):
             affaire_numero_new_view(request, params)
 
     if 'pcs' in request.params:
-        ln = Utils.last_number(request, cadastre_id, [7])
+        ln = Utils.last_number(request, cadastre_id, [7], plan_id=plan_id)
         for i in range(int(request.params['pcs'])):
             # enregistrer un nouveau numéro
             params = Utils._params(
-                cadastre_id=cadastre_id, type_id=7, etat_id=2, numero=ln + i+1)
+                cadastre_id=cadastre_id, type_id=7, etat_id=2, numero=ln + i+1, plan_id=plan_id)
             numero_id = numeros_new_view(request, params)
             # enregistrer le lien affaire-numéro
             params = Utils._params(
@@ -148,11 +148,11 @@ def reservation_numeros_new_view(request):
             affaire_numero_new_view(request, params)
 
     if 'paux' in request.params:
-        ln = Utils.last_number(request, cadastre_id, [8], plan_id=plan_id)
+        ln = Utils.last_number(request, cadastre_id, [8])
         for i in range(int(request.params['paux'])):
             # enregistrer un nouveau numéro
             params = Utils._params(
-                cadastre_id=cadastre_id, type_id=8, etat_id=2, numero=ln + i+1, plan_id=plan_id)
+                cadastre_id=cadastre_id, type_id=8, etat_id=2, numero=ln + i+1)
             numero_id = numeros_new_view(request, params)
             # enregistrer le lien affaire-numéro
             params = Utils._params(

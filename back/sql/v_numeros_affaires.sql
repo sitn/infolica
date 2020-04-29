@@ -2,7 +2,7 @@ create view infolica.v_numeros_affaires as
 select affnum.numero_id as numero_id, aff.id as affaire_id, affnum.type_id as affaire_numero_type_id, aff.nom as affaire_nom, afft.nom as affaire_type, 
 aff.date_ouverture as affaire_date, aff.information as affaire_information, cad.nom as numero_cadastre, numt.nom as numero_type, num.numero as numero, 
 num.suffixe as numero_suffixe, nume.nom as numero_etat, affnumt.nom as affaire_numero_type, numdiff.id as numero_diff_id, 
-numdiff.date_entree as numero_diff_entree, numdiff.date_sortie as numero_diff_sortie, tmp.numero_base_id as numero_base_id,
+numdiff.date_entree as numero_diff_entree, numdiff.date_sortie as numero_diff_sortie, num.plan_id as numero_plan_id, tmp.numero_base_id as numero_base_id,
 tmp.numero_base_type as numero_base_type, tmp.numero_base as numero_base, tmp.numero_base_suffixe as numero_base_suffixe, tmp.numero_base_etat as numero_base_etat
 from infolica.affaire_numero as affnum 
 left join (select numr.affaire_id as affaire_id, numr.numero_id_associe as numero_associe_id, numb.numero as numero_base, numeb.nom as numero_base_etat, 
