@@ -6,23 +6,23 @@
 
             <nav class="menu" v-if="$route.path !== '/login'">
               <md-menu md-align-trigger>
-                  <md-button md-menu-trigger v-on:click="goTo('/affaires')">Affaires</md-button>
+                  <md-button md-menu-trigger v-on:click="goTo('Affaires')">Affaires</md-button>
               </md-menu>
             
               <md-menu md-align-trigger>
-                <md-button md-menu-trigger v-on:click="goTo('/numeros')">Numéros</md-button>
+                <md-button md-menu-trigger v-on:click="goTo('Numeros')">Numéros</md-button>
               </md-menu>
             
               <md-menu md-align-trigger>
-                <md-button md-menu-trigger v-on:click="goTo('/clients')">Clients</md-button>
+                <md-button md-menu-trigger v-on:click="goTo('Clients')">Clients</md-button>
               </md-menu>
 
               <md-menu md-align-trigger>
-                <md-button md-menu-trigger v-on:click="goTo('/operateurs')">Opérateurs</md-button>
+                <md-button md-menu-trigger v-on:click="goTo('Operateurs')">Opérateurs</md-button>
               </md-menu>
             
               <md-menu md-align-trigger>
-                <md-button md-menu-trigger v-on:click="goTo('/apropos')">à propos</md-button>
+                <md-button md-menu-trigger v-on:click="goTo('About')">à propos</md-button>
               </md-menu>              
             </nav>           
 

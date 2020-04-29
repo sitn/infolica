@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="51a38106-afd0-4071-a97e-7937b616b656" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../front/src/components/Main/Main.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Main/Main.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../front/src/components/Operateurs/Operateurs.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Operateurs/Operateurs.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../front/src/routes" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/routes" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../front/src/services/helper.js" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/services/helper.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

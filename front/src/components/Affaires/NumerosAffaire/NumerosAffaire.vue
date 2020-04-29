@@ -35,7 +35,7 @@ export default {
           this.$route.params.id,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: {"Accept": "application/json"}
           }
         )
         .then(response => {
@@ -93,7 +93,7 @@ export default {
             numero_id,
             {
               withCredentials: true,
-              headers: {'Accept': 'application/json'}
+              headers: {"Accept": "application/json"}
             }
         )
         .then(response => {
@@ -118,7 +118,7 @@ export default {
           numero_.id,
         {
           withCredentials: true,
-          headers: {'Accept': 'application/json'}
+          headers: {"Accept": "application/json"}
         }
         )
         .then(response => {

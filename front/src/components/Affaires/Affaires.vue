@@ -94,7 +94,7 @@ export default {
           formData,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: {"Accept": "application/json"}
           }
         ).then(response => {
           if (response && response.data) {

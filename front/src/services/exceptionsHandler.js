@@ -14,7 +14,7 @@ export const handleException = function (error, component) {
     else if(code === 403){
         component.$root.$emit("ShowError", "Veuillez vous connecter pour continuer"); 
         if(component.$router && component.$router.currentRoute && component.$router.currentRoute.path != '/login')
-            component.$router.push('/login');
+            component.$router.push({name: "Login"});
     }
     //All other error codes
     else

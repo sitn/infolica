@@ -51,7 +51,7 @@ export default {
             formData,
             {
               withCredentials: true,
-              headers: {'Accept': 'application/json'}
+              headers: {"Accept": "application/json"}
             }
           )
           .then(response =>{
@@ -81,8 +81,8 @@ export default {
         /**
          * Call edit client
          */
-        callEditClient (id) {
-         this.$router.push('/clients/edit/' + id) ; 
+        callEditClient (id) { 
+         this.$router.push({ name: "ClientsEdit", params: { id: id } }) ;
         },
         
         /**
@@ -122,7 +122,7 @@ export default {
             process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT + "?id=" +  this.currentDeleteId, 
             {
               withCredentials: true,
-              headers: {'Accept': 'application/json'}
+              headers: {"Accept": "application/json"}
             }
           )
           .then(response =>{
