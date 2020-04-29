@@ -36,6 +36,7 @@ export default {
         nb_pfp3: 0,
         nb_paux: 0,
         nb_bat: 0,
+        nb_dp: 0,
         nb_pcs: 0,
         plan_id: null
       }
@@ -180,6 +181,8 @@ export default {
         formData.append("paux", this.reservation.nb_paux);
       if (this.reservation.nb_bat)
         formData.append("bat", this.reservation.nb_bat);
+      if (this.reservation.nb_dp)
+        formData.append("dp", this.reservation.nb_dp);
       if (this.reservation.nb_pcs)
         formData.append("pcs", this.reservation.nb_pcs);
       if (this.reservation.plan_id)
@@ -232,6 +235,7 @@ export default {
       this.reservation.nb_pfp3 = 0;
       this.reservation.nb_paux = 0;
       this.reservation.nb_bat = 0;
+      this.reservation.nb_dp = 0;
       this.reservation.nb_pcs = 0;
       this.reservation.plan_id = null;
       this.filterAffaireNumeros();
