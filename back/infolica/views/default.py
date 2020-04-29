@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 def upload_file_view(exc, request):
     filename = request.POST['file'].filename
     input_file = request.POST['file'].file
-    file_path = os.path.join('D:/................/infolica/back/tmp', filename)
+    file_path = os.path.join(request.registry.settings['upload_files_directory'], filename)
     with open(file_path, 'wb') as output_file:
         shutil.copyfileobj(input_file, output_file)
     return filename
