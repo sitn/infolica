@@ -27,9 +27,9 @@
             </nav>           
 
             <div class="user" v-if="$route.path !== '/login'">
-              <i class="material-icons md-light">account_circle</i>
+              <em class="material-icons md-light">account_circle</em>
               <span class="userName">{{loggedUserName}}</span>
-              <i class="material-icons md-light" v-on:click="callLogout" title="Déconnexion">exit_to_app</i>
+              <em class="material-icons md-light" v-on:click="callLogout" title="Déconnexion">exit_to_app</em>
             </div>
         </md-card-content>
       </md-card>

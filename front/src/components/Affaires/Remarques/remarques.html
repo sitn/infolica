@@ -12,9 +12,6 @@
                 Remarques
                 <md-button class="md-primary newRemarqueBtn" v-on:click="addRemarque()" v-if="showNewRemarqueBtn">
                     Nouvelle remarque</md-button>
-                <!-- <md-button class="md-icon-button md-raised md-primary newRemarqueBtn" v-on:click="addRemarque()">
-                    <md-icon>add</md-icon>
-                </md-button> -->
             </div>
         </md-card-header>
 
@@ -22,7 +19,6 @@
             <md-card-expand-content>
 
                 <md-card-content>
-                    <!-- <md-button class="md-primary newRemarqueBtn" v-on:click="addRemarque()">Nouvelle remarque</md-button> -->
                     <div v-if="new_remarque.showDiv">
                         <md-card>
                             <md-card-header>
@@ -60,7 +56,7 @@
                         </md-table>
                     </div>
                     <div v-else>
-                        <i>Aucune remarque</i>
+                        <em>Aucune remarque</em>
                     </div>
                 </md-card-content>
 

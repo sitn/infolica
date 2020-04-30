@@ -66,7 +66,7 @@
                                         </md-table>
                                     </div>
                                     <div v-else>
-                                        <i>Aucun numéro</i>
+                                        <em>Aucun numéro</em>
                                     </div>
 
                                 </md-card-content>
@@ -116,9 +116,6 @@
                                                 <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">
                                                     {{ item.numero_suffixe }}
                                                 </md-table-cell>
-                                                <!-- <md-table-cell md-label="Etat" md-sort-by="numero_etat">
-                                                    {{ item.numero_etat }}
-                                                </md-table-cell> -->
                                                 <md-table-cell md-label="Immeuble de base" md-sort-by="numero_base">
                                                     {{ item.numero_base }}<span v-if="item.numero_base_suffixe"> /
                                                         {{ item.numero_base_suffixe }}</span>
@@ -149,7 +146,7 @@
                                         </md-table>
                                     </div>
                                     <div v-else>
-                                        <i>Aucun numéro</i>
+                                        <em>Aucun numéro</em>
                                     </div>
 
                                 </md-card-content>

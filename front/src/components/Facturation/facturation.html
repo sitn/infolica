@@ -57,7 +57,7 @@
                         </md-table>
                     </div>
                     <div v-else>
-                        <i>Aucune facture</i>
+                        <em>Aucune facture</em>
                     </div>
                 </md-card-content>
 
@@ -70,7 +70,6 @@
                         <md-field :class="getValidationClass('sap')">
                             <label>SAP</label>
                             <md-input v-model="selectedFacture.sap" type="number"></md-input>
-                            <!-- <span class="md-error" v-if="!$v.selectedFacture.sap.required">Le numéro SAP est obligatoire</span> -->
                         </md-field>
 
                         <md-datepicker v-model="selectedFacture.date" md-immediately>
