@@ -1,4 +1,4 @@
-from ..exceptions.custom_error import CustomError
+import pyramid.httpexceptions as exc
 from pyramid.response import Response
 from pyramid.security import remember
 import json
@@ -18,45 +18,45 @@ from ..scripts.utils import Utils
 def login_view(request):
     response = None
 
+    login = None
+    password = None
+
+    if 'login' in request.params:
+        login = request.params['login']
+
+    if 'password' in request.params:
+        password = request.params['password']
+
+    # Check if user exists in DB
+    query = request.dbsession.query(models.Operateur)
+    log.info('Attempt to log with: {}'.format(login))
+    operateur = query.filter(func.lower(
+        models.Operateur.login) == func.lower(login)).first()
+
+    if not operateur:
+        return exc.HTTPNotFound('Username {} was not found'.format(login))
+
     try:
-        login = None
-        password = None
-
-        if 'login' in request.params:
-            login = request.params['login']
-
-        if 'password' in request.params:
-            password = request.params['password']
-
-        # Check if user exists in DB
-        query = request.dbsession.query(models.Operateur)
-        operateur = query.filter(func.lower(
-            models.Operateur.login) == func.lower(login)).first()
-
-        if not operateur:
-            raise Exception(CustomError.USER_NOT_FOUND_EXCEPTION)
-
         resp_json = LDAPQuery.do_login(request, login, password)
-
-        if resp_json and 'dn' in resp_json:
-            headers = remember(request, resp_json['dn'])
-
-            if operateur:
-                operateur_json = Utils.serialize_one(operateur)
-                """
-                operateur_json['role_id'] = Utils.get_role_id_by_name(request, resp_json['role_name'])
-                operateur_json['role_name'] = resp_json['role_name']
-                operateur_json['fonctions'] = Utils.get_fonctions_roles_by_id(request, operateur_json['role_id'])
-                operateur_json['fonctions'] = [x["nom"] for x in operateur_json['fonctions']]"""
-
-                operateur_json = json.dumps(operateur_json) if operateur else ''
-
-                response = Response(operateur_json, content_type='application/json; charset=UTF-8', headers=headers)
-
+    
     except Exception as error:
-        log.error(str(error), exc_info=True)
-        request.response.status = 403
+        log.error(str(error))
         return {'error': 'true', 'code': 403, 'message': str(error)}
+
+    if resp_json and 'dn' in resp_json:
+        headers = remember(request, resp_json['dn'])
+
+        if operateur:
+            operateur_json = Utils.serialize_one(operateur)
+            """
+            operateur_json['role_id'] = Utils.get_role_id_by_name(request, resp_json['role_name'])
+            operateur_json['role_name'] = resp_json['role_name']
+            operateur_json['fonctions'] = Utils.get_fonctions_roles_by_id(request, operateur_json['role_id'])
+            operateur_json['fonctions'] = [x["nom"] for x in operateur_json['fonctions']]"""
+
+            operateur_json = json.dumps(operateur_json) if operateur else ''
+
+            response = Response(operateur_json, content_type='application/json; charset=UTF-8', headers=headers)
 
     return response
 

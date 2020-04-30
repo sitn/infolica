@@ -38,7 +38,7 @@ export default {
             this.$route.params.id,
           {
             withCredentials: true,
-            headers: { Accept: "application/json" }
+            headers: {"Accept": "application/json"}
           }
         )
         .then(response => {
@@ -99,10 +99,10 @@ export default {
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_NUMEROS_ENDPOINT +
             numero_id,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/json" }
-          }
+            {
+              withCredentials: true,
+              headers: {"Accept": "application/json"}
+            }
         )
         .then(response => {
           if (response.data) {
@@ -122,12 +122,13 @@ export default {
       this.$http
         .delete(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_NUMEROS_ENDPOINT +
-            numero_.id,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/json" }
-          }
+
+          process.env.VUE_APP_NUMEROS_ENDPOINT +
+          numero_.id,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
         )
         .then(response => {
           if (response && response.status === 200) {

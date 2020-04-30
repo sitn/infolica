@@ -129,7 +129,9 @@ def includeme(config):
     config.add_route('service_by_id','/infolica/api/services/{id}')
     config.add_route('services','/infolica/api/services')
     config.add_route('services_s','/infolica/api/services/')
-    #File
-    config.add_route('upload_file', '/infolica/api/upload_file')
+    #Document
+    config.add_route('types_documents', '/infolica/api/types_documents')
+    config.add_route('types_documents_s', '/infolica/api/types_documents/')
+    config.add_route('upload_document', '/infolica/api/upload_document')
 
 

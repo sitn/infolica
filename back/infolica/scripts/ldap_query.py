@@ -1,3 +1,4 @@
+import logging
 from pyramid_ldap3 import (
     get_ldap_connector,
     groupfinder,
@@ -5,38 +6,39 @@ from pyramid_ldap3 import (
 
 from pyramid.security import remember, forget
 from pyramid.response import Response
+from pyramid.exceptions import ConfigurationError
 import json
+
+LOG = logging.getLogger(__name__)
 
 
 class LDAPQuery():
 
-
     @classmethod
     def do_login(cls, request, login, password):
         resp_json = None
+        headers = forget(request)
+
+        # Check if user exists in LDAP
         try:
-            headers = forget(request)
-
-            # Check if user exists in LDAP
             connector = get_ldap_connector(request)
-            data = connector.authenticate(login, password)
+        except ConfigurationError as error:
+            LOG.error('Connector is not well configured. Error is : {}'.format(error))
+        data = connector.authenticate(login, password)
 
-            if data is not None:
-                dn = data[0]
+        if data is not None:
+            dn = data[0]
 
-                if dn == 'null':
-                    raise Exception('Invalid credentials')
-
-                resp_json = {}
-
-                resp_json['role_name'] = cls.get_user_group_by_dn(request, dn)
-                resp_json['dn'] = dn
-
-            else:
+            if dn == 'null':
                 raise Exception('Invalid credentials')
 
-        except Exception as error:
-            raise error
+            resp_json = {}
+
+            resp_json['role_name'] = cls.get_user_group_by_dn(request, dn)
+            resp_json['dn'] = dn
+
+        else:
+            raise Exception('LDAP authentication failed')
 
         return resp_json
 

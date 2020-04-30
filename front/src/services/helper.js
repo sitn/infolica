@@ -4,16 +4,14 @@ import axios from 'axios';
 /**
  * Check if the user is logged in
  */
-export const checkLogged = function (component) {
+export const checkLogged = function () {
     var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
-    
-    if(!session_user && component.$router && component.$router.currentRoute && component.$router.currentRoute.path != '/login')
-        component.$router.push('/login');
     
     //Set current user functions
     if(session_user)
         setCurrentUserFunctions();
     
+    return session_user !== null;
 };
 
 
@@ -37,7 +35,7 @@ export const setCurrentUserFunctions = async function () {
     axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CURRENT_USERS_FUNCTIONS_ENDPOINT,
         {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: {"Accept": "application/json"}
         })
         .then(response =>{
             if(response && response.data){
@@ -62,7 +60,7 @@ export const getCadastres = async function () {
         axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CADASTRES_ENDPOINT,
             {
               withCredentials: true,
-              headers: {'Accept': 'application/json'}
+              headers: {"Accept": "application/json"}
             })
             .then(response => resolve(response))
             .catch(() => reject)
@@ -77,7 +75,7 @@ export const getTypesNumeros = async function () {
         axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_NUMEROS_ENDPOINT,
             {
               withCredentials: true,
-              headers: {'Accept': 'application/json'}
+              headers: {"Accept": "application/json"}
             })
             .then(response => resolve(response))
             .catch(() => reject)
@@ -92,7 +90,7 @@ export const getTypesAffaires = async function () {
         axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_AFFAIRES_ENDPOINT,
             {
               withCredentials: true,
-              headers: {'Accept': 'application/json'}
+              headers: {"Accept": "application/json"}
             })
             .then(response => resolve(response))
             .catch(() => reject)
@@ -107,7 +105,7 @@ export const getEtatsNumeros = async function () {
         axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_ETATS_NUMEROS_ENDPOINT,
             {
               withCredentials: true,
-              headers: {'Accept': 'application/json'}
+              headers: {"Accept": "application/json"}
             })
             .then(response => resolve(response))
             .catch(() => reject)
@@ -122,7 +120,7 @@ export const getClients = async function () {
         axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
             {
               withCredentials: true,
-              headers: {'Accept': 'application/json'}
+              headers: {"Accept": "application/json"}
             })
             .then(response => resolve(response))
             .catch(() => reject)

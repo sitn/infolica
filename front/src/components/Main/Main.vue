@@ -4,16 +4,16 @@
 
 <script>
 import Login from '@/components/Login/Login.vue'
-import {checkLogged} from '@/services/helper'
+
 
 export default {
   name: 'Main',
   components: {
     Login
   },
-  props: {
-    msg: String
-  },
+  data: () => ({
+    isAuthenticated: false
+  }),
   methods: {
     /**
      * Set default date format in datepicker
@@ -22,10 +22,8 @@ export default {
       this.$material.locale.dateFormat = "dd.MM.yyyy";
       this.$material.locale.firstDayOfAWeek = 1;
     }
-
   },
-  mounted: function(){
-    checkLogged();
+  mounted: function(){    
     this.setDefaultDateFormat();
   }
 }

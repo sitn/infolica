@@ -195,6 +195,11 @@ class RemarqueAffaire(Base):
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
+class DocumentType(Base):
+    __tablename__ = 'document_type'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
 
 class Document(Base):  ## DEPRECIE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     __tablename__ = 'document'
@@ -202,7 +207,8 @@ class Document(Base):  ## DEPRECIE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     chemin = Column(Text, nullable=False)
-
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
+    type_id = Column(BigInteger, ForeignKey(DocumentType.id), nullable=False)
 
 class EnvoiType(Base):
     __tablename__ = 'envoi_type'

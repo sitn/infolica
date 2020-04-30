@@ -107,7 +107,7 @@ import { validationMixin } from 'vuelidate'
           process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_TYPES_CLIENTS_ENDPOINT,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: {"Accept": "application/json"}
           }
         )
         .then(response =>{
@@ -136,7 +136,7 @@ import { validationMixin } from 'vuelidate'
             formData,
             {
               withCredentials: true,
-              headers: {'Accept': 'application/json'}
+              headers: {"Accept": "application/json"}
             }
           )
           .then(response =>{
@@ -242,7 +242,7 @@ import { validationMixin } from 'vuelidate'
        * Cancel edit
        */
       cancelEdit () {
-        this.$router.push('/clients');
+        this.$router.push({name: "Clients"});
       },
       
       /**
@@ -254,7 +254,7 @@ import { validationMixin } from 'vuelidate'
           process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT + '/' + id,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: {"Accept": "application/json"}
           }
         )
         .then(response =>{

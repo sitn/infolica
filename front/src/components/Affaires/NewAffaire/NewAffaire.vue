@@ -260,7 +260,7 @@ export default {
         })
         .then(response => {
           this.handleSaveDataSuccess(response);
-          this.$router.push("/affaires/" + response.data);
+          this.$router.push({ name: "AffairesDashboard", params: { id: response.data } }) ; 
         })
         //Error
         .catch(err => {
@@ -340,7 +340,7 @@ export default {
      * Cancel edit
      */
     cancelEdit() {
-      this.$router.push("/affaires");
+      this.$router.push({name: "Affaires"});
     },
 
     /**

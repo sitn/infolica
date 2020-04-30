@@ -25,13 +25,13 @@ export default {
               formData,
               {
                 withCredentials: true,
-                headers: {'Accept': 'application/json'}
+                headers: {"Accept": "application/json"}
               }
             )
             .then(response =>{
               if(response && response.data){
                 this.processLogin(response.data);
-                this.$router.push('/affaires');
+                this.$router.push({ name: "Affaires"});
               }
             })
             //Error 
@@ -48,7 +48,7 @@ export default {
               process.env.VUE_APP_API_URL + process.env.VUE_APP_LOGOUT_ENDPOINT, 
               {
                 withCredentials: true,
-                headers: {'Accept': 'application/json'}
+                headers: {"Accept": "application/json"}
               }
             )
             .then(() =>{
@@ -78,27 +78,13 @@ export default {
             this.$root.$emit('infolica_user_logged_out');
 
             if(this.$router && this.$router.currentRoute && this.$router.currentRoute.path != '/login')
-              this.$router.push('/login');
+              this.$router.push({ name: "Login"});
           }
     },
 
     mounted: function(){
-
-      //Chek a user is logged in
-      /*this.$root.$on('infolica_check_user_logged_in', () =>{
-        var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
-
-        if(!session_user){
-          this.$router.push('/login');
-          this.processLogout();  
-        }
-        else{
-          this.processLogin(session_user);
-        }
-      });*/
-
       //Logout
-      this.$root.$on('infolica_user_logout', () =>{        
+      this.$root.$on("infolica_user_logout", () =>{        
         this.doLogout();    
         this.processLogout();    
       });
