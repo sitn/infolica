@@ -72,7 +72,7 @@ export default {
           this.$route.params.id,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: {"Accept": "application/json"}
           }
         )
         .then(response => {
@@ -110,7 +110,7 @@ export default {
             process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
             {
               withCredentials: true,
-              headers: {'Accept': 'application/json'}
+              headers: {"Accept": "application/json"}
             }
           )
           .then(response => {
@@ -258,7 +258,7 @@ export default {
           formData,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: {"Accept": "application/json"}
           }
         );
       } else {
@@ -267,7 +267,7 @@ export default {
           formData,
           {
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: {"Accept": "application/json"}
           }
         );
       }
@@ -319,7 +319,7 @@ export default {
           { 
             data: formData,
             withCredentials: true,
-            headers: {'Accept': 'application/json'}
+            headers: {"Accept": "application/json"}
           }
         )
         .then(response => {

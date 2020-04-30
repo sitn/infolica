@@ -41,7 +41,7 @@ export default {
             formData,
             {
               withCredentials: true,
-              headers: {'Accept': 'application/json'}
+              headers: {"Accept": "application/json"}
             }
           )
           .then(response =>{
@@ -69,7 +69,7 @@ export default {
          * Call edit operateur
          */
         callEditOperateur (id) {
-         this.$router.push('/operateurs/edit/' + id) ; 
+         this.$router.push({ name: "OperateursEdit", params: { id: id } }) ; 
         },
         
         /**
@@ -104,7 +104,7 @@ export default {
             process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT + "?id=" +  this.currentDeleteId, 
             {
               withCredentials: true,
-              headers: {'Accept': 'application/json'}
+              headers: {"Accept": "application/json"}
             }
           )
           .then(response =>{
@@ -127,7 +127,7 @@ export default {
             process.env.VUE_APP_API_URL + process.env.VUE_APP_ADD_OPERATEURS_AD_ENDPOINT, 
             {
               withCredentials: true,
-              headers: {'Accept': 'application/json'}
+              headers: {"Accept": "application/json"}
             }
           )
           .then(response =>{

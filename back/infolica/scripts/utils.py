@@ -3,6 +3,7 @@ from sqlalchemy import func, and_, desc
 from .. import models
 from ..scripts.ldap_query import LDAPQuery
 import json
+import os
 
 
 unite_ppe_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -52,17 +53,18 @@ class Utils():
         atts = cls.get_model_record_attributes(record)
 
         for att in atts:
-            val = params[att] if att in params else getattr(record, att)
+            if att != 'affaire_doc_file':
+                val = params[att] if att in params else getattr(record, att)
 
-            #Chek boolean
-            if val == 'true':
-                val = True
-            if val == 'false':
-                val = False
-            if val == "null":
-                val = None
+                #Chek boolean
+                if val == 'true':
+                    val = True
+                if val == 'false':
+                    val = False
+                if val == "null":
+                    val = None
 
-            setattr(record, att, val)
+                setattr(record, att, val)
 
         return record
 
@@ -241,3 +243,9 @@ class Utils():
     @classmethod
     def get_nouveaux_operateurs_ad(cls, request):
         return LDAPQuery.get_infolica_users(request)
+
+    @classmethod
+    def create_affaire_folder(cls, affaire_folder):
+        if not os.path.isdir(affaire_folder):
+            os.mkdir(affaire_folder)
+

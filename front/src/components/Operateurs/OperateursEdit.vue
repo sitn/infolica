@@ -166,7 +166,7 @@ export default {
      * Cancel edit
      */
     cancelEdit() {
-      this.$router.push("/operateurs");
+      this.$router.push({name: "Operateurs"});
     },
 
     /**
