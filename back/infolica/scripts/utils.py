@@ -8,7 +8,7 @@ import os
 
 unite_ppe_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
-class Utils():
+class Utils(object):
 
     """ Serialize one query item"""
     @classmethod
@@ -29,7 +29,7 @@ class Utils():
     def serialize_many(cls, _query):
         master = []
         item = {}
-        x = 0
+
         for u in _query:
             d = u.__dict__
             item = {}
@@ -154,89 +154,71 @@ class Utils():
     @classmethod
     def get_fonctions_roles_by_id(cls, request, role_id):
         results = []
-        try:
-            query = request.dbsession.query(models.Fonction, models.Role, models.FonctionRole).filter(
-                models.Role.id == role_id).filter(models.Role.id == models.FonctionRole.role_id).filter(
-                models.Fonction.id == models.FonctionRole.fonction_id).all()
 
-            for f, r, fr in query:
-                one_item = {}
-                one_item["id"] = f.id
-                one_item["nom"] = f.nom
+        query = request.dbsession.query(models.Fonction, models.Role, models.FonctionRole).filter(
+            models.Role.id == role_id).filter(models.Role.id == models.FonctionRole.role_id).filter(
+            models.Fonction.id == models.FonctionRole.fonction_id).all()
 
-                results.append(one_item)
+        for f, r, fr in query:
+            one_item = {}
+            one_item["id"] = f.id
+            one_item["nom"] = f.nom
 
-            return results
+            results.append(one_item)
 
-        except Exception as e:
-            raise e
+        return results
 
     @classmethod
     def get_fonctions_roles_by_name(cls, request, role_name):
         results = []
-        try:
-            query = request.dbsession.query(models.Fonction, models.Role, models.FonctionRole).filter(
-                models.Role.nom == role_name).filter(models.Role.id == models.FonctionRole.role_id).filter(
-                models.Fonction.id == models.FonctionRole.fonction_id).all()
 
-            for f, r, fr in query:
-                one_item = {}
-                one_item["id"] = f.id
-                one_item["nom"] = f.nom
+        query = request.dbsession.query(models.Fonction, models.Role, models.FonctionRole).filter(
+            models.Role.nom == role_name).filter(models.Role.id == models.FonctionRole.role_id).filter(
+            models.Fonction.id == models.FonctionRole.fonction_id).all()
 
-                results.append(one_item)
+        for f, r, fr in query:
+            one_item = {}
+            one_item["id"] = f.id
+            one_item["nom"] = f.nom
 
-            return results
+            results.append(one_item)
 
-        except Exception as e:
-            raise e
+        return results
 
     @classmethod
     def has_permission(cls, request, fonction_name):
+        if not cls.check_connected(request):
+           return False
 
-        try:
-            if not cls.check_connected(request):
-               return False
+        user_dn = request.authenticated_userid
 
-            user_dn = request.authenticated_userid
+        if not user_dn:
+            return False
 
-            if not user_dn:
-                return False
+        role_name = LDAPQuery.get_user_group_by_dn(request, user_dn)
 
-            role_name = LDAPQuery.get_user_group_by_dn(request, user_dn)
+        fonctions = cls.get_fonctions_roles_by_name(request, role_name)
+        fonctions_names = [x for x in fonctions if x["nom"] == fonction_name]
+        return len(fonctions_names) > 0
 
-            fonctions = cls.get_fonctions_roles_by_name(request, role_name)
-            fonctions_names = [x for x in fonctions if x["nom"] == fonction_name]
-            return len(fonctions_names) > 0
-
-        except Exception as e:
-            raise e
 
     @classmethod
     def check_connected(cls, request):
-        try:
-            auth_tkt = request.cookies.get('auth_tkt', default=None)
+        auth_tkt = request.cookies.get('auth_tkt', default=None)
 
-            if not auth_tkt:
-                return False
+        if not auth_tkt:
+            return False
 
-            return True
-
-        except Exception as e:
-            raise e
+        return True
 
 
     @classmethod
     def get_role_id_by_name(cls, request, role_name):
-        try:
-            query = request.dbsession.query(models.Role).filter(
-                models.Role.nom == role_name).first()
+        query = request.dbsession.query(models.Role).filter(
+            models.Role.nom == role_name).first()
 
-            if query:
-                return query.id
-
-        except Exception as e:
-            raise e
+        if query:
+            return query.id
 
         return None
 
