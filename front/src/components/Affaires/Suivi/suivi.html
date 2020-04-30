@@ -13,9 +13,6 @@
                 <md-button class="md-primary newEtapeBtn" v-on:click="showEtapeDialog = !showEtapeDialog"
                     v-if="showNewEtapeBtn">
                     Nouvelle étape</md-button>
-                <!-- <md-button class="md-icon-button md-raised md-primary newEtapeBtn" v-on:click="addRemarque()">
-                    <md-icon>add</md-icon>
-                </md-button> -->
             </div>
         </md-card-header>
 
@@ -37,7 +34,7 @@
                         </md-table>
                     </div>
                     <div v-else>
-                        <i>Aucune étape</i>
+                        <em>Aucune étape</em>
                     </div>
                 </md-card-content>
 
@@ -77,8 +74,6 @@
 
                 <md-snackbar :md-active.sync="dataSaved">L'étape '{{ lastRecord }}' a été enregistrée avec succès
                 </md-snackbar>
-                <!-- <md-dialog-alert :md-active.sync="alertErrorActive" md-title="Erreur!"
-                    md-content="Une erreur est survenue lors de l'enregistrement des données" /> -->
 
             </md-card-expand-content>
         </md-card-expand>

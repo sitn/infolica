@@ -20,9 +20,6 @@
 
 .header h2{
     color:#FFFFFF;
-}
-
-.header h2{
     float: left;
     margin: 10px;
 }
@@ -44,7 +41,7 @@
     top: 8px;
 }
 
-.header i{
+.header em{
     vertical-align: middle !important;
 }
 
@@ -58,6 +55,6 @@
     font-weight: bold;
 }
 
-.header  .user i {
+.header  .user em {
     cursor: pointer;
 }
