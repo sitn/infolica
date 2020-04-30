@@ -2,7 +2,6 @@ from pyramid.config import Configurator
 from pyramid.events import NewRequest
 
 #Authentification
-import ldap3
 from pyramid_ldap3 import (
     get_ldap_connector,
     groupfinder,
@@ -10,12 +9,6 @@ from pyramid_ldap3 import (
 
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
-from pyramid.security import Allow, Authenticated
-
-class RootFactory(object):
-    __acl__ = [(Allow, Authenticated, 'view')]
-    def __init__(self, request):
-        pass
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
