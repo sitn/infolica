@@ -59,7 +59,7 @@
 
                         <md-autocomplete v-model="new_preavis.service" :md-options="services_liste"
                             :class="getValidationClass('service')">
-                            <label>Service</label>
+                            <label>Service *</label>
                             <template slot="md-autocomplete-item" slot-scope="{ item }">
                                 {{ item.nom }}
                             </template>
@@ -68,7 +68,7 @@
                         </md-autocomplete>
 
                         <md-datepicker v-model="new_preavis.date_demande" :class="getValidationClass('date_demande')" md-immediately>
-                            <label>Date de demande</label>
+                            <label>Date de demande *</label>
                         </md-datepicker>
                         <span class="md-error" v-if="!$v.new_preavis.date_demande.required">La date de demande est
                             obligatoire</span>

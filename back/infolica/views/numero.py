@@ -217,7 +217,7 @@ def affaire_numero_new_view(request, params=None):
         request.dbsession.flush()
         # Commit transaction
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.AffaireNumero.__tablename__))
 
 
 ###########################################################
@@ -241,4 +241,49 @@ def numeros_affaire_view(request):
             models.VNumerosAffaires.__tablename__, numero_id)
 
     return Utils.serialize_many(query)
+
+
+###########################################################
+# NUMERO DIFFERE
+###########################################################
+
+""" Add new numero_differe """
+@view_config(route_name='numeros_differes', request_method='POST', renderer='json')
+@view_config(route_name='numeros_differes_s', request_method='POST', renderer='json')
+def numero_differe_new_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+
+    # nouveau numero_differe
+    record = models.NumeroDiffere()
+    record = Utils.set_model_record(record, request.params)
+
+    with transaction.manager:
+        request.dbsession.add(record)
+        request.dbsession.flush()
+        # Commit transaction
+        transaction.commit()
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.NumeroDiffere.__tablename__))
+
+
+""" Update numero_differe """
+@view_config(route_name='numeros_differes', request_method='PUT', renderer='json')
+@view_config(route_name='numeros_differes_s', request_method='PUT', renderer='json')
+def numero_differe_update_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+
+    numdiff_id = request.params["numero_diff_id"] if "numero_diff_id" in request.params else None
+
+    # nouveau numero_differe
+    record = request.dbsession.query(models.NumeroDiffere).filter(models.NumeroDiffere.id == numdiff_id).first()
+    record = Utils.set_model_record(record, request.params)
+
+    with transaction.manager:
+        # Commit transaction
+        transaction.commit()
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.NumeroDiffere.__tablename__))
+
 

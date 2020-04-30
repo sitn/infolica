@@ -82,7 +82,7 @@
                         <md-input v-model="affaire.date_validation" readonly></md-input>
                     </md-field>
                     <!-- Affiche la date de validation en mode édition -->
-                    <md-datepicker v-model="affaire.date_validation" v-else>
+                    <md-datepicker v-model="affaire.date_validation" md-immediately v-else>
                         <label><strong style="color: blue">Date de la validation</strong></label>
                     </md-datepicker>
                 </div>
@@ -93,7 +93,7 @@
                         <md-input v-model="affaire.date_cloture" readonly></md-input>
                     </md-field>
                     <!-- Affiche la date de clôture en mode édition -->
-                    <md-datepicker v-model="affaire.date_cloture" v-else>
+                    <md-datepicker v-model="affaire.date_cloture" md-immediately v-else>
                         <label><strong style="color: blue">Date de la clôture</strong></label>
                     </md-datepicker>
                 </div>

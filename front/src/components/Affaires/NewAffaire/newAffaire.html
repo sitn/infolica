@@ -11,7 +11,7 @@
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100 md-size-50">
                         <md-field :class="getValidationClass('type_id')">
-                            <label for="type_id">Type affaire</label>
+                            <label for="type_id">Type affaire *</label>
                             <md-select name="type_id" id="type_id" v-model="form.type_id" :disabled="sending">
                                 <md-option v-for="item in types_affaires_list" :key="item.id" :value="item.id">
                                     {{item.nom}}</md-option>
@@ -23,7 +23,7 @@
 
                     <div class="md-layout-item md-small-size-100 md-size-50">
                         <md-field :class="getValidationClass('cadastre_id')">
-                            <label for="cadastre_id">Cadastre</label>
+                            <label for="cadastre_id">Cadastre *</label>
                             <md-select name="cadastre_id" id="cadastre_id" v-model="form.cadastre_id"
                                 :disabled="sending">
                                 <md-option v-for="item in cadastres_list" :key="item.id" :value="item.id">{{item.nom}}
@@ -65,7 +65,7 @@
                             <md-autocomplete id="client_commande_id" v-model="form.client_commande_id"
                                 :md-options="search_clients_list" md-dense
                                 @md-changed="searchClients(form.client_commande_id)">
-                                <label>Client de la commande</label>
+                                <label>Client de la commande *</label>
                             </md-autocomplete>
                             <span class="md-error" v-if="!$v.form.client_commande_id.required">Le client commande est
                                 obligatoire</span>
@@ -94,7 +94,7 @@
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100">
                         <md-field :class="getValidationClass('technicien_id')">
-                            <label for="technicien_id">Opérateur</label>
+                            <label for="technicien_id">Opérateur *</label>
                             <md-select name="technicien_id" id="technicien_id" v-model="form.technicien_id"
                                 :disabled="sending">
                                 <md-option v-for="item in operateurs_list" :key="item.id" :value="item.id">{{item.nom}}
@@ -107,7 +107,7 @@
                     
                     <div class="md-layout-item md-small-size-100">
                         <md-field :class="getValidationClass('responsable_id')">
-                            <label for="responsable_id">Validation</label>
+                            <label for="responsable_id">Validation *</label>
                             <md-select name="responsable_id" id="responsable_id" v-model="form.responsable_id"
                                 :disabled="sending">
                                 <md-option v-for="item in responsables_list" :key="item.id" :value="item.id">
@@ -163,7 +163,7 @@
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100">
                         <md-field :class="getValidationClass('localisation_E')">
-                            <label for="localisation_E">Coordonnée Est</label>
+                            <label for="localisation_E">Coordonnée Est *</label>
                             <md-input name="localisation_E" id="localisation_E" v-model="form.localisation_E"
                                 :disabled="sending" />
                             <span class="md-error" v-if="!$v.form.localisation_E.required">La coordonnée Est est
@@ -174,7 +174,7 @@
 
                     <div class="md-layout-item md-small-size-100">
                         <md-field :class="getValidationClass('localisation_N')">
-                            <label for="localisation_N">Coordonnée Nord</label>
+                            <label for="localisation_N">Coordonnée Nord *</label>
                             <md-input name="localisation_N" id="localisation_N" v-model="form.localisation_N"
                                 :disabled="sending" />
                             <span class="md-error" v-if="!$v.form.localisation_N.required">La coordonnée Nord est

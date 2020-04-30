@@ -478,6 +478,7 @@ class NumeroRelation(Base):
     numero_id_associe = Column(Integer, ForeignKey(Numero.id), nullable=False)
     relation_type_id = Column(BigInteger, ForeignKey(
         NumeroRelationType.id), nullable=False)
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
 
 
 # class NumeroPlan(Base):
@@ -582,6 +583,15 @@ class VNumerosAffaires(Base):
     numero = Column(BigInteger)
     numero_suffixe = Column(Text)
     numero_etat = Column(Text)
+    numero_diff_id = Column(Date)
+    numero_diff_entree = Column(Date)
+    numero_diff_sortie = Column(Date)
+    numero_plan_id = Column(BigInteger)
+    numero_base_id = Column(BigInteger)
+    numero_base_type = Column(Text)
+    numero_base = Column(BigInteger)
+    numero_base_suffixe = Column(Text)
+    numero_base_etat = Column(Text)
     affaire_numero_type = Column(Text)
 
 

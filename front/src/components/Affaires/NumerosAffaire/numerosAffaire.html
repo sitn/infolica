@@ -16,7 +16,7 @@
             <md-card-expand-content>
                 <div class="md-layout md-gutter">
                     <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
-                    <div class="md-layout-item md-size-50" style="padding-right: 0">
+                    <div class="md-layout-item md-size-45" style="padding-right: 0">
                         <md-card-content>
 
                             <md-card>
@@ -36,7 +36,7 @@
                                     </div>
 
                                     <!-- Tableau des numéros concernés par l'affaire -->
-                                    <div v-if="affaire_numeros_anciens[0]">
+                                    <div v-if="affaire_numeros_anciens[0]" class="scrollbar">
                                         <md-table v-model="affaire_numeros_anciens" md-sort="id" md-sort-order="desc">
                                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                                 <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
@@ -77,7 +77,7 @@
                     </div>
 
                     <!-- NUMEROS RESERVES (nouveaux numéros) -->
-                    <div class="md-layout-item md-size-50" style="padding-left: 0">
+                    <div class="md-layout-item md-size-55" style="padding-left: 0">
                         <md-card-content>
 
                             <md-card>
@@ -95,16 +95,10 @@
                                     </div>
 
                                     <!-- Tableau des numéros réservés dans l'affaire -->
-                                    <div v-if="affaire_numeros_nouveaux[0]">
+                                    <div v-if="affaire_numeros_nouveaux[0]" class="scrollbar">
                                         <md-table v-model="affaire_numeros_nouveaux" md-sort="numero_etat"
                                             md-sort-order="desc">
                                             <md-table-row slot="md-table-row" slot-scope="{ item }">
-                                                <md-table-cell class="actionsColumn">
-                                                    <md-switch v-model="item.active"
-                                                        @change="onDeleteReserveNumero(item.numero_id)"
-                                                        class="md-primary">
-                                                    </md-switch>
-                                                </md-table-cell>
                                                 <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
                                                     {{ item.numero_id }}
                                                 </md-table-cell>
@@ -114,13 +108,42 @@
                                                 <md-table-cell md-label="Type" md-sort-by="numero_type">
                                                     {{ item.numero_type }}
                                                 </md-table-cell>
+                                                <md-table-cell md-label="Plan" md-sort-by="numero_plan_id">
+                                                    {{ item.numero_plan_id }}
+                                                </md-table-cell>
                                                 <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">
                                                     {{ item.numero_suffixe }}
                                                 </md-table-cell>
-                                                <md-table-cell md-label="Etat" md-sort-by="numero_etat">
+                                                <!-- <md-table-cell md-label="Etat" md-sort-by="numero_etat">
                                                     {{ item.numero_etat }}
+                                                </md-table-cell> -->
+                                                <md-table-cell md-label="Immeuble de base" md-sort-by="numero_base">
+                                                    {{ item.numero_base }}<span v-if="item.numero_base_suffixe"> /
+                                                        {{ item.numero_base_suffixe }}</span>
+                                                </md-table-cell>
+                                                <md-table-cell md-label="Actif" class="actionsColumn">
+                                                    <md-switch v-model="item.active"
+                                                        @change="onDeleteReserveNumero(item.numero_id)"
+                                                        class="md-primary md-dense">
+                                                    </md-switch>
+                                                </md-table-cell>
+                                                <md-table-cell md-label="Mat diff" class="actionsColumn">
+                                                    <!-- Si le numéro est différé -->
+                                                    <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null">
+                                                        <md-button v-if="item.numero_type==='Bien-fonds'"  @click="doUpdateDiffererNumero(item)"
+                                                            class="md-accent md-raised md-icon-button md-dense">
+                                                            <md-icon>access_time</md-icon>
+                                                        </md-button>
+                                                    </div>
+                                                    <!-- Si le numéro n'est pas différé -->
+                                                    <div v-if="item.numero_diff_entree === null && item.numero_diff_sortie === null">
+                                                        <md-button v-if="item.numero_type==='Bien-fonds'"
+                                                            class="md-primary md-icon-button md-dense" @click="doCreateDiffererNumero(item.numero_id)">
+                                                            <md-icon>access_time</md-icon>
+                                                        </md-button>
+                                                    </div>
                                                 </md-table-cell>
                                             </md-table-row>
                                         </md-table>
