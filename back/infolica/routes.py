@@ -98,6 +98,9 @@ def includeme(config):
     config.add_route('affaire_preavis_by_affaire_id','/infolica/api/affaire_preavis/{id}')
     #Documents affaire
     config.add_route('affaire_documents_by_affaire_id','/infolica/api/affaire_documents/{id}')
+    config.add_route('types_documents', '/infolica/api/types_documents')
+    config.add_route('types_documents_s', '/infolica/api/types_documents/')
+    config.add_route('upload_affaire_document', '/infolica/api/upload_affaire_document')
     #Emoluments facture
     config.add_route('emolument_facture_by_id','/infolica/api/emolument_facture/{id}')
     config.add_route('emolument_facture','/infolica/api/emolument_facture')
@@ -129,9 +132,6 @@ def includeme(config):
     config.add_route('service_by_id','/infolica/api/services/{id}')
     config.add_route('services','/infolica/api/services')
     config.add_route('services_s','/infolica/api/services/')
-    #Document
-    config.add_route('types_documents', '/infolica/api/types_documents')
-    config.add_route('types_documents_s', '/infolica/api/types_documents/')
-    config.add_route('upload_document', '/infolica/api/upload_document')
+
 
 
