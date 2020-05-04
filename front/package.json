@@ -19,7 +19,7 @@
     "proj4": "^2.6.1",
     "vue": "^2.6.10",
     "vue-axios": "^2.1.5",
-    "vue-material": "^1.0.0-beta-11",
+    "vue-material": "^1.0.0-beta-13",
     "vue-moment": "^4.1.0",
     "vue-router": "^3.1.6",
     "vuelidate": "^0.7.5"
