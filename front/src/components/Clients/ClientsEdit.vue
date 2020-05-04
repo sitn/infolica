@@ -222,7 +222,7 @@ import { validationMixin } from 'vuelidate'
           this.lastRecord = `${this.form.prenom} ${this.form.nom}`;
           this.dataSaved = true;
           this.sending = false;
-          this.$root.$emit("ShowMessage", "L'opérateur " + this. lastRecord + " a été enregistré avec succès");
+          this.$root.$emit("ShowMessage", "L'opérateur " + this.lastRecord + " a été enregistré avec succès");
           this.clearForm();
         }
       },
