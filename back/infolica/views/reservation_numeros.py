@@ -43,7 +43,6 @@ def savePointMO(request, affaire_id, cadastre_id, numero_type, n_numeros, etat_i
         affaire_numero_new_view(request, params)
 
 
-
 """ Add new numeros in affaire"""
 @view_config(route_name='reservation_numeros', request_method='POST', renderer='json')
 @view_config(route_name='reservation_numeros_s', request_method='POST', renderer='json')
