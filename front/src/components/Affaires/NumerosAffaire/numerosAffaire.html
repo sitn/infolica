@@ -94,6 +94,13 @@
                                         </div>
                                     </div>
 
+                                    <!-- Afficher ou non les numéros de la MO -->
+                                    <div class="md-layout md-gutter">
+                                        <div class="md-layout-item">
+                                            <md-checkbox v-model="showNumerosMO" @change="filterNouveauxNumerosMO" class="md-primary">Afficher les numéros de la MO</md-checkbox>
+                                        </div>
+                                    </div>
+                                    
                                     <!-- Tableau des numéros réservés dans l'affaire -->
                                     <div v-if="affaire_numeros_nouveaux[0]" class="scrollbar">
                                         <md-table v-model="affaire_numeros_nouveaux" md-sort="numero_etat"

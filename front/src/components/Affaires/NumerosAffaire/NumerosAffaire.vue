@@ -22,7 +22,8 @@ export default {
       affaire_numeros_all: [],
       affaire_numeros_anciens: [],
       affaire_numeros_nouveaux: [],
-      showReservationDialog: false
+      showReservationDialog: false,
+      showNumerosMO: false,
     };
   },
 
@@ -59,6 +60,21 @@ export default {
         .catch(err => {
           handleException(err, this);
         });
+    },
+
+
+    /**
+     * Filtrer les nouveaux numéros pour n'afficher que les immeubles 
+     * ou les immeubles + les numéros de la MO
+     */
+    filterNouveauxNumerosMO() {
+      // numero_type_id <= 4 : les immeubles sinon ce sont les noméros de la MO
+      var numeroTypeIdMax = 4;
+      if (this.showNumerosMO) numeroTypeIdMax = 100
+
+      this.affaire_numeros_nouveaux = this.affaire_numeros_all.filter(x => {
+        return x.affaire_numero_type === "Nouveau" && x.numero_type_id <= numeroTypeIdMax;
+      });
     },
 
     /**

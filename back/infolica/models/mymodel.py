@@ -580,6 +580,7 @@ class VNumerosAffaires(Base):
     affaire_information = Column(Text)
     numero_cadastre = Column(Text)
     numero_type = Column(Text)
+    numero_type_id = Column(BigInteger)
     numero = Column(BigInteger)
     numero_suffixe = Column(Text)
     numero_etat = Column(Text)
