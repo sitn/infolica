@@ -19,8 +19,6 @@ export default {
     return {
       affaire_suivi: [],
       etapes_list: [],
-      lastRecord: null,
-      dataSaved: false,
       showNewEtapeBtn: false,
       showEtapeDialog: false,
       new_etape: {
@@ -100,7 +98,6 @@ export default {
       formData.append("affaire_id", this.$route.params.id);
       if (this.new_etape.etape.id) {
         formData.append("etape_id", this.new_etape.etape.id);
-        this.lastRecord = this.new_etape.etape.nom;
       }
       if (this.new_etape.date)
         formData.append(
@@ -127,7 +124,7 @@ export default {
           if (response.data) {
             this.searchAffaireSuivi();
             // handle success
-            this.dataSaved = true;
+            this.$root.$emit("ShowMessage", "Le suivi a été enregistré avec succès")
           }
         })
         .catch(err => {

@@ -20,7 +20,6 @@ export default {
       preavis_type_liste: [],
       services_liste: [],
       lastRecord: null,
-      dataSaved: false,
       showNewPreavisBtn: false,
       showPreavisDialog: false,
       modifyPreavis: false,
@@ -205,7 +204,7 @@ export default {
           if (response.data) {
             this.searchAffairePreavis();
             // handle success
-            this.dataSaved = true;
+            this.$root.$emit("ShowMessage", "Le préavis au " + this.lastRecord + " a été enregistrée avec succès")
           }
         })
         .catch(err => {

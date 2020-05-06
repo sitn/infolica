@@ -12,10 +12,8 @@ export default {
   props: {},
   data: () => ({
     showNewControleMutationBtn: false,
-    showModifiedControleMutation: false,
     needToCreateControleMutation: false,
     chefsProjetMO_liste: [],
-    showCreatedControleMutation: false,
     controleMutation: {}
   }),
 
@@ -106,7 +104,7 @@ export default {
         )
         .then(response => {
           if (response) {
-            this.showCreatedControleMutation = true;
+            this.$root.$emit("ShowMessage", "Le formulaire de contrôle a été créé avec succès")
             this.searchControleMutation();
             this.needToCreateControleMutation = false;
           }
@@ -165,7 +163,7 @@ export default {
         )
         .then(response => {
           if (response) {
-            this.showModifiedControleMutation = true;
+            this.$root.$emit("ShowMessage", "Le formulaire de contrôle a été mis à jour avec succès")
             this.searchControleMutation();
           }
         })
