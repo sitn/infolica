@@ -64,7 +64,6 @@ def upload_affaire_document_view(request):
 
     setattr(model, 'nom', filename)
     setattr(model, 'chemin', file_path)
-    setattr(model, 'type_id', 1)
 
     with transaction.manager:
         request.dbsession.add(model)

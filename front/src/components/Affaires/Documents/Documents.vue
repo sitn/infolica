@@ -11,7 +11,9 @@ export default {
   props: {},
   components: {},
   data: () => ({
+    types_documents_list: null,
     showUploadDocsDialog: false,
+    type_document: null,
     documentFile: null,
     documentFileName: null,
     documents: []
@@ -19,7 +21,7 @@ export default {
 
   methods: {
     /*
-     * SEARCH AFFAIRE REMARQUES
+     * SEARCH AFFAIRE DOCUMENTS
      */
     async searchAffaireDocuments() {
       this.$http
@@ -40,6 +42,8 @@ export default {
         .catch(err => {
           handleException(err, this);
         });
+
+        this.showUploadDocsDialog = false;
     },
 
     /**
@@ -57,6 +61,32 @@ export default {
         .catch(console.error);
     },
 
+    /*
+    * Init types clients list
+    */
+    initTypesDocumentsList() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_TYPES_DOCUMENTS_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      )
+      .then(response =>{
+        if (response && response.data) {
+          this.types_documents_list = response.data;
+
+          if(this.types_documents_list.length > 0){
+            this.type_document = this.types_documents_list[0].id;
+          }
+        }
+      })
+      //Error 
+      .catch(err => {
+        handleException(err, this);
+      });
+    },
+
     /**
      * Upload affaire document to server
      */
@@ -65,6 +95,7 @@ export default {
       let formData = new FormData();
       formData.append('affaire_doc_file', this.documentFile);
       formData.append('affaire_id', this.$route.params.id);
+      formData.append('type_id', this.type_document);
 
       axios.post(process.env.VUE_APP_API_URL +
           process.env.VUE_APP_AFFAIRE_UPLOAD_DOCUMENTS_ENDPOINT,
@@ -94,6 +125,7 @@ export default {
 
   mounted: function() {
     this.searchAffaireDocuments();
+    this.initTypesDocumentsList();
   }
 };
 </script>

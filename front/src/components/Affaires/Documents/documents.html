@@ -51,13 +51,24 @@
     </md-card>
     
     <md-dialog :md-active.sync="showUploadDocsDialog">
-        <md-dialog-title>Sélection des documents</md-dialog-title>
-        <md-content>
+        <md-dialog-title>Chargement des documents</md-dialog-title>
+        <md-content style="padding: 0 10px;">
+            <md-field>
+                <label for="type_document">Type document</label>
+                <md-select name="type_document" id="type_document" v-model="type_document">
+                    <md-option v-for="item in types_documents_list" :key="item.id" :value="item.id">{{item.nom}}</md-option>
+                </md-select>
+            </md-field>
+
             <md-field class="uploadDocFile">
                 <label>Charger un document</label>
-                <md-file v-model="documentFileName" @md-change="handleFileSelect($event)" placeholder="Charger un document"></md-file>                        
-                <md-button class="md-elevation-5 md-dense md-primary" v-on:click="uploadAffaireDocument()">Enregistrer le document</md-button>
+                <md-file v-model="documentFileName" @md-change="handleFileSelect($event)" placeholder="Charger un document" multiple></md-file>                        
             </md-field>  
         </md-content>
+
+        <md-dialog-actions>
+            <md-button class="md-primary" @click="showUploadDocsDialog = false">Annuler</md-button>
+            <md-button class="md-primary" @click="uploadAffaireDocument()">Enregistrer</md-button>
+        </md-dialog-actions>
     </md-dialog>
 </div>
