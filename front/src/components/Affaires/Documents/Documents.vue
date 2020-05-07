@@ -120,6 +120,31 @@ export default {
       if(files && files.length > 0){
         this.documentFile = files[0];
       } 
+    },
+    
+    /**
+     * Download file
+    */
+    downloadFile(affaire_id, filename) {
+      let _this = this;
+      
+      axios.get(process.env.VUE_APP_API_URL +
+          process.env.VUE_APP_AFFAIRE_DOWNLOAD_DOCUMENTS_ENDPOINT + '?affaire_id=' + affaire_id + '&filename=' + filename, 
+          {
+              withCredentials: true,
+              headers: {'Content-Type': 'multipart/form-data'}
+          }
+        ).then(function (response) {
+          const url = window.URL.createObjectURL(new Blob([response.data]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', 'ev.pdf') //or any other extension
+          document.body.appendChild(link)
+          link.click()
+        })
+        .catch(function (err) {
+          handleException(err, _this);
+        });
     }
   },
 

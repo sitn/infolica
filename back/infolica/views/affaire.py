@@ -177,7 +177,7 @@ def courrier_affaire_view(request):
     template = request.params['template']
     values = request.params['values']
     values_json = json.loads(values)
-    
+
     with open(mails_templates_directory + '\\MAIN.html', mode="r", encoding="utf-8") as main_html:
         main_html = main_html.read()
 

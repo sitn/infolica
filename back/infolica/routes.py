@@ -101,6 +101,8 @@ def includeme(config):
     config.add_route('types_documents', '/infolica/api/types_documents')
     config.add_route('types_documents_s', '/infolica/api/types_documents/')
     config.add_route('upload_affaire_document', '/infolica/api/upload_affaire_document')
+    config.add_route('download_affaire_document', '/infolica/api/download_affaire_document')
+    config.add_route('download_affaire_document_s', '/infolica/api/download_affaire_document/')
     config.add_route('courrier_affaire', '/infolica/api/courrier_affaire')
     config.add_route('courrier_affaire_s', '/infolica/api/courrier_affaire/')
     #Emoluments facture
