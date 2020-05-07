@@ -7,6 +7,7 @@ from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
 from distutils.dir_util import copy_tree
 import os
+import json
 
 ###########################################################
 # AFFAIRE
@@ -166,6 +167,31 @@ def affaires_update_view(request):
         # Commit transaction
         transaction.commit()
         return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
+
+
+@view_config(route_name='courrier_affaire', request_method='POST', renderer='string')
+@view_config(route_name='courrier_affaire_s', request_method='POST', renderer='string')
+def courrier_affaire_view(request):
+    settings = request.registry.settings
+    mails_templates_directory = settings['mails_templates_directory']
+    template = request.params['template']
+    values = request.params['values']
+    values_json = json.loads(values)
+    
+    with open(mails_templates_directory + '\\MAIN.html', mode="r", encoding="utf-8") as main_html:
+        main_html = main_html.read()
+
+    with open(mails_templates_directory + '\\' + template + '.html', mode="r", encoding="utf-8") as template_html:
+        template_html = template_html.read()
+
+    for att in values_json:
+        template_html = template_html.replace(att, values_json[att])
+
+    main_html = main_html.replace('CONTENU_DYNAMIQUE', template_html)
+
+    return main_html
+
+
 
 # """ Delete affaire"""
 # @view_config(route_name='affaire_by_id', request_method='DELETE', renderer='json')
