@@ -58,7 +58,7 @@
                                                 </md-table-cell>
                                                 <md-table-cell class="actionsColumn">
                                                     <md-button class="md-icon-button md-dense md-accent"
-                                                        v-on:click="onDeleteReferenceNumero(item.numero_id)">
+                                                        v-on:click="onDeleteReferenceNumero(item)">
                                                         <md-icon>delete</md-icon>
                                                     </md-button>
                                                 </md-table-cell>
@@ -94,6 +94,13 @@
                                         </div>
                                     </div>
 
+                                    <!-- Afficher ou non les numéros de la MO -->
+                                    <div class="md-layout md-gutter">
+                                        <div class="md-layout-item">
+                                            <md-checkbox v-model="showNumerosMO" @change="filterNouveauxNumerosMO" class="md-primary">Afficher les numéros de la MO</md-checkbox>
+                                        </div>
+                                    </div>
+                                    
                                     <!-- Tableau des numéros réservés dans l'affaire -->
                                     <div v-if="affaire_numeros_nouveaux[0]" class="scrollbar">
                                         <md-table v-model="affaire_numeros_nouveaux" md-sort="numero_etat"
@@ -120,7 +127,7 @@
                                                     {{ item.numero_base }}<span v-if="item.numero_base_suffixe"> /
                                                         {{ item.numero_base_suffixe }}</span>
                                                 </md-table-cell>
-                                                <md-table-cell md-label="Actif" class="actionsColumn">
+                                                <md-table-cell md-label="Projet" class="actionsColumn">
                                                     <md-switch v-model="item.active"
                                                         @change="onDeleteReserveNumero(item.numero_id)"
                                                         class="md-primary md-dense">
@@ -137,7 +144,7 @@
                                                     <!-- Si le numéro n'est pas différé -->
                                                     <div v-if="item.numero_diff_entree === null && item.numero_diff_sortie === null">
                                                         <md-button v-if="item.numero_type==='Bien-fonds'"
-                                                            class="md-primary md-icon-button md-dense" @click="doCreateDiffererNumero(item.numero_id)">
+                                                            class="md-primary md-icon-button md-dense" @click="doCreateDiffererNumero(item)">
                                                             <md-icon>access_time</md-icon>
                                                         </md-button>
                                                     </div>

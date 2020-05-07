@@ -22,7 +22,8 @@ export default {
       affaire_numeros_all: [],
       affaire_numeros_anciens: [],
       affaire_numeros_nouveaux: [],
-      showReservationDialog: false
+      showReservationDialog: false,
+      showNumerosMO: false,
     };
   },
 
@@ -61,10 +62,49 @@ export default {
         });
     },
 
+
+    /**
+     * Filtrer les nouveaux numéros pour n'afficher que les immeubles 
+     * ou les immeubles + les numéros de la MO
+     */
+    filterNouveauxNumerosMO() {
+      // numero_type_id <= 4 : les immeubles sinon ce sont les noméros de la MO
+      var numeroTypeIdMax = 4;
+      if (this.showNumerosMO) numeroTypeIdMax = 100
+
+      this.affaire_numeros_nouveaux = this.affaire_numeros_all.filter(x => {
+        return x.affaire_numero_type === "Nouveau" && x.numero_type_id <= numeroTypeIdMax;
+      });
+    },
+
+    /**
+     * Contrôler qu'un numéro de référence n'est pas une numéro de base pour un numéro
+     * réservé dans l'affaire
+     */
+    isNumeroBaseInAffaire(numero){
+      // Filtrer les numéros de base
+      var numerosAssocies = this.affaire_numeros_nouveaux.filter(x => {
+        return parseInt(x.numero_base_id)==parseInt(numero.numero_id)})
+      // Créer un array avec les numéros pour l'affichage du message
+      var numerosAssociesArray = []
+      numerosAssocies.forEach(x => numerosAssociesArray.push(x.numero))
+      // Empêcher la suppression si des numéros sont définis sur le numéro de base, supprimer sinon
+      if (numerosAssocies[0]){
+        this.$root.$emit("ShowError", "Les immeubles " + numerosAssociesArray.join() + " sont définis sur l'immeuble " + numero.numero)
+        return true
+      } else {
+        return false
+      }
+    },
+
     /**
      * Supprimer numéro référencé
      */
-    onDeleteReferenceNumero(numero_id) {
+    onDeleteReferenceNumero(numero) {
+      // Contrôler qu'aucun numéro n'a été défini sur ce numéro de base!
+      if (this.isNumeroBaseInAffaire(numero) === false)
+      {
+
       this.$http
         .delete(
           process.env.VUE_APP_API_URL +
@@ -72,7 +112,7 @@ export default {
             "?affaire_id=" +
             this.$route.params.id +
             "&numero_id=" +
-            numero_id,
+            numero.numero_id,
           {
             withCredentials: true,
             headers: { Accept: "application/json" }
@@ -81,11 +121,13 @@ export default {
         .then(response => {
           if (response.data) {
             this.searchAffaireNumeros();
+            this.$root.$emit("ShowMessage", "Le numéro " + numero.numero + " a été délié de l'affaire avec succès")
           }
         })
         .catch(err => {
           handleException(err, this);
         });
+        }
     },
 
     /**
@@ -133,20 +175,15 @@ export default {
         .then(response => {
           if (response && response.status === 200) {
             this.searchAffaireNumeros();
+            // Afficher le changement d'état
+            var etat = "Abandonné"
+            if (numero_.etat === "Abandonné") etat = "Projet" 
+            this.$root.$emit("ShowMessage", "L'état du numéro " + numero_.numero + " est passé à '" + etat + "'")
           }
         })
         .catch(err => {
           handleException(err, this);
         });
-    },
-
-    /*
-     * Open numéro in new tab
-     */
-    doOpenNumero(id) {
-      window.setTimeout;
-      let routeData = this.$router.resolve("/numeros/" + id);
-      window.open(routeData.href, "_blank");
     },
 
     /**
@@ -169,7 +206,7 @@ export default {
      */
     doCreateDiffererNumero(numero) {
       var formData = new FormData();
-      formData.append("numero_id", numero);
+      formData.append("numero_id", numero.numero_id);
       formData.append(
         "date_entree",
         moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(
@@ -190,6 +227,7 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.searchAffaireNumeros();
+            this.$root.$emit("ShowMessage", "Le numéro " + numero.numero + " a été différé")
           }
         })
         .catch(err => {
@@ -224,6 +262,7 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.searchAffaireNumeros();
+            this.$root.$emit("ShowMessage", "La mention 'différé' du numéro " + numero.numero + " a été correctement supprimée")  
           }
         })
         .catch(err => {

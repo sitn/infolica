@@ -201,6 +201,7 @@ export default {
         .then(response => {
           if (response.data) {
             this.$parent.searchAffaireNumeros();
+            this.$root.$emit("ShowMessage", "Le(s) numéro(s) réservé(s) ont été correctement ajouté(s) à l'affaire")
           }
         })
         .catch(err => {

@@ -11,8 +11,6 @@ export default {
   name: "ControlePPE",
   props: {},
   data: () => ({
-    showNewControlePPEBtn: false,
-    showModifiedControlePPE: false,
     needToCreateControlePPE: false,
     chefsProjetMO_liste: [],
     showCreatedControlePPE: false,
@@ -105,7 +103,7 @@ export default {
         )
         .then(response => {
           if (response) {
-            this.showCreatedControlePPE = true;
+            this.$root.$emit("ShowMessage", "Le formulaire de contrôle a été créé avec succès")
             this.searchControlePPE();
             this.needToCreateControlePPE = false;
           }
@@ -196,7 +194,7 @@ export default {
         )
         .then(response => {
           if (response) {
-            this.showModifiedControlePPE = true;
+            this.$root.$emit("ShowMessage", "Le formulaire de contrôle a été mis à jour avec succès")
             this.searchControlePPE();
           }
         })

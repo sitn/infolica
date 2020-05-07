@@ -1,10 +1,10 @@
 <div class="reservationNumeros">
-
+    
     <md-dialog :md-active.sync="showReservationDialog" md-confirm-text="Enregistrer" md-cancel-text="Annuler"
-        md-title="Réservation de numéros" :md-close-on-esc="true" :md-click-outside-to-close="true">
-        <md-dialog-title>Réservation de numéros</md-dialog-title>
-        <md-dialog-content>
-
+    md-title="Réservation de numéros" :md-close-on-esc="true" :md-click-outside-to-close="true">
+    <md-dialog-title>Réservation de numéros</md-dialog-title>
+    <md-dialog-content>
+    
 
             <md-card-content>
                 <!-- Affaire -->
@@ -206,12 +206,12 @@
 
             <md-divider />
 
-
+            
             <md-dialog-actions>
                 <md-button class="md-accent" @click="onCancelReservationNumeros">Annuler</md-button>
                 <md-button class="md-primary" @click="onConfirmReservationNumeros">Enregistrer</md-button>
             </md-dialog-actions>
-
+            
         </md-dialog-content>
     </md-dialog>
 

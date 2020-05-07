@@ -6,6 +6,43 @@ from .. import models
 from ..views.numero import numeros_new_view, affaire_numero_new_view, numeros_etat_histo_new_view
 from ..views.numero_relation import numeros_relations_new_view
 
+
+def savePointMO(request, affaire_id, cadastre_id, numero_type, n_numeros, etat_id=2):
+    # Corriger la liste des cadastres où la réservation de numéros se fait sur deux cadastres
+    if cadastre_id == 60 or cadastre_id == 70:
+        # Cadastre de la Chaux-de-Fonds et des Eplatures
+        tmp = [60, 70]
+        ln = max(Utils.last_number(request, tmp[0], [numero_type]),
+                 Utils.last_number(request, tmp[1], [numero_type]))
+    elif cadastre_id == 59 or cadastre_id == 69:
+        # Cadastre de Brot-Plamboz et Plamboz
+        tmp = [59, 69]
+        ln = max(Utils.last_number(request, tmp[0], [numero_type]), 
+                 Utils.last_number(request, tmp[1], [numero_type]))
+    elif cadastre_id == 1 or cadastre_id == 63:
+        # Cadastre de Neuchâtel et de la Coudre
+        tmp = [1, 63]
+        ln = max(Utils.last_number(request, tmp[0], [numero_type]), 
+                 Utils.last_number(request, tmp[1], [numero_type]))
+    elif cadastre_id == 22 or cadastre_id == 67:
+        # Cadastre de Sauge et de Saint-Aubin
+        tmp = [22, 67]
+        ln = max(Utils.last_number(request, tmp[0], [numero_type]), 
+                 Utils.last_number(request, tmp[1], [numero_type]))
+    else:
+        ln = Utils.last_number(request, cadastre_id, [numero_type])
+
+    for i in range(n_numeros):
+        # enregistrer un nouveau numéro
+        params = Utils._params(
+            cadastre_id=cadastre_id, type_id=numero_type, etat_id=etat_id, numero=ln + i+1)
+        numero_id = numeros_new_view(request, params)
+        # enregistrer le lien affaire-numéro
+        params = Utils._params(
+            affaire_id=affaire_id, numero_id=numero_id, modifie=False, type_id=2)
+        affaire_numero_new_view(request, params)
+
+
 """ Add new numeros in affaire"""
 @view_config(route_name='reservation_numeros', request_method='POST', renderer='json')
 @view_config(route_name='reservation_numeros_s', request_method='POST', renderer='json')
@@ -100,40 +137,16 @@ def reservation_numeros_new_view(request):
             numeros_relations_new_view(request, params)
 
     if 'pfp3' in request.params:
-        ln = Utils.last_number(request, cadastre_id, [5])
-        for i in range(int(request.params['pfp3'])):
-            # enregistrer un nouveau numéro
-            params = Utils._params(
-                cadastre_id=cadastre_id, type_id=5, etat_id=2, numero=ln + i+1)
-            numero_id = numeros_new_view(request, params)
-            # enregistrer le lien affaire-numéro
-            params = Utils._params(
-                affaire_id=affaire_id, numero_id=numero_id, modifie=False, type_id=2)
-            affaire_numero_new_view(request, params)
+        savePointMO(request, affaire_id, cadastre_id, 5, int(request.params["paux"]))
 
     if 'bat' in request.params:
-        ln = Utils.last_number(request, cadastre_id, [6])
-        for i in range(int(request.params['bat'])):
-            # enregistrer un nouveau numéro
-            params = Utils._params(
-                cadastre_id=cadastre_id, type_id=6, etat_id=2, numero=ln + i+1)
-            numero_id = numeros_new_view(request, params)
-            # enregistrer le lien affaire-numéro
-            params = Utils._params(
-                affaire_id=affaire_id, numero_id=numero_id, modifie=False, type_id=2)
-            affaire_numero_new_view(request, params)
-    
+        savePointMO(request, affaire_id, cadastre_id, 6, int(request.params["bat"]))
+
     if 'dp' in request.params:
-        ln = Utils.last_number(request, cadastre_id, [6])
-        for i in range(int(request.params['dp'])):
-            # enregistrer un nouveau numéro
-            params = Utils._params(
-                cadastre_id=cadastre_id, type_id=10, etat_id=2, numero=ln + i+1)
-            numero_id = numeros_new_view(request, params)
-            # enregistrer le lien affaire-numéro
-            params = Utils._params(
-                affaire_id=affaire_id, numero_id=numero_id, modifie=False, type_id=2)
-            affaire_numero_new_view(request, params)
+        savePointMO(request, affaire_id, cadastre_id, 10, int(request.params["dp"]))
+
+    if 'paux' in request.params:
+        savePointMO(request, affaire_id, cadastre_id, 8, int(request.params["paux"]))
 
     if 'pcs' in request.params:
         ln = Utils.last_number(request, cadastre_id, [7], plan_id=plan_id)
@@ -147,17 +160,5 @@ def reservation_numeros_new_view(request):
                 affaire_id=affaire_id, numero_id=numero_id, modifie=False, type_id=2)
             affaire_numero_new_view(request, params)
 
-    if 'paux' in request.params:
-        ln = Utils.last_number(request, cadastre_id, [8])
-        for i in range(int(request.params['paux'])):
-            # enregistrer un nouveau numéro
-            params = Utils._params(
-                cadastre_id=cadastre_id, type_id=8, etat_id=2, numero=ln + i+1)
-            numero_id = numeros_new_view(request, params)
-            # enregistrer le lien affaire-numéro
-            params = Utils._params(
-                affaire_id=affaire_id, numero_id=numero_id, modifie=False, type_id=2)
-            affaire_numero_new_view(request, params)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
-
