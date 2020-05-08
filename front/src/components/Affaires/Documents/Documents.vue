@@ -11,10 +11,14 @@ export default {
   props: {},
   components: {},
   data: () => ({
+    deleteDocActive: false,
+    deleteDocMessage: '',
+    currentDeleteDocId: null,
+    currentDeleteDocName: null,
     types_documents_list: null,
     showUploadDocsDialog: false,
     type_document: null,
-    documentFile: null,
+    documentFiles: null,
     documentFileName: null,
     documents: []
   }),
@@ -93,7 +97,14 @@ export default {
     uploadAffaireDocument() {
       let _this = this;
       let formData = new FormData();
-      formData.append('affaire_doc_file', this.documentFile);
+      
+      for( var i = 0; i < this.documentFiles.length; i++ ){
+        let file = this.documentFiles[i];
+
+        formData.append('affaire_doc_files[' + i + ']', file);
+      }
+
+      //formData.append('affaire_doc_files', this.documentFiles);
       formData.append('affaire_id', this.$route.params.id);
       formData.append('type_id', this.type_document);
 
@@ -105,7 +116,7 @@ export default {
               headers: {'Content-Type': 'multipart/form-data'}
           }
         ).then(function () {
-         _this.$root.$emit("ShowMessage", "Le document " + _this.documentFileName + " a été chargé avec succès");
+         _this.$root.$emit("ShowMessage", "Le document " + _this.documentFilesName + " a été chargé avec succès");
          _this.searchAffaireDocuments();
         })
         .catch(function (err) {
@@ -118,7 +129,7 @@ export default {
     */
     handleFileSelect(files) {
       if(files && files.length > 0){
-        this.documentFile = files[0];
+        this.documentFiles = files;
       } 
     },
     
@@ -126,25 +137,55 @@ export default {
      * Download file
     */
     downloadFile(affaire_id, filename) {
-      let _this = this;
-      
-      axios.get(process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_AFFAIRE_DOWNLOAD_DOCUMENTS_ENDPOINT + '?affaire_id=' + affaire_id + '&filename=' + filename, 
-          {
-              withCredentials: true,
-              headers: {'Content-Type': 'multipart/form-data'}
+      window.open(process.env.VUE_APP_AFFAIRE_DOWNLOAD_DOCUMENTS_ENDPOINT + '?affaire_id=' + affaire_id + '&filename=' + filename);
+    },
+
+    /**
+     * Call delete document
+     */
+    callDeleteDoc (id, nom) {
+      this.currentDeleteDocId = id;
+      this.currentDeleteDocName = nom;
+      this.deleteDocMessage = "Confirmer la suppression du document '<strong>" + nom + "<strong>' ?";
+      this.deleteDocActive = true;
+    },
+
+
+    /**
+    * Delete document
+    */
+    onConfirmDeleteDoc () {
+       var formData = new FormData();
+      formData.append("id", this.currentDeleteDocId);
+      formData.append("nom", this.currentDeleteDocName);
+      formData.append('affaire_id', this.$route.params.id);     
+
+      this.$http
+        .delete(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_DELETE_DOCUMENT_ENDPOINT,
+          { 
+            data: formData,
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
           }
-        ).then(function (response) {
-          const url = window.URL.createObjectURL(new Blob([response.data]))
-          const link = document.createElement('a')
-          link.href = url
-          link.setAttribute('download', 'ev.pdf') //or any other extension
-          document.body.appendChild(link)
-          link.click()
+        )
+        .then(response => {
+          if (response.data) {
+            this.searchAffaireDocuments();
+          }
         })
-        .catch(function (err) {
-          handleException(err, _this);
+        .catch(err => {
+          handleException(err, this);
         });
+
+        this.currentDeleteDocId = null;
+    },
+
+    /**
+    * Cancel delete document
+    */
+    onCancelDeleteDoc () {
+      this.currentDeleteId = null;
     }
   },
 

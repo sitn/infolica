@@ -1,4 +1,4 @@
-<div class="Documents">
+<div class="documents">
     <md-card>
         <!-- Results Header -->
         <md-card-header>
@@ -9,6 +9,10 @@
                     </md-button>
                 </md-card-expand-trigger>
                 Documents
+
+                <md-button class="md-primary uploadDocBtn" v-on:click="showUploadDocsDialog = true">
+                    Charger des documents
+                </md-button>
             </div>
         </md-card-header>
 
@@ -16,10 +20,6 @@
             <md-card-expand-content>
 
                 <md-card-content>
-                    <md-button class="md-primary" v-on:click="showUploadDocsDialog = true">
-                        Charger des documents
-                    </md-button>
-
                     <div v-if="documents[0]">
                         <md-table v-model="documents" md-sort="" md-sort-order="desc">
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
@@ -28,13 +28,12 @@
                                 </md-table-cell>
                                 <md-table-cell md-label="Création" md-sort-by="creation">{{ item.creation }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Télécharger">
-                                    <md-button class="md-icon-button md-raised md-primary">
+                                <md-table-cell md-label="Actions" class="actionsCol">
+                                    <md-button class="md-icon-button md-dense md-primary">
                                         <a target="_blank" :href="'http://localhost:6543/infolica/api/download_affaire_document?filename=' + item.nom + '&affaire_id=' + item.affaire_id"><md-icon>save_alt</md-icon></a>
                                     </md-button>
-                                </md-table-cell>
-                                <md-table-cell md-label="Supprimer">
-                                    <md-button class="md-icon-button md-raised md-accent" v-on:click="callDeleteDocument(item.id, item.nom, item.nom)">
+
+                                    <md-button class="md-icon-button md-dense md-accent" v-on:click="callDeleteDoc(item.id, item.nom, item.affaire_id)">
                                         <md-icon>delete</md-icon>
                                     </md-button>
                                 </md-table-cell>
@@ -72,4 +71,15 @@
             <md-button class="md-primary" @click="uploadAffaireDocument()">Enregistrer</md-button>
         </md-dialog-actions>
     </md-dialog>
+
+    <div>
+        <md-dialog-confirm
+          :md-active.sync="deleteDocActive"
+          md-title="Supprimer le document"
+          :md-content="deleteDocMessage"
+          md-confirm-text="Confirmer"
+          md-cancel-text="Annuler"
+          @md-confirm="onConfirmDeleteDoc" 
+          @md-cancel="onCancelDeleteDoc"/>    
+      </div>
 </div>
