@@ -191,6 +191,7 @@ def courrier_affaire_view(request):
 
     # Get header and footer template
     with open(os.path.join(mails_templates_directory,'MAIN.html'), mode="r", encoding="utf-8") as main_html:
+
         main_html = main_html.read()
 
     # Get content template

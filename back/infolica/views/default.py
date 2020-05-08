@@ -6,6 +6,7 @@ from pyramid.httpexceptions import HTTPForbidden, HTTPNoContent
 from ..scripts.utils import Utils
 import logging
 log = logging.getLogger(__name__)
+from pyramid.view import notfound_view_config
 
 
 ########################################################
@@ -52,6 +53,7 @@ def test_error(exc, request):
 @view_config(route_name='numeros_differes_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='courrier_affaire', request_method='OPTIONS', renderer='json')
 @view_config(route_name='courrier_affaire_s', request_method='OPTIONS', renderer='json')
+@view_config(route_name='delete_affaire_document', request_method='OPTIONS', renderer='json')
 def options_response_view(request):
     return ''
 
@@ -63,7 +65,7 @@ def options_response_view(request):
 def general_error(exc, request):
     log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
     request.response.status = 500
-    return {'error': 'true', 'code': 500, 'messagee': CustomError.GENERAL_EXCEPTION}
+    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
 
 ########################################################
 # Common IntegrityError return message
@@ -161,3 +163,13 @@ def http_forbidden_error(exc, request):
 def http_no_content_error(exc, request):
     log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
     request.response.status = 204
+
+########################################################
+# Common notfound return message
+########################################################
+@notfound_view_config(renderer="json")
+def notfound(request):
+    msg = CustomError.NOT_FOUND_ERROR.format(request.url, request.method)
+    log.error(msg)
+    request.response.status = 404
+    return {'error': 'true', 'code': 403, 'message': msg}
