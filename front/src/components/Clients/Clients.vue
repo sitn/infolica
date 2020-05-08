@@ -137,7 +137,7 @@ export default {
         },
 
         /**
-        * Delete client
+        * Cancel delete client
         */
         onCancelDelete () {
           this.currentDeleteId = null;
