@@ -8,6 +8,9 @@ from ..scripts.utils import Utils
 from distutils.dir_util import copy_tree
 import os
 import json
+from weasyprint import HTML, default_url_fetcher
+from pyramid.response import FileResponse
+from datetime import datetime
 
 ###########################################################
 # AFFAIRE
@@ -124,9 +127,8 @@ def affaires_new_view(request):
         return [model.id]
 
 
+
 """ Update affaire"""
-
-
 @view_config(route_name='affaires', request_method='PUT', renderer='json')
 @view_config(route_name='affaires_s', request_method='PUT', renderer='json')
 def affaires_update_view(request):
@@ -169,51 +171,86 @@ def affaires_update_view(request):
         return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
 
 
-@view_config(route_name='courrier_affaire', request_method='POST', renderer='string')
-@view_config(route_name='courrier_affaire_s', request_method='POST', renderer='string')
+"""
+Create PDF file 
+"""
+@view_config(route_name='courrier_affaire', request_method='POST', renderer='json')
+@view_config(route_name='courrier_affaire_s', request_method='POST', renderer='json')
 def courrier_affaire_view(request):
     settings = request.registry.settings
     mails_templates_directory = settings['mails_templates_directory']
+    temporary_directory = settings['temporary_directory']
+    date_time = datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = 'PCOP_' + date_time + '.pdf'
+    file_path = os.path.join(temporary_directory, filename)
+
+    # Get request params
     template = request.params['template']
     values = request.params['values']
     values_json = json.loads(values)
-    
-    with open(mails_templates_directory + '\\MAIN.html', mode="r", encoding="utf-8") as main_html:
+
+    # Get header and footer template
+    with open(os.path.join(mails_templates_directory,'MAIN.html'), mode="r", encoding="utf-8") as main_html:
         main_html = main_html.read()
 
-    with open(mails_templates_directory + '\\' + template + '.html', mode="r", encoding="utf-8") as template_html:
+    # Get content template
+    with open(os.path.join(mails_templates_directory, template + '.html'), mode="r", encoding="utf-8") as template_html:
         template_html = template_html.read()
 
+    # Replace values by keywords
     for att in values_json:
         template_html = template_html.replace(att, values_json[att])
 
+    # Fill content of html file
     main_html = main_html.replace('CONTENU_DYNAMIQUE', template_html)
+    main_html = main_html.replace("LOGO_URL", "./ne_logo.png")
+    
+    # Save PDF file
+    html = HTML(string=main_html, base_url=mails_templates_directory).write_pdf(file_path)
 
-    return main_html
+    return {'filename': filename}
 
 
+"""
+Send and delete PDF file
+"""
+@view_config(route_name='courrier_affaire', request_method='GET')
+@view_config(route_name='courrier_affaire_s', request_method='GET')
+def download_courrier_affaire_view(request):
+    settings = request.registry.settings
+    filename = request.params['filename']
+    temporary_directory = settings["temporary_directory"]
+    file_path = os.path.join(temporary_directory, filename)
 
-# """ Delete affaire"""
-# @view_config(route_name='affaire_by_id', request_method='DELETE', renderer='json')
-# def affaires_delete_view(request):
-#     # id_affaire
-#     id_affaire = request.params['id_affaire'] if 'id_affaire' in request.params else None
+    if os.path.exists(file_path):
+        response = FileResponse(file_path, request=request, cache_max_age=86400)
+        headers = response.headers
+        headers['Content-Type'] = 'application/download'
+        headers['Accept-Ranges'] = 'bite'
+        headers['Content-Disposition'] = 'attachment;filename=' + filename
 
-#     # Get the affaire
-#     record = request.dbsession.query(models.Affaire).filter(
-#         models.Affaire.id == id_affaire).first()
+        return response
 
-#     if not record:
-#         raise CustomError(
-#             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Affaire.__tablename__, id_affaire))
+    else:
+        raise exc.HTTPNotFound("Le fichier est indisponible")
 
-#
-#         with transaction.manager:
-#             request.dbsession.delete(record)
-#             # Commit transaction
-#             transaction.commit()
-#             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Affaire.__tablename__))
 
-#
-#         log.error(e)
-#         return Response(db_err_msg, content_type='text/plain', status=500)
+"""
+Supprimer le fichier une fois téléchargé
+"""
+@view_config(route_name='courrier_affaire', request_method='DELETE', renderer='string')
+@view_config(route_name='courrier_affaire_s', request_method='DELETE', renderer='string')
+def delete_courrier_affaire_view(request):
+    settings = request.registry.settings
+    filename = request.params['filename']
+    temporary_directory = settings["temporary_directory"]
+    file_path = os.path.join(temporary_directory, filename)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        response = True
+
+        return "ok"
+
+    else:
+        raise exc.HTTPNotFound("Le fichier est indisponible")
