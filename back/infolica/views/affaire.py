@@ -5,7 +5,7 @@ import transaction
 from ..models import Constant
 from ..exceptions.custom_error import CustomError
 from ..scripts.utils import Utils
-from distutils.dir_util import copy_tree
+# from distutils.dir_util import copy_tree
 import os
 import json
 from weasyprint import HTML, default_url_fetcher
@@ -123,7 +123,8 @@ def affaires_new_view(request):
         transaction.commit()
 
         # Copier le dossier __template pour une nouvelle affaire
-        copy_tree(request.registry.settings['affaireTemplateDir'], model.chemin)
+        # copy_tree(request.registry.settings['affaireTemplateDir'], model.chemin)
+        os.mkdir(model.chemin)
         return [model.id]
 
 
