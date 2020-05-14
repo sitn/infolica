@@ -7,7 +7,7 @@ import {
   getCadastres,
   getTypesAffaires,
 } from "@/services/helper";
-import {handleException} from '@/services/exceptionsHandler'
+import {handleException} from '@/services/exceptionsHandler';
 
 export default {
   name: "Affaires",

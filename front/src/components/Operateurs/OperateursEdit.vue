@@ -206,7 +206,7 @@ export default {
     if (
       this.$router &&
       this.$router.currentRoute &&
-      this.$router.currentRoute.path === "/operateurs/new"
+      this.$router.currentRoute.name === "OperateursNew"
     )
       this.mode = "new";
     else this.mode = "edit";
