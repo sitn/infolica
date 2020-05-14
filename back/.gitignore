@@ -139,3 +139,7 @@ infolica/alembic/versions
 
 # log files
 **/*.log
+
+# tmp folder content
+./tmp/*
+!.logs/.gitkeep

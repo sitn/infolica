@@ -46,6 +46,13 @@ ldap_login_query_attributes= uid, givenName, sn, mail, telephoneNumber, mobile
 # Le scope de la recherche (LEVEL, SUBTREE)
 ldap_login_query_scope= SUBTREE
 
+# Les autres attributs d'un utilisateur LDAP
+ldap_user_attribute_firstname= givenName
+ldap_user_attribute_lastname= sn
+ldap_user_attribute_telephone= telephoneNumber
+ldap_user_attribute_mail= mail
+ldap_user_attribute_mobile= mobile
+
 
 ###########################################################
 # La configuration de la recherche des groupes dans LDAP
@@ -109,13 +116,23 @@ affaire_type_revision_abornement_id = 4
 ######################################################################################
 # Chemins dossiers affaires
 ######################################################################################
-affaireTemplateDir = 
-affaireParDir = 
+affaireTemplateDir = /path/to/affaireTemplateDir
+affaireParDir = /path/to/affaireParDir
 
 ######################################################################################
 # Access-Control-Allow-Origin
 ######################################################################################
 access_control_allow_origin = http://127.0.0.1:8080
+
+######################################################################################
+# Upload file directory
+######################################################################################
+upload_files_directory = /path/to/upload_files_directory
+
+######################################################################################
+# Mails templates directory
+######################################################################################
+mails_templates_directory = /path/to/mail_templates_dorectory
 
 retry.attempts = 3
 
