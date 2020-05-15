@@ -3,8 +3,8 @@
 
 
 <script>
-import {handleException} from '@/services/exceptionsHandler'
-import {checkPermission} from '@/services/helper'
+import {handleException} from '@/services/exceptionsHandler';
+import {checkPermission} from '@/services/helper';
 
 const moment = require("moment");
 
@@ -79,10 +79,7 @@ export default {
 
   mounted: function() {
     this.copyAffaire();
-    let _this = this;
-    //setTimeout(function(){
-    _this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || _this.$parent.parentAffaireReadOnly;
-    //}, 1000)
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="51a38106-afd0-4071-a97e-7937b616b656" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../front/src/components/Affaires/Affaires.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Affaires/Affaires.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../front/src/components/Affaires/AffairesDashboard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Affaires/AffairesDashboard.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../front/src/components/Affaires/affairesDashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Affaires/affairesDashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../front/src/components/Operateurs/OperateursEdit.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../front/src/components/Operateurs/OperateursEdit.vue" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -78,8 +83,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/infolica/views/affaire.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+            <state relative-caret-position="375">
+              <caret line="136" column="43" selection-start-line="136" selection-start-column="33" selection-end-line="136" selection-end-column="43" />
+              <folding>
+                <element signature="e#0#36#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -107,7 +115,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>oper</find>
       <find>ldap_user_attribute_login</find>
       <find>ldap_user_attribute_lastname</find>
       <find>RemarqueAffaire</find>
@@ -137,6 +144,7 @@
       <find>start</find>
       <find>ldap_user_attribute_mobile</find>
       <find>HTML</find>
+      <find>put</find>
     </findStrings>
     <replaceStrings>
       <replace>TypeAffaire</replace>
@@ -306,9 +314,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="147" y="-8" width="1781" height="1096" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3102847" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.31377107" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -651,8 +658,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/infolica/views/affaire.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+        <state relative-caret-position="375">
+          <caret line="136" column="43" selection-start-line="136" selection-start-column="33" selection-end-line="136" selection-end-column="43" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

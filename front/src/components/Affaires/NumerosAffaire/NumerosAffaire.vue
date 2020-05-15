@@ -4,7 +4,7 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
-import { getCurrentDate } from "@/services/helper";
+import { getCurrentDate, checkPermission } from "@/services/helper";
 import ReferenceNumeros from "@/components/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/ReservationNumeros/ReservationNumeros.vue";
 
@@ -24,7 +24,8 @@ export default {
       affaire_numeros_anciens: [],
       affaire_numeros_nouveaux: [],
       showReservationDialog: false,
-      showNumerosMO: false
+      showNumerosMO: false,
+      affaireReadonly: true
     };
   },
 
@@ -377,6 +378,8 @@ export default {
   },
   mounted: function() {
     this.searchAffaireNumeros();
+
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

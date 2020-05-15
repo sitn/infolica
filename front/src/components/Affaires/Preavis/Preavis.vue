@@ -3,7 +3,7 @@
 
 
 <script>
-import { getCurrentDate } from "@/services/helper";
+import { getCurrentDate, checkPermission } from "@/services/helper";
 import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -23,6 +23,7 @@ export default {
       showNewPreavisBtn: false,
       showPreavisDialog: false,
       modifyPreavis: false,
+      affaireReadonly: true,
       new_preavis: {
         id: null,
         service: null,
@@ -290,6 +291,8 @@ export default {
     this.searchAffairePreavis();
     this.searchPreavisType();
     this.searchServices();
+
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

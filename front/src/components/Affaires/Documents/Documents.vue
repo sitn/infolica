@@ -12,6 +12,7 @@ export default {
   props: {},
   components: {},
   data: () => ({
+    showUploadDocBtn: false,
     deleteDocActive: false,
     deleteDocMessage: '',
     currentDeleteDocId: null,

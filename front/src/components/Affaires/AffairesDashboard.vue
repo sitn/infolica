@@ -40,6 +40,8 @@ export default {
   data() {
     return {
       affaire: {},
+      affaireLoaded: false,
+      mapLoaded: false,
       editAffaireAllowed: true,
       parentparentAffaireReadOnly: false
     };
@@ -113,33 +115,38 @@ export default {
       let _this = this;
       this.searchAffaire().then(function(obj){
         _this.affaire = obj;
+        _this.affaireLoaded = true;
         _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);        
         _this.parentAffaireReadOnly = (_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined);
         
         //If admin, allow edit
         if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)){
-          _this.parentAffaireReadOnly = true;
+          _this.parentAffaireReadOnly = false;
         }
 
-        _this.getAffaireData();
+        _this.showMap();
       });
       
       
     },
 
     /**
-     * Get affaire data before showing the map
+     * Show map
      */
-    async getAffaireData() {
-      this.center = {
-        x: this.affaire.localisation_e,
-        y: this.affaire.localisation_n
-      };
-      this.$refs.mapHandler.initMap(
-        this.center,
-        process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM
-      );
-      this.$refs.mapHandler.addMarker(this.center.x, this.center.y);
+    showMap() {
+      if(this.$refs && this.$refs.mapHandler && !this.mapLoaded){
+        this.center = {
+          x: this.affaire.localisation_e,
+          y: this.affaire.localisation_n
+        };
+        this.$refs.mapHandler.initMap(
+          this.center,
+          process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM
+        );
+        this.$refs.mapHandler.addMarker(this.center.x, this.center.y);
+
+        this.mapLoaded = true;
+      }
     },
 
     /**
@@ -172,6 +179,10 @@ export default {
 
   mounted: function() {
     this.setAffaire();
+
+    this.$root.$on('mapHandlerReady', () =>{
+      this.showMap(); 
+    });
   }
 };
 </script>
