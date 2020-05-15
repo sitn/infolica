@@ -15,7 +15,7 @@ Install requirements
 ```
 pip install -r requirements.txt
 ```
-Note: The weasyprint library depends on GDK-PixBuf, which must be installed manually.
+Note: The weasyprint library depends on `GDK-PixBuf`, which must be installed separately.
 Download and run the latest version of [gtk3-runtime-x.x.x-x-x-x-ts-win64.exe](https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer)
 
 Make your changes in config files.
@@ -25,6 +25,15 @@ Open the file and adapt `sqlalchemy.url`, `ldap_url` and `ldap_passwd` etc.
 Install the project in editable mode
 ```
 pip install -e .
+```
+
+To test if the backend is responding, type the following in your virtual env. It will serve your api.
+```
+pserve development.ini
+```
+In a web browser, check this url:
+```
+localhost:6543/infolica/api/test
 ```
 
 
