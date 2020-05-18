@@ -189,6 +189,7 @@ export default {
   },
 
   mounted: function() {
+    this.$root.$emit("mapHandlerReady");
   }
 };
 </script>

@@ -10,14 +10,14 @@
                 </md-card-expand-trigger>
                 Contrôle Mutation
                 <md-button class="md-primary newControleMutationBtn" v-on:click="newControleMutation()"
-                    v-if="needToCreateControleMutation && showNewControleMutationBtn">Créer le contrôle</md-button>
+                    v-if="needToCreateControleMutation && showNewControleMutationBtn && !affaireReadonly">Créer le contrôle</md-button>
             </div>
         </md-card-header>
 
         <md-card-expand>
             <md-card-expand-content>
 
-                <md-card-content>
+                <md-card-content v-bind:class="{ disabledElement: affaireReadonly }">
                     <div v-if="controleMutation.id">
                         <!-- BIENS_FONDS -->
                         <md-card class="controleMutationForm">
@@ -231,12 +231,12 @@
                                 </md-datepicker>
                             </div>
                             <div class="md-layout md-alignment-bottom-right">
-                                <md-button class="md-accent md-raised" v-on:click="onCancelEditControleMutation">
+                                <md-button class="md-accent md-raised" v-on:click="onCancelEditControleMutation" v-if="!affaireReadonly">
                                     Annuler
                                 </md-button>
 
                                 <md-button class="md-primary md-raised md-top-right"
-                                    v-on:click="onConfirmEditControleMutation">
+                                    v-on:click="onConfirmEditControleMutation" v-if="!affaireReadonly">
                                     Enregistrer
                                 </md-button>
                             </div>

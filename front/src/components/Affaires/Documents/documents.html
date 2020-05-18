@@ -4,13 +4,14 @@
         <md-card-header>
             <div class="md-title">
                 <md-card-expand-trigger>
-                    <md-button class="md-icon-button expandCollapseBtn">
+                    <md-button class="md-icon-button expandCollapseBtn"
+                        @click.native="showUploadDocBtn = !showUploadDocBtn">
                         <md-icon>keyboard_arrow_down</md-icon>
                     </md-button>
                 </md-card-expand-trigger>
                 Documents
 
-                <md-button class="md-primary uploadDocBtn" v-on:click="showUploadDocsDialog = true">
+                <md-button class="md-primary uploadDocBtn" v-on:click="showUploadDocsDialog = true" v-if="showUploadDocBtn && !affaireReadonly">
                     Charger des documents
                 </md-button>
             </div>
@@ -28,7 +29,7 @@
                                 </md-table-cell>
                                 <md-table-cell md-label="Création" md-sort-by="creation">{{ item.creation }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Actions" class="actionsCol">
+                                <md-table-cell md-label="Actions" class="actionsCol" v-if="!affaireReadonly">
                                     <md-button class="md-icon-button md-dense md-primary">
                                         <a target="_blank" :href="'http://localhost:6543/infolica/api/download_affaire_document?filename=' + item.nom + '&affaire_id=' + item.affaire_id"><md-icon>save_alt</md-icon></a>
                                     </md-button>

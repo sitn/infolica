@@ -15,6 +15,11 @@ body {
     color: #FFFFFF;
 }
 
+
+#app .disabledElement{
+    pointer-events: none;
+}
+
 .md-card .md-title {
     font-size: 20px !important;
 }

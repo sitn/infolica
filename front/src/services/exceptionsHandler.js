@@ -13,7 +13,7 @@ export const handleException = function (error, component) {
     //Not authorized
     else if(code === 403){
         component.$root.$emit("ShowError", "Veuillez vous connecter pour continuer"); 
-        if(component.$router && component.$router.currentRoute && component.$router.currentRoute.path != '/login')
+        if(component.$router && component.$router.currentRoute && component.$router.currentRoute.name != 'Login')
             component.$router.push({name: "Login"});
     }
     //All other error codes

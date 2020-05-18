@@ -29,7 +29,7 @@
                                             </div>
                                         </div>
                                         <div class="md-layout md-alignment-bottom-right">
-                                            <md-button class="md-primary" v-on:click="callOpenReferenceDialog">
+                                            <md-button class="md-primary" v-on:click="callOpenReferenceDialog" v-if="!affaireReadonly">
                                                 Référencer un bien-fond
                                             </md-button>
                                         </div>
@@ -88,10 +88,10 @@
                                             <div class="md-title">Immeubles réservés</div>
                                         </div>
                                         <div class="md-layout md-alignment-bottom-right">
-                                            <md-button class="md-primary" v-on:click="callCreateQuittancePCOP">
+                                            <md-button class="md-primary" v-on:click="callCreateQuittancePCOP" v-if="!affaireReadonly">
                                                 Quittance PCOP
                                             </md-button>
-                                            <md-button class="md-primary" v-on:click="callOpenReservationDialog">
+                                            <md-button class="md-primary" v-on:click="callOpenReservationDialog" v-if="!affaireReadonly">
                                                 Réservation
                                             </md-button>
                                         </div>

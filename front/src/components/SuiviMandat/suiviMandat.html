@@ -10,14 +10,14 @@
                 </md-card-expand-trigger>
                 Suivi du mandat
                 <md-button class="md-primary newSuiviMandatBtn" v-on:click="newSuiviMandat()"
-                    v-if="needToCreateSuiviMandat && showNewSuiviMandatBtn">Créer le suivi</md-button>
+                    v-if="needToCreateSuiviMandat && showNewSuiviMandatBtn && !affaireReadonly">Créer le suivi</md-button>
             </div>
         </md-card-header>
 
         <md-card-expand>
             <md-card-expand-content>
 
-                <md-card-content>
+                <md-card-content v-bind:class="{ disabledElement: affaireReadonly }">
                     <div v-if="suiviMandat.id">
                         <!-- AVANT L'AFFAIRE -->
                         <md-card class="suiviMandatForm">
@@ -170,11 +170,11 @@
                                 </md-datepicker>
                             </div>
                             <div class="md-layout md-alignment-bottom-right">
-                                <md-button class="md-accent md-raised" v-on:click="onCancelEditSuiviMandat">
+                                <md-button class="md-accent md-raised" v-on:click="onCancelEditSuiviMandat" v-if="!affaireReadonly">
                                     Annuler
                                 </md-button>
     
-                                <md-button class="md-primary md-raised md-top-right" v-on:click="onConfirmEditSuiviMandat">
+                                <md-button class="md-primary md-raised md-top-right" v-on:click="onConfirmEditSuiviMandat" v-if="!affaireReadonly">
                                     Enregistrer
                                 </md-button>
                             </div>

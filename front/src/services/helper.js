@@ -28,6 +28,15 @@ export const checkPermission = function (fonction) {
     return false;
 };
 
+
+/**
+ * Get current user role id
+ */
+export const getCurrentUserRoleId = function () {
+    var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+    return (session_user && session_user.role_id) ? session_user.role_id : null;
+};
+
 /*
  * Set current user functions
  */
@@ -43,6 +52,7 @@ export const setCurrentUserFunctions = async function () {
     
                 if(session_user){
                     session_user.fonctions = response.data.fonctions;
+                    session_user.role_id = response.data.role_id;
                     localStorage.setItem('infolica_user', JSON.stringify(session_user));
                 }
             }

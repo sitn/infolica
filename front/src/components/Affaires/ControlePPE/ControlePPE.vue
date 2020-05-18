@@ -3,7 +3,8 @@
 
 
 <script>
-import {handleException} from '@/services/exceptionsHandler'
+import {handleException} from '@/services/exceptionsHandler';
+import {checkPermission} from '@/services/helper';
 
 const moment = require('moment')
 
@@ -11,6 +12,7 @@ export default {
   name: "ControlePPE",
   props: {},
   data: () => ({
+     affaireReadonly: true,
     needToCreateControlePPE: false,
     chefsProjetMO_liste: [],
     showCreatedControlePPE: false,
@@ -207,6 +209,8 @@ export default {
   mounted: function() {
     this.searchControlePPE();
     this.searchOperateurs();
+
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_CONTROLE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

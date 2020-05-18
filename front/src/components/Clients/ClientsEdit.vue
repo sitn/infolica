@@ -290,7 +290,7 @@ import { validationMixin } from 'vuelidate'
       this.initTypesClientsList();
 
       //Mode (new or edit)      
-      if(this.$router && this.$router.currentRoute && this.$router.currentRoute.path === '/clients/new')
+      if(this.$router && this.$router.currentRoute && this.$router.currentRoute.name === 'ClientsNew')
         this.mode = 'new';
       else
         this.mode = 'edit';
