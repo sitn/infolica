@@ -4,7 +4,7 @@
 
 <script>
 var numeral = require("numeral");
-import { getCurrentDate } from "@/services/helper";
+import { getCurrentDate, checkPermission, getCurrentUserRoleId } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required, minLength } from "vuelidate/lib/validators";
@@ -16,6 +16,7 @@ export default {
   mixins: [validationMixin],
   props: {},
   data: () => ({
+    affaireReadonly: true,
     showNewFactureBtn: false,
     deleteFactureActive: false,
     deleteFactureMessage: "",
@@ -344,6 +345,19 @@ export default {
   mounted: function() {
     this.searchClients();
     this.searchAffaireFactures();
+
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) || this.$parent.parentAffaireReadOnly;
+
+    //Check if role secretaire
+    if(this.affaireReadonly){
+      var role_id = getCurrentUserRoleId();
+
+      if(role_id && !isNaN(role_id) && 
+        Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID) &&
+        checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION)){
+          this.affaireReadonly = false;
+      }
+    }
   }
 };
 </script>

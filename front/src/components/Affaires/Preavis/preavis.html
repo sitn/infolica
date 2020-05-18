@@ -11,7 +11,7 @@
                 </md-card-expand-trigger>
                 Préavis
                 <md-button class="md-primary newPreavisBtn" v-on:click="showPreavisDialog = !showPreavisDialog"
-                    v-if="showNewPreavisBtn">
+                    v-if="showNewPreavisBtn && !affaireReadonly">  
                     Nouveau préavis</md-button>
             </div>
         </md-card-header>
@@ -34,7 +34,7 @@
                                 </md-table-cell>
                                 <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}
                                 </md-table-cell>
-                                <md-table-cell md-label="">
+                                <md-table-cell md-label="" v-if="!affaireReadonly">
                                     <md-button class="md-icon-button md-primary md-raised"
                                         v-on:click="onModifyPreavis(item)">
                                         <md-icon class="md-edit">edit</md-icon>

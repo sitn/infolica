@@ -14,12 +14,16 @@ import Remarques from "@/components/Affaires/Remarques/Remarques.vue";
 import ControleMutation from "@/components/Affaires/ControleMutation/ControleMutation.vue";
 import ControlePPE from "@/components/Affaires/ControlePPE/ControlePPE.vue";
 import SuiviMandat from "@/components/SuiviMandat/SuiviMandat.vue";
+import {handleException} from '@/services/exceptionsHandler';
+import {checkPermission} from '@/services/helper'
 
 import moment from "moment";
 
 export default {
   name: "AffairesDashboard",
-  props: {},
+  props: {
+    
+  },
   components: {
     InfosGenerales,
     MapHandler,
@@ -35,7 +39,11 @@ export default {
   },
   data() {
     return {
-      affaire: {}
+      affaire: {},
+      affaireLoaded: false,
+      mapLoaded: false,
+      editAffaireAllowed: true,
+      parentparentAffaireReadOnly: false
     };
   },
 
@@ -103,29 +111,78 @@ export default {
     /**
      * Set affaire
      */
-    async setAffaire() {
-      this.affaire = await this.searchAffaire();
-      this.getAffaireData();
+    setAffaire() {
+      let _this = this;
+      this.searchAffaire().then(function(obj){
+        _this.affaire = obj;
+        _this.affaireLoaded = true;
+        _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);        
+        _this.parentAffaireReadOnly = (_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined);
+        
+        //If admin, allow edit
+        if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)){
+          _this.parentAffaireReadOnly = false;
+        }
+
+        _this.showMap();
+      });
+      
+      
     },
 
     /**
-     * Get affaire data before showing the map
+     * Show map
      */
-    async getAffaireData() {
-      this.center = {
-        x: this.affaire.localisation_e,
-        y: this.affaire.localisation_n
-      };
-      this.$refs.mapHandler.initMap(
-        this.center,
-        process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM
-      );
-      this.$refs.mapHandler.addMarker(this.center.x, this.center.y);
+    showMap() {
+      if(this.$refs && this.$refs.mapHandler && !this.mapLoaded){
+        this.center = {
+          x: this.affaire.localisation_e,
+          y: this.affaire.localisation_n
+        };
+        this.$refs.mapHandler.initMap(
+          this.center,
+          process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM
+        );
+        this.$refs.mapHandler.addMarker(this.center.x, this.center.y);
+
+        this.mapLoaded = true;
+      }
+    },
+
+    /**
+     * Clore affaire
+     */
+    cloreAffaire(){
+      var formData = new FormData();
+      formData.append("id_affaire", this.$route.params.id);
+      var date_cloture = moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS);
+      formData.append("date_cloture", date_cloture);
+
+      this.$http
+        .put(
+          process.env.VUE_APP_API_URL +
+          process.env.VUE_APP_AFFAIRES_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+        ).then(response => {
+          if (response && response.data) {
+            this.setAffaire();
+          }
+        }).catch(err => {
+          handleException(err, this);
+        });
     }
   },
 
   mounted: function() {
     this.setAffaire();
+
+    this.$root.$on('mapHandlerReady', () =>{
+      this.showMap(); 
+    });
   }
 };
 </script>

@@ -3,7 +3,7 @@
 
 
 <script>
-import { getCurrentDate } from "@/services/helper";
+import { getCurrentDate, checkPermission } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import moment from "moment"
 
@@ -12,6 +12,7 @@ export default {
   props: {},
   components: {},
   data: () => ({
+    affaireReadonly: true,
     affaire_remarques: [],
     showNewRemarqueBtn: false,
     new_remarque: {
@@ -103,6 +104,8 @@ export default {
 
   mounted: function() {
     this.searchAffaireRemarques();
+
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

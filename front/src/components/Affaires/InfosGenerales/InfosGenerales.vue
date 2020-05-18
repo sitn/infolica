@@ -3,7 +3,8 @@
 
 
 <script>
-import {handleException} from '@/services/exceptionsHandler'
+import {handleException} from '@/services/exceptionsHandler';
+import {checkPermission} from '@/services/helper';
 
 const moment = require("moment");
 
@@ -16,7 +17,8 @@ export default {
   data() {
     return {
       affaire_backup: {},
-      readonly: true
+      infoGenReadonly: true,
+      affaireReadonly: true
     };
   },
 
@@ -33,7 +35,7 @@ export default {
      */
     onCancelEdit() {
       Object.assign(this.affaire, this.affaire_backup);
-      this.readonly = true;
+      this.infoGenReadonly = true;
     },
 
     /**
@@ -64,7 +66,7 @@ export default {
         }
       ).then(() => { //response =>{
           // this.handleSaveDataSuccess(response);
-          this.readonly = true;
+          this.infoGenReadonly = true;
           this.$parent.setAffaire();
           this.copyAffaire();
         })
@@ -76,7 +78,8 @@ export default {
   },
 
   mounted: function() {
-    this.copyAffaire()
+    this.copyAffaire();
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

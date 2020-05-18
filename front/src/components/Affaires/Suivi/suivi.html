@@ -11,7 +11,7 @@
                 </md-card-expand-trigger>
                 Étapes réalisées
                 <md-button class="md-primary newEtapeBtn" v-on:click="showEtapeDialog = !showEtapeDialog"
-                    v-if="showNewEtapeBtn">
+                    v-if="showNewEtapeBtn && !affaireReadonly">
                     Nouvelle étape</md-button>
             </div>
         </md-card-header>

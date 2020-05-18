@@ -9,7 +9,7 @@
                     </md-button>
                 </md-card-expand-trigger>
                 Facturation
-                <md-button class="md-primary newFactureBtn" v-on:click="newFacture()" v-if="showNewFactureBtn">Nouvelle
+                <md-button class="md-primary newFactureBtn" v-on:click="newFacture()" v-if="showNewFactureBtn && !affaireReadonly">Nouvelle
                     facture</md-button>
             </div>
         </md-card-header>
@@ -43,7 +43,7 @@
                                 </md-table-cell>
                                 <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Actions" class="actionsColumn">
+                                <md-table-cell md-label="Actions" class="actionsColumn" v-if="!affaireReadonly">
                                     <md-button class="md-icon-button md-raised md-primary"
                                         @click="openFactureEdition(item)">
                                         <md-icon>edit</md-icon>

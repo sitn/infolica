@@ -3,7 +3,7 @@
 
 
 <script>
-import { getCurrentDate } from "@/services/helper";
+import { getCurrentDate, checkPermission } from "@/services/helper";
 import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -21,6 +21,7 @@ export default {
       etapes_list: [],
       showNewEtapeBtn: false,
       showEtapeDialog: false,
+      affaireReadonly: true,
       new_etape: {
         etape: null,
         date: getCurrentDate(),
@@ -179,6 +180,8 @@ export default {
     this.searchAffaireSuivi();
     this.searchEtapes();
     this.initForm();
+
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

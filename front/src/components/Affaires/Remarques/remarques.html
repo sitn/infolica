@@ -10,7 +10,7 @@
                     </md-button>
                 </md-card-expand-trigger>
                 Remarques
-                <md-button class="md-primary newRemarqueBtn" v-on:click="addRemarque()" v-if="showNewRemarqueBtn">
+                <md-button class="md-primary newRemarqueBtn" v-on:click="addRemarque()" v-if="showNewRemarqueBtn &&!affaireReadonly">
                     Nouvelle remarque</md-button>
             </div>
         </md-card-header>

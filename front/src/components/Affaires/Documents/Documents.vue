@@ -5,12 +5,14 @@
 <script>
 import {handleException} from '@/services/exceptionsHandler'
 import axios from "axios";
+import {checkPermission} from '@/services/helper';
 
 export default {
   name: "Documents",
   props: {},
   components: {},
   data: () => ({
+    showUploadDocBtn: false,
     deleteDocActive: false,
     deleteDocMessage: '',
     currentDeleteDocId: null,
@@ -20,7 +22,8 @@ export default {
     type_document: null,
     documentFiles: null,
     documentFileName: null,
-    documents: []
+    documents: [],
+    affaireReadonly: true
   }),
 
   methods: {
@@ -192,6 +195,7 @@ export default {
   mounted: function() {
     this.searchAffaireDocuments();
     this.initTypesDocumentsList();
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>
