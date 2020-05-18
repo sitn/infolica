@@ -7,7 +7,7 @@ from ..views.numero import numeros_new_view, affaire_numero_new_view, numeros_et
 from ..views.numero_relation import numeros_relations_new_view
 
 
-def savePointMO(request, affaire_id, cadastre_id, numero_type, n_numeros, etat_id=2):
+def savePointMO(request, affaire_id, cadastre_id, numero_type, n_numeros, etat_id):
     # Corriger la liste des cadastres où la réservation de numéros se fait sur deux cadastres
     if cadastre_id == 60 or cadastre_id == 70:
         # Cadastre de la Chaux-de-Fonds et des Eplatures
@@ -50,14 +50,33 @@ def reservation_numeros_new_view(request):
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
+    
+    # Récupère les id des biens-fonds de la config
+    settings = request.registry.settings
+    numero_bf_id = int(settings['numero_bf_id'])
+    numero_ddp_id = int(settings['numero_ddp_id'])
+    numero_ppe_id = int(settings['numero_ppe_id'])
+    numero_pcop_id = int(settings['numero_pcop_id'])
+    numero_pfp3_id = int(settings['numero_pfp3_id'])
+    numero_bat_id = int(settings['numero_bat_id'])
+    numero_pcs_id = int(settings['numero_pcs_id'])
+    numero_paux_id = int(settings['numero_paux_id'])
+    numero_pdet_id = int(settings['numero_pdet_id'])
+    numero_dp_id = int(settings['numero_dp_id'])
 
-    # Get affaire_id
+    # Récupère les id des états des biens-fonds de la config
+    numero_projet_id = int(settings['numero_projet_id'])
+    numero_vigueur_id = int(settings['numero_vigueur_id'])
+    numero_abandonne_id = int(settings['numero_abandonne_id'])
+    numero_supprime_id = int(settings['numero_supprime_id'])
+
+    # Get affaire_id 
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     cadastre_id = request.params['cadastre_id'] if 'cadastre_id' in request.params else None
     plan_id = request.params['plan_id'] if 'plan_id' in request.params else None
 
     # Get first available number (BF, DDP, PPE, PCOP)
-    ln = Utils.last_number(request, cadastre_id, [1, 2, 3, 4])
+    ln = Utils.last_number(request, cadastre_id, [numero_bf_id, numero_ddp_id, numero_ppe_id, numero_pcop_id])
 
     c = 0
     # Biens-fonds
@@ -66,7 +85,7 @@ def reservation_numeros_new_view(request):
             c += 1
             # enregistrer un nouveau numéro
             params = Utils._params(
-                cadastre_id=cadastre_id, type_id=1, etat_id=1, numero=ln + c)
+                cadastre_id=cadastre_id, type_id=numero_bf_id, etat_id=numero_projet_id, numero=ln + c)
             numero_id = numeros_new_view(request, params)
             # enregistrer le lien affaire-numéro
             params = Utils._params(
@@ -81,7 +100,7 @@ def reservation_numeros_new_view(request):
             c += 1
             # enregistrer un nouveau numéro
             params = Utils._params(
-                cadastre_id=cadastre_id, type_id=2, etat_id=1, numero=ln + c)
+                cadastre_id=cadastre_id, type_id=numero_ddp_id, etat_id=numero_projet_id, numero=ln + c)
             numero_id = numeros_new_view(request, params)
             # enregistrer le lien affaire-numéro
             params = Utils._params(
@@ -103,7 +122,7 @@ def reservation_numeros_new_view(request):
             # enregistrer un nouveau numéro
             suffixe = Utils.get_unite_from_index(unite_start_idx + i)
             params = Utils._params(
-                cadastre_id=cadastre_id, type_id=3, etat_id=1, numero=ln + c, suffixe=suffixe)
+                cadastre_id=cadastre_id, type_id=numero_ppe_id, etat_id=numero_projet_id, numero=ln + c, suffixe=suffixe)
             numero_id = numeros_new_view(request, params)
             # enregistrer le lien affaire-numéro
             params = Utils._params(
@@ -122,7 +141,7 @@ def reservation_numeros_new_view(request):
             c += 1
             # enregistrer un nouveau numéro
             params = Utils._params(
-                cadastre_id=cadastre_id, type_id=4, etat_id=1, numero=ln + c, suffixe="part")
+                cadastre_id=cadastre_id, type_id=numero_pcop_id, etat_id=numero_projet_id, numero=ln + c, suffixe="part")
             numero_id = numeros_new_view(request, params)
             # enregistrer le lien affaire-numéro
             params = Utils._params(
@@ -137,23 +156,23 @@ def reservation_numeros_new_view(request):
             numeros_relations_new_view(request, params)
 
     if 'pfp3' in request.params:
-        savePointMO(request, affaire_id, cadastre_id, 5, int(request.params["paux"]))
+        savePointMO(request, affaire_id, cadastre_id, numero_pfp3_id, int(request.params["paux"]), etat_id=numero_vigueur_id)
 
     if 'bat' in request.params:
-        savePointMO(request, affaire_id, cadastre_id, 6, int(request.params["bat"]))
+        savePointMO(request, affaire_id, cadastre_id, numero_bat_id, int(request.params["bat"]), etat_id=numero_vigueur_id)
 
     if 'dp' in request.params:
-        savePointMO(request, affaire_id, cadastre_id, 10, int(request.params["dp"]))
+        savePointMO(request, affaire_id, cadastre_id, numero_dp_id, int(request.params["dp"]), etat_id=numero_vigueur_id)
 
     if 'paux' in request.params:
-        savePointMO(request, affaire_id, cadastre_id, 8, int(request.params["paux"]))
+        savePointMO(request, affaire_id, cadastre_id, numero_paux_id, int(request.params["paux"]), etat_id=numero_vigueur_id)
 
     if 'pcs' in request.params:
         ln = Utils.last_number(request, cadastre_id, [7], plan_id=plan_id)
         for i in range(int(request.params['pcs'])):
             # enregistrer un nouveau numéro
             params = Utils._params(
-                cadastre_id=cadastre_id, type_id=7, etat_id=2, numero=ln + i+1, plan_id=plan_id)
+                cadastre_id=cadastre_id, type_id=numero_pcs_id, etat_id=numero_vigueur_id, numero=ln + i+1, plan_id=plan_id)
             numero_id = numeros_new_view(request, params)
             # enregistrer le lien affaire-numéro
             params = Utils._params(
