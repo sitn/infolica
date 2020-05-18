@@ -3,13 +3,17 @@ Fork and clone Infolica.
 
 ## Production
 ### back
+Open a cmd window and move to back folder.
+```
+cd back
+```
 Create a Python virtual environment with venv 
 ```
 python -m venv env
 ```
 Launch the virtual environment  
 ```
-env\Scripts\activate
+env/Scripts/activate
 ```
 Install requirements  
 ```
@@ -35,9 +39,15 @@ In a web browser, check this url:
 ```
 localhost:6543/infolica/api/test
 ```
+If you can read "Yeah, api is working", your installation is running correctly.
 
 
 ### front
+Move to front.
+```
+cd ../front
+```
+
 Install dependencies.
 ```
 npm install
@@ -60,13 +70,13 @@ For an Apache 2.4, 64bits with Python 3.7 and Microsoft Visual C++ 15, download 
 pip install .\mod_wsgi-4.6.4+ap24vc15-cp37-cp37m-win_amd64.whl
 mod_wsgi-express module-config
 ```
-1. You'll have an output showing the path of the generated wsgi module. Copy the module to your Apache modules folder (replace c:\Apache with your installation folder) and rename it with .so extension:
+2. You'll have an output showing the path of the generated wsgi module. Copy the module to your Apache modules folder (replace c:\Apache with your installation folder) and rename it with .so extension:
 
 ```
 cp .\env\Lib\site-packages\mod_wsgi\server\mod_*.pyd C:\Apache24\modules\mod_wsgi.so
 ```
 
-1. In the conf\httpd.conf file of your Apache installation directory, add this line to enable mod_wsgi:
+3. In the conf\httpd.conf file of your Apache installation directory, add this line to enable mod_wsgi:
 ```
 LoadModule wsgi_module modules/mod_wsgi.so
 ```
@@ -75,11 +85,11 @@ LoadModule wsgi_module modules/mod_wsgi.so
 
 1. Rename the apache/wsgi.conf.sample file to wsgi.conf and adapt the paths according to your setup.
 
-1. Finally, make your apache aware of your app by adding to the end of your httpd.conf file:
+2. Finally, make your apache aware of your app by adding to the end of your httpd.conf file:
 ```
 Include path\to\your\project\apache\*.conf
 ```
-1. Restart apache
+3. Restart apache
 
 
 
