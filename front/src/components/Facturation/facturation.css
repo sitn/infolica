@@ -18,7 +18,6 @@
 }
 
 .md-dialog {
-    width: 400px;
     z-index: 6; /* Le dialogue apparaît sous le div de suggestions du md-autocomplete pour la recherche de clients*/
 }
 
@@ -29,6 +28,11 @@
 .facturation .newFactureBtn {
     right: 25px;
     position: absolute;
+}
+
+/* Correction à l'affichage du md-dialog */
+.md-dialog /deep/ .md-dialog-container {
+    transform: none;
 }
 
 /* display autocomplete options in front of dialog -- NE FONCTIONNE PAS! */ 
