@@ -164,8 +164,7 @@ export default {
      */
     openFactureEdition(data) {
       this.showFactureDialog = true;
-      this.selectedFacture = data;
-      console.log(this.selectedFacture)
+      this.selectedFacture = Object.assign({}, data);
       this.selectedFacture.client = this.clients_liste.filter(x => {
         return x.id === this.selectedFacture.client_id
       }).pop();

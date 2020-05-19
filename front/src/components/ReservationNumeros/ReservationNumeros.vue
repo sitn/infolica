@@ -269,6 +269,7 @@ export default {
 
   mounted: function() {
     this.initCadastresList();
+    this.affaire_id = this.$route.params.id;
   }
 };
 </script>

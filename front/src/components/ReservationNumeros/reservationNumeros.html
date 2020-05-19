@@ -1,35 +1,38 @@
 <div class="reservationNumeros">
-    
-    <md-dialog :md-active.sync="showReservationDialog" md-confirm-text="Enregistrer" md-cancel-text="Annuler"
-    md-title="Réservation de numéros" :md-close-on-esc="true" :md-click-outside-to-close="true">
-    <md-dialog-title>Réservation de numéros</md-dialog-title>
-    <md-dialog-content>
-    
 
-            <md-card-content>
-                <!-- Affaire -->
-                <div class="md-layout md-gutter">
-                    <!-- Cadastre -->
-                    <div class="md-layout-item md-size-50">
-                        <md-autocomplete v-model="reservation.cadastre" :md-options="cadastre_liste"
-                            :class="getValidationClass('cadastre')">
-                            <label>Cadastre *</label>
-                            <template slot="md-autocomplete-item" scope="{ item }">
-                                {{ item.nom }}
-                            </template>
-                            <span class="md-error" v-if="!$v.reservation.cadastre.required">Le cadastre est obligatoire</span>
-                        </md-autocomplete>
-                    </div>
+    <md-dialog :md-active.sync="showReservationDialog" md-confirm-text="Enregistrer" md-cancel-text="Annuler"
+        md-title="Réservation de numéros" :md-close-on-esc="true" :md-click-outside-to-close="true">
+        <md-dialog-title>Réservation de numéros</md-dialog-title>
+
+        <md-dialog-content>
+            <div class="md-layout md-gutter">
+                <!-- Cadastre -->
+                <div class="md-layout-item md-size-50">
+                    <md-autocomplete v-model="reservation.cadastre" :md-options="cadastre_liste"
+                    :class="getValidationClass('cadastre')">
+                    <label>Cadastre *</label>
+                    <template slot="md-autocomplete-item" scope="{ item }">
+                        {{ item.nom }}
+                    </template>
+                    <span class="md-error" v-if="!$v.reservation.cadastre.required">Le cadastre est
+                        obligatoire</span>
+                    </md-autocomplete>
                 </div>
-            </md-card-content>
+                <!-- Affaire -->
+                <div class="md-layout-item md-size-50">
+                    <md-field>
+                        <label>Affaire *</label>
+                        <md-input v-model="affaire_id" readonly></md-input>
+                    </md-field>
+                </div>
+            </div>
 
             <md-divider />
+            <br />
 
-            <md-card class="md-elevation-0 simple">
-
-                <div class="leftColumn">
-                    <md-card class="md-elevation-0 simple">
-                        <!-- Immeubles -->
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item md-size-50">
+                    <md-card>
                         <md-card-header>
                             <div class="md-title">Immeubles</div>
                         </md-card-header>
@@ -60,10 +63,12 @@
                                     <md-field v-if="reservation.nb_ddp>0" :class="getValidationClass('ddp_base')">
                                         <label>Immeuble de base *</label>
                                         <md-select md-dense v-model="reservation.ddp_base">
-                                            <md-option v-for="item in affaire_numeros_base.DDP"
-                                                :value="item.numero_id">{{ item.numero }}</md-option>
+                                            <md-option v-for="item in affaire_numeros_base.DDP" :value="item.numero_id">
+                                                {{ item.numero }}</md-option>
                                         </md-select>
-                                        <span class="md-error" v-if="!$v.reservation.ddp_base.required">L'immeuble de base est obligatoire</span>
+                                        <span class="md-error" v-if="!$v.reservation.ddp_base.required">L'immeuble de
+                                            base est
+                                            obligatoire</span>
                                     </md-field>
                                 </div>
                             </div>
@@ -78,11 +83,14 @@
                                     </md-field>
                                 </div>
                                 <div class="md-layout-item md-size-50">
-                                    <md-field v-if="reservation.nb_ppe>0" :class="getValidationClass('ppe_suffixe_start')">
+                                    <md-field v-if="reservation.nb_ppe>0"
+                                        :class="getValidationClass('ppe_suffixe_start')">
                                         <label>Lettre de départ *</label>
                                         <md-input v-model="reservation.ppe_suffixe_start"
                                             onkeypress="return /[A-HJ-Z]/i.test(event.key)" maxlength="2"></md-input>
-                                            <span class="md-error" v-if="!$v.reservation.ppe_suffixe_start.required">L'unité est obligatoire</span>
+                                        <span class="md-error" v-if="!$v.reservation.ppe_suffixe_start.required">L'unité
+                                            est
+                                            obligatoire</span>
                                     </md-field>
                                 </div>
                             </div>
@@ -91,10 +99,11 @@
                                     <md-field v-if="reservation.nb_ppe>0" :class="getValidationClass('ppe_base')">
                                         <label>Immeuble de base *</label>
                                         <md-select md-dense v-model="reservation.ppe_base">
-                                            <md-option v-for="item in affaire_numeros_base.PPE"
-                                                :value="item.numero_id">{{ item.numero }}</md-option>
+                                            <md-option v-for="item in affaire_numeros_base.PPE" :value="item.numero_id">
+                                                {{ item.numero }}</md-option>
                                         </md-select>
-                                        <span class="md-error" v-if="!$v.reservation.ppe_base.required">L'immeuble de base est obligatoire</span>
+                                        <span class="md-error" v-if="!$v.reservation.ppe_base.required">L'immeuble de
+                                            base est obligatoire</span>
                                     </md-field>
                                 </div>
                             </div>
@@ -109,13 +118,15 @@
                                     </md-field>
                                 </div>
                                 <div class="md-layout-item md-size-50">
-                                    <md-field v-if="reservation.nb_pcop>0"  :class="getValidationClass('pcop_base')">
+                                    <md-field v-if="reservation.nb_pcop>0" :class="getValidationClass('pcop_base')">
                                         <label>Immeuble de base *</label>
-                                        <md-select md-dense v-model="reservation.pcop_base"> 
+                                        <md-select md-dense v-model="reservation.pcop_base">
                                             <md-option v-for="item in affaire_numeros_base.PCOP"
-                                                :value="item.numero_id">{{ item.numero }}</md-option>
+                                                :value="item.numero_id">
+                                                {{ item.numero }}</md-option>
                                         </md-select>
-                                        <span class="md-error" v-if="!$v.reservation.pcop_base.required">L'immeuble de base est obligatoire</span>
+                                        <span class="md-error" v-if="!$v.reservation.pcop_base.required">L'immeuble de
+                                            base est obligatoire</span>
                                     </md-field>
                                 </div>
                             </div>
@@ -123,95 +134,86 @@
                     </md-card>
                 </div>
 
-
-                <div class="rightColumn">
-                    <md-card class="md-elevation-0 simple">
-                        <!-- Points de la MO -->
+                <div class="md-layout-item md-size-50">
+                    <md-card>
                         <md-card-header>
+                            <!-- Points de la MO -->
                             <div class="md-title">Points de la MO</div>
                         </md-card-header>
 
                         <md-card-content>
                             <!-- PFP3 -->
                             <div class="md-layout md-gutter">
-                                <div class="md-layout-item md-small-size-100">
+                                <div class="md-layout-item md-size-50">
                                     <md-field>
                                         <label>PFP3</label>
-                                        <md-input v-model="reservation.nb_pfp3" type="number" min="0"
-                                            class="textAlignRight">
+                                        <md-input v-model="reservation.nb_pfp3" type="number" min="0" class="textAlignRight">
                                         </md-input>
                                     </md-field>
                                 </div>
-                                <div class="md-layout-item md-small-size-100"></div>
                             </div>
                             <!-- Points auxiliaires -->
                             <div class="md-layout md-gutter">
-                                <div class="md-layout-item md-small-size-100">
+                                <div class="md-layout-item md-size-50">
                                     <md-field>
                                         <label>Points auxiliaires</label>
-                                        <md-input v-model="reservation.nb_paux" type="number" min="0"
-                                            class="textAlignRight">
+                                        <md-input v-model="reservation.nb_paux" type="number" min="0" class="textAlignRight">
                                         </md-input>
                                     </md-field>
                                 </div>
-                                <div class="md-layout-item md-small-size-100"></div>
                             </div>
                             <!-- Bâtiments -->
                             <div class="md-layout md-gutter">
-                                <div class="md-layout-item md-small-size-100">
+                                <div class="md-layout-item md-size-50">
                                     <md-field>
                                         <label>Bâtiments</label>
-                                        <md-input v-model="reservation.nb_bat" type="number" min="0"
-                                            class="textAlignRight">
+                                        <md-input v-model="reservation.nb_bat" type="number" min="0" class="textAlignRight">
                                         </md-input>
                                     </md-field>
                                 </div>
-                                <div class="md-layout-item md-small-size-100"></div>
                             </div>
                             <!-- Domaine public -->
                             <div class="md-layout md-gutter">
-                                <div class="md-layout-item md-small-size-100">
+                                <div class="md-layout-item md-size-50">
                                     <md-field>
                                         <label>Domaine public</label>
-                                        <md-input v-model="reservation.nb_dp" type="number" min="0"
-                                            class="textAlignRight">
+                                        <md-input v-model="reservation.nb_dp" type="number" min="0" class="textAlignRight">
                                         </md-input>
                                     </md-field>
                                 </div>
-                                <div class="md-layout-item md-small-size-100"></div>
                             </div>
-                            <!-- Couverture du sol -->
+                            <!-- Point de détail -->
                             <div class="md-layout md-gutter">
-                                <div class="md-layout-item md-small-size-100">
+                                <div class="md-layout-item md-size-50">
                                     <md-field>
-                                        <label>Couverture du sol</label>
-                                        <md-input v-model="reservation.nb_pcs" type="number" min="0"
-                                            class="textAlignRight">
+                                        <label>Points de détail</label>
+                                        <md-input v-model="reservation.nb_pcs" type="number" min="0" class="textAlignRight">
                                         </md-input>
                                     </md-field>
                                 </div>
-                                <div class="md-layout-item md-small-size-100">
+                                <div class="md-layout-item md-size-50">
                                     <md-field v-if="reservation.nb_pcs>0">
                                         <label>Plan</label>
-                                        <md-input v-model="reservation.plan_id" type="number" min="0"
-                                            class="textAlignRight">
+                                        <md-input v-model="reservation.plan_id" type="number" min="0" class="textAlignRight">
                                         </md-input>
                                     </md-field>
                                 </div>
                             </div>
+
                         </md-card-content>
                     </md-card>
                 </div>
-            </md-card>
+            </div>
 
+            <br/>
             <md-divider />
 
-            
+
             <md-dialog-actions>
                 <md-button class="md-accent" @click="onCancelReservationNumeros">Annuler</md-button>
                 <md-button class="md-primary" @click="onConfirmReservationNumeros">Enregistrer</md-button>
             </md-dialog-actions>
-            
+
         </md-dialog-content>
     </md-dialog>
 
