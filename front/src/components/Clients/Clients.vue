@@ -3,7 +3,8 @@
 
 
 <script>
-import {handleException} from '@/services/exceptionsHandler'
+import {handleException} from '@/services/exceptionsHandler';
+import {checkPermission} from '@/services/helper';
 
 export default {
   name: 'Clients',
@@ -11,6 +12,7 @@ export default {
   data: () => ({
       clients: [],
       deleteClientActive: false,
+      editClientClientAllowed: false,
       deleteMessage: '',
       currentDeleteId: null,
       search: {
@@ -145,6 +147,7 @@ export default {
   },
 
   mounted: function(){
+    this.editClientClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION);
     this.searchClients();
   }
 }

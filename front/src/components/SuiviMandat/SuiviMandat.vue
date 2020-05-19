@@ -202,7 +202,7 @@ export default {
     this.searchSuiviMandat();
     this.searchOperateurs();
 
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_SUIVI_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

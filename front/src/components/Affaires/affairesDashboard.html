@@ -13,7 +13,7 @@
                 <div class="md-layout-item ma-size-50">
                     <div class="md-layout md-alignment-center-right">
                         <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="">Dupliquer</md-button>
-                        <md-button class="md-accent md-raised" v-if="editAffaireAllowed" v-on:click="cloreAffaire()">Clore</md-button>
+                        <md-button class="md-accent md-raised" v-if="editAffaireAllowed && cloreAffaireEnabled" v-on:click="cloreAffaire()">Clôturer</md-button>
                     </div>
                 </div>
             </div>

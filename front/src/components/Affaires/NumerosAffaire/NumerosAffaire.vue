@@ -379,7 +379,7 @@ export default {
   mounted: function() {
     this.searchAffaireNumeros();
 
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

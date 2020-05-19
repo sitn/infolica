@@ -2,7 +2,7 @@
 
     <md-toolbar class="md-card">
         <div class="md-title" style="font-weight: 700;">Affaires</div>
-        <md-button class="md-raised md-accent newAffaireBtn" @click="$router.push({name: 'NewAffaire'})">Nouvelle affaire</md-button>
+        <md-button class="md-raised md-accent newAffaireBtn" v-if="newAffaireAllowed" @click="$router.push({name: 'NewAffaire'})">Nouvelle affaire</md-button>
     </md-toolbar>
 
 

@@ -56,7 +56,7 @@
                                                 <md-table-cell md-label="Etat" md-sort-by="numero_etat">
                                                     {{ item.numero_etat }}
                                                 </md-table-cell>
-                                                <md-table-cell class="actionsColumn">
+                                                <md-table-cell class="actionsColumn" v-if="!affaireReadonly">
                                                     <md-button class="md-icon-button md-dense md-accent"
                                                         v-on:click="onDeleteReferenceNumero(item)">
                                                         <md-icon>delete</md-icon>

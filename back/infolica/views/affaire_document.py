@@ -35,17 +35,6 @@ def affaire_documents_view(request):
 
     return documents
 
-    """
-    doc_path = os.path.join(Constant.AFFAIRE_DIRECTORY, affaire_id)
-    documents = list()
-    for root, dirs, files in os.walk(doc_path):
-        for file_i in files:
-            file_path = os.path.join(root, file_i)
-            documents.append(Utils._params(nom=file_i, dossier=os.path.relpath(root, doc_path), chemin=file_path,
-                                           creation=datetime.fromtimestamp(os.path.getctime(file_path)).strftime("%d.%m.%Y")))
-    return documents
-    """
-
 
 """ Return all documents types """
 @view_config(route_name='types_documents', request_method='GET', renderer='json')
@@ -92,6 +81,10 @@ def upload_affaire_document_view(request):
 @view_config(route_name='download_affaire_document', request_method='GET')
 @view_config(route_name='download_affaire_document_s', request_method='GET')
 def download_affaire_document_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
+        raise exc.HTTPForbidden()
+
     upload_files_directory = request.registry.settings['upload_files_directory']
     affaire_id = request.params['affaire_id']
     filename = request.params['filename']
@@ -110,6 +103,9 @@ def download_affaire_document_view(request):
 
 @view_config(route_name='delete_affaire_document', request_method='DELETE', renderer='json')
 def delete_affaire_document_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
+        raise exc.HTTPForbidden()
 
     # Get params
     upload_files_directory = request.registry.settings['upload_files_directory']

@@ -43,7 +43,8 @@ export default {
       affaireLoaded: false,
       mapLoaded: false,
       editAffaireAllowed: true,
-      parentparentAffaireReadOnly: false
+      parentparentAffaireReadOnly: false,
+      cloreAffaireEnabled: false,
     };
   },
 
@@ -116,7 +117,8 @@ export default {
       this.searchAffaire().then(function(obj){
         _this.affaire = obj;
         _this.affaireLoaded = true;
-        _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);        
+        _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);  
+        _this.cloreAffaireEnabled = _this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined;     
         _this.parentAffaireReadOnly = (_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined);
         
         //If admin, allow edit
