@@ -65,12 +65,25 @@ def affaires_search_view(request):
 
 
 """ Return all types affaires"""
-
-
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
 @view_config(route_name='types_affaires_s', request_method='GET', renderer='json')
 def types_affaires_view(request):
     records = request.dbsession.query(models.AffaireType).all()
+    types_affaires = list()
+
+    # Supprimer type d'affaire "NE PLUS UTILISER"
+    for type_i in records:
+        if not "NE PLUS UTILISER" in type_i.nom:
+            types_affaires.append(type_i)
+
+    types_affaires = Utils.serialize_many(types_affaires)
+    return types_affaires
+
+""" Return all types modification affaire"""
+@view_config(route_name='types_modification_affaire', request_method='GET', renderer='json')
+@view_config(route_name='types_modification_affaire_s', request_method='GET', renderer='json')
+def types_modification_affaire_view(request):
+    records = request.dbsession.query(models.ModificationAffaireType).all()
     types_affaires = list()
 
     # Supprimer type d'affaire "NE PLUS UTILISER"

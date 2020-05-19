@@ -9,6 +9,7 @@ import NumerosAffaire from "@/components/Affaires/NumerosAffaire/NumerosAffaire.
 import Documents from "@/components/Affaires/Documents/Documents.vue";
 import Suivi from "@/components/Affaires/Suivi/Suivi.vue";
 import Preavis from "@/components/Affaires/Preavis/Preavis.vue";
+import DuplicationAffaire from "@/components/Affaires/DuplicationAffaire/DuplicationAffaire.vue";
 import Facturation from "@/components/Facturation/Facturation.vue";
 import Remarques from "@/components/Affaires/Remarques/Remarques.vue";
 import ControleMutation from "@/components/Affaires/ControleMutation/ControleMutation.vue";
@@ -35,7 +36,8 @@ export default {
     Remarques,
     ControleMutation,
     ControlePPE,
-    SuiviMandat
+    SuiviMandat,
+    DuplicationAffaire
   },
   data() {
     return {
@@ -45,6 +47,7 @@ export default {
       editAffaireAllowed: true,
       parentparentAffaireReadOnly: false,
       cloreAffaireEnabled: false,
+      duplicationAffaireForm: null
     };
   },
 
@@ -176,6 +179,13 @@ export default {
         }).catch(err => {
           handleException(err, this);
         });
+    },
+
+    /**
+     * Duplicate affaire
+     */
+    duplicateAffaire(){
+      this.$refs.duplicationAffaireForm.showDuplicationAffaireForm = true;
     }
   },
 
