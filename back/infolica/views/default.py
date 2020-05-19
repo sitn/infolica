@@ -12,7 +12,7 @@ from pyramid.view import notfound_view_config
 ########################################################
 # Test (temp endpoint)
 ########################################################
-@view_config(route_name='test', request_method='POST', renderer='json')
+@view_config(route_name='test_client', request_method='POST', renderer='json')
 def test_error(exc, request):
     query = request.dbsession.query(models.Client).first()
     query = Utils.set_model_record(query, request.params)

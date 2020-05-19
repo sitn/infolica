@@ -37,7 +37,7 @@ def includeme(config):
     config.add_route('add_operateurs_ad', '/infolica/api/add_operateurs_ad')
     config.add_route('add_operateurs_ad_s', '/infolica/api/add_operateurs_ad/')
     #Test (temp endpoint)
-    config.add_route('test', '/infolica/api/test')
+    config.add_route('test_client', '/infolica/api/test_client')
     #Controle_mutation
     config.add_route('controles_mutations','/infolica/api/controles_mutations')
     config.add_route('controles_mutations_s','/infolica/api/controles_mutations/')

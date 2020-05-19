@@ -139,6 +139,14 @@ upload_files_directory = /path/to/upload_files_directory
 ######################################################################################
 mails_templates_directory = /path/to/mail_templates_dorectory
 
+
+######################################################################################
+# Temporary directory
+######################################################################################
+temporary_directory = /path/to/temporary_directory
+
+
+
 retry.attempts = 3
 
 [pshell]
