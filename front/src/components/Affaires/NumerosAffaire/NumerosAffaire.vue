@@ -23,8 +23,9 @@ export default {
       affaire_numeros_all: [],
       affaire_numeros_anciens: [],
       affaire_numeros_nouveaux: [],
+      affaire_numeros_nouveaux_mo: [],
       showReservationDialog: false,
-      showNumerosMO: false,
+      showNumerosMO: true,
       affaireReadonly: true
     };
   },
@@ -34,7 +35,9 @@ export default {
      * SEARCH AFFAIRE NUMEROS
      */
     async searchAffaireNumeros() {
-      this.$http
+      return new Promise((resolve, reject) => {
+
+        this.$http
         .get(
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
@@ -48,7 +51,7 @@ export default {
           if (response && response.data) {
             this.affaire_numeros_all = response.data;
             this.affaire_numeros_nouveaux = response.data.filter(
-              x => x.affaire_numero_type === "Nouveau"
+              x => x.affaire_numero_type === "Nouveau" && x.numero_type_id <= process.env.VUE_APP_NUMERO_IMMEUBLE_ID_MAX
             );
             this.affaire_numeros_anciens = response.data.filter(
               x => x.affaire_numero_type === "Ancien"
@@ -57,29 +60,56 @@ export default {
               if (element.numero_etat === "Abandonné") element.active = false;
               else if (element.numero_etat === "Projet") element.active = true;
             });
+            resolve(this.affaire_numeros_all, this.affaire_numeros_anciens, this.affaire_numeros_nouveaux)
           }
         })
         .catch(err => {
           handleException(err, this);
+          reject;
         });
+      })
     },
 
     /**
      * Filtrer les nouveaux numéros pour n'afficher que les immeubles
      * ou les immeubles + les numéros de la MO
      */
-    filterNouveauxNumerosMO() {
-      // numero_type_id <= 4 : les immeubles sinon ce sont les noméros de la MO
-      var numeroTypeIdMax = 4;
-      if (this.showNumerosMO) numeroTypeIdMax = 100;
+    // filterNouveauxNumerosMO() {
+    //   // Récupérer les numéros nouveaux
+    //   this.affaire_numeros_nouveaux = this.affaire_numeros_all.filter(x => {
+    //     return x.affaire_numero_type === "Nouveau" 
+    //   });
+    //   // Filtrer les numéros visibles (immeubles ou immeubles+numéros MO)
+    //   var numeroImmeubleIdMax = process.env.VUE_APP_NUMERO_IMMEUBLE_ID_MAX;
+    //   if (!this.showNumerosMO) {
+    //     this.affaire_numeros_nouveaux = this.affaire_numeros_nouveaux.filter(x => {
+    //       return x.numero_type_id <= numeroImmeubleIdMax
+    //     });
+    //   }
 
-      this.affaire_numeros_nouveaux = this.affaire_numeros_all.filter(x => {
-        return (
-          x.affaire_numero_type === "Nouveau" &&
-          x.numero_type_id <= numeroTypeIdMax
-        );
-      });
+    // },
+
+    /**
+     * Charger les réservations des numéros de la MO
+     */
+    async searchAffaireNewNumerosMo() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL +
+        process.env.VUE_APP_AFFAIRE_NEW_NUMEROS_MO_ENDPOINT +
+        this.$route.params.id,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.affaire_numeros_nouveaux_mo = response.data;
+        }
+      }).catch(err => {
+        handleException(err, this)
+      })
     },
+
 
     /**
      * Contrôler qu'un numéro de référence n'est pas une numéro de base pour un numéro
@@ -377,7 +407,8 @@ export default {
     }
   },
   mounted: function() {
-    this.searchAffaireNumeros();
+    this.searchAffaireNumeros()
+    this.searchAffaireNewNumerosMo();
 
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
   }

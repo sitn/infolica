@@ -156,7 +156,7 @@ def reservation_numeros_new_view(request):
             numeros_relations_new_view(request, params)
 
     if 'pfp3' in request.params:
-        savePointMO(request, affaire_id, cadastre_id, numero_pfp3_id, int(request.params["paux"]), etat_id=numero_vigueur_id)
+        savePointMO(request, affaire_id, cadastre_id, numero_pfp3_id, int(request.params["pfp3"]), etat_id=numero_vigueur_id)
 
     if 'bat' in request.params:
         savePointMO(request, affaire_id, cadastre_id, numero_bat_id, int(request.params["bat"]), etat_id=numero_vigueur_id)
