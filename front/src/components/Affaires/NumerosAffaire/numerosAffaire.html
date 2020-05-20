@@ -162,8 +162,12 @@
                                 </md-card-header>
 
                                 <md-card-content>
-                                    <div v-if="affaire_numeros_nouveaux_mo[0]">
-                                        <md-table v-model="affaire_numeros_nouveaux_mo" md-sort="cadastre_id" md-sort-order="desc">
+                                    <div v-if="numerosMoLoading">
+                                        Chargement des données en cours...
+                                    </div>
+                                    <div v-else>
+                                        <div v-if="affaire_numeros_nouveaux_mo[0]">
+                                            <md-table v-model="affaire_numeros_nouveaux_mo" md-sort="cadastre_id" md-sort-order="desc">
                                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                                 <md-table-cell md-label="Cadastre" md-sort-by="cadastre">
                                                     {{ item.cadastre }}
@@ -189,10 +193,11 @@
                                     <div v-else>
                                         <em>Aucune réservation de points de la MO</em>
                                     </div>
+                                </div>
                                 </md-card-content>
                             </md-card>
-
-
+                            
+                            
                         </md-card-content>
                     </div>
                 </div>

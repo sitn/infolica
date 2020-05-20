@@ -26,7 +26,8 @@ export default {
       affaire_numeros_nouveaux_mo: [],
       showReservationDialog: false,
       showNumerosMO: true,
-      affaireReadonly: true
+      affaireReadonly: true,
+      numerosMoLoading: true,
     };
   },
 
@@ -51,14 +52,14 @@ export default {
           if (response && response.data) {
             this.affaire_numeros_all = response.data;
             this.affaire_numeros_nouveaux = response.data.filter(
-              x => x.affaire_numero_type === "Nouveau" && x.numero_type_id <= process.env.VUE_APP_NUMERO_IMMEUBLE_ID_MAX
+              x => x.affaire_numero_type_id == process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID && parseInt(x.numero_type_id) <= parseInt(process.env.VUE_APP_NUMERO_IMMEUBLE_ID_MAX)
             );
             this.affaire_numeros_anciens = response.data.filter(
-              x => x.affaire_numero_type === "Ancien"
+              x => x.affaire_numero_type_id == process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID
             );
             this.affaire_numeros_nouveaux.forEach(function(element) {
-              if (element.numero_etat === "Abandonné") element.active = false;
-              else if (element.numero_etat === "Projet") element.active = true;
+              if (element.numero_etat_id === process.env.VUE_APP_NUMERO_ABANDONNE_ID) element.active = false;
+              else if (element.numero_etat_id === process.env.VUE_APP_NUMERO_PROJET_ID) element.active = true;
             });
             resolve(this.affaire_numeros_all, this.affaire_numeros_anciens, this.affaire_numeros_nouveaux)
           }
@@ -108,6 +109,7 @@ export default {
       }).catch(err => {
         handleException(err, this)
       })
+      this.numerosMoLoading = false;
     },
 
 

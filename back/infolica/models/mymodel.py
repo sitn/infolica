@@ -585,6 +585,7 @@ class VNumerosAffaires(Base):
     numero = Column(BigInteger)
     numero_suffixe = Column(Text)
     numero_etat = Column(Text)
+    numero_etat_id = Column(BigInteger)
     numero_diff_id = Column(Date)
     numero_diff_entree = Column(Date)
     numero_diff_sortie = Column(Date)
