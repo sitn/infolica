@@ -16,5 +16,6 @@
 
 .affaires .newAffaireBtn {
     right: 25px;
+    top: 6px;
     position: absolute;
 }

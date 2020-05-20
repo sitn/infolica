@@ -201,7 +201,6 @@ class Utils(object):
         fonctions_names = [x for x in fonctions if x["nom"] == fonction_name]
         return len(fonctions_names) > 0
 
-
     @classmethod
     def check_connected(cls, request):
         auth_tkt = request.cookies.get('auth_tkt', default=None)

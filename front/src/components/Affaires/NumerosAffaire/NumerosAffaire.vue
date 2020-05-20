@@ -48,14 +48,14 @@ export default {
           if (response && response.data) {
             this.affaire_numeros_all = response.data;
             this.affaire_numeros_nouveaux = response.data.filter(
-              x => x.affaire_numero_type === "Nouveau"
+              x => x.affaire_numero_type_id === Number(process.env.VUE_APP_NUMERO_AFFAIRE_TYPE_NOUVEAU_ID)
             );
             this.affaire_numeros_anciens = response.data.filter(
-              x => x.affaire_numero_type === "Ancien"
+              x => x.affaire_numero_type_id === Number(process.env.VUE_APP_NUMERO_AFFAIRE_TYPE_ANCIEN_ID)
             );
             this.affaire_numeros_nouveaux.forEach(function(element) {
-              if (element.numero_etat === "Abandonné") element.active = false;
-              else if (element.numero_etat === "Projet") element.active = true;
+              if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_AFFAIRE_TYPE_ABONDONNE_ID)) element.active = false;
+              else if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_AFFAIRE_TYPE_PROJET_ID)) element.active = true;
             });
           }
         })
@@ -379,7 +379,7 @@ export default {
   mounted: function() {
     this.searchAffaireNumeros();
 
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

@@ -65,12 +65,25 @@ def affaires_search_view(request):
 
 
 """ Return all types affaires"""
-
-
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
 @view_config(route_name='types_affaires_s', request_method='GET', renderer='json')
 def types_affaires_view(request):
     records = request.dbsession.query(models.AffaireType).all()
+    types_affaires = list()
+
+    # Supprimer type d'affaire "NE PLUS UTILISER"
+    for type_i in records:
+        if not "NE PLUS UTILISER" in type_i.nom:
+            types_affaires.append(type_i)
+
+    types_affaires = Utils.serialize_many(types_affaires)
+    return types_affaires
+
+""" Return all types modification affaire"""
+@view_config(route_name='types_modification_affaire', request_method='GET', renderer='json')
+@view_config(route_name='types_modification_affaire_s', request_method='GET', renderer='json')
+def types_modification_affaire_view(request):
+    records = request.dbsession.query(models.ModificationAffaireType).all()
     types_affaires = list()
 
     # Supprimer type d'affaire "NE PLUS UTILISER"
@@ -256,3 +269,22 @@ def delete_courrier_affaire_view(request):
 
     else:
         raise exc.HTTPNotFound("Le fichier est indisponible")
+
+"""
+Modification affaire
+"""
+@view_config(route_name='modification_affaires', request_method='POST', renderer='json')
+@view_config(route_name='modification_affaires_s', request_method='POST', renderer='json')
+def modification_affaires_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
+        raise exc.HTTPForbidden()
+
+    # Get client instance
+    model = Utils.set_model_record(models.ModificationAffaire(), request.params)
+
+    with transaction.manager:
+        request.dbsession.add(model)
+        transaction.commit()
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ModificationAffaire.__tablename__))
+

@@ -9,6 +9,7 @@ import NumerosAffaire from "@/components/Affaires/NumerosAffaire/NumerosAffaire.
 import Documents from "@/components/Affaires/Documents/Documents.vue";
 import Suivi from "@/components/Affaires/Suivi/Suivi.vue";
 import Preavis from "@/components/Affaires/Preavis/Preavis.vue";
+import DuplicationAffaire from "@/components/Affaires/DuplicationAffaire/DuplicationAffaire.vue";
 import Facturation from "@/components/Facturation/Facturation.vue";
 import Remarques from "@/components/Affaires/Remarques/Remarques.vue";
 import ControleMutation from "@/components/Affaires/ControleMutation/ControleMutation.vue";
@@ -35,7 +36,8 @@ export default {
     Remarques,
     ControleMutation,
     ControlePPE,
-    SuiviMandat
+    SuiviMandat,
+    DuplicationAffaire
   },
   data() {
     return {
@@ -43,7 +45,9 @@ export default {
       affaireLoaded: false,
       mapLoaded: false,
       editAffaireAllowed: true,
-      parentparentAffaireReadOnly: false
+      parentparentAffaireReadOnly: false,
+      cloreAffaireEnabled: false,
+      duplicationAffaireForm: null
     };
   },
 
@@ -67,6 +71,7 @@ export default {
             if (response.data) {
               var obj = response.data;
               obj["client"] = [
+                obj.client_id,
                 obj.client_entreprise,
                 obj.client_titre,
                 obj.client_commande_nom,
@@ -75,6 +80,7 @@ export default {
                 .filter(Boolean)
                 .join(" ");
               obj["client_par"] = [
+                obj.client_par_id,
                 obj.client_par_entreprise,
                 obj.client_par_titre,
                 obj.client_par_commande_nom,
@@ -82,7 +88,7 @@ export default {
               ]
                 .filter(Boolean)
                 .join(" ");
-              obj["technicien"] = [obj.technicien_prenom, obj.technicien_nom]
+              obj["technicien"] = [obj.technicien_id, obj.technicien_prenom, obj.technicien_nom]
                 .filter(Boolean)
                 .join(" ");
               obj["responsable"] = [obj.responsable_prenom, obj.responsable_nom]
@@ -116,7 +122,8 @@ export default {
       this.searchAffaire().then(function(obj){
         _this.affaire = obj;
         _this.affaireLoaded = true;
-        _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);        
+        _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);  
+        _this.cloreAffaireEnabled = _this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined;     
         _this.parentAffaireReadOnly = (_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined);
         
         //If admin, allow edit
@@ -174,6 +181,13 @@ export default {
         }).catch(err => {
           handleException(err, this);
         });
+    },
+
+    /**
+     * Duplicate affaire
+     */
+    duplicateAffaire(){
+      this.$refs.duplicationAffaireForm.showDuplicationAffaireForm = true;
     }
   },
 

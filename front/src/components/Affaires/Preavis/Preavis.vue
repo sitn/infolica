@@ -292,7 +292,7 @@ export default {
     this.searchPreavisType();
     this.searchServices();
 
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_PREAVIS_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

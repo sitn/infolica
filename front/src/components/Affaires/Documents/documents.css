@@ -25,8 +25,3 @@
 .uploadDocFile {
     max-width: 700px;
 }
-
-/* Correction à l'affichage du md-dialog */
-.md-dialog /deep/ .md-dialog-container {
-    transform: none;
-}
