@@ -269,3 +269,22 @@ def delete_courrier_affaire_view(request):
 
     else:
         raise exc.HTTPNotFound("Le fichier est indisponible")
+
+"""
+Modification affaire
+"""
+@view_config(route_name='modification_affaires', request_method='POST', renderer='json')
+@view_config(route_name='modification_affaires_s', request_method='POST', renderer='json')
+def modification_affaires_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
+        raise exc.HTTPForbidden()
+
+    # Get client instance
+    model = Utils.set_model_record(models.ModificationAffaire(), request.params)
+
+    with transaction.manager:
+        request.dbsession.add(model)
+        transaction.commit()
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ModificationAffaire.__tablename__))
+

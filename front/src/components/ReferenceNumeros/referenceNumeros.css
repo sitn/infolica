@@ -13,8 +13,3 @@
 .md-dialog {
     z-index: 6;
 }
-
-/* Correction à l'affichage du md-dialog */
-.md-dialog /deep/ .md-dialog-container {
-    transform: none;
-}

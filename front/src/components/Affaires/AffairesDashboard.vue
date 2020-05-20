@@ -71,6 +71,7 @@ export default {
             if (response.data) {
               var obj = response.data;
               obj["client"] = [
+                obj.client_id,
                 obj.client_entreprise,
                 obj.client_titre,
                 obj.client_commande_nom,
@@ -79,6 +80,7 @@ export default {
                 .filter(Boolean)
                 .join(" ");
               obj["client_par"] = [
+                obj.client_par_id,
                 obj.client_par_entreprise,
                 obj.client_par_titre,
                 obj.client_par_commande_nom,
@@ -86,7 +88,7 @@ export default {
               ]
                 .filter(Boolean)
                 .join(" ");
-              obj["technicien"] = [obj.technicien_prenom, obj.technicien_nom]
+              obj["technicien"] = [obj.technicien_id, obj.technicien_prenom, obj.technicien_nom]
                 .filter(Boolean)
                 .join(" ");
               obj["responsable"] = [obj.responsable_prenom, obj.responsable_nom]
