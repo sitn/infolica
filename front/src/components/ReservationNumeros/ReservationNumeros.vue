@@ -216,7 +216,6 @@ export default {
      * Annuler la réservation de uméros
      */
     onCancelReservationNumeros() {
-      alert(this.reservation.ddp_base);
       this.showReservationDialog = false;
       this.initializeForm();
     },
