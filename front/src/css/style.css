@@ -52,3 +52,8 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
+
+/* Correction à l'affichage du md-dialog */
+.md-dialog /deep/ .md-dialog-container {
+    transform: none;
+}

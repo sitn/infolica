@@ -52,11 +52,15 @@ export default {
         formData.append(
           "date_validation", this.affaire.date_validation?
           moment(this.affaire.date_validation, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
+      else
+        formData.append("date_validation", null);
       if (this.affaire.date_cloture)
         formData.append(
           "date_cloture", this.affaire.date_cloture? 
           moment(this.affaire.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
-
+      else
+        formData.append("date_cloture", null);
+        
       this.$http.put(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
         formData,

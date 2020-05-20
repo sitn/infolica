@@ -63,6 +63,7 @@ def options_response_view(request):
 ########################################################
 @view_config(context=Exception, renderer='json')
 def general_error(exc, request):
+    return 'okkkk'
     log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
     request.response.status = 500
     return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}

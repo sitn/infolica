@@ -195,7 +195,7 @@ export default {
   mounted: function() {
     this.searchAffaireDocuments();
     this.initTypesDocumentsList();
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_ENVOIS_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

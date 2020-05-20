@@ -6,6 +6,7 @@
 import {
   getCadastres,
   getTypesAffaires,
+  checkPermission
 } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler';
 
@@ -16,6 +17,7 @@ export default {
     cadastre_liste: [],
     types_affaires: [],
     affaires: [],
+    newAffaireAllowed: false,
     search: {
       id: null,
       nom: null,
@@ -100,6 +102,7 @@ export default {
           if (response && response.data) {
             this.affaires = response.data;
           }
+          this.newAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
         }).catch(err => {
           handleException(err, this);
         });

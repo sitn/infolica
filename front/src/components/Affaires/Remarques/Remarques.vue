@@ -105,7 +105,7 @@ export default {
   mounted: function() {
     this.searchAffaireRemarques();
 
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
+    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_REMARQUE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

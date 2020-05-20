@@ -6,8 +6,8 @@
             <span v-if="affaire.nom != '-'">[{{ affaire.nom }}]</span>
         </div>
         
-        <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="">Dupliquer</md-button>
-        <md-button class="md-accent md-raised" v-if="editAffaireAllowed" v-on:click="cloreAffaire()">Clôturer</md-button>
+        <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="duplicateAffaire">Dupliquer</md-button>
+        <md-button class="md-accent md-raised" v-if="editAffaireAllowed && cloreAffaireEnabled" v-on:click="cloreAffaire()">Clôturer</md-button>
     </md-toolbar>
 
     <!-- INFORMATIONS GENERALES -->
@@ -84,6 +84,12 @@
     <!-- SUIVI DU MANDAT -->
     <div class="affairesDashboard">
         <SuiviMandat />
+    </div>
+
+
+    <!-- Duplication Affaire -->
+    <div>
+        <DuplicationAffaire ref="duplicationAffaireForm" :affaire="affaire"/>
     </div>
 
 </div>
