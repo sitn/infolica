@@ -52,15 +52,14 @@ export default {
           if (response && response.data) {
             this.affaire_numeros_all = response.data;
             this.affaire_numeros_nouveaux = response.data.filter(
-
-              x => x.affaire_numero_type_id === Number(process.env.VUE_APP_NUMERO_AFFAIRE_TYPE_NOUVEAU_ID)
+              x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID)
             );
             this.affaire_numeros_anciens = response.data.filter(
-              x => x.affaire_numero_type_id === Number(process.env.VUE_APP_NUMERO_AFFAIRE_TYPE_ANCIEN_ID)
+              x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID)
             );
             this.affaire_numeros_nouveaux.forEach(function(element) {
-              if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_AFFAIRE_TYPE_ABONDONNE_ID)) element.active = false;
-              else if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_AFFAIRE_TYPE_PROJET_ID)) element.active = true;
+              if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)) element.active = false;
+              else if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_PROJET_ID)) element.active = true;
             });
             resolve(this.affaire_numeros_all, this.affaire_numeros_anciens, this.affaire_numeros_nouveaux)
           }
