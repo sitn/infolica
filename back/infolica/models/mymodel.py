@@ -503,7 +503,8 @@ class AffaireNumero(Base):
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     numero_id = Column(BigInteger, ForeignKey(Numero.id), nullable=False)
     type_id = Column(BigInteger, ForeignKey(AffaireNumeroType.id))  # , nullable=False)
-    modifie = Column(Boolean, default=False, nullable=False)
+    actif = Column(Boolean, default=True, nullable=False)
+    affaire_destination_id = Column(BigInteger, ForeignKey(Affaire.id))
 
 
 class Service(Base):

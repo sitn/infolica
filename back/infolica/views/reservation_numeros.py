@@ -8,6 +8,13 @@ from ..views.numero_relation import numeros_relations_new_view
 
 
 def savePointMO(request, affaire_id, cadastre_id, numero_type, n_numeros, etat_id):
+    settings = request.registry.settings
+    cadastres_ChauxDeFonds_Eplatures_id = settings['cadastres_ChauxDeFonds_Eplatures_id'].split(",")
+    cadastres_BrotPlamboz_Plamboz_id = settings['cadastres_BrotPlamboz_Plamboz_id'].split(",")
+    cadastres_Neuchatel_Coudre_id = settings['cadastres_Neuchatel_Coudre_id'].split(",")
+    cadastres_Sauge_StAubin_id = settings['cadastres_Sauge_StAubin_id'].split(",")
+    
+
     # Corriger la liste des cadastres où la réservation de numéros se fait sur deux cadastres
     if cadastre_id == 60 or cadastre_id == 70:
         # Cadastre de la Chaux-de-Fonds et des Eplatures
@@ -39,7 +46,7 @@ def savePointMO(request, affaire_id, cadastre_id, numero_type, n_numeros, etat_i
         numero_id = numeros_new_view(request, params)
         # enregistrer le lien affaire-numéro
         params = Utils._params(
-            affaire_id=affaire_id, numero_id=numero_id, modifie=False, type_id=2)
+            affaire_id=affaire_id, numero_id=numero_id, actif=True, type_id=2)
         affaire_numero_new_view(request, params)
 
 
@@ -89,7 +96,7 @@ def reservation_numeros_new_view(request):
             numero_id = numeros_new_view(request, params)
             # enregistrer le lien affaire-numéro
             params = Utils._params(
-                affaire_id=affaire_id, numero_id=numero_id, modifie=False, type_id=2)
+                affaire_id=affaire_id, numero_id=numero_id, actif=True, type_id=2)
             affaire_numero_new_view(request, params)
             # enregistrer l'historique de l'état
             params = Utils._params(numero_id=numero_id, numero_etat_id=1)
@@ -104,7 +111,7 @@ def reservation_numeros_new_view(request):
             numero_id = numeros_new_view(request, params)
             # enregistrer le lien affaire-numéro
             params = Utils._params(
-                affaire_id=affaire_id, numero_id=numero_id, modifie=False, type_id=2)
+                affaire_id=affaire_id, numero_id=numero_id, actif=True, type_id=2)
             affaire_numero_new_view(request, params)
             # enregistrer l'historique de l'état
             params = Utils._params(numero_id=numero_id, numero_etat_id=1)
@@ -126,7 +133,7 @@ def reservation_numeros_new_view(request):
             numero_id = numeros_new_view(request, params)
             # enregistrer le lien affaire-numéro
             params = Utils._params(
-                affaire_id=affaire_id, numero_id=numero_id, modifie=False, type_id=2)
+                affaire_id=affaire_id, numero_id=numero_id, actif=True, type_id=2)
             affaire_numero_new_view(request, params)
             # enregistrer l'historique de l'état
             params = Utils._params(numero_id=numero_id, numero_etat_id=1)
@@ -145,7 +152,7 @@ def reservation_numeros_new_view(request):
             numero_id = numeros_new_view(request, params)
             # enregistrer le lien affaire-numéro
             params = Utils._params(
-                affaire_id=affaire_id, numero_id=numero_id, modifie=False, type_id=2)
+                affaire_id=affaire_id, numero_id=numero_id, actif=True, type_id=2)
             affaire_numero_new_view(request, params)
             # enregistrer l'historique de l'état
             params = Utils._params(numero_id=numero_id, numero_etat_id=1)
@@ -176,7 +183,7 @@ def reservation_numeros_new_view(request):
             numero_id = numeros_new_view(request, params)
             # enregistrer le lien affaire-numéro
             params = Utils._params(
-                affaire_id=affaire_id, numero_id=numero_id, modifie=False, type_id=2)
+                affaire_id=affaire_id, numero_id=numero_id, actif=True, type_id=2)
             affaire_numero_new_view(request, params)
 
 
