@@ -25,7 +25,7 @@ def reference_numeros_new_view(request):
     for numero_i in numeros_liste:
         # enregistrer le lien affaire-numéro
         params = Utils._params(
-            affaire_id=affaire_id, numero_id=numero_i['numero_id'], modifie=False, type_id=1)
+            affaire_id=affaire_id, numero_id=numero_i['numero_id'], actif=True, type_id=1)
         affaire_numero_new_view(request, params)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
