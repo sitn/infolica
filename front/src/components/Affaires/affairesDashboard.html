@@ -1,24 +1,14 @@
 <div class="affairesDashboard" v-if="affaireLoaded">
 
     <!-- TITRE -->
-    <md-card>
-        <md-card-header>
-            <div class="md-gutter md-layout">
-                <div class="md-layout-item md-size-50">
-                    <div class="md-title">
-                        Affaire {{ affaire.id }}
-                        <span v-if="affaire.nom != '-'">[{{ affaire.nom }}]</span>
-                    </div>
-                </div>
-                <div class="md-layout-item ma-size-50">
-                    <div class="md-layout md-alignment-center-right">
-                        <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="duplicateAffaire">Dupliquer</md-button>
-                        <md-button class="md-accent md-raised" v-if="editAffaireAllowed && cloreAffaireEnabled" v-on:click="cloreAffaire()">Clôturer</md-button>
-                    </div>
-                </div>
-            </div>
-        </md-card-header>
-    </md-card>
+    <md-toolbar>
+        <div class="md-title" style="flex: 1; font-weight: 700"> Affaire {{ affaire.id }}
+            <span v-if="affaire.nom != '-'">[{{ affaire.nom }}]</span>
+        </div>
+        
+        <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="duplicateAffaire">Dupliquer</md-button>
+        <md-button class="md-accent md-raised" v-if="editAffaireAllowed && cloreAffaireEnabled" v-on:click="cloreAffaire()">Clôturer</md-button>
+    </md-toolbar>
 
     <!-- INFORMATIONS GENERALES -->
     <div class="leftColumn">

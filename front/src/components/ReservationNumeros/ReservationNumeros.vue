@@ -201,6 +201,7 @@ export default {
         .then(response => {
           if (response.data) {
             this.$parent.searchAffaireNumeros();
+            this.$parent.searchAffaireNewNumerosMo();
             this.$root.$emit("ShowMessage", "Le(s) numéro(s) réservé(s) ont été correctement ajouté(s) à l'affaire")
           }
         })
@@ -215,7 +216,6 @@ export default {
      * Annuler la réservation de uméros
      */
     onCancelReservationNumeros() {
-      alert(this.reservation.ddp_base);
       this.showReservationDialog = false;
       this.initializeForm();
     },
@@ -269,7 +269,6 @@ export default {
 
   mounted: function() {
     this.initCadastresList();
-    this.affaire_id = this.$route.params.id;
   }
 };
 </script>

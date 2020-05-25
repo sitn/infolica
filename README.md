@@ -39,7 +39,7 @@ In a web browser, check this url:
 ```
 localhost:6543/infolica/api/test
 ```
-If you can read "Yeah, api is working", your installation is running correctly.
+If you can read "Yeah, your api is working!", your installation is running correctly.
 
 
 ### front

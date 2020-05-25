@@ -97,13 +97,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Afficher ou non les numéros de la MO -->
-                                    <div class="md-layout md-gutter">
-                                        <div class="md-layout-item">
-                                            <md-checkbox v-model="showNumerosMO" @change="filterNouveauxNumerosMO" class="md-primary">Afficher les numéros de la MO</md-checkbox>
-                                        </div>
-                                    </div>
-                                    
                                     <!-- Tableau des numéros réservés dans l'affaire -->
                                     <div v-if="affaire_numeros_nouveaux[0]" class="scrollbar">
                                         <md-table v-model="affaire_numeros_nouveaux" md-sort="numero_etat"
@@ -162,6 +155,49 @@
                                 </md-card-content>
                             </md-card>
 
+                            <!-- Numéros de la MO -->
+                            <md-card>
+                                <md-card-header>
+                                    <div class="md-title">Numéros de la MO</div>
+                                </md-card-header>
+
+                                <md-card-content>
+                                    <div v-if="numerosMoLoading">
+                                        Chargement des données en cours...
+                                    </div>
+                                    <div v-else>
+                                        <div v-if="affaire_numeros_nouveaux_mo[0]">
+                                            <md-table v-model="affaire_numeros_nouveaux_mo" md-sort="cadastre_id" md-sort-order="desc">
+                                            <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                                <md-table-cell md-label="Cadastre" md-sort-by="cadastre">
+                                                    {{ item.cadastre }}
+                                                </md-table-cell>
+                                                <md-table-cell md-label="Type" md-sort-by="type">
+                                                    {{ item.numero_type }}
+                                                </md-table-cell>
+                                                <md-table-cell md-label="Plan" md-sort-by="plan_id">
+                                                    {{ item.plan_id }}
+                                                </md-table-cell>
+                                                <md-table-cell md-label="De" md-sort-by="numero_de">
+                                                    {{ item.numero_de }}
+                                                </md-table-cell>
+                                                <md-table-cell md-label="À" md-sort-by="numero_a">
+                                                    {{ item.numero_a }}
+                                                </md-table-cell>
+                                                <md-table-cell md-label="Nombre" md-sort-by="nombre">
+                                                    {{ item.nombre }}
+                                                </md-table-cell>
+                                            </md-table-row>
+                                        </md-table>
+                                    </div>
+                                    <div v-else>
+                                        <em>Aucune réservation de points de la MO</em>
+                                    </div>
+                                </div>
+                                </md-card-content>
+                            </md-card>
+                            
+                            
                         </md-card-content>
                     </div>
                 </div>

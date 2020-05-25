@@ -5,6 +5,8 @@ from ..models import Constant
 import transaction
 from ..exceptions.custom_error import CustomError
 from .. import models
+from sqlalchemy import and_
+import json
 
 
 """ Return all numeros"""
@@ -160,7 +162,8 @@ def numeros_by_id_delete_view(request):
 @view_config(route_name='numeros_etat_histo_s', request_method='POST', renderer='json')
 def numeros_etat_histo_new_view(request, params=None):
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+    settings = request.registry.settings
+    if not Utils.has_permission(request, settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
 
     if not params:
@@ -193,9 +196,108 @@ def affaire_numeros_view(request):
 
     affaire_id = request.matchdict["id"]
 
+    # Récupérer les id des numéros de la MO
+    settings = request.registry.settings
+
+    numeros_immeubles_type_id = [settings['numero_bf_id'], 
+                     settings['numero_ddp_id'], 
+                     settings['numero_ppe_id'], 
+                     settings['numero_pcop_id']]
+
     records = request.dbsession.query(models.VNumerosAffaires).filter(
-        models.VNumerosAffaires.affaire_id == affaire_id).all()
+        models.VNumerosAffaires.affaire_id == affaire_id,
+        models.VNumerosAffaires.numero_type_id.in_(numeros_immeubles_type_id)).all()
     return Utils.serialize_many(records)
+
+
+""" Return all new numeros MO in affaire"""
+@view_config(route_name='affaire_new_numeros_MO_by_affaire_id', request_method='GET', renderer='json')
+def affaire_new_numeros_mo_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    affaire_id = request.matchdict["id"]
+
+    # Récupérer les id des numéros de la MO
+    settings = request.registry.settings
+
+    numeros_mo_type_id = [settings['numero_pfp3_id'], 
+                     settings['numero_bat_id'], 
+                     settings['numero_pcs_id'], 
+                     settings['numero_paux_id'], 
+                     settings['numero_pdet_id'], 
+                     settings['numero_dp_id']]
+
+    # Contenu de la table VNumerosAffaires avec les numéros de la MO
+    query = request.dbsession.query(models.VNumerosAffaires).filter(
+        and_(
+            models.VNumerosAffaires.affaire_id == affaire_id,
+            models.VNumerosAffaires.numero_type_id.in_(numeros_mo_type_id)
+        )
+    )
+
+    records = query.all()
+
+    cadastres_id = list()
+    types_id = list()
+    plans_id = list()
+    for record in records:
+        cadastres_id.append(record.numero_cadastre_id)
+        types_id.append(record.numero_type_id)
+        plans_id.append(record.numero_plan_id)
+    # Retient les valeurs uniques
+    cadastres_id = set(cadastres_id)
+    types_id = set(types_id)
+    plans_id = set(plans_id)
+    
+    reservations_ranges = list()
+    for cadastre_id in cadastres_id:
+        for type_id in types_id:
+            for plan_id in plans_id:
+                records = query.filter(
+                    and_(
+                        models.VNumerosAffaires.numero_cadastre_id == cadastre_id,
+                        models.VNumerosAffaires.numero_type_id == type_id,
+                        models.VNumerosAffaires.numero_plan_id == plan_id
+                    )
+                ).order_by(models.VNumerosAffaires.numero.asc()).all()
+
+                if len(records) == 0:
+                    continue
+
+                numeros = list()
+                for record in records:
+                    numeros.append(record.numero)
+
+                # Get lists of consecutive numbers [[de, à], [de, à], etc]
+                consecutive_diff = [x - numeros[i - 1] for i, x in enumerate(numeros)][1:]
+                diff_index_greaterthan1 = list(filter(lambda x: consecutive_diff[x]>1, range(len(consecutive_diff))))
+                
+                n_diff_idx = len(diff_index_greaterthan1)
+                last_diff_idx = 0
+                for i, diff_idx in enumerate(diff_index_greaterthan1):
+                    reservations_ranges.append({"cadastre_id": cadastre_id, 
+                                                "type_id": type_id, 
+                                                "plan_id": plan_id, 
+                                                "numero_de": numeros[last_diff_idx], 
+                                                "numero_a": numeros[diff_idx], 
+                                                "cadastre": record.numero_cadastre, 
+                                                "numero_type": record.numero_type, 
+                                                "nombre": numeros[diff_idx] - numeros[last_diff_idx] + 1 })
+                    last_diff_idx = diff_idx + 1
+
+                # Ne pas oublier la dernière série...    
+                reservations_ranges.append({"cadastre_id": cadastre_id, 
+                                            "type_id": type_id, 
+                                            "plan_id": plan_id, 
+                                            "numero_de": numeros[last_diff_idx], 
+                                            "numero_a": numeros[-1], 
+                                            "cadastre": record.numero_cadastre, 
+                                            "numero_type": record.numero_type,
+                                            "nombre": numeros[-1] - numeros[last_diff_idx] + 1 })
+
+    return json.loads(json.dumps(reservations_ranges))
 
 
 """ Add new affaire-numero """

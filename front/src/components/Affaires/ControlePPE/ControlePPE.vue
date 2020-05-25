@@ -12,7 +12,8 @@ export default {
   name: "ControlePPE",
   props: {},
   data: () => ({
-     affaireReadonly: true,
+    showNewControlePPEBtn: false,
+    affaireReadonly: true,
     needToCreateControlePPE: false,
     chefsProjetMO_liste: [],
     showCreatedControlePPE: false,

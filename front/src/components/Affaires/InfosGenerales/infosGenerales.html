@@ -6,14 +6,14 @@
                 <div class="md-layout-item md-size-50 md-small-size-100">
                     <md-field>
                         <label>Cadastre</label>
-                        <md-input v-model="affaire.cadastre" infoGenReadonly></md-input>
+                        <md-input v-model="affaire.cadastre" readonly></md-input>
                     </md-field>
                 </div>
 
                 <div class="md-layout-item md-size-50 md-small-size-100">
                     <md-field>
                         <label>Type</label>
-                        <md-input v-model="affaire.type_affaire" infoGenReadonly></md-input>
+                        <md-input v-model="affaire.type_affaire" readonly></md-input>
                     </md-field>
                 </div>
             </div>
@@ -22,14 +22,14 @@
                 <div class="md-layout-item md-size-50 md-small-size-100">
                     <md-field>
                         <label>Opérateur</label>
-                        <md-input v-model="affaire.technicien" infoGenReadonly>
+                        <md-input v-model="affaire.technicien" readonly>
                         </md-input>
                     </md-field>
                 </div>
                 <div class="md-layout-item md-size-50 md-small-size-100">
                     <md-field>
                         <label>Validation</label>
-                        <md-input v-model="affaire.responsable" infoGenReadonly>
+                        <md-input v-model="affaire.responsable" readonly>
                         </md-input>
                     </md-field>
                 </div>
@@ -39,13 +39,13 @@
                 <div class="md-layout-item md-size-50 md-small-size-100">
                     <md-field>
                         <label>Client</label>
-                        <md-input v-model="affaire.client" infoGenReadonly></md-input>
+                        <md-input v-model="affaire.client" readonly></md-input>
                     </md-field>
                 </div>
                 <div class="md-layout-item md-size-50 md-small-size-100">
                     <md-field>
                         <label>Représenté par</label>
-                        <md-input v-model="affaire.client_par" infoGenReadonly></md-input>
+                        <md-input v-model="affaire.client_par" readonly></md-input>
                     </md-field>
                 </div>
             </div>
@@ -71,7 +71,7 @@
                 <div class="md-layout-item md-size-25 md-small-size-100">
                     <md-field>
                         <label>Date d'ouverture</label>
-                        <md-input v-model="affaire.date_ouverture" infoGenReadonly></md-input>
+                        <md-input v-model="affaire.date_ouverture" readonly></md-input>
                     </md-field>
                 </div>
                 <!-- <span>{{ affaire.date_ouverture | formatDate }}</span> -->
@@ -79,7 +79,7 @@
                     <!-- Affiche la date de validation en mode infoGenReadonly -->
                     <md-field v-if="infoGenReadonly">
                         <label>Date de validation</label>
-                        <md-input v-model="affaire.date_validation" infoGenReadonly></md-input>
+                        <md-input v-model="affaire.date_validation" readonly></md-input>
                     </md-field>
                     <!-- Affiche la date de validation en mode édition -->
                     <md-datepicker v-model="affaire.date_validation" md-immediately v-else>
@@ -90,7 +90,7 @@
                     <!-- Affiche la date de clôture en mode infoGenReadonly -->
                     <md-field v-if="infoGenReadonly">
                         <label>Date de clôture</label>
-                        <md-input v-model="affaire.date_cloture" infoGenReadonly></md-input>
+                        <md-input v-model="affaire.date_cloture" readonly></md-input>
                     </md-field>
                     <!-- Affiche la date de clôture en mode édition -->
                     <md-datepicker v-model="affaire.date_cloture" md-immediately v-else>

@@ -35,6 +35,13 @@ body {
     margin: 4px;
 }
 
+.md-toolbar {
+    width: 100%;
+    display: inline-block;
+    vertical-align: top;
+    margin: 4px;
+}
+
 
 /* Suppression molette input type number */
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
