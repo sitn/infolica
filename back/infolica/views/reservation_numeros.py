@@ -10,32 +10,32 @@ from ..views.numero_relation import numeros_relations_new_view
 def savePointMO(request, affaire_id, cadastre_id, numero_type, n_numeros, etat_id):
     settings = request.registry.settings
     cadastres_ChauxDeFonds_Eplatures_id = settings['cadastres_ChauxDeFonds_Eplatures_id'].split(",")
+    cadastres_ChauxDeFonds_Eplatures_id = [int(cadastres_ChauxDeFonds_Eplatures_id[0]), int(cadastres_ChauxDeFonds_Eplatures_id[1])]
     cadastres_BrotPlamboz_Plamboz_id = settings['cadastres_BrotPlamboz_Plamboz_id'].split(",")
+    cadastres_BrotPlamboz_Plamboz_id = [int(cadastres_BrotPlamboz_Plamboz_id[0]), int(cadastres_BrotPlamboz_Plamboz_id[1])]
     cadastres_Neuchatel_Coudre_id = settings['cadastres_Neuchatel_Coudre_id'].split(",")
+    cadastres_Neuchatel_Coudre_id = [int(cadastres_Neuchatel_Coudre_id[0]), int(cadastres_Neuchatel_Coudre_id[1])]
     cadastres_Sauge_StAubin_id = settings['cadastres_Sauge_StAubin_id'].split(",")
+    cadastres_Sauge_StAubin_id = [int(cadastres_Sauge_StAubin_id[0]), int(cadastres_Sauge_StAubin_id[1])]
     
 
     # Corriger la liste des cadastres où la réservation de numéros se fait sur deux cadastres
-    if cadastre_id == 60 or cadastre_id == 70:
+    if cadastre_id == cadastres_ChauxDeFonds_Eplatures_id[0] or cadastre_id == cadastres_ChauxDeFonds_Eplatures_id[1]:
         # Cadastre de la Chaux-de-Fonds et des Eplatures
-        tmp = [60, 70]
-        ln = max(Utils.last_number(request, tmp[0], [numero_type]),
-                 Utils.last_number(request, tmp[1], [numero_type]))
-    elif cadastre_id == 59 or cadastre_id == 69:
+        ln = max(Utils.last_number(request, cadastres_ChauxDeFonds_Eplatures_id[0], [numero_type]),
+                 Utils.last_number(request, cadastres_ChauxDeFonds_Eplatures_id[1], [numero_type]))
+    elif cadastre_id == cadastres_BrotPlamboz_Plamboz_id[0] or cadastre_id == cadastres_BrotPlamboz_Plamboz_id[1]:
         # Cadastre de Brot-Plamboz et Plamboz
-        tmp = [59, 69]
-        ln = max(Utils.last_number(request, tmp[0], [numero_type]), 
-                 Utils.last_number(request, tmp[1], [numero_type]))
-    elif cadastre_id == 1 or cadastre_id == 63:
+        ln = max(Utils.last_number(request, cadastres_BrotPlamboz_Plamboz_id[0], [numero_type]), 
+                 Utils.last_number(request, cadastres_BrotPlamboz_Plamboz_id[1], [numero_type]))
+    elif cadastre_id == cadastres_Neuchatel_Coudre_id[0] or cadastre_id == cadastres_Neuchatel_Coudre_id[1]:
         # Cadastre de Neuchâtel et de la Coudre
-        tmp = [1, 63]
-        ln = max(Utils.last_number(request, tmp[0], [numero_type]), 
-                 Utils.last_number(request, tmp[1], [numero_type]))
-    elif cadastre_id == 22 or cadastre_id == 67:
+        ln = max(Utils.last_number(request, cadastres_Neuchatel_Coudre_id[0], [numero_type]), 
+                 Utils.last_number(request, cadastres_Neuchatel_Coudre_id[1], [numero_type]))
+    elif cadastre_id == cadastres_Sauge_StAubin_id[0] or cadastre_id == cadastres_Sauge_StAubin_id[1]:
         # Cadastre de Sauge et de Saint-Aubin
-        tmp = [22, 67]
-        ln = max(Utils.last_number(request, tmp[0], [numero_type]), 
-                 Utils.last_number(request, tmp[1], [numero_type]))
+        ln = max(Utils.last_number(request, cadastres_Sauge_StAubin_id[0], [numero_type]), 
+                 Utils.last_number(request, cadastres_Sauge_StAubin_id[1], [numero_type]))
     else:
         ln = Utils.last_number(request, cadastre_id, [numero_type])
 
@@ -79,7 +79,7 @@ def reservation_numeros_new_view(request):
 
     # Get affaire_id 
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
-    cadastre_id = request.params['cadastre_id'] if 'cadastre_id' in request.params else None
+    cadastre_id = int(request.params['cadastre_id']) if 'cadastre_id' in request.params else None
     plan_id = request.params['plan_id'] if 'plan_id' in request.params else None
 
     # Get first available number (BF, DDP, PPE, PCOP)
