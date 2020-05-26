@@ -120,6 +120,10 @@ export default {
       this.view.on("change:resolution", function() {
         _this.setCanvasTransform();
       });
+      
+      this.map.on("moveend", function() {
+        _this.setCanvasTransform();
+      });
     },
 
     /**
