@@ -112,9 +112,8 @@ export default {
      * Open numéro in new tab
      */
     doOpenAffaire(id) {
-      let routeData = this.$router.resolve({ name: "Affaires"});
-      window.open(routeData.href + '/' + id, '_blank');
-      //this.$router.push({ name: "Affaires", params: { id: id } }) ;
+      let routeData = this.$router.resolve({ name: "AffairesDashboard", params: {id}});
+      window.open(routeData.href, '_blank');
     }
   },
 

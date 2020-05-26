@@ -137,8 +137,8 @@ export default {
      * Open numéro in new tab
      */
     doOpenNumero(id) {
-      let routeData = this.$router.resolve("/numeros/" + id);
-      window.open(routeData.href, "_blank");
+      let routeData = this.$router.resolve({ name: "NumerosHistory", params: {id}});
+      window.open(routeData.href, '_blank');
     }
   },
 

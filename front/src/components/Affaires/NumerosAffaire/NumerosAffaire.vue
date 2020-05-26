@@ -375,7 +375,8 @@ export default {
         process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
         "?filename=" +
         filename;
-      window.open(url, "_blank");
+      let routeData = this.$router.resolve(url);
+      window.open(routeData.href, '_blank');
     },
 
     /**
