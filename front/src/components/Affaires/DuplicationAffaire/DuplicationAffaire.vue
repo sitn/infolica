@@ -38,6 +38,10 @@ export default {
       .then(response =>{
         if (response && response.data) {
           this.types_modifs_affaire_list = response.data;
+          
+          if(this.types_modifs_affaire_list && this.types_modifs_affaire_list.length > 0){
+            this.type_modif_affaire = this.types_modifs_affaire_list[0].id;
+          }
         }
       })
       //Error 
@@ -213,6 +217,8 @@ export default {
       .then(response => {
         if (response) {
           _this.$root.$emit("ShowMessage", "L'affaire a été dupliquée avec succès");
+          _this.$root.$emit("UpdateNumerosAffaires");
+          this.searchAffaireNumeros();
         }
       })
       .catch(err => {
@@ -279,7 +285,7 @@ export default {
      * Récupérer la sélection des anciens numéros
      */
     onSelectNumsAnciens(items) {
-      this.selectedAnciensNumeros = items.map(x => (x.numero));
+      this.selectedAnciensNumeros = items.map(x => (x.numero_id));
     },
 
 
@@ -287,7 +293,7 @@ export default {
      * Récupérer la sélection des nouveaux numéros
      */
     onSelectNumsNouveux(items) {
-      this.selectedNouveauxNumeros = items.map(x => (x.numero));
+      this.selectedNouveauxNumeros = items.map(x => (x.numero_id));
     }
   },
 

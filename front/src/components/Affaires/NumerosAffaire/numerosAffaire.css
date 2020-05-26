@@ -22,3 +22,7 @@
     max-height: 400px;
     overflow: auto;
 }
+
+.disabledNum{
+    color: #aba5a5;
+}
