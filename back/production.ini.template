@@ -15,19 +15,19 @@ pyramid.default_locale_name = en
 #############################################
 # Les informations de connexion à la BD
 #############################################
-sqlalchemy.url = postgresql://users:password@host/infolica
+sqlalchemy.url = /*TO COMPLETE*/
 
 #############################################
 # Les informations de connexion au LDAP
 #############################################
 # L'URL de LDAP et le numéro de port
-ldap_url = ldap://host:port
+ldap_url = /*TO COMPLETE*/
 
 # Le bind utilisé par la connexion
-ldap_bind= cn=Manager,dc=maxcrc,dc=com
+ldap_bind= /*TO COMPLETE*/
 
 # Le mot de passe du bind utilisé par la connexion
-ldap_passwd= password
+ldap_passwd= /*TO COMPLETE*/
 
 
 ###########################################################
@@ -35,13 +35,13 @@ ldap_passwd= password
 ###########################################################
 
 # Le DN de base de la recherche des logins
-ldap_login_query_base_dn= ou=infolicaUsers,ou=People,dc=maxcrc,dc=com
+ldap_login_query_base_dn = /*TO COMPLETE*/
 
 # Le filtre de la recherche des logins
-ldap_login_query_filter_tmpl= (uid=%%(login)s)
+ldap_login_query_filter_tmpl= /*TO COMPLETE*/
 
 # Les attributs à retourner
-ldap_login_query_attributes= uid, givenName, sn, mail, telephoneNumber, mobile
+ldap_login_query_attributes= /*TO COMPLETE*/
 
 # Le scope de la recherche (LEVEL, SUBTREE)
 ldap_login_query_scope= SUBTREE
@@ -51,7 +51,6 @@ ldap_user_attribute_firstname= givenName
 ldap_user_attribute_lastname= sn
 ldap_user_attribute_telephone= telephoneNumber
 ldap_user_attribute_mail= mail
-ldap_user_attribute_mobile= mobile
 
 
 ###########################################################
@@ -59,10 +58,10 @@ ldap_user_attribute_mobile= mobile
 ###########################################################
 
 # Le DN de base de la recherche des groupes
-ldap_group_query_base_dn= ou=infolicaGroups,ou=People,dc=maxcrc,dc=com
+ldap_group_query_base_dn= /*TO COMPLETE*/
 
 # Le filtre de la recherche des groupes
-ldap_group_query_filter_tmpl= (&(objectClass=groupOfNames)(cn=INFOLICA*)(member=%%(userdn)s))
+ldap_group_query_filter_tmpl= /*TO COMPLETE*/
 
 # Le nombre de secondes du cache de la recherche des groupes
 ldap_group_query_cache_period=600
@@ -71,16 +70,16 @@ ldap_group_query_cache_period=600
 ldap_group_query_scope=SUBTREE
 
 # Les attributs à retourner
-ldap_group_attributes=cn, ou,member
+ldap_group_attributes= /*TO COMPLETE*/
 
 # L'attribut qui correspond à l'identifiant d'un groupe LDAP
-ldap_group_attribute_id= cn
+ldap_group_attribute_id= /*TO COMPLETE*/
 
 # Les informations de recherche d'un utilisateur LDAP
-ldap_search_user_filter=(objectClass=person)
+ldap_search_user_filter= /*TO COMPLETE*/
 
 # Le préfixe des groupes infolica
-infolica_groups_prefix= INFOLICA_
+infolica_groups_prefix= /*TO COMPLETE*/
 
 ######################################################################################
 # Le nombre max des résultats retournés par la recherche
@@ -92,6 +91,7 @@ search_limit = 20
 # Les différentes permissions (fonctions)
 ######################################################################################
 fonction_admin = fonction_admin
+affaire_consultation = affaire_consultation
 affaire_edition = affaire_edition
 affaire_ppe_edition = affaire_ppe_edition
 affaire_revision_abornement_edition = affaire_revision_abornement_edition
@@ -104,35 +104,70 @@ affaire_etape_edition = affaire_etape_edition
 affaire_facture_edition = affaire_facture_edition
 affaire_preavis_edition = affaire_preavis_edition
 affaire_numero_edition = affaire_numero_edition
+numero_consultation = numero_consultation
+operateur_consultation = operateur_consultation
+client_consultation = client_consultation
 client_edition = client_edition
 
 ######################################################################################
-# Affaire types id
+# Variables tirées de la base de données
 ######################################################################################
+# Affaire types id
 affaire_type_cadastration_id = 2
 affaire_type_ppe_id = 3
 affaire_type_revision_abornement_id = 4
 
+# ID Numéros-types biens-fonds
+numero_bf_id = 1
+numero_ddp_id = 2
+numero_ppe_id = 3
+numero_pcop_id = 4
+numero_pfp3_id = 5
+numero_bat_id = 6
+numero_pcs_id = 7
+numero_paux_id = 8
+numero_pdet_id = 9
+numero_dp_id = 10
+
+# ID états des numéros
+numero_projet_id = 1
+numero_vigueur_id = 2
+numero_abandonne_id = 3
+numero_supprime_id = 4
+
+# ID cadastres-binômes pour la réservation de numéros
+cadastres_ChauxDeFonds_Eplatures_id = 60,70
+cadastres_BrotPlamboz_Plamboz_id = 59,69
+cadastres_Neuchatel_Coudre_id = 1,63
+cadastres_Sauge_StAubin_id = 22,67
+
 ######################################################################################
 # Chemins dossiers affaires
 ######################################################################################
-affaireTemplateDir = /path/to/affaireTemplateDir
-affaireParDir = /path/to/affaireParDir
+#affaireTemplateDir = /*TO COMPLETE*/
+affaireParDir = /*TO COMPLETE*/
 
 ######################################################################################
 # Access-Control-Allow-Origin
 ######################################################################################
-access_control_allow_origin = http://127.0.0.1:8080
+access_control_allow_origin = http://127.0.0.1:81
 
 ######################################################################################
 # Upload file directory
 ######################################################################################
-upload_files_directory = /path/to/upload_files_directory
+upload_files_directory = /*TO COMPLETE*/
 
 ######################################################################################
 # Mails templates directory
 ######################################################################################
-mails_templates_directory = /path/to/mail_templates_dorectory
+mails_templates_directory = /*TO COMPLETE*/
+
+
+######################################################################################
+# Temporary directory
+######################################################################################
+temporary_directory = /*TO COMPLETE*/
+
 
 retry.attempts = 3
 
@@ -151,7 +186,7 @@ file_template = %%(year)d%%(month).2d%%(day).2d_%%(rev)s
 
 [server:main]
 use = egg:waitress#main
-listen = *:6543
+listen = 127.0.0.1:81
 
 ###
 # logging configuration
