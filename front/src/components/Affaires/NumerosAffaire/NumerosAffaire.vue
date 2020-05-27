@@ -42,13 +42,15 @@ export default {
         .get(
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
-            this.$route.params.id,
+            this.$route.params.id,// + "?affaire_numero_actif=true",
           {
             withCredentials: true,
             headers: { Accept: "application/json" }
           }
         )
         .then(response => {
+          let routeAffaireData = this.$router.resolve({ name: "Affaires"});
+
           if (response && response.data) {
             this.affaire_numeros_all = response.data;
             this.affaire_numeros_nouveaux = response.data.filter(
@@ -61,6 +63,18 @@ export default {
               if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)) element.active = false;
               else if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_PROJET_ID)) element.active = true;
             });
+
+            //Affaires links
+            this.affaire_numeros_anciens.map( function(item) {
+              item.affaire_destination_href = routeAffaireData.href + '/' + item.affaire_destination_id;
+              return item;
+            });
+
+            this.affaire_numeros_nouveaux.map( function(item) {
+              item.affaire_destination_href = routeAffaireData.href + '/' + item.affaire_destination_id;
+              return item;
+            });
+
             resolve(this.affaire_numeros_all, this.affaire_numeros_anciens, this.affaire_numeros_nouveaux)
           }
         })
@@ -409,9 +423,13 @@ export default {
     }
   },
   mounted: function() {
-    this.searchAffaireNumeros()
+    this.searchAffaireNumeros();
     this.searchAffaireNewNumerosMo();
 
+    this.$root.$on('UpdateNumerosAffaires', () =>{
+      this.searchAffaireNumeros();
+    });
+    
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };

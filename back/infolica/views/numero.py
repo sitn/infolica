@@ -193,20 +193,28 @@ def affaire_numeros_view(request):
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
-
+    conditions = list()
     affaire_id = request.matchdict["id"]
 
     # Récupérer les id des numéros de la MO
     settings = request.registry.settings
+
 
     numeros_immeubles_type_id = [settings['numero_bf_id'], 
                      settings['numero_ddp_id'], 
                      settings['numero_ppe_id'], 
                      settings['numero_pcop_id']]
 
+    conditions.append(models.VNumerosAffaires.affaire_id == affaire_id)
+    conditions.append(models.VNumerosAffaires.numero_type_id.in_(numeros_immeubles_type_id))
+
+    if 'affaire_numero_actif' in request.params:
+        affaire_numero_actif = request.params['affaire_numero_actif']
+        affaire_numero_actif = True if affaire_numero_actif.upper() == 'TRUE' else False
+        conditions.append(models.VNumerosAffaires.affaire_numero_actif == affaire_numero_actif)
+
     records = request.dbsession.query(models.VNumerosAffaires).filter(
-        models.VNumerosAffaires.affaire_id == affaire_id,
-        models.VNumerosAffaires.numero_type_id.in_(numeros_immeubles_type_id)).all()
+        *conditions).all()
     return Utils.serialize_many(records)
 
 
@@ -387,5 +395,29 @@ def numero_differe_update_view(request):
         # Commit transaction
         transaction.commit()
         return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.NumeroDiffere.__tablename__))
+
+
+
+""" Deactivate numero_affaire """
+@view_config(route_name='desactiver_numeros_affaires', request_method='POST', renderer='json')
+@view_config(route_name='desactiver_numeros_affaires_s', request_method='POST', renderer='json')
+def desactiver_numeros_affaires_view(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+
+    affaire_id = request.params['affaire_id'] if 'affaire_id' else None
+    affaire_destination_id = request.params['affaire_destination_id'] if 'affaire_destination_id' else None
+    numeros = request.params['numeros'] if 'numeros' else None
+
+    if numeros:
+        numeros = json.loads(numeros)
+        records = request.dbsession.query(models.AffaireNumero).filter(
+            models.AffaireNumero.affaire_id == affaire_id).filter(models.AffaireNumero.numero_id.in_(numeros)).all()
+
+        with transaction.manager:
+            for rec in records:
+                rec.actif = False
+                rec.affaire_destination_id = affaire_destination_id
 
 

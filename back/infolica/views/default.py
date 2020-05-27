@@ -54,6 +54,8 @@ def test_error(exc, request):
 @view_config(route_name='courrier_affaire', request_method='OPTIONS', renderer='json')
 @view_config(route_name='courrier_affaire_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='delete_affaire_document', request_method='OPTIONS', renderer='json')
+@view_config(route_name='numeros', request_method='OPTIONS', renderer='json')
+@view_config(route_name='numeros_s', request_method='OPTIONS', renderer='json')
 def options_response_view(request):
     return ''
 
@@ -63,7 +65,6 @@ def options_response_view(request):
 ########################################################
 @view_config(context=Exception, renderer='json')
 def general_error(exc, request):
-    return 'okkkk'
     log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
     request.response.status = 500
     return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
