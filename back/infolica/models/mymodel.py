@@ -575,6 +575,8 @@ class VNumerosAffaires(Base):
     numero_id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger, primary_key=True)
     affaire_numero_type_id = Column(BigInteger)
+    affaire_numero_actif = Column(Boolean)
+    affaire_destination_id = Column(BigInteger)
     affaire_nom = Column(Text)
     affaire_type = Column(Text)
     affaire_date = Column(Date)

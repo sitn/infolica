@@ -176,11 +176,60 @@ export default {
           }
         ).then(response => {
           if (response && response.data) {
-            this.setAffaire();
+            this.validateAffaireEtatNumeros();
           }
         }).catch(err => {
           handleException(err, this);
         });
+    },
+
+
+    /**
+     * Valider les état des numéros de l'affaire
+     */
+    validateAffaireEtatNumeros(){
+      var nums = this.$refs.numerosAffaire.affaire_numeros_nouveaux;
+      let _this = this;
+      var promises = [];
+
+      nums.forEach((num) => {
+        if(num.affaire_numero_actif)
+          promises.push(this.validateOneAffaireEtatNumeros(num.numero_id));
+      });
+
+      Promise.all(promises)
+      .then(response => {
+        if (response) {
+          _this.setAffaire(); 
+          _this.$root.$emit("ShowMessage", "L'affaire " + this.affaire.id + " a été clôturées avec succès");         
+        }
+      })
+      .catch(err => {
+        handleException(err, this);
+      });
+    },
+
+
+    /**
+     * Add affaire numero
+     */
+    validateOneAffaireEtatNumeros(num){
+      var formData = new FormData();
+      formData.append("etat_id", process.env.VUE_APP_NUMERO_VIGUEUR_ID); 
+        
+      return new Promise((resolve, reject) => {
+        var url = process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ENDPOINT + "?id=" + num;
+        this.$http.put(
+          url, 
+          formData,
+          {
+            withCredentials: true,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+          }
+        )
+        .then(response => resolve(response))
+        .catch((err) => reject(err))
+      });
     },
 
     /**

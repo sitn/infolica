@@ -38,7 +38,7 @@
                                     <!-- Tableau des numéros concernés par l'affaire -->
                                     <div v-if="affaire_numeros_anciens[0]" class="scrollbar">
                                         <md-table v-model="affaire_numeros_anciens" md-sort="id" md-sort-order="desc">
-                                            <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                            <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif }">
                                                 <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
                                                     {{ item.numero_id }}
                                                 </md-table-cell>
@@ -56,8 +56,11 @@
                                                 <md-table-cell md-label="Etat" md-sort-by="numero_etat">
                                                     {{ item.numero_etat }}
                                                 </md-table-cell>
-                                                <md-table-cell class="actionsColumn" v-if="!affaireReadonly">
-                                                    <md-button class="md-icon-button md-dense md-accent"
+                                                <md-table-cell md-label="Repris par">    
+                                                    <a v-bind:href="item.affaire_destination_href" target="_blank"> {{item.affaire_destination_id }}</a>
+                                                </md-table-cell>
+                                                <md-table-cell class="actionsColumn">
+                                                    <md-button class="md-icon-button md-dense md-accent" v-if="!affaireReadonly && item.affaire_numero_actif"
                                                         v-on:click="onDeleteReferenceNumero(item)">
                                                         <md-icon>delete</md-icon>
                                                     </md-button>
@@ -101,7 +104,7 @@
                                     <div v-if="affaire_numeros_nouveaux[0]" class="scrollbar">
                                         <md-table v-model="affaire_numeros_nouveaux" md-sort="numero_etat"
                                             md-sort-order="desc">
-                                            <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                            <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif || !item.active }">
                                                 <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
                                                     {{ item.numero_id }}
                                                 </md-table-cell>
@@ -124,21 +127,24 @@
                                                         {{ item.numero_base_suffixe }}</span>
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Projet" class="actionsColumn">
-                                                    <md-switch v-model="item.active"
+                                                    <md-switch v-model="item.active" v-if="!affaireReadonly && item.affaire_numero_actif"
                                                         @change="onDeleteReserveNumero(item.numero_id)"
                                                         class="md-primary md-dense">
                                                     </md-switch>
                                                 </md-table-cell>
+                                                <md-table-cell md-label="Repris par">    
+                                                    <a v-bind:href="item.affaire_destination_href" target="_blank"> {{item.affaire_destination_id }}</a>
+                                                </md-table-cell>
                                                 <md-table-cell md-label="Mat diff" class="actionsColumn">
                                                     <!-- Si le numéro est différé -->
-                                                    <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null">
-                                                        <md-button v-if="item.numero_type==='Bien-fonds'"  @click="doUpdateDiffererNumero(item)"
+                                                    <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif">
+                                                        <md-button v-if="item.numero_type==='Bien-fonds'"  @click="doUpdateDiffererNumero(item)" 
                                                             class="md-accent md-raised md-icon-button md-dense">
                                                             <md-icon>access_time</md-icon>
                                                         </md-button>
                                                     </div>
                                                     <!-- Si le numéro n'est pas différé -->
-                                                    <div v-if="item.numero_diff_entree === null && item.numero_diff_sortie === null">
+                                                    <div v-if="item.numero_diff_entree === null && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif">
                                                         <md-button v-if="item.numero_type==='Bien-fonds'"
                                                             class="md-primary md-icon-button md-dense" @click="doCreateDiffererNumero(item)">
                                                             <md-icon>access_time</md-icon>

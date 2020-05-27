@@ -38,6 +38,10 @@ export default {
       .then(response =>{
         if (response && response.data) {
           this.types_modifs_affaire_list = response.data;
+          
+          if(this.types_modifs_affaire_list && this.types_modifs_affaire_list.length > 0){
+            this.type_modif_affaire = this.types_modifs_affaire_list[0].id;
+          }
         }
       })
       //Error 
@@ -54,7 +58,7 @@ export default {
         .get(
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
-            this.$route.params.id,
+            this.$route.params.id + "?affaire_numero_actif=true",
           {
             withCredentials: true,
             headers: { Accept: "application/json" }
@@ -62,16 +66,16 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
-            this.affaire_numeros_all = response.data;
+           this.affaire_numeros_all = response.data;
             this.affaire_numeros_nouveaux = response.data.filter(
-              x => x.affaire_numero_type_id === Number(process.env.VUE_APP_NUMERO_AFFAIRE_TYPE_NOUVEAU_ID)
+              x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID)
             );
             this.affaire_numeros_anciens = response.data.filter(
-              x => x.affaire_numero_type_id === Number(process.env.VUE_APP_NUMERO_AFFAIRE_TYPE_ANCIEN_ID)
+              x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID)
             );
             this.affaire_numeros_nouveaux.forEach(function(element) {
-              if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_AFFAIRE_TYPE_ABONDONNE_ID)) element.active = false;
-              else if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_AFFAIRE_TYPE_PROJET_ID)) element.active = true;
+              if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)) element.active = false;
+              else if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_PROJET_ID)) element.active = true;
             });
           }
         })
@@ -180,7 +184,13 @@ export default {
         })
         .then(response => {
           if (response && response.data) {
-            _this.addAffaireNumerosAll(id_affaire_fille);
+            this.deactivateAffaireNumeros(id_affaire_fille)
+            .then(function(){
+              _this.addAffaireNumerosAll(id_affaire_fille);
+            })
+            .catch(err => {
+              handleException(err, _this);
+            });            
           }
         })
         .catch(err => {
@@ -196,17 +206,19 @@ export default {
       var promises = [];
 
       this.selectedAnciensNumeros.forEach((num) => {
-          promises.push(this.addAffaireNumero(id_affaire_fille, num, process.env.VUE_APP_NUMERO_AFFAIRE_TYPE_ANCIEN_ID));
+          promises.push(this.addAffaireNumero(id_affaire_fille, num, process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID));
       });
 
       this.selectedNouveauxNumeros.forEach((num) => {
-          promises.push(this.addAffaireNumero(id_affaire_fille, num, process.env.VUE_APP_NUMERO_AFFAIRE_TYPE_NOUVEAU_ID));
+          promises.push(this.addAffaireNumero(id_affaire_fille, num, process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID));
       });
 
       Promise.all(promises)
       .then(response => {
         if (response) {
           _this.$root.$emit("ShowMessage", "L'affaire a été dupliquée avec succès");
+          _this.$root.$emit("UpdateNumerosAffaires");
+          this.searchAffaireNumeros();
         }
       })
       .catch(err => {
@@ -222,7 +234,7 @@ export default {
       formData.append("affaire_id", id_affaire_fille);
       formData.append("numero_id", numero_id);
       formData.append("type_id", type_id);
-      formData.append("modifie", false);    
+      formData.append("actif", true);    
         
       return new Promise((resolve, reject) => {
         var url = process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT;
@@ -236,11 +248,44 @@ export default {
       });
     },
 
+    
+    /**
+     * Deactivate numero_affaire in source affaire 
+     **/ 
+    deactivateAffaireNumeros(id_affaire_fille){
+      var numeros = [];
+      this.selectedAnciensNumeros.forEach((num) => {
+         numeros.push(num);
+      });
+
+      this.selectedNouveauxNumeros.forEach((num) => {
+        numeros.push(num);
+      });
+
+      if(numeros.length > 0){
+        var formData = new FormData();
+        formData.append("affaire_id", this.affaire.id);
+        formData.append("affaire_destination_id", id_affaire_fille);
+        formData.append("numeros", JSON.stringify(numeros)); 
+          
+        return new Promise((resolve, reject) => {
+          var url = process.env.VUE_APP_API_URL + process.env.VUE_APP_DESACTIVER_AFFAIRE_NUMEROS_ENDPOINT;
+          this.$http
+          .post(url, formData, {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          })
+          .then(response => resolve(response))
+          .catch((err) => reject(err))
+        });
+      }
+    },
+
     /**
      * Récupérer la sélection des anciens numéros
      */
     onSelectNumsAnciens(items) {
-      this.selectedAnciensNumeros = items.map(x => (x.numero));
+      this.selectedAnciensNumeros = items.map(x => (x.numero_id));
     },
 
 
@@ -248,7 +293,7 @@ export default {
      * Récupérer la sélection des nouveaux numéros
      */
     onSelectNumsNouveux(items) {
-      this.selectedNouveauxNumeros = items.map(x => (x.numero));
+      this.selectedNouveauxNumeros = items.map(x => (x.numero_id));
     }
   },
 
