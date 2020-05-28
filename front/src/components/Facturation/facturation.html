@@ -87,6 +87,7 @@
 
                         <md-field :class="getValidationClass('montant_mo')">
                             <label>Montant MO *</label>
+                            <span class="md-prefix">CHF</span>
                             <md-input class="currency" v-model="selectedFacture.montant_mo" v-on:keyup="computeTotal()"
                                 type="number" min="0.00" step="0.05"></md-input>
                                 <span class="md-error" v-if="!$v.selectedFacture.montant_mo.required">Le montant MO est obligatoire</span>
@@ -94,6 +95,7 @@
 
                         <md-field :class="getValidationClass('montant_mat_diff')">
                             <label>Montant mat diff *</label>
+                            <span class="md-prefix">CHF</span>
                             <md-input class="currency" v-model="selectedFacture.montant_mat_diff"
                                 v-on:keyup="computeTotal()" type="number" min="0.00" step="0.05"></md-input>
                                 <span class="md-error" v-if="!$v.selectedFacture.montant_mat_diff.required">Le montant mat diff est obligatoire</span>
@@ -101,6 +103,7 @@
 
                         <md-field :class="getValidationClass('montant_rf')">
                             <label>Montant RF *</label>
+                            <span class="md-prefix">CHF</span>
                             <md-input class="currency" v-model="selectedFacture.montant_rf" v-on:keyup="computeTotal()"
                                 type="number" min="0.00" step="0.05"></md-input>
                                 <span class="md-error" v-if="!$v.selectedFacture.montant_rf.required">Le montant RF est obligatoire</span>
@@ -108,6 +111,7 @@
 
                         <md-field :class="getValidationClass('montant_tva')">
                             <label>TVA *</label>
+                            <span class="md-prefix">CHF</span>
                             <md-input class="currency" v-model="selectedFacture.montant_tva" v-on:keyup="computeTotal()"
                                 type="number" min="0.00" step="0.05"></md-input>
                                 <span class="md-error" v-if="!$v.selectedFacture.montant_tva.required">Le montant de TVA est obligatoire</span>
@@ -115,6 +119,7 @@
 
                         <md-field>
                             <label>Total</label>
+                            <span class="md-prefix">CHF</span>
                             <md-input class="currency" v-model="selectedFacture.montant_total" type="number" min="0.00"
                                 step="0.05" readonly></md-input>
                         </md-field>
