@@ -91,7 +91,7 @@
                                             <div class="md-title">Immeubles réservés</div>
                                         </div>
                                         <div class="md-layout md-alignment-bottom-right">
-                                            <md-button class="md-primary" v-on:click="callCreateQuittancePCOP" v-if="!affaireReadonly">
+                                            <md-button class="md-primary" v-on:click="callOpenQuittancePCOPDialog" v-if="!affaireReadonly">
                                                 Quittance PCOP
                                             </md-button>
                                             <md-button class="md-primary" v-on:click="callOpenReservationDialog" v-if="!affaireReadonly">
@@ -216,5 +216,10 @@
     <ReferenceNumeros ref="formReference" />
     <!-- Réservation de numéros -->
     <ReservationNumeros ref="formReservation" />
+    <!-- Quittance pour les numéros de parts de copropriété réservés -->
+    <QuittancePCOP :affaire="affaire" 
+                   :affaire_numeros_anciens="affaire_numeros_anciens" 
+                   :affaire_numeros_nouveaux="affaire_numeros_nouveaux"
+                   ref="formQuittancePCOP"/>
 
 </div>

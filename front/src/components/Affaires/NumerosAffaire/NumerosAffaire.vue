@@ -7,15 +7,19 @@ import { handleException } from "@/services/exceptionsHandler";
 import { getCurrentDate, checkPermission } from "@/services/helper";
 import ReferenceNumeros from "@/components/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/ReservationNumeros/ReservationNumeros.vue";
+import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue"
 
 const moment = require("moment");
 
 export default {
   name: "NumerosAffaire",
-  props: {},
+  props: {
+    affaire: {}
+  },
   components: {
     ReferenceNumeros,
-    ReservationNumeros
+    ReservationNumeros,
+    QuittancePCOP
   },
   data: () => {
     return {
@@ -28,6 +32,7 @@ export default {
       showNumerosMO: true,
       affaireReadonly: true,
       numerosMoLoading: true,
+      showQuittancePCOPDialog: false,
     };
   },
 
@@ -268,6 +273,13 @@ export default {
     },
 
     /**
+     * Ouvrir le dialog de quittance de réservation de PCOP
+     */
+    callOpenQuittancePCOPDialog() {
+      this.$refs.formQuittancePCOP.openQuittancePCOPDialog()
+    },
+
+    /**
      * Créer Différer un numéro
      */
     doCreateDiffererNumero(numero) {
@@ -344,84 +356,6 @@ export default {
           handleException(err, this);
         });
     },
-
-    /**
-     * Créer la quittance de création de parts de copropriétés
-     */
-    callCreateQuittancePCOP() {
-      var formData = new FormData();
-      formData.append("template", "TEST");
-      formData.append(
-        "values",
-        JSON.stringify({
-          VREF: "VREF_test",
-          NREF: "NREF_test"
-        })
-      );
-
-      this.$http
-        .post(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/html" }
-          }
-        )
-        .then(response => {
-          if (response && response.data) {
-            this.downloadQuittancePCOP(response.data.filename);
-            this.deleteQuittancePCOP(response.data.filename);
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
-    },
-
-    /**
-     * Download QuittancePCOP
-     */
-    downloadQuittancePCOP(filename) {
-      var url =
-        process.env.VUE_APP_API_URL +
-        process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
-        "?filename=" +
-        filename;
-      let routeData = this.$router.resolve(url);
-      window.open(routeData.href, '_blank');
-    },
-
-    /**
-     * Delete quittancePCOP
-     */
-    deleteQuittancePCOP(filename) {
-      this.$http
-        .delete(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
-            "?filename=" +
-            filename,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/html" }
-          }
-        )
-        .then(response => {
-          if (response && response.data) {
-            this.$root.$emit(
-              "ShowMessage",
-              "Le fichier '" +
-                filename +
-                "' se trouve dans le dossier 'Téléchargement'"
-            );
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
-    }
   },
   mounted: function() {
     this.searchAffaireNumeros();

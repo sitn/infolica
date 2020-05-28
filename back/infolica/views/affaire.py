@@ -214,7 +214,10 @@ def courrier_affaire_view(request):
 
     # Replace values by keywords
     for att in values_json:
-        template_html = template_html.replace(att, values_json[att])
+        tmp = values_json[att]
+        if tmp is None:
+            tmp = ''
+        template_html = template_html.replace(att, tmp)
 
     # Fill content of html file
     main_html = main_html.replace('CONTENU_DYNAMIQUE', template_html)

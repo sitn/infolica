@@ -146,3 +146,15 @@ export const getCurrentDate = function () {
         ("0" + today.getDate()).slice(-2) + "." + ("0" + (today.getMonth() + 1)).slice(-2) + "." + today.getFullYear();
     return date
 };
+
+/**
+ * Prépare la liste pour le md-complete
+ */
+export const stringifyAutocomplete = function(liste) {
+    return liste.map(x => ({
+        id: x.id,
+        nom: x.nom,
+        toString: () => x.nom.toString(),
+        toLowerCase: () => x.nom.toLowerCase()
+    }))
+}
