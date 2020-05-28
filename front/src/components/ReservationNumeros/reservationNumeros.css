@@ -36,4 +36,5 @@
 /* Correction à l'affichage du md-dialog */
 .md-dialog /deep/ .md-dialog-container {
     width: 770px;
+    transform: none;
 }

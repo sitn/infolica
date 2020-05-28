@@ -230,7 +230,7 @@ def courrier_affaire_view(request):
 
 
 """
-Send and delete PDF file
+Send PDF file
 """
 @view_config(route_name='courrier_affaire', request_method='GET')
 @view_config(route_name='courrier_affaire_s', request_method='GET')

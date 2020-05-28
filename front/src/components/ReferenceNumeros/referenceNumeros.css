@@ -13,3 +13,7 @@
 .md-dialog {
     z-index: 6;
 }
+
+.md-dialog /deep/ .md-dialog-container {
+    transform: none;
+}

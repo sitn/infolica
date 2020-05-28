@@ -30,6 +30,9 @@
     position: absolute;
 }
 
+.md-dialog /deep/ .md-dialog-container {
+    transform: none;
+}
 
 /* display autocomplete options in front of dialog -- NE FONCTIONNE PAS! */ 
 /* .md-menu-content {
