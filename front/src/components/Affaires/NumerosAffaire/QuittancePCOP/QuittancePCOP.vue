@@ -91,12 +91,12 @@ export default {
      * Récupère les nouveaux numéros de type PCOP
      */
     getNumerosReservesPCOP() {
-      this.numeros_pcop = this.affaire_numeros_nouveaux.filter(x => x.numero_type_id===Number(process.env.VUE_APP_NUMERO_TYPE_PCOP));
+      this.numeros_pcop = this.affaire_numeros_nouveaux.filter(x => x.numero_type_id===Number(process.env.VUE_APP_NUMERO_TYPE_PCOP) && x.active);
       this.numeros_base = [];
       var tmp = [];
       // Get set of unique BF base
       this.affaire_numeros_nouveaux.map(x => {
-        if (!tmp.includes(x.numero_base_id) && x.numero_base_id !== null){
+        if (!tmp.includes(x.numero_base_id) && x.numero_base_id !== null && x.active){
           tmp.push(x.numero_base_id);
           this.numeros_base.push({numero_base: x.numero_base, numero_base_id: x.numero_base_id});
         }
@@ -108,7 +108,7 @@ export default {
      */
     updateNumerosPCOP() {
       const tmp = []
-      this.affaire_numeros_nouveaux.filter(x => x.numero_base === this.form.bfBase).map(x => tmp.push(x.numero));
+      this.affaire_numeros_nouveaux.filter(x => x.numero_base === this.form.bfBase).map(x => {if (x.active) tmp.push(x.numero)});
       this.form.numeros_de = Math.min(...tmp);
       this.form.numeros_a = Math.max(...tmp);
     },

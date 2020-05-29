@@ -86,7 +86,7 @@
             </md-card-header>
 
             <md-card-content>
-                <md-table v-model="numero_affaires" md-sort="affaire_date" md-sort-order="desc">
+                <md-table v-model="numero_affaires" md-sort="affaire_date" md-sort-order="desc" md-fixed-header>
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell md-label="Index" md-sort-by="cadastre">{{ item.affaire_id }}</md-table-cell>
                         <md-table-cell md-label="Affaire" md-sort-by="suffixe">{{ item.affaire_nom }}</md-table-cell>
@@ -94,7 +94,7 @@
                         <md-table-cell md-label="Informations" md-sort-by="type">{{ item.affaire_information }}</md-table-cell>
                         <md-table-cell md-label="Date" md-sort-by="date">{{ item.affaire_date | formatDate }}</md-table-cell>
                         <md-table-cell md-label="Actions" class="actionsColumn">
-                            <md-button class="md-icon-button md-raised md-primary" v-on:click="doOpenAffaire(item.affaire_id)">
+                            <md-button class="md-icon-button md-primary" v-on:click="doOpenAffaire(item.affaire_id)">
                                 <md-icon>open_in_new</md-icon>
                             </md-button>
                         </md-table-cell>

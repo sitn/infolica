@@ -144,7 +144,7 @@ export default {
       if (this.affaire.responsable_id) formData.append("responsable_id", this.affaire.responsable_id);
       if (this.affaire.technicien_id) formData.append("technicien_id", this.affaire.technicien_id);
       if (this.affaire.cadastre_id !== null && this.affaire.cadastre_id !== undefined) formData.append("cadastre_id", this.affaire.cadastre_id);
-      if (this.affaire.information) formData.append("information", this.affaire.information);
+      if (this.affaire.information) formData.append("information", "Provient de l'affaire " + String(this.affaire.id) + " / " + this.affaire.information);
       if (this.affaire.localisation_E !== null && this.affaire.localisation_E !== undefined) formData.append("localisation_E", this.affaire.localisation_E); else formData.append("localisation_E", 0);
       if (this.affaire.localisation_N !== null && this.affaire.localisation_N !== undefined) formData.append("localisation_N", this.affaire.localisation_N); else formData.append("localisation_N", 0);
       if (this.affaire.vref) formData.append("vref", this.affaire.vref);

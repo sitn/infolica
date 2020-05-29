@@ -36,8 +36,8 @@
                                     </div>
 
                                     <!-- Tableau des numéros concernés par l'affaire -->
-                                    <div v-if="affaire_numeros_anciens[0]" class="scrollbar">
-                                        <md-table v-model="affaire_numeros_anciens" md-sort="id" md-sort-order="desc">
+                                    <div v-if="affaire_numeros_anciens[0]">
+                                        <md-table v-model="affaire_numeros_anciens" md-sort="id" md-sort-order="desc" md-fixed-header>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif }">
                                                 <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
                                                     {{ item.numero_id }}
@@ -101,9 +101,9 @@
                                     </div>
 
                                     <!-- Tableau des numéros réservés dans l'affaire -->
-                                    <div v-if="affaire_numeros_nouveaux[0]" class="scrollbar">
+                                    <div v-if="affaire_numeros_nouveaux[0]">
                                         <md-table v-model="affaire_numeros_nouveaux" md-sort="numero_etat"
-                                            md-sort-order="desc">
+                                            md-sort-order="desc" md-fixed-header>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif || !item.active }">
                                                 <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
                                                     {{ item.numero_id }}
@@ -173,7 +173,7 @@
                                     </div>
                                     <div v-else>
                                         <div v-if="affaire_numeros_nouveaux_mo[0]">
-                                            <md-table v-model="affaire_numeros_nouveaux_mo" md-sort="cadastre_id" md-sort-order="desc">
+                                            <md-table v-model="affaire_numeros_nouveaux_mo" md-sort="cadastre_id" md-sort-order="desc" md-fixed-header>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                                 <md-table-cell md-label="Cadastre" md-sort-by="cadastre">
                                                     {{ item.cadastre }}

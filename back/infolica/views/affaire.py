@@ -16,9 +16,9 @@ from datetime import datetime
 # AFFAIRE
 ###########################################################
 
-""" Return all affaires"""
-
-
+""" 
+Return all affaires
+"""
 @view_config(route_name='affaires', request_method='GET', renderer='json')
 @view_config(route_name='affaires_s', request_method='GET', renderer='json')
 def affaires_view(request):
@@ -30,9 +30,9 @@ def affaires_view(request):
     return Utils.serialize_many(query)
 
 
-""" Return affaires by id"""
-
-
+""" 
+Return affaires by id
+"""
 @view_config(route_name='affaire_by_id', request_method='GET', renderer='json')
 def affaire_by_id_view(request):
     # Check connected
@@ -45,9 +45,9 @@ def affaire_by_id_view(request):
     return Utils.serialize_one(one)
 
 
-""" Search affaires"""
-
-
+""" 
+Search affaires
+"""
 @view_config(route_name='recherche_affaires', request_method='POST', renderer='json')
 @view_config(route_name='recherche_affaires_s', request_method='POST', renderer='json')
 def affaires_search_view(request):
@@ -64,7 +64,9 @@ def affaires_search_view(request):
     return Utils.serialize_many(query)
 
 
-""" Return all types affaires"""
+""" 
+Return all types affaires
+"""
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
 @view_config(route_name='types_affaires_s', request_method='GET', renderer='json')
 def types_affaires_view(request):
@@ -79,7 +81,9 @@ def types_affaires_view(request):
     types_affaires = Utils.serialize_many(types_affaires)
     return types_affaires
 
-""" Return all types modification affaire"""
+""" 
+Return all types modification affaire
+"""
 @view_config(route_name='types_modification_affaire', request_method='GET', renderer='json')
 @view_config(route_name='types_modification_affaire_s', request_method='GET', renderer='json')
 def types_modification_affaire_view(request):
@@ -95,9 +99,9 @@ def types_modification_affaire_view(request):
     return types_affaires
 
 
-""" Add new affaire"""
-
-
+""" 
+Add new affaire
+"""
 @view_config(route_name='affaires', request_method='POST', renderer='json')
 @view_config(route_name='affaires_s', request_method='POST', renderer='json')
 def affaires_new_view(request):
@@ -142,7 +146,9 @@ def affaires_new_view(request):
 
 
 
-""" Update affaire"""
+""" 
+Update affaire
+"""
 @view_config(route_name='affaires', request_method='PUT', renderer='json')
 @view_config(route_name='affaires_s', request_method='PUT', renderer='json')
 def affaires_update_view(request):

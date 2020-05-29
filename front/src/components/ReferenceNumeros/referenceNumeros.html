@@ -92,7 +92,7 @@
                     <!-- Afficher le tableau des immeubles si la liste est non nulle -->
                     <div v-if="numeros_liste.length>0">
                         <!-- Table des biens-fonds -->
-                        <md-table v-model="numeros_liste" md-sort="numero" md-sort-order="desc" @md-selected="onSelect">
+                        <md-table v-model="numeros_liste" md-sort="numero" md-sort-order="desc" @md-selected="onSelect" md-fixed-header>
                             <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple"
                                 class="md-primary md-raised" md-auto-select>
                                 <md-table-cell md-label="Cadastre" md-sort-by="cadastre">

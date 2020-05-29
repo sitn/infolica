@@ -44,7 +44,7 @@
 
 
                     <div v-if="affaire_remarques[0]">
-                        <md-table v-model="affaire_remarques" md-sort="id" md-sort-order="desc">
+                        <md-table v-model="affaire_remarques" md-sort="id" md-sort-order="desc" md-fixed-header>
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                 <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                                 <md-table-cell md-label="Opérateur" md-sort-by="nom">{{ item.prenom }} {{ item.nom }}
