@@ -57,3 +57,7 @@ input[type=number] {
 .md-dialog /deep/ .md-dialog-container {
     transform: none;
 }
+
+.buttonRightAlign {
+    text-align: right;
+}
