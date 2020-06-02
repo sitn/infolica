@@ -44,13 +44,13 @@
 
 
                     <div v-if="affaire_remarques[0]">
-                        <md-table v-model="affaire_remarques" md-sort="id" md-sort-order="desc" md-fixed-header>
+                        <md-table v-model="affaire_remarques" md-sort="id" md-sort-order="desc" md-fixed-header md-card>
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                 <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
-                                <md-table-cell md-label="Opérateur" md-sort-by="nom">{{ item.prenom }} {{ item.nom }}
+                                <md-table-cell md-label="Opérateur" md-sort-by="nom" style="width: 15%;">{{ item.prenom }} {{ item.nom }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Date" md-sort-by="date">{{ item.date | formatDate }}</md-table-cell>
-                                <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}
+                                <md-table-cell md-label="Date" md-sort-by="date" style="width: 10%;">{{ item.date | formatDate }}</md-table-cell>
+                                <md-table-cell md-label="Remarque" md-sort-by="remarque" style="width: 75%;">{{ item.remarque }}
                                 </md-table-cell>
                             </md-table-row>
                         </md-table>

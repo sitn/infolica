@@ -42,7 +42,7 @@
                                         </md-autocomplete>
                                     </div>
                                     <div class="md-layout-item md-size-50">
-                                        <md-datepicker v-model="suiviMandat.av_33">
+                                        <md-datepicker v-model="suiviMandat.av_33" md-immediately>
                                             <label>Date de la vérification</label>
                                         </md-datepicker>
                                     </div>
@@ -83,9 +83,9 @@
                                 </md-field>
                                 </md-field>
 
-                                <md-checkbox class="md-primary" v-model="suiviMandat.pdt_31">
+                                <!-- <md-checkbox class="md-primary" v-model="suiviMandat.pdt_31">
                                     Matérialisation différée (copie du plan de mutation)
-                                </md-checkbox>
+                                </md-checkbox> -->
 
                                 <md-checkbox class="md-primary" v-model="suiviMandat.pdt_41">
                                     Contrôle de l'enregistrement de tous les documents (courriel, courrier, préavis, plan, etc.)
@@ -136,7 +136,7 @@
                                         </md-autocomplete>
                                     </div>
                                     <div class="md-layout-item md-size-50">
-                                        <md-datepicker v-model="suiviMandat.ap_33">
+                                        <md-datepicker v-model="suiviMandat.ap_33" md-immediately>
                                             <label>Date de la vérification</label>
                                         </md-datepicker>
                                     </div>

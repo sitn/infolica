@@ -22,10 +22,9 @@
 
                 <md-card-content>
                     <div v-if="documents[0]">
-                        <md-table v-model="documents" md-sort="" md-sort-order="desc" md-fixed-header>
+                        <md-table v-model="documents" md-sort="" md-sort-order="desc" md-fixed-header md-card>
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                 <md-table-cell md-label="Nom" md-sort-by="nom">{{ item.nom }}</md-table-cell>
-                                <!-- <md-table-cell md-label="Dossier" md-sort-by="dossier">{{ item.dossier }}-->
                                 </md-table-cell>
                                 <md-table-cell md-label="Type" md-sort-by="type_doc">{{ item.type_doc }}
                                 </md-table-cell>

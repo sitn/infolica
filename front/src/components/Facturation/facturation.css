@@ -3,10 +3,6 @@
     float: left;
 }
 
-.facturation .alignRight {
-    text-align: right;
-}
-
 .facturation .actionsColumn {
     width: 150px !important;
     min-width: 150px !important;
@@ -18,11 +14,12 @@
 }
 
 .md-dialog {
-    z-index: 6; /* Le dialogue apparaît sous le div de suggestions du md-autocomplete pour la recherche de clients*/
+    z-index: 6;
+    /* Le dialogue apparaît sous le div de suggestions du md-autocomplete pour la recherche de clients*/
 }
 
 .md-dialog .currency {
-    text-align: right;
+    text-align: right !important;
 }
 
 .facturation .newFactureBtn {
@@ -34,7 +31,8 @@
     transform: none;
 }
 
-/* display autocomplete options in front of dialog -- NE FONCTIONNE PAS! */ 
+/* display autocomplete options in front of dialog -- NE FONCTIONNE PAS! */
+
 /* .md-menu-content {
     z-index: 10000;
     width: 500px;

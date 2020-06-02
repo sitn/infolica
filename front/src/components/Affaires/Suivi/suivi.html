@@ -9,7 +9,7 @@
                         <md-icon>keyboard_arrow_down</md-icon>
                     </md-button>
                 </md-card-expand-trigger>
-                Étapes réalisées
+                Historique de l'affaire
                 <md-button class="md-primary newEtapeBtn" v-on:click="showEtapeDialog = !showEtapeDialog"
                     v-if="showNewEtapeBtn && !affaireReadonly">
                     Nouvelle étape</md-button>
@@ -24,11 +24,11 @@
                         <md-table v-model="affaire_suivi" md-sort="date_etape" md-sort-order="desc" md-fixed-header md-card>
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                 <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
-                                <md-table-cell md-label="Étape" md-sort-by="etape">{{ item.etape }}
+                                <md-table-cell md-label="Étape" md-sort-by="etape" style="width: 30%;">{{ item.etape }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Date" md-sort-by="date_etape">{{ item.date_etape | formatDate }}
+                                <md-table-cell md-label="Date" md-sort-by="date_etape"  style="width: 20%;">{{ item.date_etape | formatDate }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}
+                                <md-table-cell md-label="Remarque" md-sort-by="remarque" style="width: 50%;">{{ item.remarque }}
                                 </md-table-cell>
                             </md-table-row>
                         </md-table>
