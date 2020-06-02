@@ -54,7 +54,7 @@ def upload_affaire_document_view(request):
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
 
     # Create affaire folder if does not exist
-    affaire_folder = request.registry.settings['upload_files_directory'] + '/' + affaire_id
+    affaire_folder = os.path.join(request.registry.settings['upload_files_directory'], affaire_id)
     Utils.create_affaire_folder(affaire_folder)
     fileslist = [request.POST[x] for x in request.POST if x.startswith('affaire_doc_files')]
 
@@ -70,7 +70,7 @@ def upload_affaire_document_view(request):
             model = Utils.set_model_record(models.Document(), request.params)
 
             setattr(model, 'nom', filename)
-            setattr(model, 'chemin', affaire_id + '\\' + filename)
+            setattr(model, 'chemin', os.path.join(affaire_id, filename))
 
             request.dbsession.add(model)
 
@@ -92,14 +92,15 @@ def download_affaire_document_view(request):
     filename = request.params['filename']
 
     if affaire_id:
-        file_path = upload_files_directory + '\\' + affaire_id + '\\' + filename
+        file_path = os.path.join(upload_files_directory, affaire_id, filename)
         base_file_name = os.path.basename(file_path)
 
+    import urllib
     response = FileResponse(file_path, request=request, cache_max_age=86400)
     headers = response.headers
     headers['Content-Type'] = 'application/download'
     headers['Accept-Ranges'] = 'bite'
-    headers['Content-Disposition'] = 'attachment;filename=' + base_file_name
+    headers['Content-Disposition'] = 'attachment;filename=' + urllib.parse.quote(base_file_name)
     return response
 
 
@@ -115,7 +116,7 @@ def delete_affaire_document_view(request):
     id_doc = request.params['id']
     affaire_id = request.params['affaire_id']
     filename = request.params['nom']
-    file_path = upload_files_directory + '\\' + affaire_id + '\\' + filename
+    file_path = os.path.join(upload_files_directory, affaire_id, filename)
 
     # Delete file from folder
     os.remove(file_path)

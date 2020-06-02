@@ -139,8 +139,9 @@ export default {
     /**
      * Download file
     */
-    downloadFile(affaire_id, filename) {
-      window.open(process.env.VUE_APP_AFFAIRE_DOWNLOAD_DOCUMENTS_ENDPOINT + '?affaire_id=' + affaire_id + '&filename=' + filename);
+    downloadFile(item) {
+      let affaire_id = this.$route.params.id;
+      window.open(process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_DOWNLOAD_DOCUMENT_ENDPOINT + '?affaire_id=' + affaire_id + '&filename=' + item.nom);
     },
 
     /**

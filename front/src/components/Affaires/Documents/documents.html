@@ -31,8 +31,8 @@
                                 <md-table-cell md-label="Création" md-sort-by="creation">{{ item.creation }}
                                 </md-table-cell>
                                 <md-table-cell md-label="Actions" class="actionsCol" v-if="!affaireReadonly">
-                                    <md-button class="md-icon-button md-dense md-primary">
-                                        <a target="_blank" :href="'http://localhost:6543/infolica/api/download_affaire_document?filename=' + item.nom + '&affaire_id=' + item.affaire_id"><md-icon>save_alt</md-icon></a>
+                                    <md-button class="md-icon-button md-dense md-primary" @click="downloadFile(item)">
+                                        <md-icon>save_alt</md-icon>
                                     </md-button>
 
                                     <md-button class="md-icon-button md-dense md-accent" v-on:click="callDeleteDoc(item.id, item.nom, item.affaire_id)">
@@ -51,7 +51,7 @@
         </md-card-expand>
 
     </md-card>
-    
+
     <md-dialog :md-active.sync="showUploadDocsDialog">
         <md-dialog-title>Chargement des documents</md-dialog-title>
         <md-dialog-content style="padding: 0 10px;">
@@ -64,8 +64,8 @@
 
             <md-field class="uploadDocFile">
                 <label>Charger un document</label>
-                <md-file v-model="documentFileName" @md-change="handleFileSelect($event)" placeholder="Charger un document" multiple></md-file>                        
-            </md-field>  
+                <md-file v-model="documentFileName" @md-change="handleFileSelect($event)" placeholder="Charger un document" multiple></md-file>
+            </md-field>
         </md-dialog-content>
 
         <md-dialog-actions>
@@ -81,7 +81,7 @@
           :md-content="deleteDocMessage"
           md-confirm-text="Confirmer"
           md-cancel-text="Annuler"
-          @md-confirm="onConfirmDeleteDoc" 
-          @md-cancel="onCancelDeleteDoc"/>    
+          @md-confirm="onConfirmDeleteDoc"
+          @md-cancel="onCancelDeleteDoc"/>
       </div>
 </div>
