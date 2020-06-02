@@ -201,7 +201,7 @@ class DocumentType(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
 
-class Document(Base):  ## DEPRECIE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+class Document(Base):
     __tablename__ = 'document'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
@@ -749,17 +749,31 @@ class VNumerosRelations(Base):
     numero_associe_plan_id = Column(BigInteger)
     relation_type = Column(Text, primary_key=True)
 
+
+class VDocumentsAffaires(Base):
+    __tablename__ = 'v_documents_affaires'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True)
+    nom = Column(Text)
+    chemin = Column(Text)
+    affaire_id = Column(BigInteger)
+    type_id = Column(BigInteger)
+    type_doc = Column(Text)
+
+
 class Fonction(Base):
     __tablename__ = 'fonction'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
 
+
 class Role(Base):
     __tablename__ = 'role'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
+
 
 class FonctionRole(Base):
     __tablename__ = 'fonction_role'

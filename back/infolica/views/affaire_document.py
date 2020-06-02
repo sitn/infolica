@@ -24,13 +24,13 @@ def affaire_documents_view(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.matchdict['id']
-    query = request.dbsession.query(models.Document).filter(models.Document.affaire_id == affaire_id).all()
+    query = request.dbsession.query(models.VDocumentsAffaires).filter(models.VDocumentsAffaires.affaire_id == affaire_id).all()
     documents = Utils.serialize_many(query)
 
     for doc in documents:
         affaire_id = doc['affaire_id']
         filename = doc['nom']
-        filepath = request.registry.settings['upload_files_directory'] + '\\' + str(affaire_id) + '\\' + filename
+        filepath = os.path.join(request.registry.settings['upload_files_directory'], str(affaire_id), filename)
         doc['creation'] = datetime.fromtimestamp(os.path.getctime(filepath)).strftime("%d.%m.%Y")
 
     return documents
@@ -42,6 +42,7 @@ def affaire_documents_view(request):
 def types_documents_view(request):
     query = request.dbsession.query(models.DocumentType).all()
     return Utils.serialize_many(query)
+
 
 """Upload document"""
 @view_config(route_name='upload_affaire_document', request_method='POST', renderer='json')
@@ -78,6 +79,7 @@ def upload_affaire_document_view(request):
         return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Document.__tablename__))
 
 
+"""Download document"""
 @view_config(route_name='download_affaire_document', request_method='GET')
 @view_config(route_name='download_affaire_document_s', request_method='GET')
 def download_affaire_document_view(request):
@@ -101,6 +103,7 @@ def download_affaire_document_view(request):
     return response
 
 
+"""Delete document"""
 @view_config(route_name='delete_affaire_document', request_method='DELETE', renderer='json')
 def delete_affaire_document_view(request):
     # Check authorization
