@@ -26,15 +26,3 @@
     right: 25px;
     position: absolute;
 }
-
-.md-dialog /deep/ .md-dialog-container {
-    transform: none;
-}
-
-/* display autocomplete options in front of dialog -- NE FONCTIONNE PAS! */
-
-/* .md-menu-content {
-    z-index: 10000;
-    width: 500px;
-    max-width: 500px;
-} */

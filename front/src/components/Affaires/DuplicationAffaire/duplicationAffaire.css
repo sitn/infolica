@@ -2,7 +2,3 @@
     width: 100%;
     float: left;
 }
-
-.md-dialog /deep/ .md-dialog-container {
-    transform: none;
-}

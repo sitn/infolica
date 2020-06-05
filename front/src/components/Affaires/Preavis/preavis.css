@@ -18,6 +18,3 @@
     /* Le dialogue apparaît sous le div de suggestions du md-autocomplete pour la recherche de clients*/
 }
 
-.md-dialog /deep/ .md-dialog-container {
-    transform: none;
-}
