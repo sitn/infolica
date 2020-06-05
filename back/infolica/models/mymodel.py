@@ -735,19 +735,27 @@ class VNumerosRelations(Base):
     __table_args__ = {'schema': 'infolica'}
     numero_base_id = Column(BigInteger, primary_key=True)
     numero_base_cadastre = Column(Text)
+    numero_base_cadastre_id = Column(BigInteger)
     numero_base_type = Column(Text)
+    numero_base_type_id = Column(BigInteger)
     numero_base_numero = Column(BigInteger)
     numero_base_suffixe = Column(Text)
     numero_base_etat = Column(Text)
+    numero_base_etat_id = Column(BigInteger)
     numero_base_plan_id = Column(BigInteger)
     numero_associe_id = Column(BigInteger, primary_key=True)
     numero_associe_cadastre = Column(Text)
+    numero_associe_cadastre_id = Column(BigInteger)
     numero_associe_type = Column(Text)
+    numero_associe_type_id = Column(BigInteger)
     numero_associe_numero = Column(BigInteger)
     numero_associe_suffixe = Column(Text)
     numero_associe_etat = Column(Text)
+    numero_associe_etat_id = Column(BigInteger)
     numero_associe_plan_id = Column(BigInteger)
-    relation_type = Column(Text, primary_key=True)
+    relation_type = Column(Text)
+    relation_type_id = Column(BigInteger, primary_key=True)
+    affaire_id = Column(BigInteger, primary_key=True)
 
 
 class VDocumentsAffaires(Base):

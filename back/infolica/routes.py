@@ -66,6 +66,8 @@ def includeme(config):
     config.add_route('numero_associe_relations_by_id', '/infolica/api/numero_associe_relations/{id}')
     config.add_route('numeros_relations','/infolica/api/numeros_relations')
     config.add_route('numeros_relations_s','/infolica/api/numeros_relations/')
+    config.add_route('numeros_relations_by_numeroBase','/infolica/api/numeros_relations_by_numeroBase_id')
+    config.add_route('numeros_relations_by_numeroBase_s','/infolica/api/numeros_relations_by_numeroBase_id/')
     config.add_route('numeros_differes','/infolica/api/numeros_differes')
     config.add_route('numeros_differes_s','/infolica/api/numeros_differes/')
     #Référence de numéros
