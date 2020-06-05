@@ -15,7 +15,8 @@ import Remarques from "@/components/Affaires/Remarques/Remarques.vue";
 import ControleMutation from "@/components/Affaires/ControleMutation/ControleMutation.vue";
 import ControlePPE from "@/components/Affaires/ControlePPE/ControlePPE.vue";
 import SuiviMandat from "@/components/SuiviMandat/SuiviMandat.vue";
-import {handleException} from '@/services/exceptionsHandler';
+import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
+
 import {checkPermission} from '@/services/helper'
 
 import moment from "moment";
@@ -37,7 +38,8 @@ export default {
     ControleMutation,
     ControlePPE,
     SuiviMandat,
-    DuplicationAffaire
+    DuplicationAffaire,
+    ClotureAffaire,
   },
   data() {
     return {
@@ -48,6 +50,7 @@ export default {
       parentparentAffaireReadOnly: false,
       cloreAffaireEnabled: false,
       duplicationAffaireForm: null
+      // numeros_base_associes = []
     };
   },
 
@@ -157,86 +160,17 @@ export default {
     },
 
     /**
-     * Clore affaire
+     * Cloture affaire
      */
-    cloreAffaire(){
-      var formData = new FormData();
-      formData.append("id_affaire", this.$route.params.id);
-      var date_cloture = moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS);
-      formData.append("date_cloture", date_cloture);
-
-      this.$http
-        .put(
-          process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_AFFAIRES_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: {"Accept": "application/json"}
-          }
-        ).then(response => {
-          if (response && response.data) {
-            this.validateAffaireEtatNumeros();
-          }
-        }).catch(err => {
-          handleException(err, this);
-        });
-    },
-
-
-    /**
-     * Valider les état des numéros de l'affaire
-     */
-    validateAffaireEtatNumeros(){
-      var nums = this.$refs.numerosAffaire.affaire_numeros_nouveaux;
-      let _this = this;
-      var promises = [];
-
-      nums.forEach((num) => {
-        if(num.affaire_numero_actif)
-          promises.push(this.validateOneAffaireEtatNumeros(num.numero_id));
-      });
-
-      Promise.all(promises)
-      .then(response => {
-        if (response) {
-          _this.setAffaire(); 
-          _this.$root.$emit("ShowMessage", "L'affaire " + this.affaire.id + " a été clôturées avec succès");         
-        }
-      })
-      .catch(err => {
-        handleException(err, this);
-      });
-    },
-
-
-    /**
-     * Add affaire numero
-     */
-    validateOneAffaireEtatNumeros(num){
-      var formData = new FormData();
-      formData.append("etat_id", process.env.VUE_APP_NUMERO_VIGUEUR_ID); 
-        
-      return new Promise((resolve, reject) => {
-        var url = process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ENDPOINT + "?id=" + num;
-        this.$http.put(
-          url, 
-          formData,
-          {
-            withCredentials: true,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-          }
-        )
-        .then(response => resolve(response))
-        .catch((err) => reject(err))
-      });
+    callClotureAffaire() {
+      this.$refs.clotureAffaireForm.openClotureDialog();
     },
 
     /**
      * Duplicate affaire
      */
     duplicateAffaire(){
-      this.$refs.duplicationAffaireForm.showDuplicationAffaireForm = true;
+      this.$refs.duplicationAffaireForm.openDuplicationAffaireDialog();
     }
   },
 

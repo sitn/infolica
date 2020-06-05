@@ -21,29 +21,29 @@ def numeros_relations_view(request):
     return Utils.serialize_many(query)
 
 
-""" Return all numeros_relations based on numero_base_id having project or valid numbers defined on it"""
-@view_config(route_name='numeros_relations_by_numeroBase', request_method='POST', renderer='json')
-@view_config(route_name='numeros_relations_by_numeroBase_s', request_method='POST', renderer='json')
-def numeros_relations_by_numeroBase_view(request):
-    # Check connected
-    if not Utils.check_connected(request):
-        raise exc.HTTPForbidden()
+# """ Return all numeros_relations based on numero_base_id having project or valid numbers defined on it"""
+# @view_config(route_name='numeros_relations_by_numeroBase', request_method='POST', renderer='json')
+# @view_config(route_name='numeros_relations_by_numeroBase_s', request_method='POST', renderer='json')
+# def numeros_relations_by_numeroBase_view(request):
+#     # Check connected
+#     if not Utils.check_connected(request):
+#         raise exc.HTTPForbidden()
 
-    # Récupérer les indices des états projet et vigueur de la config
-    settings = request.registry.settings
-    numero_etat_projet_id = int(settings['numero_projet_id'])
-    numero_etat_vigueur_id = int(settings['numero_vigueur_id'])
+#     # Récupérer les indices des états projet et vigueur de la config
+#     settings = request.registry.settings
+#     numero_etat_projet_id = int(settings['numero_projet_id'])
+#     numero_etat_vigueur_id = int(settings['numero_vigueur_id'])
 
-    # Récupérer la liste des numéros de base de l'affaire
-    numeros_base_id_list = request.params['numeros_base_id_list'] if 'numeros_base_id_list' in request.params else None
-    numeros_base_id_list = json.loads(numeros_base_id_list)
+#     # Récupérer la liste des numéros de base de l'affaire
+#     numeros_base_id_list = request.params['numeros_base_id_list'] if 'numeros_base_id_list' in request.params else None
+#     numeros_base_id_list = json.loads(numeros_base_id_list)
 
-    query = request.dbsession.query(models.VNumerosRelations).filter(
-        and_(
-            models.VNumerosRelations.numero_base_id.in_(numeros_base_id_list),
-            models.VNumerosRelations.numero_associe_etat_id.in_([numero_etat_projet_id, numero_etat_vigueur_id])
-        )).all()
-    return Utils.serialize_many(query)
+#     query = request.dbsession.query(models.VNumerosRelations).filter(
+#         and_(
+#             models.VNumerosRelations.numero_base_id.in_(numeros_base_id_list),
+#             models.VNumerosRelations.numero_associe_etat_id.in_([numero_etat_projet_id, numero_etat_vigueur_id])
+#         )).all()
+#     return Utils.serialize_many(query)
 
 
 """ Add new numeros_relations"""

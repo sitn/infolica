@@ -11,7 +11,7 @@
                 </div>
                 <div class="md-layout-item buttonRightAlign">
                     <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="duplicateAffaire">Dupliquer</md-button>
-                    <md-button class="md-accent md-raised" v-if="editAffaireAllowed && cloreAffaireEnabled" v-on:click="cloreAffaire()">Clôturer</md-button>
+                    <md-button class="md-accent md-raised" v-if="editAffaireAllowed && cloreAffaireEnabled" v-on:click="callClotureAffaire">Clôturer</md-button>
                 </div>
             </div>
         </md-card-header>
@@ -55,8 +55,7 @@
 
     <!-- NUMEROS -->
     <div class="affairesDashboard">
-        <numerosAffaire ref="numerosAffaire" 
-                        :affaire="affaire"/>
+        <numerosAffaire :affaire="affaire"/>
     </div>
 
     <!-- SUIVI D'AFFAIRE -->
@@ -98,6 +97,11 @@
     <!-- Duplication Affaire -->
     <div>
         <DuplicationAffaire ref="duplicationAffaireForm" :affaire="affaire"/>
+    </div>
+
+    <!-- Cloture Affaire -->
+    <div>
+        <ClotureAffaire ref="clotureAffaireForm"/>
     </div>
 
 </div>
