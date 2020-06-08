@@ -133,9 +133,13 @@ export default {
       Promise.all(promises)
       .then(response => {
         if (response) {
-          this.AjoutDateClotureAffaire();
-          this.$router.go(0);
-          this.$parent.setAffaire(); 
+          this.AjoutDateClotureAffaire()
+          .then(() => {
+            this.$router.go(0);
+            this.$parent.setAffaire(); 
+            this.$root.$emit("ShowMessage", "L'affaire " + this.$route.params.id + " a été clôturées avec succès");         
+          })
+          .catch(err => handleException(err, this));
         }
       })
       .catch(err => {
@@ -146,27 +150,27 @@ export default {
     /**
      * Ajout de la date de clôture de l'affaire
      */
-    AjoutDateClotureAffaire(){
-      var formData = new FormData();
-      formData.append("id_affaire", this.$route.params.id);
-      formData.append("date_cloture",  moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
+    async AjoutDateClotureAffaire(){
+      return new Promise((resolve, reject) => {
+        var formData = new FormData();
+        formData.append("id_affaire", this.$route.params.id);
+        formData.append("date_cloture",  moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
 
-      this.$http
-        .put(
-          process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_AFFAIRES_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: {"Accept": "application/json"}
-          }
-        ).then(response => {
-          if (response) {
-            this.$root.$emit("ShowMessage", "L'affaire " + this.$route.params.id + " a été clôturées avec succès");         
-          }
-        }).catch(err => {
-          handleException(err, this);
-        });
+        this.$http
+          .put(
+            process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_AFFAIRES_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: {"Accept": "application/json"}
+            }
+          ).then(response => {
+            if (response) {
+              resolve(response);
+            }
+          }).catch(err => reject(err));
+        })
     },
 
 

@@ -57,7 +57,7 @@
                                                     <a v-bind:href="item.affaire_destination_href" target="_blank"> {{item.affaire_destination_id }}</a>
                                                 </md-table-cell>
                                                 <md-table-cell class="actionsColumn">
-                                                    <md-button class="md-icon-button md-dense md-accent" v-if="!affaireReadonly && item.affaire_numero_actif"
+                                                    <md-button class="md-icon-button md-dense md-accent" v-if="!affaireReadonly && item.affaire_numero_actif && !affaire.date_cloture"
                                                         v-on:click="onDeleteReferenceNumero(item)">
                                                         <md-icon>delete</md-icon>
                                                     </md-button>
@@ -121,7 +121,7 @@
                                                         {{ item.numero_base_suffixe }}</span>
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Projet" class="actionsColumn">
-                                                    <md-switch v-model="item.active" v-if="!affaireReadonly && item.affaire_numero_actif"
+                                                    <md-switch v-model="item.active" v-if="!affaireReadonly && item.affaire_numero_actif && !affaire.date_cloture"
                                                         @change="onDeleteReserveNumero(item.numero_id)"
                                                         class="md-primary md-dense">
                                                     </md-switch>
@@ -131,7 +131,7 @@
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Mat diff" class="actionsColumn">
                                                     <!-- Si le numéro est différé -->
-                                                    <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif">
+                                                    <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif ">
                                                         <md-button v-if="item.numero_type==='Bien-fonds'"  @click="doUpdateDiffererNumero(item)" 
                                                             class="md-accent md-raised md-icon-button md-dense">
                                                             <md-icon>access_time</md-icon>

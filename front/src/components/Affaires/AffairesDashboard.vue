@@ -91,7 +91,7 @@ export default {
               ]
                 .filter(Boolean)
                 .join(" ");
-              obj["technicien"] = [obj.technicien_id, obj.technicien_prenom, obj.technicien_nom]
+              obj["technicien"] = [obj.technicien_prenom, obj.technicien_nom]
                 .filter(Boolean)
                 .join(" ");
               obj["responsable"] = [obj.responsable_prenom, obj.responsable_nom]
