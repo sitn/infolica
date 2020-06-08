@@ -77,9 +77,7 @@ export default {
         element.numero_etatFutur_id = element.numero_etat_id;
 
         // Cas des numéros projetés, non mat-diff, à passer de projet à validé
-        if (((element.numero_diff_id !== null && element.numero_diff_sortie !== null) || 
-            (element.numero_diff_id === null)) &&
-            element.affaire_numero_type_id == process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID && 
+        if (element.affaire_numero_type_id == process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID && 
             element.numero_etat_id == process.env.VUE_APP_NUMERO_PROJET_ID) {
           element.numero_etatFutur_id = 2;
         } 

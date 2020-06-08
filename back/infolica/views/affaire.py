@@ -142,7 +142,7 @@ def affaires_new_view(request):
         # Copier le dossier __template pour une nouvelle affaire
         # copy_tree(request.registry.settings['affaireTemplateDir'], model.chemin)
         os.mkdir(model.chemin)
-        return [model.id]
+        return model.id
 
 
 
