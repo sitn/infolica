@@ -88,12 +88,12 @@
             <md-card-content>
                 <md-table v-model="numero_affaires" md-sort="affaire_date" md-sort-order="desc" md-fixed-header>
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
-                        <md-table-cell md-label="Index" md-sort-by="cadastre">{{ item.affaire_id }}</md-table-cell>
-                        <md-table-cell md-label="Affaire" md-sort-by="suffixe">{{ item.affaire_nom }}</md-table-cell>
-                        <md-table-cell md-label="Type" md-sort-by="numero">{{ item.affaire_type }}</md-table-cell>
-                        <md-table-cell md-label="Informations" md-sort-by="type">{{ item.affaire_information }}</md-table-cell>
-                        <md-table-cell md-label="Date" md-sort-by="date">{{ item.affaire_date | formatDate }}</md-table-cell>
-                        <md-table-cell md-label="Actions" class="actionsColumn">
+                        <md-table-cell md-label="Affaire" md-sort-by="affaire_id" style="width: 10%;">{{ item.affaire_id }}</md-table-cell>
+                        <md-table-cell md-label="Nom de l'affaire" md-sort-by="affaire_nom" style="width: 15%;">{{ item.affaire_nom }}</md-table-cell>
+                        <md-table-cell md-label="Type" md-sort-by="affaire_type" style="width: 20%;">{{ item.affaire_type }}</md-table-cell>
+                        <md-table-cell md-label="Informations" md-sort-by="affaire_information" style="width: 30%;">{{ item.affaire_information }}</md-table-cell>
+                        <md-table-cell md-label="Date" md-sort-by="affaire_date" style="width: 10%;">{{ item.affaire_date | formatDate }}</md-table-cell>
+                        <md-table-cell md-label="Actions" class="actionsColumn" style="width: 15%;">
                             <md-button class="md-icon-button md-primary" v-on:click="doOpenAffaire(item.affaire_id)">
                                 <md-icon>open_in_new</md-icon>
                             </md-button>
