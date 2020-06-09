@@ -24,6 +24,7 @@ export default {
       cadastre: "",
       type: "",
       etat: "",
+      matDiff: false,
     }
   }),
 
@@ -38,6 +39,7 @@ export default {
       if (this.search.cadastre) formData.append("cadastre_id", this.search.cadastre.id);
       if (this.search.type) formData.append("type_numero_id", this.search.type.id);
       if (this.search.etat) formData.append("etat_id", this.search.etat.id);
+      if (this.search.matDiff) formData.append("matDiff", this.search.matDiff);
 
       this.$http
         .post(
@@ -131,14 +133,15 @@ export default {
       this.search.cadastre = "";
       this.search.type = "";
       this.search.etat = "";
+      this.matDiff = false;
     },
 
     /*
      * Open numéro in new tab
      */
     doOpenNumero(id) {
-      let routeData = this.$router.resolve("/numeros/" + id);
-      window.open(routeData.href, "_blank");
+      let routeData = this.$router.resolve({ name: "NumerosHistory", params: {id}});
+      window.open(routeData.href, '_blank');
     }
   },
 

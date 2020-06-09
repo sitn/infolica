@@ -80,6 +80,8 @@ class Utils(object):
         condition_not_in = False # pour les conditions NOT IN, p. ex. référencement numéros à affaire
 
         for param in params:
+            if param == 'matDiff':
+                continue
             if param.startswith('_'):
                 param = param[1:]
                 condition_not_in = True

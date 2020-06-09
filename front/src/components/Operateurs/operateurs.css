@@ -1,28 +1,11 @@
 .operateurs{
     width: 100%;
     float: left;
-    overflow: auto;
 }
-
 
 .operateurs .actionsColumn{
     width: 150px !important;
     min-width: 150px !important;
-}
-
-/*
-.operateurs .operateursResults .md-table{
-    overflow: hidden;
-}
-
-.operateurs .operateursResults .md-table-content{
-    width: 100%;
-}*/
-
-.operateurs .newOperateurBtn{
-    right: 25px;
-    bottom: 8px;
-    position: absolute;
 }
 
 .operateurs .expandCollapseBtn{

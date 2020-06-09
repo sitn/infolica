@@ -132,7 +132,7 @@ export default {
       if (this.suiviMandat.av_32)
         formData.append("av_32", this.suiviMandat.av_32);
       if (this.suiviMandat.av_33)
-        formData.append("av_33", this.suiviMandat.av_33);
+        formData.append("av_33", moment(this.suiviMandat.av_33, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       if (this.suiviMandat.av_41)
         formData.append("av_41", this.suiviMandat.av_41);
       if (this.suiviMandat.av_51)
@@ -164,7 +164,7 @@ export default {
       if (this.suiviMandat.ap_32)
         formData.append("ap_32", this.suiviMandat.ap_32);
       if (this.suiviMandat.ap_33)
-        formData.append("ap_33", this.suiviMandat.ap_33);
+        formData.append("ap_33", moment(this.suiviMandat.ap_33, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       if (this.suiviMandat.ap_41)
         formData.append("ap_41", this.suiviMandat.ap_41);
       if (this.suiviMandat.ap_42)

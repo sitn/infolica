@@ -1,0 +1,102 @@
+<div class="quittancePCOP">
+    <md-dialog :md-active.sync="showQuittancePCOPDialog">
+        <md-dialog-title>Quittance de parts de copropriétés</md-dialog-title>
+
+        <md-dialog-content style="padding: 0 25px;">
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item md-size-50">
+                    <md-field>
+                        <label>Nom et Prénom</label>
+                        <md-input v-model="form.nom_prenom" required />
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-50">
+                    <md-field>
+                        <label>Titre</label>
+                        <md-input v-model="form.titre" required />
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-50">
+                    <md-field>
+                        <label>Adresse</label>
+                        <md-input v-model="form.adresse" required />
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-15">
+                    <md-field class="md-size-15">
+                        <label>NPA</label>
+                        <md-input v-model="form.npa" required />
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-35">
+                    <md-field class="md-size-35">
+                        <label>Localité</label>
+                        <md-input v-model="form.localite" required />
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-50">
+                    <md-field>
+                        <label>NREF</label>
+                        <span class="md-prefix">{{ affaire.id }}-</span>
+                        <md-input v-model="form.nref" />
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-50">
+                    <md-field>
+                        <label>VREF</label>
+                        <md-input v-model="form.vref" required />
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-50">
+                    <md-datepicker v-model="form.dateDemande" md-immediately>
+                        <label>Date de la demande</label>
+                    </md-datepicker>
+                </div>
+                <div class="md-layout-item md-size-50">
+                    <md-datepicker v-model="form.dateEnvoi" md-immediately>
+                        <label>Date de l'envoi du courrier</label>
+                    </md-datepicker>
+                </div>
+
+                <div class="md-layout-item md-size-100 md-title">Numéros réservés</div>
+                <div class="md-layout-item md-size-50">
+                    <md-field>
+                        <label>Bien-fonds de base</label>
+                        <md-select v-model="form.bfBase" @md-selected="updateNumerosPCOP" md-dense required>
+                            <md-option v-for="item in numeros_base" :key="item.numero_base_id" :value="item.numero_base" >{{ item.numero_base }}</md-option>
+                        </md-select>
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-50">
+                    <md-autocomplete v-model="form.cadastre" :md-options="cadastres_liste" required>
+                        <label>Cadastre</label>
+                        <template slot="md-autocomplete-item" slot-scope="{item}">{{item.nom}}</template>
+                    </md-autocomplete>
+                </div>
+                <div class="md-layout-item md-size-25">
+                    <md-field>
+                        <label>De</label>
+                        <md-input v-model="form.numeros_de" type="number" required/>
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-25">
+                    <md-field>
+                        <label>À</label>
+                        <md-input v-model="form.numeros_a" type="number" required/>
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-25">
+                    <md-field>
+                        <label>Nombre de parts de copropriétés réservées</label>
+                        <md-input :value="form.numeros_de !== '' && form.numeros_a !== '' ? Number(form.numeros_a) - Number(form.numeros_de) + 1 : null" readonly />
+                    </md-field>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions>
+            <md-button class="md-accent" @click="showQuittancePCOPDialog = false">Annuler</md-button>
+            <md-button class="md-primary" @click="callCreateQuittancePCOP">Générer le PDF</md-button>
+        </md-dialog-actions>
+    </md-dialog>
+</div>

@@ -21,21 +21,21 @@
 
                 <md-card-content>
                     <div v-if="affaire_preavis[0]">
-                        <md-table v-model="affaire_preavis" md-sort="service" md-sort-order="asc">
+                        <md-table v-model="affaire_preavis" md-sort="service" md-sort-order="asc" md-fixed-header md-card>
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                 <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
-                                <md-table-cell md-label="Service" md-sort-by="service">{{ item.service }}
+                                <md-table-cell md-label="Service" md-sort-by="service" style="width: 10%;">{{ item.service }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Demande" md-sort-by="date_demande">{{ item.date_demande | formatDate }}
+                                <md-table-cell md-label="Demande" md-sort-by="date_demande" style="width: 10%;">{{ item.date_demande | formatDate }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Réponse" md-sort-by="date_reponse">{{ item.date_reponse | formatDate }}
+                                <md-table-cell md-label="Réponse" md-sort-by="date_reponse" style="width: 10%;">{{ item.date_reponse | formatDate }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Préavis" md-sort-by="preavis">{{ item.preavis }}
+                                <md-table-cell md-label="Préavis" md-sort-by="preavis" style="width: 10%;">{{ item.preavis }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}
+                                <md-table-cell md-label="Remarque" md-sort-by="remarque"  style="width: 20%;">{{ item.remarque }}
                                 </md-table-cell>
-                                <md-table-cell md-label="" v-if="!affaireReadonly">
-                                    <md-button class="md-icon-button md-primary md-raised"
+                                <md-table-cell md-label="Actions" v-if="!affaireReadonly"  style="width: 5%;">
+                                    <md-button class="md-icon-button md-primary"
                                         v-on:click="onModifyPreavis(item)">
                                         <md-icon class="md-edit">edit</md-icon>
                                     </md-button>

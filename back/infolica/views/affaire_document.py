@@ -24,13 +24,13 @@ def affaire_documents_view(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.matchdict['id']
-    query = request.dbsession.query(models.Document).filter(models.Document.affaire_id == affaire_id).all()
+    query = request.dbsession.query(models.VDocumentsAffaires).filter(models.VDocumentsAffaires.affaire_id == affaire_id).all()
     documents = Utils.serialize_many(query)
 
     for doc in documents:
         affaire_id = doc['affaire_id']
         filename = doc['nom']
-        filepath = request.registry.settings['upload_files_directory'] + '\\' + str(affaire_id) + '\\' + filename
+        filepath = os.path.join(request.registry.settings['upload_files_directory'], str(affaire_id), filename)
         doc['creation'] = datetime.fromtimestamp(os.path.getctime(filepath)).strftime("%d.%m.%Y")
 
     return documents
@@ -43,6 +43,7 @@ def types_documents_view(request):
     query = request.dbsession.query(models.DocumentType).all()
     return Utils.serialize_many(query)
 
+
 """Upload document"""
 @view_config(route_name='upload_affaire_document', request_method='POST', renderer='json')
 def upload_affaire_document_view(request):
@@ -53,7 +54,7 @@ def upload_affaire_document_view(request):
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
 
     # Create affaire folder if does not exist
-    affaire_folder = request.registry.settings['upload_files_directory'] + '/' + affaire_id
+    affaire_folder = os.path.join(request.registry.settings['upload_files_directory'], affaire_id)
     Utils.create_affaire_folder(affaire_folder)
     fileslist = [request.POST[x] for x in request.POST if x.startswith('affaire_doc_files')]
 
@@ -69,7 +70,7 @@ def upload_affaire_document_view(request):
             model = Utils.set_model_record(models.Document(), request.params)
 
             setattr(model, 'nom', filename)
-            setattr(model, 'chemin', affaire_id + '\\' + filename)
+            setattr(model, 'chemin', os.path.join(affaire_id, filename))
 
             request.dbsession.add(model)
 
@@ -78,6 +79,7 @@ def upload_affaire_document_view(request):
         return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Document.__tablename__))
 
 
+"""Download document"""
 @view_config(route_name='download_affaire_document', request_method='GET')
 @view_config(route_name='download_affaire_document_s', request_method='GET')
 def download_affaire_document_view(request):
@@ -90,17 +92,19 @@ def download_affaire_document_view(request):
     filename = request.params['filename']
 
     if affaire_id:
-        file_path = upload_files_directory + '\\' + affaire_id + '\\' + filename
+        file_path = os.path.join(upload_files_directory, affaire_id, filename)
         base_file_name = os.path.basename(file_path)
 
+    import urllib
     response = FileResponse(file_path, request=request, cache_max_age=86400)
     headers = response.headers
     headers['Content-Type'] = 'application/download'
     headers['Accept-Ranges'] = 'bite'
-    headers['Content-Disposition'] = 'attachment;filename=' + base_file_name
+    headers['Content-Disposition'] = 'attachment;filename=' + urllib.parse.quote(base_file_name)
     return response
 
 
+"""Delete document"""
 @view_config(route_name='delete_affaire_document', request_method='DELETE', renderer='json')
 def delete_affaire_document_view(request):
     # Check authorization
@@ -112,7 +116,7 @@ def delete_affaire_document_view(request):
     id_doc = request.params['id']
     affaire_id = request.params['affaire_id']
     filename = request.params['nom']
-    file_path = upload_files_directory + '\\' + affaire_id + '\\' + filename
+    file_path = os.path.join(upload_files_directory, affaire_id, filename)
 
     # Delete file from folder
     os.remove(file_path)

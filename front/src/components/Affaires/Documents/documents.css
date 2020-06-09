@@ -4,17 +4,12 @@
 }
 
 .documents .md-table {
-    max-width: 700px;
+    width: 70%;
     margin: auto;
 }
 
 .documents .actionsCol {
     width: 140px;
-}
-
-.documents .newRemarqueBtn {
-    right: 25px;
-    position: absolute;
 }
 
 .documents .uploadDocBtn {

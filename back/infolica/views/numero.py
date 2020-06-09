@@ -10,7 +10,6 @@ import json
 
 
 """ Return all numeros"""
-
 @view_config(route_name='numeros', request_method='GET', renderer='json')
 @view_config(route_name='numeros_s', request_method='GET', renderer='json')
 def numeros_view(request):
@@ -62,10 +61,29 @@ def numeros_search_view(request):
 
     settings = request.registry.settings
     search_limit = int(settings['search_limit'])
-    conditions = Utils.get_search_conditions(models.VNumeros, request.params)
+
+    params = request.params
+    
+    matDiff = False
+    if 'matDiff' in params: 
+        matDiff = True if params['matDiff'] == 'true' else False
+
+    # Set conditions
+    conditions = Utils.get_search_conditions(models.VNumeros, params)
+
+    # filter by conditions
     query = request.dbsession.query(models.VNumeros).order_by(models.VNumeros.cadastre,
-                                                              models.VNumeros.numero.desc()).filter(
-        *conditions).limit(search_limit).all()
+                                                              models.VNumeros.numero.desc()).filter(*conditions)
+    # if option matDiff selected
+    if matDiff:
+        query = query.filter(
+            and_(
+                models.VNumeros.diff_entree.isnot(None), 
+                models.VNumeros.diff_sortie.is_(None)
+                )
+            )
+
+    query = query.limit(search_limit).all()
     return Utils.serialize_many(query)
 
 
@@ -385,9 +403,9 @@ def numero_differe_update_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
 
-    numdiff_id = request.params["numero_diff_id"] if "numero_diff_id" in request.params else None
+    numdiff_id = request.params["id"] if "id" in request.params else None
 
-    # nouveau numero_differe
+    # update numero_differe
     record = request.dbsession.query(models.NumeroDiffere).filter(models.NumeroDiffere.id == numdiff_id).first()
     record = Utils.set_model_record(record, request.params)
 

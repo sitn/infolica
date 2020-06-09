@@ -7,15 +7,19 @@ import { handleException } from "@/services/exceptionsHandler";
 import { getCurrentDate, checkPermission } from "@/services/helper";
 import ReferenceNumeros from "@/components/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/ReservationNumeros/ReservationNumeros.vue";
+import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue";
 
 const moment = require("moment");
 
 export default {
   name: "NumerosAffaire",
-  props: {},
+  props: {
+    affaire: {}
+  },
   components: {
     ReferenceNumeros,
-    ReservationNumeros
+    ReservationNumeros,
+    QuittancePCOP
   },
   data: () => {
     return {
@@ -24,10 +28,11 @@ export default {
       affaire_numeros_anciens: [],
       affaire_numeros_nouveaux: [],
       affaire_numeros_nouveaux_mo: [],
-      showReservationDialog: false,
       showNumerosMO: true,
       affaireReadonly: true,
       numerosMoLoading: true,
+      showQuittancePCOPDialog: false,
+      // numeros_base_relations: []
     };
   },
 
@@ -85,24 +90,6 @@ export default {
       })
     },
 
-    /**
-     * Filtrer les nouveaux numéros pour n'afficher que les immeubles
-     * ou les immeubles + les numéros de la MO
-     */
-    // filterNouveauxNumerosMO() {
-    //   // Récupérer les numéros nouveaux
-    //   this.affaire_numeros_nouveaux = this.affaire_numeros_all.filter(x => {
-    //     return x.affaire_numero_type === "Nouveau" 
-    //   });
-    //   // Filtrer les numéros visibles (immeubles ou immeubles+numéros MO)
-    //   var numeroImmeubleIdMax = process.env.VUE_APP_NUMERO_IMMEUBLE_ID_MAX;
-    //   if (!this.showNumerosMO) {
-    //     this.affaire_numeros_nouveaux = this.affaire_numeros_nouveaux.filter(x => {
-    //       return x.numero_type_id <= numeroImmeubleIdMax
-    //     });
-    //   }
-
-    // },
 
     /**
      * Charger les réservations des numéros de la MO
@@ -268,6 +255,13 @@ export default {
     },
 
     /**
+     * Ouvrir le dialog de quittance de réservation de PCOP
+     */
+    callOpenQuittancePCOPDialog() {
+      this.$refs.formQuittancePCOP.openQuittancePCOPDialog()
+    },
+
+    /**
      * Créer Différer un numéro
      */
     doCreateDiffererNumero(numero) {
@@ -345,85 +339,46 @@ export default {
         });
     },
 
-    /**
-     * Créer la quittance de création de parts de copropriétés
-     */
-    callCreateQuittancePCOP() {
-      var formData = new FormData();
-      formData.append("template", "TEST");
-      formData.append(
-        "values",
-        JSON.stringify({
-          VREF: "VREF_test",
-          NREF: "NREF_test"
-        })
-      );
+    // /**
+    //  * update numéros référencés à la clôture de l'affaire
+    //  */
+    // updateNumerosReferencesOnCloture() {
+    //   // Chercher la liste des immeubles de base qui ont des immeubles en projet ou vigueur dessus
+    //   this.getImmeublesAssocies()
+    //   .then(response => this.numeros_base_relations = response)
+    //   .catch(err => handleException(err, this));
 
-      this.$http
-        .post(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/html" }
-          }
-        )
-        .then(response => {
-          if (response && response.data) {
-            this.downloadQuittancePCOP(response.data.filename);
-            this.deleteQuittancePCOP(response.data.filename);
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
-    },
 
-    /**
-     * Download QuittancePCOP
-     */
-    downloadQuittancePCOP(filename) {
-      var url =
-        process.env.VUE_APP_API_URL +
-        process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
-        "?filename=" +
-        filename;
-      window.open(url, "_blank");
-    },
+    // },
 
-    /**
-     * Delete quittancePCOP
-     */
-    deleteQuittancePCOP(filename) {
-      this.$http
-        .delete(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
-            "?filename=" +
-            filename,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/html" }
-          }
-        )
-        .then(response => {
-          if (response && response.data) {
-            this.$root.$emit(
-              "ShowMessage",
-              "Le fichier '" +
-                filename +
-                "' se trouve dans le dossier 'Téléchargement'"
-            );
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
-    }
+    // /**
+    //  * Get immeubles associes
+    //  */
+    // async getImmeublesAssocies() {
+    //   return new Promise((resolve, reject) => {
+    //     // Récupère la liste des id des numéros référencés
+    //     var numeros_base_id_list = this.affaire_numeros_anciens.map(x => x.numero_id);
+  
+    //     var formData = new FormData();
+    //     formData.append("numeros_base_id_list", JSON.stringify(numeros_base_id_list));
+  
+    //     this.$http.post(
+    //       process.env.VUE_APP_API_URL +
+    //       process.env.VUE_APP_NUMEROS_RELATIONS_BY_NUMEROSBASEID_ENDPOINT,
+    //       formData,
+    //       {
+    //         withCredentials: true,
+    //         headers: {'Content-type': 'application/json'},
+    //       }
+    //     )
+    //     .then(response => {if (response && response.data) resolve(response.data)})
+    //     .catch(err => reject(err));
+    //   });
+    // },
+
   },
   mounted: function() {
-    this.searchAffaireNumeros();
+    this.searchAffaireNumeros()
     this.searchAffaireNewNumerosMo();
 
     this.$root.$on('UpdateNumerosAffaires', () =>{

@@ -201,7 +201,7 @@ class DocumentType(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
 
-class Document(Base):  ## DEPRECIE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+class Document(Base):
     __tablename__ = 'document'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
@@ -564,6 +564,7 @@ class VNumeros(Base):
     etat_id = Column(BigInteger)
     type_numero = Column(Text)
     type_numero_id = Column(BigInteger)
+    diff_id = Column(Date)
     diff_entree = Column(Date)
     diff_sortie = Column(Date)
     plan_id = Column(BigInteger)
@@ -735,19 +736,39 @@ class VNumerosRelations(Base):
     __table_args__ = {'schema': 'infolica'}
     numero_base_id = Column(BigInteger, primary_key=True)
     numero_base_cadastre = Column(Text)
+    numero_base_cadastre_id = Column(BigInteger)
     numero_base_type = Column(Text)
+    numero_base_type_id = Column(BigInteger)
     numero_base_numero = Column(BigInteger)
     numero_base_suffixe = Column(Text)
     numero_base_etat = Column(Text)
+    numero_base_etat_id = Column(BigInteger)
     numero_base_plan_id = Column(BigInteger)
     numero_associe_id = Column(BigInteger, primary_key=True)
     numero_associe_cadastre = Column(Text)
+    numero_associe_cadastre_id = Column(BigInteger)
     numero_associe_type = Column(Text)
+    numero_associe_type_id = Column(BigInteger)
     numero_associe_numero = Column(BigInteger)
     numero_associe_suffixe = Column(Text)
     numero_associe_etat = Column(Text)
+    numero_associe_etat_id = Column(BigInteger)
     numero_associe_plan_id = Column(BigInteger)
-    relation_type = Column(Text, primary_key=True)
+    relation_type = Column(Text)
+    relation_type_id = Column(BigInteger, primary_key=True)
+    affaire_id = Column(BigInteger, primary_key=True)
+
+
+class VDocumentsAffaires(Base):
+    __tablename__ = 'v_documents_affaires'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True)
+    nom = Column(Text)
+    chemin = Column(Text)
+    affaire_id = Column(BigInteger)
+    type_id = Column(BigInteger)
+    type_doc = Column(Text)
+
 
 class Fonction(Base):
     __tablename__ = 'fonction'
@@ -755,11 +776,13 @@ class Fonction(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
 
+
 class Role(Base):
     __tablename__ = 'role'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
+
 
 class FonctionRole(Base):
     __tablename__ = 'fonction_role'

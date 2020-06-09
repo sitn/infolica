@@ -24,6 +24,14 @@ export default {
   }),
 
   methods: {
+    /**
+     * Open duplication affaire dialog
+     */
+    openDuplicationAffaireDialog() {
+      this.searchAffaireNumeros();
+      this.showDuplicationAffaireForm = true;
+    },
+
     /*
     * Init types modifications affaire list
     */
@@ -38,13 +46,13 @@ export default {
       .then(response =>{
         if (response && response.data) {
           this.types_modifs_affaire_list = response.data;
-          
+
           if(this.types_modifs_affaire_list && this.types_modifs_affaire_list.length > 0){
             this.type_modif_affaire = this.types_modifs_affaire_list[0].id;
           }
         }
       })
-      //Error 
+      //Error
       .catch(err => {
         handleException(err, this);
       });
@@ -83,8 +91,8 @@ export default {
           handleException(err, this);
         });
     },
-    
-    
+
+
     /*
     * Save duplicated affaire
     */
@@ -96,7 +104,7 @@ export default {
       .then(function(response){
         if(response && response.data && response.data.length > 0){
           var id_affaire_fille = response.data[0];
-         
+
           //Save affaires modifications
           _this.saveAffaireModifications(id_affaire_fille);
         }
@@ -106,7 +114,7 @@ export default {
 
         _this.showDuplicationAffaireForm = false;
 
-        
+
       })
       .catch(function(err){
         handleException(err, _this);
@@ -118,7 +126,7 @@ export default {
      */
     duplicateAffaire(){
       var formData = this.initNewAffairePostData();
-        
+
       return new Promise((resolve, reject) => {
         var url = process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT;
         this.$http
@@ -144,9 +152,9 @@ export default {
       if (this.affaire.responsable_id) formData.append("responsable_id", this.affaire.responsable_id);
       if (this.affaire.technicien_id) formData.append("technicien_id", this.affaire.technicien_id);
       if (this.affaire.cadastre_id !== null && this.affaire.cadastre_id !== undefined) formData.append("cadastre_id", this.affaire.cadastre_id);
-      if (this.affaire.information) formData.append("information", this.affaire.information);
-      if (this.affaire.localisation_E !== null && this.affaire.localisation_E !== undefined) formData.append("localisation_E", this.affaire.localisation_E); else formData.append("localisation_E", 0);
-      if (this.affaire.localisation_N !== null && this.affaire.localisation_N !== undefined) formData.append("localisation_N", this.affaire.localisation_N); else formData.append("localisation_N", 0);
+      if (this.affaire.information) formData.append("information", "Provient de l'affaire " + String(this.affaire.id) + " / " + this.affaire.information);
+      if (this.affaire.localisation_e !== null && this.affaire.localisation_e !== undefined) formData.append("localisation_E", this.affaire.localisation_e); else formData.append("localisation_E", 0);
+      if (this.affaire.localisation_n !== null && this.affaire.localisation_n !== undefined) formData.append("localisation_N", this.affaire.localisation_n); else formData.append("localisation_N", 0);
       if (this.affaire.vref) formData.append("vref", this.affaire.vref);
       if (this.affaire.chemin) formData.append("chemin", this.affaire.chemin);
       if (this.affaire.date_ouverture)
@@ -190,7 +198,7 @@ export default {
             })
             .catch(err => {
               handleException(err, _this);
-            });            
+            });
           }
         })
         .catch(err => {
@@ -234,8 +242,8 @@ export default {
       formData.append("affaire_id", id_affaire_fille);
       formData.append("numero_id", numero_id);
       formData.append("type_id", type_id);
-      formData.append("actif", true);    
-        
+      formData.append("actif", true);
+
       return new Promise((resolve, reject) => {
         var url = process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT;
         this.$http
@@ -248,10 +256,10 @@ export default {
       });
     },
 
-    
+
     /**
-     * Deactivate numero_affaire in source affaire 
-     **/ 
+     * Deactivate numero_affaire in source affaire
+     **/
     deactivateAffaireNumeros(id_affaire_fille){
       var numeros = [];
       this.selectedAnciensNumeros.forEach((num) => {
@@ -266,8 +274,8 @@ export default {
         var formData = new FormData();
         formData.append("affaire_id", this.affaire.id);
         formData.append("affaire_destination_id", id_affaire_fille);
-        formData.append("numeros", JSON.stringify(numeros)); 
-          
+        formData.append("numeros", JSON.stringify(numeros));
+
         return new Promise((resolve, reject) => {
           var url = process.env.VUE_APP_API_URL + process.env.VUE_APP_DESACTIVER_AFFAIRE_NUMEROS_ENDPOINT;
           this.$http
@@ -299,7 +307,6 @@ export default {
 
   mounted: function() {
     this.initTypesModifsAffaireList();
-    this.searchAffaireNumeros();
   }
 };
 </script>

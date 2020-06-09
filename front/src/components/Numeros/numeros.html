@@ -1,8 +1,14 @@
 <div class="numeros">
 
-    <md-toolbar>
-        <div class="md-title" style="flex: 1; font-weight: 700;">Numéros</div>
-    </md-toolbar>
+    <md-card>
+        <md-card-header>
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item">
+                    <div class="md-title" style="flex: 1; font-weight: 700;">Numéros</div>
+                </div>
+            </div>
+        </md-card-header>
+    </md-card>
 
     <!-- Search -->
     <md-card>
@@ -35,6 +41,10 @@
                                 <label>Suffixe/Unité</label>
                                 <md-input v-model="search.suffixe"></md-input>
                             </md-field>
+                        </div>
+                        <!-- Mat diff -->
+                        <div class="md-layout-item md-small-size-30" style="text-align: center;">
+                            <md-checkbox v-model="search.matDiff" class="md-primary">Matérialisation différée</md-checkbox>
                         </div>
                     </div>
 
@@ -92,7 +102,7 @@
 
             <!-- Results Content -->
             <md-card-content>
-                <md-table v-model="numeros" md-sort="numero" md-sort-order="desc">
+                <md-table v-model="numeros" md-sort="numero" md-sort-order="desc" md-fixed-header>
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                         <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
@@ -101,7 +111,7 @@
                         <md-table-cell md-label="Suffixe/Unité" md-sort-by="suffixe">{{ item.suffixe }}</md-table-cell>
                         <md-table-cell md-label="Etat" md-sort-by="etat">{{ item.etat }}</md-table-cell>
                         <md-table-cell md-label="Actions" class="actionsColumn">
-                            <md-button class="md-icon-button md-raised md-primary" v-on:click="doOpenNumero(item.id)">
+                            <md-button class="md-icon-button md-primary" v-on:click="doOpenNumero(item.id)">
                                 <md-icon>open_in_new</md-icon>
                             </md-button>
                         </md-table-cell>

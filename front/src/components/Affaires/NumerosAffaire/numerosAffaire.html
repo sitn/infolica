@@ -20,24 +20,21 @@
                         <md-card-content>
 
                             <md-card>
-                                <md-card-content>
-
+                                <md-card-header>
                                     <div class="md-layout md-gutter">
                                         <div class="md-layout-item md-size-60">
-                                            <div class="md-title">
-                                                Immeubles mutée / biens-fonds de base
-                                            </div>
+                                            <div class="md-title">Immeubles mutés / biens-fonds de base</div>
                                         </div>
-                                        <div class="md-layout md-alignment-bottom-right">
-                                            <md-button class="md-primary" v-on:click="callOpenReferenceDialog" v-if="!affaireReadonly">
-                                                Référencer un bien-fond
-                                            </md-button>
+                                        <div class="md-layout-item buttonRightAlign">
+                                            <md-button class="md-primary" v-on:click="callOpenReferenceDialog" v-if="!affaireReadonly">Référencer un bien-fond</md-button>
                                         </div>
                                     </div>
+                                </md-card-header>
 
-                                    <!-- Tableau des numéros concernés par l'affaire -->
-                                    <div v-if="affaire_numeros_anciens[0]" class="scrollbar">
-                                        <md-table v-model="affaire_numeros_anciens" md-sort="id" md-sort-order="desc">
+                                <!-- Tableau des numéros concernés par l'affaire -->
+                                <md-card-content>
+                                    <div v-if="affaire_numeros_anciens[0]">
+                                        <md-table v-model="affaire_numeros_anciens" md-sort="id" md-sort-order="desc" md-fixed-header>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif }">
                                                 <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
                                                     {{ item.numero_id }}
@@ -60,7 +57,7 @@
                                                     <a v-bind:href="item.affaire_destination_href" target="_blank"> {{item.affaire_destination_id }}</a>
                                                 </md-table-cell>
                                                 <md-table-cell class="actionsColumn">
-                                                    <md-button class="md-icon-button md-dense md-accent" v-if="!affaireReadonly && item.affaire_numero_actif"
+                                                    <md-button class="md-icon-button md-dense md-accent" v-if="!affaireReadonly && item.affaire_numero_actif && !affaire.date_cloture"
                                                         v-on:click="onDeleteReferenceNumero(item)">
                                                         <md-icon>delete</md-icon>
                                                     </md-button>
@@ -84,26 +81,23 @@
                         <md-card-content>
 
                             <md-card>
-                                <md-card-content>
-
-                                    <div class="md-layout md-gutter">
-                                        <div class="md-layout-item md-size-60">
-                                            <div class="md-title">Immeubles réservés</div>
-                                        </div>
-                                        <div class="md-layout md-alignment-bottom-right">
-                                            <md-button class="md-primary" v-on:click="callCreateQuittancePCOP" v-if="!affaireReadonly">
-                                                Quittance PCOP
-                                            </md-button>
-                                            <md-button class="md-primary" v-on:click="callOpenReservationDialog" v-if="!affaireReadonly">
-                                                Réservation
-                                            </md-button>
-                                        </div>
+                                <md-card-header>
+                                <div class="md-layout md-gutter">
+                                    <div class="md-layout-item md-size-40">
+                                        <div class="md-title">Immeubles réservés</div>
                                     </div>
-
-                                    <!-- Tableau des numéros réservés dans l'affaire -->
-                                    <div v-if="affaire_numeros_nouveaux[0]" class="scrollbar">
-                                        <md-table v-model="affaire_numeros_nouveaux" md-sort="numero_etat"
-                                            md-sort-order="desc">
+                                    <div class="md-layout-item buttonRightAlign">
+                                        <md-button class="md-primary" v-on:click="callOpenQuittancePCOPDialog" v-if="!affaireReadonly">Quittance PCOP</md-button>
+                                        <md-button class="md-primary" v-on:click="callOpenReservationDialog" v-if="!affaireReadonly">Réservation</md-button>
+                                    </div>
+                                </div>
+                                </md-card-header>
+                                
+                                <md-card-content>
+                                <!-- Tableau des numéros réservés dans l'affaire -->
+                                <div v-if="affaire_numeros_nouveaux[0]">
+                                    <md-table v-model="affaire_numeros_nouveaux" md-sort="numero_etat"
+                                            md-sort-order="desc" md-fixed-header>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif || !item.active }">
                                                 <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
                                                     {{ item.numero_id }}
@@ -127,7 +121,7 @@
                                                         {{ item.numero_base_suffixe }}</span>
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Projet" class="actionsColumn">
-                                                    <md-switch v-model="item.active" v-if="!affaireReadonly && item.affaire_numero_actif"
+                                                    <md-switch v-model="item.active" v-if="!affaireReadonly && item.affaire_numero_actif && !affaire.date_cloture"
                                                         @change="onDeleteReserveNumero(item.numero_id)"
                                                         class="md-primary md-dense">
                                                     </md-switch>
@@ -137,7 +131,7 @@
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Mat diff" class="actionsColumn">
                                                     <!-- Si le numéro est différé -->
-                                                    <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif">
+                                                    <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif ">
                                                         <md-button v-if="item.numero_type==='Bien-fonds'"  @click="doUpdateDiffererNumero(item)" 
                                                             class="md-accent md-raised md-icon-button md-dense">
                                                             <md-icon>access_time</md-icon>
@@ -173,7 +167,7 @@
                                     </div>
                                     <div v-else>
                                         <div v-if="affaire_numeros_nouveaux_mo[0]">
-                                            <md-table v-model="affaire_numeros_nouveaux_mo" md-sort="cadastre_id" md-sort-order="desc">
+                                            <md-table v-model="affaire_numeros_nouveaux_mo" md-sort="cadastre_id" md-sort-order="desc" md-fixed-header>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                                 <md-table-cell md-label="Cadastre" md-sort-by="cadastre">
                                                     {{ item.cadastre }}
@@ -202,8 +196,6 @@
                                 </div>
                                 </md-card-content>
                             </md-card>
-                            
-                            
                         </md-card-content>
                     </div>
                 </div>
@@ -216,5 +208,10 @@
     <ReferenceNumeros ref="formReference" />
     <!-- Réservation de numéros -->
     <ReservationNumeros ref="formReservation" />
+    <!-- Quittance pour les numéros de parts de copropriété réservés -->
+    <QuittancePCOP :affaire="affaire" 
+                   :affaire_numeros_anciens="affaire_numeros_anciens" 
+                   :affaire_numeros_nouveaux="affaire_numeros_nouveaux"
+                   ref="formQuittancePCOP"/>
 
 </div>
