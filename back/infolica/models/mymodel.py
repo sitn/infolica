@@ -564,6 +564,7 @@ class VNumeros(Base):
     etat_id = Column(BigInteger)
     type_numero = Column(Text)
     type_numero_id = Column(BigInteger)
+    diff_id = Column(Date)
     diff_entree = Column(Date)
     diff_sortie = Column(Date)
     plan_id = Column(BigInteger)

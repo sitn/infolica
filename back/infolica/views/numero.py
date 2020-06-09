@@ -403,9 +403,9 @@ def numero_differe_update_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
 
-    numdiff_id = request.params["numero_diff_id"] if "numero_diff_id" in request.params else None
+    numdiff_id = request.params["id"] if "id" in request.params else None
 
-    # nouveau numero_differe
+    # update numero_differe
     record = request.dbsession.query(models.NumeroDiffere).filter(models.NumeroDiffere.id == numdiff_id).first()
     record = Utils.set_model_record(record, request.params)
 
