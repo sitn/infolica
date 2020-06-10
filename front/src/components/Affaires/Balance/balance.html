@@ -1,0 +1,31 @@
+<div class="balance">
+    <!-- <md-card> -->
+        <md-card-header>
+            <div class="md-title">Balance</div>
+            <md-button @click="initBFArrays" class="md-raised">init</md-button>
+        </md-card-header>
+
+        <md-card-content>
+
+            <md-table v-model="numeros_relations_matrice" style="width: min-content;" md-card>
+                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                    <md-table-cell>{{ item.numero_old }}</md-table-cell>
+                    <md-table-cell v-for="(value, key) in item.new" :md-label="key"><md-checkbox v-model="item.new[key]" @change="updateNumerosRelations"></md-checkbox></md-table-cell>
+                </md-table-row>
+            </md-table>
+
+            <div style="text-align: right;">
+                <md-button class="md-accent" @click="initBFArrays">Annuler</md-button>
+                <md-button class="md-primary" @click="initBFArrays">Enregistrer</md-button>
+            </div>
+
+            <md-table v-model="numeros_relations">
+                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                    <md-table-cell md-label="Source">{{ item.source }}</md-table-cell>
+                    <md-table-cell md-label="Destination">{{ item.destination }}</md-table-cell>
+                </md-table-row>
+            </md-table>
+
+        </md-card-content>
+    <!-- </md-card> -->
+</div>
