@@ -674,26 +674,7 @@ class VAffairesPreavis(Base):
     date_demande = Column(Date)
     date_reponse = Column(Date)
     remarque = Column(Text)
-
-
-class VAffairesBalances(Base):
-    __tablename__ = 'v_affaires_balances'
-    __table_args__ = {'schema': 'infolica'}
-    affaire_id = Column(BigInteger, primary_key=True)
-    numero_base_id = Column(BigInteger, primary_key=True)
-    numero_associe_id = Column(BigInteger, primary_key=True)
-    numero_relation_id = Column(BigInteger, primary_key=True)
-    affaire_nom = Column(Text)
-    numero_base_type = Column(Text)
-    numero_base = Column(Integer)
-    numero_base_suffixe = Column(Text)
-    numero_base_etat = Column(Text)
-    numero_associe_type = Column(Text)
-    numero_associe = Column(Integer)
-    numero_associe_suffixe = Column(Text)
-    numero_associe_etat = Column(Text)
-    numero_relation_type = Column(Text)
-
+    
 
 class VTableauBord(Base):
     __tablename__ = 'v_tableau_de_bord'
@@ -734,29 +715,30 @@ class VEmolumentsFactures(Base):
 class VNumerosRelations(Base):
     __tablename__ = 'v_numeros_relations'
     __table_args__ = {'schema': 'infolica'}
-    numero_base_id = Column(BigInteger, primary_key=True)
-    numero_base_cadastre = Column(Text)
+    affaire_id = Column(BigInteger)
+    numero_relation_id = Column(BigInteger, primary_key=True)
+    numero_base_id = Column(BigInteger)
     numero_base_cadastre_id = Column(BigInteger)
-    numero_base_type = Column(Text)
+    numero_base_cadastre = Column(Text)
     numero_base_type_id = Column(BigInteger)
-    numero_base_numero = Column(BigInteger)
+    numero_base_type = Column(Text)
+    numero_base = Column(BigInteger)
     numero_base_suffixe = Column(Text)
-    numero_base_etat = Column(Text)
     numero_base_etat_id = Column(BigInteger)
+    numero_base_etat = Column(Text)
     numero_base_plan_id = Column(BigInteger)
-    numero_associe_id = Column(BigInteger, primary_key=True)
-    numero_associe_cadastre = Column(Text)
+    numero_associe_id = Column(BigInteger)
     numero_associe_cadastre_id = Column(BigInteger)
-    numero_associe_type = Column(Text)
+    numero_associe_cadastre = Column(Text)
     numero_associe_type_id = Column(BigInteger)
-    numero_associe_numero = Column(BigInteger)
+    numero_associe_type = Column(Text)
+    numero_associe = Column(BigInteger)
     numero_associe_suffixe = Column(Text)
-    numero_associe_etat = Column(Text)
     numero_associe_etat_id = Column(BigInteger)
+    numero_associe_etat = Column(Text)
     numero_associe_plan_id = Column(BigInteger)
-    relation_type = Column(Text)
-    relation_type_id = Column(BigInteger, primary_key=True)
-    affaire_id = Column(BigInteger, primary_key=True)
+    numero_relation_type_id = Column(BigInteger)
+    numero_relation_type = Column(Text)
 
 
 class VDocumentsAffaires(Base):

@@ -21,6 +21,22 @@ def numeros_relations_view(request):
     return Utils.serialize_many(query)
 
 
+""" Return Numeros_relations"""
+@view_config(route_name='numeros_relation_by_affaire_id', request_method='GET', renderer='json')
+def numeros_relation_by_affaire_id_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()    
+    
+    affaire_id = request.matchdict['id']
+    
+    # filter by conditions
+    query = request.dbsession.query(models.VNumerosRelations).filter(
+        models.VNumerosRelations.affaire_id == affaire_id).all()
+
+    return Utils.serialize_many(query)
+
+
 # """ Return all numeros_relations based on numero_base_id having project or valid numbers defined on it"""
 # @view_config(route_name='numeros_relations_by_numeroBase', request_method='POST', renderer='json')
 # @view_config(route_name='numeros_relations_by_numeroBase_s', request_method='POST', renderer='json')
