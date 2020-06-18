@@ -8,6 +8,8 @@ import { getCurrentDate, checkPermission } from "@/services/helper";
 import ReferenceNumeros from "@/components/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/ReservationNumeros/ReservationNumeros.vue";
 import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue";
+import Balance from "@/components/Affaires/Balance/Balance.vue";
+
 
 const moment = require("moment");
 
@@ -19,7 +21,8 @@ export default {
   components: {
     ReferenceNumeros,
     ReservationNumeros,
-    QuittancePCOP
+    QuittancePCOP,
+    Balance
   },
   data: () => {
     return {

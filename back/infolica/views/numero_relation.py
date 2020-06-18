@@ -21,6 +21,22 @@ def numeros_relations_view(request):
     return Utils.serialize_many(query)
 
 
+""" Return Numeros_relations"""
+@view_config(route_name='numeros_relation_by_affaire_id', request_method='GET', renderer='json')
+def numeros_relation_by_affaire_id_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()    
+    
+    affaire_id = request.matchdict['id']
+    
+    # filter by conditions
+    query = request.dbsession.query(models.VNumerosRelations).filter(
+        models.VNumerosRelations.affaire_id == affaire_id).all()
+
+    return Utils.serialize_many(query)
+
+
 # """ Return all numeros_relations based on numero_base_id having project or valid numbers defined on it"""
 # @view_config(route_name='numeros_relations_by_numeroBase', request_method='POST', renderer='json')
 # @view_config(route_name='numeros_relations_by_numeroBase_s', request_method='POST', renderer='json')
@@ -62,6 +78,30 @@ def numeros_relations_new_view(request, params=None):
 
     with transaction.manager:
         request.dbsession.add(model)
+        transaction.commit()
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.NumeroRelation.__tablename__))
+
+
+""" Delete numeros_relations"""
+@view_config(route_name='numeros_relations', request_method='DELETE', renderer='json')
+@view_config(route_name='numeros_relations_s', request_method='DELETE', renderer='json')
+def numeros_relations_delete_view(request):
+    
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+
+    numero_relation_id = request.params["numero_relation_id"] if "numero_relation_id" in request.params else None
+
+    # Get numeros_relations instance
+    model = request.dbsession.query(models.NumeroRelation).filter(models.NumeroRelation.id == numero_relation_id).first()
+
+    if not model:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.NumeroRelation.__tablename__, numero_relation_id))
+
+    with transaction.manager:
+        request.dbsession.delete(model)
         transaction.commit()
         return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.NumeroRelation.__tablename__))
 

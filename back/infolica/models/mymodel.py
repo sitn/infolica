@@ -73,6 +73,7 @@ class Plan(Base):
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
     nom = Column(Text, nullable=False)
     echelle = Column(BigInteger, nullable=False)
+    chemin = Column(Text)
 
 
 class AffaireType(Base):
@@ -88,7 +89,7 @@ class Affaire(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text)
     client_commande_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
-    client_commande_par_id = Column(BigInteger, ForeignKey(Client.id))
+    client_commande_complement = Column(Text)
     responsable_id = Column(
         BigInteger, ForeignKey(Operateur.id), nullable=False)
     technicien_id = Column(BigInteger, ForeignKey(
@@ -149,7 +150,7 @@ class Facture(Base):
     sap = Column(Text)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
-    client_par_id = Column(BigInteger, ForeignKey(Client.id))
+    client_complement = Column(Text)
     indice_application_mo = Column(Float, default=1.2)
     indice_tva = Column(Float, default=7.7)
     montant_mo = Column(Float, default=0.0, nullable=False)
@@ -195,11 +196,13 @@ class RemarqueAffaire(Base):
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
+
 class DocumentType(Base):
     __tablename__ = 'document_type'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
+
 
 class Document(Base):
     __tablename__ = 'document'
@@ -223,12 +226,12 @@ class Envoi(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
-    client_par_id = Column(BigInteger, ForeignKey(Client.id))
+    client_complement = Column(Text)
     type_id = Column(BigInteger, ForeignKey(EnvoiType.id), nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
-class EnvoiDocument(Base):  ## DEPRECIE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+class EnvoiDocument(Base):
     __tablename__ = 'envoi_document'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
@@ -541,16 +544,38 @@ class Preavis(Base):
     remarque = Column(Text)
 
 
-class RemarquePreavis(Base):  # currently not used, replaced by attribute Remarque in table Preavis
-    __tablename__ = 'remarque_preavis'
+# class RemarquePreavis(Base):  # currently not used, replaced by attribute Remarque in table Preavis
+#     __tablename__ = 'remarque_preavis'
+#     __table_args__ = {'schema': 'infolica'}
+#     id = Column(BigInteger, primary_key=True, autoincrement=True)
+#     preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
+#     remarque = Column(Text, nullable=False)
+#     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+
+
+class Fonction(Base):
+    __tablename__ = 'fonction'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
-    remarque = Column(Text, nullable=False)
-    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+    nom = Column(Text, nullable=False)
 
+
+class Role(Base):
+    __tablename__ = 'role'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
+
+
+class FonctionRole(Base):
+    __tablename__ = 'fonction_role'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    fonction_id = Column(BigInteger, ForeignKey(Fonction.id), nullable=False)
+    role_id = Column(BigInteger, ForeignKey(Role.id), nullable=False)
 
 # ======================== VUES ========================
+
 
 class VNumeros(Base):
     __tablename__ = 'v_numeros'
@@ -612,11 +637,7 @@ class VAffaire(Base):
     client_commande_titre = Column(Text)
     client_commande_nom = Column(Text)
     client_commande_prenom = Column(Text)
-    client_commande_par_id = Column(BigInteger)
-    client_commande_par_entreprise = Column(Text)
-    client_commande_par_titre = Column(Text)
-    client_commande_par_nom = Column(Text)
-    client_commande_par_prenom = Column(Text)
+    client_commande_complement = Column(Text)
     responsable_id = Column(BigInteger)
     responsable_nom = Column(Text)
     responsable_prenom = Column(Text)
@@ -634,6 +655,7 @@ class VAffaire(Base):
     cadastre_id = Column(BigInteger)
     type_id = Column(BigInteger)
     vref = Column(Text)
+    chemin = Column(Text)
 
 
 class VEnvois(Base):
@@ -647,7 +669,9 @@ class VEnvois(Base):
     client_titre = Column(Text)
     client_nom = Column(Text)
     client_prenom = Column(Text)
-    envoi_type = Column(BigInteger)
+    client_complement = Column(Text)
+    envoi_type_id = Column(BigInteger)
+    envoi_type = Column(Text)
     date = Column(Date)
 
 
@@ -674,26 +698,7 @@ class VAffairesPreavis(Base):
     date_demande = Column(Date)
     date_reponse = Column(Date)
     remarque = Column(Text)
-
-
-class VAffairesBalances(Base):
-    __tablename__ = 'v_affaires_balances'
-    __table_args__ = {'schema': 'infolica'}
-    affaire_id = Column(BigInteger, primary_key=True)
-    numero_base_id = Column(BigInteger, primary_key=True)
-    numero_associe_id = Column(BigInteger, primary_key=True)
-    numero_relation_id = Column(BigInteger, primary_key=True)
-    affaire_nom = Column(Text)
-    numero_base_type = Column(Text)
-    numero_base = Column(Integer)
-    numero_base_suffixe = Column(Text)
-    numero_base_etat = Column(Text)
-    numero_associe_type = Column(Text)
-    numero_associe = Column(Integer)
-    numero_associe_suffixe = Column(Text)
-    numero_associe_etat = Column(Text)
-    numero_relation_type = Column(Text)
-
+    
 
 class VTableauBord(Base):
     __tablename__ = 'v_tableau_de_bord'
@@ -734,29 +739,30 @@ class VEmolumentsFactures(Base):
 class VNumerosRelations(Base):
     __tablename__ = 'v_numeros_relations'
     __table_args__ = {'schema': 'infolica'}
-    numero_base_id = Column(BigInteger, primary_key=True)
-    numero_base_cadastre = Column(Text)
+    affaire_id = Column(BigInteger)
+    numero_relation_id = Column(BigInteger, primary_key=True)
+    numero_base_id = Column(BigInteger)
     numero_base_cadastre_id = Column(BigInteger)
-    numero_base_type = Column(Text)
+    numero_base_cadastre = Column(Text)
     numero_base_type_id = Column(BigInteger)
-    numero_base_numero = Column(BigInteger)
+    numero_base_type = Column(Text)
+    numero_base = Column(BigInteger)
     numero_base_suffixe = Column(Text)
-    numero_base_etat = Column(Text)
     numero_base_etat_id = Column(BigInteger)
+    numero_base_etat = Column(Text)
     numero_base_plan_id = Column(BigInteger)
-    numero_associe_id = Column(BigInteger, primary_key=True)
-    numero_associe_cadastre = Column(Text)
+    numero_associe_id = Column(BigInteger)
     numero_associe_cadastre_id = Column(BigInteger)
-    numero_associe_type = Column(Text)
+    numero_associe_cadastre = Column(Text)
     numero_associe_type_id = Column(BigInteger)
-    numero_associe_numero = Column(BigInteger)
+    numero_associe_type = Column(Text)
+    numero_associe = Column(BigInteger)
     numero_associe_suffixe = Column(Text)
-    numero_associe_etat = Column(Text)
     numero_associe_etat_id = Column(BigInteger)
+    numero_associe_etat = Column(Text)
     numero_associe_plan_id = Column(BigInteger)
-    relation_type = Column(Text)
-    relation_type_id = Column(BigInteger, primary_key=True)
-    affaire_id = Column(BigInteger, primary_key=True)
+    numero_relation_type_id = Column(BigInteger)
+    numero_relation_type = Column(Text)
 
 
 class VDocumentsAffaires(Base):
@@ -769,24 +775,3 @@ class VDocumentsAffaires(Base):
     type_id = Column(BigInteger)
     type_doc = Column(Text)
 
-
-class Fonction(Base):
-    __tablename__ = 'fonction'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-
-
-class Role(Base):
-    __tablename__ = 'role'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-
-
-class FonctionRole(Base):
-    __tablename__ = 'fonction_role'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    fonction_id = Column(BigInteger, ForeignKey(Fonction.id), nullable=False)
-    role_id = Column(BigInteger, ForeignKey(Role.id), nullable=False)
