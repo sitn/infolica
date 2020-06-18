@@ -27,11 +27,13 @@ pip install -e ".[testing]"
 ```
 
 ## In case of database migration  
+Generate delta file
 ```
 alembic -c development.ini revision --autogenerate -m "init"  
 ```
+Apply modifications
 ```
-alembic -c development.ini upgrade head`
+alembic -c development.ini upgrade head
 ```
 
 ## Run your project  
