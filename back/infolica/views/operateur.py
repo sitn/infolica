@@ -67,7 +67,6 @@ def operateurs_new_view(request):
     with transaction.manager:
         request.dbsession.add(model)
         request.dbsession.flush()
-        print("model.id = ", model.id)
         transaction.commit()
         return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Operateur.__tablename__))
 
