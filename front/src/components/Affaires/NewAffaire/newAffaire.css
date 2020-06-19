@@ -13,3 +13,7 @@
 .newAffaire  .mapHeight {
     height: 500px;
 }
+
+.newAffaire  .autocomplete {
+    margin-top: 30px;
+}

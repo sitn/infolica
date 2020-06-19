@@ -57,7 +57,7 @@ export default {
           }
         )
         .then(response => {
-          let routeAffaireData = this.$router.resolve({ name: "Affaires"});
+          const routeAffaireData = this.$router.resolve({ name: "Affaires"});
 
           if (response && response.data) {
             this.affaire_numeros_all = response.data;
