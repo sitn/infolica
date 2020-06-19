@@ -17,7 +17,7 @@ class LDAPQuery(object):
     @classmethod
     def do_login(cls, request, login, password):
 
-        #headers = forget(request)
+
 
         # Check if user exists in LDAP
         try:
@@ -42,7 +42,7 @@ class LDAPQuery(object):
         else:
             raise Exception('LDAP authentication failed')
 
-        return None
+
 
 
     @classmethod
@@ -82,23 +82,19 @@ class LDAPQuery(object):
 
     @classmethod
     def get_user_group_by_dn(cls, request, dn):
-        groups = []
-
         connector = get_ldap_connector(request)
         result = connector.user_groups(dn)
 
         if result is not None:
-            for r in result:
-                if r and len(r) > 1:
-                    groups.append(cls.format_json_attributes(json.loads(json.dumps(dict(r[1])))))
+            groups = [cls.format_json_attributes(json.loads(json.dumps(dict(r[1])))) for r in result if r and len(r) > 1]
 
             if groups and len(groups) > 0:
                 cn_attribute = request.registry.settings['ldap_group_attribute_id']
 
                 for group in groups:
                     if group[cn_attribute].startswith(request.registry.settings['infolica_groups_prefix']):
+                        print (group[cn_attribute])
                         return group[cn_attribute]
-
         return None
 
     @classmethod

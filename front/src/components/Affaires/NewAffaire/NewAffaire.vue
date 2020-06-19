@@ -8,6 +8,7 @@ import { validationMixin } from "vuelidate";
 import { handleException } from "@/services/exceptionsHandler";
 import { required } from "vuelidate/lib/validators";
 import { getCurrentDate } from "@/services/helper";
+import Autocomplete from 'vuejs-auto-complete';
 
 const moment = require("moment");
 
@@ -16,7 +17,8 @@ export default {
   mixins: [validationMixin],
   props: {},
   components: {
-    MapHandler
+    MapHandler,
+    Autocomplete
   },
   data: () => {
     return {
@@ -26,6 +28,8 @@ export default {
       operateurs_list: [],
       responsables_list: [],
       cadastres_list: [],
+      sitn_search_categories: null,
+      
 
       form: {
         nom: null,
@@ -362,10 +366,66 @@ export default {
       this.form.nomlocalisation_E = null;
       this.form.nomlocalisation_N = null;
       this.form.nomvref = null;
-    }
+    },
+
+    /**
+     * User SITN search service
+     */
+    async doSearchSITN(input){
+      let result = await 
+        this.$http
+        .get(process.env.VUE_APP_SITN_SEARCH_SERVICE_URL + input )
+        .then(response => {
+          return (response);
+        })
+        //Error
+        .catch(err => {
+          this.sending = false;
+          console.error(err);
+        });
+      return result;
+    },
+
+    /**
+     * Search SITN endpoint
+     */
+    searchSITNEndpoint (input) {
+      return process.env.VUE_APP_SITN_SEARCH_SERVICE_URL + input;
+    },
+
+    /**
+     * Handle SITN search item 
+     */
+    handleSelectSITNItem (feature) {
+      if(feature && feature.selectedObject && feature.selectedObject.geometry){
+        this.$refs.mapHandler.addGraphic(feature.selectedObject);
+      }
+      
+      // access the autocomplete component methods from the parent
+      this.$refs.autocomplete.clear()
+    },
+    
+    /**
+     * Handle display format
+     */
+    formattedDisplay (result) {
+        return result.properties.label;
+    },
+
+    /**
+     * Handle SITN search results
+    
+    handleSITNSearchResults (results) {
+      console.log(results);
+      document.getElementsByClassName('autocomplete__results')[0].innerHTML = "Tessssst";
+    },*/
+
   },
 
   mounted: function() {
+    //Init search SITN categories
+    this.sitn_search_categories = JSON.parse(process.env.VUE_APP_SITN_SEARCH_CATEGORIES_ALIASES);
+
     //Init map component
     this.callInitMap();
 

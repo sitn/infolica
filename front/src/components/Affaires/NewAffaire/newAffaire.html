@@ -173,10 +173,20 @@
                                 obligatoire</span>
                         </md-field>
                     </div>
-                    <div class="md-layout-item md-small-size-100"></div>
-                    <div class="md-layout-item md-small-size-100"></div>
-                    <div class="md-layout-item md-small-size-100"></div>
-                    <div class="md-layout-item md-small-size-100"></div>
+
+                    <div class="md-layout-item md-small-size-100">
+                        <autocomplete
+                        ref="autocomplete"
+                        placeholder="Rechercher un bien-fond"
+                        :source="searchSITNEndpoint"
+                        input-class="form-control"
+                        results-property="features"
+                        :results-display="formattedDisplay"
+                        @selected="handleSelectSITNItem"
+                        @results="handleSITNSearchResults"
+                        >
+                        </autocomplete>
+                    </div>
                 </div>
 
                 <div class="md-layout md-gutter mapHeight" id="mapContainer">
