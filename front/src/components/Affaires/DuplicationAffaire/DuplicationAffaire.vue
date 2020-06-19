@@ -83,7 +83,7 @@ export default {
             );
             this.affaire_numeros_nouveaux.forEach(function(element) {
               if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)) element.active = false;
-              else if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_PROJET_ID)) element.active = true;
+              else /*if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_PROJET_ID))*/ element.active = true;
             });
           }
         })
@@ -261,8 +261,8 @@ export default {
      * Deactivate numero_affaire in source affaire
      **/
     deactivateAffaireNumeros(id_affaire_fille){
-      var numeros = [];
-      this.selectedAnciensNumeros.forEach((num) => {
+      let numeros = [];
+      this.selectedAnciensNumeros.forEach(num => {
          numeros.push(num);
       });
 

@@ -13,9 +13,9 @@ import TileWMS from "ol/source/TileWMS";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Feature from "ol/Feature";
-// import Circle from 'ol/geom/Circle'
 import Point from "ol/geom/Point";
-import { Style, Circle, Fill, Stroke } from "ol/style";
+import { Style, Circle, Fill, Stroke, RegularShape } from "ol/style";
+import GeoJSON from 'ol/format/GeoJSON'
 
 export default {
   name: "MapHandler",
@@ -30,6 +30,8 @@ export default {
     view: null,
     vectorLayer: null,
     vectorSource: null,
+    graphicsLayer: null,
+    graphicsLayerSource: null,
     markerStyle: null
   }),
 
@@ -62,8 +64,11 @@ export default {
         source: this.vectorSource
       });
 
+      // Graphics layer
+      this.initGraphicsLayer();
+
       // Map layers
-      var layers = [wmsLayer, this.vectorLayer];
+      var layers = [wmsLayer, this.vectorLayer, this.graphicsLayer];
 
       //View
       this.view = new View({
@@ -130,9 +135,13 @@ export default {
      * Handle map click event
      */
     setCanvasTransform: function() {
-      var canvas = document.getElementById("mapDiv").querySelectorAll("canvas");
+      var canvasList = document.getElementById("mapDiv").querySelectorAll("canvas");
 
-      if (canvas && canvas.length > 1) canvas[1].style.transform = "inherit";
+      if (canvasList && canvasList.length > 1) {
+         canvasList.forEach(canvas => {
+          canvas.style.transform = "inherit";
+         });
+      }
     },
 
     /**
@@ -150,6 +159,80 @@ export default {
         })
       });
     },
+
+    /**
+     * Init graphics layer
+     */
+    initGraphicsLayer: function(){
+      this.graphicsLayerSource = new VectorSource({
+        projection: process.env.VUE_APP_MAP_PROJECTION
+      });
+      this.graphicsLayer = new VectorLayer({
+        source: this.graphicsLayerSource,
+        style: new Style({
+          fill: new Fill({ color: 'yellow' }),
+          stroke: new Stroke({ color: 'red', width: 8 }),
+          image: new RegularShape({
+            fill: new Fill({ color: 'yellow' }),
+            stroke: new Stroke({ color: 'red', width: 4 }),
+            points: 4,
+            radius: 10,
+            radius2: 0,
+            angle: Math.PI / 4,
+          }),
+        }),
+        opacity: 0.5
+      });
+    },
+
+    /**
+     * Add graphic to graphics layer
+     */
+    addGraphic: function(feature){
+      this.graphicsLayerSource.clear();      
+      const geojsonFormat = new GeoJSON();
+
+      const nGeom = feature.geometry.coordinates.length;
+
+      // Geometry is not empty
+      if (nGeom !== 0) {
+        this.graphicsLayerSource.addFeatures(geojsonFormat.readFeatures(feature));
+        
+      // Geometry is empty
+      } else if (feature.bbox.length > 1) { 
+        const point = new Point(feature.bbox[0], feature.bbox[1]);
+        const pointFeature = new Feature(point);
+        this.graphicsLayer.addFeatures(pointFeature);
+      }
+
+      // Zoom to feature
+      if (feature.geometry.type === 'Point') {
+        this.view.fit(feature.bbox);
+        this.view.setZoom(12);
+      } else {
+        this.view.fit(feature.bbox, {padding: [50, 50, 50, 50]});
+      }
+    },
+
+
+    /**
+     * Add marker
+     */
+    addMarker: function(x, y) {
+      var marker = new Feature({
+        geometry: new Point([x, y])
+      });
+      marker.setStyle(this.markerStyle);
+      this.vectorSource.addFeature(marker);
+    },
+
+    /**
+     * Clear markers
+     */
+    clearMarkers: function() {
+      this.vectorSource.clear();
+    }
+
 
     /**
      * Handle map click event
@@ -172,24 +255,6 @@ export default {
     /*onMapMounted: function() {
       console.log(this.$refs.map);
     },*/
-
-    /**
-     * Add marker
-     */
-    addMarker: function(x, y) {
-      var marker = new Feature({
-        geometry: new Point([x, y])
-      });
-      marker.setStyle(this.markerStyle);
-      this.vectorSource.addFeature(marker);
-    },
-
-    /**
-     * Clear markers
-     */
-    clearMarkers: function() {
-      this.vectorSource.clear();
-    },
   },
 
   mounted: function() {
