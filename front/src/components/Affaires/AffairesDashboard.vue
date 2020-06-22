@@ -39,7 +39,7 @@ export default {
     ControlePPE,
     SuiviMandat,
     DuplicationAffaire,
-    ClotureAffaire,
+    ClotureAffaire
   },
   data() {
     return {

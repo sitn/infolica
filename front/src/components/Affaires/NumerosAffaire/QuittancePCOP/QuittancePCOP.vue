@@ -9,7 +9,7 @@ import {
   getCadastres,
   stringifyAutocomplete
 } from "@/services/helper";
-const moment = require("moment");
+import moment from "moment";
 
 export default {
   name: "quittancePCOP",
@@ -39,7 +39,7 @@ export default {
     showQuittancePCOPDialog: false,
     cadastres_liste: [],
     numeros_pcop: [],
-    numeros_base: [],
+    numeros_base: []
   }),
 
   methods: {
@@ -81,10 +81,10 @@ export default {
           this.form.titre = client.titre;
           this.form.nom_prenom = client.prenom === null? client.nom : client.nom +  " "  + client.prenom;
           this.form.adresse = client.adresse;
-          this.form.npa = client.npa
-          this.form.localite = client.localite
+          this.form.npa = client.npa;
+          this.form.localite = client.localite;
         }
-      })
+      });
     },
 
     /**
@@ -93,21 +93,21 @@ export default {
     getNumerosReservesPCOP() {
       this.numeros_pcop = this.affaire_numeros_nouveaux.filter(x => x.numero_type_id===Number(process.env.VUE_APP_NUMERO_TYPE_PCOP) && x.active);
       this.numeros_base = [];
-      var tmp = [];
+      let tmp = [];
       // Get set of unique BF base
       this.affaire_numeros_nouveaux.map(x => {
         if (!tmp.includes(x.numero_base_id) && x.numero_base_id !== null && x.active){
           tmp.push(x.numero_base_id);
           this.numeros_base.push({numero_base: x.numero_base, numero_base_id: x.numero_base_id});
         }
-      })
+      });
     },
 
     /**
      * Update les numéros de et à en fonction du BF de base
      */
     updateNumerosPCOP() {
-      const tmp = []
+      const tmp = [];
       this.affaire_numeros_nouveaux.filter(x => x.numero_base === this.form.bfBase).map(x => {if (x.active) tmp.push(x.numero)});
       this.form.numeros_de = Math.min(...tmp);
       this.form.numeros_a = Math.max(...tmp);
@@ -137,7 +137,7 @@ export default {
      * Créer la quittance de création de parts de copropriétés
      */
     callCreateQuittancePCOP() {
-      var formData = new FormData();
+      let formData = new FormData();
 
       formData.append("template", "QuittancePCOP");
       formData.append(
@@ -147,7 +147,7 @@ export default {
           NOMPRENOM: this.form.nom_prenom,
           ADRESSE: this.form.adresse,
           NPALOCALITE: this.form.npa + " " + this.form.localite,
-          NREF: this.form.nref == "" ? String(this.affaire.id) : String(this.affaire.id) + "-" + this.form.nref,
+          NREF: this.form.nref === "" ? String(this.affaire.id) : String(this.affaire.id) + "-" + this.form.nref,
           VREF: String(this.form.vref),
           DATEENVOI: String(this.form.dateEnvoi),
           CIVILITE: this.form.titre,
@@ -184,7 +184,7 @@ export default {
      * Download QuittancePCOP
      */
     downloadQuittancePCOP(filename) {
-      var url =
+      let url =
         process.env.VUE_APP_API_URL +
         process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
         "?filename=" +

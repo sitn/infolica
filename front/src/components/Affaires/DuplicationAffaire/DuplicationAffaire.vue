@@ -4,7 +4,6 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-//import func from '../../../../vue-temp/vue-editor-bridge';
 const moment = require("moment");
 
 export default {

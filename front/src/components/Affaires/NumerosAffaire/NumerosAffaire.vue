@@ -34,7 +34,7 @@ export default {
       showNumerosMO: true,
       affaireReadonly: true,
       numerosMoLoading: true,
-      showQuittancePCOPDialog: false,
+      showQuittancePCOPDialog: false
       // numeros_base_relations: []
     };
   },
@@ -261,7 +261,7 @@ export default {
      * Ouvrir le dialog de quittance de réservation de PCOP
      */
     callOpenQuittancePCOPDialog() {
-      this.$refs.formQuittancePCOP.openQuittancePCOPDialog()
+      this.$refs.formQuittancePCOP.openQuittancePCOPDialog();
     },
 
     /**
@@ -343,18 +343,6 @@ export default {
     },
 
     // /**
-    //  * update numéros référencés à la clôture de l'affaire
-    //  */
-    // updateNumerosReferencesOnCloture() {
-    //   // Chercher la liste des immeubles de base qui ont des immeubles en projet ou vigueur dessus
-    //   this.getImmeublesAssocies()
-    //   .then(response => this.numeros_base_relations = response)
-    //   .catch(err => handleException(err, this));
-
-
-    // },
-
-    // /**
     //  * Get immeubles associes
     //  */
     // async getImmeublesAssocies() {
@@ -381,7 +369,7 @@ export default {
 
   },
   mounted: function() {
-    this.searchAffaireNumeros()
+    this.searchAffaireNumeros();
     this.searchAffaireNewNumerosMo();
 
     this.$root.$on('UpdateNumerosAffaires', () =>{
