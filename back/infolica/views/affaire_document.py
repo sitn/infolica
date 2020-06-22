@@ -16,6 +16,18 @@ from cgi import FieldStorage
 # DOCUMENTS (LISTE) AFFAIRE
 ###########################################################
 
+""" GET documents folder"""
+@view_config(route_name='affaire_dossier_by_affaire_id', request_method='GET', renderer='json')
+def affaire_dossier_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+    
+    affaire_dossier = request.registry.settings["affaires_directory"]
+    affaire_id = request.matchdict['id']
+    return os.path.join(affaire_dossier, affaire_id)
+
+
 """ GET documents affaire"""
 @view_config(route_name='affaire_documents_by_affaire_id', request_method='GET', renderer='json')
 def affaire_documents_view(request):
@@ -30,7 +42,7 @@ def affaire_documents_view(request):
     for doc in documents:
         affaire_id = doc['affaire_id']
         filename = doc['nom']
-        filepath = os.path.join(request.registry.settings['upload_files_directory'], str(affaire_id), filename)
+        filepath = os.path.join(request.registry.settings['affaires_directory'], str(affaire_id), filename)
         doc['creation'] = datetime.fromtimestamp(os.path.getctime(filepath)).strftime("%d.%m.%Y")
 
     return documents
@@ -54,7 +66,7 @@ def upload_affaire_document_view(request):
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
 
     # Create affaire folder if does not exist
-    affaire_folder = os.path.join(request.registry.settings['upload_files_directory'], affaire_id)
+    affaire_folder = os.path.join(request.registry.settings['affaires_directory'], affaire_id)
     Utils.create_affaire_folder(affaire_folder)
     fileslist = [request.POST[x] for x in request.POST if x.startswith('affaire_doc_files')]
 
@@ -87,12 +99,12 @@ def download_affaire_document_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
         raise exc.HTTPForbidden()
 
-    upload_files_directory = request.registry.settings['upload_files_directory']
+    affaires_directory = request.registry.settings['affaires_directory']
     affaire_id = request.params['affaire_id']
     filename = request.params['filename']
 
     if affaire_id:
-        file_path = os.path.join(upload_files_directory, affaire_id, filename)
+        file_path = os.path.join(affaires_directory, affaire_id, filename)
         base_file_name = os.path.basename(file_path)
 
     import urllib
@@ -112,11 +124,11 @@ def delete_affaire_document_view(request):
         raise exc.HTTPForbidden()
 
     # Get params
-    upload_files_directory = request.registry.settings['upload_files_directory']
+    affaires_directory = request.registry.settings['affaires_directory']
     id_doc = request.params['id']
     affaire_id = request.params['affaire_id']
     filename = request.params['nom']
-    file_path = os.path.join(upload_files_directory, affaire_id, filename)
+    file_path = os.path.join(affaires_directory, affaire_id, filename)
 
     # Delete file from folder
     os.remove(file_path)

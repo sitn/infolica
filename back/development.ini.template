@@ -147,17 +147,12 @@ cadastres_Sauge_StAubin_id = 22, 67
 # Chemins dossiers affaires
 ######################################################################################
 # affaireTemplateDir = /path/to/affaireTemplateDir
-affaireParDir = /path/to/affaireParDir
+affaires_directory = /path/to/affaires_directory
 
 ######################################################################################
 # Access-Control-Allow-Origin
 ######################################################################################
 access_control_allow_origin = http://127.0.0.1:8080
-
-######################################################################################
-# Upload file directory
-######################################################################################
-upload_files_directory = /path/to/upload_files_directory
 
 ######################################################################################
 # Mails templates directory

@@ -10,7 +10,6 @@
                     </md-button>
                 </md-card-expand-trigger>
                 Documents
-
                 <md-button class="md-primary uploadDocBtn" v-on:click="showUploadDocsDialog = true" v-if="showUploadDocBtn && !affaireReadonly">
                     Charger des documents
                 </md-button>
@@ -19,8 +18,14 @@
 
         <md-card-expand>
             <md-card-expand-content>
-
                 <md-card-content>
+                    
+                    <div style="display: table-cell;">
+                            Dossier de l'affaire: 
+                            <input type="text" id="dossier-affaire" :value="dossier_affaire" style="width: 200px;" readonly>
+                            <md-button class="md-primary md-dense md-center-left" style="vertical-align: middle;" @click="copyToClipboard">copier</md-button>
+                    </div>
+
                     <div v-if="documents[0]">
                         <md-table v-model="documents" md-sort="" md-sort-order="desc" md-fixed-header md-card>
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
