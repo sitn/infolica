@@ -40,7 +40,7 @@ export default {
         type_id: null,
         cadastre_id: null,
         information: null,
-        date_ouverture: getCurrentDate(),
+        date_ouverture: moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS),
         date_validation: null,
         date_cloture: null,
         localisation_E: null,
