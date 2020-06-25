@@ -23,6 +23,13 @@ export default {
   },
 
   methods: {
+    /**
+     * Ouvre la page de consultation/édition de client
+     */
+    openClientEditor(field_name) {
+      let routedata = this.$router.resolve({name: 'ClientsEdit', params: {id: this.affaire[field_name]}});
+      window.open(routedata.href, "_blank");
+    },
     /*
      * CREATE COPY OF AFFAIRE
      */
@@ -54,6 +61,12 @@ export default {
           moment(this.affaire.date_validation, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
       else
         formData.append("date_validation", null);
+      if (this.affaire.date_envoi)
+        formData.append(
+          "date_envoi", this.affaire.date_envoi? 
+          moment(this.affaire.date_envoi, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
+      else
+        formData.append("date_cloture", null);
       if (this.affaire.date_cloture)
         formData.append(
           "date_cloture", this.affaire.date_cloture? 

@@ -75,7 +75,6 @@ export default {
      * Télécharger le document en local
      */
     downloadItem(item) {
-      alert(item.chemin.replace(/\\/g, "/"))
       axios.get(item.chemin.replace(/\\/g, "/"), { responseType: "blob" })
         .then(response => {
           const blob = new Blob([response.data], { type: "application/pdf" });

@@ -90,8 +90,9 @@ class Affaire(Base):
     nom = Column(Text)
     client_commande_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
     client_commande_complement = Column(Text)
-    responsable_id = Column(
-        BigInteger, ForeignKey(Operateur.id), nullable=False)
+    client_envoi_id = Column(BigInteger, ForeignKey(Client.id))
+    client_envoi_complement = Column(Text)
+    responsable_id = Column(BigInteger, ForeignKey(Operateur.id))
     technicien_id = Column(BigInteger, ForeignKey(
         Operateur.id), nullable=False)
     type_id = Column(BigInteger, ForeignKey(
@@ -101,6 +102,7 @@ class Affaire(Base):
     date_ouverture = Column(
         Date, default=datetime.datetime.utcnow, nullable=False)
     date_validation = Column(Date)
+    date_envoi = Column(Date)
     date_cloture = Column(Date)
     localisation_E = Column(Float, nullable=False)
     localisation_N = Column(Float, nullable=False)
@@ -158,7 +160,7 @@ class Facture(Base):
     montant_mat_diff = Column(Float, default=0.0, nullable=False)
     montant_tva = Column(Float, default=0.0, nullable=False)
     montant_total = Column(Float, default=0.0, nullable=False)
-    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+    date = Column(Date)
     remarque = Column(Text)
 
 
@@ -227,8 +229,8 @@ class Envoi(Base):
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
     client_complement = Column(Text)
-    type_id = Column(BigInteger, ForeignKey(EnvoiType.id), nullable=False)
-    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+    type_id = Column(BigInteger, ForeignKey(EnvoiType.id))
+    date = Column(Date, default=datetime.datetime.utcnow)
 
 
 class EnvoiDocument(Base):
@@ -638,6 +640,28 @@ class VAffaire(Base):
     client_commande_nom = Column(Text)
     client_commande_prenom = Column(Text)
     client_commande_complement = Column(Text)
+    client_commande_npa = Column(Text)
+    client_commande_localite = Column(Text)
+    client_commande_tel_fixe = Column(Text)
+    client_commande_tel_portable = Column(Text)
+    client_commande_fax = Column(Text)
+    client_commande_mail = Column(Text)
+    client_commande_no_sap = Column(Text)
+    client_commande_no_bdp_bdee = Column(Text)
+    client_envoi_id = Column(BigInteger)
+    client_envoi_entreprise = Column(Text)
+    client_envoi_titre = Column(Text)
+    client_envoi_nom = Column(Text)
+    client_envoi_prenom = Column(Text)
+    client_envoi_complement = Column(Text)
+    client_envoi_npa = Column(Text)
+    client_envoi_localite = Column(Text)
+    client_envoi_tel_fixe = Column(Text)
+    client_envoi_tel_portable = Column(Text)
+    client_envoi_fax = Column(Text)
+    client_envoi_mail = Column(Text)
+    client_envoi_no_sap = Column(Text)
+    client_envoi_no_bdp_bdee = Column(Text)
     responsable_id = Column(BigInteger)
     responsable_nom = Column(Text)
     responsable_prenom = Column(Text)
@@ -649,6 +673,7 @@ class VAffaire(Base):
     information = Column(Text)
     date_ouverture = Column(Date)
     date_validation = Column(Date)
+    date_envoi = Column(Date)
     date_cloture = Column(Date)
     localisation_e = Column(Float)
     localisation_n = Column(Float)
