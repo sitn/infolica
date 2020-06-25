@@ -11,10 +11,18 @@
                 </div>
                 
                 <div class="md-layout-item md-size-50 md-small-size-100">
-                    <md-field>
+                    <md-field v-if="infoGenReadonly">
                         <label>Type</label>
                         <md-input v-model="affaire.type_affaire" readonly></md-input>
                     </md-field>
+
+                    <md-autocomplete v-model="form.typeAffaire"
+                        :md-options="typesAffairesListe"
+                        required
+                        md-dense
+                        v-else>
+                        <label><strong style="color: blue;">Type</strong></label>
+                    </md-autocomplete>
                 </div>
             </div>
 
@@ -31,18 +39,34 @@
             
             <div class="md-layout md-gutter ">
                 <div class="md-layout-item md-size-50 md-small-size-100">
-                    <md-field>
+                    <md-field v-if="infoGenReadonly">
                         <label>Opérateur</label>
                         <md-input v-model="affaire.technicien" readonly>
                         </md-input>
                     </md-field>
+
+                    <md-autocomplete v-model="form.technicien" 
+                        :md-options="operateursListe"
+                        required
+                        md-dense
+                        v-else>
+                        <label><strong style="color: blue">Opérateur</strong></label>
+                    </md-autocomplete>
+
                 </div>
                 <div class="md-layout-item md-size-50 md-small-size-100">
-                    <md-field>
+                    <md-field v-if="infoGenReadonly">
                         <label>Validation</label>
                         <md-input v-model="affaire.responsable" readonly>
                         </md-input>
                     </md-field>
+
+                    <md-autocomplete v-model="form.responsable"
+                        :md-options="operateursListe"
+                        md-dense
+                        v-else>
+                        <label><strong style="color: blue">Validation</strong></label>
+                    </md-autocomplete>
                 </div>
             </div>
 
@@ -89,13 +113,6 @@
             <div class="md-layout md-gutter ">
                 <div class="md-layout-item md-size-50 md-small-size-100">
                     <md-field>
-                        <label v-if="infoGenReadonly">Nom de l'affaire</label>
-                        <label v-else><strong style="color: blue">Nom de l'affaire</strong></label>
-                        <md-input v-model="affaire.nom" :readonly="infoGenReadonly"></md-input>
-                    </md-field>
-                </div>
-                <div class="md-layout-item md-size-50 md-small-size-100">
-                    <md-field>
                         <label v-if="infoGenReadonly">v/ref</label>
                         <label v-else><strong style="color: blue">v/ref</strong></label>
                         <md-input v-model="affaire.vref" :readonly="infoGenReadonly"></md-input>
@@ -119,7 +136,7 @@
                     </md-field>
                     <!-- Affiche la date de validation en mode édition -->
                     <md-datepicker v-model="affaire.date_validation" md-immediately v-else>
-                        <label><strong style="color: blue">Date de la validation</strong></label>
+                        <label><strong style="color: blue">Date de la validation</strong></strong></label>
                     </md-datepicker>
                 </div>
                 <div class="md-layout-item md-size-25 md-small-size-100">
@@ -150,7 +167,7 @@
                 <div class="md-layout-item">
                     <div class="md-layout md-alignment-bottom-right">
                         <div v-if="infoGenReadonly">
-                            <md-button class="md-elevation-5 md-dense md-primary" v-if="!affaireReadonly" @click="infoGenReadonly=!infoGenReadonly">Modifier
+                            <md-button class="md-elevation-5 md-dense md-primary" v-if="!affaireReadonly" @click="openEditMode">Modifier
                             </md-button>
                         </div>
                         <div v-else>

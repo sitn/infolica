@@ -4,7 +4,7 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission} from '@/services/helper';
+import {checkPermission, stringifyAutocomplete} from '@/services/helper';
 
 const moment = require("moment");
 
@@ -18,7 +18,14 @@ export default {
     return {
       affaire_backup: {},
       infoGenReadonly: true,
-      affaireReadonly: true
+      affaireReadonly: true,
+      operateursListe: [],
+      typesAffairesListe: [],
+      form: {
+        technicien: null,
+        responsable: null,
+        typeAffaire: null
+      }
     };
   },
 
@@ -51,6 +58,9 @@ export default {
     async onConfirmEdit() {
       var formData = new FormData();
       formData.append("id_affaire", this.affaire.id);
+      formData.append("technicien_id", this.form.technicien.id);
+      formData.append("type_id", this.form.typeAffaire.id);
+      if (this.form.responsable !== null) formData.append("responsable_id", this.form.responsable.id);
       if (this.affaire.nom !== "-") formData.append("nom", this.affaire.nom || null);
       if (this.affaire.information !== "-")
         formData.append("information", this.affaire.information || null);
@@ -91,11 +101,73 @@ export default {
         .catch(err => {
           handleException(err, this); 
         });
-    }
+    },
+
+    /**
+     * Initialiser la liste des opérateurs
+     */
+    async initOperateursListe() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.operateursListe = response.data
+          .map(x => ({
+            id: x.id,
+            nom: [x.prenom, x.nom].filter(Boolean).join(" ")
+          }))
+          .map(x => ({
+            id: x.id,
+            nom: x.nom,
+            toLowerCase: () => x.nom.toLowerCase(),
+            toString: () => x.nom.toString()
+          }));
+        }
+      }).catch(err => handleException(err, this))
+    },
+
+    /**
+     * Open Edit mode
+     */
+    openEditMode() {
+      this.form.technicien = this.operateursListe
+      .filter(x => x.id === this.affaire.technicien_id)[0];
+      
+      this.form.responsable = this.operateursListe
+      .filter(x => x.id === this.affaire.responsable_id)[0];
+
+      this.form.typeAffaire = this.typesAffairesListe
+      .filter(x => x.id === this.affaire.type_id)[0];
+
+      this.infoGenReadonly = false;
+    },
+
+    /**
+     * get cadastres
+     */
+    async initTypesAffairesListe() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_AFFAIRES_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) 
+          this.typesAffairesListe = stringifyAutocomplete(response.data);
+      }).catch(err => handleException(err, this))
+    },
+
   },
 
   mounted: function() {
     this.copyAffaire();
+    this.initOperateursListe();
+    this.initTypesAffairesListe();
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
