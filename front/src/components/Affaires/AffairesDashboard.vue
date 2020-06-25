@@ -80,13 +80,15 @@ export default {
               ]
                 .filter(Boolean)
                 .join(" ");
+
               obj["client_envoi_nom_"] = [
                 obj.client_envoi_entreprise,
                 obj.client_envoi_titre,
-                [obj.client_envoi_commande_nom, obj.client_envoi_prenom].filter(Boolean).join(" ")
+                [obj.client_envoi_nom, obj.client_envoi_prenom].filter(Boolean).join(" ")
               ]
                 .filter(Boolean)
                 .join(" ");
+
               obj["technicien"] = [obj.technicien_prenom, obj.technicien_nom]
                 .filter(Boolean)
                 .join(" ");
