@@ -87,6 +87,7 @@ class Affaire(Base):
     __tablename__ = 'affaire'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
+    no_access = Column(Text)
     nom = Column(Text)
     client_commande_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
     client_commande_complement = Column(Text)
@@ -633,6 +634,7 @@ class VAffaire(Base):
     __tablename__ = 'v_affaires'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True)
+    no_access = Column(Text)
     nom = Column(Text)
     client_commande_id = Column(BigInteger)
     client_commande_entreprise = Column(Text)

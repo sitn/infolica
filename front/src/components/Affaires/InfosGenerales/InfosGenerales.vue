@@ -92,7 +92,6 @@ export default {
           headers: { Accept: "application/json" }
         }
       ).then(() => { //response =>{
-          // this.handleSaveDataSuccess(response);
           this.infoGenReadonly = true;
           this.$parent.setAffaire();
           this.copyAffaire();

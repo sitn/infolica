@@ -27,6 +27,7 @@ export default {
       search_clients_list: [],
       operateurs_list: [],
       cadastres_list: [],
+      // affaires_list: [],
       sitn_search_categories: null,
       client_envoi: null,
       client_envoi_complement: null,
@@ -36,22 +37,26 @@ export default {
         nom: null,
         client_commande: null,
         client_commande_complement: null,
-        // responsable_id: null,
         technicien_id: null,
         type_id: null,
         cadastre_id: null,
-        information: null,
         date_ouverture: getCurrentDate(),
         date_validation: null,
         date_cloture: null,
         localisation_E: null,
         localisation_N: null,
         localisation: null,
-        vref: null
+        vref: null,
+        affaire_base: null,
+        remarque: null,
+        affaire_base_id: null,
+        affaire_modif_type: null
       },
       dataSaved: false,
       sending: false,
-      lastRecord: null
+      lastRecord: null,
+      type_modification_bool: false,
+      typesModficiationAffaire_list: []
     };
   },
 
@@ -139,7 +144,7 @@ export default {
     /*
      * Init types affaires list
      */
-    initTypesAffairesList() {
+    async initTypesAffairesList() {
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
@@ -163,7 +168,7 @@ export default {
     /*
      * Init clients list
      */
-    initClientsList() {
+    async initClientsList() {
       this.$http
         .get(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
@@ -203,7 +208,7 @@ export default {
     /*
      * Init operateurs list
      */
-    initOperateursList() {
+    async initOperateursList() {
       this.$http
         .get(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
@@ -236,7 +241,7 @@ export default {
     /*
      * Init cadastres list
      */
-    initCadastresList() {
+    async initCadastresList() {
       this.$http
         .get(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_CADASTRES_ENDPOINT,
@@ -290,21 +295,25 @@ export default {
           const _response = response;
           if (response && response.data) {
 
+            var promises = [];
             // Enregistrer une facture vide
-            this.postFacture(_response.data)
-              .then(response => {
-                if (response) {
-                  this.handleSaveDataSuccess(_response);
-                  this.$router.push({
-                    name: "AffairesDashboard",
-                    params: { id: _response.data }
-                  });
-                }
-              })
-              .catch(err => {
+            promises.push(this.postFacture(_response.data));
+            if (this.form.remarque !== null) promises.push(this.postRemarqueAffaire(_response.data));
+            if (this.type_modification_bool) promises.push(this.postAffaireRelation(_response.data));
+
+            Promise.all(promises)
+            .then(() => {
+              this.handleSaveDataSuccess(_response);
+              this.$router.push({
+                name: "AffairesDashboard",
+                params: { id: _response.data }
+              });
+                
+            }).catch(err => {
                 handleException(err, this);
                 this.sending = false;
               });
+              
           }
         })
         //Error
@@ -350,6 +359,52 @@ export default {
     },
 
     /**
+     * Post affaires relation si affaire de type modification
+     */
+    postAffaireRelation(affaire_id) {
+      var formData = new FormData();
+      formData.append('affaire_id_mere', this.form.affaire_base_id);
+      formData.append('affaire_id_fille', affaire_id);
+      formData.append('type_id', this.form.affaire_modif_type.id);
+      formData.append("date", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_MODIFICATION_AFFAIRE_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      })
+    },
+
+    /**
+     * Post remarque affaire si remarque spécifiée
+     */
+    postRemarqueAffaire(affaire_id) {
+      var formData = new FormData();
+      formData.append("affaire_id", affaire_id);
+      formData.append("remarque", this.form.remarque);
+      formData.append("operateur_id", this.form.technicien_id);
+      formData.append("date", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
+      
+      return new Promise((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_REMARQUES_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },  
+
+    /**
      * Handle save data success
      */
     initPostData() {
@@ -375,8 +430,6 @@ export default {
         formData.append("technicien_id", this.form.technicien_id);
       if (this.form.cadastre_id)
         formData.append("cadastre_id", this.form.cadastre_id);
-      if (this.form.information)
-        formData.append("information", this.form.information);
       if (this.form.localisation_E)
         formData.append("localisation_E", this.form.localisation_E);
       if (this.form.localisation_N)
@@ -451,7 +504,6 @@ export default {
       this.form.nomtechnicien_id = null;
       this.form.nomtype_id = null;
       this.form.nomcadastre_id = null;
-      this.form.nominformation = null;
       this.form.nomdate_ouverture = getCurrentDate(),
       this.form.nomdate_validation = null;
       this.form.nomdate_cloture = null;
@@ -536,11 +588,76 @@ export default {
 
     /**
      * openCreateClient
-    //  */
+     */
     openCreateClient() {
       let routedata = this.$router.resolve({ name: "ClientsNew" });
       window.open(routedata.href, "_blank");
+    },
+
+    // /**
+    //  * Get affaires
+    //  */
+    // async initAffaires() {
+    //   this.$http.get(
+    //     process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
+    //     {
+    //       withCredentials: true,
+    //       headers: {Accept: "application/json"}
+    //     }
+    //   ).then(response => {
+    //     if (response && response.data) {
+    //       let tmp = response.data;
+    //       tmp.filter(x => {
+    //         x.date_cloture === null && x.cadastre_id === this.form.cadastre_id;
+    //       })
+    //       .map(x => ({
+    //         id: x.id,
+    //         nom: [x.id, x.no_access].filter(Boolean).join(" ")
+    //       }))
+    //       .map(x => ({
+    //         id: x.id,
+    //         nom: x.nom,
+    //         toLowerCase: () => x.nom.toLowerCase(),
+    //         toString: () => x.nom.toString()
+    //       }));
+    //       this.affaires_list = tmp;
+    //     }
+    //   }).catch(err => handleException(err, this));
+    // },
+
+    /**
+     * On Select Type affaire
+     */
+    onSelectType() {
+      if (this.form.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION)){
+        this.type_modification_bool = true;
+      } else {
+        this.type_modification_bool = false;
+      }
+    },
+
+    /**
+     * get Types de modifications d'affaire
+     */
+    async initTypesModficiationAffaire() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_TYPES_MODIF_AFFAIRE_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.typesModficiationAffaire_list = response.data.map(x => ({
+            id: x.id,
+            nom: x.nom,
+            toLowerCase: () => x.nom.toLowerCase(),
+            toString: () => x.nom.toString()
+          }));
+        }
+      }).catch(err => handleException(err, this));
     }
+
   },
 
   mounted: function() {
@@ -557,6 +674,8 @@ export default {
     this.initClientsList();
     this.initOperateursList();
     this.initCadastresList();
+    // this.initAffaires();
+    this.initTypesModficiationAffaire();
   }
 };
 </script>
