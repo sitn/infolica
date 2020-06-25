@@ -41,10 +41,7 @@ export default {
         type_id: null,
         cadastre_id: null,
         information: null,
-        date_ouverture: moment(
-          getCurrentDate(),
-          process.env.VUE_APP_DATEFORMAT_WS
-        ).format(process.env.VUE_APP_DATEFORMAT_WS),
+        date_ouverture: getCurrentDate(),
         date_validation: null,
         date_cloture: null,
         localisation_E: null,
@@ -292,7 +289,6 @@ export default {
         .then(response => {
           const _response = response;
           if (response && response.data) {
-            alert(_response.data);
 
             // Enregistrer une facture vide
             this.postFacture(_response.data)
@@ -368,8 +364,8 @@ export default {
           "client_commande_complement",
           this.form.client_commande_complement.id
         );
-      if (this.form.client_envoi)
-        formData.append("client_envoi_id", this.form.client_envoi.id);
+      if (this.client_envoi)
+        formData.append("client_envoi_id", this.client_envoi.id);
       if (this.form.client_envoi_complement)
         formData.append(
           "client_envoi_complement",
@@ -456,10 +452,7 @@ export default {
       this.form.nomtype_id = null;
       this.form.nomcadastre_id = null;
       this.form.nominformation = null;
-      this.form.nomdate_ouverture = moment(
-        getCurrentDate(),
-        process.env.VUE_APP_DATEFORMAT_WS
-      ).format(process.env.VUE_APP_DATEFORMAT_WS);
+      this.form.nomdate_ouverture = getCurrentDate(),
       this.form.nomdate_validation = null;
       this.form.nomdate_cloture = null;
       this.form.nomlocalisation_E = null;
