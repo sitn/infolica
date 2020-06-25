@@ -93,7 +93,6 @@ class LDAPQuery(object):
 
                 for group in groups:
                     if group[cn_attribute].startswith(request.registry.settings['infolica_groups_prefix']):
-                        print (group[cn_attribute])
                         return group[cn_attribute]
         return None
 

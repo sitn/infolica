@@ -2,93 +2,63 @@
     <md-toolbar :md-elevation="1">
         <div class="md-title" style="font-weight: 700;">Nouvelle affaire</div>
     </md-toolbar>
-
+    
     <form novalidate class="md-layout" @submit.prevent="validateForm">
         <md-card>
             <md-card-content>
-
+                
                 <!-- Type d'affaire et cadastre -->
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field :class="getValidationClass('type_id')">
-                            <label for="type_id">Type affaire *</label>
-                            <md-select name="type_id" id="type_id" v-model="form.type_id" :disabled="sending">
+                        <md-field :class="getValidationClass($v.form.type_id)">
+                            <label for="type_id">Type affaire</label>
+                            <md-select name="type_id" id="type_id" v-model="form.type_id" :disabled="sending" required>
                                 <md-option v-for="item in types_affaires_list" :key="item.id" :value="item.id">
                                     {{item.nom}}</md-option>
-                            </md-select>
+                                </md-select>
                             <span class="md-error" v-if="!$v.form.type_id.required">Le type affaire est
                                 obligatoire</span>
                         </md-field>
                     </div>
-
+                    
                     <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field :class="getValidationClass('cadastre_id')">
-                            <label for="cadastre_id">Cadastre *</label>
+                        <md-field :class="getValidationClass($v.form.cadastre_id)">
+                            <label for="cadastre_id">Cadastre</label>
                             <md-select name="cadastre_id" id="cadastre_id" v-model="form.cadastre_id"
-                                :disabled="sending">
-                                <md-option v-for="item in cadastres_list" :key="item.id" :value="item.id">{{item.nom}}
-                                </md-option>
-                            </md-select>
-                            <span class="md-error" v-if="!$v.form.cadastre_id.required">Le type cadastre est
-                                obligatoire</span>
+                            :disabled="sending" required>
+                            <md-option v-for="item in cadastres_list" :key="item.id" :value="item.id">{{item.nom}}
+                            </md-option>
+                        </md-select>
+                        <span class="md-error" v-if="!$v.form.cadastre_id.required">Le type cadastre est
+                            obligatoire</span>
                         </md-field>
                     </div>
                 </div>
-
+                
                 <!-- nom de l'affaire  et v-ref -->
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field :class="getValidationClass('nom')">
+                        <md-field :class="getValidationClass($v.form.nom)">
                             <label for="nom">Nom de l'affaire</label>
                             <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending" />
                         </md-field>
                     </div>
-
+                    
                     <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field :class="getValidationClass('vref')">
+                        <md-field :class="getValidationClass($v.form.vref)">
                             <label for="vref">Vref</label>
                             <md-input name="vref" id="vref" v-model="form.vref" :disabled="sending" />
                         </md-field>
                     </div>
                 </div>
 
-                <!-- Client et par -->
-                <div class="md-layout md-gutter">
-                    <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field style="margin: -15px 0 0 0 !important;height: 68px !important;"
-                            :class="getValidationClass('client_commande_id')">
-                            <md-autocomplete id="client_commande_id" v-model="form.client_commande_id"
-                                :md-options="search_clients_list" md-dense
-                                @md-changed="searchClients(form.client_commande_id)">
-                                <label>Client de la commande *</label>
-                            </md-autocomplete>
-                            <span class="md-error" v-if="!$v.form.client_commande_id.required">Le client commande est
-                                obligatoire</span>
-                        </md-field>
-                    </div>
-
-                    <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field style="margin: -15px 0 0 0 !important;height: 68px !important;"
-                            :class="getValidationClass('client_commande_par_id')">
-                            <md-autocomplete id="client_commande_par_id" v-model="form.client_commande_par_id"
-                                :md-options="search_clients_list" md-dense
-                                @md-changed="searchClients(form.client_commande_par_id)">
-                                <label>Client représenté par</label>
-                            </md-autocomplete>
-                            </md-select>
-                        </md-field>
-                    </div>
-                </div>
-
-                <br />
-
                 <!-- Responsable et technicien -->
                 <div class="md-layout md-gutter">
-                    <div class="md-layout-item md-small-size-100">
-                        <md-field :class="getValidationClass('technicien_id')">
-                            <label for="technicien_id">Opérateur *</label>
+                    <div class="md-layout-item md-small-size-100 md-size-50">
+                        <md-field :class="getValidationClass($v.form.technicien_id)">
+                            <label for="technicien_id">Opérateur</label>
                             <md-select name="technicien_id" id="technicien_id" v-model="form.technicien_id"
-                                :disabled="sending">
+                                :disabled="sending" required>
                                 <md-option v-for="item in operateurs_list" :key="item.id" :value="item.id">{{item.nom}}
                                 </md-option>
                             </md-select>
@@ -96,54 +66,13 @@
                                 obligatoire</span>
                         </md-field>
                     </div>
-                    
-                    <div class="md-layout-item md-small-size-100">
-                        <md-field :class="getValidationClass('responsable_id')">
-                            <label for="responsable_id">Validation *</label>
-                            <md-select name="responsable_id" id="responsable_id" v-model="form.responsable_id"
-                                :disabled="sending">
-                                <md-option v-for="item in responsables_list" :key="item.id" :value="item.id">
-                                    {{item.nom}}</md-option>
-                            </md-select>
-                            <span class="md-error" v-if="!$v.form.responsable_id.required">Le responsable est
-                                obligatoire</span>
-                        </md-field>
-                    </div>
-
                 </div>
-
-                <br />
-
-                <!-- Dates -->
-                <div class="md-layout md-gutter">
-                    <div class="md-layout-item md-small-size-100">
-                        <md-datepicker v-model="form.date_ouverture" md-immediately
-                            :class="getValidationClass('date_ouverture')">
-                            <label>Date ouverture</label>
-                        </md-datepicker>
-                    </div>
-
-                    <div class="md-layout-item md-small-size-100">
-                        <md-datepicker v-model="form.date_validation" md-immediately
-                            :class="getValidationClass('date_validation')">
-                            <label>Date validation</label>
-                        </md-datepicker>
-                    </div>
-
-                    <div class="md-layout-item md-small-size-100">
-                        <md-datepicker v-model="form.date_cloture" md-immediately
-                            :class="getValidationClass('date_cloture')">
-                            <label>Date clôture</label>
-                        </md-datepicker>
-                    </div>
-                </div>
-
-                <br />
-
+                
+                <br>
                 <!-- Informations -->
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100 md-size-100">
-                        <md-field :class="getValidationClass('nom')">
+                        <md-field :class="getValidationClass($v.form.nom)">
                             <label for="nom">Informations</label>
                             <md-textarea name="information" id="information" v-model="form.information"
                                 :disabled="sending" />
@@ -151,27 +80,132 @@
                     </div>
                 </div>
 
+                <br>
+                
+                <md-divider></md-divider>
+                <md-subheader>Clients</md-subheader>
+                <md-divider></md-divider>
+                
+                <!-- Client DEMANDEUR et ligne complément -->
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-small-size-100 md-size-50">
+                        <md-autocomplete id="client_commande" v-model="form.client_commande"
+                            :md-options="search_clients_list" md-dense
+                            @md-changed="searchClients(form.client_commande)"
+                            @md-selected="defaultCompleteClients(form.client_commande)"
+                            :class="getValidationClass($v.form.client_commande)"
+                            required>
+                            <label>Demandeur</label>
+                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                            </template>
+                            <span class="md-error" v-if="!$v.form.client_commande.required">Le demandeur est
+                            obligatoire</span>
+                        </md-autocomplete>
+                    </div>
+                        
+                    <div class="md-layout-item md-small-size-100 md-size-50">
+                        <md-field>
+                            <label>Complément</label>
+                            <md-input v-model="form.client_commande_complement" />
+                        </md-field>
+                    </div>
+                </div>
+                    
+                
+                <!-- Client ENVOI et ligne complément -->
+
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-small-size-100 md-size-50">
+                        <md-autocomplete id="client_envoi_id" v-model="client_envoi"
+                        :md-options="search_clients_list" md-dense
+                        @md-changed="searchClients(client_envoi)"
+                        :class="getValidationClass($v.client_envoi.id)"
+                        required>
+                        <label>Client envoi</label>
+
+                        <span class="md-error" v-if="!$v.client_envoi.id.required">Le client envoi est
+                            obligatoire</span>
+                        </md-autocomplete>
+                    </div>
+                    
+                    <div class="md-layout-item md-small-size-100 md-size-50">
+                        <md-field>
+                            <label>Complément</label>
+                            <md-input v-model="client_envoi_complement" />
+                        </md-field>
+                    </div>
+                </div>
+            
+                <!-- Client FACTURE et ligne complément -->
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-small-size-100 md-size-50">
+                        <md-autocomplete id="client_facture_id" v-model="client_facture"
+                            :md-options="search_clients_list" md-dense
+                            @md-changed="searchClients(client_facture)"
+                            :class="getValidationClass($v.client_facture.id)"
+                            required>
+                            <label>Client facture</label>
+                            <span class="md-error" v-if="!$v.client_facture.id.required">Le client facture est
+                                obligatoire</span>
+                        </md-autocomplete>
+                    </div>
+
+                    <div class="md-layout-item md-small-size-100 md-size-50">
+                        <md-field>
+                            <label>Complément</label>
+                            <md-input v-model="client_facture_complement" />
+                        </md-field>
+                    </div>
+                </div>
+
+                <br />
+                <md-divider></md-divider>
+                <br />
+
+                <!-- Dates -->
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-small-size-50 md-size-25">
+                        <md-datepicker v-model="form.date_ouverture" md-immediately
+                            :class="getValidationClass($v.form.date_ouverture)">
+                            <label>Date ouverture</label>
+                        </md-datepicker>
+                    </div>
+
+                    <div class="md-layout-item md-small-size-50 md-size-25">
+                        <md-datepicker v-model="form.date_validation" md-immediately
+                            :class="getValidationClass($v.form.date_validation)">
+                            <label>Date validation</label>
+                        </md-datepicker>
+                    </div>
+
+                    <div class="md-layout-item md-small-size-50 md-size-25">
+                        <md-datepicker v-model="form.date_envoi" md-immediately
+                            :class="getValidationClass($v.form.date_envoi)">
+                            <label>Date d'envoi</label>
+                        </md-datepicker>
+                    </div>
+
+                    <div class="md-layout-item md-small-size-50 md-size-25">
+                        <md-datepicker v-model="form.date_cloture" md-immediately
+                            :class="getValidationClass($v.form.date_cloture)">
+                            <label>Date clôture</label>
+                        </md-datepicker>
+                    </div>
+                </div>
+
+                <br />
+
                 <!-- Coordonnées -->
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100">
-                        <md-field :class="getValidationClass('localisation_E')">
-                            <label for="localisation_E">Coordonnée Est *</label>
-                            <md-input name="localisation_E" id="localisation_E" v-model="form.localisation_E"
-                                :disabled="sending" />
-                            <span class="md-error" v-if="!$v.form.localisation_E.required">La coordonnée Est est
+                        <md-field :class="getValidationClass($v.form.localisation)">
+                            <label for="localisation">Coordonnées</label>
+                            <md-input v-model=form.localisation readonly></md-input>
+                            <span class="md-error" v-if="!$v.form.localisation.required">La localisation de l'affaire est
                                 obligatoire</span>
                         </md-field>
 
-                    </div>
-
-                    <div class="md-layout-item md-small-size-100">
-                        <md-field :class="getValidationClass('localisation_N')">
-                            <label for="localisation_N">Coordonnée Nord *</label>
-                            <md-input name="localisation_N" id="localisation_N" v-model="form.localisation_N"
-                                :disabled="sending" />
-                            <span class="md-error" v-if="!$v.form.localisation_N.required">La coordonnée Nord est
-                                obligatoire</span>
-                        </md-field>
                     </div>
 
                     <div class="md-layout-item md-small-size-100">
@@ -183,8 +217,9 @@
                         results-property="features"
                         :results-display="formattedDisplay"
                         @selected="handleSelectSITNItem"
-                        @results="handleSITNSearchResults"
                         >
+                        <!-- @results="handleSITNSearchResults"
+                        > -->
                         </autocomplete>
                     </div>
                 </div>

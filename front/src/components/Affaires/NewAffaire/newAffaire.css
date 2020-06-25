@@ -16,4 +16,5 @@
 
 .newAffaire  .autocomplete {
     margin-top: 30px;
+    z-index: auto;
 }

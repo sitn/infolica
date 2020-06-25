@@ -70,13 +70,7 @@ Return all types affaires
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
 @view_config(route_name='types_affaires_s', request_method='GET', renderer='json')
 def types_affaires_view(request):
-    records = request.dbsession.query(models.AffaireType).all()
-    types_affaires = list()
-
-    # Supprimer type d'affaire "NE PLUS UTILISER"
-    for type_i in records:
-        if not "NE PLUS UTILISER" in type_i.nom:
-            types_affaires.append(type_i)
+    types_affaires = request.dbsession.query(models.AffaireType).all()
 
     types_affaires = Utils.serialize_many(types_affaires)
     return types_affaires
@@ -134,7 +128,7 @@ def affaires_new_view(request):
         request.dbsession.flush()
 
         # Créer le chemin du dossier de l'affaire
-        model.chemin = os.path.join(request.registry.settings['affaireParDir'], str(model.id))
+        model.chemin = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
 
         # commit
         transaction.commit()

@@ -39,7 +39,7 @@ export default {
     ControlePPE,
     SuiviMandat,
     DuplicationAffaire,
-    ClotureAffaire,
+    ClotureAffaire
   },
   data() {
     return {
@@ -73,21 +73,17 @@ export default {
           .then(response => {
             if (response.data) {
               var obj = response.data;
-              obj["client"] = [
-                obj.client_id,
-                obj.client_entreprise,
-                obj.client_titre,
-                obj.client_commande_nom,
-                obj.client_prenom
+              obj["client_commande_nom_"] = [
+                obj.client_commande_entreprise,
+                obj.client_commande_titre,
+                [obj.client_commande_nom, obj.client_commande_prenom].filter(Boolean).join(" ")
               ]
                 .filter(Boolean)
                 .join(" ");
-              obj["client_par"] = [
-                obj.client_par_id,
-                obj.client_par_entreprise,
-                obj.client_par_titre,
-                obj.client_par_commande_nom,
-                obj.client_par_prenom
+              obj["client_envoi_nom_"] = [
+                obj.client_envoi_entreprise,
+                obj.client_envoi_titre,
+                [obj.client_envoi_commande_nom, obj.client_envoi_prenom].filter(Boolean).join(" ")
               ]
                 .filter(Boolean)
                 .join(" ");

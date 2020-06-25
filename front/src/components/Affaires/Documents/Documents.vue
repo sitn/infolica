@@ -23,10 +23,28 @@ export default {
     documentFiles: null,
     documentFileName: null,
     documents: [],
-    affaireReadonly: true
+    affaireReadonly: true,
+    dossier_affaire: null,
   }),
 
   methods: {
+    /**
+     * Search affaire dossier
+     */
+    async searchAffaireDossier() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + 
+        process.env.VUE_APP_AFFAIRE_DOSSIER_ENDPOINT +
+        this.$route.params.id,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) this.dossier_affaire = response.data;
+      }).catch(err => handleException(err, this))
+    },
+
     /*
      * SEARCH AFFAIRE DOCUMENTS
      */
@@ -57,7 +75,6 @@ export default {
      * Télécharger le document en local
      */
     downloadItem(item) {
-      alert(item.chemin.replace(/\\/g, "/"))
       axios.get(item.chemin.replace(/\\/g, "/"), { responseType: "blob" })
         .then(response => {
           const blob = new Blob([response.data], { type: "application/pdf" });
@@ -140,7 +157,7 @@ export default {
      * Download file
     */
     downloadFile(item) {
-      let affaire_id = this.$route.params.id;
+      const affaire_id = this.$route.params.id;
       window.open(process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_DOWNLOAD_DOCUMENT_ENDPOINT + '?affaire_id=' + affaire_id + '&filename=' + item.nom);
     },
 
@@ -190,12 +207,29 @@ export default {
     */
     onCancelDeleteDoc () {
       this.currentDeleteId = null;
+    },
+
+    /**
+     * Copier dans le presse-papier
+     */
+    copyToClipboard () {
+      // let copyText = document.querySelector(this.dossier_affaire);
+      let copyText = document.querySelector("#dossier-affaire");
+      copyText.setAttribute('type', 'text');
+      copyText.select();
+      var success = document.execCommand("copy");
+      if (success) {
+        this.$root.$emit("ShowMessage", "Copié dans le presse-papier avec succès")
+      } else {
+        this.$root.$emit("ErrorMessage", "Erreur, n'a pas pu copier le contenu")
+      }
     }
   },
 
   mounted: function() {
     this.searchAffaireDocuments();
     this.initTypesDocumentsList();
+    this.searchAffaireDossier();
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_ENVOIS_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };

@@ -1,4 +1,3 @@
-<style src="./clotureAffaire.css" scoped></style>
 <template src="./clotureAffaire.html"></template>
 
 
@@ -23,7 +22,7 @@ export default {
      * Open clotureDialog
      */
     openClotureDialog(){
-      this.getNumerosAffaire()
+      this.getNumerosAffaire();
       this.showClotureDialog = true;
     },
 
@@ -55,9 +54,7 @@ export default {
      * Récupérer les numéros de base pour les numéros DDP, PPE et PCOP
      */
     getNumerosBaseList(data) {
-      var tmp = new Set(data.map(x => {
-        return x.numero_base_id
-      }));
+      var tmp = new Set(data.map(x => x.numero_base_id));
       tmp.delete(null);
       return Array.from(tmp);
     },
@@ -66,7 +63,7 @@ export default {
      * Filtrer les numéros actifs dans l'affaire
      */
     filterNumerosActiveInAffaire(numeros) {
-      return numeros.filter(x => x.affaire_destination_id === null)
+      return numeros.filter(x => x.affaire_destination_id === null);
     },
 
     /**
@@ -77,12 +74,12 @@ export default {
         element.numero_etatFutur_id = element.numero_etat_id;
 
         // Cas des numéros projetés, non mat-diff, à passer de projet à validé
-        if (element.affaire_numero_type_id == process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID && 
-            element.numero_etat_id == process.env.VUE_APP_NUMERO_PROJET_ID) {
+        if (element.affaire_numero_type_id === process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID && 
+            element.numero_etat_id === process.env.VUE_APP_NUMERO_PROJET_ID) {
           element.numero_etatFutur_id = 2;
         } 
         // Cas des numéros référencés à supprimer
-        else if (element.affaire_numero_type_id == process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID) {
+        else if (element.affaire_numero_type_id === process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID) {
           if (~base.includes(element.numero_id)) element.numero_etatFutur_id = process.env.VUE_APP_NUMERO_SUPPRIME_ID;
         }
       });
@@ -99,14 +96,13 @@ export default {
           this.numero_etats_liste = stringifyAutocomplete(response.data);
         }
       })
-      .catch(err => handleException(err, this))
+      .catch(err => handleException(err, this));
     },
 
     /**
      * update Affaire_Numeros when new etat selected
      */
     updateAffaireNumero(num_id, etat_id) {
-      alert(etat_id)
       this.affaire_numeros.map(x => {
         if (x.numero_id == num_id) x.numero_etatFutur_id = etat_id; 
       })
@@ -119,13 +115,12 @@ export default {
     onConfirmCloture() {
       this.showClotureDialog = false;
       
-      let _this = this;
-      var promises = []
+      const _this = this;
+      var promises = [];
 
       _this.affaire_numeros.forEach(num => {
         promises.push(_this.saveNewEtatNumero(num));
         promises.push(_this.saveNewEtatHistoryNumero(num));
-        // this.saveRelationNumeros()
       });
 
       Promise.all(promises)
@@ -191,7 +186,7 @@ export default {
           }
         )
         .then(response => resolve(response))
-        .catch(err => reject(err))
+        .catch(err => reject(err));
       })
     },
 
@@ -215,7 +210,7 @@ export default {
           }
         )
         .then(response => resolve(response))
-        .catch(err => reject(err))
+        .catch(err => reject(err));
       })
     },
 

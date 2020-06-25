@@ -109,6 +109,7 @@ def includeme(config):
     config.add_route('preavis_type_s','/infolica/api/preavis_type/')
     config.add_route('affaire_preavis_by_affaire_id','/infolica/api/affaire_preavis/{id}')
     #Documents affaire
+    config.add_route('affaire_dossier_by_affaire_id', '/infolica/api/affaire_dossier/{id}')
     config.add_route('affaire_documents_by_affaire_id','/infolica/api/affaire_documents/{id}')
     config.add_route('types_documents', '/infolica/api/types_documents')
     config.add_route('types_documents_s', '/infolica/api/types_documents/')

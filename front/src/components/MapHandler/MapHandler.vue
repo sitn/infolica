@@ -170,7 +170,7 @@ export default {
       this.graphicsLayer = new VectorLayer({
         source: this.graphicsLayerSource,
         style: new Style({
-          fill: new Fill({ color: 'yellow' }),
+          fill: new Fill({ color: '#b3ffff' }),
           stroke: new Stroke({ color: 'red', width: 8 }),
           image: new RegularShape({
             fill: new Fill({ color: 'yellow' }),
