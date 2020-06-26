@@ -31,6 +31,11 @@ export default {
       client_envoi_complement: null,
       client_facture: null,
       client_facture_complement: null,
+      selectedModificationAffaire: null,
+      affaire_numeros_anciens: [],
+      affaire_numeros_nouveaux: [],
+      selectedAnciensNumeros: null,
+      selectedNouveauxNumeros: null,
       form: {
         nom: null,
         client_commande: null,
@@ -117,21 +122,32 @@ export default {
      */
     onMapClick: function(_this) {
       return function(evt) {
-        _this.$refs.mapHandler.clearMarkers();
         if (evt.coordinate) {
           _this.form.localisation_E = evt.coordinate[0];
           _this.form.localisation_N = evt.coordinate[1];
-          _this.form.localisation = [
-            Math.round(_this.form.localisation_E),
-            Math.round(_this.form.localisation_N)
-          ].join(" / ");
-          _this.$refs.mapHandler.addMarker(
-            _this.form.localisation_E,
-            _this.form.localisation_N
-          );
+          _this.handleLocalisation(_this.form.localisation_E, _this.form.localisation_N);
         }
       };
     },
+
+
+    /**
+     * Handle localisation
+     */
+    handleLocalisation: function(localisation_E, localisation_N, zoom) {
+      this.$refs.mapHandler.clearMarkers();
+      this.form.localisation = [
+        Math.round(localisation_E),
+        Math.round(localisation_N)
+      ].join(" / ");
+      this.$refs.mapHandler.addMarker(
+        localisation_E,
+        localisation_N,
+        zoom
+      );
+    },
+
+
     /*
      * Init types affaires list
      */
@@ -613,8 +629,130 @@ export default {
           }));
         }
       }).catch(err => handleException(err, this));
+    },
+
+    
+    /*
+     * Open affaire modification in new tab
+     */
+    doOpenAffaireModification() {
+      const routeData = this.$router.resolve({ name: "AffairesDashboard", params: {id: this.form.affaire_base_id}});
+      window.open(routeData.href, '_blank');
+    },
+
+     /**
+     * Select affaire modification
+     */
+    doSelectAffaireModification() {
+      let _this = this;
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_AFFAIRE_BY_ID_ENDPOINT +
+            this.form.affaire_base_id,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        )
+        .then(response => {
+        if (response && response.data) {
+          _this.selectedModificationAffaire = response.data;
+
+          //Fill values
+          this.fillValuesFromModificationAffaire();
+
+          //Expand numéros card
+          this.$refs.expandCollapseBtn.$el.click();
+
+          //Search numéros immeubles
+          _this.setModificationAffaireNuméros();
+        }
+        else{
+          handleException({msg : "Affaire non trouvée"}, this);
+        }
+      })
+      //Error
+      .catch(err => {
+        handleException(err, this);
+      });
+    },
+
+    /**
+     * Fill values from modification affaire
+     */
+    fillValuesFromModificationAffaire(){
+      if(this.selectedModificationAffaire){
+        this.form.cadastre_id = this.selectedModificationAffaire.cadastre_id; 
+        this.form.nom = this.selectedModificationAffaire.nom; 
+        this.form.vref = this.selectedModificationAffaire.vref; 
+        this.form.remarque = this.selectedModificationAffaire.remarque; 
+        this.form.client_commande = this.selectedModificationAffaire.client_commande_id; 
+        this.form.client_envoi = this.selectedModificationAffaire.client_envoi_id;
+        //this.form.client_facture = this.selectedModificationAffaire.client_envoi_id;  
+        this.form.date_ouverture =  this.selectedModificationAffaire.date_ouverture ? moment(new Date(this.selectedModificationAffaire.date_ouverture)).format(process.env.VUE_APP_DATEFORMAT_CLIENT) : null;
+        this.form.date_validation =  this.selectedModificationAffaire.date_validation ? moment(new Date(this.selectedModificationAffaire.date_validation)).format(process.env.VUE_APP_DATEFORMAT_CLIENT) : null;
+        this.form.date_cloture =  this.selectedModificationAffaire.date_cloture ? moment(new Date(this.selectedModificationAffaire.date_cloture)).format(process.env.VUE_APP_DATEFORMAT_CLIENT) : null;
+        this.form.date_envoi =  this.selectedModificationAffaire.date_envoi ? moment(new Date(this.selectedModificationAffaire.date_envoi)).format(process.env.VUE_APP_DATEFORMAT_CLIENT) : null;
+        this.form.localisation_E = this.selectedModificationAffaire.localisation_e; 
+        this.form.localisation_N = this.selectedModificationAffaire.localisation_n; 
+
+        //Handle localisation
+        if(this.selectedModificationAffaire.localisation_e && this.selectedModificationAffaire.localisation_n)
+          this.handleLocalisation(this.selectedModificationAffaire.localisation_e, this.selectedModificationAffaire.localisation_n, true);
+      }
+    },
+
+    /**
+     * Set affaire
+     */
+    setModificationAffaireNuméros() {
+      this.$http
+      .get(
+        process.env.VUE_APP_API_URL +
+          process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
+          this.form.affaire_base_id + "?affaire_numero_actif=true",
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      )
+      .then(response => {
+        if (response && response.data) {
+          this.affaire_numeros_all = response.data;
+          this.affaire_numeros_nouveaux = response.data.filter(
+            x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID)
+          );
+          this.affaire_numeros_anciens = response.data.filter(
+            x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID)
+          );
+          this.affaire_numeros_nouveaux.forEach(function(element) {
+            if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)) element.active = false;
+            else element.active = true;
+          });
+        }
+      })
+      .catch(err => {
+        handleException(err, this);
+      });
+    },
+
+    /**
+     * Récupérer la sélection des anciens numéros
+     */
+    onSelectNumsAnciens(items) {
+      this.selectedAnciensNumeros = items.map(x => (x.numero_id));
+    },
+
+
+    /**
+     * Récupérer la sélection des nouveaux numéros
+     */
+    onSelectNumsNouveux(items) {
+      this.selectedNouveauxNumeros = items.map(x => (x.numero_id));
     }
   },
+
   mounted: function() {
     //Init search SITN categories
     this.sitn_search_categories = JSON.parse(
