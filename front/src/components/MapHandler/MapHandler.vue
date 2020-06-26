@@ -226,8 +226,6 @@ export default {
       this.vectorSource.addFeature(marker);
 
       if(zoom){
-        //var size = this.map.getSize();
-        //this.view.centerOn(marker.getGeometry().getCoordinates(), size, [570, 500]);
         this.view.setCenter([x, y]);
         this.view.setZoom(process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM);
       }
