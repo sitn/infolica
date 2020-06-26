@@ -262,7 +262,7 @@ export default {
     },
 
     /**
-     * Search Client par after 3 letters
+     * Search Client after 3 letters
      */
     searchClients(value) {
       let tmp = [];
@@ -471,7 +471,6 @@ export default {
         this.lastRecord = `${this.form.nom}`;
         this.dataSaved = true;
         this.sending = false;
-        this.clearForm();
       }
     },
 
@@ -493,29 +492,6 @@ export default {
       this.$router.push({ name: "Affaires" });
     },
 
-    /**
-     * Clear the form
-     */
-    clearForm() {
-      this.$v.$reset();
-      this.form.nom = null;
-      this.form.nomclient_commande = { id: null, nom: null };
-      this.form.nomclient_commande_complement = null;
-      this.form.nomtechnicien_id = null;
-      this.form.nomtype_id = null;
-      this.form.nomcadastre_id = null;
-      this.form.nomdate_ouverture = getCurrentDate(),
-      this.form.nomdate_validation = null;
-      this.form.nomdate_cloture = null;
-      this.form.nomlocalisation_E = null;
-      this.form.nomlocalisation_N = null;
-      this.form.nomlocalisation = null;
-      this.form.nomvref = null;
-      this.client_envoi = null;
-      this.client_envoi_complement = null;
-      this.client_facture = null;
-      this.client_facture_complement = null;
-    },
 
     /**
      * User SITN search service
@@ -538,9 +514,13 @@ export default {
      * Search SITN endpoint
      */
     searchSITNEndpoint(input) {
-      let cadastre = this.cadastres_list.filter(
-        x => x.id === this.form.cadastre_id
-      )[0].nom;
+      let cadastre = null;
+      if (this.form.cadastre_id !== null) {
+        cadastre = this.cadastres_list.filter(
+          x => x.id === this.form.cadastre_id
+        )[0].nom;
+      }
+
       return (
         process.env.VUE_APP_SITN_SEARCH_SERVICE_URL +
         [input, cadastre, "egrid"].filter(Boolean).join(" ")

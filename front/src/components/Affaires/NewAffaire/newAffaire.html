@@ -73,11 +73,12 @@
                     </div>
                 </div>
 
+                <!-- Nom de l'affaire -->
                 <div class="md-gutter me-layout">
                     <div class="md-layout-item md-size-100">
                         <md-field>
                             <label>Nom de l'affaire</label>
-                            <md-input>
+                            <md-input v-model="form.nom">
                             </md-input>
                         </md-field>
                     </div>
@@ -98,7 +99,7 @@
                 <!-- Remarques -->
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100 md-size-100">
-                        <md-field :class="getValidationClass($v.form.nom)">
+                        <md-field>
                             <label for="nom">Remarques</label>
                             <md-textarea name="remarque" id="remarque" v-model="form.remarque"
                             :disabled="sending" />
@@ -140,7 +141,6 @@
 
 
                 <!-- Client ENVOI et ligne complément -->
-
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100 md-size-50">
                         <md-autocomplete id="client_envoi_id" v-model="client_envoi"

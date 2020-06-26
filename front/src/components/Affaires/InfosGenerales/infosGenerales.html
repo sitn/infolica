@@ -29,9 +29,9 @@
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-100 md-small-size-100">
                     <md-field>
-                        <label v-if="infoGenReadonly">Description</label>
-                        <label v-else><strong style="color: blue">Description</strong></label>
-                        <md-textarea v-model="affaire.information" :readonly="infoGenReadonly" md-autogrow>
+                        <label v-if="infoGenReadonly">Nom</label>
+                        <label v-else><strong style="color: blue">Nom</strong></label>
+                        <md-textarea v-model="affaire.nom" :readonly="infoGenReadonly" md-autogrow>
                         </md-textarea>
                     </md-field>
                 </div>
