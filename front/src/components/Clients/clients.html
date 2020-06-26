@@ -30,7 +30,7 @@
        <md-card-expand>
            <md-card-expand-content>
                <md-card-content>
-                   <div class="md-layout md-gutter">
+                   <!-- <div class="md-layout md-gutter">
                        <div class="md-layout-item md-small-size-30">
                            <md-field>
                                <label for="prenom">Prénom</label>
@@ -51,29 +51,39 @@
                                <md-input name="entreprise" id="entreprise" v-model="search.entreprise" />
                            </md-field>
                        </div>
-                   </div>
+                   </div> -->
 
                    <div class="md-layout md-gutter">
-                       <div class="md-layout-item md-small-size-30">
-                           <md-field>
-                               <label for="adresse">Adresse</label>
-                               <md-input name="adresse" id="adresse" v-model="search.adresse" />
-                           </md-field>
-                       </div>
+                        <div class="md-layout-item md-small-size-30">
+                            <md-autocomplete id="client" v-model="search.client_id"
+                            :md-options="search_clients_list" md-dense
+                            @md-changed="searchClientsForFormInput(search.client_id)">
+                            <label>Client</label>
+                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                Pas de client correspondant à la recherche "{{ term }}".</a>
+                            </template>
+                        </md-autocomplete>
+                        </div>
+                        <div class="md-layout-item md-small-size-30">
+                            <md-field>
+                                <label for="adresse">Adresse</label>
+                                <md-input name="adresse" id="adresse" v-model="search.adresse" />
+                            </md-field>
+                        </div>
 
-                       <div class="md-layout-item md-small-size-30">
-                           <md-field>
-                               <label for="localite">Localité</label>
-                               <md-input type="email" name="localite" id="localite" v-model="search.localite" />
-                           </md-field>
-                       </div>
+                        <div class="md-layout-item md-small-size-30">
+                            <md-field>
+                                <label for="localite">Localité</label>
+                                <md-input type="email" name="localite" id="localite" v-model="search.localite" />
+                            </md-field>
+                        </div>
 
-                       <div class="md-layout-item md-small-size-30">
-                           <md-field>
-                               <label for="mail">Email</label>
-                               <md-input type="email" name="mail" id="mail" v-model="search.mail" />
-                           </md-field>
-                       </div>
+                        <div class="md-layout-item md-small-size-30">
+                            <md-field>
+                                <label for="mail">Email</label>
+                                <md-input type="email" name="mail" id="mail" v-model="search.mail" />
+                            </md-field>
+                        </div>
                    </div>
                    <!-- Search Actions -->
                   <md-card-actions>
