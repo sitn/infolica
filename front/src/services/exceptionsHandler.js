@@ -16,10 +16,14 @@ export const handleException = function (error, component) {
         if(component.$router && component.$router.currentRoute && component.$router.currentRoute.name != 'Login')
             component.$router.push({name: "Login"});
     }
+    //Custom error
+    else if(error && error.msg){
+        component.$root.$emit("ShowError", error.msg);   
+    }
     //All other error codes
     else
     {
        component.$root.$emit("ShowError", "Une erreur est survenue");   
-    }                      
+    }                  
 };
 

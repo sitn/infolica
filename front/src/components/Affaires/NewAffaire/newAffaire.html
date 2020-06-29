@@ -55,8 +55,91 @@
                         <md-field>
                             <label>Affaire de base</label>
                             <md-input v-model="form.affaire_base_id" required />
+
+                            <md-button class="md-primary md-icon-button modifAffaireActionBtn" title="Sélectionner cette affaire"
+                            v-if="type_modification_bool && this.form.affaire_base_id"
+                            @click="doSelectAffaireModification()">
+                            <md-icon>remove_red_eye</md-icon>
+                            </md-button>
+
+                            <md-button class="md-primary md-icon-button modifAffaireActionBtn" title="Afficher cette affaire" 
+                            v-if="type_modification_bool && this.form.affaire_base_id"
+                            @click="doOpenAffaireModification()">
+                            <md-icon>open_in_new</md-icon>
+                            </md-button>
                         </md-field>
                     </div>
+                </div>
+
+                <!-- Si type d'affaire est "modification, afficher la zone de de sélection des biens-fonds" -->
+                <div class="md-layout md-gutter" v-if="type_modification_bool">
+                    <md-card class="immeublesSelectDiv">
+                        <!-- Search Header -->
+                        <md-card-header>
+                            <div class="md-title">Sélection d'immeubles</div>
+                        </md-card-header>
+                 
+                        <md-card-expand-trigger>
+                          <md-button class="md-icon-button expandCollapseBtn" ref="expandCollapseBtn">
+                              <md-icon>keyboard_arrow_down</md-icon>
+                          </md-button>
+                       </md-card-expand-trigger>
+                 
+                        <!-- Search Content -->
+                        <md-card-expand>
+                            <md-card-expand-content>
+                                <md-card-content>
+                                    <div class="md-title" v-if="selectedModificationAffaire">Indiquer le immeubles à sélectionner de l'affaire {{selectedModificationAffaire.id}} <span v-if="selectedModificationAffaire.nom != '-'">[{{ selectedModificationAffaire.nom }}]</span></div>
+                                    <br>                                   
+
+                                    <!-- Tableau des numéros concernés par l'affaire -->
+                                    <br/>
+                                    <strong>1 - Immeubles mutée / biens-fonds de base</strong>    
+                                    <br/><br/>        
+                                    <div v-if="affaire_numeros_anciens[0]">
+                                        <md-table v-model="affaire_numeros_anciens" md-sort="numero" md-sort-order="desc" @md-selected="onSelectNumsAnciens" md-fixed-header md-card>
+                                            <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple">
+                                                <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}
+                                                </md-table-cell>
+                                                <md-table-cell md-label="Type" md-sort-by="numero_type">
+                                                    {{ item.numero_type }}
+                                                </md-table-cell>
+                                                <md-table-cell md-label="Etat" md-sort-by="numero_etat">
+                                                    {{ item.numero_etat }}
+                                                </md-table-cell>
+                                            </md-table-row>
+                                        </md-table>
+                                    </div>
+                                    <div v-else>
+                                        <em>Aucun numéro</em>
+                                    </div>
+
+                                    <!-- Tableau des numéros réservés dans l'affaire -->
+                                    <br/>
+                                    <strong>2 - Immeubles réservés</strong>
+                                    <br/><br/>   
+                                    <div v-if="affaire_numeros_nouveaux[0]">
+                                        <md-table v-model="affaire_numeros_nouveaux" md-sort="numero" md-sort-order="desc" @md-selected="onSelectNumsNouveux" md-fixed-header md-card>
+                                            <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple">
+                                                <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}
+                                                </md-table-cell>
+                                                <md-table-cell md-label="Type" md-sort-by="numero_type">
+                                                    {{ item.numero_type }}
+                                                </md-table-cell>
+                                                <md-table-cell md-label="Etat" md-sort-by="numero_etat">
+                                                    {{ item.numero_etat }}
+                                                </md-table-cell>
+                                            </md-table-row>
+                                        </md-table>
+                                    </div>
+                                    <div v-else>
+                                        <em>Aucun numéro</em>
+                                    </div>
+
+                                </md-card-content>              
+                            </md-card-expand-content>
+                        </md-card-expand>
+                    </md-card>
                 </div>
 
                 <!-- Type de modification -->
@@ -78,8 +161,7 @@
                     <div class="md-layout-item md-size-100">
                         <md-field>
                             <label>Nom de l'affaire</label>
-                            <md-input v-model="form.nom">
-                            </md-input>
+                            <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending" />
                         </md-field>
                     </div>
                 </div>

@@ -15,10 +15,10 @@ export default {
       editClientClientAllowed: false,
       deleteMessage: '',
       currentDeleteId: null,
+      clients_list: [],
+      search_clients_list: [],
       search: {
-        nom: null,
-        prenom: null,
-        entreprise: null,
+        client_id: null,
         adresse: null,
         localite: null,
         mail: null
@@ -30,14 +30,9 @@ export default {
         */
         async searchClients () {
           var formData = new FormData();
-          if(this.search.nom)
-            formData.append("nom", this.search.nom);
 
-          if(this.search.prenom)
-            formData.append("prenom", this.search.prenom);
-
-          if(this.search.entreprise)
-            formData.append("entreprise", this.search.entreprise);
+          if(this.search.client_id)
+            formData.append("id", this.search.client_id.id);
 
           if(this.search.adresse)
             formData.append("adresse", this.search.adresse);
@@ -143,11 +138,67 @@ export default {
         */
         onCancelDelete () {
           this.currentDeleteId = null;
+        },
+
+    /*
+     * Init clients list (for search input in form)
+     */
+    async initClientsSearchList() {
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        )
+        .then(response => {
+          if (response && response.data) {
+            var tmp = response.data;
+            tmp.forEach(x => {
+              x.nom_ = [
+                x.entreprise,
+                [x.nom, x.prenom].filter(Boolean).join(" "),
+                x.adresse,
+                [x.npa, x.localite].filter(Boolean).join(" ")
+              ]
+                .filter(Boolean)
+                .join(", ");
+            });
+
+            this.clients_list = tmp.map(x => ({
+              id: x.id,
+              nom: x.nom_,
+              toLowerCase: () => x.nom_.toLowerCase(),
+              toString: () => x.nom_
+            }));
+          }
+        })
+        //Error
+        .catch(err => {
+          handleException(err, this);
+        });
+      },
+
+      /**
+     * Search Client for form input after 3 letters
+     */
+    searchClientsForFormInput(value) {
+      let tmp = [];
+      if (value !== null) {
+        if (value.length >= 3) {
+          tmp = this.clients_list.filter(x =>
+            x.nom.toLowerCase().includes(value.toLowerCase())
+          );
         }
+      }
+      this.search_clients_list = tmp;
+    }
   },
 
-  mounted: function(){
+  mounted: function(){    
     this.editClientClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION);
+    this.initClientsSearchList();
     this.searchClients();
   }
 }

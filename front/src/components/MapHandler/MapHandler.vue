@@ -15,7 +15,7 @@ import VectorSource from "ol/source/Vector";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import { Style, Circle, Fill, Stroke, RegularShape } from "ol/style";
-import GeoJSON from 'ol/format/GeoJSON'
+import GeoJSON from 'ol/format/GeoJSON';
 
 export default {
   name: "MapHandler",
@@ -218,12 +218,18 @@ export default {
     /**
      * Add marker
      */
-    addMarker: function(x, y) {
+    addMarker: function(x, y, zoom) {
       var marker = new Feature({
         geometry: new Point([x, y])
       });
       marker.setStyle(this.markerStyle);
       this.vectorSource.addFeature(marker);
+
+      if(zoom){
+        this.view.setCenter([x, y]);
+        this.view.setZoom(process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM);
+      }
+
     },
 
     /**
