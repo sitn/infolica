@@ -13,6 +13,9 @@ class Utils(object):
     """ Serialize one query item"""
     @classmethod
     def serialize_one(cls, _query):
+        if _query is None:
+            return None
+
         d = _query.__dict__
         item = {}
         for n in d.keys():
@@ -27,9 +30,10 @@ class Utils(object):
     """ Serialize many query items"""
     @classmethod
     def serialize_many(cls, _query):
-        master = []
-        item = {}
+        if _query is None:
+            return None
 
+        master = []
         for u in _query:
             d = u.__dict__
             item = {}
