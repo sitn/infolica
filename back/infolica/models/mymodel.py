@@ -601,8 +601,9 @@ class VNumeros(Base):
 class VNumerosAffaires(Base):
     __tablename__ = 'v_numeros_affaires'
     __table_args__ = {'schema': 'infolica'}
-    numero_id = Column(BigInteger, primary_key=True)
-    affaire_id = Column(BigInteger, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
+    numero_id = Column(BigInteger)
+    affaire_id = Column(BigInteger)
     affaire_numero_type_id = Column(BigInteger)
     affaire_numero_actif = Column(Boolean)
     affaire_destination_id = Column(BigInteger)

@@ -147,11 +147,13 @@ export default {
 
       if (this.affaire.nom) formData.append("nom", this.affaire.nom);
       if (this.affaire.client_commande_id) formData.append("client_commande_id", this.affaire.client_commande_id);
-      if (this.affaire.client_commande_par_id && !isNaN(this.affaire.client_commande_par_id)) formData.append("client_commande_par_id", this.affaire.client_commande_par_id);
-      if (this.affaire.responsable_id) formData.append("responsable_id", this.affaire.responsable_id);
+      if (this.affaire.client_commande_complement) formData.append("client_commande_complement", this.affaire.client_commande_complement);
+      if (this.affaire.client_envoi_id) formData.append("client_envoi_id", this.affaire.client_envoi_id);
+      if (this.affaire.client_envoi_complement) formData.append("client_envoi_complement", this.affaire.client_envoi_complement);
+      if (this.affaire.responsable_id && this.affaire.responsable_id !== "-") formData.append("responsable_id", this.affaire.responsable_id);
       if (this.affaire.technicien_id) formData.append("technicien_id", this.affaire.technicien_id);
       if (this.affaire.cadastre_id !== null && this.affaire.cadastre_id !== undefined) formData.append("cadastre_id", this.affaire.cadastre_id);
-      if (this.affaire.information) formData.append("information", "Provient de l'affaire " + String(this.affaire.id) + " / " + this.affaire.information);
+      // if (this.affaire.information) formData.append("information", "Provient de l'affaire " + String(this.affaire.id) + " / " + this.affaire.information);
       if (this.affaire.localisation_e !== null && this.affaire.localisation_e !== undefined) formData.append("localisation_E", this.affaire.localisation_e); else formData.append("localisation_E", 0);
       if (this.affaire.localisation_n !== null && this.affaire.localisation_n !== undefined) formData.append("localisation_N", this.affaire.localisation_n); else formData.append("localisation_N", 0);
       if (this.affaire.vref) formData.append("vref", this.affaire.vref);
@@ -159,15 +161,7 @@ export default {
       if (this.affaire.date_ouverture)
         formData.append(
           "date_ouverture",
-          moment(this.affaire.date_ouverture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      if (this.affaire.date_validation)
-        formData.append(
-          "date_validation",
-          moment(this.affaire.date_validation, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      if (this.affaire.date_cloture)
-        formData.append(
-          "date_cloture",
-          moment(this.affaire.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
+          moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
 
       return formData;
     },

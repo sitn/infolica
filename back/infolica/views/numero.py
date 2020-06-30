@@ -326,6 +326,29 @@ def affaire_new_numeros_mo_view(request):
     return json.loads(json.dumps(reservations_ranges))
 
 
+"""Update numeros_affaires"""
+@view_config(route_name='affaire_numeros', request_method='PUT', renderer='json')
+@view_config(route_name='affaire_numeros_s', request_method='PUT', renderer='json')
+def affaire_numero_update_view(request):
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+
+    affnum_id = request.params["id"] if "id" in request.params else None
+
+    record = request.dbsession.query(models.AffaireNumero).filter(models.AffaireNumero.id == affnum_id).first()
+
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.AffaireNumero.__tablename__, affnum_id))
+
+    record = Utils.set_model_record(record, request.params)
+
+    with transaction.manager:
+        transaction.commit()
+
+        return 
+
+
 """ Add new affaire-numero """
 @view_config(route_name='affaire_numeros', request_method='POST', renderer='json')
 @view_config(route_name='affaire_numeros_s', request_method='POST', renderer='json')
@@ -415,27 +438,5 @@ def numero_differe_update_view(request):
         return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.NumeroDiffere.__tablename__))
 
 
-
-""" Deactivate numero_affaire """
-@view_config(route_name='desactiver_numeros_affaires', request_method='POST', renderer='json')
-@view_config(route_name='desactiver_numeros_affaires_s', request_method='POST', renderer='json')
-def desactiver_numeros_affaires_view(request):
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
-        raise exc.HTTPForbidden()
-
-    affaire_id = request.params['affaire_id'] if 'affaire_id' else None
-    affaire_destination_id = request.params['affaire_destination_id'] if 'affaire_destination_id' else None
-    numeros = request.params['numeros'] if 'numeros' else None
-
-    if numeros:
-        numeros = json.loads(numeros)
-        records = request.dbsession.query(models.AffaireNumero).filter(
-            models.AffaireNumero.affaire_id == affaire_id).filter(models.AffaireNumero.numero_id.in_(numeros)).all()
-
-        with transaction.manager:
-            for rec in records:
-                rec.actif = False
-                rec.affaire_destination_id = affaire_destination_id
 
 

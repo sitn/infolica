@@ -104,6 +104,7 @@ export default {
         };
       }
     },
+
     /**
      * Init map
      */
@@ -115,6 +116,7 @@ export default {
       );
       this.$refs.mapHandler.map.on("singleclick", this.onMapClick(this));
     },
+
     /**
      * Handle map click event
      */
@@ -127,7 +129,6 @@ export default {
         }
       };
     },
-
 
     /**
      * Handle localisation
@@ -144,7 +145,6 @@ export default {
         zoom
       );
     },
-
 
     /*
      * Init types affaires list
@@ -169,6 +169,7 @@ export default {
           handleException(err, this);
         });
     },
+
     /*
      * Init clients list
      */
@@ -207,6 +208,7 @@ export default {
           handleException(err, this);
         });
     },
+
     /*
      * Init operateurs list
      */
@@ -239,6 +241,7 @@ export default {
           handleException(err, this);
         });
     },
+
     /*
      * Init cadastres list
      */
@@ -261,6 +264,7 @@ export default {
           handleException(err, this);
         });
     },
+
     /**
      * Search Client after 3 letters
      */
@@ -275,6 +279,7 @@ export default {
       }
       this.search_clients_list = tmp;
     },
+
     /**
      * Save data
      */
@@ -295,7 +300,10 @@ export default {
             // Enregistrer une facture vide
             promises.push(this.postFacture(_response.data));
             if (this.form.remarque !== null) promises.push(this.postRemarqueAffaire(_response.data));
-            if (this.type_modification_bool) promises.push(this.postAffaireRelation(_response.data));
+            if (this.type_modification_bool) {
+              promises.push(this.postAffaireRelation(_response.data));
+              promises.push(this.updateNumerosAffaire(_response.data))
+            }
             Promise.all(promises)
             .then(() => {
               this.handleSaveDataSuccess(_response);
@@ -317,6 +325,7 @@ export default {
           handleException(err, this);
         });
     },
+
     /**
      * Enregistre une facture vide avec l'adresse
      */
@@ -350,6 +359,7 @@ export default {
           .catch(err => reject(err));
       });
     },
+
     /**
      * Post affaires relation si affaire de type modification
      */
@@ -371,6 +381,7 @@ export default {
         .catch(err => reject(err));
       })
     },
+
     /**
      * Post remarque affaire si remarque spécifiée
      */
@@ -392,7 +403,8 @@ export default {
         ).then(response => resolve(response))
         .catch(err => reject(err));
       });
-    },  
+    },
+
     /**
      * Handle save data success
      */
@@ -405,14 +417,14 @@ export default {
       if (this.form.client_commande_complement)
         formData.append(
           "client_commande_complement",
-          this.form.client_commande_complement.id
+          this.form.client_commande_complement
         );
       if (this.form.client_envoi)
         formData.append("client_envoi_id", this.form.client_envoi.id);
       if (this.form.client_envoi_complement)
         formData.append(
           "client_envoi_complement",
-          this.form.client_envoi_complement.id
+          this.form.client_envoi_complement
         );
       if (this.form.technicien_id)
         formData.append("technicien_id", this.form.technicien_id);
@@ -449,6 +461,71 @@ export default {
         );
       return formData;
     },
+
+    /**
+     * Update numeros_affaire
+     */
+    updateNumerosAffaire(affaire_destination_id) {
+      let promises = [];
+      this.selectedAnciensNumeros.forEach(x => {
+        promises.push(this.deactivateNumeroAffaires(x, affaire_destination_id));
+        promises.push(this.postAffaireNumero(x, affaire_destination_id));
+      });
+      this.selectedNouveauxNumeros.forEach(x => {
+        promises.push(this.deactivateNumeroAffaires(x, affaire_destination_id));
+        promises.push(this.postAffaireNumero(x, affaire_destination_id));
+      });
+
+      Promise.all(promises)
+      .then(() => this.$root.$emit("ShowMessage", "Les numéros ont bien été récupérés de l'affaire de base"))
+      .catch(err => handleException(err, this));
+    },
+
+    /**
+     * desactiver_numeros_affaires dans affaire base
+     */
+    async deactivateNumeroAffaires(affnum, affaire_destination_id) {
+      var formData = new FormData();
+      formData.append("id", affnum.id);
+      formData.append("actif", false);
+      formData.append("affaire_destination_id", affaire_destination_id);
+
+      return new Promise ((resolve, reject) => {
+        this.$http.put(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
+    /**
+     * Create new numero_affaire relation
+     */
+    async postAffaireNumero(affnum, affaire_destination_id) {
+      var formData = new FormData();
+      formData.append("affaire_id", affaire_destination_id);
+      formData.append("numero_id", affnum.numero_id);
+      formData.append("type_id", affnum.affaire_numero_type_id);
+      formData.append("actif", true);
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
     /**
      * Handle save data success
      */
@@ -459,6 +536,7 @@ export default {
         this.sending = false;
       }
     },
+
     /**
      * Validate form
      */
@@ -468,6 +546,7 @@ export default {
         this.saveData();
       }
     },
+
     /**
      * Cancel edit
      */
@@ -491,6 +570,7 @@ export default {
         });
       return result;
     },
+
     /**
      * Search SITN endpoint
      */
@@ -507,6 +587,7 @@ export default {
         [input, cadastre, "egrid"].filter(Boolean).join(" ")
       );
     },
+
     /**
      * Handle SITN search item
      */
@@ -521,19 +602,14 @@ export default {
       // access the autocomplete component methods from the parent
       this.$refs.autocomplete.clear();
     },
+
     /**
      * Handle display format
      */
     formattedDisplay(result) {
       return result.properties.label;
     },
-    /**
-     * Handle SITN search results
-    
-    handleSITNSearchResults (results) {
-      console.log(results);
-      document.getElementsByClassName('autocomplete__results')[0].innerHTML = "Tessssst";
-    },*/
+
     /**
      * Complète par défaut les clients envoi et facture
      */
@@ -541,6 +617,7 @@ export default {
       this.form.client_envoi = client;
       this.client_facture = client;
     },
+
     /**
      * openCreateClient
      */
@@ -548,6 +625,7 @@ export default {
       let routedata = this.$router.resolve({ name: "ClientsNew" });
       window.open(routedata.href, "_blank");
     },
+
     // /**
     //  * Get affaires
     //  */
@@ -578,6 +656,7 @@ export default {
     //     }
     //   }).catch(err => handleException(err, this));
     // },
+
     /**
      * On Select Type affaire
      */
@@ -588,6 +667,7 @@ export default {
         this.type_modification_bool = false;
       }
     },
+
     /**
      * get Types de modifications d'affaire
      */
@@ -609,7 +689,6 @@ export default {
         }
       }).catch(err => handleException(err, this));
     },
-
     
     /*
      * Open affaire modification in new tab
@@ -668,7 +747,9 @@ export default {
         this.form.vref = this.selectedModificationAffaire.vref; 
         this.form.remarque = this.selectedModificationAffaire.remarque; 
         this.form.client_commande = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_commande_id)[0]; 
+        this.form.client_commande_complement = this.selectedModificationAffaire.client_commande_complement; 
         this.form.client_envoi = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_envoi_id)[0];
+        this.form.client_envoi_complement = this.selectedModificationAffaire.client_envoi_complement;
         //this.form.client_facture = this.selectedModificationAffaire.client_envoi_id;  
         this.form.date_ouverture =  getCurrentDate();
         this.form.localisation_E = this.selectedModificationAffaire.localisation_e; 
@@ -681,14 +762,14 @@ export default {
     },
 
     /**
-     * On select type modif
+     * On select type modif update nom_affaire
      */
     typeModifSelected() {
       this.form.nom = (this.form.affaire_modif_type? this.form.affaire_modif_type.nom + " : " : null) + this.form.nom_;
     },
 
     /**
-     * Set affaire
+     * Récupère les numéros référencés, réservés et le client de la facture
      */
     setModificationAffaireNuméros() {
       this.$http
@@ -737,15 +818,14 @@ export default {
      * Récupérer la sélection des anciens numéros
      */
     onSelectNumsAnciens(items) {
-      this.selectedAnciensNumeros = items.map(x => (x.numero_id));
+      this.selectedAnciensNumeros = items;
     },
-
 
     /**
      * Récupérer la sélection des nouveaux numéros
      */
     onSelectNumsNouveux(items) {
-      this.selectedNouveauxNumeros = items.map(x => (x.numero_id));
+      this.selectedNouveauxNumeros = items;
     }
   },
 
