@@ -10,7 +10,7 @@
                     </div>
                 </div>
                 <div class="md-layout-item buttonRightAlign">
-                    <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="duplicateAffaire">Dupliquer</md-button>
+                    <md-button class="md-primary md-raised" v-if="editAffaireAllowed && false" v-on:click="duplicateAffaire">Modification / Visa</md-button>
                     <md-button class="md-accent md-raised" v-if="editAffaireAllowed && cloreAffaireEnabled" v-on:click="callClotureAffaire">Clôturer</md-button>
                 </div>
             </div>
@@ -29,13 +29,17 @@
             <md-card-content>
                 <!-- Afficher les oordonnées -->
                 <div class="md-layout md-gutter">
-                    <div class="md-layout-item md-size-50">
+                    <div class="md-layout-item md-size-30">
                         <md-field>
                             <label>Coordonnées</label>
                             <md-input v-model="[affaire.localisation_e | 0, affaire.localisation_n | 0].join(' / ')"
                                 readonly>
                             </md-input>
                         </md-field>
+                    </div>
+                    <div style="text-align: right;" class="md-layout-item">
+                        <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('environnement')">Environnement</md-button>
+                        <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('amenagement_territoire')">Aménagement du territoire</md-button>
                     </div>
                 </div>
                 <div id="mapContainer">
