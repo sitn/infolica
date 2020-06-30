@@ -136,8 +136,10 @@ export default {
       this.form.technicien = this.operateursListe
       .filter(x => x.id === this.affaire.technicien_id)[0];
       
-      this.form.responsable = this.operateursListe
-      .filter(x => x.id === this.affaire.responsable_id)[0];
+      if (this.form.responsable !== null){
+        this.form.responsable = this.operateursListe
+        .filter(x => x.id === this.affaire.responsable_id)[0];
+      }
 
       this.form.typeAffaire = this.typesAffairesListe
       .filter(x => x.id === this.affaire.type_id)[0];
