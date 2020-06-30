@@ -27,8 +27,6 @@ export default {
       cadastres_list: [],
       // affaires_list: [],
       sitn_search_categories: null,
-      client_envoi: null,
-      client_envoi_complement: null,
       client_facture: null,
       client_facture_complement: null,
       selectedModificationAffaire: null,
@@ -40,6 +38,8 @@ export default {
         nom: null,
         client_commande: null,
         client_commande_complement: null,
+        client_envoi: null,
+        client_envoi_complement: null,
         technicien_id: null,
         type_id: null,
         cadastre_id: null,
@@ -71,6 +71,9 @@ export default {
       client_commande: {
         required
       },
+      client_envoi: {
+        required
+      },
       technicien_id: {
         required
       },
@@ -81,11 +84,6 @@ export default {
         required
       },
       localisation: {
-        required
-      }
-    },
-    client_envoi: {
-      id: {
         required
       }
     },
@@ -409,8 +407,8 @@ export default {
           "client_commande_complement",
           this.form.client_commande_complement.id
         );
-      if (this.client_envoi)
-        formData.append("client_envoi_id", this.client_envoi.id);
+      if (this.form.client_envoi)
+        formData.append("client_envoi_id", this.form.client_envoi.id);
       if (this.form.client_envoi_complement)
         formData.append(
           "client_envoi_complement",
@@ -540,7 +538,7 @@ export default {
      * Complète par défaut les clients envoi et facture
      */
     defaultCompleteClients(client) {
-      this.client_envoi = client;
+      this.form.client_envoi = client;
       this.client_facture = client;
     },
     /**
@@ -666,15 +664,13 @@ export default {
       if(this.selectedModificationAffaire){
         this.form.cadastre_id = this.selectedModificationAffaire.cadastre_id; 
         this.form.nom = this.selectedModificationAffaire.nom; 
+        this.form.nom_ = this.selectedModificationAffaire.nom; 
         this.form.vref = this.selectedModificationAffaire.vref; 
         this.form.remarque = this.selectedModificationAffaire.remarque; 
-        this.form.client_commande = this.selectedModificationAffaire.client_commande_id; 
-        this.form.client_envoi = this.selectedModificationAffaire.client_envoi_id;
+        this.form.client_commande = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_commande_id)[0]; 
+        this.form.client_envoi = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_envoi_id)[0];
         //this.form.client_facture = this.selectedModificationAffaire.client_envoi_id;  
-        this.form.date_ouverture =  this.selectedModificationAffaire.date_ouverture ? moment(new Date(this.selectedModificationAffaire.date_ouverture)).format(process.env.VUE_APP_DATEFORMAT_CLIENT) : null;
-        this.form.date_validation =  this.selectedModificationAffaire.date_validation ? moment(new Date(this.selectedModificationAffaire.date_validation)).format(process.env.VUE_APP_DATEFORMAT_CLIENT) : null;
-        this.form.date_cloture =  this.selectedModificationAffaire.date_cloture ? moment(new Date(this.selectedModificationAffaire.date_cloture)).format(process.env.VUE_APP_DATEFORMAT_CLIENT) : null;
-        this.form.date_envoi =  this.selectedModificationAffaire.date_envoi ? moment(new Date(this.selectedModificationAffaire.date_envoi)).format(process.env.VUE_APP_DATEFORMAT_CLIENT) : null;
+        this.form.date_ouverture =  getCurrentDate();
         this.form.localisation_E = this.selectedModificationAffaire.localisation_e; 
         this.form.localisation_N = this.selectedModificationAffaire.localisation_n; 
 
@@ -682,6 +678,13 @@ export default {
         if(this.selectedModificationAffaire.localisation_e && this.selectedModificationAffaire.localisation_n)
           this.handleLocalisation(this.selectedModificationAffaire.localisation_e, this.selectedModificationAffaire.localisation_n, true);
       }
+    },
+
+    /**
+     * On select type modif
+     */
+    typeModifSelected() {
+      this.form.nom = (this.form.affaire_modif_type? this.form.affaire_modif_type.nom + " : " : null) + this.form.nom_;
     },
 
     /**
@@ -711,6 +714,18 @@ export default {
             if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)) element.active = false;
             else element.active = true;
           });
+
+          // get client_affaire
+          const url = process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_FACTURES_ENDPOINT + this.form.affaire_base_id;
+          this.$http.get(url,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }).then(response => {
+            if(response && response.data) 
+              var affaire_factures = response.data;
+              this.client_facture = this.clients_list.filter(x => x.id === affaire_factures[0].client_id)[0];
+          }).catch(err => handleException(err, this));
         }
       })
       .catch(err => {

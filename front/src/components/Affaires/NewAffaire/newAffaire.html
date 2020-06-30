@@ -89,7 +89,7 @@
                         <md-card-expand>
                             <md-card-expand-content>
                                 <md-card-content>
-                                    <div class="md-title" v-if="selectedModificationAffaire">Indiquer le immeubles à sélectionner de l'affaire {{selectedModificationAffaire.id}} <span v-if="selectedModificationAffaire.nom != '-'">[{{ selectedModificationAffaire.nom }}]</span></div>
+                                    <div class="md-title" v-if="selectedModificationAffaire">Indiquer les immeubles concernés de l'affaire {{selectedModificationAffaire.id}} <span v-if="selectedModificationAffaire.nom != '-'">[{{ selectedModificationAffaire.nom }}]</span></div>
                                     <br>                                   
 
                                     <!-- Tableau des numéros concernés par l'affaire -->
@@ -149,6 +149,7 @@
                             id="type_modification_affaire"
                             v-model="form.affaire_modif_type"
                             :md-options="typesModficiationAffaire_list"
+                            @md-selected="typeModifSelected"
                             required>
                             <label>Type de modification</label>
 
@@ -225,14 +226,14 @@
                 <!-- Client ENVOI et ligne complément -->
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-autocomplete id="client_envoi_id" v-model="client_envoi"
+                        <md-autocomplete id="client_envoi_id" v-model="form.client_envoi"
                         :md-options="search_clients_list" md-dense
-                        @md-changed="searchClients(client_envoi)"
-                        :class="getValidationClass($v.client_envoi.id)"
+                        @md-changed="searchClients(form.client_envoi)"
+                        :class="getValidationClass($v.form.client_envoi)"
                         required>
                         <label>Client envoi</label>
 
-                        <span class="md-error" v-if="!$v.client_envoi.id.required">Le client envoi est
+                        <span class="md-error" v-if="!$v.form.client_envoi.required">Le client envoi est
                             obligatoire</span>
                         </md-autocomplete>
                     </div>
@@ -240,7 +241,7 @@
                     <div class="md-layout-item md-small-size-100 md-size-50">
                         <md-field>
                             <label>Complément</label>
-                            <md-input v-model="client_envoi_complement" />
+                            <md-input v-model="form.client_envoi_complement" />
                         </md-field>
                     </div>
                 </div>
@@ -276,28 +277,7 @@
                     <div class="md-layout-item md-small-size-50 md-size-25">
                         <md-datepicker v-model="form.date_ouverture" md-immediately
                             :class="getValidationClass($v.form.date_ouverture)">
-                            <label>Date ouverture</label>
-                        </md-datepicker>
-                    </div>
-
-                    <div class="md-layout-item md-small-size-50 md-size-25">
-                        <md-datepicker v-model="form.date_validation" md-immediately
-                            :class="getValidationClass($v.form.date_validation)">
-                            <label>Date validation</label>
-                        </md-datepicker>
-                    </div>
-
-                    <div class="md-layout-item md-small-size-50 md-size-25">
-                        <md-datepicker v-model="form.date_envoi" md-immediately
-                            :class="getValidationClass($v.form.date_envoi)">
-                            <label>Date d'envoi</label>
-                        </md-datepicker>
-                    </div>
-
-                    <div class="md-layout-item md-small-size-50 md-size-25">
-                        <md-datepicker v-model="form.date_cloture" md-immediately
-                            :class="getValidationClass($v.form.date_cloture)">
-                            <label>Date clôture</label>
+                            <label>Date d'ouverture</label>
                         </md-datepicker>
                     </div>
                 </div>
