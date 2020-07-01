@@ -199,34 +199,47 @@ def courrier_affaire_view(request):
     file_path = os.path.join(temporary_directory, filename)
 
     # Get request params
-    template = request.params['template']
+    # template = request.params['template']
     values = request.params['values']
     values_json = json.loads(values)
 
-    # Get header and footer template
-    with open(os.path.join(mails_templates_directory,'MAIN.html'), mode="r", encoding="utf-8") as main_html:
+    # # Get header and footer template
+    # with open(os.path.join(mails_templates_directory,'MAIN.html'), mode="r", encoding="utf-8") as main_html:
 
-        main_html = main_html.read()
+    #     main_html = main_html.read()
 
-    # Get content template
-    with open(os.path.join(mails_templates_directory, template + '.html'), mode="r", encoding="utf-8") as template_html:
-        template_html = template_html.read()
+    # # Get content template
+    # with open(os.path.join(mails_templates_directory, template + '.html'), mode="r", encoding="utf-8") as template_html:
+    #     template_html = template_html.read()
+
+    # # Replace values by keywords
+    # for att in values_json:
+    #     tmp = values_json[att]
+    #     if tmp is None:
+    #         tmp = ''
+    #     template_html = template_html.replace(att, tmp)
+
+    # # Fill content of html file
+    # main_html = main_html.replace('CONTENU_DYNAMIQUE', template_html)
+    # main_html = main_html.replace("LOGO_URL", "./ne_logo.png")
+    
+    # # Save PDF file
+    # html = HTML(string=main_html, base_url=mails_templates_directory).write_pdf(file_path)
+
+    from docxtpl import DocxTemplate
+    doc = DocxTemplate(os.path.join(mails_templates_directory, "ParCop.docx"))
 
     # Replace values by keywords
     for att in values_json:
-        tmp = values_json[att]
-        if tmp is None:
-            tmp = ''
-        template_html = template_html.replace(att, tmp)
+        context = {values_json[att], att}
+        print(context)
+        doc.render(context)
 
-    # Fill content of html file
-    main_html = main_html.replace('CONTENU_DYNAMIQUE', template_html)
-    main_html = main_html.replace("LOGO_URL", "./ne_logo.png")
-    
-    # Save PDF file
-    html = HTML(string=main_html, base_url=mails_templates_directory).write_pdf(file_path)
+    doc.save(os.path.join(mails_templates_directory, "test.docx"))
 
-    return {'filename': filename}
+
+    return "ok"
+    # return {'filename': filename}
 
 
 """
@@ -291,3 +304,30 @@ def modification_affaires_view(request):
         transaction.commit()
         return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ModificationAffaire.__tablename__))
 
+
+"""Get modification affaire by affaire_mère"""
+@view_config(route_name="modification_affaire_by_affaire_mere", request_method="GET", renderer="json")
+def modification_affaire_by_affaire_mere_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    affaire_mere_id = request.matchdict["id"]
+
+    records = request.dbsession.query(models.ModificationAffaire).filter(models.ModificationAffaire.affaire_id_fille == affaire_mere_id).all()
+
+    return Utils.serialize_many(records)
+
+
+"""Get modification affaire by affaire_fille"""
+@view_config(route_name="modification_affaire_by_affaire_fille", request_method="GET", renderer="json")
+def modification_affaire_by_affaire_fille_view(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    affaire_fille_id = request.matchdict["id"]
+
+    records = request.dbsession.query(models.ModificationAffaire).filter(models.ModificationAffaire.affaire_id_mere == affaire_fille_id).all()
+
+    return Utils.serialize_many(records)
