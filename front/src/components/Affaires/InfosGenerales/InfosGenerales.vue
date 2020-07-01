@@ -9,7 +9,7 @@ import {checkPermission, stringifyAutocomplete} from '@/services/helper';
 const moment = require("moment");
 
 export default {
-  name: "AffairesDashboard",
+  name: "InfosGénérales",
   props: {
     affaire: {type: Object}
     },
@@ -21,6 +21,8 @@ export default {
       affaireReadonly: true,
       operateursListe: [],
       typesAffairesListe: [],
+      affaires_source: [],
+      affaires_destination: [],
       form: {
         technicien: null,
         responsable: null,
@@ -136,8 +138,10 @@ export default {
       this.form.technicien = this.operateursListe
       .filter(x => x.id === this.affaire.technicien_id)[0];
       
-      this.form.responsable = this.operateursListe
-      .filter(x => x.id === this.affaire.responsable_id)[0];
+      if (this.form.responsable !== null){
+        this.form.responsable = this.operateursListe
+        .filter(x => x.id === this.affaire.responsable_id)[0];
+      }
 
       this.form.typeAffaire = this.typesAffairesListe
       .filter(x => x.id === this.affaire.type_id)[0];
@@ -161,12 +165,67 @@ export default {
       }).catch(err => handleException(err, this))
     },
 
+    /**
+     * Récupère l'affaire mère
+     */
+    async searchAffaireSource() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL +
+        process.env.VUE_APP_MODIFICATION_AFFAIRE_BY_AFFAIRE_MERE_ENDPOINT + 
+        this.$route.params.id,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          var tmp = [];
+          response.data.forEach(x => {
+            tmp.push(x.affaire_id_mere)
+          });
+          this.affaires_source = tmp;
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Récupère l'affaire fille
+     */
+    async searchAffaireDestination() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL +
+        process.env.VUE_APP_MODIFICATION_AFFAIRE_BY_AFFAIRE_FILLE_ENDPOINT + 
+        this.$route.params.id,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          var tmp = [];
+          response.data.forEach(x => {
+            tmp.push(x.affaire_id_fille)
+          });
+          this.affaires_destination = tmp;
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * On click provenance
+     */
+    onClickProvenance(item) {
+      alert(item)
+    },
+
   },
 
   mounted: function() {
     this.copyAffaire();
     this.initOperateursListe();
     this.initTypesAffairesListe();
+    this.searchAffaireSource();
+    this.searchAffaireDestination();
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };

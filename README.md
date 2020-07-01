@@ -48,6 +48,8 @@ Move to front.
 cd ../front
 ```
 
+Duplicate the `.env` file to `env.development.local` for development or `env.production.local` for production and adapt urls and config. Files ending with `*.local` are ignored by git.
+
 Install dependencies.
 ```
 npm install

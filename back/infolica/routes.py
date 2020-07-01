@@ -23,6 +23,8 @@ def includeme(config):
     config.add_route('types_modification_affaire_s', '/infolica/api/types_modification_affaire/')
     config.add_route('modification_affaires', '/infolica/api/modification_affaires')
     config.add_route('modification_affaires_s', '/infolica/api/modification_affaires/')
+    config.add_route('modification_affaire_by_affaire_mere', '/infolica/api/modification_affaire_by_affaire_mere/{id}')
+    config.add_route('modification_affaire_by_affaire_fille', '/infolica/api/modification_affaire_by_affaire_fille/{id}')
     #Factures
     config.add_route('factures', '/infolica/api/factures')
     config.add_route('factures_s', '/infolica/api/factures/')

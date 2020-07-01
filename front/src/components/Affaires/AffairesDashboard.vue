@@ -169,7 +169,23 @@ export default {
      */
     duplicateAffaire(){
       this.$refs.duplicationAffaireForm.openDuplicationAffaireDialog();
+    },
+
+    /**
+     * Open Theme SITN
+     */
+    openSitnTheme(choix) {
+      var route;
+      if (choix === "environnement") {
+        route = process.env.VUE_APP_SITN_ENVIRONNEMENT_URL;
+      } else if (choix === "amenagement_territoire") {
+          route = process.env.VUE_APP_SITN_AMENAGEMENT_TERRITOIRE_URL;
+      } else {
+        return null;
+      }
+      window.open(route + "&map_x=" + this.affaire.localisation_e + "&map_y=" + this.affaire.localisation_n, "_blank");
     }
+
   },
 
   mounted: function() {

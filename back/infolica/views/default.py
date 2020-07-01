@@ -58,6 +58,8 @@ def test_error(exc, request):
 @view_config(route_name='numeros_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='numeros_relations', request_method='OPTIONS', renderer='json')
 @view_config(route_name='numeros_relations_s', request_method='OPTIONS', renderer='json')
+@view_config(route_name='affaire_numeros', request_method='OPTIONS', renderer='json')
+@view_config(route_name='affaire_numeros_s', request_method='OPTIONS', renderer='json')
 def options_response_view(request):
     return ''
 
