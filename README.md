@@ -48,6 +48,8 @@ Move to front.
 cd ../front
 ```
 
+Duplicate the `.env` file to `env.development.local` for development or `env.production.local` for production and adapt urls and config.
+
 Install dependencies.
 ```
 npm install
