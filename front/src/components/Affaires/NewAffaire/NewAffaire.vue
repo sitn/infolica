@@ -102,7 +102,7 @@ export default {
 
     return {form, client_facture}
   },
-  
+
   methods: {
     /**
      * Get validation class par fieldname pour objet form
@@ -762,7 +762,6 @@ export default {
         this.form.client_commande_complement = this.selectedModificationAffaire.client_commande_complement; 
         this.form.client_envoi = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_envoi_id)[0];
         this.form.client_envoi_complement = this.selectedModificationAffaire.client_envoi_complement;
-        //this.form.client_facture = this.selectedModificationAffaire.client_envoi_id;  
         this.form.date_ouverture =  getCurrentDate();
         this.form.localisation_E = this.selectedModificationAffaire.localisation_e; 
         this.form.localisation_N = this.selectedModificationAffaire.localisation_n; 
