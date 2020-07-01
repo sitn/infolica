@@ -32,8 +32,8 @@ export default {
       selectedModificationAffaire: null,
       affaire_numeros_anciens: [],
       affaire_numeros_nouveaux: [],
-      selectedAnciensNumeros: null,
-      selectedNouveauxNumeros: null,
+      selectedAnciensNumeros: [],
+      selectedNouveauxNumeros: [],
       form: {
         nom: null,
         client_commande: null,
@@ -53,7 +53,7 @@ export default {
         affaire_base: null,
         remarque: null,
         affaire_base_id: null,
-        affaire_modif_type: null
+        affaire_modif_type_id: null
       },
       dataSaved: false,
       sending: false,
@@ -63,8 +63,8 @@ export default {
     };
   },
   // Validations
-  validations: {
-    form: {
+  validations() {
+    var form = {
       type_id: {
         required
       },
@@ -85,14 +85,24 @@ export default {
       },
       localisation: {
         required
-      }
-    },
-    client_facture: {
-      id: {
+      },
+    };
+
+    if (this.type_modification_bool) {
+      form.affaire_modif_type_id = {
         required
       }
     }
+
+    var client_facture = {
+      id: {
+        required
+      }
+    };
+
+    return {form, client_facture}
   },
+  
   methods: {
     /**
      * Get validation class par fieldname pour objet form
@@ -295,21 +305,24 @@ export default {
         })
         .then(response => {
           const _response = response;
+          const id_new_affaire = response.data;
           if (response && response.data) {
             var promises = [];
             // Enregistrer une facture vide
-            promises.push(this.postFacture(_response.data));
-            if (this.form.remarque !== null) promises.push(this.postRemarqueAffaire(_response.data));
+            promises.push(this.postFacture(id_new_affaire));
+            if (this.form.remarque !== null) promises.push(this.postRemarqueAffaire(id_new_affaire));
             if (this.type_modification_bool) {
-              promises.push(this.postAffaireRelation(_response.data));
-              promises.push(this.updateNumerosAffaire(_response.data))
+              promises.push(this.postAffaireRelation(id_new_affaire));
+              if ((this.selectedAnciensNumeros.length + this.selectedNouveauxNumeros.length) > 0 ) {
+                promises.push(this.updateNumerosAffaire(id_new_affaire));
+              }
             }
             Promise.all(promises)
             .then(() => {
               this.handleSaveDataSuccess(_response);
               this.$router.push({
                 name: "AffairesDashboard",
-                params: { id: _response.data }
+                params: { id: id_new_affaire }
               });
                 
             }).catch(err => {
@@ -367,7 +380,7 @@ export default {
       var formData = new FormData();
       formData.append('affaire_id_mere', this.form.affaire_base_id);
       formData.append('affaire_id_fille', affaire_id);
-      formData.append('type_id', this.form.affaire_modif_type.id);
+      formData.append('type_id', this.form.affaire_modif_type_id);
       formData.append("date", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       return new Promise((resolve, reject) => {
         this.$http.post(
@@ -743,9 +756,8 @@ export default {
       if(this.selectedModificationAffaire){
         this.form.cadastre_id = this.selectedModificationAffaire.cadastre_id; 
         this.form.nom = this.selectedModificationAffaire.nom; 
-        this.form.nom_ = this.selectedModificationAffaire.nom; 
+        this.form.nom_ = this.selectedModificationAffaire.nom; // garder le nom pas modifié en mémoire
         this.form.vref = this.selectedModificationAffaire.vref; 
-        this.form.remarque = this.selectedModificationAffaire.remarque; 
         this.form.client_commande = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_commande_id)[0]; 
         this.form.client_commande_complement = this.selectedModificationAffaire.client_commande_complement; 
         this.form.client_envoi = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_envoi_id)[0];
@@ -765,7 +777,8 @@ export default {
      * On select type modif update nom_affaire
      */
     typeModifSelected() {
-      this.form.nom = (this.form.affaire_modif_type? this.form.affaire_modif_type.nom + " : " : null) + this.form.nom_;
+      this.form.nom = (this.form.affaire_modif_type_id? 
+                       this.typesModficiationAffaire_list.filter(x => x.id === this.form.affaire_modif_type_id) + " : " : null) + this.form.nom_;
     },
 
     /**
