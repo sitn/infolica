@@ -8,7 +8,6 @@ from ..scripts.utils import Utils
 # from distutils.dir_util import copy_tree
 import os
 import json
-from weasyprint import HTML, default_url_fetcher
 from pyramid.response import FileResponse
 from datetime import datetime
 from docxtpl import DocxTemplate, RichText
