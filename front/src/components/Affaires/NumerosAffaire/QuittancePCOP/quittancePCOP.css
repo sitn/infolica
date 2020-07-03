@@ -3,6 +3,12 @@
     float: left;
 }
 
+.md-textarea {
+    height: auto;
+}
+
 .md-dialog {
     z-index: 6;
+    width: 60%;
+    margin: auto;
 }

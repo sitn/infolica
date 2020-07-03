@@ -211,12 +211,6 @@ export default {
       }).catch(err => handleException(err, this));
     },
 
-    /**
-     * On click provenance
-     */
-    onClickProvenance(item) {
-      alert(item)
-    },
 
   },
 

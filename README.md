@@ -19,8 +19,6 @@ Install requirements
 ```
 pip install -r requirements.txt
 ```
-Note: The weasyprint library depends on `GDK-PixBuf`, which must be installed separately.
-Download and run the latest version of [gtk3-runtime-x.x.x-x-x-x-ts-win64.exe](https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer)
 
 Make your changes in config files.
 Rename `production.ini.template` to `production.ini`  

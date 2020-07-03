@@ -8,9 +8,10 @@ from ..scripts.utils import Utils
 # from distutils.dir_util import copy_tree
 import os
 import json
-from weasyprint import HTML, default_url_fetcher
 from pyramid.response import FileResponse
 from datetime import datetime
+from docxtpl import DocxTemplate, RichText
+
 
 ###########################################################
 # AFFAIRE
@@ -186,7 +187,7 @@ def affaires_update_view(request):
 
 
 """
-Create PDF file 
+Create  file 
 """
 @view_config(route_name='courrier_affaire', request_method='POST', renderer='json')
 @view_config(route_name='courrier_affaire_s', request_method='POST', renderer='json')
@@ -195,55 +196,27 @@ def courrier_affaire_view(request):
     mails_templates_directory = settings['mails_templates_directory']
     temporary_directory = settings['temporary_directory']
     date_time = datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = 'PCOP_' + date_time + '.pdf'
+    filename = 'PCOP_' + date_time + '.docx'
     file_path = os.path.join(temporary_directory, filename)
 
     # Get request params
     # template = request.params['template']
     values = request.params['values']
-    values_json = json.loads(values)
+    context = json.loads(values)
+    context["ADRESSE_"] = RichText(context["ADRESSE_"])
 
-    # # Get header and footer template
-    # with open(os.path.join(mails_templates_directory,'MAIN.html'), mode="r", encoding="utf-8") as main_html:
-
-    #     main_html = main_html.read()
-
-    # # Get content template
-    # with open(os.path.join(mails_templates_directory, template + '.html'), mode="r", encoding="utf-8") as template_html:
-    #     template_html = template_html.read()
-
-    # # Replace values by keywords
-    # for att in values_json:
-    #     tmp = values_json[att]
-    #     if tmp is None:
-    #         tmp = ''
-    #     template_html = template_html.replace(att, tmp)
-
-    # # Fill content of html file
-    # main_html = main_html.replace('CONTENU_DYNAMIQUE', template_html)
-    # main_html = main_html.replace("LOGO_URL", "./ne_logo.png")
-    
-    # # Save PDF file
-    # html = HTML(string=main_html, base_url=mails_templates_directory).write_pdf(file_path)
-
-    from docxtpl import DocxTemplate
+    # Ouverture du document template
     doc = DocxTemplate(os.path.join(mails_templates_directory, "ParCop.docx"))
 
-    # Replace values by keywords
-    for att in values_json:
-        context = {values_json[att], att}
-        print(context)
-        doc.render(context)
+    # Replace values by keywords and save
+    doc.render(context)
+    doc.save(file_path)
 
-    doc.save(os.path.join(mails_templates_directory, "test.docx"))
-
-
-    return "ok"
-    # return {'filename': filename}
+    return {'filename': filename}
 
 
 """
-Send PDF file
+Send file
 """
 @view_config(route_name='courrier_affaire', request_method='GET')
 @view_config(route_name='courrier_affaire_s', request_method='GET')

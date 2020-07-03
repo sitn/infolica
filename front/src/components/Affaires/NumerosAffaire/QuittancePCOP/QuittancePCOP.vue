@@ -21,15 +21,12 @@ export default {
   components: {},
   data: () => ({
     form: {
+      adresse_: null,
+      entreprise: null,
       titre: null,
-      nom_prenom: null,
-      adresse: null,
-      npa: null,
-      localite: null,
       nref: null,
       vref: null,
       dateEnvoi: null,
-      civilite: null,
       dateDemande: null,
       numerosReserves: null,
       nombreNumerosReserves: null,
@@ -67,24 +64,18 @@ export default {
      * Get client from affaire.client_commande_id
      */
     async getClientAffaire() {
-      this.$http.get(
-        process.env.VUE_APP_API_URL +
-        process.env.VUE_APP_CLIENTS_ENDPOINT +
-        "/" + this.affaire.client_commande_id,
-        {
-          withCredentials: true,
-          headers: { Accept: "application/json" }
-        }
-      ).then(response => {
-        if (response && response.data) {
-          const client = response.data;
-          this.form.titre = client.titre;
-          this.form.nom_prenom = client.prenom === null? client.nom : client.nom +  " "  + client.prenom;
-          this.form.adresse = client.adresse;
-          this.form.npa = client.npa;
-          this.form.localite = client.localite;
-        }
-      });
+      return new Promise((resolve, reject) => {
+        this.$http.get(
+          process.env.VUE_APP_API_URL +
+          process.env.VUE_APP_CLIENTS_ENDPOINT +
+          "/" + this.affaire.client_commande_id,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      })
     },
 
     /**
@@ -118,18 +109,33 @@ export default {
      * Initialiser le formulaire Dialog
      */
     initForm() {
-      this.getClientAffaire();
+      this.getClientAffaire()
+      .then(response => {
+        if (response && response.data) {
+          const client = response.data;
+          const new_line = "\n"
+          this.form.adresse_ = "";
+          this.form.adresse_ += this.affaire.client_envoi_complement !== null && this.affaire.client_envoi_complement !== "-"? this.affaire.client_envoi_complement + new_line + "Par " : "";
+          this.form.adresse_ += client.entreprise !== null? client.entreprise + new_line: "";
+          this.form.adresse_ += [client.titre, client.prenom, client.nom].filter(Boolean).join(" ") + new_line; 
+          this.form.adresse_ += client.adresse + new_line; 
+          this.form.adresse_ += client.case_postale? "Case postale " + client.case_postale + new_line: ""
+          this.form.adresse_ += [client.npa, client.localite].filter(Boolean).join(" ");
+
+          this.form.titre = client.titre;
+        }
+      }).catch(err => handleException(err));
+
       this.form = {
-        nref: "",
+        nref: this.affaire.id,
         vref: this.affaire.vref,
+        cadastre: this.affaire.cadastre,
         dateEnvoi: getCurrentDate(),
-        civilite: "",
         dateDemande: moment(this.affaire.date_ouverture, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
         numeros_de: "",
         numeros_a: "",
         nombreNumerosReserves: "",
-        bfBase: "",
-        cadastre: this.affaire.cadastre
+        bfBase: ""
       };
     },
 
@@ -143,14 +149,11 @@ export default {
       formData.append(
         "values",
         JSON.stringify({
+          ADRESSE_: this.form.adresse_,
           TITRE: this.form.titre,
-          NOMPRENOM: this.form.nom_prenom,
-          ADRESSE: this.form.adresse,
-          NPALOCALITE: this.form.npa + " " + this.form.localite,
-          NREF: this.form.nref === "" ? String(this.affaire.id) : String(this.affaire.id) + "-" + this.form.nref,
+          NREF: this.form.nref,
           VREF: String(this.form.vref),
           DATEENVOI: String(this.form.dateEnvoi),
-          CIVILITE: this.form.titre,
           DATEDEMANDE: String(this.form.dateDemande),
           NUMEROSRESERVES: String(this.form.numeros_de) + " à " + String(this.form.numeros_a),
           NOMBRENUMEROS: String(Number(this.form.numeros_a)-Number(this.form.numeros_de)+1),
