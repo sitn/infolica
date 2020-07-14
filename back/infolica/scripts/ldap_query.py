@@ -84,6 +84,7 @@ class LDAPQuery(object):
     def get_user_group_by_dn(cls, request, dn):
         connector = get_ldap_connector(request)
         result = connector.user_groups(dn)
+        group_to_avoid = request.registry.settings['infolica_group_to_avoid']
 
         if result is not None:
             groups = [cls.format_json_attributes(json.loads(json.dumps(dict(r[1])))) for r in result if r and len(r) > 1]
@@ -92,7 +93,7 @@ class LDAPQuery(object):
                 cn_attribute = request.registry.settings['ldap_group_attribute_id']
 
                 for group in groups:
-                    if group[cn_attribute].startswith(request.registry.settings['infolica_groups_prefix']):
+                    if group[cn_attribute].startswith(request.registry.settings['infolica_groups_prefix']) and not group_to_avoid in group[cn_attribute]:
                         return group[cn_attribute]
         return None
 
