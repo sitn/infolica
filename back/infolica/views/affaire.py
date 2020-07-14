@@ -27,7 +27,7 @@ def affaires_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(models.VAffaire).all()
+    query = request.dbsession.query(models.VAffaire).order_by(models.VAffaire.id.desc()).all()
     return Utils.serialize_many(query)
 
 
@@ -61,7 +61,7 @@ def affaires_search_view(request):
     conditions = Utils.get_search_conditions(
         models.VAffaire, request.params)
     query = request.dbsession.query(models.VAffaire).filter(
-        *conditions).order_by(models.VAffaire.date_ouverture.desc()).limit(search_limit).all()
+        *conditions).order_by(models.VAffaire.id.desc()).limit(search_limit).all()
     return Utils.serialize_many(query)
 
 
@@ -71,7 +71,7 @@ Return all types affaires
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
 @view_config(route_name='types_affaires_s', request_method='GET', renderer='json')
 def types_affaires_view(request):
-    types_affaires = request.dbsession.query(models.AffaireType).all()
+    types_affaires = request.dbsession.query(models.AffaireType).filter(models.AffaireType.ordre != None).order_by(models.AffaireType.ordre.asc()).all()
 
     types_affaires = Utils.serialize_many(types_affaires)
     return types_affaires
@@ -82,16 +82,8 @@ Return all types modification affaire
 @view_config(route_name='types_modification_affaire', request_method='GET', renderer='json')
 @view_config(route_name='types_modification_affaire_s', request_method='GET', renderer='json')
 def types_modification_affaire_view(request):
-    records = request.dbsession.query(models.ModificationAffaireType).all()
-    types_affaires = list()
-
-    # Supprimer type d'affaire "NE PLUS UTILISER"
-    for type_i in records:
-        if not "NE PLUS UTILISER" in type_i.nom:
-            types_affaires.append(type_i)
-
-    types_affaires = Utils.serialize_many(types_affaires)
-    return types_affaires
+    records = request.dbsession.query(models.ModificationAffaireType).filter(models.ModificationAffaireType.ordre != None).order_by(models.ModificationAffaireType.ordre.asc()).all()
+    return Utils.serialize_many(records)
 
 
 """ 

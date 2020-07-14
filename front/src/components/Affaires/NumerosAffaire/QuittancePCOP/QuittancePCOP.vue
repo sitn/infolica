@@ -115,7 +115,6 @@ export default {
           const client = response.data;
           const new_line = "\n"
           this.form.adresse_ = "";
-          this.form.adresse_ += this.affaire.client_envoi_complement !== null && this.affaire.client_envoi_complement !== "-"? this.affaire.client_envoi_complement + new_line + "Par " : "";
           this.form.adresse_ += client.entreprise !== null? client.entreprise + new_line: "";
           this.form.adresse_ += [client.titre, client.prenom, client.nom].filter(Boolean).join(" ") + new_line; 
           this.form.adresse_ += client.adresse + new_line; 
@@ -174,8 +173,9 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
-            this.downloadQuittancePCOP(response.data.filename);
-            this.deleteQuittancePCOP(response.data.filename);
+            this.downloadQuittancePCOP(response.data.filename).then(
+              this.deleteQuittancePCOP(response.data.filename)
+            );
           }
         })
         .catch(err => {
@@ -187,12 +187,14 @@ export default {
      * Download QuittancePCOP
      */
     downloadQuittancePCOP(filename) {
-      let url =
-        process.env.VUE_APP_API_URL +
-        process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
-        "?filename=" +
-        filename;
-      window.open(url, "_blank");
+      return new Promise(() => {
+        let url =
+          process.env.VUE_APP_API_URL +
+          process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
+          "?filename=" +
+          filename;
+        window.open(url, "_blank");
+      });
     },
 
     /**

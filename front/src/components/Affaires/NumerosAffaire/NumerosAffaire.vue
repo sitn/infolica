@@ -34,7 +34,8 @@ export default {
       showNumerosMO: true,
       affaireReadonly: true,
       numerosMoLoading: true,
-      showQuittancePCOPDialog: false
+      showQuittancePCOPDialog: false,
+      showBalance: false
       // numeros_base_relations: []
     };
   },
@@ -367,10 +368,18 @@ export default {
     //   });
     // },
 
+    /**
+     * Afficher la balance si c'est une affaire de division
+     */
+    async showBalance_() {
+      this.showBalance = await this.affaire.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION);
+    }
+
   },
   mounted: function() {
     this.searchAffaireNumeros();
     this.searchAffaireNewNumerosMo();
+    this.showBalance_();
 
     this.$root.$on('UpdateNumerosAffaires', () =>{
       this.searchAffaireNumeros();

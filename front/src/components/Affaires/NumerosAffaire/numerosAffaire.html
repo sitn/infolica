@@ -201,7 +201,7 @@
 
 
                     <!-- Balance des biens-fonds -->
-                    <md-card-content>
+                    <md-card-content v-if="showBalance">
                         <Balance :affaire_numeros_all="affaire_numeros_all" />
                     </md-card-content>
                     
