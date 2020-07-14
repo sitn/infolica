@@ -198,7 +198,7 @@ export default {
             tmp.forEach(x => {
               x.nom_ = [
                 x.entreprise,
-                [x.nom, x.prenom].filter(Boolean).join(" "),
+                [x.titre, x.nom, x.prenom].filter(Boolean).join(" "),
                 x.adresse,
                 [x.npa, x.localite].filter(Boolean).join(" ")
               ]

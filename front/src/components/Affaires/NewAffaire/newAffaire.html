@@ -206,6 +206,7 @@
                             @md-selected="defaultCompleteClients(form.client_commande)"
                             :class="getValidationClass($v.form.client_commande)"
                             required>
+
                             <label>Demandeur</label>
                             <template slot="md-autocomplete-empty" slot-scope="{ term }">
                                 Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
@@ -232,8 +233,8 @@
                         @md-changed="searchClients(form.client_envoi)"
                         :class="getValidationClass($v.form.client_envoi)"
                         required>
-                        <label>Client envoi</label>
 
+                        <label>Client envoi</label>
                         <span class="md-error" v-if="!$v.form.client_envoi.required">Le client envoi est
                             obligatoire</span>
                         </md-autocomplete>

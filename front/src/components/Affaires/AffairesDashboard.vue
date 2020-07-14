@@ -73,36 +73,33 @@ export default {
           .then(response => {
             if (response.data) {
               var obj = response.data;
+
               obj["client_commande_nom_"] = [
                 obj.client_commande_entreprise,
-                obj.client_commande_titre,
-                [obj.client_commande_nom, obj.client_commande_prenom].filter(Boolean).join(" ")
-              ]
-                .filter(Boolean)
-                .join(" ");
+                [obj.client_commande_titre, obj.client_commande_nom, obj.client_commande_prenom].filter(Boolean).join(" "),
+                obj.client_commande_adresse,
+                obj.client_commande_case_postale,
+                [obj.client_commande_npa, obj.client_commande_localite].filter(Boolean).join(" ")]
+                .filter(Boolean).join("\n");
 
               obj["client_envoi_nom_"] = [
                 obj.client_envoi_entreprise,
-                obj.client_envoi_titre,
-                [obj.client_envoi_nom, obj.client_envoi_prenom].filter(Boolean).join(" ")
-              ]
-                .filter(Boolean)
-                .join(" ");
+                [obj.client_envoi_titre, obj.client_envoi_nom, obj.client_envoi_prenom].filter(Boolean).join(" "),
+                obj.client_envoi_complement !== null? obj.client_envoi_complement: null,
+                obj.client_envoi_adresse,
+                obj.client_envoi_case_postale,
+                [obj.client_envoi_npa, obj.client_envoi_localite].filter(Boolean).join(" ")]
+                .filter(Boolean).join("\n");
 
               obj["technicien"] = [obj.technicien_prenom, obj.technicien_nom]
-                .filter(Boolean)
-                .join(" ");
+                .filter(Boolean).join(" ");
+
               obj["responsable"] = [obj.responsable_prenom, obj.responsable_nom]
-                .filter(Boolean)
-                .join(" ");
+                .filter(Boolean).join(" ");
+
               Object.keys(obj).forEach(function(key) {
-                // Mettre un tiret à toutes les entrées nulles sauf les dates
-                if (
-                  (obj[key] === null || obj[key] === "") &&
-                  !key.includes("date")
-                ) {
-                  obj[key] = "-";
-                } 
+
+                
                 // Formater la date en DD.MM.YYYY
                 if (key.includes("date") && obj[key] !== null && obj[key] !== "") {
                   obj[key] = moment(obj[key], process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
