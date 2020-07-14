@@ -19,7 +19,7 @@ def etapes_index_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    records = request.dbsession.query(models.AffaireEtapeIndex).all()
+    records = request.dbsession.query(models.AffaireEtapeIndex).filter(models.AffaireEtapeIndex.ordre != None).order_by(models.AffaireEtapeIndex.ordre.asc()).all()
     return Utils.serialize_many(records)
 
 """ GET etapes affaire"""

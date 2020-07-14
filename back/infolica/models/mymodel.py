@@ -81,6 +81,7 @@ class AffaireType(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
+    ordre = Column(BigInteger)
 
 
 class Affaire(Base):
@@ -116,6 +117,7 @@ class AffaireEtapeIndex(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
+    ordre = Column(BigInteger)
 
 
 class AffaireEtape(Base):
@@ -133,6 +135,7 @@ class ModificationAffaireType(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
+    ordre = Column(BigInteger)
 
 
 class ModificationAffaire(Base):
@@ -722,7 +725,9 @@ class VAffairesPreavis(Base):
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger)
     service = Column(Text)
+    service_id = Column(BigInteger)
     preavis = Column(Text)
+    preavis_type_id = Column(BigInteger)
     date_demande = Column(Date)
     date_reponse = Column(Date)
     remarque = Column(Text)
