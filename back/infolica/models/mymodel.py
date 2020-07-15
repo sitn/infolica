@@ -471,6 +471,7 @@ class NumeroDiffere(Base):
     date_entree = Column(
         Date, default=datetime.datetime.utcnow, nullable=False)
     date_sortie = Column(Date)
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
 
 
 class NumeroRelationType(Base):
@@ -599,6 +600,7 @@ class VNumeros(Base):
     diff_id = Column(Date)
     diff_entree = Column(Date)
     diff_sortie = Column(Date)
+    diff_affaire_id = Column(BigInteger)
     plan_id = Column(BigInteger)
 
 
