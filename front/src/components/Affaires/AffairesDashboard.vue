@@ -50,7 +50,7 @@ export default {
       parentparentAffaireReadOnly: false,
       cloreAffaireEnabled: false,
       duplicationAffaireForm: null,
-      typesAffaire: {
+      typesAffaires: {
         mutation: process.env.VUE_APP_TYPE_AFFAIRE_DIVISION,
         cadastration: process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION,
         ppe: process.env.VUE_APP_TYPE_AFFAIRE_PPE,

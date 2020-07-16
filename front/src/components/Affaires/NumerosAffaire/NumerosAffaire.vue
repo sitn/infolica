@@ -16,7 +16,8 @@ const moment = require("moment");
 export default {
   name: "NumerosAffaire",
   props: {
-    affaire: {}
+    affaire: Object,
+    typesAffaires: Object
   },
   components: {
     ReferenceNumeros,

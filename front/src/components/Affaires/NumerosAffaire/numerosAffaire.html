@@ -156,7 +156,7 @@
                             </md-card>
 
                             <!-- Numéros de la MO -->
-                            <md-card>
+                            <md-card v-if="affaire.type_id==typesAffaires.mutation">
                                 <md-card-header>
                                     <div class="md-title">Numéros de la MO</div>
                                 </md-card-header>
@@ -201,7 +201,7 @@
 
 
                     <!-- Balance des biens-fonds -->
-                    <md-card-content v-if="showBalance">
+                    <md-card-content v-if="showBalance && affaire.type_id==typesAffaires.mutation">
                         <Balance :affaire_numeros_all="affaire_numeros_all" />
                     </md-card-content>
                     
