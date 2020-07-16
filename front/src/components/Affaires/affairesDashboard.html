@@ -37,7 +37,7 @@
                             </md-input>
                         </md-field>
                     </div>
-                    <div style="text-align: right;" class="md-layout-item">
+                    <div style="text-align: right;" class="md-layout-item" v-if="affaire.type_id==typesAffaire.mutation">
                         <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('environnement')">Environnement</md-button>
                         <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('amenagement_territoire')">Aménagement du territoire</md-button>
                     </div>
@@ -68,7 +68,7 @@
     </div>
 
     <!-- PREAVIS -->
-    <div class="affairesDashboard">
+    <div class="affairesDashboard" v-if="affaire.type_id==typesAffaire.mutation">
         <preavis />
     </div>
 
@@ -84,16 +84,16 @@
 
     <!-- CONTROLE TECHNIQUE MUTATION -->
     <div class="affairesDashboard">
-        <ControleMutation v-if="affaire.type_id==1" />
+        <ControleMutation v-if="affaire.type_id==typesAffaire.mutation" />
     </div>
 
     <!-- CONTROLE TECHNIQUE PPE -->
     <div class="affairesDashboard">
-        <ControlePPE v-if="affaire.type_id==3" />
+        <ControlePPE v-if="affaire.type_id==typesAffaire.ppe" />
     </div>
 
     <!-- SUIVI DU MANDAT -->
-    <div class="affairesDashboard">
+    <div class="affairesDashboard" v-if="affaire.type_id==typesAffaire.mutation">
         <SuiviMandat />
     </div>
 

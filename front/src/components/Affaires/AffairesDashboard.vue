@@ -49,7 +49,19 @@ export default {
       editAffaireAllowed: true,
       parentparentAffaireReadOnly: false,
       cloreAffaireEnabled: false,
-      duplicationAffaireForm: null
+      duplicationAffaireForm: null,
+      typesAffaire: {
+        mutation: process.env.VUE_APP_TYPE_AFFAIRE_DIVISION,
+        cadastration: process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION,
+        ppe: process.env.VUE_APP_TYPE_AFFAIRE_PPE,
+        pcop: process.env.VUE_APP_TYPE_AFFAIRE_PCOP,
+        maj_periodique: process.env.VUE_APP_TYPE_AFFAIRE_MAJ_PERIODIQUE,
+        modification: process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION,
+        revision_abornement: process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT,
+        remaniement_parcellaire: process.env.VUE_APP_TYPE_AFFAIRE_REMANIEMENT_PARCELLAIRE,
+        servitude: process.env.VUE_APP_TYPE_AFFAIRE_SERVITUDE,
+        autre: process.env.VUE_APP_TYPE_AFFAIRE_AUTRE
+      }
       // numeros_base_associes = []
     };
   },
