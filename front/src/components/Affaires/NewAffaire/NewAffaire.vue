@@ -125,6 +125,23 @@ export default {
         process.env.VUE_APP_MAP_DEFAULT_ZOOM
       );
       this.$refs.mapHandler.map.on("singleclick", this.onMapClick(this));
+      this.$refs.mapHandler.modify.on("modifyend", this.onFeatureChange(this));
+    },
+
+    /**
+     * Handle map feature change event
+     */
+    onFeatureChange: function(_this) {
+      return function(modify) {
+        const features = modify.features.getArray();
+        if (features) {
+          const feature = features[0];
+          const coordinates = feature.getGeometry().getCoordinates();
+          _this.form.localisation_E = coordinates[0];
+          _this.form.localisation_N = coordinates[1];
+          _this.handleLocalisation(_this.form.localisation_E, _this.form.localisation_N);
+        }
+      };
     },
 
     /**
@@ -324,12 +341,12 @@ export default {
                 name: "AffairesDashboard",
                 params: { id: id_new_affaire }
               });
-                
+
             }).catch(err => {
                 handleException(err, this);
                 this.sending = false;
               });
-              
+
           }
         })
         //Error
@@ -404,7 +421,7 @@ export default {
       formData.append("remarque", this.form.remarque);
       formData.append("operateur_id", this.form.technicien_id);
       formData.append("date", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      
+
       return new Promise((resolve, reject) => {
         this.$http.post(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_REMARQUES_ENDPOINT,
@@ -702,7 +719,7 @@ export default {
         }
       }).catch(err => handleException(err, this));
     },
-    
+
     /*
      * Open affaire modification in new tab
      */
@@ -754,17 +771,17 @@ export default {
      */
     fillValuesFromModificationAffaire(){
       if(this.selectedModificationAffaire){
-        this.form.cadastre_id = this.selectedModificationAffaire.cadastre_id; 
-        this.form.nom = this.selectedModificationAffaire.nom; 
+        this.form.cadastre_id = this.selectedModificationAffaire.cadastre_id;
+        this.form.nom = this.selectedModificationAffaire.nom;
         this.form.nom_ = this.selectedModificationAffaire.nom; // garder le nom pas modifié en mémoire
-        this.form.vref = this.selectedModificationAffaire.vref; 
-        this.form.client_commande = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_commande_id)[0]; 
-        this.form.client_commande_complement = this.selectedModificationAffaire.client_commande_complement; 
+        this.form.vref = this.selectedModificationAffaire.vref;
+        this.form.client_commande = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_commande_id)[0];
+        this.form.client_commande_complement = this.selectedModificationAffaire.client_commande_complement;
         this.form.client_envoi = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_envoi_id)[0];
         this.form.client_envoi_complement = this.selectedModificationAffaire.client_envoi_complement;
         this.form.date_ouverture =  getCurrentDate();
-        this.form.localisation_E = this.selectedModificationAffaire.localisation_e; 
-        this.form.localisation_N = this.selectedModificationAffaire.localisation_n; 
+        this.form.localisation_E = this.selectedModificationAffaire.localisation_e;
+        this.form.localisation_N = this.selectedModificationAffaire.localisation_n;
 
         //Handle localisation
         if(this.selectedModificationAffaire.localisation_e && this.selectedModificationAffaire.localisation_n)
@@ -776,7 +793,7 @@ export default {
      * On select type modif update nom_affaire
      */
     typeModifSelected() {
-      this.form.nom = (this.form.affaire_modif_type_id? 
+      this.form.nom = (this.form.affaire_modif_type_id?
                        this.typesModficiationAffaire_list.filter(x => x.id === this.form.affaire_modif_type_id) + " : " : null) + this.form.nom_;
     },
 
@@ -815,7 +832,7 @@ export default {
             withCredentials: true,
             headers: {Accept: "application/json"}
           }).then(response => {
-            if(response && response.data) 
+            if(response && response.data)
               var affaire_factures = response.data;
               this.client_facture = this.clients_list.filter(x => x.id === affaire_factures[0].client_id)[0];
           }).catch(err => handleException(err, this));
