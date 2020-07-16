@@ -523,6 +523,7 @@ class Service(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     service = Column(Text, nullable=False)
+    abreviation = Column(Text, nullable=False)
     nom = Column(Text)
     prenom = Column(Text)
     adresse = Column(Text)

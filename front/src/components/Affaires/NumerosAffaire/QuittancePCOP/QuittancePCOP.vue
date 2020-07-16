@@ -144,7 +144,7 @@ export default {
     callCreateQuittancePCOP() {
       let formData = new FormData();
 
-      formData.append("template", "QuittancePCOP");
+      formData.append("template", "ParCop");
       formData.append(
         "values",
         JSON.stringify({

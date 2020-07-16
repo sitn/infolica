@@ -16,7 +16,6 @@ export default {
       numeros_relations: [],
       numeros_relations_bk: [],
       numeros_relations_matrice: [],
-      tmp: []
     };
   },
   methods: {
