@@ -172,7 +172,7 @@ export default {
       this.selectedFacture = {
         id: tmp.id,
         sap: tmp.sap,
-        date: tmp.date,
+        date: tmp.date !== null? tmp.date: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
         client: tmp.client_,
         client_: tmp.client_,
         client_complement: tmp.client_complement,
