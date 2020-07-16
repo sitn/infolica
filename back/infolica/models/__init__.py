@@ -6,6 +6,7 @@ import zope.sqlalchemy
 # import or define all models here to ensure they are attached to the
 # Base.metadata prior to any initialization routines
 from .mymodel import *
+from .mssql_models import *
 
 # run configure_mappers after defining all of the models to ensure
 # all relationships can be setup
@@ -15,6 +16,8 @@ configure_mappers()
 def get_engine(settings, prefix='sqlalchemy.'):
     return engine_from_config(settings, prefix)
 
+def get_mssql_engine(settings, prefix='mssql_sqlalchemy.'):
+    return engine_from_config(settings, prefix)
 
 def get_session_factory(engine):
     factory = sessionmaker()
@@ -66,12 +69,23 @@ def includeme(config):
     config.include('pyramid_retry')
 
     session_factory = get_session_factory(get_engine(settings))
+    mssql_session_factory = get_session_factory(get_mssql_engine(settings))
+    
     config.registry['dbsession_factory'] = session_factory
+    config.registry['msssql_dbsession_factory'] = mssql_session_factory
 
     # make request.dbsession available for use in Pyramid
     config.add_request_method(
         # r.tm is the transaction manager used by pyramid_tm
         lambda r: get_tm_session(session_factory, r.tm),
         'dbsession',
+        reify=True
+    )
+
+    # make request.dbsession available for use in Pyramid
+    config.add_request_method(
+        # r.tm is the transaction manager used by pyramid_tm
+        lambda r: get_tm_session(mssql_session_factory, r.tm),
+        'mssql_dbsession',
         reify=True
     )

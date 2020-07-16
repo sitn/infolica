@@ -16,6 +16,7 @@ pyramid.default_locale_name = en
 # Les informations de connexion à la BD
 #############################################
 sqlalchemy.url = /*TO COMPLETE*/
+mssql_sqlalchemy.url = /*TO COMPLETE*/
 
 #############################################
 # Les informations de connexion au LDAP

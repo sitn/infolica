@@ -18,6 +18,7 @@ pyramid.includes =
 # Les informations de connexion à la BD
 #############################################
 sqlalchemy.url = postgresql://users:password@host/infolica
+mssql_sqlalchemy.url = mssql+pymssql://mssql_dbuser:mssql_dbpassword@mssql_dbhost/mssql_db
 
 #############################################
 # Les informations de connexion au LDAP

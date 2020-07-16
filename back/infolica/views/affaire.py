@@ -1,6 +1,7 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 from .. import models
+from infolica.models.mssql_models import VImmeubles
 import transaction
 from ..models import Constant
 from ..exceptions.custom_error import CustomError
@@ -16,6 +17,24 @@ from docxtpl import DocxTemplate, RichText
 ###########################################################
 # AFFAIRE
 ###########################################################
+
+
+""" 
+Return all affaires
+"""
+@view_config(route_name='test_mssql', request_method='GET', renderer='json')
+def test_mssql(request):
+    # Check connected
+
+    query = request.mssql_dbsession.query(VImmeubles).limit(100).all()
+    
+    asd
+    
+    return {}
+
+
+
+
 
 """ 
 Return all affaires

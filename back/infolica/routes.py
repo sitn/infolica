@@ -12,6 +12,7 @@ def includeme(config):
     config.add_route('recherche_clients', '/infolica/api/recherche_clients')
     config.add_route('recherche_clients_s', '/infolica/api/recherche_clients/')
     #Affaires
+    config.add_route('test_mssql', '/infolica/api/test_mssql')
     config.add_route('affaires', '/infolica/api/affaires')
     config.add_route('affaires_s', '/infolica/api/affaires/')
     config.add_route('types_affaires', '/infolica/api/types_affaires')

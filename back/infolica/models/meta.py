@@ -14,3 +14,6 @@ NAMING_CONVENTION = {
 
 metadata = MetaData(naming_convention=NAMING_CONVENTION, schema="infolica")
 Base = declarative_base(metadata=metadata)
+
+mssql_metadata = MetaData(naming_convention=NAMING_CONVENTION)
+Base_mssql = declarative_base(metadata=mssql_metadata)
