@@ -29,6 +29,7 @@ export default {
       sitn_search_categories: null,
       client_facture: null,
       client_facture_complement: null,
+      client_facture_attention_de: null,
       selectedModificationAffaire: null,
       affaire_numeros_anciens: [],
       affaire_numeros_nouveaux: [],
@@ -198,7 +199,7 @@ export default {
             tmp.forEach(x => {
               x.nom_ = [
                 x.entreprise,
-                [x.nom, x.prenom].filter(Boolean).join(" "),
+                [x.titre, x.nom, x.prenom].filter(Boolean).join(" "),
                 x.adresse,
                 [x.npa, x.localite].filter(Boolean).join(" ")
               ]
@@ -347,6 +348,7 @@ export default {
         var formData = new FormData();
         formData.append("affaire_id", affaire_id);
         formData.append("client_id", this.client_facture.id);
+        formData.append("client_attention_de", this.client_facture_attention_de);
         formData.append(
           "client_complement",
           this.client_facture_complement

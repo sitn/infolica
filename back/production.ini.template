@@ -81,6 +81,9 @@ ldap_search_user_filter= /*TO COMPLETE*/
 # Le préfixe des groupes infolica
 infolica_groups_prefix= /*TO COMPLETE*/
 
+# Le préfixe des groupes infolica
+infolica_group_to_avoid= /*TO COMPLETE*/
+
 ######################################################################################
 # Le nombre max des résultats retournés par la recherche
 ######################################################################################

@@ -4,7 +4,7 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission, stringifyAutocomplete} from '@/services/helper';
+import {checkPermission, stringifyAutocomplete, getClients} from '@/services/helper';
 
 const moment = require("moment");
 
@@ -23,15 +23,67 @@ export default {
       typesAffairesListe: [],
       affaires_source: [],
       affaires_destination: [],
+      clientsListe: [],
+      searchClientsListe: [],
       form: {
         technicien: null,
         responsable: null,
-        typeAffaire: null
-      }
+        typeAffaire: null,
+        client_commande: null,
+        client_envoi: null,
+        client_envoi_complement: null
+      },
     };
   },
 
   methods: {
+    /**
+     * Search clients
+     */
+    async initClientsListe() {
+      getClients()
+        .then(response => {
+          if (response && response.data) {
+            var tmp = response.data;
+            tmp.forEach(x => {
+              x.nom_ = [
+                x.entreprise,
+                [x.titre, x.nom, x.prenom].filter(Boolean).join(" "),
+                x.adresse,
+                [x.npa, x.localite].filter(Boolean).join(" ")
+              ]
+                .filter(Boolean)
+                .join(", ");
+            });
+            this.clientsListe = tmp.map(x => ({
+              id: x.id,
+              nom: x.nom_,
+              toLowerCase: () => x.nom_.toLowerCase(),
+              toString: () => x.nom_
+            }));
+          }
+        })
+        //Error
+        .catch(err => {
+          handleException(err, this);
+        });
+    },
+
+    /**
+     * Search Client after 3 letters
+     */
+    searchClients(value) {
+      let tmp = [];
+      if (value !== null) {
+        if (value.length >= 3) {
+          tmp = this.clientsListe.filter(x =>
+            x.nom.toLowerCase().includes(value.toLowerCase())
+          );
+        }
+      }
+      this.searchClientsListe = tmp;
+    },
+
     /**
      * Ouvre la page de consultation/édition de client
      */
@@ -63,10 +115,16 @@ export default {
       formData.append("technicien_id", this.form.technicien.id);
       formData.append("type_id", this.form.typeAffaire.id);
       if (this.form.responsable !== null) formData.append("responsable_id", this.form.responsable.id);
-      if (this.affaire.nom !== "-") formData.append("nom", this.affaire.nom || null);
-      if (this.affaire.information !== "-")
+      if (this.affaire.nom !== null) formData.append("nom", this.affaire.nom || null);
+      if (this.affaire.information !== null)
         formData.append("information", this.affaire.information || null);
-      if (this.affaire.vref !== "-") formData.append("vref", this.affaire.vref || null);
+      if (this.affaire.vref !== null) formData.append("vref", this.affaire.vref || null);
+      
+      if (typeof this.form.client_commande === 'object') formData.append("client_commande_id", this.form.client_commande.id || null);
+      if (typeof this.form.client_envoi === 'object') formData.append("client_envoi_id", this.form.client_envoi.id || null);
+
+      formData.append("client_envoi_complement", this.form.client_envoi_complement || null);
+
       if (this.affaire.date_validation)
         formData.append(
           "date_validation", this.affaire.date_validation?
@@ -146,7 +204,27 @@ export default {
       this.form.typeAffaire = this.typesAffairesListe
       .filter(x => x.id === this.affaire.type_id)[0];
 
+      this.form.client_commande = this.affaire.client_commande_nom_.replace("\n", ", ");
+      this.form.client_envoi = this.affaire.client_envoi_nom_.replace("\n", ", ");
+      // this.form.client_commande = {
+      //   id: this.affaire.client_commande_id,
+      //   nom: this.affaire.client_commande_nom_.replace("\n", ", ")
+      // };
+      // this.form.client_envoi = {
+      //   id: this.affaire.client_envoi_id,
+      //   nom: this.affaire.client_envoi_nom_.replace("\n", ", ")
+      // };
+      this.form.client_envoi_complement = this.affaire.client_envoi_complement;
+
       this.infoGenReadonly = false;
+    },
+
+    /**
+     * openCreateClient
+     */
+    openCreateClient() {
+      let routedata = this.$router.resolve({ name: "ClientsNew" });
+      window.open(routedata.href, "_blank");
     },
 
     /**
@@ -211,7 +289,6 @@ export default {
       }).catch(err => handleException(err, this));
     },
 
-
   },
 
   mounted: function() {
@@ -220,6 +297,7 @@ export default {
     this.initTypesAffairesListe();
     this.searchAffaireSource();
     this.searchAffaireDestination();
+    this.initClientsListe();
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };

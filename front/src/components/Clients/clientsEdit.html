@@ -57,9 +57,9 @@
         <!-- Représenté par  -->
         <div class="md-layout md-guttermd-size-100">
           <div class="md-layout-item md-small-size-100">
-            <md-field>
-              <label for="represente_par">Représenté par</label>
-              <md-input name="represente_par" id="represente_par" v-model="form.represente_par" :disabled="sending" />
+            <md-field style="background-color: lightgrey;">
+              <label for="represente_par">Représenté par (non éditable)</label>
+              <md-input name="represente_par" id="represente_par" v-model="form.represente_par" :disabled="sending" readonly />
             </md-field>
           </div>
         </div>

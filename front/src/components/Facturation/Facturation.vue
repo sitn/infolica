@@ -7,7 +7,7 @@ var numeral = require("numeral");
 import { getCurrentDate, checkPermission, getCurrentUserRoleId } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
-import { required, minLength } from "vuelidate/lib/validators";
+import { required } from "vuelidate/lib/validators";
 
 const moment = require('moment')
 
@@ -34,6 +34,8 @@ export default {
       date: null,
       client: null,
       client_id: null,
+      client_complement: null,
+      client_attention_de: null,
       montant_mo: null,
       montant_mat_diff: null,
       montant_rf: null,
@@ -46,12 +48,8 @@ export default {
   // Validations
   validations: {
     selectedFacture: {
-      // sap: { required },
       date: { required },
-      client: {
-        required,
-        minLength: minLength(3)
-      },
+      client: { required },
       montant_mo: { required },
       montant_mat_diff: { required },
       montant_rf: { required },
@@ -65,7 +63,6 @@ export default {
      * SEARCH AFFAIRE FACTURES
      */
     async searchAffaireFactures() {
-      await this.searchClients();
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
@@ -78,22 +75,24 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
-            this.affaire_factures = response.data.map(x => ({
-              id: x.id,
-              sap: x.sap,
-              date: moment(x.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
-              client_id: x.client_id,
-              client: this.clients_liste
-                .filter(obj => {
-                  return obj.id === x.client_id;
-                }).pop(),
-              montant_mo: numeral(x.montant_mo).format("0.00"),
-              montant_mat_diff: numeral(x.montant_mat_diff).format("0.00"),
-              montant_rf: numeral(x.montant_rf).format("0.00"),
-              montant_tva: numeral(x.montant_tva).format("0.00"),
-              montant_total: numeral(x.montant_total).format("0.00"),
-              remarque: x.remarque
-            }));
+            var tmp = response.data;
+            tmp.forEach(x => {
+              x.date = x.date !== null? moment(x.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
+              x.montant_mo = numeral(x.montant_mo).format("0.00"),
+              x.montant_mat_diff = numeral(x.montant_mat_diff).format("0.00"),
+              x.montant_rf = numeral(x.montant_rf).format("0.00"),
+              x.montant_tva = numeral(x.montant_tva).format("0.00"),
+              x.montant_total = numeral(x.montant_total).format("0.00"),
+              x.client_ = [
+                x.client_entreprise,
+                [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
+                x.client_adresse,
+                x.client_case_postale,
+                [x.client_npa, x.client_localite].filter(Boolean).join(" ")
+              ].filter(Boolean).join(", ")
+            });
+
+            this.affaire_factures = tmp;
           }
         })
         .catch(err => {
@@ -102,31 +101,37 @@ export default {
     },
 
     /**
-     * Lier le nom du client à son id (facture.client_id) dans le tableau
+     * Liste des clients
      */
     async searchClients() {
-      return new Promise((resolve, reject) => {
-        this.$http
-          .get(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
-            {
-              withCredentials: true,
-              headers: {"Accept": "application/json"}
-            }
-          )
-          .then(response => {
-            if (response.data) {
-              this.clients_liste = response.data.map(x => ({
-                id: x.id,
-                nom: [x.entreprise, x.prenom, x.nom].filter(Boolean).join(" "),
-                toLowerCase: () => x.nom.toLowerCase(),
-                toString: () => x.nom
-              }));
-              resolve(this.client_liste)
-            }
-          })
-          .catch(() => reject);
-      });
+      this.$http
+        .get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+        )
+        .then(response => {
+          if (response && response.data) {
+            var tmp = response.data;
+            tmp.forEach(x => {
+              x.nom_ = [
+                x.entreprise,
+                [x.titre, x.nom, x.prenom].filter(Boolean).join(" "),
+                x.adresse,
+                x.case_postale,
+                [x.npa, x.localite].filter(Boolean).join(" ")
+              ].filter(Boolean).join(", ")
+            });
+            this.clients_liste = tmp.map(x => ({
+              id: x.id,
+              nom: x.nom_,
+              toLowerCase: () => x.nom_.toLowerCase(),
+              toString: () => x.nom_
+            }));
+          }
+        })
     },
 
     /**
@@ -152,22 +157,35 @@ export default {
      * Calcul le montant total de la facture à la volée lors de l'édition
      */
     computeTotal() {
-      this.selectedFacture.montant_total =
+      this.selectedFacture.montant_total = numeral(
         Number(this.selectedFacture.montant_mo) +
         Number(this.selectedFacture.montant_mat_diff) +
         Number(this.selectedFacture.montant_rf) +
-        Number(this.selectedFacture.montant_tva);
+        Number(this.selectedFacture.montant_tva)).format('0.00');
     },
 
     /**
      * Edit facture
      */
     openFactureEdition(data) {
+      var tmp = this.affaire_factures.filter(x => x.id === data.id).pop();
+      this.selectedFacture = {
+        id: tmp.id,
+        sap: tmp.sap,
+        date: tmp.date !== null? tmp.date: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        client: tmp.client_,
+        client_: tmp.client_,
+        client_complement: tmp.client_complement,
+        client_attention_de: tmp.client_attention_de,
+        montant_mo: numeral(tmp.montant_mo).format('0.00'),
+        montant_mat_diff: numeral(tmp.montant_mat_diff).format('0.00'),
+        montant_rf: numeral(tmp.montant_rf).format('0.00'),
+        montant_tva: numeral(tmp.montant_tva).format('0.00'),
+        montant_total: numeral(tmp.montant_total).format('0.00'),
+        remarque: tmp.remarque
+      }
+      // this.selectedFacture.client = this.selectedFacture.client_;
       this.showFactureDialog = true;
-      this.selectedFacture = Object.assign({}, data);
-      this.selectedFacture.client = this.clients_liste.filter(x => {
-        return x.id === this.selectedFacture.client_id
-      }).pop();
     },
 
     /**
@@ -179,11 +197,13 @@ export default {
         sap: null,
         date: getCurrentDate(),
         client: null,
-        montant_mo: 0,
-        montant_mat_diff: 0,
-        montant_rf: 0,
-        montant_tva: 0,
-        montant_total: 0,
+        client_complement: null,
+        client_attention_de: null,
+        montant_mo: numeral(0).format('0.00'),
+        montant_mat_diff: numeral(0).format('0.00'),
+        montant_rf: numeral(0).format('0.00'),
+        montant_tva: numeral(0).format('0.00'),
+        montant_total: numeral(0).format('0.00'),
         remarque: null
       };
       this.showFactureDialog = true;
@@ -219,36 +239,21 @@ export default {
      */
     saveData() {
       var formData = new FormData();
-      if (this.selectedFacture.id)
-        formData.append("id", this.selectedFacture.id);
-      if (this.selectedFacture.sap)
-        formData.append("sap", this.selectedFacture.sap);
-      if (this.selectedFacture.date)
-        formData.append("date", moment(this.selectedFacture.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      if (this.selectedFacture.client.id) formData.append("client_id", this.selectedFacture.client.id);
-      if (this.selectedFacture.montant_mo)
-        formData.append("montant_mo", this.selectedFacture.montant_mo);
-      if (this.selectedFacture.montant_mat_diff)
-        formData.append(
-          "montant_mat_diff",
-          this.selectedFacture.montant_mat_diff
-        );
-      if (this.selectedFacture.montant_rf)
-        formData.append("montant_rf", this.selectedFacture.montant_rf);
-      if (this.selectedFacture.montant_tva)
-        formData.append("montant_tva", this.selectedFacture.montant_tva);
-      if (this.selectedFacture.montant_total)
-        formData.append("montant_total", this.selectedFacture.montant_total);
-      if (this.selectedFacture.indice_tva)
-        formData.append("indice_tva", this.selectedFacture.indice_tva);
-      if (this.selectedFacture.indice_application_mo)
-        formData.append(
-          "indice_application_mo",
-          this.selectedFacture.indice_application_mo
-        );
-      if (this.selectedFacture.remarque)
-        formData.append("remarque", this.selectedFacture.remarque);
       formData.append("affaire_id", this.$route.params.id);
+      formData.append("id", this.selectedFacture.id);
+      formData.append("sap", this.selectedFacture.sap || null);
+      formData.append("remarque", this.selectedFacture.remarque || null);
+      formData.append("client_complement", this.selectedFacture.client_complement || null);
+      formData.append("client_attention_de", this.selectedFacture.client_attention_de || null);
+      if (this.selectedFacture.date) formData.append("date", moment(this.selectedFacture.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
+      if (this.selectedFacture.client.id) formData.append("client_id", this.selectedFacture.client.id);
+      if (this.selectedFacture.montant_mo) formData.append("montant_mo", this.selectedFacture.montant_mo);
+      if (this.selectedFacture.montant_mat_diff) formData.append("montant_mat_diff", this.selectedFacture.montant_mat_diff);
+      if (this.selectedFacture.montant_rf) formData.append("montant_rf", this.selectedFacture.montant_rf);
+      if (this.selectedFacture.montant_tva) formData.append("montant_tva", this.selectedFacture.montant_tva);
+      if (this.selectedFacture.montant_total) formData.append("montant_total", this.selectedFacture.montant_total);
+      if (this.selectedFacture.indice_tva) formData.append("indice_tva", this.selectedFacture.indice_tva);
+      if (this.selectedFacture.indice_application_mo) formData.append("indice_application_mo", this.selectedFacture.indice_application_mo);
 
       // Type de requête selon si c'est une création ou une modification de facture
       if (this.createFacture) {
@@ -277,6 +282,7 @@ export default {
             this.lastRecordSAP = this.selectedFacture.sap;
             this.dataSaved = true;
             this.searchAffaireFactures();
+            this.$root.$emit("ShowMessage", "La facture a été enregistrée avec succès")
           }
         })
         .catch(err => {
@@ -338,6 +344,13 @@ export default {
      */
     onCancelDelete() {
       this.deleteFactureId = null;
+    },
+
+    /**
+     * Set finance format for numbers in facture
+     */
+    setFinanceFormat(key) {
+      this.selectedFacture[key] = numeral(this.selectedFacture[key]).format('0.00');
     }
   },
 

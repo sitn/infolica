@@ -19,7 +19,7 @@ def factures_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(models.Facture).all()
+    query = request.dbsession.query(models.VFactures).all()
     return Utils.serialize_many(query)
 
 
@@ -32,8 +32,8 @@ def affaires_factures_view(request):
 
     affaire_id = request.matchdict["id"]
 
-    query = request.dbsession.query(models.Facture)\
-        .filter(models.Facture.affaire_id == affaire_id).all()
+    query = request.dbsession.query(models.VFactures)\
+        .filter(models.VFactures.affaire_id == affaire_id).all()
     return Utils.serialize_many(query)
 
 
