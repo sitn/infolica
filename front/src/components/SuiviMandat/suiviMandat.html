@@ -36,9 +36,6 @@
                                     <div class="md-layout-item md-size-50">
                                         <md-autocomplete v-model="suiviMandat.av_32" :md-options="chefsProjetMO_liste">
                                             <label>Chef de projet</label>
-                                            <template slot="md-autocomplete-item" slot-scope="{ item }">
-                                                {{item.nom}}
-                                            </template>
                                         </md-autocomplete>
                                     </div>
                                     <div class="md-layout-item md-size-50">
@@ -130,9 +127,6 @@
                                     <div class="md-layout-item md-size-50">
                                         <md-autocomplete v-model="suiviMandat.ap_32" :md-options="chefsProjetMO_liste">
                                             <label>Chef de projet</label>
-                                            <template slot="md-autocomplete-item" slot-scope="{ item }">
-                                                {{item.nom}}
-                                            </template>
                                         </md-autocomplete>
                                     </div>
                                     <div class="md-layout-item md-size-50">
@@ -159,9 +153,6 @@
                             <div class="md-layout-item md-size-25">
                                 <md-autocomplete v-model="suiviMandat.visa" :md-options="chefsProjetMO_liste">
                                     <label>Visa</label>
-                                    <template slot="md-autocomplete-item" slot-scope="{ item }">
-                                        {{item.nom}}
-                                    </template>
                                 </md-autocomplete>
                             </div>
                             <div class="md-layout-item md-size-25">
