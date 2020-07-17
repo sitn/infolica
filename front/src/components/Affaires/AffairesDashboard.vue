@@ -53,6 +53,11 @@ export default {
       // numeros_base_associes = []
     };
   },
+  // watch: {
+  //   bigbadaboum: function(new_) {
+  //     console.log(new_)
+  //   }
+  // },
 
   methods: {
     /*
@@ -143,6 +148,7 @@ export default {
      */
     showMap() {
       if(this.$refs && this.$refs.mapHandler && !this.mapLoaded){
+        console.log('paf')
         this.center = {
           x: this.affaire.localisation_e,
           y: this.affaire.localisation_n
@@ -152,6 +158,8 @@ export default {
           process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM
         );
         this.$refs.mapHandler.addMarker(this.center.x, this.center.y);
+        this.$refs.mapHandler.modify.setActive(false);
+        this.$refs.mapHandler.snap.setActive(false);
         this.$refs.mapHandler.modify.on("modifyend", this.onFeatureChange(this));
         this.mapLoaded = true;
       }
@@ -197,14 +205,26 @@ export default {
         return null;
       }
       window.open(route + "&map_x=" + this.affaire.localisation_e + "&map_y=" + this.affaire.localisation_n, "_blank");
-    }
+    },
 
+    modifyOff(value) {
+      if (value === false) {
+        this.$refs.mapHandler.modify.setActive(true);
+        this.$refs.mapHandler.snap.setActive(true);
+      } else {
+        this.$refs.mapHandler.modify.setActive(false);
+        this.$refs.mapHandler.snap.setActive(false);
+        this.$refs.mapHandler.addMarker(this.affaire.localisation_e, this.affaire.localisation_n);
+        this.center.x = this.affaire.localisation_e;
+        this.center.y = this.affaire.localisation_n;
+      }
+    }
   },
 
   mounted: function() {
     this.setAffaire();
-
     this.$root.$on('mapHandlerReady', () =>{
+
       this.showMap();
     });
   }

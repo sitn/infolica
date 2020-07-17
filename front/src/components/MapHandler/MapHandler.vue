@@ -98,12 +98,15 @@ export default {
         let me = this;
 
         this.map.on('pointermove', function(e) {
-          if (e.dragging) {
-            me.map.getTarget().style.cursor = 'grabbing';
-          } else {
-            let pixel = me.map.getEventPixel(e.originalEvent);
-            let hit = me.map.hasFeatureAtPixel(pixel);
-            me.map.getTarget().style.cursor = hit ? 'pointer' : '';
+          //console.log(me.modify.getActive())
+          if (me.modify.getActive() === true) {
+            if (e.dragging) {
+              me.map.getTarget().style.cursor = 'grabbing';
+            } else {
+              let pixel = me.map.getEventPixel(e.originalEvent);
+              let hit = me.map.hasFeatureAtPixel(pixel);
+              me.map.getTarget().style.cursor = hit ? 'pointer' : '';
+            }
           }
         });
 
@@ -244,6 +247,7 @@ export default {
      * Add marker
      */
     addMarker: function(x, y, zoom) {
+      this.vectorSource.clear()
       const marker = new Feature({
         geometry: new Point([x, y])
       });
