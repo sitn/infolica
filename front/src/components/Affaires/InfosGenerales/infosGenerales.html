@@ -127,7 +127,7 @@
                     <md-autocomplete v-model="form.client_commande"
                         :md-options="searchClientsListe"
                         @md-changed="searchClients(form.client_commande)"
-                        required>
+                        required md-dense>
                         
                         <label><strong style="color: blue">Demandeur</strong></label>
                         <template slot="md-autocomplete-empty" slot-scope="{ term }">
@@ -140,7 +140,7 @@
                     <md-autocomplete v-model="form.client_envoi"
                         :md-options="searchClientsListe"
                         @md-changed="searchClients(form.client_envoi)"
-                        required>
+                        required md-dense>
                         
                         <label><strong style="color: blue">Client envoi</strong></label>
                         <template slot="md-autocomplete-empty" slot-scope="{ term }">

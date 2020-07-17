@@ -51,7 +51,7 @@
                     <div class="md-layout md-gutter">
                         <!-- Cadastre -->
                         <div class="md-layout-item md-small-size-30">
-                            <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste">
+                            <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste" md-dense>
                                 <label>Cadastre</label>
                                 <template slot="md-autocomplete-item" slot-scope="{ item }">
                                     {{ item.nom }}
@@ -60,7 +60,7 @@
                         </div>
                         <!-- Type -->
                         <div class="md-layout-item md-small-size-30">
-                            <md-autocomplete v-model="search.type" :md-options="types_numeros">
+                            <md-autocomplete v-model="search.type" :md-options="types_numeros" md-dense>
                                 <label>Type</label>
                                 <template slot="md-autocomplete-item" slot-scope="{ item }">
                                     {{ item.nom }}
@@ -69,7 +69,7 @@
                         </div>
                         <!-- Etat -->
                         <div class="md-layout-item md-small-size-30">
-                            <md-autocomplete v-model="search.etat" :md-options="etats_numeros">
+                            <md-autocomplete v-model="search.etat" :md-options="etats_numeros" md-dense>
                                 <label>Etat</label>
                                 <template slot="md-autocomplete-item" slot-scope="{ item }">
                                     {{ item.nom }}

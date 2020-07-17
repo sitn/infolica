@@ -34,7 +34,7 @@
 
                                 <div class="md-layout md-gutter" v-if="suiviMandat.av_31">
                                     <div class="md-layout-item md-size-50">
-                                        <md-autocomplete v-model="suiviMandat.av_32" :md-options="chefsProjetMO_liste">
+                                        <md-autocomplete v-model="suiviMandat.av_32" :md-options="chefsProjetMO_liste" md-dense>
                                             <label>Chef de projet</label>
                                         </md-autocomplete>
                                     </div>
@@ -125,7 +125,7 @@
 
                                 <div class="md-layout md-gutter" v-if="suiviMandat.ap_31">
                                     <div class="md-layout-item md-size-50">
-                                        <md-autocomplete v-model="suiviMandat.ap_32" :md-options="chefsProjetMO_liste">
+                                        <md-autocomplete v-model="suiviMandat.ap_32" :md-options="chefsProjetMO_liste" md-dense>
                                             <label>Chef de projet</label>
                                         </md-autocomplete>
                                     </div>
@@ -151,7 +151,7 @@
                         <!-- Visa et date -->
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-size-25">
-                                <md-autocomplete v-model="suiviMandat.visa" :md-options="chefsProjetMO_liste">
+                                <md-autocomplete v-model="suiviMandat.visa" :md-options="chefsProjetMO_liste" md-dense>
                                     <label>Visa</label>
                                 </md-autocomplete>
                             </div>

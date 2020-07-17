@@ -7,7 +7,7 @@
             <strong>1 - Type de modification de l'affaire</strong>  
             <md-field>
                 <label for="type_modif_affaire">Type modification</label>
-                <md-select name="type_modif_affaire" id="type_modif_affaire" v-model="type_modif_affaire">
+                <md-select name="type_modif_affaire" id="type_modif_affaire" v-model="type_modif_affaire" md-dense>
                     <md-option v-for="item in types_modifs_affaire_list" :key="item.id" :value="item.id">{{item.nom}}</md-option>
                 </md-select>
             </md-field>

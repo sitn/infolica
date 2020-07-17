@@ -56,7 +56,7 @@
             <!-- Etat et Différé -->
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-small-size-30 md-size-50">
-                    <md-autocomplete v-model="numero_edit.etat" :md-options="etatsNumeros" @md-selected="onSelectEtatNumero">
+                    <md-autocomplete v-model="numero_edit.etat" :md-options="etatsNumeros" @md-selected="onSelectEtatNumero" md-dense>
                         <label class="edit">Etat *</label>
                         <template slot="md-autocomplete-item" slot-scope="{ item }">{{ item.nom }}</template>
 
