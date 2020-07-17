@@ -115,9 +115,7 @@ export default {
           }
         ).then(response => {
           if (response.data) {
-            this.numero_provenance = response.data.map(function(obj) {
-              return obj.numero_base_numero;
-            });
+            this.numero_provenance = response.data.map(x => x.numero_base + x.numero_base_suffixe);
           } else {
             this.numero_provenance = "-"
           }
@@ -142,9 +140,7 @@ export default {
           }
         ).then(response => {
           if (response.data) {
-            this.numero_destination = response.data.map(function(obj) {
-              return obj.numero_associe_numero;
-            });
+            this.numero_destination = response.data.map(x => x.numero_associe + x.numero_associe_suffixe);
           } else {
             this.numero_destination = "-"
           }

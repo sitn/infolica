@@ -13,7 +13,7 @@
           <div class="md-layout-item md-small-size-100 md-size-50">
             <md-field :class="getValidationClass('type_client')">
               <label for="type_client">Type client *</label>
-              <md-select name="type_client" id="type_client" v-model="form.type_client" :disabled="sending">
+              <md-select name="type_client" id="type_client" v-model="form.type_client" md-dense :disabled="sending">
                 <md-option v-for="item in types_clients_list" :key="item.id" :value="item.id">{{item.nom}}</md-option>
               </md-select>
               <span class="md-error" v-if="!$v.form.type_client.required">Le type client est obligatoire</span>

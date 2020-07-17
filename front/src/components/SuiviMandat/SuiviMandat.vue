@@ -27,60 +27,70 @@ export default {
      * SEARCH AFFAIRE-SUIVI MANDAT
      */
     async searchSuiviMandat() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_SUIVI_MANDAT_ENDPOINT +
-            this.$route.params.id,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/json" }
-          }
-        )
-        .then(response => {
-          if (response && response.data) {
-            this.suiviMandat = response.data;
-            if (this.suiviMandat.date) this.suiviMandat.date = moment(this.suiviMandat.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT)
-          } else {
-            // Il n'existe pas encore de suivi de mandat pour cette affaire
-            this.needToCreateSuiviMandat = true;
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
+      this.searchOperateurs()
+      .then(() => {
+        this.$http
+          .get(
+            process.env.VUE_APP_API_URL +
+              process.env.VUE_APP_AFFAIRE_SUIVI_MANDAT_ENDPOINT +
+              this.$route.params.id,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          )
+          .then(response => {
+            if (response && response.data) {
+              this.suiviMandat = response.data;
+              if (this.suiviMandat.date !== null) this.suiviMandat.date = moment(this.suiviMandat.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+              if (this.suiviMandat.av_33 !== null) this.suiviMandat.av_33 = moment(this.suiviMandat.av_33, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+              if (this.suiviMandat.ap_33 !== null) this.suiviMandat.ap_33 = moment(this.suiviMandat.ap_33, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+              if (this.suiviMandat.av_32 !== null) this.suiviMandat.av_32 = this.chefsProjetMO_liste.filter(x => x.id === this.suiviMandat.av_32).pop().nom;
+              if (this.suiviMandat.ap_32 !== null) this.suiviMandat.ap_32 = this.chefsProjetMO_liste.filter(x => x.id === this.suiviMandat.ap_32).pop().nom;
+              if (this.suiviMandat.visa !== null) this.suiviMandat.visa = this.chefsProjetMO_liste.filter(x => x.id === this.suiviMandat.visa).pop().nom;
+            } else {
+              // Il n'existe pas encore de suivi de mandat pour cette affaire
+              this.needToCreateSuiviMandat = true;
+            }
+          })
+          .catch(err => {
+            handleException(err, this);
+          });
+      }
+      )
     },
 
     /**
      * Cherche les opérateurs
      */
     async searchOperateurs() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/json" }
-          }
-        )
-        .then(response => {
-          if (response.data) {
-            this.operateurs_liste = response.data;
-            this.chefsProjetMO_liste = response.data
-              .filter(x => {
-                return x.responsable;
-              })
-              .map(x => ({
-                id: x.id,
-                nom: [x.nom, x.prenom].join(" "),
-                toLowerCase: () => [x.nom, x.prenom].join(" ").toLowerCase(),
-                toString: () => [x.nom, x.prenom].join(" ")
-              }));
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
+      return new Promise((resolve, reject) => {
+        this.$http
+          .get(
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          )
+          .then(response => {
+            if (response.data) {
+              this.operateurs_liste = response.data;
+              this.chefsProjetMO_liste = response.data
+                .filter(x => {
+                  return x.responsable;
+                })
+                .map(x => ({
+                  id: x.id,
+                  nom: [x.nom, x.prenom].join(" "),
+                  toLowerCase: () => [x.nom, x.prenom].join(" ").toLowerCase(),
+                  toString: () => [x.nom, x.prenom].join(" ")
+                }));
+              resolve(response);
+            }
+          })
+          .catch(err => reject(err));
+      })
     },
 
     /**
@@ -129,8 +139,8 @@ export default {
         formData.append("av_21", this.suiviMandat.av_21);
       if (this.suiviMandat.av_31)
         formData.append("av_31", this.suiviMandat.av_31);
-      if (this.suiviMandat.av_32)
-        formData.append("av_32", this.suiviMandat.av_32);
+      if (this.suiviMandat.av_32 && this.suiviMandat.av_32.id)
+        formData.append("av_32", this.suiviMandat.av_32.id);
       if (this.suiviMandat.av_33)
         formData.append("av_33", moment(this.suiviMandat.av_33, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       if (this.suiviMandat.av_41)
@@ -161,8 +171,8 @@ export default {
         formData.append("ap_22", this.suiviMandat.ap_22);
       if (this.suiviMandat.ap_31)
         formData.append("ap_31", this.suiviMandat.ap_31);
-      if (this.suiviMandat.ap_32)
-        formData.append("ap_32", this.suiviMandat.ap_32);
+      if (this.suiviMandat.ap_32 && this.suiviMandat.ap_32.id)
+        formData.append("ap_32", this.suiviMandat.ap_32.id);
       if (this.suiviMandat.ap_33)
         formData.append("ap_33", moment(this.suiviMandat.ap_33, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       if (this.suiviMandat.ap_41)

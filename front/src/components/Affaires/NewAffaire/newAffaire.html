@@ -13,7 +13,7 @@
                         <md-field :class="getValidationClass($v.form.cadastre_id)">
                             <label for="cadastre_id">Cadastre</label>
                             <md-select name="cadastre_id" id="cadastre_id" v-model="form.cadastre_id"
-                            :disabled="sending" required>
+                            :disabled="sending" required md-dense>
                             <md-option v-for="item in cadastres_list" :key="item.id" :value="item.id">{{item.nom}}
                             </md-option>
                         </md-select>
@@ -26,7 +26,7 @@
                         <md-field :class="getValidationClass($v.form.technicien_id)">
                             <label for="technicien_id">Opérateur</label>
                             <md-select name="technicien_id" id="technicien_id" v-model="form.technicien_id"
-                            :disabled="sending" required>
+                            :disabled="sending" required md-dense>
                             <md-option v-for="item in operateurs_list" :key="item.id" :value="item.id">{{item.nom}}
                             </md-option>
                         </md-select>
@@ -42,7 +42,7 @@
                     <div class="md-layout-item md-small-size-100 md-size-50">
                         <md-field :class="getValidationClass($v.form.type_id)">
                             <label for="type_id">Type affaire</label>
-                            <md-select name="type_id" id="type_id" v-model="form.type_id" :disabled="sending" @md-selected="onSelectType" required>
+                            <md-select name="type_id" id="type_id" v-model="form.type_id" :disabled="sending" @md-selected="onSelectType" required md-dense>
                                 <md-option v-for="item in types_affaires_list" :key="item.id" :value="item.id">
                                     {{item.nom}}</md-option>
                                 </md-select>
@@ -148,7 +148,7 @@
                         <md-field :class="getValidationClass($v.form.affaire_modif_type_id)">
                             <label>Type de modification</label>
                             
-                            <md-select v-model="form.affaire_modif_type_id" @md-selected="typeModifSelected" required>
+                            <md-select v-model="form.affaire_modif_type_id" @md-selected="typeModifSelected" required md-dense>
                                 <md-option v-for="item in typesModficiationAffaire_list" :key="item.id" :value="item.id">
                                     {{item.nom}}</md-option>
                                 </md-select>

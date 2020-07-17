@@ -67,7 +67,7 @@
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-50 md-small-size-100">
                     <md-autocomplete v-model="new_preavis.service" :md-options="services_liste"
-                        :class="getValidationClass('service')">
+                        :class="getValidationClass('service')" md-dense>
                         <label>Service *</label>
                         <template slot="md-autocomplete-item" slot-scope="{ item }">
                             {{ item.nom }}
@@ -87,7 +87,7 @@
             
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-50 md-small-size-100">
-                    <md-autocomplete v-model="new_preavis.preavis" :md-options="preavis_type_liste">
+                    <md-autocomplete v-model="new_preavis.preavis" :md-options="preavis_type_liste" md-dense>
                         <label>Préavis</label>
                         <template slot="md-autocomplete-item" slot-scope="{ item }">
                             {{ item.nom }}
