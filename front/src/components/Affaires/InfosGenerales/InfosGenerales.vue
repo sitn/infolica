@@ -11,8 +11,7 @@ const moment = require("moment");
 export default {
   name: "InfosGénérales",
   props: {
-    affaire: {type: Object}//,
-    // mapHandler: {type: Object}
+    affaire: {type: Object}
     },
   components: {},
   data() {
@@ -54,8 +53,6 @@ export default {
       Object.assign(this.affaire, this.affaire_backup);
       this.infoGenReadonly = true;
       this.$emit('modify-off', true);
-      // this.mapHandler.modify.setActive(false);
-      // this.mapHandler.snap.setActive(false);
     },
 
     /**
@@ -156,8 +153,6 @@ export default {
 
       this.infoGenReadonly = false;
       this.$emit('modify-off', false);
-      // this.mapHandler.modify.setActive(true);
-      // this.mapHandler.snap.setActive(true);
     },
 
     /**

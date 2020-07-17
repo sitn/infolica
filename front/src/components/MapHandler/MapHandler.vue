@@ -1,12 +1,9 @@
 <style src="./mapHandler.css" scoped></style>
 <template src="./mapHandler.html"></template>
 
-
-
 <script>
 import "ol/ol.css";
 import {defaults as defaultInteractions, Snap, Modify} from 'ol/interaction';
-// Pointer as PointerInteraction
 import Map from "ol/Map";
 import View from "ol/View";
 //import {defaults as defaultControls, ScaleLine} from 'ol/control';

@@ -53,11 +53,6 @@ export default {
       // numeros_base_associes = []
     };
   },
-  // watch: {
-  //   bigbadaboum: function(new_) {
-  //     console.log(new_)
-  //   }
-  // },
 
   methods: {
     /*
