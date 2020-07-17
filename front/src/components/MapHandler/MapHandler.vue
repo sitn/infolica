@@ -95,7 +95,6 @@ export default {
         let me = this;
 
         this.map.on('pointermove', function(e) {
-          //console.log(me.modify.getActive())
           if (me.modify.getActive() === true) {
             if (e.dragging) {
               me.map.getTarget().style.cursor = 'grabbing';
@@ -265,27 +264,6 @@ export default {
       this.vectorSource.clear();
     }
 
-    /**
-     * Handle map click event
-     */
-    /*onMapClick: function(evt) {
-      console.log(evt);
-      //var viewResolution = this.$refs.view.getResolution();
-      var url = this.$refs.wmsSource.getFeatureInfoUrl(
-        evt.coordinate,
-        null, //viewResolution,
-        "EPSG:2056",
-        { INFO_FORMAT: "text/html" }
-      );
-      console.log(url);
-    },*/
-
-    /**
-     * Handle map mounted event
-     */
-    /*onMapMounted: function() {
-      console.log(this.$refs.map);
-    },*/
   },
 
   mounted: function() {

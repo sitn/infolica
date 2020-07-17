@@ -150,7 +150,6 @@ export default {
      */
     showMap() {
       if(this.$refs && this.$refs.mapHandler && !this.mapLoaded){
-        console.log('paf')
         this.center = {
           x: this.affaire.localisation_e,
           y: this.affaire.localisation_n
