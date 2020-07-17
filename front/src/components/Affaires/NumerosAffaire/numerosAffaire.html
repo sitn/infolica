@@ -42,21 +42,21 @@
                                                 <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">
                                                     {{ item.numero_cadastre }}
                                                 </md-table-cell>
-                                                <md-table-cell md-label="Type" md-sort-by="numero_type">
+                                                <!-- <md-table-cell md-label="Type" md-sort-by="numero_type">
                                                     {{ item.numero_type }}
+                                                </md-table-cell> -->
+                                                <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}<span v-if="item.numero_suffixe"> / {{ item.numero_suffixe }}</span>
                                                 </md-table-cell>
-                                                <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}
-                                                </md-table-cell>
-                                                <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">
+                                                <!-- <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">
                                                     {{ item.numero_suffixe }}
-                                                </md-table-cell>
+                                                </md-table-cell> -->
                                                 <md-table-cell md-label="Etat" md-sort-by="numero_etat">
                                                     {{ item.numero_etat }}
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Repris par">    
                                                     <a v-bind:href="item.affaire_destination_href" target="_blank"> {{item.affaire_destination_id }}</a>
                                                 </md-table-cell>
-                                                <md-table-cell class="actionsColumn">
+                                                <md-table-cell md-label="Action" class="actionsColumn">
                                                     <md-button class="md-icon-button md-dense md-accent" v-if="!affaireReadonly && item.affaire_numero_actif && !affaire.date_cloture"
                                                         v-on:click="onDeleteReferenceNumero(item)">
                                                         <md-icon>delete</md-icon>
@@ -97,7 +97,7 @@
                                 <!-- Tableau des numéros réservés dans l'affaire -->
                                 <div v-if="affaire_numeros_nouveaux[0]">
                                     <md-table v-model="affaire_numeros_nouveaux" md-sort="numero_etat"
-                                            md-sort-order="desc" md-fixed-header>
+                                            md-sort-order="desc" md-fixed-header md-dense>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif || !item.active }">
                                                 <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
                                                     {{ item.numero_id }}
@@ -105,17 +105,17 @@
                                                 <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">
                                                     {{ item.numero_cadastre }}
                                                 </md-table-cell>
-                                                <md-table-cell md-label="Type" md-sort-by="numero_type">
+                                                <!-- <md-table-cell md-label="Type" md-sort-by="numero_type">
                                                     {{ item.numero_type }}
-                                                </md-table-cell>
-                                                <md-table-cell md-label="Plan" md-sort-by="numero_plan_id">
+                                                </md-table-cell> -->
+                                                <!-- <md-table-cell md-label="Plan" md-sort-by="numero_plan_id">
                                                     {{ item.numero_plan_id }}
+                                                </md-table-cell> -->
+                                                <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}<span v-if="item.numero_suffixe"> / {{ item.numero_suffixe }}</span>
                                                 </md-table-cell>
-                                                <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}
-                                                </md-table-cell>
-                                                <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">
+                                                <!-- <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">
                                                     {{ item.numero_suffixe }}
-                                                </md-table-cell>
+                                                </md-table-cell> -->
                                                 <md-table-cell md-label="Immeuble de base" md-sort-by="numero_base">
                                                     {{ item.numero_base }}<span v-if="item.numero_base_suffixe"> /
                                                         {{ item.numero_base_suffixe }}</span>
@@ -167,7 +167,7 @@
                                     </div>
                                     <div v-else>
                                         <div v-if="affaire_numeros_nouveaux_mo[0]">
-                                            <md-table v-model="affaire_numeros_nouveaux_mo" md-sort="cadastre_id" md-sort-order="desc" md-fixed-header>
+                                            <md-table v-model="affaire_numeros_nouveaux_mo" md-sort="cadastre_id" md-sort-order="desc" md-fixed-header md-dense>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                                 <md-table-cell md-label="Cadastre" md-sort-by="cadastre">
                                                     {{ item.cadastre }}
