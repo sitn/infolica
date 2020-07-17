@@ -24,7 +24,7 @@ import moment from "moment";
 export default {
   name: "AffairesDashboard",
   props: {
-    
+
   },
   components: {
     InfosGenerales,
@@ -110,8 +110,6 @@ export default {
                 .filter(Boolean).join(" ");
 
               Object.keys(obj).forEach(function(key) {
-
-                
                 // Formater la date en DD.MM.YYYY
                 if (key.includes("date") && obj[key] !== null && obj[key] !== "") {
                   obj[key] = moment(obj[key], process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
@@ -132,10 +130,10 @@ export default {
       this.searchAffaire().then(function(obj){
         _this.affaire = obj;
         _this.affaireLoaded = true;
-        _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);  
-        _this.cloreAffaireEnabled = _this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined;     
+        _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
+        _this.cloreAffaireEnabled = _this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined;
         _this.parentAffaireReadOnly = (_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined);
-        
+
         //If admin, allow edit
         if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)){
           _this.parentAffaireReadOnly = false;
@@ -143,8 +141,8 @@ export default {
 
         _this.showMap();
       });
-      
-      
+
+
     },
 
     /**
@@ -161,9 +159,24 @@ export default {
           process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM
         );
         this.$refs.mapHandler.addMarker(this.center.x, this.center.y);
-
+        this.$refs.mapHandler.modify.setActive(false);
+        this.$refs.mapHandler.snap.setActive(false);
+        this.$refs.mapHandler.modify.on("modifyend", this.onFeatureChange(this));
         this.mapLoaded = true;
       }
+    },
+
+    onFeatureChange(_this) {
+
+      return function(modify) {
+        const features = modify.features.getArray();
+        if (features) {
+          const feature = features[0];
+          const coordinates = feature.getGeometry().getCoordinates();
+          _this.affaire.localisation_e = coordinates[0];
+          _this.affaire.localisation_n = coordinates[1];
+        }
+      };
     },
 
     /**
@@ -193,19 +206,28 @@ export default {
         return null;
       }
       window.open(route + "&map_x=" + this.affaire.localisation_e + "&map_y=" + this.affaire.localisation_n, "_blank");
-    }
+    },
 
+    modifyOff(value) {
+      if (value === false) {
+        this.$refs.mapHandler.modify.setActive(true);
+        this.$refs.mapHandler.snap.setActive(true);
+      } else {
+        this.$refs.mapHandler.modify.setActive(false);
+        this.$refs.mapHandler.snap.setActive(false);
+        this.$refs.mapHandler.addMarker(this.affaire.localisation_e, this.affaire.localisation_n);
+        this.center.x = this.affaire.localisation_e;
+        this.center.y = this.affaire.localisation_n;
+      }
+    }
   },
 
   mounted: function() {
     this.setAffaire();
-
     this.$root.$on('mapHandlerReady', () =>{
-      this.showMap(); 
+
+      this.showMap();
     });
   }
 };
 </script>
-
-
-

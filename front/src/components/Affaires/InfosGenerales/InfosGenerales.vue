@@ -104,6 +104,7 @@ export default {
     onCancelEdit() {
       Object.assign(this.affaire, this.affaire_backup);
       this.infoGenReadonly = true;
+      this.$emit('modify-off', true);
     },
 
     /**
@@ -133,17 +134,20 @@ export default {
         formData.append("date_validation", null);
       if (this.affaire.date_envoi)
         formData.append(
-          "date_envoi", this.affaire.date_envoi? 
+          "date_envoi", this.affaire.date_envoi?
           moment(this.affaire.date_envoi, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
       else
         formData.append("date_cloture", null);
       if (this.affaire.date_cloture)
         formData.append(
-          "date_cloture", this.affaire.date_cloture? 
+          "date_cloture", this.affaire.date_cloture?
           moment(this.affaire.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
       else
         formData.append("date_cloture", null);
-        
+
+      formData.append("localisation_E", this.affaire.localisation_e);
+      formData.append("localisation_N", this.affaire.localisation_n);
+
       this.$http.put(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
         formData,
@@ -153,12 +157,13 @@ export default {
         }
       ).then(() => { //response =>{
           this.infoGenReadonly = true;
+          this.$emit('modify-off', true);
           this.$parent.setAffaire();
           this.copyAffaire();
         })
-        //Error 
+        //Error
         .catch(err => {
-          handleException(err, this); 
+          handleException(err, this);
         });
     },
 
@@ -195,7 +200,7 @@ export default {
     openEditMode() {
       this.form.technicien = this.operateursListe
       .filter(x => x.id === this.affaire.technicien_id)[0];
-      
+
       if (this.form.responsable !== null){
         this.form.responsable = this.operateursListe
         .filter(x => x.id === this.affaire.responsable_id)[0];
@@ -217,6 +222,7 @@ export default {
       this.form.client_envoi_complement = this.affaire.client_envoi_complement;
 
       this.infoGenReadonly = false;
+      this.$emit('modify-off', false);
     },
 
     /**
@@ -238,7 +244,7 @@ export default {
           headers: {Accept: "application/json"}
         }
       ).then(response => {
-        if (response && response.data) 
+        if (response && response.data)
           this.typesAffairesListe = stringifyAutocomplete(response.data);
       }).catch(err => handleException(err, this))
     },
@@ -249,7 +255,7 @@ export default {
     async searchAffaireSource() {
       this.$http.get(
         process.env.VUE_APP_API_URL +
-        process.env.VUE_APP_MODIFICATION_AFFAIRE_BY_AFFAIRE_MERE_ENDPOINT + 
+        process.env.VUE_APP_MODIFICATION_AFFAIRE_BY_AFFAIRE_MERE_ENDPOINT +
         this.$route.params.id,
         {
           withCredentials: true,
@@ -272,7 +278,7 @@ export default {
     async searchAffaireDestination() {
       this.$http.get(
         process.env.VUE_APP_API_URL +
-        process.env.VUE_APP_MODIFICATION_AFFAIRE_BY_AFFAIRE_FILLE_ENDPOINT + 
+        process.env.VUE_APP_MODIFICATION_AFFAIRE_BY_AFFAIRE_FILLE_ENDPOINT +
         this.$route.params.id,
         {
           withCredentials: true,
@@ -302,6 +308,3 @@ export default {
   }
 };
 </script>
-
-
-
