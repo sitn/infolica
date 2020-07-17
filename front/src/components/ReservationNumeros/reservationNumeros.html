@@ -9,7 +9,7 @@
                 <!-- Cadastre -->
                 <div class="md-layout-item md-size-50">
                     <md-autocomplete v-model="reservation.cadastre" :md-options="cadastre_liste"
-                    :class="getValidationClass('cadastre')">
+                    :class="getValidationClass('cadastre')" md-dense>
                     <label>Cadastre *</label>
                     <template slot="md-autocomplete-item" scope="{ item }">
                         {{ item.nom }}

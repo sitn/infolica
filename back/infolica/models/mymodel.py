@@ -157,6 +157,7 @@ class Facture(Base):
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
     client_complement = Column(Text)
+    client_attention_de = Column(Text)
     indice_application_mo = Column(Float, default=1.2)
     indice_tva = Column(Float, default=7.7)
     montant_mo = Column(Float, default=0.0, nullable=False)
@@ -470,6 +471,7 @@ class NumeroDiffere(Base):
     date_entree = Column(
         Date, default=datetime.datetime.utcnow, nullable=False)
     date_sortie = Column(Date)
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
 
 
 class NumeroRelationType(Base):
@@ -521,6 +523,7 @@ class Service(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     service = Column(Text, nullable=False)
+    abreviation = Column(Text, nullable=False)
     nom = Column(Text)
     prenom = Column(Text)
     adresse = Column(Text)
@@ -598,6 +601,7 @@ class VNumeros(Base):
     diff_id = Column(Date)
     diff_entree = Column(Date)
     diff_sortie = Column(Date)
+    diff_affaire_id = Column(BigInteger)
     plan_id = Column(BigInteger)
 
 
@@ -646,6 +650,7 @@ class VAffaire(Base):
     client_commande_nom = Column(Text)
     client_commande_prenom = Column(Text)
     client_commande_complement = Column(Text)
+    client_commande_adresse = Column(Text)
     client_commande_npa = Column(Text)
     client_commande_localite = Column(Text)
     client_commande_tel_fixe = Column(Text)
@@ -660,6 +665,7 @@ class VAffaire(Base):
     client_envoi_nom = Column(Text)
     client_envoi_prenom = Column(Text)
     client_envoi_complement = Column(Text)
+    client_envoi_adresse = Column(Text)
     client_envoi_npa = Column(Text)
     client_envoi_localite = Column(Text)
     client_envoi_tel_fixe = Column(Text)
@@ -808,3 +814,39 @@ class VDocumentsAffaires(Base):
     type_id = Column(BigInteger)
     type_doc = Column(Text)
 
+
+class VFactures(Base):
+    __tablename__ = 'v_factures'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True)
+    affaire_id = Column(BigInteger)
+    affaire_vref = Column(Text)
+    sap = Column(Text)
+    client_id = Column(BigInteger)
+    client_entreprise = Column(Text)
+    client_titre = Column(Text)
+    client_nom = Column(Text)
+    client_prenom = Column(Text)
+    client_adresse = Column(Text)
+    client_npa = Column(Text)
+    client_localite = Column(Text)
+    client_case_postale = Column(Text)
+    client_tel_fixe = Column(Text)
+    client_fax = Column(Text)
+    client_tel_portable = Column(Text)
+    client_mail = Column(Text)
+    client_entree = Column(Date)
+    client_sortie = Column(Date)
+    client_no_sap = Column(Text)
+    client_no_bdp_bdee = Column(Text)
+    indice_application_mo = Column(Float)
+    indice_tva = Column(Float)
+    montant_mo = Column(Float)
+    montant_mat_diff = Column(Float)
+    montant_rf = Column(Float)
+    montant_tva = Column(Float)
+    montant_total = Column(Float)
+    date = Column(Date)
+    remarque = Column(Text)
+    client_complement = Column(Text)
+    client_attention_de = Column(Text)

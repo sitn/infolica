@@ -13,7 +13,7 @@
           <div class="md-layout-item md-small-size-100 md-size-50">
             <md-field :class="getValidationClass('type_client')">
               <label for="type_client">Type client *</label>
-              <md-select name="type_client" id="type_client" v-model="form.type_client" :disabled="sending">
+              <md-select name="type_client" id="type_client" v-model="form.type_client" md-dense :disabled="sending">
                 <md-option v-for="item in types_clients_list" :key="item.id" :value="item.id">{{item.nom}}</md-option>
               </md-select>
               <span class="md-error" v-if="!$v.form.type_client.required">Le type client est obligatoire</span>
@@ -57,9 +57,9 @@
         <!-- Représenté par  -->
         <div class="md-layout md-guttermd-size-100">
           <div class="md-layout-item md-small-size-100">
-            <md-field>
-              <label for="represente_par">Représenté par</label>
-              <md-input name="represente_par" id="represente_par" v-model="form.represente_par" :disabled="sending" />
+            <md-field style="background-color: lightgrey;">
+              <label for="represente_par">Représenté par (non éditable)</label>
+              <md-input name="represente_par" id="represente_par" v-model="form.represente_par" :disabled="sending" readonly />
             </md-field>
           </div>
         </div>

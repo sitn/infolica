@@ -346,7 +346,7 @@
                         <!-- Visa et date -->
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-size-25">
-                                <md-autocomplete v-model="controlePPE.visa" :md-options="chefsProjetMO_liste">
+                                <md-autocomplete v-model="controlePPE.visa" :md-options="chefsProjetMO_liste" md-dense>
                                     <label>Visa</label>
                                     <template slot="md-autocomplete-item" slot-scope="{ item }">
                                         {{item.nom}}
