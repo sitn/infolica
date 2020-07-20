@@ -1,18 +1,47 @@
-from datetime import time, date, datetime
+# -*- coding: utf-8 -*--
+from datetime import date, datetime
 from sqlalchemy import func, and_, desc
 from infolica.models.models import Numero, AffaireNumero, Fonction, Role, FonctionRole
 from infolica.scripts.ldap_query import LDAPQuery
 import json
 import os
 
+unite_ppe_list = [
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z'
+]
 
-unite_ppe_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
 class Utils(object):
 
-    """ Serialize one query item"""
     @classmethod
     def serialize_one(cls, _query):
+        """
+        Serialize one query item
+        """
         if _query is None:
             return None
 
@@ -27,9 +56,11 @@ class Utils(object):
 
         return item
 
-    """ Serialize many query items"""
     @classmethod
     def serialize_many(cls, _query):
+        """
+        Serialize many query items
+        """
         if _query is None:
             return None
 
@@ -46,21 +77,25 @@ class Utils(object):
             master.append(item)
         return master
 
-    """ Return model record parameters """
     @classmethod
     def get_model_record_attributes(cls, record):
+        """
+        Return model record parameters
+        """
         return [a for a in dir(record) if not (a == 'id' or a.startswith('_'))] if record else []
 
-    """ Set model record"""
     @classmethod
     def set_model_record(cls, record, params):
+        """
+        Set model record
+        """
         atts = cls.get_model_record_attributes(record)
 
         for att in atts:
             if att != 'affaire_doc_file':
                 val = params[att] if att in params else getattr(record, att)
 
-                #Chek boolean
+                # Check boolean
                 if val == 'true':
                     val = True
                 if val == 'false':
@@ -72,16 +107,20 @@ class Utils(object):
 
         return record
 
-    """ Get data save response"""
     @classmethod
     def get_data_save_response(cls, message):
+        """
+        Get data save response
+        """
         return {'message': message}
 
-    """ Get search conditions """
     @classmethod
     def get_search_conditions(cls, model, params):
+        """
+        Get search conditions
+        """
         conditions = list()
-        condition_not_in = False # pour les conditions NOT IN, p. ex. référencement numéros à affaire
+        condition_not_in = False  # pour les conditions NOT IN, p. ex. référencement numéros à affaire
 
         for param in params:
             if param == 'matDiff':
@@ -99,39 +138,47 @@ class Utils(object):
                     conditions.append(getattr(model, param) == tmp)
                 else:
                     conditions.append(func.lower(getattr(model, param)).like(
-                        '%' + func.lower(params[param].replace('"','')) + '%'))
+                        '%' + func.lower(params[param].replace('"', '')) + '%'))
         return conditions
 
-
-    """ Get number_record with the highest number in cadastre and type to continue the numerotation """
     @classmethod
     def last_number(cls, request, cadastre_id, type_id, plan_id=None, affaire_id=None):
+        """
+        Get number_record with the highest number in cadastre and type
+        to continue the numerotation
+        """
         if not isinstance(type_id, list):
             type_id = [type_id]
         # Filter by type and cadastre
-        query = request.dbsession.query(Numero).filter(and_(Numero.type_id.in_(type_id), Numero.cadastre_id==cadastre_id))
+        query = request.dbsession.query(Numero).filter(
+            and_(Numero.type_id.in_(type_id), Numero.cadastre_id == cadastre_id)
+        )
         # If plan_id is specified, also filter by plan
         if plan_id:
-            query = query.filter(Numero.plan_id==plan_id)
+            query = query.filter(Numero.plan_id == plan_id)
         if affaire_id:
-            query = query.filter(and_(AffaireNumero.affaire_id==affaire_id, AffaireNumero.numero_id==Numero.id))
+            query = query.filter(
+                and_(AffaireNumero.affaire_id == affaire_id, AffaireNumero.numero_id == Numero.id)
+            )
         result = query.order_by(desc(Numero.numero)).limit(1).first()
         numero = result.numero if result else 0
         return numero
 
-
-    """ Function that creates dictionnary with specified keys and values """
     @classmethod
     def _params(cls, **kwargs):
+        """
+        Function that creates dictionnary with specified keys and values
+        """
         params = dict()
         for key, value in kwargs.items():
             params[key] = value
         return params
 
-
-    """ Get PPE unite from index """
     @classmethod
     def get_unite_from_index(cls, idx):
+        """
+        Get PPE unite from index
+        """
         if idx == 0:
             unite = "A"
         else:
@@ -144,9 +191,11 @@ class Utils(object):
                 c = 1
         return unite
 
-    """ Get index from PPE unite """
     @classmethod
     def get_index_from_unite(cls, unite):
+        """
+        Get index from PPE unite
+        """
         n = len(unite_ppe_list)
         idx = 0
         c = 0
@@ -155,10 +204,11 @@ class Utils(object):
             c = 1
         return idx
 
-    """ Return fonctions roles by role id"""
-
     @classmethod
     def get_fonctions_roles_by_id(cls, request, role_id):
+        """
+        Return fonctions roles by role id
+        """
         results = []
 
         query = request.dbsession.query(Fonction, Role, FonctionRole).filter(
@@ -194,7 +244,7 @@ class Utils(object):
     @classmethod
     def has_permission(cls, request, fonction_name):
         if not cls.check_connected(request):
-           return False
+            return False
 
         user_dn = request.authenticated_userid
 
@@ -215,7 +265,6 @@ class Utils(object):
             return False
 
         return True
-
 
     @classmethod
     def get_role_id_by_name(cls, request, role_name):

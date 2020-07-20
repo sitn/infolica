@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*--
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
@@ -7,10 +8,12 @@ from infolica.models.models import SuiviMandat
 from infolica.scripts.utils import Utils
 
 
-""" Return all suivi_mandats"""
 @view_config(route_name='suivi_mandats', request_method='GET', renderer='json')
 @view_config(route_name='suivi_mandats_s', request_method='GET', renderer='json')
 def suivi_mandats_view(request):
+    """
+    Return all suivi_mandats
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -19,9 +22,11 @@ def suivi_mandats_view(request):
     return Utils.serialize_many(query)
 
 
-""" Return suivi_mandats by id"""
 @view_config(route_name='suivi_mandat_by_id', request_method='GET', renderer='json')
 def suivi_mandats_by_id_view(request):
+    """
+    Return suivi_mandats by id
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -33,9 +38,11 @@ def suivi_mandats_by_id_view(request):
     return Utils.serialize_one(query)
 
 
-""" Return suivi_mandats by affaire_id"""
 @view_config(route_name='affaire_suivi_mandats_by_affaire_id', request_method='GET', renderer='json')
 def affaire_suivi_mandats_by_affaire_id_view(request):
+    """
+    Return suivi_mandats by affaire_id
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -51,10 +58,12 @@ def affaire_suivi_mandats_by_affaire_id_view(request):
     return Utils.serialize_one(query)
 
 
-""" Add new suivi_mandats"""
 @view_config(route_name='suivi_mandats', request_method='POST', renderer='json')
 @view_config(route_name='suivi_mandats_s', request_method='POST', renderer='json')
 def suivi_mandats_new_view(request):
+    """
+    Add new suivi_mandats
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_suivi_edition']):
         raise exc.HTTPForbidden()
@@ -67,10 +76,12 @@ def suivi_mandats_new_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(SuiviMandat.__tablename__))
 
 
-""" Update suivi_mandats"""
 @view_config(route_name='suivi_mandats', request_method='PUT', renderer='json')
 @view_config(route_name='suivi_mandats_s', request_method='PUT', renderer='json')
 def suivi_mandats_update_view(request):
+    """
+    Update suivi_mandats
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_suivi_edition']):
         raise exc.HTTPForbidden()
@@ -91,10 +102,12 @@ def suivi_mandats_update_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(SuiviMandat.__tablename__))
 
 
-""" Delete suivi_mandats"""
 @view_config(route_name='suivi_mandats', request_method='DELETE', renderer='json')
 @view_config(route_name='suivi_mandats_s', request_method='DELETE', renderer='json')
 def suivi_mandats_delete_view(request):
+    """
+    Delete suivi_mandats
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_suivi_edition']):
         raise exc.HTTPForbidden()

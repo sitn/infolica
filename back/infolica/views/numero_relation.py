@@ -1,21 +1,19 @@
+# -*- coding: utf-8 -*--
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-
-from sqlalchemy import and_
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import NumeroRelation, VNumerosRelations
 from infolica.scripts.utils import Utils
 
-from datetime import datetime
-import json
 
-
-""" Return all numeros_relations"""
 @view_config(route_name='numeros_relations', request_method='GET', renderer='json')
 @view_config(route_name='numeros_relations_s', request_method='GET', renderer='json')
 def numeros_relations_view(request):
+    """
+    Return all numeros_relations
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -24,15 +22,17 @@ def numeros_relations_view(request):
     return Utils.serialize_many(query)
 
 
-""" Return Numeros_relations"""
 @view_config(route_name='numeros_relation_by_affaire_id', request_method='GET', renderer='json')
 def numeros_relation_by_affaire_id_view(request):
+    """
+    Return Numeros_relations
+    """
     # Check connected
     if not Utils.check_connected(request):
-        raise exc.HTTPForbidden()    
-    
+        raise exc.HTTPForbidden()
+
     affaire_id = request.matchdict['id']
-    
+
     # filter by conditions
     query = request.dbsession.query(VNumerosRelations).filter(
         VNumerosRelations.affaire_id == affaire_id).all()
@@ -65,10 +65,12 @@ def numeros_relation_by_affaire_id_view(request):
 #     return Utils.serialize_many(query)
 
 
-""" Add new numeros_relations"""
 @view_config(route_name='numeros_relations', request_method='POST', renderer='json')
 @view_config(route_name='numeros_relations_s', request_method='POST', renderer='json')
 def numeros_relations_new_view(request, params=None):
+    """
+    Add new numeros_relations
+    """
     if params is None:
         params = request.params
 
@@ -84,11 +86,12 @@ def numeros_relations_new_view(request, params=None):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroRelation.__tablename__))
 
 
-""" Delete numeros_relations"""
 @view_config(route_name='numeros_relations', request_method='DELETE', renderer='json')
 @view_config(route_name='numeros_relations_s', request_method='DELETE', renderer='json')
 def numeros_relations_delete_view(request):
-    
+    """
+    Delete numeros_relations
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
@@ -103,7 +106,5 @@ def numeros_relations_delete_view(request):
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(NumeroRelation.__tablename__, numero_relation_id))
 
     request.dbsession.delete(model)
-    
+
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroRelation.__tablename__))
-
-

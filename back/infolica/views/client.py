@@ -9,18 +9,22 @@ from infolica.scripts.utils import Utils
 from datetime import datetime
 
 
-""" Return all types clients"""
 @view_config(route_name='types_clients', request_method='GET', renderer='json')
 @view_config(route_name='types_clients_s', request_method='GET', renderer='json')
 def types_clients_view(request):
+    """
+    Return all types clients
+    """
     query = request.dbsession.query(ClientType).all()
     return Utils.serialize_many(query)
 
 
-""" Return all clients"""
 @view_config(route_name='clients', request_method='GET', renderer='json')
 @view_config(route_name='clients_s', request_method='GET', renderer='json')
 def clients_view(request):
+    """
+    Return all clients
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -28,9 +32,12 @@ def clients_view(request):
     query = request.dbsession.query(Client).all()
     return Utils.serialize_many(query)
 
-""" Return client by id"""
+
 @view_config(route_name='client_by_id', request_method='GET', renderer='json')
 def client_by_id_view(request):
+    """
+    Return client by id
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -41,10 +48,12 @@ def client_by_id_view(request):
     return Utils.serialize_one(query)
 
 
-""" Search clients"""
 @view_config(route_name='recherche_clients', request_method='POST', renderer='json')
 @view_config(route_name='recherche_clients_s', request_method='POST', renderer='json')
 def clients_search_view(request):
+    """
+    Search clients
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -64,10 +73,12 @@ def clients_search_view(request):
     return Utils.serialize_many(query)
 
 
-""" Add new client"""
 @view_config(route_name='clients', request_method='POST', renderer='json')
 @view_config(route_name='clients_s', request_method='POST', renderer='json')
 def clients_new_view(request):
+    """
+    Add new client
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['client_edition']):
         raise exc.HTTPForbidden()
@@ -80,10 +91,12 @@ def clients_new_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Client.__tablename__))
 
 
-""" Update client"""
 @view_config(route_name='clients', request_method='PUT', renderer='json')
 @view_config(route_name='clients_s', request_method='PUT', renderer='json')
 def clients_update_view(request):
+    """
+    Update client
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['client_edition']):
         raise exc.HTTPForbidden()
@@ -105,10 +118,12 @@ def clients_update_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Client.__tablename__))
 
 
-""" Delete client"""
 @view_config(route_name='clients', request_method='DELETE', renderer='json')
 @view_config(route_name='clients_s', request_method='DELETE', renderer='json')
 def clients_delete_view(request):
+    """
+    Delete client
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['client_edition']):
         raise exc.HTTPForbidden()

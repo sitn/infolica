@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*--
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
@@ -10,17 +11,23 @@ from infolica.scripts.utils import Utils
 # ENVOIS AFFAIRE
 ###########################################################
 
-""" GET envois_type"""
+
 @view_config(route_name='envois_types', request_method='GET', renderer='json')
 @view_config(route_name='envois_types_s', request_method='GET', renderer='json')
 def envois_types_view(request):
-    
+    """
+    GET envois_type
+    """
+
     records = request.dbsession.query(EnvoiType).all()
     return Utils.serialize_many(records)
 
-""" GET envois affaire"""
+
 @view_config(route_name='affaire_envois_by_affaire_id', request_method='GET', renderer='json')
 def affaire_envois_view(request):
+    """
+    GET envois affaire
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -34,10 +41,12 @@ def affaire_envois_view(request):
     return Utils.serialize_many(records)
 
 
-""" POST envois"""
 @view_config(route_name='envois', request_method='POST', renderer='json')
 @view_config(route_name='envois_s', request_method='POST', renderer='json')
 def envois_new_view(request):
+    """
+    POST envois
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_envois_edition']):
         raise exc.HTTPForbidden()
@@ -50,11 +59,12 @@ def envois_new_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Envoi.__tablename__))
 
 
-
-""" UPDATE envoi"""
 @view_config(route_name='envois', request_method='PUT', renderer='json')
 @view_config(route_name='envois_s', request_method='PUT', renderer='json')
 def envois_update_view(request):
+    """
+    UPDATE envoi
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_envois_edition']):
         raise exc.HTTPForbidden()
@@ -71,9 +81,12 @@ def envois_update_view(request):
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Envoi.__tablename__))
 
-""" DELETE envois"""
+
 @view_config(route_name='envois_by_id', request_method='DELETE', renderer='json')
 def envois_delete_view(request):
+    """
+    DELETE envois
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_envois_edition']):
         raise exc.HTTPForbidden()
@@ -90,5 +103,3 @@ def envois_delete_view(request):
     request.dbsession.delete(record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Envoi.__tablename__))
-
-

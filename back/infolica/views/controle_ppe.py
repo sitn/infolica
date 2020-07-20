@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*--
 from pyramid.view import view_config
-
 import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
@@ -8,10 +8,12 @@ from infolica.models.models import ControlePPE
 from infolica.scripts.utils import Utils
 
 
-""" Return all controles_ppe"""
 @view_config(route_name='controles_ppe', request_method='GET', renderer='json')
 @view_config(route_name='controles_ppe_s', request_method='GET', renderer='json')
 def controles_ppe_view(request):
+    """
+    Return all controles_ppe
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -20,9 +22,11 @@ def controles_ppe_view(request):
     return Utils.serialize_many(query)
 
 
-""" Return controles_ppe by id"""
 @view_config(route_name='controle_ppe_by_id', request_method='GET', renderer='json')
 def controles_ppe_by_id_view(request):
+    """
+    Return controles_ppe by id
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -34,9 +38,11 @@ def controles_ppe_by_id_view(request):
     return Utils.serialize_one(query)
 
 
-""" Return controles_ppe by affaire_id"""
 @view_config(route_name='controle_ppe_by_affaire_id', request_method='GET', renderer='json')
 def controles_ppe_by_affaire_id_view(request):
+    """
+    Return controles_ppe by affaire_id
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -52,10 +58,12 @@ def controles_ppe_by_affaire_id_view(request):
     return Utils.serialize_one(query)
 
 
-""" Add new controles_ppe"""
 @view_config(route_name='controles_ppe', request_method='POST', renderer='json')
 @view_config(route_name='controles_ppe_s', request_method='POST', renderer='json')
 def controles_ppe_new_view(request):
+    """
+    Add new controles_ppe
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
         raise exc.HTTPForbidden()
@@ -68,10 +76,12 @@ def controles_ppe_new_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControlePPE.__tablename__))
 
 
-""" Update controles_ppe"""
 @view_config(route_name='controles_ppe', request_method='PUT', renderer='json')
 @view_config(route_name='controles_ppe_s', request_method='PUT', renderer='json')
 def controles_ppe_update_view(request):
+    """
+    Update controles_ppe
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
         raise exc.HTTPForbidden()
@@ -91,10 +101,13 @@ def controles_ppe_update_view(request):
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControlePPE.__tablename__))
 
-""" Delete controles_ppe"""
+
 @view_config(route_name='controles_ppe', request_method='DELETE', renderer='json')
 @view_config(route_name='controles_ppe_s', request_method='DELETE', renderer='json')
 def controles_ppe_delete_view(request):
+    """
+    Delete controles_ppe
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
         raise exc.HTTPForbidden()
