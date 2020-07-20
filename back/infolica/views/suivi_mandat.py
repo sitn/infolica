@@ -1,10 +1,12 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from ..scripts.utils import Utils
-from ..models import Constant
+
+from infolica.exceptions.custom_error import CustomError
+from infolica.models.constant import Constant
+from infolica.models.models import SuiviMandat
+from infolica.scripts.utils import Utils
+
 import transaction
-from ..exceptions.custom_error import CustomError
-from .. import models
 
 """ Return all suivi_mandats"""
 @view_config(route_name='suivi_mandats', request_method='GET', renderer='json')
@@ -14,7 +16,7 @@ def suivi_mandats_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(models.SuiviMandat).all()
+    query = request.dbsession.query(SuiviMandat).all()
     return Utils.serialize_many(query)
 
 
@@ -27,8 +29,8 @@ def suivi_mandats_by_id_view(request):
 
     # Get controle mutation id
     id = request.id = request.matchdict['id']
-    query = request.dbsession.query(models.SuiviMandat).filter(
-        models.SuiviMandat.id == id).first()
+    query = request.dbsession.query(SuiviMandat).filter(
+        SuiviMandat.id == id).first()
     return Utils.serialize_one(query)
 
 
@@ -41,8 +43,8 @@ def affaire_suivi_mandats_by_affaire_id_view(request):
 
     # Get controle mutation id
     affaire_id = request.id = request.matchdict['id']
-    query = request.dbsession.query(models.SuiviMandat).filter(
-        models.SuiviMandat.affaire_id == affaire_id).first()
+    query = request.dbsession.query(SuiviMandat).filter(
+        SuiviMandat.affaire_id == affaire_id).first()
 
     if query is None:
         return None
@@ -58,7 +60,7 @@ def suivi_mandats_new_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_suivi_edition']):
         raise exc.HTTPForbidden()
 
-    record = models.SuiviMandat()
+    record = SuiviMandat()
     record = Utils.set_model_record(record, request.params)
 
     with transaction.manager:
@@ -66,7 +68,7 @@ def suivi_mandats_new_view(request):
         request.dbsession.flush()
         # Commit transaction
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.SuiviMandat.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(SuiviMandat.__tablename__))
 
 
 """ Update suivi_mandats"""
@@ -81,19 +83,19 @@ def suivi_mandats_update_view(request):
     id = request.params['id'] if 'id' in request.params else None
 
     # Get controle mutation record
-    record = request.dbsession.query(models.SuiviMandat).filter(
-        models.SuiviMandat.id == id).first()
+    record = request.dbsession.query(SuiviMandat).filter(
+        SuiviMandat.id == id).first()
 
     if not record:
         raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.SuiviMandat.__tablename__, id))
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(SuiviMandat.__tablename__, id))
 
     record = Utils.set_model_record(record, request.params)
 
     with transaction.manager:
         # Commit transaction
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.SuiviMandat.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(SuiviMandat.__tablename__))
 
 
 """ Delete suivi_mandats"""
@@ -108,15 +110,15 @@ def suivi_mandats_delete_view(request):
     id = request.params['id'] if 'id' in request.params else None
 
     # Get controle mutation record
-    record = request.dbsession.query(models.SuiviMandat).filter(
-        models.SuiviMandat.id == id).first()
+    record = request.dbsession.query(SuiviMandat).filter(
+        SuiviMandat.id == id).first()
 
     if not record:
         raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.SuiviMandat.__tablename__, id))
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(SuiviMandat.__tablename__, id))
 
     with transaction.manager:
         request.dbsession.delete(record)
         # Commit transaction
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.SuiviMandat.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(SuiviMandat.__tablename__))

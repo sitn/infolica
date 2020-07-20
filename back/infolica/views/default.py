@@ -1,12 +1,14 @@
-from pyramid.view import view_config
-from .. import models
-from sqlalchemy import exc
-from ..exceptions.custom_error import CustomError
 from pyramid.httpexceptions import HTTPForbidden, HTTPNoContent
-from ..scripts.utils import Utils
+from pyramid.view import notfound_view_config, view_config
+
+from sqlalchemy import exc
+
+from infolica.exceptions.custom_error import CustomError
+from infolica.models.models import Client
+from infolica.scripts.utils import Utils
+
 import logging
 log = logging.getLogger(__name__)
-from pyramid.view import notfound_view_config
 
 
 ########################################################
@@ -14,7 +16,7 @@ from pyramid.view import notfound_view_config
 ########################################################
 @view_config(route_name='test_client', request_method='POST', renderer='json')
 def test_error(exc, request):
-    query = request.dbsession.query(models.Client).first()
+    query = request.dbsession.query(Client).first()
     query = Utils.set_model_record(query, request.params)
     return Utils.serialize_one(query)
 

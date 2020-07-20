@@ -1,15 +1,16 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from .. import models
+from pyramid.response import FileResponse
+
+from infolica.exceptions.custom_error import CustomError
+from infolica.models.constant import Constant
+from infolica.models.models import VAffaire, AffaireType, ModificationAffaireType
 from infolica.models.mssql_models import VBalance
+from infolica.scripts.utils import Utils
+
 import transaction
-from ..models import Constant
-from ..exceptions.custom_error import CustomError
-from ..scripts.utils import Utils
-# from distutils.dir_util import copy_tree
 import os
 import json
-from pyramid.response import FileResponse
 from datetime import datetime
 from docxtpl import DocxTemplate, RichText
 
@@ -28,7 +29,7 @@ def affaires_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(models.VAffaire).order_by(models.VAffaire.id.desc()).all()
+    query = request.dbsession.query(VAffaire).order_by(VAffaire.id.desc()).all()
     return Utils.serialize_many(query)
 
 
@@ -42,8 +43,8 @@ def affaire_by_id_view(request):
         raise exc.HTTPForbidden()
 
     id = request.matchdict['id']
-    query = request.dbsession.query(models.VAffaire)
-    one = query.filter(models.VAffaire.id == id).first()
+    query = request.dbsession.query(VAffaire)
+    one = query.filter(VAffaire.id == id).first()
     return Utils.serialize_one(one)
 
 
@@ -60,9 +61,9 @@ def affaires_search_view(request):
     settings = request.registry.settings
     search_limit = int(settings['search_limit'])
     conditions = Utils.get_search_conditions(
-        models.VAffaire, request.params)
-    query = request.dbsession.query(models.VAffaire).filter(
-        *conditions).order_by(models.VAffaire.id.desc()).limit(search_limit).all()
+        VAffaire, request.params)
+    query = request.dbsession.query(VAffaire).filter(
+        *conditions).order_by(VAffaire.id.desc()).limit(search_limit).all()
     return Utils.serialize_many(query)
 
 
@@ -72,7 +73,7 @@ Return all types affaires
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
 @view_config(route_name='types_affaires_s', request_method='GET', renderer='json')
 def types_affaires_view(request):
-    types_affaires = request.dbsession.query(models.AffaireType).filter(models.AffaireType.ordre != None).order_by(models.AffaireType.ordre.asc()).all()
+    types_affaires = request.dbsession.query(AffaireType).filter(AffaireType.ordre != None).order_by(AffaireType.ordre.asc()).all()
 
     types_affaires = Utils.serialize_many(types_affaires)
     return types_affaires
@@ -83,7 +84,7 @@ Return all types modification affaire
 @view_config(route_name='types_modification_affaire', request_method='GET', renderer='json')
 @view_config(route_name='types_modification_affaire_s', request_method='GET', renderer='json')
 def types_modification_affaire_view(request):
-    records = request.dbsession.query(models.ModificationAffaireType).filter(models.ModificationAffaireType.ordre != None).order_by(models.ModificationAffaireType.ordre.asc()).all()
+    records = request.dbsession.query(ModificationAffaireType).filter(ModificationAffaireType.ordre != None).order_by(ModificationAffaireType.ordre.asc()).all()
     return Utils.serialize_many(records)
 
 
@@ -113,7 +114,7 @@ def affaires_new_view(request):
     if not Utils.has_permission(request, permission):
         raise exc.HTTPForbidden()
 
-    model = models.Affaire()
+    model = Affaire()
     model = Utils.set_model_record(model, request.params)
 
     with transaction.manager:
@@ -144,12 +145,12 @@ def affaires_update_view(request):
     id_affaire = request.params['id_affaire'] if 'id_affaire' in request.params else None
 
     # Get the affaire
-    record = request.dbsession.query(models.Affaire).filter(
-        models.Affaire.id == id_affaire).first()
+    record = request.dbsession.query(Affaire).filter(
+        Affaire.id == id_affaire).first()
 
     if not record:
         raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Affaire.__tablename__, id_affaire))
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(Affaire.__tablename__, id_affaire))
 
     # Get role depending on affaire type
     affaire_type = request.params['type_id'] if 'type_id' in request.params else record.type_id
@@ -176,7 +177,7 @@ def affaires_update_view(request):
     with transaction.manager:
         # Commit transaction
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Affaire.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
 
 
 """
@@ -268,12 +269,12 @@ def modification_affaires_view(request):
         raise exc.HTTPForbidden()
 
     # Get client instance
-    model = Utils.set_model_record(models.ModificationAffaire(), request.params)
+    model = Utils.set_model_record(ModificationAffaire(), request.params)
 
     with transaction.manager:
         request.dbsession.add(model)
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ModificationAffaire.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ModificationAffaire.__tablename__))
 
 
 """Get modification affaire by affaire_mère"""
@@ -285,7 +286,7 @@ def modification_affaire_by_affaire_mere_view(request):
 
     affaire_mere_id = request.matchdict["id"]
 
-    records = request.dbsession.query(models.ModificationAffaire).filter(models.ModificationAffaire.affaire_id_fille == affaire_mere_id).all()
+    records = request.dbsession.query(ModificationAffaire).filter(ModificationAffaire.affaire_id_fille == affaire_mere_id).all()
 
     return Utils.serialize_many(records)
 
@@ -299,7 +300,7 @@ def modification_affaire_by_affaire_fille_view(request):
 
     affaire_fille_id = request.matchdict["id"]
 
-    records = request.dbsession.query(models.ModificationAffaire).filter(models.ModificationAffaire.affaire_id_mere == affaire_fille_id).all()
+    records = request.dbsession.query(ModificationAffaire).filter(ModificationAffaire.affaire_id_mere == affaire_fille_id).all()
 
     return Utils.serialize_many(records)
 

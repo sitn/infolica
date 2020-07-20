@@ -1,10 +1,13 @@
 from pyramid.view import view_config
+
 import pyramid.httpexceptions as exc
-from ..scripts.utils import Utils
-from ..models import Constant
+
+from infolica.exceptions.custom_error import CustomError
+from infolica.models import Constant
+from infolica.models.models import ControlePPE
+from infolica.scripts.utils import Utils
+
 import transaction
-from ..exceptions.custom_error import CustomError
-from .. import models
 
 
 """ Return all controles_ppe"""
@@ -15,7 +18,7 @@ def controles_ppe_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(models.ControlePPE).all()
+    query = request.dbsession.query(ControlePPE).all()
     return Utils.serialize_many(query)
 
 
@@ -28,8 +31,8 @@ def controles_ppe_by_id_view(request):
 
     # Get controle mutation id
     id = request.id = request.matchdict['id']
-    query = request.dbsession.query(models.ControlePPE).filter(
-        models.ControlePPE.id == id).first()
+    query = request.dbsession.query(ControlePPE).filter(
+        ControlePPE.id == id).first()
     return Utils.serialize_one(query)
 
 
@@ -42,8 +45,8 @@ def controles_ppe_by_affaire_id_view(request):
 
     # Get controle mutation id
     affaire_id = request.id = request.matchdict['id']
-    query = request.dbsession.query(models.ControlePPE).filter(
-        models.ControlePPE.affaire_id == affaire_id).first()
+    query = request.dbsession.query(ControlePPE).filter(
+        ControlePPE.affaire_id == affaire_id).first()
 
     if query is None:
         return None
@@ -59,7 +62,7 @@ def controles_ppe_new_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
         raise exc.HTTPForbidden()
 
-    record = models.ControlePPE()
+    record = ControlePPE()
     record = Utils.set_model_record(record, request.params)
 
     with transaction.manager:
@@ -67,7 +70,7 @@ def controles_ppe_new_view(request):
         request.dbsession.flush()
         # Commit transaction
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ControlePPE.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControlePPE.__tablename__))
 
 
 """ Update controles_ppe"""
@@ -82,19 +85,19 @@ def controles_ppe_update_view(request):
     id = request.params['id'] if 'id' in request.params else None
 
     # Get controle mutation record
-    record = request.dbsession.query(models.ControlePPE).filter(
-        models.ControlePPE.id == id).first()
+    record = request.dbsession.query(ControlePPE).filter(
+        ControlePPE.id == id).first()
 
     if not record:
         raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.ControlePPE.__tablename__, id))
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(ControlePPE.__tablename__, id))
 
     record = Utils.set_model_record(record, request.params)
 
     with transaction.manager:
         # Commit transaction
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.ControlePPE.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControlePPE.__tablename__))
 
 """ Delete controles_ppe"""
 @view_config(route_name='controles_ppe', request_method='DELETE', renderer='json')
@@ -108,15 +111,15 @@ def controles_ppe_delete_view(request):
     id = request.params['id'] if 'id' in request.params else None
 
     # Get controle mutation record
-    record = request.dbsession.query(models.ControlePPE).filter(
-        models.ControlePPE.id == id).first()
+    record = request.dbsession.query(ControlePPE).filter(
+        ControlePPE.id == id).first()
 
     if not record:
         raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.ControlePPE.__tablename__, id))
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(ControlePPE.__tablename__, id))
 
     with transaction.manager:
         request.dbsession.delete(record)
         # Commit transaction
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.ControlePPE.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(ControlePPE.__tablename__))

@@ -1,6 +1,7 @@
 from pyramid.view import view_config
-from .. import models
-from ..scripts.utils import Utils
+
+from infolica.models.models import Cadastre
+from infolica.scripts.utils import Utils
 
 ###########################################################
 # Cadastre
@@ -16,7 +17,7 @@ def cadastre_view(request):
     # if not Utils.check_connected(request):
     # raise exc.HTTPForbidden()
 
-    records = request.dbsession.query(models.Cadastre).order_by(models.Cadastre.nom).all()
+    records = request.dbsession.query(Cadastre).order_by(Cadastre.nom).all()
     cadastres = list()
 
     # Supprimer l'entrée "CADASTRE CANTONAL" de la liste

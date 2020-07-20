@@ -1,17 +1,20 @@
-from datetime import datetime
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from .. import models
+
+from infolica.exceptions.custom_error import CustomError
+from infolica.models import Constant
+from infolica.models.models import Client, ClientType
+from infolica.scripts.utils import Utils
+
 import transaction
-from ..models import Constant
-from ..exceptions.custom_error import CustomError
-from ..scripts.utils import Utils
+from datetime import datetime
+
 
 """ Return all types clients"""
 @view_config(route_name='types_clients', request_method='GET', renderer='json')
 @view_config(route_name='types_clients_s', request_method='GET', renderer='json')
 def types_clients_view(request):
-    query = request.dbsession.query(models.ClientType).all()
+    query = request.dbsession.query(ClientType).all()
     return Utils.serialize_many(query)
 
 
@@ -23,7 +26,7 @@ def clients_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(models.Client).all()
+    query = request.dbsession.query(Client).all()
     return Utils.serialize_many(query)
 
 """ Return client by id"""
@@ -34,8 +37,8 @@ def client_by_id_view(request):
         raise exc.HTTPForbidden()
 
     id = request.matchdict['id']
-    query = request.dbsession.query(models.Client).filter(
-        models.Client.id == id).first()
+    query = request.dbsession.query(Client).filter(
+        Client.id == id).first()
     return Utils.serialize_one(query)
 
 
@@ -49,15 +52,15 @@ def clients_search_view(request):
 
     settings = request.registry.settings
     search_limit = int(settings['search_limit'])
-    conditions = Utils.get_search_conditions(models.Client, request.params)
+    conditions = Utils.get_search_conditions(Client, request.params)
 
     # Check date_sortie is null
     conditions = [] if not conditions or len(
         conditions) == 0 else conditions
 
-    conditions.append(models.Client.sortie == None)
+    conditions.append(Client.sortie == None)
 
-    query = request.dbsession.query(models.Client).order_by(models.Client.nom, models.Client.prenom).filter(
+    query = request.dbsession.query(Client).order_by(Client.nom, Client.prenom).filter(
         *conditions).limit(search_limit).all()
     return Utils.serialize_many(query)
 
@@ -71,13 +74,13 @@ def clients_new_view(request):
         raise exc.HTTPForbidden()
 
     # Get client instance
-    model = Utils.set_model_record(models.Client(), request.params)
+    model = Utils.set_model_record(Client(), request.params)
 
     with transaction.manager:
         request.dbsession.add(model)
         request.dbsession.flush()
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Client.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Client.__tablename__))
 
 
 """ Update client"""
@@ -91,13 +94,13 @@ def clients_update_view(request):
     # Get client_id
     id_client = request.params['id'] if 'id' in request.params else None
 
-    model = request.dbsession.query(models.Client).filter(
-        models.Client.id == id_client).first()
+    model = request.dbsession.query(Client).filter(
+        Client.id == id_client).first()
 
     # If result is empty
     if not model:
         raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
-            models.Client.__tablename__, id_client))
+            Client.__tablename__, id_client))
 
     # Read params client
     model = Utils.set_model_record(model, request.params)
@@ -105,7 +108,7 @@ def clients_update_view(request):
     with transaction.manager:
 
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Client.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Client.__tablename__))
 
 
 """ Delete client"""
@@ -119,17 +122,17 @@ def clients_delete_view(request):
     # Get client_id
     id_client = request.params['id'] if 'id' in request.params else None
 
-    model = request.dbsession.query(models.Client).filter(
-        models.Client.id == id_client).first()
+    model = request.dbsession.query(Client).filter(
+        Client.id == id_client).first()
 
     # If result is empty
     if not model:
         raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
-            models.Client.__tablename__, id_client))
+            Client.__tablename__, id_client))
 
     model.sortie = datetime.utcnow()
 
     with transaction.manager:
 
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Client.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Client.__tablename__))

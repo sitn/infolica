@@ -1,10 +1,12 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from ..scripts.utils import Utils
-from ..models import Constant
+
+from infolica.exceptions.custom_error import CustomError
+from infolica.models.constant import Constant
+from infolica.models.models import Facture, VFactures
+from infolica.scripts.utils import Utils
+
 import transaction
-from ..exceptions.custom_error import CustomError
-from .. import models
 
 
 ###########################################################
@@ -19,7 +21,7 @@ def factures_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(models.VFactures).all()
+    query = request.dbsession.query(VFactures).all()
     return Utils.serialize_many(query)
 
 
@@ -32,8 +34,9 @@ def affaires_factures_view(request):
 
     affaire_id = request.matchdict["id"]
 
-    query = request.dbsession.query(models.VFactures)\
-        .filter(models.VFactures.affaire_id == affaire_id).all()
+    query = request.dbsession.query(VFactures).filter(
+        VFactures.affaire_id == affaire_id
+    ).all()
     return Utils.serialize_many(query)
 
 
@@ -45,13 +48,13 @@ def factures_new_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise exc.HTTPForbidden()
 
-    model = models.Facture()
+    model = Facture()
     model = Utils.set_model_record(model, request.params)
 
     with transaction.manager:
         request.dbsession.add(model)
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Facture.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Facture.__tablename__))
 
 
 """ Update facture"""
@@ -69,18 +72,18 @@ def factures_update_view(request):
         id_facture = request.params['id']
 
     # Get the facture
-    facture_record = request.dbsession.query(models.Facture).filter(
-        models.Facture.id == id_facture).first()
+    facture_record = request.dbsession.query(Facture).filter(
+        Facture.id == id_facture).first()
 
     if not facture_record:
         raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Facture.__tablename__, id_facture))
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(Facture.__tablename__, id_facture))
 
     facture_record = Utils.set_model_record(facture_record, request.params)
 
     with transaction.manager:
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Facture.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Facture.__tablename__))
 
 
 """ Delete facture"""
@@ -93,16 +96,16 @@ def factures_delete_view(request):
 
     id = request.params['id'] if 'id' in request.params else None
 
-    facture = request.dbsession.query(models.Facture).filter(models.Facture.id == id).first()
+    facture = request.dbsession.query(Facture).filter(Facture.id == id).first()
 
     if not facture:
         raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Facture.__tablename__, id))
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(Facture.__tablename__, id))
 
     with transaction.manager:
         request.dbsession.delete(facture)
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Facture.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Facture.__tablename__))
 
 
 

@@ -1,12 +1,17 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from ..scripts.utils import Utils
-from ..models import Constant
-import transaction
+
 from sqlalchemy import and_
+
+from infolica.exceptions.custom_error import CustomError
+from infolica.models.constant import Constant
+from infolica.models.models import AffaireNumero, Numero
+from infolica.scripts.utils import Utils
+from infolica.views.numero import affaire_numero_new_view
+
+import transaction
+
 import json
-from .. import models
-from ..views.numero import affaire_numero_new_view
 
 
 """ Add numéro muté in affaire"""
@@ -28,7 +33,7 @@ def reference_numeros_new_view(request):
             affaire_id=affaire_id, numero_id=numero_i['numero_id'], actif=True, type_id=1)
         affaire_numero_new_view(request, params)
 
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Numero.__tablename__))
 
 
 """ Delete numéro muté in affaire"""
@@ -44,11 +49,11 @@ def reference_numeros_delete_view(request):
     numero_id = request.params['numero_id'] if 'numero_id' in request.params else None
 
     # supprimer le lien affaire-numéro
-    affNum = request.dbsession.query(models.AffaireNumero).filter(and_(
-        models.AffaireNumero.affaire_id == affaire_id, models.AffaireNumero.numero_id == numero_id)).first()
+    affNum = request.dbsession.query(AffaireNumero).filter(and_(
+        AffaireNumero.affaire_id == affaire_id, AffaireNumero.numero_id == numero_id)).first()
 
     with transaction.manager:
         request.dbsession.delete(affNum)
         transaction.commit()
 
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Numero.__tablename__))

@@ -1,10 +1,14 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from ..scripts.utils import Utils
-from ..models import Constant
-from .. import models
-from ..views.numero import numeros_new_view, affaire_numero_new_view, numeros_etat_histo_new_view
-from ..views.numero_relation import numeros_relations_new_view
+
+
+from infolica.exceptions.custom_error import CustomError
+from infolica.models.constant import Constant
+from infolica.models.models import Numero
+from infolica.scripts.utils import Utils
+from infolica.views.numero import numeros_new_view, affaire_numero_new_view
+from infolica.views.numero import numeros_etat_histo_new_view
+from infolica.views.numero_relation import numeros_relations_new_view
 
 
 def savePointMO(request, affaire_id, cadastre_id, numero_type, n_numeros, etat_id):
@@ -187,4 +191,4 @@ def reservation_numeros_new_view(request):
             affaire_numero_new_view(request, params)
 
 
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Numero.__tablename__))
