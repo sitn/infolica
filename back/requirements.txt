@@ -9,12 +9,14 @@ colorama==0.4.3
 coverage==4.5.4
 cssselect2==0.3.0
 defusedxml==0.6.0
+flake8==3.8.3
 html5lib==1.0.1
 hupper==1.9.1
 importlib-metadata==1.2.0
 ldap3==2.6.1
 Mako==1.1.0
 MarkupSafe==1.1.1
+mccabe==0.6.1
 more-itertools==8.0.2
 packaging==19.2
 PasteDeploy==2.0.1
@@ -25,7 +27,9 @@ pluggy==0.13.1
 psycopg2==2.8.4
 py==1.8.0
 pyasn1==0.4.8
+pycodestyle==2.6.0
 pycparser==2.20
+pyflakes==2.2.0
 Pygments==2.5.2
 pymssql==2.1.4
 pyparsing==2.4.5
