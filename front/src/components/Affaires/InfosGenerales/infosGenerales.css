@@ -4,5 +4,5 @@
 }
 
 .infosGenerales .mapHeight {
-    height: 620px;
+    min-height: 620px;
 } 

@@ -188,18 +188,23 @@ def courrier_affaire_view(request):
     settings = request.registry.settings
     mails_templates_directory = settings['mails_templates_directory']
     temporary_directory = settings['temporary_directory']
-    date_time = datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = 'PCOP_' + date_time + '.docx'
-    file_path = os.path.join(temporary_directory, filename)
 
     # Get request params
-    # template = request.params['template']
+    template = request.params['template']
     values = request.params['values']
+
+    # Set output file name
+    date_time = datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = template + "_" + date_time + '.docx'
+    file_path = os.path.join(temporary_directory, filename)
+
+    # Set context
     context = json.loads(values)
-    context["ADRESSE_"] = RichText(context["ADRESSE_"])
+    for key in context.keys():
+        context[key] = RichText(context[key])
 
     # Ouverture du document template
-    doc = DocxTemplate(os.path.join(mails_templates_directory, "ParCop.docx"))
+    doc = DocxTemplate(os.path.join(mails_templates_directory, template + ".docx"))
 
     # Replace values by keywords and save
     doc.render(context)

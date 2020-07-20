@@ -16,7 +16,8 @@ const moment = require("moment");
 export default {
   name: "NumerosAffaire",
   props: {
-    affaire: {}
+    affaire: Object,
+    typesAffaires: Object
   },
   components: {
     ReferenceNumeros,
@@ -271,6 +272,7 @@ export default {
     doCreateDiffererNumero(numero) {
       var formData = new FormData();
       formData.append("numero_id", numero.numero_id);
+      formData.append("affaire_id", this.$route.params.id)
       formData.append(
         "date_entree",
         moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(

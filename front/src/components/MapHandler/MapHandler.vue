@@ -1,10 +1,9 @@
 <style src="./mapHandler.css" scoped></style>
 <template src="./mapHandler.html"></template>
 
-
-
 <script>
 import "ol/ol.css";
+import {defaults as defaultInteractions, Snap, Modify} from 'ol/interaction';
 import Map from "ol/Map";
 import View from "ol/View";
 //import {defaults as defaultControls, ScaleLine} from 'ol/control';
@@ -14,6 +13,7 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
+
 import { Style, Circle, Fill, Stroke, RegularShape } from "ol/style";
 import GeoJSON from 'ol/format/GeoJSON';
 
@@ -44,7 +44,7 @@ export default {
       this.initMarkerStyle();
 
       //WMS
-      var wmsSource = new TileWMS({
+      const wmsSource = new TileWMS({
         url: process.env.VUE_APP_WMS_URL,
         params: {
           LAYERS: "plan_cadastral_couleur",
@@ -52,7 +52,7 @@ export default {
         }
       });
 
-      var wmsLayer = new TileLayer({
+      const wmsLayer = new TileLayer({
         source: wmsSource
       });
 
@@ -68,7 +68,7 @@ export default {
       this.initGraphicsLayer();
 
       // Map layers
-      var layers = [wmsLayer, this.vectorLayer, this.graphicsLayer];
+      const layers = [wmsLayer, this.vectorLayer, this.graphicsLayer];
 
       //View
       this.view = new View({
@@ -80,17 +80,42 @@ export default {
       });
 
       if (!this.map) {
-        this.map = new Map({
-          layers: layers,
-          target: "mapDiv",
-          view: this.view
+
+        const interactions = new defaultInteractions({
+          altShiftDragRotate: false,
+          pinchRotate: false
         });
 
+        this.map = new Map({
+          layers: layers,
+          target: document.getElementById("mapDiv"),
+          view: this.view,
+          interactions: interactions
+        });
+        let me = this;
+
+        this.map.on('pointermove', function(e) {
+          if (me.modify.getActive() === true) {
+            if (e.dragging) {
+              me.map.getTarget().style.cursor = 'grabbing';
+            } else {
+              let pixel = me.map.getEventPixel(e.originalEvent);
+              let hit = me.map.hasFeatureAtPixel(pixel);
+              me.map.getTarget().style.cursor = hit ? 'pointer' : '';
+            }
+          }
+        });
+
+        this.modify = new Modify({
+          source: this.vectorSource
+        });
+
+        this.snap = new Snap({
+          source: this.vectorSource
+        });
         //Workaround to draw markers in the good position
         this.makeWorkaroundCanvasTransform();
 
-        // Add click listener
-        //this.map.on('click', this.onMapClick);
       } else {
         this.map
           .getView()
@@ -100,9 +125,6 @@ export default {
               : process.env.VUE_APP_MAP_DEFAULT_CENTER
           );
       }
-
-      // Add marker
-      //this.addMarker(center.x, center.y);
     },
 
     /**
@@ -113,6 +135,8 @@ export default {
 
       this.vectorSource.once("addfeature", function() {
         _this.setCanvasTransform();
+        _this.map.addInteraction(_this.modify);
+        _this.map.addInteraction(_this.snap);
       });
       this.vectorLayer.once("postrender", function() {
         _this.setCanvasTransform();
@@ -125,7 +149,7 @@ export default {
       this.view.on("change:resolution", function() {
         _this.setCanvasTransform();
       });
-      
+
       this.map.on("moveend", function() {
         _this.setCanvasTransform();
       });
@@ -135,7 +159,7 @@ export default {
      * Handle map click event
      */
     setCanvasTransform: function() {
-      var canvasList = document.getElementById("mapDiv").querySelectorAll("canvas");
+      let canvasList = document.getElementById("mapDiv").querySelectorAll("canvas");
 
       if (canvasList && canvasList.length > 1) {
          canvasList.forEach(canvas => {
@@ -189,7 +213,7 @@ export default {
      * Add graphic to graphics layer
      */
     addGraphic: function(feature){
-      this.graphicsLayerSource.clear();      
+      this.graphicsLayerSource.clear();
       const geojsonFormat = new GeoJSON();
 
       const nGeom = feature.geometry.coordinates.length;
@@ -197,9 +221,9 @@ export default {
       // Geometry is not empty
       if (nGeom !== 0) {
         this.graphicsLayerSource.addFeatures(geojsonFormat.readFeatures(feature));
-        
+
       // Geometry is empty
-      } else if (feature.bbox.length > 1) { 
+      } else if (feature.bbox.length > 1) {
         const point = new Point(feature.bbox[0], feature.bbox[1]);
         const pointFeature = new Feature(point);
         this.graphicsLayer.addFeatures(pointFeature);
@@ -219,7 +243,8 @@ export default {
      * Add marker
      */
     addMarker: function(x, y, zoom) {
-      var marker = new Feature({
+      this.vectorSource.clear()
+      const marker = new Feature({
         geometry: new Point([x, y])
       });
       marker.setStyle(this.markerStyle);
@@ -239,28 +264,6 @@ export default {
       this.vectorSource.clear();
     }
 
-
-    /**
-     * Handle map click event
-     */
-    /*onMapClick: function(evt) {
-      console.log(evt);
-      //var viewResolution = this.$refs.view.getResolution();
-      var url = this.$refs.wmsSource.getFeatureInfoUrl(
-        evt.coordinate,
-        null, //viewResolution,
-        "EPSG:2056",
-        { INFO_FORMAT: "text/html" }
-      );
-      console.log(url);
-    },*/
-
-    /**
-     * Handle map mounted event
-     */
-    /*onMapMounted: function() {
-      console.log(this.$refs.map);
-    },*/
   },
 
   mounted: function() {
@@ -268,4 +271,3 @@ export default {
   }
 };
 </script>
-

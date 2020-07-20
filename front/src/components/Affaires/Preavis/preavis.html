@@ -34,10 +34,16 @@
                                 </md-table-cell>
                                 <md-table-cell md-label="Remarque" md-sort-by="remarque"  style="width: 20%;">{{ item.remarque }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Actions" v-if="!affaireReadonly"  style="width: 5%;">
+                                <md-table-cell md-label="Actions" v-if="!affaireReadonly"  style="width: 10%;">
                                     <md-button class="md-icon-button md-primary"
-                                        v-on:click="onModifyPreavis(item)">
+                                        v-on:click="onModifyPreavis(item)"  
+                                        title="Mettre à jour le préavis">
                                         <md-icon class="md-edit">edit</md-icon>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-primary" 
+                                    title="Générer la demande de préavis"
+                                    @click="getDocument(item.service_id)">
+                                        <md-icon>save_alt</md-icon>
                                     </md-button>
                                 </md-table-cell>
                             </md-table-row>
@@ -57,38 +63,55 @@
         md-title="Édition de préavis">
         <md-dialog-title>Édition de préavis</md-dialog-title>
         <md-dialog-content>
+            
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item md-size-50 md-small-size-100">
+                    <md-autocomplete v-model="new_preavis.service" :md-options="services_liste"
+                        :class="getValidationClass('service')" md-dense>
+                        <label>Service *</label>
+                        <template slot="md-autocomplete-item" slot-scope="{ item }">
+                            {{ item.nom }}
+                        </template>
+                        <span class="md-error" v-if="!$v.new_preavis.service.required">Le service est
+                            obligatoire</span>
+                    </md-autocomplete>
+                </div>
+                <div class="md-layout-item md-size-50 md-small-size-100">
+                    <md-datepicker v-model="new_preavis.date_demande" :class="getValidationClass('date_demande')" md-immediately>
+                        <label>Date de demande *</label>
+                    </md-datepicker>
+                    <span class="md-error" v-if="!$v.new_preavis.date_demande.required">La date de demande est
+                        obligatoire</span>
+                </div>
+            </div>
+            
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item md-size-50 md-small-size-100">
+                    <md-autocomplete v-model="new_preavis.preavis" :md-options="preavis_type_liste" md-dense>
+                        <label>Préavis</label>
+                        <template slot="md-autocomplete-item" slot-scope="{ item }">
+                            {{ item.nom }}
+                        </template>
+                    </md-autocomplete>
+                </div>
+                <div class="md-layout-item md-size-50 md-small-size-100">
+                    <md-datepicker v-model="new_preavis.date_reponse" md-immediately>
+                        <label>Date de réponse</label>
+                    </md-datepicker>
+                </div>
+            </div>
+
+            <br/>
     
-            <md-autocomplete v-model="new_preavis.service" :md-options="services_liste"
-                :class="getValidationClass('service')">
-                <label>Service *</label>
-                <template slot="md-autocomplete-item" slot-scope="{ item }">
-                    {{ item.nom }}
-                </template>
-                <span class="md-error" v-if="!$v.new_preavis.service.required">L'étape est
-                    obligatoire</span>
-            </md-autocomplete>
-    
-            <md-datepicker v-model="new_preavis.date_demande" :class="getValidationClass('date_demande')" md-immediately>
-                <label>Date de demande *</label>
-            </md-datepicker>
-            <span class="md-error" v-if="!$v.new_preavis.date_demande.required">La date de demande est
-                obligatoire</span>
-    
-            <md-datepicker v-model="new_preavis.date_reponse" md-immediately>
-                <label>Date de réponse</label>
-            </md-datepicker>
-    
-            <md-autocomplete v-model="new_preavis.preavis" :md-options="preavis_type_liste">
-                <label>Préavis</label>
-                <template slot="md-autocomplete-item" slot-scope="{ item }">
-                    {{ item.nom }}
-                </template>
-            </md-autocomplete>
-    
-            <md-field>
-                <label>Remarque</label>
-                <md-textarea v-model="new_preavis.remarque"></md-textarea>
-            </md-field>
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item md-size-100">
+                    <md-field>
+                        <label>Remarque</label>
+                        <md-textarea v-model="new_preavis.remarque"></md-textarea>
+                    </md-field>
+                </div>
+            </div>
+            
     
         </md-dialog-content>
         <md-dialog-actions>

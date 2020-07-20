@@ -1,6 +1,6 @@
 <div class="numerosHistory">
-
-
+    
+    
     <md-card>
         <!-- Results Header -->
         <md-card-header>
@@ -28,7 +28,7 @@
                         <md-input v-model="numero_edit.cadastre" readonly></md-input>
                     </md-field>
                 </div>
-
+                
                 <div class="md-layout-item md-small-size-30">
                     <md-field>
                         <label>Immeuble</label>
@@ -36,7 +36,7 @@
                     </md-field>
                 </div>
             </div>
-
+            
             <!-- Type et Suffixe -->
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-small-size-30">
@@ -52,24 +52,30 @@
                     </md-field>
                 </div>
             </div>
-
+            
             <!-- Etat et Différé -->
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-small-size-30 md-size-50">
-                    <md-autocomplete v-model="numero_edit.etat" :md-options="etatsNumeros" @md-selected="onSelectEtatNumero">
+                    <md-autocomplete v-model="numero_edit.etat" :md-options="etatsNumeros" @md-selected="onSelectEtatNumero" md-dense>
                         <label class="edit">Etat *</label>
                         <template slot="md-autocomplete-item" slot-scope="{ item }">{{ item.nom }}</template>
 
                     </md-autocomplete>
                 </div>
-                <div class="md-layout-item md-small-size-30 md-size-25">
+                <div class="md-layout-item md-small-size-30 md-size-15">
                     <md-datepicker v-model="numero_edit.diff_entree" md-immediately><label  class="edit">Date diff entrée</label></md-datepicker>
                 </div>
-                <div class="md-layout-item md-small-size-30 md-size-25">
+                <div class="md-layout-item md-small-size-30 md-size-15">
                     <md-datepicker v-model="numero_edit.diff_sortie" md-immediately><label class="edit">Date diff sortie</label></md-datepicker>
                 </div>
+                <div class="md-layout-item md-small-size-30 md-size-10">
+                    <md-field>
+                        <label>Affaire</label>
+                        <md-input v-model="numero_edit.diff_affaire_id" readonly></md-input>
+                    </md-field>
+                </div>
             </div>
-
+            
             <!-- Provenance et Destination -->
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-small-size-30">
@@ -85,16 +91,16 @@
                     </md-field>
                 </div>
             </div>
-
+            
             <div style="text-align: right;">
                 <md-button class="md-accent" @click="editionActivated = false">Annuler</md-button>
                 <md-button class="md-primary" @click="onConfirmEditNumero">Enregistrer</md-button>
             </div>
-
+            
         </md-card-content>
-
+        
     </md-card>
-
+    
 
     <!-- CONSULTATION DE NUMERO -->
     <md-card v-else>
@@ -107,7 +113,7 @@
                         <md-input v-model="numero.cadastre" readonly></md-input>
                     </md-field>
                 </div>
-
+                
                 <div class="md-layout-item md-small-size-30">
                     <md-field>
                         <label>Immeuble</label>
@@ -115,7 +121,7 @@
                     </md-field>
                 </div>
             </div>
-
+            
             <!-- Type et Suffixe -->
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-small-size-30">
@@ -131,10 +137,10 @@
                     </md-field>
                 </div>
             </div>
-
+            
             <!-- Etat et Différé -->
             <div class="md-layout md-gutter">
-                <div class="md-layout-item md-small-size-30">
+                <div class="md-layout-item md-small-size-30 md-size-50">
                     <md-field>
                         <label>Etat</label>
                         <md-input v-model="numero.etat" readonly></md-input>
@@ -146,8 +152,14 @@
                         <md-input v-model="numero.diff" readonly></md-input>
                     </md-field>
                 </div>
+                <div class="md-layout-item md-small-size-30 md-size-15" v-if="numero.diff_affaire_id">
+                    <md-field>
+                        <label>Affaire</label>
+                        <md-input v-model="numero.diff_affaire_id" readonly></md-input>
+                    </md-field>
+                </div>
             </div>
-
+            
             <!-- Provenance et Destination -->
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-small-size-30">

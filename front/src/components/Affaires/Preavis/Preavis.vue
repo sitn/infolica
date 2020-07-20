@@ -19,6 +19,7 @@ export default {
       affaire_preavis: [],
       preavis_type_liste: [],
       services_liste: [],
+      services_liste_bk: [],
       lastRecord: null,
       showNewPreavisBtn: false,
       showPreavisDialog: false,
@@ -112,11 +113,12 @@ export default {
         )
         .then(response => {
           if (response.data) {
+            this.services_liste_bk = response.data;
             this.services_liste = response.data.map(x => ({
               id: x.id,
-              nom: x.service,
-              toLowerCase: () => x.service.toLowerCase(),
-              toString: () => x.service
+              nom: x.abreviation,
+              toLowerCase: () => x.abreviation.toLowerCase(),
+              toString: () => x.abreviation
             }));
           }
         })
@@ -132,10 +134,10 @@ export default {
       this.new_preavis.id = curr_preavis.id;
       this.new_preavis.date_demande = moment(curr_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
       if (curr_preavis.date_reponse) {
-        moment(curr_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+        this.new_preavis.date_reponse = moment(curr_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
       } else {
         // si pas de date de réponse, proposition défaut aujourd'hui
-        curr_preavis.date_reponse = getCurrentDate();
+        this.new_preavis.date_reponse = moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
         }
       // this.new_preavis.date_reponse = curr_preavis.date_reponse;
       this.new_preavis.remarque = curr_preavis.remarque;
@@ -284,6 +286,106 @@ export default {
       if (!this.$v.$invalid) {
         this.onConfirmEditPreavis();
       }
+    },
+
+    /**
+     * getDocument pour préavis
+     */
+    getDocument(service_id) {
+      let form = {};
+
+      const service_ = this.services_liste_bk.filter(x => x.id === service_id).pop();
+      form.adresse_service = [
+        service_.service,
+        service_.adresse,
+        [service_.npa, service_.localite].filter(Boolean).join(" ")
+      ].filter(Boolean).join("\n");
+
+      const affaire_ = this.$parent.affaire;
+      form.adresse_demandeur = [
+        affaire_.client_commande_entreprise,
+        [affaire_.client_commande_titre, affaire_.client_commande_prenom, affaire_.client_commande_nom].filter(Boolean).join(" "),
+        affaire_.client_commande_adresse,
+        affaire_.client_commande_case_postale,
+        [affaire_.client_commande_npa, affaire_.client_commande_localite].filter(Boolean).join(" ")
+      ].filter(Boolean).join("\n");
+      
+      let formData = new FormData();
+      formData.append("template", service_.abreviation)
+      formData.append("values", JSON.stringify({
+        ADRESSE_SERVICE: form.adresse_service,
+        DATE_ENVOI: String(getCurrentDate()),
+        NREF: affaire_.id,
+        DATE_DEMANDE: String(affaire_.date_ouverture),
+        ADRESSE_DEMANDEUR: form.adresse_demandeur,
+        CADASTRE: affaire_.cadastre,
+        CONCERNE: affaire_.nom,
+        ANNEXES: ""
+      }));
+
+    this.$http
+      .post(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/html" }
+        }
+      )
+      .then(response => {
+        if (response && response.data) {
+          this.downloadGeneratedDocument(response.data.filename).then(
+            this.deleteGeneratedDocument(response.data.filename)
+          );
+        }
+      })
+      .catch(err => {
+        handleException(err, this);
+      });
+    },
+
+    /**
+     * Download GeneratedDocument
+     */
+    downloadGeneratedDocument(filename) {
+      return new Promise(() => {
+        let url =
+          process.env.VUE_APP_API_URL +
+          process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
+          "?filename=" +
+          filename;
+        window.open(url, "_blank");
+      });
+    },
+
+    /**
+     * Delete generated document
+     */
+    deleteGeneratedDocument(filename) {
+      this.$http
+        .delete(
+          process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
+            "?filename=" +
+            filename,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/html" }
+          }
+        )
+        .then(response => {
+          if (response && response.data) {
+            this.$root.$emit(
+              "ShowMessage",
+              "Le fichier '" +
+                filename +
+                "' se trouve dans le dossier 'Téléchargement'"
+            );
+          }
+        })
+        .catch(err => {
+          handleException(err, this);
+        });
     }
   },
 

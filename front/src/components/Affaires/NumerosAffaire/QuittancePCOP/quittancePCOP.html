@@ -52,7 +52,7 @@
                     </md-field>
                 </div>
                 <div class="md-layout-item md-size-50">
-                    <md-autocomplete v-model="form.cadastre" :md-options="cadastres_liste" required>
+                    <md-autocomplete v-model="form.cadastre" :md-options="cadastres_liste" required md-dense>
                         <label>Cadastre</label>
                         <template slot="md-autocomplete-item" slot-scope="{item}">{{item.nom}}</template>
                     </md-autocomplete>

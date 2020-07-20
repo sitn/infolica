@@ -4,7 +4,7 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission, stringifyAutocomplete} from '@/services/helper';
+import {checkPermission, stringifyAutocomplete, getClients} from '@/services/helper';
 
 const moment = require("moment");
 
@@ -23,15 +23,67 @@ export default {
       typesAffairesListe: [],
       affaires_source: [],
       affaires_destination: [],
+      clientsListe: [],
+      searchClientsListe: [],
       form: {
         technicien: null,
         responsable: null,
-        typeAffaire: null
-      }
+        typeAffaire: null,
+        client_commande: null,
+        client_envoi: null,
+        client_envoi_complement: null
+      },
     };
   },
 
   methods: {
+    /**
+     * Search clients
+     */
+    async initClientsListe() {
+      getClients()
+        .then(response => {
+          if (response && response.data) {
+            var tmp = response.data;
+            tmp.forEach(x => {
+              x.nom_ = [
+                x.entreprise,
+                [x.titre, x.nom, x.prenom].filter(Boolean).join(" "),
+                x.adresse,
+                [x.npa, x.localite].filter(Boolean).join(" ")
+              ]
+                .filter(Boolean)
+                .join(", ");
+            });
+            this.clientsListe = tmp.map(x => ({
+              id: x.id,
+              nom: x.nom_,
+              toLowerCase: () => x.nom_.toLowerCase(),
+              toString: () => x.nom_
+            }));
+          }
+        })
+        //Error
+        .catch(err => {
+          handleException(err, this);
+        });
+    },
+
+    /**
+     * Search Client after 3 letters
+     */
+    searchClients(value) {
+      let tmp = [];
+      if (value !== null) {
+        if (value.length >= 3) {
+          tmp = this.clientsListe.filter(x =>
+            x.nom.toLowerCase().includes(value.toLowerCase())
+          );
+        }
+      }
+      this.searchClientsListe = tmp;
+    },
+
     /**
      * Ouvre la page de consultation/édition de client
      */
@@ -52,6 +104,7 @@ export default {
     onCancelEdit() {
       Object.assign(this.affaire, this.affaire_backup);
       this.infoGenReadonly = true;
+      this.$emit('modify-off', true);
     },
 
     /**
@@ -63,10 +116,16 @@ export default {
       formData.append("technicien_id", this.form.technicien.id);
       formData.append("type_id", this.form.typeAffaire.id);
       if (this.form.responsable !== null) formData.append("responsable_id", this.form.responsable.id);
-      if (this.affaire.nom !== "-") formData.append("nom", this.affaire.nom || null);
-      if (this.affaire.information !== "-")
+      if (this.affaire.nom !== null) formData.append("nom", this.affaire.nom || null);
+      if (this.affaire.information !== null)
         formData.append("information", this.affaire.information || null);
-      if (this.affaire.vref !== "-") formData.append("vref", this.affaire.vref || null);
+      if (this.affaire.vref !== null) formData.append("vref", this.affaire.vref || null);
+      
+      if (typeof this.form.client_commande === 'object') formData.append("client_commande_id", this.form.client_commande.id || null);
+      if (typeof this.form.client_envoi === 'object') formData.append("client_envoi_id", this.form.client_envoi.id || null);
+
+      formData.append("client_envoi_complement", this.form.client_envoi_complement || null);
+
       if (this.affaire.date_validation)
         formData.append(
           "date_validation", this.affaire.date_validation?
@@ -75,17 +134,20 @@ export default {
         formData.append("date_validation", null);
       if (this.affaire.date_envoi)
         formData.append(
-          "date_envoi", this.affaire.date_envoi? 
+          "date_envoi", this.affaire.date_envoi?
           moment(this.affaire.date_envoi, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
       else
         formData.append("date_cloture", null);
       if (this.affaire.date_cloture)
         formData.append(
-          "date_cloture", this.affaire.date_cloture? 
+          "date_cloture", this.affaire.date_cloture?
           moment(this.affaire.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
       else
         formData.append("date_cloture", null);
-        
+
+      formData.append("localisation_E", this.affaire.localisation_e);
+      formData.append("localisation_N", this.affaire.localisation_n);
+
       this.$http.put(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
         formData,
@@ -95,12 +157,13 @@ export default {
         }
       ).then(() => { //response =>{
           this.infoGenReadonly = true;
+          this.$emit('modify-off', true);
           this.$parent.setAffaire();
           this.copyAffaire();
         })
-        //Error 
+        //Error
         .catch(err => {
-          handleException(err, this); 
+          handleException(err, this);
         });
     },
 
@@ -137,7 +200,7 @@ export default {
     openEditMode() {
       this.form.technicien = this.operateursListe
       .filter(x => x.id === this.affaire.technicien_id)[0];
-      
+
       if (this.form.responsable !== null){
         this.form.responsable = this.operateursListe
         .filter(x => x.id === this.affaire.responsable_id)[0];
@@ -146,7 +209,28 @@ export default {
       this.form.typeAffaire = this.typesAffairesListe
       .filter(x => x.id === this.affaire.type_id)[0];
 
+      this.form.client_commande = this.affaire.client_commande_nom_.replace("\n", ", ");
+      this.form.client_envoi = this.affaire.client_envoi_nom_.replace("\n", ", ");
+      // this.form.client_commande = {
+      //   id: this.affaire.client_commande_id,
+      //   nom: this.affaire.client_commande_nom_.replace("\n", ", ")
+      // };
+      // this.form.client_envoi = {
+      //   id: this.affaire.client_envoi_id,
+      //   nom: this.affaire.client_envoi_nom_.replace("\n", ", ")
+      // };
+      this.form.client_envoi_complement = this.affaire.client_envoi_complement;
+
       this.infoGenReadonly = false;
+      this.$emit('modify-off', false);
+    },
+
+    /**
+     * openCreateClient
+     */
+    openCreateClient() {
+      let routedata = this.$router.resolve({ name: "ClientsNew" });
+      window.open(routedata.href, "_blank");
     },
 
     /**
@@ -160,7 +244,7 @@ export default {
           headers: {Accept: "application/json"}
         }
       ).then(response => {
-        if (response && response.data) 
+        if (response && response.data)
           this.typesAffairesListe = stringifyAutocomplete(response.data);
       }).catch(err => handleException(err, this))
     },
@@ -171,7 +255,7 @@ export default {
     async searchAffaireSource() {
       this.$http.get(
         process.env.VUE_APP_API_URL +
-        process.env.VUE_APP_MODIFICATION_AFFAIRE_BY_AFFAIRE_MERE_ENDPOINT + 
+        process.env.VUE_APP_MODIFICATION_AFFAIRE_BY_AFFAIRE_MERE_ENDPOINT +
         this.$route.params.id,
         {
           withCredentials: true,
@@ -194,7 +278,7 @@ export default {
     async searchAffaireDestination() {
       this.$http.get(
         process.env.VUE_APP_API_URL +
-        process.env.VUE_APP_MODIFICATION_AFFAIRE_BY_AFFAIRE_FILLE_ENDPOINT + 
+        process.env.VUE_APP_MODIFICATION_AFFAIRE_BY_AFFAIRE_FILLE_ENDPOINT +
         this.$route.params.id,
         {
           withCredentials: true,
@@ -211,7 +295,6 @@ export default {
       }).catch(err => handleException(err, this));
     },
 
-
   },
 
   mounted: function() {
@@ -220,10 +303,8 @@ export default {
     this.initTypesAffairesListe();
     this.searchAffaireSource();
     this.searchAffaireDestination();
+    this.initClientsListe();
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>
-
-
-
