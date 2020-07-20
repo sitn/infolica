@@ -8,8 +8,6 @@ from infolica.models.constant import Constant
 from infolica.models.models import NumeroRelation, VNumerosRelations
 from infolica.scripts.utils import Utils
 
-import transaction
-
 from datetime import datetime
 import json
 
@@ -81,10 +79,9 @@ def numeros_relations_new_view(request, params=None):
     # Get numeros_relations instance
     model = Utils.set_model_record(NumeroRelation(), params)
 
-    with transaction.manager:
-        request.dbsession.add(model)
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroRelation.__tablename__))
+    request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroRelation.__tablename__))
 
 
 """ Delete numeros_relations"""
@@ -105,9 +102,8 @@ def numeros_relations_delete_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(NumeroRelation.__tablename__, numero_relation_id))
 
-    with transaction.manager:
-        request.dbsession.delete(model)
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroRelation.__tablename__))
+    request.dbsession.delete(model)
+    
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroRelation.__tablename__))
 
 

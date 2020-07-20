@@ -6,8 +6,6 @@ from infolica.models.constant import Constant
 from infolica.models.models import Service
 from infolica.scripts.utils import Utils
 
-import transaction
-
 ###########################################################
 # SERVICES EXTERNES 
 ###########################################################
@@ -52,11 +50,9 @@ def services_new_view(request):
     model = Service()
     model = Utils.set_model_record(model, request.params)
 
-    with transaction.manager:
-        request.dbsession.add(model)
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Service.__tablename__))
+    request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Service.__tablename__))
 
 
 """ UPDATE service """
@@ -77,9 +73,7 @@ def services_update_view(request):
 
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Service.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Service.__tablename__))
 
 
 # """ DELETE preavis affaire"""
@@ -99,11 +93,8 @@ def services_update_view(request):
 #             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Service.__tablename__, service_id))
 
 #     
-#         with transaction.manager:
-#             request.dbsession.delete(record)
-#             # Commit transaction
-#             transaction.commit()
-#             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Service.__tablename__))
+#      request.dbsession.delete(record)
+#      return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Service.__tablename__))
 
 #     except Exception as e:
 #         raise e

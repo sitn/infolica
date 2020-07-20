@@ -7,7 +7,6 @@ from infolica.models.constant import Constant
 from infolica.models.models import Document, DocumentType, VDocumentsAffaires
 from infolica.scripts.utils import Utils
 
-import transaction
 import os
 import shutil
 from datetime import datetime
@@ -72,25 +71,22 @@ def upload_affaire_document_view(request):
     Utils.create_affaire_folder(affaire_folder)
     fileslist = [request.POST[x] for x in request.POST if x.startswith('affaire_doc_files')]
 
-    with transaction.manager:
-        for f in fileslist:
-            filename = f.filename
-            input_file = f.file
-            file_path = os.path.join(affaire_folder, filename)
-            with open(file_path, 'wb') as output_file:
-                shutil.copyfileobj(input_file, output_file)
+    for f in fileslist:
+        filename = f.filename
+        input_file = f.file
+        file_path = os.path.join(affaire_folder, filename)
+        with open(file_path, 'wb') as output_file:
+            shutil.copyfileobj(input_file, output_file)
 
-            # Get document instance
-            model = Utils.set_model_record(Document(), request.params)
+        # Get document instance
+        model = Utils.set_model_record(Document(), request.params)
 
-            setattr(model, 'nom', filename)
-            setattr(model, 'chemin', os.path.join(affaire_id, filename))
+        setattr(model, 'nom', filename)
+        setattr(model, 'chemin', os.path.join(affaire_id, filename))
 
-            request.dbsession.add(model)
+        request.dbsession.add(model)
 
-        transaction.commit()
-
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Document.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Document.__tablename__))
 
 
 """Download document"""
@@ -144,8 +140,6 @@ def delete_affaire_document_view(request):
         raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
             Document.__tablename__, id_doc))
 
-    with transaction.manager:
-        request.dbsession.delete(record)
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Document.__tablename__))
+    request.dbsession.delete(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Document.__tablename__))

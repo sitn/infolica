@@ -6,7 +6,6 @@ from infolica.models.constant import Constant
 from infolica.models.models import SuiviMandat
 from infolica.scripts.utils import Utils
 
-import transaction
 
 """ Return all suivi_mandats"""
 @view_config(route_name='suivi_mandats', request_method='GET', renderer='json')
@@ -63,12 +62,9 @@ def suivi_mandats_new_view(request):
     record = SuiviMandat()
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        request.dbsession.add(record)
-        request.dbsession.flush()
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(SuiviMandat.__tablename__))
+    request.dbsession.add(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(SuiviMandat.__tablename__))
 
 
 """ Update suivi_mandats"""
@@ -92,10 +88,7 @@ def suivi_mandats_update_view(request):
 
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(SuiviMandat.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(SuiviMandat.__tablename__))
 
 
 """ Delete suivi_mandats"""
@@ -117,8 +110,6 @@ def suivi_mandats_delete_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(SuiviMandat.__tablename__, id))
 
-    with transaction.manager:
-        request.dbsession.delete(record)
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(SuiviMandat.__tablename__))
+    request.dbsession.delete(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(SuiviMandat.__tablename__))

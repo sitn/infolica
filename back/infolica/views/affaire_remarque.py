@@ -6,8 +6,6 @@ from infolica.models.constant import Constant
 from infolica.models.models import Operateur, RemarqueAffaire
 from infolica.scripts.utils import Utils
 
-import transaction
-
 ###########################################################
 # REMARQUES AFFAIRE
 ###########################################################
@@ -44,11 +42,9 @@ def affaires_remarques_new_view(request):
     model = RemarqueAffaire()
     model = Utils.set_model_record(model, request.params)
 
-    with transaction.manager:
-        request.dbsession.add(model)
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(RemarqueAffaire.__tablename__))
+    request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(RemarqueAffaire.__tablename__))
 
 
 """ PUT remarque affaire"""
@@ -70,9 +66,7 @@ def remarques_affaires_update_view(request):
 
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(RemarqueAffaire.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(RemarqueAffaire.__tablename__))
 
 
 """ DELETE remarque affaire"""
@@ -91,7 +85,6 @@ def remarques_affaires_delete_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(RemarqueAffaire.__tablename__, remarque_affaire_id))
 
-    with transaction.manager:
-        request.dbsession.delete(record)
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(RemarqueAffaire.__tablename__))
+    request.dbsession.delete(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(RemarqueAffaire.__tablename__))

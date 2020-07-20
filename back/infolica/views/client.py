@@ -6,7 +6,6 @@ from infolica.models import Constant
 from infolica.models.models import Client, ClientType
 from infolica.scripts.utils import Utils
 
-import transaction
 from datetime import datetime
 
 
@@ -76,11 +75,9 @@ def clients_new_view(request):
     # Get client instance
     model = Utils.set_model_record(Client(), request.params)
 
-    with transaction.manager:
-        request.dbsession.add(model)
-        request.dbsession.flush()
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Client.__tablename__))
+    request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Client.__tablename__))
 
 
 """ Update client"""
@@ -105,10 +102,7 @@ def clients_update_view(request):
     # Read params client
     model = Utils.set_model_record(model, request.params)
 
-    with transaction.manager:
-
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Client.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Client.__tablename__))
 
 
 """ Delete client"""
@@ -132,7 +126,4 @@ def clients_delete_view(request):
 
     model.sortie = datetime.utcnow()
 
-    with transaction.manager:
-
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Client.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Client.__tablename__))

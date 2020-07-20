@@ -108,14 +108,13 @@ def numeros_new_view(request, params=None):
     record = Numero()
     record = Utils.set_model_record(record, params)
 
-    with transaction.manager:
-        request.dbsession.add(record)
-        request.dbsession.flush()
-        # Commit transaction
-        transaction.commit()
-        Utils.get_data_save_response(
-            Constant.SUCCESS_SAVE.format(Numero.__tablename__))
-        return record.id
+    request.dbsession.add(record)
+
+    Utils.get_data_save_response(
+            Constant.SUCCESS_SAVE.format(Numero.__tablename__)
+    )
+
+    return record.id
 
 
 """ Update numeros"""
@@ -140,17 +139,13 @@ def numeros_update_view(request):
     last_record_etat_id = record.etat_id
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        # Commit transaction
-        transaction.commit()
+    if 'etat_id' in request.params:
+        if request.params['etat_id'] != last_record_etat_id:
+            params = Utils._params(
+                numero_id=record.id, numero_etat_id=request.params['etat_id'])
+            numeros_etat_histo_new_view(request, params)
 
-        if 'etat_id' in request.params:
-            if request.params['etat_id'] != last_record_etat_id:
-                params = Utils._params(
-                    numero_id=record.id, numero_etat_id=request.params['etat_id'])
-                numeros_etat_histo_new_view(request, params)
-
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Numero.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Numero.__tablename__))
 
 
 """ Supprimer/abandonner numeros by id"""
@@ -173,10 +168,6 @@ def numeros_by_id_delete_view(request):
         # elif query.etat_id == 2: # vigueur
         #     query.etat_id = 4
 
-        with transaction.manager:
-            transaction.commit()
-
-
 ###########################################################
 # NUMERO ETAT HISTO
 ###########################################################
@@ -197,14 +188,13 @@ def numeros_etat_histo_new_view(request, params=None):
     record = NumeroEtatHisto()
     record = Utils.set_model_record(record, params)
 
-    with transaction.manager:
-        request.dbsession.add(record)
-        request.dbsession.flush()
-        # Commit transaction
-        transaction.commit()
-        Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(
-            NumeroEtatHisto.__tablename__))
-        return record.id
+    request.dbsession.add(record)
+
+    Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(
+        NumeroEtatHisto.__tablename__)
+    )
+    
+    return record.id
 
 
 ###########################################################
@@ -349,10 +339,7 @@ def affaire_numero_update_view(request):
 
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        transaction.commit()
-
-        return 
+    return 
 
 
 """ Add new affaire-numero """
@@ -369,12 +356,9 @@ def affaire_numero_new_view(request, params=None):
     record = AffaireNumero()
     record = Utils.set_model_record(record, params)
 
-    with transaction.manager:
-        request.dbsession.add(record)
-        request.dbsession.flush()
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireNumero.__tablename__))
+    request.dbsession.add(record)
+    
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireNumero.__tablename__))
 
 
 ###########################################################
@@ -416,12 +400,9 @@ def numero_differe_new_view(request):
     record = NumeroDiffere()
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        request.dbsession.add(record)
-        request.dbsession.flush()
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroDiffere.__tablename__))
+    request.dbsession.add(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroDiffere.__tablename__))
 
 
 """ Update numero_differe """
@@ -438,11 +419,4 @@ def numero_differe_update_view(request):
     record = request.dbsession.query(NumeroDiffere).filter(NumeroDiffere.id == numdiff_id).first()
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroDiffere.__tablename__))
-
-
-
-
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroDiffere.__tablename__))
