@@ -1,7 +1,7 @@
 from datetime import time, date, datetime
 from sqlalchemy import func, and_, desc
-from .. import models
-from ..scripts.ldap_query import LDAPQuery
+from infolica.models.models import Numero, AffaireNumero, Fonction, Role, FonctionRole
+from infolica.scripts.ldap_query import LDAPQuery
 import json
 import os
 
@@ -109,13 +109,13 @@ class Utils(object):
         if not isinstance(type_id, list):
             type_id = [type_id]
         # Filter by type and cadastre
-        query = request.dbsession.query(models.Numero).filter(and_(models.Numero.type_id.in_(type_id), models.Numero.cadastre_id==cadastre_id))
+        query = request.dbsession.query(Numero).filter(and_(Numero.type_id.in_(type_id), Numero.cadastre_id==cadastre_id))
         # If plan_id is specified, also filter by plan
         if plan_id:
-            query = query.filter(models.Numero.plan_id==plan_id)
+            query = query.filter(Numero.plan_id==plan_id)
         if affaire_id:
-            query = query.filter(and_(models.AffaireNumero.affaire_id==affaire_id, models.AffaireNumero.numero_id==models.Numero.id))
-        result = query.order_by(desc(models.Numero.numero)).limit(1).first()
+            query = query.filter(and_(AffaireNumero.affaire_id==affaire_id, AffaireNumero.numero_id==Numero.id))
+        result = query.order_by(desc(Numero.numero)).limit(1).first()
         numero = result.numero if result else 0
         return numero
 
@@ -161,9 +161,9 @@ class Utils(object):
     def get_fonctions_roles_by_id(cls, request, role_id):
         results = []
 
-        query = request.dbsession.query(models.Fonction, models.Role, models.FonctionRole).filter(
-            models.Role.id == role_id).filter(models.Role.id == models.FonctionRole.role_id).filter(
-            models.Fonction.id == models.FonctionRole.fonction_id).all()
+        query = request.dbsession.query(Fonction, Role, FonctionRole).filter(
+            Role.id == role_id).filter(Role.id == FonctionRole.role_id).filter(
+            Fonction.id == FonctionRole.fonction_id).all()
 
         for f, r, fr in query:
             one_item = {}
@@ -178,9 +178,9 @@ class Utils(object):
     def get_fonctions_roles_by_name(cls, request, role_name):
         results = []
 
-        query = request.dbsession.query(models.Fonction, models.Role, models.FonctionRole).filter(
-            models.Role.nom == role_name).filter(models.Role.id == models.FonctionRole.role_id).filter(
-            models.Fonction.id == models.FonctionRole.fonction_id).all()
+        query = request.dbsession.query(Fonction, Role, FonctionRole).filter(
+            Role.nom == role_name).filter(Role.id == FonctionRole.role_id).filter(
+            Fonction.id == FonctionRole.fonction_id).all()
 
         for f, r, fr in query:
             one_item = {}
@@ -219,8 +219,8 @@ class Utils(object):
 
     @classmethod
     def get_role_id_by_name(cls, request, role_name):
-        query = request.dbsession.query(models.Role).filter(
-            models.Role.nom == role_name).first()
+        query = request.dbsession.query(Role).filter(
+            Role.nom == role_name).first()
 
         if query:
             return query.id

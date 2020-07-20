@@ -1,12 +1,17 @@
-from sqlalchemy import func
-from datetime import datetime
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from .. import models
+
+from sqlalchemy import func
+
+from infolica.exceptions.custom_error import CustomError
+from infolica.models.constant import Constant
+from infolica.models.models import Operateur
+from infolica.scripts.utils import Utils
+
 import transaction
-from ..models import Constant
-from ..exceptions.custom_error import CustomError
-from ..scripts.utils import Utils
+
+from datetime import datetime
+
 
 """ Return all operateurs"""
 @view_config(route_name='operateurs', request_method='GET', renderer='json')
@@ -16,7 +21,7 @@ def operateurs_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(models.Operateur).all()
+    query = request.dbsession.query(Operateur).all()
     return Utils.serialize_many(query)
     
 
@@ -28,8 +33,8 @@ def operateur_by_id_view(request):
         raise exc.HTTPForbidden()
 
     id = request.matchdict['id']
-    query = request.dbsession.query(models.Operateur).filter(
-        models.Operateur.id == id).first()
+    query = request.dbsession.query(Operateur).filter(
+        Operateur.id == id).first()
     return Utils.serialize_one(query)
 
 
@@ -43,13 +48,13 @@ def operateurs_search_view(request):
 
     settings = request.registry.settings
     search_limit = int(settings['search_limit'])
-    conditions = Utils.get_search_conditions(models.Operateur, request.params)
+    conditions = Utils.get_search_conditions(Operateur, request.params)
 
     # Check date_sortie is null
     conditions = [] if not conditions or len(conditions) == 0 else conditions
-    conditions.append(models.Operateur.sortie == None)
+    conditions.append(Operateur.sortie == None)
 
-    query = request.dbsession.query(models.Operateur).order_by(models.Operateur.nom, models.Operateur.prenom).filter(
+    query = request.dbsession.query(Operateur).order_by(Operateur.nom, Operateur.prenom).filter(
         *conditions).limit(search_limit).all()
     return Utils.serialize_many(query)
 
@@ -62,13 +67,13 @@ def operateurs_new_view(request):
         raise exc.HTTPForbidden()
 
     # Get operateur instance
-    model = Utils.set_model_record(models.Operateur(), request.params)
+    model = Utils.set_model_record(Operateur(), request.params)
 
     with transaction.manager:
         request.dbsession.add(model)
         request.dbsession.flush()
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Operateur.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Operateur.__tablename__))
 
 
 """ Update operateur"""
@@ -82,13 +87,13 @@ def operateurs_update_view(request):
     # Get operateur_id
     id_operateur = request.params['id'] if 'id' in request.params else None
 
-    model = request.dbsession.query(models.Operateur).filter(
-        models.Operateur.id == id_operateur).first()
+    model = request.dbsession.query(Operateur).filter(
+        Operateur.id == id_operateur).first()
 
     # If result is empty
     if not model:
         raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
-            models.Operateur.__tablename__, id_operateur))
+            Operateur.__tablename__, id_operateur))
 
     # Read params operateur
     model = Utils.set_model_record(model, request.params)
@@ -96,7 +101,7 @@ def operateurs_update_view(request):
     with transaction.manager:
 
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Operateur.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Operateur.__tablename__))
 
 """ Delete operateur"""
 @view_config(route_name='operateurs', request_method='DELETE', renderer='json')
@@ -109,19 +114,19 @@ def operateurs_delete_view(request):
     # Get operateur_id
     id_operateur = request.params['id'] if 'id' in request.params else None
 
-    model = request.dbsession.query(models.Operateur).filter(
-        models.Operateur.id == id_operateur).first()
+    model = request.dbsession.query(Operateur).filter(
+        Operateur.id == id_operateur).first()
 
     # If result is empty
     if not model:
         raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
-            models.Operateur.__tablename__, id_operateur))
+            Operateur.__tablename__, id_operateur))
 
     model.sortie = datetime.utcnow()
 
     with transaction.manager:
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Operateur.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Operateur.__tablename__))
 
 
 """ Add nouveaux operateurs AD"""
@@ -141,8 +146,8 @@ def add_operateurs_ad_view(request):
 
     # Logins from DB
     op_bd_logins = []
-    op_bd_logins_query = request.dbsession.query(models.Operateur).distinct(models.Operateur.login).filter(
-        models.Operateur.login.isnot(None)).all()
+    op_bd_logins_query = request.dbsession.query(Operateur).distinct(Operateur.login).filter(
+        Operateur.login.isnot(None)).all()
     for c in op_bd_logins_query:
         op_bd_logins.append(c.login.upper())
 
@@ -152,7 +157,7 @@ def add_operateurs_ad_view(request):
 
             if one_ad_op_login and one_ad_op_login.upper() not in op_bd_logins:
 
-                one_op_model = models.Operateur(
+                one_op_model = Operateur(
                     login=one_ad_op[settings['ldap_user_attribute_login']],
                     nom=one_ad_op[settings['ldap_user_attribute_lastname']],
                     prenom=one_ad_op[settings['ldap_user_attribute_firstname']],
@@ -164,7 +169,7 @@ def add_operateurs_ad_view(request):
         transaction.commit()
 
         if op_added > 0:
-            save_response = Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Operateur.__tablename__))
+            save_response = Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Operateur.__tablename__))
             save_response['count'] = op_added
             return save_response
         else:

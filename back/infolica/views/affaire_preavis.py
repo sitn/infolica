@@ -1,10 +1,12 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from .. import models
+
+from infolica.exceptions.custom_error import CustomError
+from infolica.models.constant import Constant
+from infolica.models.models import Preavis, PreavisType, VAffairesPreavis
+from infolica.scripts.utils import Utils
+
 import transaction
-from ..models import Constant
-from ..exceptions.custom_error import CustomError
-from ..scripts.utils import Utils
 
 ###########################################################
 # PREAVIS AFFAIRE
@@ -14,7 +16,7 @@ from ..scripts.utils import Utils
 @view_config(route_name='preavis_type', request_method='GET', renderer='json')
 @view_config(route_name='preavis_type_s', request_method='GET', renderer='json')
 def preavis_type_view(request):
-    records = request.dbsession.query(models.PreavisType).all()
+    records = request.dbsession.query(PreavisType).all()
     return Utils.serialize_many(records)
 
 
@@ -27,8 +29,9 @@ def affaire_preavis_view(request):
 
     affaire_id = request.matchdict['id']
 
-    records = request.dbsession.query(models.VAffairesPreavis)\
-        .filter(models.VAffairesPreavis.affaire_id == affaire_id).all()
+    records = request.dbsession.query(VAffairesPreavis).filter(
+        VAffairesPreavis.affaire_id == affaire_id
+        ).all()
 
     return Utils.serialize_many(records)
 
@@ -41,14 +44,14 @@ def preavis_new_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_preavis_edition']):
         raise exc.HTTPForbidden()
 
-    model = models.Preavis()
+    model = Preavis()
     model = Utils.set_model_record(model, request.params)
 
     with transaction.manager:
         request.dbsession.add(model)
         # Commit transaction
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Preavis.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Preavis.__tablename__))
 
 """ UPDATE preavis affaire"""
 @view_config(route_name='preavis', request_method='PUT', renderer='json')
@@ -60,18 +63,18 @@ def preavis_update_view(request):
 
     preavis_id = request.params['id'] if 'id' in request.params else None
 
-    record = request.dbsession.query(models.Preavis).filter(
-        models.Preavis.id == preavis_id).first()
+    record = request.dbsession.query(Preavis).filter(
+        Preavis.id == preavis_id).first()
 
     if not record:
         raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Preavis.__tablename__, preavis_id))
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(Preavis.__tablename__, preavis_id))
 
     record = Utils.set_model_record(record, request.params)
 
     with transaction.manager:
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Preavis.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Preavis.__tablename__))
 
 
 """ DELETE preavis affaire"""
@@ -83,18 +86,18 @@ def preavis_delete_view(request):
 
     preavis_id = request.matchdict['id']
 
-    record = request.dbsession.query(models.Preavis).filter(
-        models.Preavis.id == preavis_id).first()
+    record = request.dbsession.query(Preavis).filter(
+        Preavis.id == preavis_id).first()
 
     if not record:
         raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Preavis.__tablename__, preavis_id))
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(Preavis.__tablename__, preavis_id))
 
     with transaction.manager:
         request.dbsession.delete(record)
         # Commit transaction
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Preavis.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Preavis.__tablename__))
 
 
 # # Remarques Préavis

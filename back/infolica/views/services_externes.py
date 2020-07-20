@@ -1,10 +1,12 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from .. import models
+
+from infolica.exceptions.custom_error import CustomError
+from infolica.models.constant import Constant
+from infolica.models.models import Service
+from infolica.scripts.utils import Utils
+
 import transaction
-from ..models import Constant
-from ..exceptions.custom_error import CustomError
-from ..scripts.utils import Utils
 
 ###########################################################
 # SERVICES EXTERNES 
@@ -19,8 +21,9 @@ def service_by_id_view(request):
 
     service_id = request.matchdict['id']
 
-    record = request.dbsession.query(models.Service)\
-        .filter(models.Service.id==service_id).first()
+    record = request.dbsession.query(Service).filter(
+        Service.id==service_id
+    ).first()
 
     return Utils.serialize_one(record)
 
@@ -33,7 +36,7 @@ def services_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    records = request.dbsession.query(models.Service).all()
+    records = request.dbsession.query(Service).all()
 
     return Utils.serialize_many(records)
 
@@ -46,14 +49,14 @@ def services_new_view(request):
     if not Utils.has_permission(request, request.registry.settings['fonction_admin']):
         raise exc.HTTPForbidden()
 
-    model = models.Service()
+    model = Service()
     model = Utils.set_model_record(model, request.params)
 
     with transaction.manager:
         request.dbsession.add(model)
         # Commit transaction
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Service.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Service.__tablename__))
 
 
 """ UPDATE service """
@@ -65,18 +68,18 @@ def services_update_view(request):
         raise exc.HTTPForbidden()
 
     service_id = request.params['id'] if 'id' in request.params else None
-    record = request.dbsession.query(models.Service).filter(
-        models.Service.id == service_id).first()
+    record = request.dbsession.query(Service).filter(
+        Service.id == service_id).first()
 
     if not record:
         raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Service.__tablename__, service_id))
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(Service.__tablename__, service_id))
 
     record = Utils.set_model_record(record, request.params)
 
     with transaction.manager:
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Service.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Service.__tablename__))
 
 
 # """ DELETE preavis affaire"""

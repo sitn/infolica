@@ -1,11 +1,17 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from ..scripts.utils import Utils
-from ..models import Constant
-import transaction
-from ..exceptions.custom_error import CustomError
-from .. import models
+
 from sqlalchemy import and_
+
+from infolica.exceptions.custom_error import CustomError
+from infolica.models.constant import Constant
+from infolica.models.models import AffaireNumero, Numero, NumeroDiffere, NumeroEtat
+from infolica.models.models import NumeroEtatHisto, NumeroType, VNumeros
+from infolica.models.models import VNumerosAffaires
+from infolica.scripts.utils import Utils
+
+import transaction
+
 import json
 
 
@@ -17,7 +23,7 @@ def numeros_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(models.VNumeros).all()
+    query = request.dbsession.query(VNumeros).all()
     return Utils.serialize_many(query)
 
 
@@ -25,7 +31,7 @@ def numeros_view(request):
 @view_config(route_name='types_numeros', request_method='GET', renderer='json')
 @view_config(route_name='types_numeros_s', request_method='GET', renderer='json')
 def types_numeros_view(request):
-    query = request.dbsession.query(models.NumeroType).all()
+    query = request.dbsession.query(NumeroType).all()
     return Utils.serialize_many(query)
 
 
@@ -33,7 +39,7 @@ def types_numeros_view(request):
 @view_config(route_name='etats_numeros', request_method='GET', renderer='json')
 @view_config(route_name='etats_numeros_s', request_method='GET', renderer='json')
 def etats_numeros_view(request):
-    query = request.dbsession.query(models.NumeroEtat).all()
+    query = request.dbsession.query(NumeroEtat).all()
     return Utils.serialize_many(query)
 
 
@@ -46,8 +52,8 @@ def numeros_by_id_view(request):
 
     # Get controle mutation id
     id = request.id = request.matchdict['id']
-    query = request.dbsession.query(models.VNumeros).filter(
-        models.VNumeros.id == id).first()
+    query = request.dbsession.query(VNumeros).filter(
+        VNumeros.id == id).first()
     return Utils.serialize_one(query)
 
 
@@ -69,17 +75,17 @@ def numeros_search_view(request):
         matDiff = True if params['matDiff'] == 'true' else False
 
     # Set conditions
-    conditions = Utils.get_search_conditions(models.VNumeros, params)
+    conditions = Utils.get_search_conditions(VNumeros, params)
 
     # filter by conditions
-    query = request.dbsession.query(models.VNumeros).order_by(models.VNumeros.cadastre,
-                                                              models.VNumeros.numero.desc()).filter(*conditions)
+    query = request.dbsession.query(VNumeros).order_by(VNumeros.cadastre,
+                                                              VNumeros.numero.desc()).filter(*conditions)
     # if option matDiff selected
     if matDiff:
         query = query.filter(
             and_(
-                models.VNumeros.diff_entree.isnot(None), 
-                models.VNumeros.diff_sortie.is_(None)
+                VNumeros.diff_entree.isnot(None), 
+                VNumeros.diff_sortie.is_(None)
                 )
             )
 
@@ -99,7 +105,7 @@ def numeros_new_view(request, params=None):
         params = request.params
 
     # nouveau numero
-    record = models.Numero()
+    record = Numero()
     record = Utils.set_model_record(record, params)
 
     with transaction.manager:
@@ -108,7 +114,7 @@ def numeros_new_view(request, params=None):
         # Commit transaction
         transaction.commit()
         Utils.get_data_save_response(
-            Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
+            Constant.SUCCESS_SAVE.format(Numero.__tablename__))
         return record.id
 
 
@@ -124,12 +130,12 @@ def numeros_update_view(request):
     id = request.params['id'] if 'id' in request.params else None
 
     # Get numero record
-    record = request.dbsession.query(models.Numero).filter(
-        models.Numero.id == id).first()
+    record = request.dbsession.query(Numero).filter(
+        Numero.id == id).first()
 
     if not record:
         raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Numero.__tablename__, id))
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(Numero.__tablename__, id))
 
     last_record_etat_id = record.etat_id
     record = Utils.set_model_record(record, request.params)
@@ -144,7 +150,7 @@ def numeros_update_view(request):
                     numero_id=record.id, numero_etat_id=request.params['etat_id'])
                 numeros_etat_histo_new_view(request, params)
 
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Numero.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Numero.__tablename__))
 
 
 """ Supprimer/abandonner numeros by id"""
@@ -156,8 +162,8 @@ def numeros_by_id_delete_view(request):
 
     # Get numero by id
     id = request.matchdict['id']
-    query = request.dbsession.query(models.Numero).filter(
-        models.Numero.id == id).first()
+    query = request.dbsession.query(Numero).filter(
+        Numero.id == id).first()
 
     if query:
         if query.etat_id == 1:  # projet
@@ -188,7 +194,7 @@ def numeros_etat_histo_new_view(request, params=None):
         params = request.params
 
     # nouveau numero
-    record = models.NumeroEtatHisto()
+    record = NumeroEtatHisto()
     record = Utils.set_model_record(record, params)
 
     with transaction.manager:
@@ -197,7 +203,7 @@ def numeros_etat_histo_new_view(request, params=None):
         # Commit transaction
         transaction.commit()
         Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(
-            models.NumeroEtatHisto.__tablename__))
+            NumeroEtatHisto.__tablename__))
         return record.id
 
 
@@ -223,15 +229,15 @@ def affaire_numeros_view(request):
                      settings['numero_ppe_id'], 
                      settings['numero_pcop_id']]
 
-    conditions.append(models.VNumerosAffaires.affaire_id == affaire_id)
-    conditions.append(models.VNumerosAffaires.numero_type_id.in_(numeros_immeubles_type_id))
+    conditions.append(VNumerosAffaires.affaire_id == affaire_id)
+    conditions.append(VNumerosAffaires.numero_type_id.in_(numeros_immeubles_type_id))
 
     if 'affaire_numero_actif' in request.params:
         affaire_numero_actif = request.params['affaire_numero_actif']
         affaire_numero_actif = True if affaire_numero_actif.upper() == 'TRUE' else False
-        conditions.append(models.VNumerosAffaires.affaire_numero_actif == affaire_numero_actif)
+        conditions.append(VNumerosAffaires.affaire_numero_actif == affaire_numero_actif)
 
-    records = request.dbsession.query(models.VNumerosAffaires).filter(
+    records = request.dbsession.query(VNumerosAffaires).filter(
         *conditions).all()
     return Utils.serialize_many(records)
 
@@ -256,10 +262,10 @@ def affaire_new_numeros_mo_view(request):
                      settings['numero_dp_id']]
 
     # Contenu de la table VNumerosAffaires avec les numéros de la MO
-    query = request.dbsession.query(models.VNumerosAffaires).filter(
+    query = request.dbsession.query(VNumerosAffaires).filter(
         and_(
-            models.VNumerosAffaires.affaire_id == affaire_id,
-            models.VNumerosAffaires.numero_type_id.in_(numeros_mo_type_id)
+            VNumerosAffaires.affaire_id == affaire_id,
+            VNumerosAffaires.numero_type_id.in_(numeros_mo_type_id)
         )
     )
 
@@ -283,11 +289,11 @@ def affaire_new_numeros_mo_view(request):
             for plan_id in plans_id:
                 records = query.filter(
                     and_(
-                        models.VNumerosAffaires.numero_cadastre_id == cadastre_id,
-                        models.VNumerosAffaires.numero_type_id == type_id,
-                        models.VNumerosAffaires.numero_plan_id == plan_id
+                        VNumerosAffaires.numero_cadastre_id == cadastre_id,
+                        VNumerosAffaires.numero_type_id == type_id,
+                        VNumerosAffaires.numero_plan_id == plan_id
                     )
-                ).order_by(models.VNumerosAffaires.numero.asc()).all()
+                ).order_by(VNumerosAffaires.numero.asc()).all()
 
                 if len(records) == 0:
                     continue
@@ -335,11 +341,11 @@ def affaire_numero_update_view(request):
 
     affnum_id = request.params["id"] if "id" in request.params else None
 
-    record = request.dbsession.query(models.AffaireNumero).filter(models.AffaireNumero.id == affnum_id).first()
+    record = request.dbsession.query(AffaireNumero).filter(AffaireNumero.id == affnum_id).first()
 
     if not record:
         raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.AffaireNumero.__tablename__, affnum_id))
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(AffaireNumero.__tablename__, affnum_id))
 
     record = Utils.set_model_record(record, request.params)
 
@@ -360,7 +366,7 @@ def affaire_numero_new_view(request, params=None):
     if not params:
         params = request.params
     # nouveau affaire_numero
-    record = models.AffaireNumero()
+    record = AffaireNumero()
     record = Utils.set_model_record(record, params)
 
     with transaction.manager:
@@ -368,7 +374,7 @@ def affaire_numero_new_view(request, params=None):
         request.dbsession.flush()
         # Commit transaction
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.AffaireNumero.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireNumero.__tablename__))
 
 
 ###########################################################
@@ -384,12 +390,12 @@ def numeros_affaire_view(request):
 
     numero_id = request.matchdict['id']
 
-    query = request.dbsession.query(models.VNumerosAffaires).filter(
-        models.VNumerosAffaires.numero_id == numero_id).all()
+    query = request.dbsession.query(VNumerosAffaires).filter(
+        VNumerosAffaires.numero_id == numero_id).all()
 
     if not query:
         raise CustomError.RECORD_WITH_ID_NOT_FOUND.format(
-            models.VNumerosAffaires.__tablename__, numero_id)
+            VNumerosAffaires.__tablename__, numero_id)
 
     return Utils.serialize_many(query)
 
@@ -407,7 +413,7 @@ def numero_differe_new_view(request):
         raise exc.HTTPForbidden()
 
     # nouveau numero_differe
-    record = models.NumeroDiffere()
+    record = NumeroDiffere()
     record = Utils.set_model_record(record, request.params)
 
     with transaction.manager:
@@ -415,7 +421,7 @@ def numero_differe_new_view(request):
         request.dbsession.flush()
         # Commit transaction
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.NumeroDiffere.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroDiffere.__tablename__))
 
 
 """ Update numero_differe """
@@ -429,13 +435,13 @@ def numero_differe_update_view(request):
     numdiff_id = request.params["id"] if "id" in request.params else None
 
     # update numero_differe
-    record = request.dbsession.query(models.NumeroDiffere).filter(models.NumeroDiffere.id == numdiff_id).first()
+    record = request.dbsession.query(NumeroDiffere).filter(NumeroDiffere.id == numdiff_id).first()
     record = Utils.set_model_record(record, request.params)
 
     with transaction.manager:
         # Commit transaction
         transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.NumeroDiffere.__tablename__))
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroDiffere.__tablename__))
 
 
 

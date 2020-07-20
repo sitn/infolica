@@ -1,14 +1,19 @@
+from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 from pyramid.response import Response
 from pyramid.security import remember
-import json
-from pyramid.view import view_config
+
 from sqlalchemy import func
-from .. import models
-from ..scripts.ldap_query import LDAPQuery
+
+from infolica.models.models import Operateur
+from infolica.scripts.ldap_query import LDAPQuery
+from infolica.scripts.utils import Utils
+
+import json
+
 import logging
 log = logging.getLogger(__name__)
-from ..scripts.utils import Utils
+
 
 ########################################################
 # Login
@@ -28,10 +33,10 @@ def login_view(request):
         password = request.params['password']
 
     # Check if user exists in DB
-    query = request.dbsession.query(models.Operateur)
+    query = request.dbsession.query(Operateur)
     log.info('Attempt to log with: {}'.format(login))
     operateur = query.filter(func.lower(
-        models.Operateur.login) == func.lower(login)).first()
+        Operateur.login) == func.lower(login)).first()
 
     if not operateur:
         return exc.HTTPNotFound('Username {} was not found'.format(login))
