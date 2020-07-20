@@ -8,8 +8,6 @@ from infolica.models.constant import Constant
 from infolica.models.models import Operateur
 from infolica.scripts.utils import Utils
 
-import transaction
-
 from datetime import datetime
 
 
@@ -69,11 +67,9 @@ def operateurs_new_view(request):
     # Get operateur instance
     model = Utils.set_model_record(Operateur(), request.params)
 
-    with transaction.manager:
-        request.dbsession.add(model)
-        request.dbsession.flush()
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Operateur.__tablename__))
+    request.dbsession.add(model)
+ 
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Operateur.__tablename__))
 
 
 """ Update operateur"""
@@ -98,10 +94,7 @@ def operateurs_update_view(request):
     # Read params operateur
     model = Utils.set_model_record(model, request.params)
 
-    with transaction.manager:
-
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Operateur.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Operateur.__tablename__))
 
 """ Delete operateur"""
 @view_config(route_name='operateurs', request_method='DELETE', renderer='json')
@@ -123,10 +116,8 @@ def operateurs_delete_view(request):
             Operateur.__tablename__, id_operateur))
 
     model.sortie = datetime.utcnow()
-
-    with transaction.manager:
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Operateur.__tablename__))
+    
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Operateur.__tablename__))
 
 
 """ Add nouveaux operateurs AD"""
@@ -151,29 +142,26 @@ def add_operateurs_ad_view(request):
     for c in op_bd_logins_query:
         op_bd_logins.append(c.login.upper())
 
-    with transaction.manager:
-        for one_ad_op in op_ad:
-            one_ad_op_login = one_ad_op[login_attr] if login_attr in one_ad_op else None
+    for one_ad_op in op_ad:
+        one_ad_op_login = one_ad_op[login_attr] if login_attr in one_ad_op else None
 
-            if one_ad_op_login and one_ad_op_login.upper() not in op_bd_logins:
+        if one_ad_op_login and one_ad_op_login.upper() not in op_bd_logins:
 
-                one_op_model = Operateur(
-                    login=one_ad_op[settings['ldap_user_attribute_login']],
-                    nom=one_ad_op[settings['ldap_user_attribute_lastname']],
-                    prenom=one_ad_op[settings['ldap_user_attribute_firstname']],
-                    entree=func.now())
+            one_op_model = Operateur(
+                login=one_ad_op[settings['ldap_user_attribute_login']],
+                nom=one_ad_op[settings['ldap_user_attribute_lastname']],
+                prenom=one_ad_op[settings['ldap_user_attribute_firstname']],
+                entree=func.now())
 
-                request.dbsession.add(one_op_model)
-                op_added = op_added + 1
+            request.dbsession.add(one_op_model)
+            op_added = op_added + 1
 
-        transaction.commit()
-
-        if op_added > 0:
-            save_response = Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Operateur.__tablename__))
-            save_response['count'] = op_added
-            return save_response
-        else:
-            raise exc.HTTPNoContent
+    if op_added > 0:
+        save_response = Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Operateur.__tablename__))
+        save_response['count'] = op_added
+        return save_response
+    else:
+        raise exc.HTTPNoContent
 
 
 

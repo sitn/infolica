@@ -6,9 +6,6 @@ from infolica.models.constant import Constant
 from infolica.models.models import Facture, VFactures
 from infolica.scripts.utils import Utils
 
-import transaction
-
-
 ###########################################################
 # FACTURE
 ###########################################################
@@ -51,10 +48,9 @@ def factures_new_view(request):
     model = Facture()
     model = Utils.set_model_record(model, request.params)
 
-    with transaction.manager:
-        request.dbsession.add(model)
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Facture.__tablename__))
+    request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Facture.__tablename__))
 
 
 """ Update facture"""
@@ -81,9 +77,7 @@ def factures_update_view(request):
 
     facture_record = Utils.set_model_record(facture_record, request.params)
 
-    with transaction.manager:
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Facture.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Facture.__tablename__))
 
 
 """ Delete facture"""
@@ -102,10 +96,9 @@ def factures_delete_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(Facture.__tablename__, id))
 
-    with transaction.manager:
-        request.dbsession.delete(facture)
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Facture.__tablename__))
+    request.dbsession.delete(facture)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Facture.__tablename__))
 
 
 

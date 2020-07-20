@@ -6,9 +6,6 @@ from infolica.models.constant import Constant
 from infolica.models.models import Envoi, EnvoiType, VEnvois
 from infolica.scripts.utils import Utils
 
-import transaction
-
-
 ###########################################################
 # ENVOIS AFFAIRE
 ###########################################################
@@ -48,10 +45,9 @@ def envois_new_view(request):
     model = Envoi()
     model = Utils.set_model_record(model, request.params)
 
-    with transaction.manager:
-        request.dbsession.add(model)
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Envoi.__tablename__))
+    request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Envoi.__tablename__))
 
 
 
@@ -73,9 +69,7 @@ def envois_update_view(request):
 
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Envoi.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Envoi.__tablename__))
 
 """ DELETE envois"""
 @view_config(route_name='envois_by_id', request_method='DELETE', renderer='json')
@@ -93,9 +87,8 @@ def envois_delete_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(Envoi.__tablename__, record_id))
 
-    with transaction.manager:
-        request.dbsession.delete(record)
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Envoi.__tablename__))
+    request.dbsession.delete(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Envoi.__tablename__))
 
 

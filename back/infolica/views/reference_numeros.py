@@ -9,8 +9,6 @@ from infolica.models.models import AffaireNumero, Numero
 from infolica.scripts.utils import Utils
 from infolica.views.numero import affaire_numero_new_view
 
-import transaction
-
 import json
 
 
@@ -52,8 +50,6 @@ def reference_numeros_delete_view(request):
     affNum = request.dbsession.query(AffaireNumero).filter(and_(
         AffaireNumero.affaire_id == affaire_id, AffaireNumero.numero_id == numero_id)).first()
 
-    with transaction.manager:
-        request.dbsession.delete(affNum)
-        transaction.commit()
+    request.dbsession.delete(affNum)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Numero.__tablename__))

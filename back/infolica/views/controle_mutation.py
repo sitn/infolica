@@ -6,8 +6,6 @@ from infolica.models import Constant
 from infolica.models.models import ControleMutation
 from infolica.scripts.utils import Utils
 
-import transaction
-
 
 """ Return all controles_mutations"""
 @view_config(route_name='controles_mutations', request_method='GET', renderer='json')
@@ -64,12 +62,9 @@ def controles_mutations_new_view(request):
     record = ControleMutation()
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        request.dbsession.add(record)
-        request.dbsession.flush()
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControleMutation.__tablename__))
+    request.dbsession.add(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControleMutation.__tablename__))
 
 
 """ Update controle_mutation"""
@@ -93,10 +88,7 @@ def controles_mutations_update_view(request):
 
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControleMutation.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControleMutation.__tablename__))
 
 
 """ Delete controle_mutation"""
@@ -118,8 +110,6 @@ def controles_mutations_delete_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(ControleMutation.__tablename__, id))
 
-    with transaction.manager:
-        request.dbsession.delete(record)
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(ControleMutation.__tablename__))
+    request.dbsession.delete(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(ControleMutation.__tablename__))

@@ -6,8 +6,6 @@ from infolica.models.constant import Constant
 from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffaires
 from infolica.scripts.utils import Utils
 
-import transaction
-
 ###########################################################
 # ETAPES AFFAIRE
 ###########################################################
@@ -51,11 +49,10 @@ def etapes_new_view(request):
     model = AffaireEtape()
     model = Utils.set_model_record(model, request.params)
 
-    with transaction.manager:
-        request.dbsession.add(model)
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireEtape.__tablename__))
+
+    request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireEtape.__tablename__))
 
 """ DELETE remarque affaire"""
 @view_config(route_name='etapes_by_id', request_method='DELETE', renderer='json')
@@ -73,10 +70,8 @@ def etapes_delete_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(AffaireEtape.__tablename__, affaire_etape_id))
 
-    with transaction.manager:
-        request.dbsession.delete(record)
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(AffaireEtape.__tablename__))
+    request.dbsession.delete(record)
+    
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(AffaireEtape.__tablename__))
 
 

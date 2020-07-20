@@ -6,8 +6,6 @@ from infolica.models.constant import Constant
 from infolica.models.models import Preavis, PreavisType, VAffairesPreavis
 from infolica.scripts.utils import Utils
 
-import transaction
-
 ###########################################################
 # PREAVIS AFFAIRE
 ###########################################################
@@ -47,11 +45,9 @@ def preavis_new_view(request):
     model = Preavis()
     model = Utils.set_model_record(model, request.params)
 
-    with transaction.manager:
-        request.dbsession.add(model)
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Preavis.__tablename__))
+    request.dbsession.add(model)
+    
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Preavis.__tablename__))
 
 """ UPDATE preavis affaire"""
 @view_config(route_name='preavis', request_method='PUT', renderer='json')
@@ -72,9 +68,7 @@ def preavis_update_view(request):
 
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Preavis.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Preavis.__tablename__))
 
 
 """ DELETE preavis affaire"""
@@ -93,11 +87,9 @@ def preavis_delete_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(Preavis.__tablename__, preavis_id))
 
-    with transaction.manager:
-        request.dbsession.delete(record)
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Preavis.__tablename__))
+    request.dbsession.delete(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Preavis.__tablename__))
 
 
 # # Remarques Préavis
@@ -125,13 +117,8 @@ def preavis_delete_view(request):
 
 #     model = models.Preavis()
 #     model = Utils.set_model_record(model, request.params)
-
-#     
-#         with transaction.manager:
-#             request.dbsession.add(model)
-#             # Commit transaction
-#             transaction.commit()
-#             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Preavis.__tablename__))
+#     request.dbsession.add(model)
+#     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Preavis.__tablename__))
 
 #     except Exception as e:
 #         log.error(e)
@@ -151,11 +138,8 @@ def preavis_delete_view(request):
 #             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Preavis.__tablename__, preavis_id))
 
 #     record = Utils.set_model_record(record, request.params)
-
 #     
-#         with transaction.manager:
-#             transaction.commit()
-#             return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Preavis.__tablename__))
+#     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.Preavis.__tablename__))
 
 #     except Exception as e:
 #         log.error(e)
@@ -175,11 +159,8 @@ def preavis_delete_view(request):
 #             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Preavis.__tablename__, preavis_id))
 
 #     
-#         with transaction.manager:
-#             request.dbsession.delete(record)
-#             # Commit transaction
-#             transaction.commit()
-#             return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Preavis.__tablename__))
+#      request.dbsession.delete(record)
+#      return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Preavis.__tablename__))
 
 #     except Exception as e:
 #         log.error(e)

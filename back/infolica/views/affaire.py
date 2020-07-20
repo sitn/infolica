@@ -4,7 +4,7 @@ from pyramid.response import FileResponse
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import VAffaire, AffaireType, ModificationAffaireType
+from infolica.models.models import VAffaire, AffaireType, ModificationAffaireType, ModificationAffaire
 from infolica.scripts.utils import Utils
 
 import os
@@ -115,21 +115,17 @@ def affaires_new_view(request):
     model = Affaire()
     model = Utils.set_model_record(model, request.params)
 
-    with transaction.manager:
-        request.dbsession.add(model)
-        # Récupèrer l'id de la nouvelle affaire
-        request.dbsession.flush()
+    request.dbsession.add(model)
+    # Récupèrer l'id de la nouvelle affaire
+    request.dbsession.flush()
 
-        # Créer le chemin du dossier de l'affaire
-        model.chemin = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
+    # Créer le chemin du dossier de l'affaire
+    model.chemin = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
 
-        # commit
-        transaction.commit()
-
-        # Copier le dossier __template pour une nouvelle affaire
-        # copy_tree(request.registry.settings['affaireTemplateDir'], model.chemin)
-        os.mkdir(model.chemin)
-        return model.id
+    # Copier le dossier __template pour une nouvelle affaire
+    # copy_tree(request.registry.settings['affaireTemplateDir'], model.chemin)
+    os.mkdir(model.chemin)
+    return model.id
 
 
 
@@ -172,10 +168,7 @@ def affaires_update_view(request):
 
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
 
 
 """
@@ -269,10 +262,9 @@ def modification_affaires_view(request):
     # Get client instance
     model = Utils.set_model_record(ModificationAffaire(), request.params)
 
-    with transaction.manager:
-        request.dbsession.add(model)
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ModificationAffaire.__tablename__))
+    request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ModificationAffaire.__tablename__))
 
 
 """Get modification affaire by affaire_mère"""

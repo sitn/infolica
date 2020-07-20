@@ -6,7 +6,6 @@ from infolica.models.constant import Constant
 from infolica.models.models import EmolumentFacture, VEmolumentsFactures
 from infolica.scripts.utils import Utils
 
-import transaction
 ###########################################################
 # EMOLUMENTS
 ###########################################################
@@ -37,10 +36,9 @@ def emolument_facture_new_view(request):
     record = EmolumentFacture()
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        request.dbsession.add(record)
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentFacture.__tablename__))
+    request.dbsession.add(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentFacture.__tablename__))
 
 """ Update emolument_facture"""
 @view_config(route_name='emolument_facture', request_method='PUT', renderer='json')
@@ -62,9 +60,7 @@ def emolument_facture_update_view(request):
 
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentFacture.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentFacture.__tablename__))
 
 
 """ Delete emolument_facture"""
@@ -83,7 +79,6 @@ def emolument_facture_delete_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(EmolumentFacture.__tablename__, id))
 
-    with transaction.manager:
-        request.dbsession.delete(record)
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(EmolumentFacture.__tablename__))
+    request.dbsession.delete(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(EmolumentFacture.__tablename__))

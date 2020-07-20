@@ -7,8 +7,6 @@ from infolica.models import Constant
 from infolica.models.models import ControlePPE
 from infolica.scripts.utils import Utils
 
-import transaction
-
 
 """ Return all controles_ppe"""
 @view_config(route_name='controles_ppe', request_method='GET', renderer='json')
@@ -65,12 +63,9 @@ def controles_ppe_new_view(request):
     record = ControlePPE()
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        request.dbsession.add(record)
-        request.dbsession.flush()
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControlePPE.__tablename__))
+    request.dbsession.add(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControlePPE.__tablename__))
 
 
 """ Update controles_ppe"""
@@ -94,10 +89,7 @@ def controles_ppe_update_view(request):
 
     record = Utils.set_model_record(record, request.params)
 
-    with transaction.manager:
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControlePPE.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControlePPE.__tablename__))
 
 """ Delete controles_ppe"""
 @view_config(route_name='controles_ppe', request_method='DELETE', renderer='json')
@@ -118,8 +110,6 @@ def controles_ppe_delete_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(ControlePPE.__tablename__, id))
 
-    with transaction.manager:
-        request.dbsession.delete(record)
-        # Commit transaction
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(ControlePPE.__tablename__))
+    request.dbsession.delete(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(ControlePPE.__tablename__))
