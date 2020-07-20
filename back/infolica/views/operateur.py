@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*--
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
@@ -11,21 +12,25 @@ from infolica.scripts.utils import Utils
 from datetime import datetime
 
 
-""" Return all operateurs"""
 @view_config(route_name='operateurs', request_method='GET', renderer='json')
 @view_config(route_name='operateurs_s', request_method='GET', renderer='json')
 def operateurs_view(request):
+    """
+    Return all operateurs
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(Operateur).all()
     return Utils.serialize_many(query)
-    
 
-""" Return operateur by id"""
+
 @view_config(route_name='operateur_by_id', request_method='GET', renderer='json')
 def operateur_by_id_view(request):
+    """
+    Return operateur by id
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -36,10 +41,12 @@ def operateur_by_id_view(request):
     return Utils.serialize_one(query)
 
 
-""" Search operateurs"""
 @view_config(route_name='recherche_operateurs', request_method='POST', renderer='json')
 @view_config(route_name='recherche_operateurs_s', request_method='POST', renderer='json')
 def operateurs_search_view(request):
+    """
+    Search operateurs
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -56,10 +63,13 @@ def operateurs_search_view(request):
         *conditions).limit(search_limit).all()
     return Utils.serialize_many(query)
 
-""" Add new operateur"""
+
 @view_config(route_name='operateurs', request_method='POST', renderer='json')
 @view_config(route_name='operateurs_s', request_method='POST', renderer='json')
 def operateurs_new_view(request):
+    """
+    Add new operateur
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['fonction_admin']):
         raise exc.HTTPForbidden()
@@ -68,14 +78,16 @@ def operateurs_new_view(request):
     model = Utils.set_model_record(Operateur(), request.params)
 
     request.dbsession.add(model)
- 
+
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Operateur.__tablename__))
 
 
-""" Update operateur"""
 @view_config(route_name='operateurs', request_method='PUT', renderer='json')
 @view_config(route_name='operateurs_s', request_method='PUT', renderer='json')
 def operateurs_update_view(request):
+    """
+    Update operateur
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['fonction_admin']):
         raise exc.HTTPForbidden()
@@ -96,10 +108,13 @@ def operateurs_update_view(request):
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Operateur.__tablename__))
 
-""" Delete operateur"""
+
 @view_config(route_name='operateurs', request_method='DELETE', renderer='json')
 @view_config(route_name='operateurs_s', request_method='DELETE', renderer='json')
 def operateurs_delete_view(request):
+    """
+    Delete operateur
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['fonction_admin']):
         raise exc.HTTPForbidden()
@@ -116,18 +131,20 @@ def operateurs_delete_view(request):
             Operateur.__tablename__, id_operateur))
 
     model.sortie = datetime.utcnow()
-    
+
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Operateur.__tablename__))
 
 
-""" Add nouveaux operateurs AD"""
 @view_config(route_name='add_operateurs_ad', request_method='GET', renderer='json')
 @view_config(route_name='add_operateurs_ad_s', request_method='GET', renderer='json')
 def add_operateurs_ad_view(request):
+    """
+    Add nouveaux operateurs AD
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['fonction_admin']):
         raise exc.HTTPForbidden()
-    
+
     settings = request.registry.settings
     login_attr = settings['ldap_user_attribute_login']
     op_added = 0
@@ -162,6 +179,3 @@ def add_operateurs_ad_view(request):
         return save_response
     else:
         raise exc.HTTPNoContent
-
-
-

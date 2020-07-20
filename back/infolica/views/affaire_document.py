@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*--
 from pyramid.view import view_config
 from pyramid.response import FileResponse
 import pyramid.httpexceptions as exc
@@ -10,28 +11,31 @@ from infolica.scripts.utils import Utils
 import os
 import shutil
 from datetime import datetime
-from cgi import FieldStorage
 
 
 ###########################################################
 # DOCUMENTS (LISTE) AFFAIRE
 ###########################################################
 
-""" GET documents folder"""
 @view_config(route_name='affaire_dossier_by_affaire_id', request_method='GET', renderer='json')
 def affaire_dossier_view(request):
+    """
+    GET documents folder
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
-    
+
     affaire_dossier = request.registry.settings["affaires_directory"]
     affaire_id = request.matchdict['id']
     return os.path.join(affaire_dossier, affaire_id)
 
 
-""" GET documents affaire"""
 @view_config(route_name='affaire_documents_by_affaire_id', request_method='GET', renderer='json')
 def affaire_documents_view(request):
+    """
+    GET documents affaire
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -49,17 +53,21 @@ def affaire_documents_view(request):
     return documents
 
 
-""" Return all documents types """
 @view_config(route_name='types_documents', request_method='GET', renderer='json')
 @view_config(route_name='types_documents_s', request_method='GET', renderer='json')
 def types_documents_view(request):
+    """
+    Return all documents types
+    """
     query = request.dbsession.query(DocumentType).all()
     return Utils.serialize_many(query)
 
 
-"""Upload document"""
 @view_config(route_name='upload_affaire_document', request_method='POST', renderer='json')
 def upload_affaire_document_view(request):
+    """
+    Upload document
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
         raise exc.HTTPForbidden()
@@ -89,10 +97,12 @@ def upload_affaire_document_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Document.__tablename__))
 
 
-"""Download document"""
 @view_config(route_name='download_affaire_document', request_method='GET')
 @view_config(route_name='download_affaire_document_s', request_method='GET')
 def download_affaire_document_view(request):
+    """
+    Download document
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
         raise exc.HTTPForbidden()
@@ -114,9 +124,11 @@ def download_affaire_document_view(request):
     return response
 
 
-"""Delete document"""
 @view_config(route_name='delete_affaire_document', request_method='DELETE', renderer='json')
 def delete_affaire_document_view(request):
+    """
+    Delete document
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
         raise exc.HTTPForbidden()

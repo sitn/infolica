@@ -1,10 +1,12 @@
+# -*- coding: utf-8 -*--
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 from pyramid.response import FileResponse
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import VAffaire, AffaireType, ModificationAffaireType, ModificationAffaire
+from infolica.models.models import Affaire, AffaireType, ModificationAffaire
+from infolica.models.models import ModificationAffaireType, VAffaire
 from infolica.models.mssql_models import VBalance
 from infolica.scripts.utils import Utils
 
@@ -18,12 +20,13 @@ from docxtpl import DocxTemplate, RichText
 # AFFAIRE
 ###########################################################
 
-"""
-Return all affaires
-"""
+
 @view_config(route_name='affaires', request_method='GET', renderer='json')
 @view_config(route_name='affaires_s', request_method='GET', renderer='json')
 def affaires_view(request):
+    """
+    Return all affaires
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -32,11 +35,11 @@ def affaires_view(request):
     return Utils.serialize_many(query)
 
 
-"""
-Return affaires by id
-"""
 @view_config(route_name='affaire_by_id', request_method='GET', renderer='json')
 def affaire_by_id_view(request):
+    """
+    Return affaires by id
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -47,12 +50,12 @@ def affaire_by_id_view(request):
     return Utils.serialize_one(one)
 
 
-"""
-Search affaires
-"""
 @view_config(route_name='recherche_affaires', request_method='POST', renderer='json')
 @view_config(route_name='recherche_affaires_s', request_method='POST', renderer='json')
 def affaires_search_view(request):
+    """
+    Search affaires
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -66,33 +69,39 @@ def affaires_search_view(request):
     return Utils.serialize_many(query)
 
 
-"""
-Return all types affaires
-"""
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
 @view_config(route_name='types_affaires_s', request_method='GET', renderer='json')
 def types_affaires_view(request):
-    types_affaires = request.dbsession.query(AffaireType).filter(AffaireType.ordre != None).order_by(AffaireType.ordre.asc()).all()
+    """
+    Return all types affaires
+    """
+    types_affaires = request.dbsession.query(AffaireType).filter(
+        AffaireType.ordre != None
+    ).order_by(AffaireType.ordre.asc()).all()
 
     types_affaires = Utils.serialize_many(types_affaires)
     return types_affaires
 
-"""
-Return all types modification affaire
-"""
+
 @view_config(route_name='types_modification_affaire', request_method='GET', renderer='json')
 @view_config(route_name='types_modification_affaire_s', request_method='GET', renderer='json')
 def types_modification_affaire_view(request):
-    records = request.dbsession.query(ModificationAffaireType).filter(ModificationAffaireType.ordre != None).order_by(ModificationAffaireType.ordre.asc()).all()
+    """
+    Return all types modification affaire
+    """
+    records = request.dbsession.query(ModificationAffaireType).filter(
+        ModificationAffaireType.ordre != None
+    ).order_by(ModificationAffaireType.ordre.asc()).all()
+
     return Utils.serialize_many(records)
 
 
-"""
-Add new affaire
-"""
 @view_config(route_name='affaires', request_method='POST', renderer='json')
 @view_config(route_name='affaires_s', request_method='POST', renderer='json')
 def affaires_new_view(request):
+    """
+    Add new affaire
+    """
     # Get role depending on affaire type
     affaire_type = request.params['type_id'] if 'type_id' in request.params else None
 
@@ -129,13 +138,12 @@ def affaires_new_view(request):
     return model.id
 
 
-
-"""
-Update affaire
-"""
 @view_config(route_name='affaires', request_method='PUT', renderer='json')
 @view_config(route_name='affaires_s', request_method='PUT', renderer='json')
 def affaires_update_view(request):
+    """
+    Update affaire
+    """
     # id_affaire
     id_affaire = request.params['id_affaire'] if 'id_affaire' in request.params else None
 
@@ -172,12 +180,12 @@ def affaires_update_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
 
 
-"""
-Create  file
-"""
 @view_config(route_name='courrier_affaire', request_method='POST', renderer='json')
 @view_config(route_name='courrier_affaire_s', request_method='POST', renderer='json')
 def courrier_affaire_view(request):
+    """
+    Create  file
+    """
     settings = request.registry.settings
     mails_templates_directory = settings['mails_templates_directory']
     temporary_directory = settings['temporary_directory']
@@ -206,12 +214,12 @@ def courrier_affaire_view(request):
     return {'filename': filename}
 
 
-"""
-Send file
-"""
 @view_config(route_name='courrier_affaire', request_method='GET')
 @view_config(route_name='courrier_affaire_s', request_method='GET')
 def download_courrier_affaire_view(request):
+    """
+    Send file
+    """
     settings = request.registry.settings
     filename = request.params['filename']
     temporary_directory = settings["temporary_directory"]
@@ -230,12 +238,12 @@ def download_courrier_affaire_view(request):
         raise exc.HTTPNotFound("Le fichier est indisponible")
 
 
-"""
-Supprimer le fichier une fois téléchargé
-"""
 @view_config(route_name='courrier_affaire', request_method='DELETE', renderer='string')
 @view_config(route_name='courrier_affaire_s', request_method='DELETE', renderer='string')
 def delete_courrier_affaire_view(request):
+    """
+    Supprimer le fichier une fois téléchargé
+    """
     settings = request.registry.settings
     filename = request.params['filename']
     temporary_directory = settings["temporary_directory"]
@@ -243,19 +251,18 @@ def delete_courrier_affaire_view(request):
 
     if os.path.exists(file_path):
         os.remove(file_path)
-        response = True
-
         return "ok"
 
     else:
         raise exc.HTTPNotFound("Le fichier est indisponible")
 
-"""
-Modification affaire
-"""
+
 @view_config(route_name='modification_affaires', request_method='POST', renderer='json')
 @view_config(route_name='modification_affaires_s', request_method='POST', renderer='json')
 def modification_affaires_view(request):
+    """
+    Modification affaire
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
         raise exc.HTTPForbidden()
@@ -268,38 +275,47 @@ def modification_affaires_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ModificationAffaire.__tablename__))
 
 
-"""Get modification affaire by affaire_mère"""
 @view_config(route_name="modification_affaire_by_affaire_mere", request_method="GET", renderer="json")
 def modification_affaire_by_affaire_mere_view(request):
+    """
+    Get modification affaire by affaire_mère
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_mere_id = request.matchdict["id"]
 
-    records = request.dbsession.query(ModificationAffaire).filter(ModificationAffaire.affaire_id_fille == affaire_mere_id).all()
+    records = request.dbsession.query(ModificationAffaire).filter(
+        ModificationAffaire.affaire_id_fille == affaire_mere_id
+    ).all()
 
     return Utils.serialize_many(records)
 
 
-"""Get modification affaire by affaire_fille"""
 @view_config(route_name="modification_affaire_by_affaire_fille", request_method="GET", renderer="json")
 def modification_affaire_by_affaire_fille_view(request):
+    """
+    Get modification affaire by affaire_fille
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_fille_id = request.matchdict["id"]
 
-    records = request.dbsession.query(ModificationAffaire).filter(ModificationAffaire.affaire_id_mere == affaire_fille_id).all()
+    records = request.dbsession.query(ModificationAffaire).filter(
+        ModificationAffaire.affaire_id_mere == affaire_fille_id
+    ).all()
 
     return Utils.serialize_many(records)
 
-"""
-Returns balance of an affaire
-"""
+
 @view_config(route_name='affaire_balance_get', request_method='GET', renderer='json')
 def affaire_balance_get(request):
+    """
+    Returns balance of an affaire
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*--
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 from pyramid.response import Response
@@ -15,12 +16,12 @@ import logging
 log = logging.getLogger(__name__)
 
 
-########################################################
-# Login
-########################################################
 @view_config(route_name='login', request_method='POST', renderer='json')
 @view_config(route_name='login_s', request_method='POST', renderer='json')
 def login_view(request):
+    """
+    Login
+    """
     response = None
 
     login = None
@@ -43,7 +44,7 @@ def login_view(request):
 
     try:
         resp_json = LDAPQuery.do_login(request, login, password)
-    
+
     except Exception as error:
         log.error(str(error))
         return {'error': 'true', 'code': 403, 'message': str(error)}
@@ -66,11 +67,11 @@ def login_view(request):
     return response
 
 
-########################################################
-# Logout
-########################################################
 @view_config(route_name='logout', request_method='GET', renderer='json')
 def logout_view(request):
+    """
+    Logout
+    """
     response = None
     try:
         response = LDAPQuery.do_logout(request)
@@ -80,4 +81,3 @@ def logout_view(request):
         return {'error': 'true', 'code': 403, 'message': str(error)}
 
     return response
-

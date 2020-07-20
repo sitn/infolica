@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*--
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
@@ -10,10 +11,13 @@ from infolica.scripts.utils import Utils
 # FACTURE
 ###########################################################
 
-""" Return all factures"""
+
 @view_config(route_name='factures', request_method='GET', renderer='json')
 @view_config(route_name='factures_s', request_method='GET', renderer='json')
 def factures_view(request):
+    """
+    Return all factures
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -22,9 +26,11 @@ def factures_view(request):
     return Utils.serialize_many(query)
 
 
-""" Return all factures in affaire"""
 @view_config(route_name='affaires_factures_by_affaire_id', request_method='GET', renderer='json')
 def affaires_factures_view(request):
+    """
+    Return all factures in affaire
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -37,10 +43,12 @@ def affaires_factures_view(request):
     return Utils.serialize_many(query)
 
 
-""" Add new facture"""
 @view_config(route_name='factures', request_method='POST', renderer='json')
 @view_config(route_name='factures_s', request_method='POST', renderer='json')
 def factures_new_view(request):
+    """
+    Add new facture
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise exc.HTTPForbidden()
@@ -53,10 +61,12 @@ def factures_new_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Facture.__tablename__))
 
 
-""" Update facture"""
 @view_config(route_name='factures', request_method='PUT', renderer='json')
 @view_config(route_name='factures_s', request_method='PUT', renderer='json')
 def factures_update_view(request):
+    """
+    Update facture
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise exc.HTTPForbidden()
@@ -80,10 +90,12 @@ def factures_update_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Facture.__tablename__))
 
 
-""" Delete facture"""
 @view_config(route_name='factures', request_method='DELETE', renderer='json')
 @view_config(route_name='factures_s', request_method='DELETE', renderer='json')
 def factures_delete_view(request):
+    """
+    Delete facture
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise exc.HTTPForbidden()
@@ -99,6 +111,3 @@ def factures_delete_view(request):
     request.dbsession.delete(facture)
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Facture.__tablename__))
-
-
-

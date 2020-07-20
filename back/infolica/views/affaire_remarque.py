@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*--
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
@@ -10,9 +11,12 @@ from infolica.scripts.utils import Utils
 # REMARQUES AFFAIRE
 ###########################################################
 
-""" GET remarque affaire"""
+
 @view_config(route_name='affaires_remarques_by_affaire_id', request_method='GET', renderer='json')
 def affaires_remarques_view(request):
+    """
+    GET remarque affaire
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -31,10 +35,12 @@ def affaires_remarques_view(request):
     return ra_json
 
 
-""" POST remarque affaire"""
 @view_config(route_name='remarques_affaires', request_method='POST', renderer='json')
 @view_config(route_name='remarques_affaires_s', request_method='POST', renderer='json')
 def affaires_remarques_new_view(request):
+    """
+    POST remarque affaire
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_remarque_edition']):
         raise exc.HTTPForbidden()
@@ -47,10 +53,12 @@ def affaires_remarques_new_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(RemarqueAffaire.__tablename__))
 
 
-""" PUT remarque affaire"""
 @view_config(route_name='remarques_affaires', request_method='PUT', renderer='json')
 @view_config(route_name='remarques_affaires_s', request_method='PUT', renderer='json')
 def remarques_affaires_update_view(request):
+    """
+    PUT remarque affaire
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_remarque_edition']):
         raise exc.HTTPForbidden()
@@ -69,9 +77,11 @@ def remarques_affaires_update_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(RemarqueAffaire.__tablename__))
 
 
-""" DELETE remarque affaire"""
 @view_config(route_name='remarques_affaires_by_id', request_method='DELETE', renderer='json')
 def remarques_affaires_delete_view(request):
+    """
+    DELETE remarque affaire
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_remarque_edition']):
         raise exc.HTTPForbidden()

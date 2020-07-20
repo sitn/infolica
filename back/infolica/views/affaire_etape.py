@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*--
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
@@ -10,10 +11,13 @@ from infolica.scripts.utils import Utils
 # ETAPES AFFAIRE
 ###########################################################
 
-""" GET etapes index"""
+
 @view_config(route_name='etapes_index', request_method='GET', renderer='json')
 @view_config(route_name='etapes_index_s', request_method='GET', renderer='json')
 def etapes_index_view(request):
+    """
+    GET etapes index
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -23,9 +27,12 @@ def etapes_index_view(request):
         ).order_by(AffaireEtapeIndex.ordre.asc()).all()
     return Utils.serialize_many(records)
 
-""" GET etapes affaire"""
+
 @view_config(route_name='affaire_etapes_by_affaire_id', request_method='GET', renderer='json')
 def affaires_etapes_view(request):
+    """
+    GET etapes affaire
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -38,10 +45,13 @@ def affaires_etapes_view(request):
 
     return Utils.serialize_many(records)
 
-""" POST remarque affaire"""
+
 @view_config(route_name='etapes', request_method='POST', renderer='json')
 @view_config(route_name='etapes_s', request_method='POST', renderer='json')
 def etapes_new_view(request):
+    """
+    POST remarque affaire
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_etape_edition']):
         raise exc.HTTPForbidden()
@@ -49,14 +59,16 @@ def etapes_new_view(request):
     model = AffaireEtape()
     model = Utils.set_model_record(model, request.params)
 
-
     request.dbsession.add(model)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireEtape.__tablename__))
 
-""" DELETE remarque affaire"""
+
 @view_config(route_name='etapes_by_id', request_method='DELETE', renderer='json')
 def etapes_delete_view(request):
+    """
+    DELETE remarque affaire
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_etape_edition']):
         raise exc.HTTPForbidden()
@@ -71,7 +83,5 @@ def etapes_delete_view(request):
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(AffaireEtape.__tablename__, affaire_etape_id))
 
     request.dbsession.delete(record)
-    
+
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(AffaireEtape.__tablename__))
-
-

@@ -1,9 +1,9 @@
+# -*- coding: utf-8 -*--
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
 from sqlalchemy import and_
 
-from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import AffaireNumero, Numero
 from infolica.scripts.utils import Utils
@@ -12,10 +12,12 @@ from infolica.views.numero import affaire_numero_new_view
 import json
 
 
-""" Add numéro muté in affaire"""
 @view_config(route_name='reference_numeros', request_method='POST', renderer='json')
 @view_config(route_name='reference_numeros_s', request_method='POST', renderer='json')
 def reference_numeros_new_view(request):
+    """
+    Add numéro muté in affaire
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
@@ -34,10 +36,12 @@ def reference_numeros_new_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Numero.__tablename__))
 
 
-""" Delete numéro muté in affaire"""
 @view_config(route_name='reference_numeros', request_method='DELETE', renderer='json')
 @view_config(route_name='reference_numeros_s', request_method='DELETE', renderer='json')
 def reference_numeros_delete_view(request):
+    """
+    Add numéro muté in affaire
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
