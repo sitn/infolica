@@ -4,6 +4,7 @@ from .. import models
 from ..scripts.ldap_query import LDAPQuery
 import json
 import os
+import uuid
 
 
 unite_ppe_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -41,8 +42,11 @@ class Utils(object):
                 if n != '_sa_instance_state':
                     if isinstance(d[n], (datetime, date)):
                         item[n] = d[n].isoformat()
+                    elif isinstance(d[n], uuid.UUID):
+                        item[n] = str(d[n])
                     else:
                         item[n] = d[n]
+
             master.append(item)
         return master
 
@@ -89,7 +93,7 @@ class Utils(object):
             if param.startswith('_'):
                 param = param[1:]
                 condition_not_in = True
-            
+
             if condition_not_in:
                 conditions.append(~getattr(model, param).in_(json.loads(params["_"+param])))
                 condition_not_in = False
@@ -138,7 +142,7 @@ class Utils(object):
             n = len(unite_ppe_list)
             unite = ""
             c = 0
-            while idx: 
+            while idx:
                 idx, idx_ = divmod(idx-c, n)
                 unite = unite_ppe_list[idx_] + unite
                 c = 1
@@ -235,4 +239,3 @@ class Utils(object):
     def create_affaire_folder(cls, affaire_folder):
         if not os.path.isdir(affaire_folder):
             os.mkdir(affaire_folder)
-

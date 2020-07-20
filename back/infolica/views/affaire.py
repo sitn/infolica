@@ -1,7 +1,7 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 from .. import models
-from infolica.models.mssql_models import VImmeubles
+from infolica.models.mssql_models import VBalance
 import transaction
 from ..models import Constant
 from ..exceptions.custom_error import CustomError
@@ -18,25 +18,7 @@ from docxtpl import DocxTemplate, RichText
 # AFFAIRE
 ###########################################################
 
-
-""" 
-Return all affaires
 """
-@view_config(route_name='test_mssql', request_method='GET', renderer='json')
-def test_mssql(request):
-    # Check connected
-
-    query = request.mssql_dbsession.query(VImmeubles).limit(100).all()
-    
-    asd
-    
-    return {}
-
-
-
-
-
-""" 
 Return all affaires
 """
 @view_config(route_name='affaires', request_method='GET', renderer='json')
@@ -50,7 +32,7 @@ def affaires_view(request):
     return Utils.serialize_many(query)
 
 
-""" 
+"""
 Return affaires by id
 """
 @view_config(route_name='affaire_by_id', request_method='GET', renderer='json')
@@ -65,7 +47,7 @@ def affaire_by_id_view(request):
     return Utils.serialize_one(one)
 
 
-""" 
+"""
 Search affaires
 """
 @view_config(route_name='recherche_affaires', request_method='POST', renderer='json')
@@ -84,7 +66,7 @@ def affaires_search_view(request):
     return Utils.serialize_many(query)
 
 
-""" 
+"""
 Return all types affaires
 """
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
@@ -95,7 +77,7 @@ def types_affaires_view(request):
     types_affaires = Utils.serialize_many(types_affaires)
     return types_affaires
 
-""" 
+"""
 Return all types modification affaire
 """
 @view_config(route_name='types_modification_affaire', request_method='GET', renderer='json')
@@ -105,7 +87,7 @@ def types_modification_affaire_view(request):
     return Utils.serialize_many(records)
 
 
-""" 
+"""
 Add new affaire
 """
 @view_config(route_name='affaires', request_method='POST', renderer='json')
@@ -152,7 +134,7 @@ def affaires_new_view(request):
 
 
 
-""" 
+"""
 Update affaire
 """
 @view_config(route_name='affaires', request_method='PUT', renderer='json')
@@ -198,7 +180,7 @@ def affaires_update_view(request):
 
 
 """
-Create  file 
+Create  file
 """
 @view_config(route_name='courrier_affaire', request_method='POST', renderer='json')
 @view_config(route_name='courrier_affaire_s', request_method='POST', renderer='json')
@@ -313,5 +295,20 @@ def modification_affaire_by_affaire_fille_view(request):
     affaire_fille_id = request.matchdict["id"]
 
     records = request.dbsession.query(models.ModificationAffaire).filter(models.ModificationAffaire.affaire_id_mere == affaire_fille_id).all()
+
+    return Utils.serialize_many(records)
+
+"""
+Returns balance of an affaire
+"""
+@view_config(route_name='affaire_balance_get', request_method='GET', renderer='json')
+def affaire_balance_get(request):
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    affaire_id = request.matchdict["id"]
+
+    records = request.mssql_dbsession.query(VBalance).filter(VBalance.affaire == affaire_id).all()
 
     return Utils.serialize_many(records)

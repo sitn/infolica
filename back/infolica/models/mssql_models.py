@@ -14,8 +14,12 @@ from sqlalchemy import (
 from .meta import Base_mssql
 
 
-class VImmeubles(Base_mssql):
-    __tablename__ = 'v_Immeubles'
+class VBalance(Base_mssql):
+    __tablename__ = 'v_Balance'
     __table_args__ = {'schema': 'dbo'}
-    numcom = Column(Integer)
-    fkimm = Column(Text, primary_key=True)
+    id = Column(Text, primary_key=True)
+    ancien = Column(Text)
+    nouveau = Column(Text)
+    genre = Column(Integer)
+    base = Column(Text)
+    affaire = Column(Text)
