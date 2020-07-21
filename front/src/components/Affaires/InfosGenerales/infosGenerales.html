@@ -29,8 +29,8 @@
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-100 md-small-size-100">
                     <md-field>
-                        <label v-if="infoGenReadonly">Nom</label>
-                        <label v-else><strong style="color: blue">Nom</strong></label>
+                        <label v-if="infoGenReadonly">Description</label>
+                        <label v-else><strong style="color: blue">Description</strong></label>
                         <md-textarea v-model="affaire.nom" :readonly="infoGenReadonly" md-autogrow>
                         </md-textarea>
                     </md-field>
@@ -94,65 +94,67 @@
                 </div>
             </div>
 
-            <!-- Clients (read-only) -->
-            <div class="md-layout md-gutter" v-if="infoGenReadonly">
-                <div class="md-layout-item md-size-50 md-small-size-100">
-                    <md-field>
-                        <label>Demandeur</label>
-                        <md-textarea v-model="affaire.client_commande_nom_" readonly></md-textarea>
-                        <md-button class="md-primary md-icon-button md-dense" 
-                            v-if="affaire.client_commande_id !== '-'"
-                            @click="openClientEditor('client_commande_id')">
-                            <md-icon>open_in_new</md-icon>
+            <div id="clients" v-if="affaire.type_id !== typesAffaires.cadastration">
+                <!-- Clients (read-only) -->
+                <div class="md-layout md-gutter" v-if="infoGenReadonly">
+                    <div class="md-layout-item md-size-50 md-small-size-100">
+                        <md-field>
+                            <label>Demandeur</label>
+                            <md-textarea v-model="affaire.client_commande_nom_" readonly></md-textarea>
+                            <md-button class="md-primary md-icon-button md-dense" 
+                                v-if="affaire.client_commande_id !== '-'"
+                                @click="openClientEditor('client_commande_id')">
+                                <md-icon>open_in_new</md-icon>
+                            </md-button>
+                        </md-field>
+                    </div>
+    
+                    <div class="md-layout-item md-size-50 md-small-size-100">
+                        <md-field>
+                            <label>Client envoi</label>
+                            <md-textarea v-model="affaire.client_envoi_nom_" readonly></md-textarea>
+                            <md-button class="md-primary md-icon-button md-dense" 
+                                v-if="affaire.client_envoi_id !== '-'"
+                                @click="openClientEditor('client_envoi_id')">
+                                <md-icon>open_in_new</md-icon>
                         </md-button>
-                    </md-field>
+                        </md-field>
+                    </div>
                 </div>
-
-                <div class="md-layout-item md-size-50 md-small-size-100">
-                    <md-field>
-                        <label>Client envoi</label>
-                        <md-textarea v-model="affaire.client_envoi_nom_" readonly></md-textarea>
-                        <md-button class="md-primary md-icon-button md-dense" 
-                            v-if="affaire.client_envoi_id !== '-'"
-                            @click="openClientEditor('client_envoi_id')">
-                            <md-icon>open_in_new</md-icon>
-                    </md-button>
-                    </md-field>
-                </div>
-            </div>
-
-            <!-- Clients (edition) -->
-            <div class="md-layout md-gutter" v-else>
-                <div class="md-layout-item md-size-100 md-small-size-100">
-                    <md-autocomplete v-model="form.client_commande"
-                        :md-options="searchClientsListe"
-                        @md-changed="searchClients(form.client_commande)"
-                        required md-dense>
-                        
-                        <label><strong style="color: blue">Demandeur</strong></label>
-                        <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                            Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
-                        </template>
-                    </md-autocomplete>
-                </div>
-
-                <div class="md-layout-item md-size-100 md-small-size-100">
-                    <md-autocomplete v-model="form.client_envoi"
-                        :md-options="searchClientsListe"
-                        @md-changed="searchClients(form.client_envoi)"
-                        required md-dense>
-                        
-                        <label><strong style="color: blue">Client envoi</strong></label>
-                        <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                            Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
-                        </template>
-                    </md-autocomplete>
-                </div>
-                <div class="md-layout-item md-size-100 md-small-size-100" style="float: right;">
-                    <md-field>
-                        <label>Complément client envoi</label>
-                        <md-input v-model="affaire.client_envoi_complement" ></md-input>
-                    </md-field>
+    
+                <!-- Clients (edition) -->
+                <div class="md-layout md-gutter" v-else>
+                    <div class="md-layout-item md-size-100 md-small-size-100">
+                        <md-autocomplete v-model="form.client_commande"
+                            :md-options="searchClientsListe"
+                            @md-changed="searchClients(form.client_commande)"
+                            required md-dense>
+                            
+                            <label><strong style="color: blue">Demandeur</strong></label>
+                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                            </template>
+                        </md-autocomplete>
+                    </div>
+    
+                    <div class="md-layout-item md-size-100 md-small-size-100">
+                        <md-autocomplete v-model="form.client_envoi"
+                            :md-options="searchClientsListe"
+                            @md-changed="searchClients(form.client_envoi)"
+                            required md-dense>
+                            
+                            <label><strong style="color: blue">Client envoi</strong></label>
+                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                            </template>
+                        </md-autocomplete>
+                    </div>
+                    <div class="md-layout-item md-size-50 md-small-size-100" style="float: right;">
+                        <md-field>
+                            <label>Par</label>
+                            <md-input v-model="form.client_envoi_complement" ></md-input>
+                        </md-field>
+                    </div>
                 </div>
             </div>
 
@@ -172,30 +174,30 @@
                         <md-input v-model="affaire.date_validation" readonly></md-input>
                     </md-field>
                     <!-- Affiche la date de validation en mode édition -->
-                    <md-datepicker v-model="affaire.date_validation" md-immediately v-else>
-                        <label><strong style="color: blue">Date de la validation</strong></strong></label>
+                    <md-datepicker v-model="affaire.date_validation" md-immediately v-else @md-closed="onSelectDate" >
+                        <label><strong style="color: blue">Date de validation</strong></label>
                     </md-datepicker>
                 </div>
                 <div class="md-layout-item md-size-25 md-small-size-100">
                     <!-- Affiche la date de envoi en mode infoGenReadonly -->
-                    <md-field v-if="infoGenReadonly">
+                    <md-field v-if="infoGenReadonly || affaire.date_validation === null">
                         <label>Date d'envoi</label>
                         <md-input v-model="affaire.date_envoi" readonly></md-input>
                     </md-field>
                     <!-- Affiche la date de clôture en mode édition -->
-                    <md-datepicker v-model="affaire.date_envoi" md-immediately v-else>
+                    <md-datepicker v-model="affaire.date_envoi" md-immediately v-else  @md-closed="onSelectDate">
                         <label><strong style="color: blue">Date d'envoi</strong></label>
                     </md-datepicker>
                 </div>
                 <div class="md-layout-item md-size-25 md-small-size-100">
                     <!-- Affiche la date de clôture en mode infoGenReadonly -->
-                    <md-field v-if="infoGenReadonly">
+                    <md-field v-if="infoGenReadonly || affaire.date_envoi === null">
                         <label>Date de clôture</label>
                         <md-input v-model="affaire.date_cloture" readonly></md-input>
                     </md-field>
                     <!-- Affiche la date de clôture en mode édition -->
-                    <md-datepicker v-model="affaire.date_cloture" md-immediately v-else>
-                        <label><strong style="color: blue">Date de la clôture</strong></label>
+                    <md-datepicker v-model="affaire.date_cloture" md-immediately v-else @md-closed="onSelectDate">
+                        <label><strong style="color: blue">Date de clôture</strong></label>
                     </md-datepicker>
                 </div>
             </div>
@@ -219,4 +221,16 @@
 
         </md-card-content>
     </md-card>
+
+
+    <!-- Date alert -->
+    <md-dialog :md-active.sync="showDateAlert">
+        <md-dialog-title>Date incohérente</md-dialog-title>
+        <md-dialog-content>
+            La {{ controle_dateItem }} entrée précède la date d'ouverture.
+        </md-dialog-content>
+        <md-dialog-actions>
+            <md-button @click="onAcceptDateAlert">Ok</md-button>
+        </md-dialog-actions>
+    </md-dialog>
 </div>

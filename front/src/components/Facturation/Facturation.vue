@@ -84,7 +84,9 @@ export default {
               x.montant_tva = numeral(x.montant_tva).format("0.00"),
               x.montant_total = numeral(x.montant_total).format("0.00"),
               x.client_ = [
+                x.client_attention_de,
                 x.client_entreprise,
+                x.client_complement,
                 [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
                 x.client_adresse,
                 x.client_case_postale,
@@ -351,6 +353,14 @@ export default {
      */
     setFinanceFormat(key) {
       this.selectedFacture[key] = numeral(this.selectedFacture[key]).format('0.00');
+    },
+
+    /**
+     * openCreateClient
+     */
+    openCreateClient() {
+      let routedata = this.$router.resolve({ name: "ClientsNew" });
+      window.open(routedata.href, "_blank");
     }
   },
 

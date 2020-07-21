@@ -35,7 +35,7 @@ import { validationMixin } from 'vuelidate'
         fax: null,
         tel_portable: null,
         mail: null,
-        entree: new Date(),
+        entree: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
         no_sap: null,
         no_bdp_bdee: null
       },
@@ -140,6 +140,7 @@ import { validationMixin } from 'vuelidate'
             }
           )
           .then(response =>{
+            this.$router.push({ "name": "Clients" });
             this.handleSaveDataSuccess(response);
           })
           //Error 
@@ -161,6 +162,7 @@ import { validationMixin } from 'vuelidate'
             }
           )
           .then(response =>{
+            this.$router.push({ "name": "Clients" });
             this.handleSaveDataSuccess(response);
           })
           //Error 
@@ -177,39 +179,22 @@ import { validationMixin } from 'vuelidate'
       initPostData () {
         var formData = new FormData();
         formData.append("type_client", this.form.type_client);
-
-        if(this.form.entreprise)
-          formData.append("entreprise", this.form.entreprise);
-        if(this.form.titre)
-          formData.append("titre", this.form.titre);
-        if(this.form.nom)
-          formData.append("nom", this.form.nom);
-        if(this.form.prenom)
-          formData.append("prenom", this.form.prenom);
-        if(this.form.represente_par)
-          formData.append("represente_par", this.form.represente_par);
-        if(this.form.adresse)
-          formData.append("adresse", this.form.adresse);
-        if(this.form.npa)
-          formData.append("npa", this.form.npa);
-        if(this.form.localite)
-          formData.append("localite", this.form.localite);
-        if(this.form.case_postale)
-          formData.append("case_postale", this.form.case_postale);
-        if(this.form.tel_fixe)
-          formData.append("tel_fixe", this.form.tel_fixe);
-        if(this.form.fax)
-          formData.append("fax", this.form.fax);
-        if(this.form.tel_portable)
-          formData.append("tel_portable", this.form.tel_portable);
-        if(this.form.mail)
-          formData.append("mail", this.form.mail);
-        if(this.form.entree)
-          formData.append("entree", moment(this.form.entree, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-        if(this.form.no_sap)
-          formData.append("no_sap", this.form.no_sap);
-        if(this.form.no_bdp_bdee)
-          formData.append("no_bdp_bdee", this.form.no_bdp_bdee);
+        formData.append("entreprise", this.form.entreprise || null);
+        formData.append("titre", this.form.titre || null);
+        formData.append("nom", this.form.nom || null);
+        formData.append("prenom", this.form.prenom || null);
+        formData.append("represente_par", this.form.represente_par || null);
+        formData.append("adresse", this.form.adresse || null);
+        formData.append("npa", this.form.npa || null);
+        formData.append("localite", this.form.localite || null);
+        formData.append("case_postale", this.form.case_postale || null);
+        formData.append("tel_fixe", this.form.tel_fixe || null);
+        formData.append("fax", this.form.fax || null);
+        formData.append("tel_portable", this.form.tel_portable || null);
+        formData.append("mail", this.form.mail || null);
+        formData.append("no_sap", this.form.no_sap || null);
+        formData.append("no_bdp_bdee", this.form.no_bdp_bdee || null);
+        formData.append("entree", moment(this.form.entree, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
 
         return formData;
       },
@@ -219,10 +204,9 @@ import { validationMixin } from 'vuelidate'
       */
       handleSaveDataSuccess (response) {
         if(response && response.data){
-          this.lastRecord = `${this.form.prenom} ${this.form.nom}`;
           this.dataSaved = true;
           this.sending = false;
-          this.$root.$emit("ShowMessage", "L'opérateur " + this.lastRecord + " a été enregistré avec succès");
+          this.$root.$emit("ShowMessage", "Le client a été enregistré avec succès");
           this.clearForm();
         }
       },

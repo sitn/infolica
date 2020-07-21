@@ -140,8 +140,7 @@ export default {
      * Open numéro in new tab
      */
     doOpenNumero(id) {
-      let routeData = this.$router.resolve({ name: "NumerosHistory", params: {id}});
-      window.open(routeData.href, '_blank');
+      this.$router.push({ name: "NumerosHistory", params: {id}});
     }
   },
 

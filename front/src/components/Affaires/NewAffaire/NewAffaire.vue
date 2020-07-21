@@ -25,7 +25,6 @@ export default {
       search_clients_list: [],
       operateurs_list: [],
       cadastres_list: [],
-      // affaires_list: [],
       sitn_search_categories: null,
       client_facture: null,
       client_facture_complement: null,
@@ -60,46 +59,66 @@ export default {
       sending: false,
       lastRecord: null,
       type_modification_bool: false,
-      typesModficiationAffaire_list: []
+      typesModficiationAffaire_list: [],
+      showClientsForm: true,
     };
   },
   // Validations
   validations() {
-    var form = {
-      type_id: {
-        required
-      },
-      client_commande: {
-        required
-      },
-      client_envoi: {
-        required
-      },
-      technicien_id: {
-        required
-      },
-      cadastre_id: {
-        required
-      },
-      date_ouverture: {
-        required
-      },
-      localisation: {
-        required
-      },
-    };
+    let form = {};
+    let client_facture = {};
 
-    if (this.type_modification_bool) {
-      form.affaire_modif_type_id = {
-        required
-      }
+    if (this.showClientsForm) {
+      form = {
+        type_id: {
+          required
+        },
+        technicien_id: {
+          required
+        },
+        cadastre_id: {
+          required
+        },
+        date_ouverture: {
+          required
+        },
+        localisation: {
+          required
+        },
+        client_commande: {
+          required
+        },
+        client_envoi: {
+          required
+        }
+      };
+
+      client_facture = {
+        id: {required}
+      };
+    } else {
+      form = {
+        type_id: {
+          required
+        },
+        technicien_id: {
+          required
+        },
+        cadastre_id: {
+          required
+        },
+        date_ouverture: {
+          required
+        },
+        localisation: {
+          required
+        }
+      };
     }
 
-    var client_facture = {
-      id: {
-        required
-      }
-    };
+    if (this.type_modification_bool) {
+      form.affaire_modif_type_id = {required}  
+    }
 
     return {form, client_facture}
   },
@@ -327,7 +346,7 @@ export default {
           if (response && response.data) {
             var promises = [];
             // Enregistrer une facture vide
-            promises.push(this.postFacture(id_new_affaire));
+            if (this.showClientsForm) promises.push(this.postFacture(id_new_affaire));
             if (this.form.remarque !== null) promises.push(this.postRemarqueAffaire(id_new_affaire));
             if (this.type_modification_bool) {
               promises.push(this.postAffaireRelation(id_new_affaire));
@@ -365,7 +384,7 @@ export default {
         var formData = new FormData();
         formData.append("affaire_id", affaire_id);
         formData.append("client_id", this.client_facture.id);
-        formData.append("client_attention_de", this.client_facture_attention_de);
+        formData.append("client_attention_de", "À l'attention de " + this.client_facture_attention_de);
         formData.append(
           "client_complement",
           this.client_facture_complement
@@ -444,14 +463,9 @@ export default {
       var formData = new FormData();
       formData.append("type_id", this.form.type_id);
       if (this.form.nom) formData.append("nom", this.form.nom);
-      if (this.form.client_commande)
+      if (this.form.client_commande && this.form.client_commande.id)
         formData.append("client_commande_id", this.form.client_commande.id);
-      if (this.form.client_commande_complement)
-        formData.append(
-          "client_commande_complement",
-          this.form.client_commande_complement
-        );
-      if (this.form.client_envoi)
+      if (this.form.client_envoi && this.form.client_envoi.id)
         formData.append("client_envoi_id", this.form.client_envoi.id);
       if (this.form.client_envoi_complement)
         formData.append(
@@ -646,8 +660,12 @@ export default {
      * Complète par défaut les clients envoi et facture
      */
     defaultCompleteClients(client) {
-      this.form.client_envoi = client;
-      this.client_facture = client;
+      if (this.form.client_envoi === null || this.form.client_envoi === "") {
+        this.form.client_envoi = client;
+      }
+      if (this.client_facture === null || this.client_facture === "") {
+        this.client_facture = client;
+      }
     },
 
     /**
@@ -658,37 +676,6 @@ export default {
       window.open(routedata.href, "_blank");
     },
 
-    // /**
-    //  * Get affaires
-    //  */
-    // async initAffaires() {
-    //   this.$http.get(
-    //     process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
-    //     {
-    //       withCredentials: true,
-    //       headers: {Accept: "application/json"}
-    //     }
-    //   ).then(response => {
-    //     if (response && response.data) {
-    //       let tmp = response.data;
-    //       tmp.filter(x => {
-    //         x.date_cloture === null && x.cadastre_id === this.form.cadastre_id;
-    //       })
-    //       .map(x => ({
-    //         id: x.id,
-    //         nom: [x.id, x.no_access].filter(Boolean).join(" ")
-    //       }))
-    //       .map(x => ({
-    //         id: x.id,
-    //         nom: x.nom,
-    //         toLowerCase: () => x.nom.toLowerCase(),
-    //         toString: () => x.nom.toString()
-    //       }));
-    //       this.affaires_list = tmp;
-    //     }
-    //   }).catch(err => handleException(err, this));
-    // },
-
     /**
      * On Select Type affaire
      */
@@ -697,6 +684,18 @@ export default {
         this.type_modification_bool = true;
       } else {
         this.type_modification_bool = false;
+      }
+      // this.showClientsForm = this.form.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION)? false: true;
+      if (this.form.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION)) {
+        this.showClientsForm = false;
+        this.form.client_commande = null;
+        this.form.client_envoi = null;
+        this.form.client_envoi_complement = null;
+        this.client_facture = null;
+        this.client_facture_complement = null;
+        this.client_facture_attention_de = null;
+      } else {
+        this.showClientsForm = true;
       }
     },
 
@@ -872,7 +871,6 @@ export default {
     this.initClientsList();
     this.initOperateursList();
     this.initCadastresList();
-    // this.initAffaires();
     this.initTypesModficiationAffaire();
   }
 };

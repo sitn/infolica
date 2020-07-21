@@ -162,7 +162,7 @@
                 <div class="md-gutter me-layout">
                     <div class="md-layout-item md-size-100">
                         <md-field>
-                            <label>Nom de l'affaire</label>
+                            <label>Description</label>
                             <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending" />
                         </md-field>
                     </div>
@@ -173,7 +173,7 @@
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100 md-size-50">
                         <md-field :class="getValidationClass($v.form.vref)">
-                            <label for="vref">Vref</label>
+                            <label for="vref">v/ref</label>
                             <md-input name="vref" id="vref" v-model="form.vref" :disabled="sending" />
                         </md-field>
                     </div>
@@ -193,21 +193,21 @@
 
                 <br>
 
-                <md-divider></md-divider>
-                <md-subheader>Clients</md-subheader>
-                <md-divider></md-divider>
                 
-                <!-- Client DEMANDEUR et ligne complément -->
-                <div class="md-layout md-gutter">
-                    <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-autocomplete id="client_commande" v-model="form.client_commande"
-                        :md-options="search_clients_list" md-dense
-                        @md-changed="searchClients(form.client_commande)"
-                        @md-selected="defaultCompleteClients(form.client_commande)"
-                        :class="getValidationClass($v.form.client_commande)"
-                        required>
-                        
-                        <label>Demandeur</label>
+                <div v-if="showClientsForm">
+                    <md-divider></md-divider>
+
+                    <!-- Client DEMANDEUR et ligne complément -->
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-small-size-100 md-size-100">
+                            <md-autocomplete id="client_commande" v-model="form.client_commande"
+                            :md-options="search_clients_list" md-dense
+                            @md-changed="searchClients(form.client_commande)"
+                            @md-selected="defaultCompleteClients(form.client_commande)"
+                            :class="getValidationClass($v.form.client_commande)"
+                            required>
+                            
+                            <label>Commandé par</label>
                             <template slot="md-autocomplete-empty" slot-scope="{ term }">
                                 Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
                             </template>
@@ -217,74 +217,83 @@
                         </div>
                     </div>
                     
+                    <md-divider></md-divider>
                     
                     <!-- Client ENVOI et ligne complément -->
                     <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-small-size-100 md-size-100">
+                            <md-autocomplete id="client_envoi_id" v-model="form.client_envoi"
+                            :md-options="search_clients_list" md-dense
+                            @md-changed="searchClients(form.client_envoi)"
+                            :class="getValidationClass($v.form.client_envoi)"
+                            required>
+                            
+                            <label>Envoyer à</label>
+                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                            </template>
+                            <span class="md-error" v-if="!$v.form.client_envoi.required">Le client envoi est
+                                obligatoire</span>
+                            </md-autocomplete>
+                        </div>
+                        
                         <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-autocomplete id="client_envoi_id" v-model="form.client_envoi"
-                        :md-options="search_clients_list" md-dense
-                        @md-changed="searchClients(form.client_envoi)"
-                        :class="getValidationClass($v.form.client_envoi)"
-                        required>
-
-                        <label>Client envoi</label>
-                        <span class="md-error" v-if="!$v.form.client_envoi.required">Le client envoi est
-                            obligatoire</span>
-                        </md-autocomplete>
+                            <md-field>
+                                <label>Par</label>
+                                <span class="md-prefix">Par </span>
+                                <md-input v-model="form.client_envoi_complement" />
+                            </md-field>
+                        </div>
                     </div>
-
-                    <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field>
-                            <label>Complément client envoi</label>
-                            <md-input v-model="form.client_envoi_complement" />
-                        </md-field>
-                    </div>
-                </div>
-
-                <!-- Client FACTURE et ligne complément -->
-                <div class="md-layout md-gutter">
-                    <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-autocomplete id="client_facture_id" v-model="client_facture"
+                    
+                    <md-divider></md-divider>
+                    
+                    <!-- Client FACTURE et ligne complément -->
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-small-size-100 md-size-100">
+                            <md-autocomplete id="client_facture_id" v-model="client_facture"
                             :md-options="search_clients_list" md-dense
                             @md-changed="searchClients(client_facture)"
                             :class="getValidationClass($v.client_facture.id)"
                             required>
-                            <label>Client facture</label>
+                            <label>Facturer à</label>
+                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                            </template>
                             <span class="md-error" v-if="!$v.client_facture.id.required">Le client facture est
                                 obligatoire</span>
-                        </md-autocomplete>
+                            </md-autocomplete>
+                        </div>
+                        
+                        <div class="md-layout-item md-small-size-100 md-size-50">
+                            <md-field>
+                                <label>Par</label>
+                                <span class="md-prefix">Par </span>
+                                <md-input v-model="client_facture_complement" />
+                            </md-field>
+                        </div>
+                        <div class="md-layout-item md-size-50 md-small-size-100">
+                            <md-field>
+                                <label>À l'attention de</label>
+                                <span class="md-prefix">À l'attention de </span>
+                                <md-input v-model="client_facture_attention_de" />
+                            </md-field>
+                        </div>
                     </div>
-
-                    <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field>
-                            <label>Complément client facture</label>
-                            <md-input v-model="client_facture_complement" />
-                        </md-field>
-                    </div>
+                    
+                    
+                    <md-divider></md-divider>
+                    <br />
                 </div>
                 
-                <div class="md-gutter md-layout">
-                    <div class="md-layout-item md-size-50"></div>
-                    <div class="md-layout-item md-size-50 md-small-size-100">
-                        <md-field>
-                            <label>A l'attention de...</label>
-                            <md-input v-model="client_facture_attention_de" />
-                        </md-field>
-                    </div>
-                </div>
-
-                <br />
-                <md-divider></md-divider>
-                <br />
-
                 <!-- Dates -->
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-50 md-size-25">
                         <md-datepicker v-model="form.date_ouverture" md-immediately
-                            :class="getValidationClass($v.form.date_ouverture)">
-                            <label>Date d'ouverture</label>
-                        </md-datepicker>
-                    </div>
+                        :class="getValidationClass($v.form.date_ouverture)">
+                        <label>Date d'ouverture</label>
+                    </md-datepicker>
+                </div>
                 </div>
 
                 <br />
@@ -311,8 +320,6 @@
                         :results-display="formattedDisplay"
                         @selected="handleSelectSITNItem"
                         >
-                        <!-- @results="handleSITNSearchResults"
-                        > -->
                         </autocomplete>
                     </div>
                 </div>

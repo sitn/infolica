@@ -51,16 +51,16 @@ export default {
       cloreAffaireEnabled: false,
       duplicationAffaireForm: null,
       typesAffaires: {
-        mutation: process.env.VUE_APP_TYPE_AFFAIRE_DIVISION,
-        cadastration: process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION,
-        ppe: process.env.VUE_APP_TYPE_AFFAIRE_PPE,
-        pcop: process.env.VUE_APP_TYPE_AFFAIRE_PCOP,
-        maj_periodique: process.env.VUE_APP_TYPE_AFFAIRE_MAJ_PERIODIQUE,
-        modification: process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION,
-        revision_abornement: process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT,
-        remaniement_parcellaire: process.env.VUE_APP_TYPE_AFFAIRE_REMANIEMENT_PARCELLAIRE,
-        servitude: process.env.VUE_APP_TYPE_AFFAIRE_SERVITUDE,
-        autre: process.env.VUE_APP_TYPE_AFFAIRE_AUTRE
+        mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION),
+        cadastration: Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION),
+        ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_PPE),
+        pcop: Number(process.env.VUE_APP_TYPE_AFFAIRE_PCOP),
+        maj_periodique: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAJ_PERIODIQUE),
+        modification: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION),
+        revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
+        remaniement_parcellaire: Number(process.env.VUE_APP_TYPE_AFFAIRE_REMANIEMENT_PARCELLAIRE),
+        servitude: Number(process.env.VUE_APP_TYPE_AFFAIRE_SERVITUDE),
+        autre: Number(process.env.VUE_APP_TYPE_AFFAIRE_AUTRE)
       }
       // numeros_base_associes = []
     };

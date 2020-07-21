@@ -310,8 +310,18 @@ export default {
         [affaire_.client_commande_npa, affaire_.client_commande_localite].filter(Boolean).join(" ")
       ].filter(Boolean).join("\n");
       
+      let observation = {
+        titre: "",
+        contenu: ""
+      };
+      if (service_id === Number(process.env.VUE_APP_SERVICE_SCAT)) {
+        observation.titre = "Observation:",
+        observation.contenu = "Pour autant que vous le jugiez utile, veuillez transmettre le dossier au service des forêts ou au service de la viticulture."
+      }
+
       let formData = new FormData();
-      formData.append("template", service_.abreviation)
+      formData.append("template", "Preavis")
+      formData.append("output_file_name", service_.abreviation)
       formData.append("values", JSON.stringify({
         ADRESSE_SERVICE: form.adresse_service,
         DATE_ENVOI: String(getCurrentDate()),
@@ -320,6 +330,8 @@ export default {
         ADRESSE_DEMANDEUR: form.adresse_demandeur,
         CADASTRE: affaire_.cadastre,
         CONCERNE: affaire_.nom,
+        OBSERVATION_TITRE: observation.titre,
+        OBSERVATION: observation.contenu,
         ANNEXES: ""
       }));
 

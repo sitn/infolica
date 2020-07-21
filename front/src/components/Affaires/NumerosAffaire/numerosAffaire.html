@@ -8,7 +8,7 @@
                         <md-icon>keyboard_arrow_down</md-icon>
                     </md-button>
                 </md-card-expand-trigger>
-                Immeubles et numéros MO
+                Immeubles et réservation de numéros
             </div>
         </md-card-header>
 
@@ -54,7 +54,7 @@
                                                     {{ item.numero_etat }}
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Repris par">    
-                                                    <a v-bind:href="item.affaire_destination_href" target="_blank"> {{item.affaire_destination_id }}</a>
+                                                    <a v-bind:href="item.affaire_destination_href">{{item.affaire_destination_id }}</a>
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Action" class="actionsColumn">
                                                     <md-button class="md-icon-button md-dense md-accent" v-if="!affaireReadonly && item.affaire_numero_actif && !affaire.date_cloture"
@@ -127,7 +127,7 @@
                                                     </md-switch>
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Repris par">    
-                                                    <a v-bind:href="item.affaire_destination_href" target="_blank"> {{item.affaire_destination_id }}</a>
+                                                    <a v-bind:href="item.affaire_destination_href"> {{item.affaire_destination_id }}</a>
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Mat diff" class="actionsColumn">
                                                     <!-- Si le numéro est différé -->

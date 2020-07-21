@@ -153,8 +153,7 @@ export default {
      * Open numéro in new tab
      */
     doOpenAffaire(id) {
-      let routeData = this.$router.resolve({ name: "AffairesDashboard", params: {id}});
-      window.open(routeData.href, '_blank');
+      this.$router.push({ name: "AffairesDashboard", params: {id}});
     },
 
     /**

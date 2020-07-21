@@ -11,6 +11,7 @@ const moment = require("moment");
 export default {
   name: "InfosGénérales",
   props: {
+    typesAffaires: {type: Object},
     affaire: {type: Object}
     },
   components: {},
@@ -25,6 +26,8 @@ export default {
       affaires_destination: [],
       clientsListe: [],
       searchClientsListe: [],
+      showDateAlert: false,
+      controle_dateItem: null,
       form: {
         technicien: null,
         responsable: null,
@@ -121,9 +124,8 @@ export default {
         formData.append("information", this.affaire.information || null);
       if (this.affaire.vref !== null) formData.append("vref", this.affaire.vref || null);
       
-      if (typeof this.form.client_commande === 'object') formData.append("client_commande_id", this.form.client_commande.id || null);
-      if (typeof this.form.client_envoi === 'object') formData.append("client_envoi_id", this.form.client_envoi.id || null);
-
+      if (this.form.client_commande && this.form.client_commande.id) formData.append("client_commande_id", this.form.client_commande.id || null);
+      if (this.form.client_envoi && this.form.client_envoi.id) formData.append("client_envoi_id", this.form.client_envoi.id || null);
       formData.append("client_envoi_complement", this.form.client_envoi_complement || null);
 
       if (this.affaire.date_validation)
@@ -209,16 +211,8 @@ export default {
       this.form.typeAffaire = this.typesAffairesListe
       .filter(x => x.id === this.affaire.type_id)[0];
 
-      this.form.client_commande = this.affaire.client_commande_nom_.replace("\n", ", ");
-      this.form.client_envoi = this.affaire.client_envoi_nom_.replace("\n", ", ");
-      // this.form.client_commande = {
-      //   id: this.affaire.client_commande_id,
-      //   nom: this.affaire.client_commande_nom_.replace("\n", ", ")
-      // };
-      // this.form.client_envoi = {
-      //   id: this.affaire.client_envoi_id,
-      //   nom: this.affaire.client_envoi_nom_.replace("\n", ", ")
-      // };
+      this.form.client_commande = this.affaire.client_commande_nom_.replaceAll("\n", ", ");
+      this.form.client_envoi = this.affaire.client_envoi_nom_.replaceAll("\n", ", ");
       this.form.client_envoi_complement = this.affaire.client_envoi_complement;
 
       this.infoGenReadonly = false;
@@ -294,6 +288,37 @@ export default {
         }
       }).catch(err => handleException(err, this));
     },
+
+    /**
+     * Contrôle que la date de validation soit supérieure à la date d'ouverture
+     */
+    async onSelectDate() {
+      await new Promise(r => setTimeout(r, 200));
+      let date_ouverture = moment(this.affaire.date_ouverture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS);
+      let date_validation = moment(this.affaire.date_validation, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS);
+      let date_envoi = moment(this.affaire.date_envoi, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS);
+      let date_cloture = moment(this.affaire.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS);
+      if (date_validation < date_ouverture) {
+        this.controle_dateItem = "date_validation";
+        this.showDateAlert = true;
+      }
+      if (date_envoi < date_validation) {
+        this.controle_dateItem = "date_envoi";
+        this.showDateAlert = true;
+      }
+      if (date_cloture < date_envoi) {
+        this.controle_dateItem = "date_cloture";
+        this.showDateAlert = true;
+      }
+    },
+
+    /**
+     * Effacer la date inférieure
+     */
+    onAcceptDateAlert() {
+      this.affaire[this.controle_dateItem] = null;
+      this.showDateAlert = false;
+    }
 
   },
 
