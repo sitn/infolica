@@ -4,7 +4,9 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission} from '@/services/helper';
+import {checkPermission,
+        getClients,
+        filterList } from '@/services/helper';
 
 export default {
   name: 'Clients',
@@ -144,55 +146,25 @@ export default {
      * Init clients list (for search input in form)
      */
     async initClientsSearchList() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/json" }
-          }
-        )
-        .then(response => {
-          if (response && response.data) {
-            var tmp = response.data;
-            tmp.forEach(x => {
-              x.nom_ = [
-                x.entreprise,
-                [x.nom, x.prenom].filter(Boolean).join(" "),
-                x.adresse,
-                [x.npa, x.localite].filter(Boolean).join(" ")
-              ]
-                .filter(Boolean)
-                .join(", ");
-            });
-
-            this.clients_list = tmp.map(x => ({
-              id: x.id,
-              nom: x.nom_,
-              toLowerCase: () => x.nom_.toLowerCase(),
-              toString: () => x.nom_
-            }));
-          }
-        })
-        //Error
-        .catch(err => {
-          handleException(err, this);
-        });
-      },
-
-      /**
-     * Search Client for form input after 3 letters
-     */
-    searchClientsForFormInput(value) {
-      let tmp = [];
-      if (value !== null) {
-        if (value.length >= 3) {
-          tmp = this.clients_list.filter(x =>
-            x.nom.toLowerCase().includes(value.toLowerCase())
-          );
+      getClients()
+      .then(response => {
+        if (response && response.data) {
+          this.clients_list = response.data.map(x => ({
+            id: x.id,
+            nom: x.adresse_,
+            toLowerCase: () => x.adresse_.toLowerCase(),
+            toString: () => x.adresse_
+          }));
         }
-      }
-      this.search_clients_list = tmp;
+      })
+      //Error
+      .catch(err => {
+        handleException(err, this);
+      });
+    },
+
+    searchClientsForFormInput(value) {
+      this.search_clients_list = filterList(this.clients_list, value, 3);
     }
   },
 

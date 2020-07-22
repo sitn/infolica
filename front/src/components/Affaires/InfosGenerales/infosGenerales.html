@@ -78,20 +78,6 @@
                     </md-autocomplete>
 
                 </div>
-                <div class="md-layout-item md-size-50 md-small-size-100">
-                    <md-field v-if="infoGenReadonly">
-                        <label>Validation</label>
-                        <md-input v-model="affaire.responsable" readonly>
-                        </md-input>
-                    </md-field>
-
-                    <md-autocomplete v-model="form.responsable"
-                        :md-options="operateursListe"
-                        md-dense
-                        v-else>
-                        <label><strong style="color: blue">Validation</strong></label>
-                    </md-autocomplete>
-                </div>
             </div>
 
             <div id="clients" v-if="affaire.type_id !== typesAffaires.cadastration">
@@ -102,7 +88,8 @@
                             <label>Demandeur</label>
                             <md-textarea v-model="affaire.client_commande_nom_" readonly></md-textarea>
                             <md-button class="md-primary md-icon-button md-dense" 
-                                v-if="affaire.client_commande_id !== '-'"
+                                v-if="affaire.client_commande_id !== null"
+                                title="Consulter/Modifier le client"
                                 @click="openClientEditor('client_commande_id')">
                                 <md-icon>open_in_new</md-icon>
                             </md-button>
@@ -113,11 +100,27 @@
                         <md-field>
                             <label>Client envoi</label>
                             <md-textarea v-model="affaire.client_envoi_nom_" readonly></md-textarea>
-                            <md-button class="md-primary md-icon-button md-dense" 
-                                v-if="affaire.client_envoi_id !== '-'"
-                                @click="openClientEditor('client_envoi_id')">
-                                <md-icon>open_in_new</md-icon>
-                        </md-button>
+
+                            <ul style="list-style: none; margin: 0px; padding-left: 0px;">
+                                <li style="text-align: center;">
+                                    <md-button class="md-primary md-icon-button md-dense"
+                                        v-if="affaire.client_envoi_id !== null"
+                                        @click="openClientEditor('client_envoi_id')"
+                                        title="Consulter/Modifier le client"
+                                        style="display: block">
+                                        <md-icon>open_in_new</md-icon>
+                                    </md-button>
+                                </li>
+
+                                <li style="text-align: center;">
+                                    <md-button class="md-primary md-icon-button md-dense"
+                                        @click="genererBordereau"
+                                        title="Générer le bordereau"
+                                        style="display: block;">
+                                        <md-icon>save_alt</md-icon>
+                                    </md-button>
+                                </li>
+                            </ul>
                         </md-field>
                     </div>
                 </div>

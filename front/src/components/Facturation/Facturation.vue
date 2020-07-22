@@ -4,7 +4,11 @@
 
 <script>
 var numeral = require("numeral");
-import { getCurrentDate, checkPermission, getCurrentUserRoleId } from "@/services/helper";
+import { getCurrentDate,
+         checkPermission,
+         getCurrentUserRoleId,
+         getClients,
+         filterList } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -106,31 +110,14 @@ export default {
      * Liste des clients
      */
     async searchClients() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
-          {
-            withCredentials: true,
-            headers: {"Accept": "application/json"}
-          }
-        )
+      getClients()
         .then(response => {
           if (response && response.data) {
-            var tmp = response.data;
-            tmp.forEach(x => {
-              x.nom_ = [
-                x.entreprise,
-                [x.titre, x.nom, x.prenom].filter(Boolean).join(" "),
-                x.adresse,
-                x.case_postale,
-                [x.npa, x.localite].filter(Boolean).join(" ")
-              ].filter(Boolean).join(", ")
-            });
-            this.clients_liste = tmp.map(x => ({
+            this.clients_liste = response.data.map(x => ({
               id: x.id,
-              nom: x.nom_,
-              toLowerCase: () => x.nom_.toLowerCase(),
-              toString: () => x.nom_
+              nom: x.adresse_,
+              toLowerCase: () => x.adresse_.toLowerCase(),
+              toString: () => x.adresse_
             }));
           }
         })
@@ -140,19 +127,7 @@ export default {
      * Crée la liste de sélection du client lors de la création de facture
      */
     getClientSearch() {
-      this.clients_liste_select = [];
-      if (this.selectedFacture.client != null) {
-        if (this.selectedFacture.client.length < 3) {
-          return;
-        } else {
-          this.clients_liste_select = this.clients_liste
-            .filter(client_i => {
-              return client_i.nom
-                .toLowerCase()
-                .includes(this.selectedFacture.client.toLowerCase());
-            });
-        }
-      }
+      this.clients_liste_select = filterList(this.clients_liste, this.selectedFacture.client, 3)
     },
 
     /**

@@ -4,7 +4,11 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission, stringifyAutocomplete, getClients} from '@/services/helper';
+import {checkPermission,
+        stringifyAutocomplete,
+        getClients,
+        filterList,
+        getDocument} from '@/services/helper';
 
 const moment = require("moment");
 
@@ -47,22 +51,11 @@ export default {
       getClients()
         .then(response => {
           if (response && response.data) {
-            var tmp = response.data;
-            tmp.forEach(x => {
-              x.nom_ = [
-                x.entreprise,
-                [x.titre, x.nom, x.prenom].filter(Boolean).join(" "),
-                x.adresse,
-                [x.npa, x.localite].filter(Boolean).join(" ")
-              ]
-                .filter(Boolean)
-                .join(", ");
-            });
-            this.clientsListe = tmp.map(x => ({
+            this.clientsListe = response.data.map(x => ({
               id: x.id,
-              nom: x.nom_,
-              toLowerCase: () => x.nom_.toLowerCase(),
-              toString: () => x.nom_
+              nom: x.adresse_,
+              toLowerCase: () => x.adresse_.toLowerCase(),
+              toString: () => x.adresse_
             }));
           }
         })
@@ -76,15 +69,7 @@ export default {
      * Search Client after 3 letters
      */
     searchClients(value) {
-      let tmp = [];
-      if (value !== null) {
-        if (value.length >= 3) {
-          tmp = this.clientsListe.filter(x =>
-            x.nom.toLowerCase().includes(value.toLowerCase())
-          );
-        }
-      }
-      this.searchClientsListe = tmp;
+      this.searchClientsListe = filterList(this.clientsListe, value, 3)
     },
 
     /**
@@ -335,6 +320,18 @@ export default {
     onAcceptDateAlert() {
       this.affaire[this.controle_dateItem] = null;
       this.showDateAlert = false;
+    },
+
+    genererBordereau() {
+      let formData = new FormData()
+      formData.append("template", "Bordereau");
+      formData.append("values", JSON.stringify({
+        "ADRESSE": this.affaire.client_envoi_nom_
+      }));
+
+      getDocument(formData).then(response => {
+        this.$root.$emit("ShowMessage", "Le document '"+ response +"' se trouve dans le dossier Téléchargement")
+      }).catch(err => handleException(err, this));
     }
 
   },

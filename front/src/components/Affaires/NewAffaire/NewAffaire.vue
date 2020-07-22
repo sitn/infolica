@@ -7,7 +7,9 @@ import MapHandler from "@/components/MapHandler/MapHandler.vue";
 import { validationMixin } from "vuelidate";
 import { handleException } from "@/services/exceptionsHandler";
 import { required } from "vuelidate/lib/validators";
-import { getCurrentDate } from "@/services/helper";
+import { getCurrentDate,
+         getClients,
+         filterList } from "@/services/helper";
 import Autocomplete from "vuejs-auto-complete";
 const moment = require("moment");
 export default {
@@ -221,39 +223,21 @@ export default {
      * Init clients list
      */
     async initClientsList() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/json" }
-          }
-        )
-        .then(response => {
-          if (response && response.data) {
-            var tmp = response.data;
-            tmp.forEach(x => {
-              x.nom_ = [
-                x.entreprise,
-                [x.titre, x.nom, x.prenom].filter(Boolean).join(" "),
-                x.adresse,
-                [x.npa, x.localite].filter(Boolean).join(" ")
-              ]
-                .filter(Boolean)
-                .join(", ");
-            });
-            this.clients_list = tmp.map(x => ({
-              id: x.id,
-              nom: x.nom_,
-              toLowerCase: () => x.nom_.toLowerCase(),
-              toString: () => x.nom_
-            }));
-          }
-        })
-        //Error
-        .catch(err => {
-          handleException(err, this);
-        });
+      getClients()
+      .then(response => {
+        if (response && response.data) {
+          this.clients_list = response.data.map(x => ({
+            id: x.id,
+            nom: x.adresse_,
+            toLowerCase: () => x.adresse_.toLowerCase(),
+            toString: () => x.adresse_
+          }));
+        }
+      })
+      //Error
+      .catch(err => {
+        handleException(err, this);
+      });
     },
 
     /*
@@ -316,15 +300,7 @@ export default {
      * Search Client after 3 letters
      */
     searchClients(value) {
-      let tmp = [];
-      if (value !== null) {
-        if (value.length >= 3) {
-          tmp = this.clients_list.filter(x =>
-            x.nom.toLowerCase().includes(value.toLowerCase())
-          );
-        }
-      }
-      this.search_clients_list = tmp;
+      this.search_clients_list = filterList(this.clients_list, value, 3);
     },
 
     /**
@@ -388,11 +364,12 @@ export default {
         var formData = new FormData();
         formData.append("affaire_id", affaire_id);
         formData.append("client_id", this.client_facture.id);
-        formData.append("client_attention_de", "À l'attention de " + this.client_facture_attention_de);
-        formData.append(
-          "client_complement",
-          this.client_facture_complement
-        );
+        if (this.client_facture_attention_de !== null) {
+          formData.append("client_attention_de", "À l'attention de " + this.client_facture_attention_de);
+        }
+        if (this.client_facture_complement !== null) {
+          formData.append("client_complement", "Par " + this.client_facture_complement);
+        }
         this.$http
           .post(
             process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_ENDPOINT,
@@ -476,7 +453,7 @@ export default {
         formData.append("client_envoi_id", this.form.client_envoi.id);
       }
       if (this.form.client_envoi_complement) {
-        formData.append("client_envoi_complement", this.form.client_envoi_complement);
+        formData.append("client_envoi_complement", "Par " + this.form.client_envoi_complement);
       }
       if (this.form.technicien_id) {
         formData.append("technicien_id", this.form.technicien_id);

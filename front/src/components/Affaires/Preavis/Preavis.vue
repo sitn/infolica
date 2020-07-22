@@ -3,7 +3,7 @@
 
 
 <script>
-import { getCurrentDate, checkPermission } from "@/services/helper";
+import { getCurrentDate, checkPermission, getDocument } from "@/services/helper";
 import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -298,9 +298,9 @@ export default {
     },
 
     /**
-     * getDocument pour préavis
+     * getModel pour préavis
      */
-    getDocument(service_id) {
+    async downloadModel(service_id) {
       let form = {};
 
       const service_ = this.services_liste_bk.filter(x => x.id === service_id).pop();
@@ -344,69 +344,11 @@ export default {
         ANNEXES: ""
       }));
 
-    this.$http
-      .post(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT,
-        formData,
-        {
-          withCredentials: true,
-          headers: { Accept: "application/html" }
-        }
-      )
+      getDocument(formData)
       .then(response => {
-        if (response && response.data) {
-          this.downloadGeneratedDocument(response.data.filename).then(
-            this.deleteGeneratedDocument(response.data.filename)
-          );
-        }
+          this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'")
       })
-      .catch(err => {
-        handleException(err, this);
-      });
-    },
-
-    /**
-     * Download GeneratedDocument
-     */
-    downloadGeneratedDocument(filename) {
-      return new Promise(() => {
-        let url =
-          process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
-          "?filename=" +
-          filename;
-        window.open(url, "_blank");
-      });
-    },
-
-    /**
-     * Delete generated document
-     */
-    deleteGeneratedDocument(filename) {
-      this.$http
-        .delete(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
-            "?filename=" +
-            filename,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/html" }
-          }
-        )
-        .then(response => {
-          if (response && response.data) {
-            this.$root.$emit(
-              "ShowMessage",
-              "Le fichier '" +
-                filename +
-                "' se trouve dans le dossier 'Téléchargement'"
-            );
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
+      .catch(err => handleException(err, this));
     }
   },
 

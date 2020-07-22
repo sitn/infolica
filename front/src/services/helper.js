@@ -59,7 +59,7 @@ export const setCurrentUserFunctions = async function () {
             })
         .catch(() => {
             //To do message
-        })
+        });
 };
 
 /*
@@ -73,7 +73,7 @@ export const getCadastres = async function () {
               headers: {"Accept": "application/json"}
             })
             .then(response => resolve(response))
-            .catch(() => reject)
+            .catch(() => reject);
     });
 };
 
@@ -88,7 +88,7 @@ export const getTypesNumeros = async function () {
               headers: {"Accept": "application/json"}
             })
             .then(response => resolve(response))
-            .catch(() => reject)
+            .catch(() => reject);
     });
 };
 
@@ -103,7 +103,7 @@ export const getTypesAffaires = async function () {
               headers: {"Accept": "application/json"}
             })
             .then(response => resolve(response))
-            .catch(() => reject)
+            .catch(() => reject);
     });
 };
 
@@ -118,7 +118,7 @@ export const getEtatsNumeros = async function () {
               headers: {"Accept": "application/json"}
             })
             .then(response => resolve(response))
-            .catch(() => reject)
+            .catch(() => reject);
     });
 };
 
@@ -132,10 +132,37 @@ export const getClients = async function () {
               withCredentials: true,
               headers: {"Accept": "application/json"}
             })
-            .then(response => resolve(response))
-            .catch(() => reject)
+            .then(response => {
+                response.data = setClientsAdresse_(response.data);
+                resolve(response);
+            })
+            .catch(() => reject);
     });
 };
+
+export const setClientsAdresse_ = function(clients, sep=", ") {
+    let isArray = true;
+    if (!Array.isArray(clients)) {
+        isArray = false;
+        clients = [clients];        
+    }
+    
+    clients.forEach(x => {
+        x.adresse_ = [
+            x.entreprise,
+            [x.titre, x.prenom, x.nom].filter(Boolean).join(" "),
+            x.adresse,
+            x.case_postale !== null? "Case postale " + x.case_postale: null,
+            [x.npa, x.localite].filter(Boolean).join(" ") 
+        ].filter(Boolean).join(sep);
+    });
+
+    if (!isArray) {
+        clients = clients.pop();
+    }
+
+    return clients
+}
 
 /**
  * Get date of the day in good format for BD
@@ -157,4 +184,90 @@ export const stringifyAutocomplete = function(liste) {
         toString: () => x.nom.toString(),
         toLowerCase: () => x.nom.toLowerCase()
     }))
-}
+};
+
+/**
+ * Générer les documents à partir des modèles
+ */
+export const getDocument = async function(formData) {
+    return new Promise((resolve, reject) => {
+        axios.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT,
+            formData,
+            {
+                withCredentials: true,
+                headers: { Accept: "application/html" }
+            }
+        ).then(response => {
+            if (response && response.data) {
+                const filename = response.data.filename;
+
+                downloadGeneratedDocument(filename)
+                .then(response => {
+                    deleteGeneratedDocument(response)
+                    .then(() => resolve(filename))
+                    .catch(err => reject(err));
+                })
+            }
+        })
+        .catch(err => reject(err));
+    });
+};
+
+/**
+ * Download GeneratedDocument
+ */
+const downloadGeneratedDocument = async function(filename) {
+    return new Promise(resolve => {
+        let url =
+        process.env.VUE_APP_API_URL +
+        process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
+        "?filename=" +
+        filename;
+        window.open(url, "_blank");
+        resolve(filename)
+    });
+};
+
+/**
+ * Delete generated document
+ */
+const deleteGeneratedDocument = async function(filename) {
+    return new Promise((resolve, reject) => {
+        new Promise(r => setTimeout(r, 200)).then(() => {
+
+            axios.delete(process.env.VUE_APP_API_URL + process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
+                "?filename=" + filename,
+                {
+                    withCredentials: true,
+                    headers: { Accept: "application/html" }
+                }
+            )
+            .then(response => resolve(response))
+            .catch(err => reject(err));
+        });
+    });    
+};
+
+/**
+ * Search in list after n letters
+ */
+export const filterList = function(list, searchTerm, nLetters=0) {
+    let result = [];
+    if (searchTerm !== null) {
+        let searchTerm_ = searchTerm.split(" ");
+
+        let idx = searchTerm_.indexOf("");
+        if (idx > -1) {
+            searchTerm_.splice(idx, 1)
+        }
+
+        if (searchTerm.length >= nLetters) {
+            result = list.filter(x => {
+                return !searchTerm_.some(y => {
+                    return !x.nom.toLowerCase().includes(y.toLowerCase())   
+                });
+            });
+        }
+    }
+    return result.slice(0,20);
+};

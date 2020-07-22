@@ -7,7 +7,9 @@ import { handleException } from "@/services/exceptionsHandler";
 import {
   getCurrentDate,
   getCadastres,
-  stringifyAutocomplete
+  stringifyAutocomplete,
+  getDocument,
+  setClientsAdresse_
 } from "@/services/helper";
 import moment from "moment";
 
@@ -115,15 +117,8 @@ export default {
       this.getClientAffaire()
       .then(response => {
         if (response && response.data) {
-          const client = response.data;
-          const new_line = "\n"
-          this.form.adresse_ = "";
-          this.form.adresse_ += client.entreprise !== null? client.entreprise + new_line: "";
-          this.form.adresse_ += [client.titre, client.prenom, client.nom].filter(Boolean).join(" ") + new_line; 
-          this.form.adresse_ += client.adresse + new_line; 
-          this.form.adresse_ += client.case_postale? "Case postale " + client.case_postale + new_line: ""
-          this.form.adresse_ += [client.npa, client.localite].filter(Boolean).join(" ");
-
+          let client = setClientsAdresse_(response.data, "\n");
+          this.form.adresse_ = client.adresse_;
           this.form.titre = client.titre;
         }
       }).catch(err => handleException(err));
@@ -164,71 +159,14 @@ export default {
         })
       );
 
-      this.$http
-        .post(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/html" }
-          }
-        )
-        .then(response => {
-          if (response && response.data) {
-            this.downloadQuittancePCOP(response.data.filename).then(
-              this.deleteQuittancePCOP(response.data.filename)
-            );
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
-    },
-
-    /**
-     * Download QuittancePCOP
-     */
-    downloadQuittancePCOP(filename) {
-      return new Promise(() => {
-        let url =
-          process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
-          "?filename=" +
-          filename;
-        window.open(url, "_blank");
-      });
-    },
-
-    /**
-     * Delete quittancePCOP
-     */
-    deleteQuittancePCOP(filename) {
-      this.$http
-        .delete(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
-            "?filename=" +
-            filename,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/html" }
-          }
-        )
-        .then(response => {
-          if (response && response.data) {
-            this.$root.$emit(
-              "ShowMessage",
-              "Le fichier '" +
-                filename +
-                "' se trouve dans le dossier 'Téléchargement'"
-            );
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
+      getDocument(formData)
+      .then(response => {
+          this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'")
+          this.showQuittancePCOPDialog = false;
+      })
+      .catch(err => handleException(err, this));
     }
+
   },
   mounted: function() {
     this.initForm();
