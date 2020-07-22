@@ -1,38 +1,41 @@
-from datetime import datetime
+# -*- coding: utf-8 -*--
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from .. import models
-import transaction
-from ..models import Constant
-from ..exceptions.custom_error import CustomError
-from ..scripts.utils import Utils
-from sqlalchemy import and_
-import json
 
-""" Return all numeros_relations"""
+from infolica.exceptions.custom_error import CustomError
+from infolica.models.constant import Constant
+from infolica.models.models import NumeroRelation, VNumerosRelations
+from infolica.scripts.utils import Utils
+
+
 @view_config(route_name='numeros_relations', request_method='GET', renderer='json')
 @view_config(route_name='numeros_relations_s', request_method='GET', renderer='json')
 def numeros_relations_view(request):
+    """
+    Return all numeros_relations
+    """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(models.VNumerosRelations).all()
+    query = request.dbsession.query(VNumerosRelations).all()
     return Utils.serialize_many(query)
 
 
-""" Return Numeros_relations"""
 @view_config(route_name='numeros_relation_by_affaire_id', request_method='GET', renderer='json')
 def numeros_relation_by_affaire_id_view(request):
+    """
+    Return Numeros_relations
+    """
     # Check connected
     if not Utils.check_connected(request):
-        raise exc.HTTPForbidden()    
-    
+        raise exc.HTTPForbidden()
+
     affaire_id = request.matchdict['id']
-    
+
     # filter by conditions
-    query = request.dbsession.query(models.VNumerosRelations).filter(
-        models.VNumerosRelations.affaire_id == affaire_id).all()
+    query = request.dbsession.query(VNumerosRelations).filter(
+        VNumerosRelations.affaire_id == affaire_id).all()
 
     return Utils.serialize_many(query)
 
@@ -62,10 +65,12 @@ def numeros_relation_by_affaire_id_view(request):
 #     return Utils.serialize_many(query)
 
 
-""" Add new numeros_relations"""
 @view_config(route_name='numeros_relations', request_method='POST', renderer='json')
 @view_config(route_name='numeros_relations_s', request_method='POST', renderer='json')
 def numeros_relations_new_view(request, params=None):
+    """
+    Add new numeros_relations
+    """
     if params is None:
         params = request.params
 
@@ -74,19 +79,19 @@ def numeros_relations_new_view(request, params=None):
         raise exc.HTTPForbidden()
 
     # Get numeros_relations instance
-    model = Utils.set_model_record(models.NumeroRelation(), params)
+    model = Utils.set_model_record(NumeroRelation(), params)
 
-    with transaction.manager:
-        request.dbsession.add(model)
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.NumeroRelation.__tablename__))
+    request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroRelation.__tablename__))
 
 
-""" Delete numeros_relations"""
 @view_config(route_name='numeros_relations', request_method='DELETE', renderer='json')
 @view_config(route_name='numeros_relations_s', request_method='DELETE', renderer='json')
 def numeros_relations_delete_view(request):
-    
+    """
+    Delete numeros_relations
+    """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
@@ -94,15 +99,12 @@ def numeros_relations_delete_view(request):
     numero_relation_id = request.params["numero_relation_id"] if "numero_relation_id" in request.params else None
 
     # Get numeros_relations instance
-    model = request.dbsession.query(models.NumeroRelation).filter(models.NumeroRelation.id == numero_relation_id).first()
+    model = request.dbsession.query(NumeroRelation).filter(NumeroRelation.id == numero_relation_id).first()
 
     if not model:
         raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.NumeroRelation.__tablename__, numero_relation_id))
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(NumeroRelation.__tablename__, numero_relation_id))
 
-    with transaction.manager:
-        request.dbsession.delete(model)
-        transaction.commit()
-        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(models.NumeroRelation.__tablename__))
+    request.dbsession.delete(model)
 
-
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroRelation.__tablename__))
