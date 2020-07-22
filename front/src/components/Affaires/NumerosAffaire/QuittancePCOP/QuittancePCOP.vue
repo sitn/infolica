@@ -99,7 +99,10 @@ export default {
      */
     updateNumerosPCOP() {
       const tmp = [];
-      this.affaire_numeros_nouveaux.filter(x => x.numero_base === this.form.bfBase).map(x => {if (x.active) tmp.push(x.numero)});
+      this.affaire_numeros_nouveaux.filter(x => x.numero_base === this.form.bfBase).map(x => {
+        if (x.active) {
+          tmp.push(x.numero)}
+        });
       this.form.numeros_de = Math.min(...tmp);
       this.form.numeros_a = Math.max(...tmp);
     },

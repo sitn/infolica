@@ -346,8 +346,12 @@ export default {
           if (response && response.data) {
             var promises = [];
             // Enregistrer une facture vide
-            if (this.showClientsForm) promises.push(this.postFacture(id_new_affaire));
-            if (this.form.remarque !== null) promises.push(this.postRemarqueAffaire(id_new_affaire));
+            if (this.showClientsForm){
+              promises.push(this.postFacture(id_new_affaire));
+            } 
+            if (this.form.remarque !== null) {
+              promises.push(this.postRemarqueAffaire(id_new_affaire));
+            }
             if (this.type_modification_bool) {
               promises.push(this.postAffaireRelation(id_new_affaire));
               if ((this.selectedAnciensNumeros.length + this.selectedNouveauxNumeros.length) > 0 ) {
@@ -462,49 +466,48 @@ export default {
     initPostData() {
       var formData = new FormData();
       formData.append("type_id", this.form.type_id);
-      if (this.form.nom) formData.append("nom", this.form.nom);
-      if (this.form.client_commande && this.form.client_commande.id)
+      if (this.form.nom) {
+        formData.append("nom", this.form.nom);
+      }
+      if (this.form.client_commande && this.form.client_commande.id) {
         formData.append("client_commande_id", this.form.client_commande.id);
-      if (this.form.client_envoi && this.form.client_envoi.id)
+      }
+      if (this.form.client_envoi && this.form.client_envoi.id) {
         formData.append("client_envoi_id", this.form.client_envoi.id);
-      if (this.form.client_envoi_complement)
-        formData.append(
-          "client_envoi_complement",
-          this.form.client_envoi_complement
-        );
-      if (this.form.technicien_id)
+      }
+      if (this.form.client_envoi_complement) {
+        formData.append("client_envoi_complement", this.form.client_envoi_complement);
+      }
+      if (this.form.technicien_id) {
         formData.append("technicien_id", this.form.technicien_id);
-      if (this.form.cadastre_id)
+      }
+      if (this.form.cadastre_id) {
         formData.append("cadastre_id", this.form.cadastre_id);
-      if (this.form.localisation_E)
+      }
+      if (this.form.localisation_E) {
         formData.append("localisation_E", this.form.localisation_E);
-      if (this.form.localisation_N)
+      }
+      if (this.form.localisation_N) {
         formData.append("localisation_N", this.form.localisation_N);
-      if (this.form.vref) formData.append("vref", this.form.vref);
-      if (this.form.date_ouverture)
-        formData.append(
-          "date_ouverture",
-          moment(
-            this.form.date_ouverture,
-            process.env.VUE_APP_DATEFORMAT_CLIENT
-          ).format(process.env.VUE_APP_DATEFORMAT_WS)
+      }
+      if (this.form.vref) {
+        formData.append("vref", this.form.vref);
+      }
+      if (this.form.date_ouverture) {
+        formData.append("date_ouverture",
+          moment(this.form.date_ouverture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)
         );
-      if (this.form.date_validation)
-        formData.append(
-          "date_validation",
-          moment(
-            this.form.date_validation,
-            process.env.VUE_APP_DATEFORMAT_CLIENT
-          ).format(process.env.VUE_APP_DATEFORMAT_WS)
+      }
+      if (this.form.date_validation) {
+        formData.append("date_validation",
+          moment(this.form.date_validation, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)
         );
-      if (this.form.date_cloture)
-        formData.append(
-          "date_cloture",
-          moment(
-            this.form.date_cloture,
-            process.env.VUE_APP_DATEFORMAT_CLIENT
-          ).format(process.env.VUE_APP_DATEFORMAT_WS)
+      }
+      if (this.form.date_cloture) {
+        formData.append("date_cloture",
+          moment(this.form.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)
         );
+      }
       return formData;
     },
 
@@ -822,8 +825,11 @@ export default {
             x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID)
           );
           this.affaire_numeros_nouveaux.forEach(function(element) {
-            if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)) element.active = false;
-            else element.active = true;
+            if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)) {
+              element.active = false;
+            } else {
+              element.active = true;
+            }
           });
 
           // get client_affaire

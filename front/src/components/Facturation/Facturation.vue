@@ -247,15 +247,33 @@ export default {
       formData.append("remarque", this.selectedFacture.remarque || null);
       formData.append("client_complement", this.selectedFacture.client_complement || null);
       formData.append("client_attention_de", this.selectedFacture.client_attention_de || null);
-      if (this.selectedFacture.date) formData.append("date", moment(this.selectedFacture.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      if (this.selectedFacture.client.id) formData.append("client_id", this.selectedFacture.client.id);
-      if (this.selectedFacture.montant_mo) formData.append("montant_mo", this.selectedFacture.montant_mo);
-      if (this.selectedFacture.montant_mat_diff) formData.append("montant_mat_diff", this.selectedFacture.montant_mat_diff);
-      if (this.selectedFacture.montant_rf) formData.append("montant_rf", this.selectedFacture.montant_rf);
-      if (this.selectedFacture.montant_tva) formData.append("montant_tva", this.selectedFacture.montant_tva);
-      if (this.selectedFacture.montant_total) formData.append("montant_total", this.selectedFacture.montant_total);
-      if (this.selectedFacture.indice_tva) formData.append("indice_tva", this.selectedFacture.indice_tva);
-      if (this.selectedFacture.indice_application_mo) formData.append("indice_application_mo", this.selectedFacture.indice_application_mo);
+      if (this.selectedFacture.date) {
+        formData.append("date", moment(this.selectedFacture.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
+      }
+      if (this.selectedFacture.client.id) {
+        formData.append("client_id", this.selectedFacture.client.id);
+      }
+      if (this.selectedFacture.montant_mo) {
+        formData.append("montant_mo", this.selectedFacture.montant_mo);
+      }
+      if (this.selectedFacture.montant_mat_diff) {
+        formData.append("montant_mat_diff", this.selectedFacture.montant_mat_diff);
+      }
+      if (this.selectedFacture.montant_rf) {
+        formData.append("montant_rf", this.selectedFacture.montant_rf);
+      }
+      if (this.selectedFacture.montant_tva) {
+        formData.append("montant_tva", this.selectedFacture.montant_tva);
+      }
+      if (this.selectedFacture.montant_total) {
+        formData.append("montant_total", this.selectedFacture.montant_total);
+      }
+      if (this.selectedFacture.indice_tva) {
+        formData.append("indice_tva", this.selectedFacture.indice_tva);
+      }
+      if (this.selectedFacture.indice_application_mo) {
+        formData.append("indice_application_mo", this.selectedFacture.indice_application_mo);
+      }
 
       // Type de requête selon si c'est une création ou une modification de facture
       if (this.createFacture) {

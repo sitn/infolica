@@ -41,7 +41,9 @@ export default {
           headers: {Accept: "application/json"}
         }
       ).then(response => {
-        if (response && response.data) this.dossier_affaire = response.data;
+        if (response && response.data) {
+          this.dossier_affaire = response.data;
+        }
       }).catch(err => handleException(err, this))
     },
 

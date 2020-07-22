@@ -62,8 +62,12 @@ export default {
         .then(response => {
           if (response.data) {
             this.affaire_preavis = response.data;
-            if (this.affaire_preavis.date_demande) this.affaire_preavis.date_demande = moment(this.affaire_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
-            if (this.affaire_preavis.date_reponse) this.affaire_preavis.date_reponse = moment(this.affaire_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            if (this.affaire_preavis.date_demande) {
+              this.affaire_preavis.date_demande = moment(this.affaire_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            }
+            if (this.affaire_preavis.date_reponse) {
+              this.affaire_preavis.date_reponse = moment(this.affaire_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            }
           }
         })
         .catch(err => {
@@ -149,7 +153,7 @@ export default {
           toLowerCase: () => x.nom.toLowerCase(),
           toString: () => x.nom
         }))[0];
-      if (curr_preavis)
+      if (curr_preavis) {
         this.new_preavis.preavis = this.preavis_type_liste
           .filter(data => data.nom === curr_preavis.preavis)
           .map(x => ({
@@ -158,6 +162,7 @@ export default {
             toLowerCase: () => x.nom.toLowerCase(),
             toString: () => x.nom
           }))[0];
+      }
       this.modifyPreavis = true;
       this.showPreavisDialog = true;
     },
@@ -225,19 +230,23 @@ export default {
         formData.append("service_id", this.new_preavis.service.id);
         this.lastRecord = this.new_preavis.service.nom;
       }
-      if (this.new_preavis.preavis)
+      if (this.new_preavis.preavis) {
         formData.append("preavis_type_id", this.new_preavis.preavis.id);
-      if (this.new_preavis.date_demande)
-        formData.append(
-          "date_demande",
+      }
+      if (this.new_preavis.date_demande) {
+        formData.append("date_demande",
           moment(this.new_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      if (this.new_preavis.date_reponse)
-        formData.append(
-          "date_reponse",
+      }
+      if (this.new_preavis.date_reponse) {
+        formData.append("date_reponse",
           moment(this.new_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      if (this.new_preavis.remarque)
+      }
+      if (this.new_preavis.remarque) {
         formData.append("remarque", this.new_preavis.remarque);
-      if (this.new_preavis.id) formData.append("id", this.new_preavis.id);
+      }
+      if (this.new_preavis.id){
+        formData.append("id", this.new_preavis.id);
+      }
 
       return formData;
     },

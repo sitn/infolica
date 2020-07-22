@@ -49,12 +49,16 @@ export default {
       cadastre: { required }
     };
     
-    if (this.reservation.nb_ddp > 0) reservation.ddp_base = { required };
+    if (this.reservation.nb_ddp > 0) {
+      reservation.ddp_base = { required };
+    }
     if (this.reservation.nb_ppe > 0) {
       reservation.ppe_base = { required };
       reservation.ppe_suffixe_start = { required };
     }
-    if (this.reservation.nb_pcop > 0) reservation.pcop_base = { required };
+    if (this.reservation.nb_pcop > 0) {
+      reservation.pcop_base = { required };
+    }
 
     return { reservation };
   },
@@ -157,36 +161,52 @@ export default {
      */
     saveReservationNumeros() {
       var formData = new FormData();
-      if (this.reservation.cadastre.id)
-        formData.append("cadastre_id", this.reservation.cadastre.id);
       formData.append("affaire_id", this.$route.params.id);
-      if (this.reservation.nb_bf) formData.append("bf", this.reservation.nb_bf);
-      if (this.reservation.nb_ddp)
+      if (this.reservation.cadastre.id) {
+        formData.append("cadastre_id", this.reservation.cadastre.id);
+      }
+      if (this.reservation.nb_bf) {
+        formData.append("bf", this.reservation.nb_bf);
+      }
+      if (this.reservation.nb_ddp) {
         formData.append("ddp", this.reservation.nb_ddp);
-      if (this.reservation.ddp_base)
+      }
+      if (this.reservation.ddp_base) {
         formData.append("ddp_base", this.reservation.ddp_base);
-      if (this.reservation.nb_ppe)
+      }
+      if (this.reservation.nb_ppe) {
         formData.append("ppe", this.reservation.nb_ppe);
-      if (this.reservation.ppe_suffixe_start)
+      }
+      if (this.reservation.ppe_suffixe_start) {
         formData.append("ppe_unite", this.reservation.ppe_suffixe_start);
-      if (this.reservation.ppe_base)
+      }
+      if (this.reservation.ppe_base) {
         formData.append("ppe_base", this.reservation.ppe_base);
-      if (this.reservation.nb_pcop)
+      }
+      if (this.reservation.nb_pcop) {
         formData.append("pcop", this.reservation.nb_pcop);
-      if (this.reservation.pcop_base)
+      }
+      if (this.reservation.pcop_base) {
         formData.append("pcop_base", this.reservation.pcop_base);
-      if (this.reservation.nb_pfp3)
+      }
+      if (this.reservation.nb_pfp3) {
         formData.append("pfp3", this.reservation.nb_pfp3);
-      if (this.reservation.nb_paux)
+      }
+      if (this.reservation.nb_paux) {
         formData.append("paux", this.reservation.nb_paux);
-      if (this.reservation.nb_bat)
+      }
+      if (this.reservation.nb_bat) {
         formData.append("bat", this.reservation.nb_bat);
-      if (this.reservation.nb_dp)
+      }
+      if (this.reservation.nb_dp) {
         formData.append("dp", this.reservation.nb_dp);
-      if (this.reservation.nb_pcs)
+      }
+      if (this.reservation.nb_pcs) {
         formData.append("pcs", this.reservation.nb_pcs);
-      if (this.reservation.plan_id)
+      }
+      if (this.reservation.plan_id) {
         formData.append("plan_id", this.reservation.plan_id);
+      }
 
       this.$http
         .post(

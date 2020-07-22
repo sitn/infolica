@@ -84,10 +84,22 @@ export default {
      */
     async searchAffaires() {
       var formData = new FormData();
-      if (this.search.id) formData.append("id", this.search.id);
-      if (this.search.nom) formData.append("nom", this.search.nom);
-      if (this.search.cadastre) formData.append("cadastre", this.search.cadastre);
-      if (this.search.type) formData.append("type_affaire", this.search.type);
+      if (this.search.id) {
+        formData.append("id", this.search.id);
+      }
+      
+      if (this.search.nom) {
+        formData.append("nom", this.search.nom);
+      }
+      
+      if (this.search.cadastre) {
+        formData.append("cadastre", this.search.cadastre);
+      }
+      
+      if (this.search.type) {
+        formData.append("type_affaire", this.search.type);
+      }
+      
 
       this.$http
         .post(

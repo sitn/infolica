@@ -118,35 +118,51 @@ export default {
       formData.append("id_affaire", this.affaire.id);
       formData.append("technicien_id", this.form.technicien.id);
       formData.append("type_id", this.form.typeAffaire.id);
-      if (this.form.responsable !== null) formData.append("responsable_id", this.form.responsable.id);
-      if (this.affaire.nom !== null) formData.append("nom", this.affaire.nom || null);
-      if (this.affaire.information !== null)
+      if (this.form.responsable !== null) {
+        formData.append("responsable_id", this.form.responsable.id);
+      }
+
+      if (this.affaire.nom !== null) {
+        formData.append("nom", this.affaire.nom || null);
+      }
+
+      if (this.affaire.information !== null) {
         formData.append("information", this.affaire.information || null);
-      if (this.affaire.vref !== null) formData.append("vref", this.affaire.vref || null);
+      }
+
+      if (this.affaire.vref !== null) {
+        formData.append("vref", this.affaire.vref || null);
+      }
       
-      if (this.form.client_commande && this.form.client_commande.id) formData.append("client_commande_id", this.form.client_commande.id || null);
-      if (this.form.client_envoi && this.form.client_envoi.id) formData.append("client_envoi_id", this.form.client_envoi.id || null);
-      formData.append("client_envoi_complement", this.form.client_envoi_complement || null);
+      if (this.form.client_commande && this.form.client_commande.id) {
+        formData.append("client_commande_id", this.form.client_commande.id || null);
+      }
 
-      if (this.affaire.date_validation)
-        formData.append(
-          "date_validation", this.affaire.date_validation?
+      if (this.form.client_envoi && this.form.client_envoi.id) {
+        formData.append("client_envoi_id", this.form.client_envoi.id || null);
+      }
+
+      if (this.affaire.date_validation) {
+        formData.append("date_validation", this.affaire.date_validation?
           moment(this.affaire.date_validation, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
-      else
+      } else {
         formData.append("date_validation", null);
-      if (this.affaire.date_envoi)
-        formData.append(
-          "date_envoi", this.affaire.date_envoi?
+      }
+      if (this.affaire.date_envoi) {
+        formData.append("date_envoi", this.affaire.date_envoi?
           moment(this.affaire.date_envoi, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
-      else
+      } else {
         formData.append("date_cloture", null);
-      if (this.affaire.date_cloture)
-        formData.append(
-          "date_cloture", this.affaire.date_cloture?
-          moment(this.affaire.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
-      else
-        formData.append("date_cloture", null);
+      }
 
+      if (this.affaire.date_cloture) {
+        formData.append("date_cloture", this.affaire.date_cloture?
+          moment(this.affaire.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
+      } else {
+        formData.append("date_cloture", null);
+      }
+
+      formData.append("client_envoi_complement", this.form.client_envoi_complement || null);
       formData.append("localisation_E", this.affaire.localisation_e);
       formData.append("localisation_N", this.affaire.localisation_n);
 
@@ -203,7 +219,7 @@ export default {
       this.form.technicien = this.operateursListe
       .filter(x => x.id === this.affaire.technicien_id)[0];
 
-      if (this.form.responsable !== null){
+      if (this.form.responsable !== null) {
         this.form.responsable = this.operateursListe
         .filter(x => x.id === this.affaire.responsable_id)[0];
       }
@@ -238,8 +254,9 @@ export default {
           headers: {Accept: "application/json"}
         }
       ).then(response => {
-        if (response && response.data)
+        if (response && response.data) {
           this.typesAffairesListe = stringifyAutocomplete(response.data);
+        }
       }).catch(err => handleException(err, this))
     },
 

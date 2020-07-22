@@ -80,7 +80,9 @@ export default {
         } 
         // Cas des numéros référencés à supprimer
         else if (element.affaire_numero_type_id === process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID) {
-          if (~base.includes(element.numero_id)) element.numero_etatFutur_id = process.env.VUE_APP_NUMERO_SUPPRIME_ID;
+          if (~base.includes(element.numero_id)) {
+            element.numero_etatFutur_id = process.env.VUE_APP_NUMERO_SUPPRIME_ID;
+          }
         }
       });
       return data;
@@ -104,7 +106,9 @@ export default {
      */
     updateAffaireNumero(num_id, etat_id) {
       this.affaire_numeros.map(x => {
-        if (x.numero_id == num_id) x.numero_etatFutur_id = etat_id; 
+        if (x.numero_id == num_id) {
+          x.numero_etatFutur_id = etat_id;
+        } 
       })
     },
 

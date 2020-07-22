@@ -108,15 +108,24 @@ export default {
       });
 
       var formData = new FormData();
-      if (this.search.cadastre)
+      if (this.search.cadastre) {
         formData.append("cadastre_id", this.search.cadastre.id);
-      if (this.search.type)
+      }
+      if (this.search.type) {
         formData.append("type_numero_id", this.search.type.id);
-      if (this.search.etat) formData.append("etat_id", this.search.etat.id);
-      if (this.search.numero) formData.append("numero", this.search.numero);
-      if (this.search.suffixe) formData.append("suffixe", this.search.suffixe);
-      if (numerosReferencesId)
+      }
+      if (this.search.etat) {
+        formData.append("etat_id", this.search.etat.id);
+      }
+      if (this.search.numero) {
+        formData.append("numero", this.search.numero);
+      }
+      if (this.search.suffixe) {
+        formData.append("suffixe", this.search.suffixe);
+      }
+      if (numerosReferencesId) {
         formData.append("_id", JSON.stringify(numerosReferencesId));
+      }
 
       this.$http
         .post(
@@ -232,8 +241,9 @@ export default {
     onConfirmReferenceNumeros() {
       var formData = new FormData();
       formData.append("affaire_id", this.$route.params.id);
-      if (this.selectedNumeros)
+      if (this.selectedNumeros) {
         formData.append("numeros_liste", JSON.stringify(this.selectedNumeros));
+      }
 
       this.$http
         .post(
@@ -310,12 +320,21 @@ export default {
      */
     onConfirmCreateNumero() {
       var formData = new FormData();
-      if (this.search.cadastre)
+      if (this.search.cadastre) {
         formData.append("cadastre_id", this.search.cadastre.id);
-      if (this.search.numero) formData.append("numero", this.search.numero);
-      if (this.search.suffixe) formData.append("suffixe", this.search.suffixe);
-      if (this.search.type) formData.append("type_id", this.search.type.id);
-      if (this.search.etat) formData.append("etat_id", this.search.etat.id);
+      }
+      if (this.search.numero) {
+        formData.append("numero", this.search.numero);
+      }
+      if (this.search.suffixe) {
+        formData.append("suffixe", this.search.suffixe);
+      }
+      if (this.search.type) {
+        formData.append("type_id", this.search.type.id);
+      }
+      if (this.search.etat) {
+        formData.append("etat_id", this.search.etat.id);
+      }
 
       // Enregistrer le numéro
       this.$http
@@ -381,7 +400,9 @@ export default {
       this.$v.$touch();
 
       if (!this.$v.$invalid) {
-        if (this.search.type.id !== 3) this.search.suffixe = null;
+        if (this.search.type.id !== 3) {
+          this.search.suffixe = null;
+        }
         this.onConfirmCreateNumero();
       }
     }
