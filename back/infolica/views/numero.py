@@ -123,6 +123,7 @@ def numeros_new_view(request, params=None):
     record = Utils.set_model_record(record, params)
 
     request.dbsession.add(record)
+    request.dbsession.flush()
 
     Utils.get_data_save_response(
             Constant.SUCCESS_SAVE.format(Numero.__tablename__)
@@ -210,6 +211,7 @@ def numeros_etat_histo_new_view(request, params=None):
     record = Utils.set_model_record(record, params)
 
     request.dbsession.add(record)
+    request.dbsession.flush()
 
     Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(
         NumeroEtatHisto.__tablename__)
@@ -457,7 +459,7 @@ def numero_differe_update_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
 
-    numdiff_id = request.params["id"] if "id" in request.params else None
+    numdiff_id = request.params["numero_diff_id"] if "numero_diff_id" in request.params else None
 
     # update numero_differe
     record = request.dbsession.query(NumeroDiffere).filter(NumeroDiffere.id == numdiff_id).first()
