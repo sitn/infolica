@@ -124,16 +124,23 @@ export default {
     initPostData() {
       var formData = new FormData();
 
-      if (this.form.nom) formData.append("nom", this.form.nom);
-      if (this.form.prenom) formData.append("prenom", this.form.prenom);
-      if (this.form.login) formData.append("login", this.form.login);
-      if (this.form.responsable !== null && this.form.responsable !== undefined)
+      if (this.form.nom) {
+        formData.append("nom", this.form.nom);
+      }
+      if (this.form.prenom) {
+        formData.append("prenom", this.form.prenom);
+      }
+      if (this.form.login) {
+        formData.append("login", this.form.login);
+      }
+      if (this.form.responsable !== null && this.form.responsable !== undefined) {
         formData.append("responsable", this.form.responsable);
-      if (this.form.entree)
-        formData.append(
-          "entree",
+      }
+      if (this.form.entree) {
+        formData.append("entree",
           moment(new Date(new Date(this.form.entree))).format("YYYY-MM-DD")
         );
+      }
 
       return formData;
     },
@@ -207,9 +214,11 @@ export default {
       this.$router &&
       this.$router.currentRoute &&
       this.$router.currentRoute.name === "OperateursNew"
-    )
+    ) {
       this.mode = "new";
-    else this.mode = "edit";
+    } else {
+      this.mode = "edit";
+    }
 
     //If mode = edit, get the operateur
     if (this.mode === "edit") {

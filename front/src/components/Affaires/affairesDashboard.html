@@ -19,7 +19,7 @@
 
     <!-- INFORMATIONS GENERALES -->
     <div class="leftColumn">
-        <InfosGenerales @modify-off="modifyOff" :affaire="affaire" />
+        <InfosGenerales @modify-off="modifyOff" :affaire="affaire" :typesAffaires="typesAffaires" />
     </div>
 
 
@@ -34,52 +34,34 @@
                             <label>Coordonnées</label>
                             <md-input v-model="[affaire.localisation_e | 0, affaire.localisation_n | 0].join(' / ')"
                                 readonly>
-                            </md-input>
-                        </md-field>
+                            </md-input>    
+                        </md-field>    
                     </div>
                     <div style="text-align: right;" class="md-layout-item" v-if="affaire.type_id==typesAffaires.mutation">
                         <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('environnement')">Environnement</md-button>
                         <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('amenagement_territoire')">Aménagement du territoire</md-button>
                     </div>
+                    <div id="mapContainer">
+                        <MapHandler ref="mapHandler" />
+                    </div>
                 </div>
-                <div id="mapContainer">
-                    <MapHandler ref="mapHandler" />
-                </div>
-            </md-card-content>
-        </md-card>
-    </div>
-
-    <!-- DOCUMENTS -->
-    <div class="affairesDashboard">
-        <Documents v-if="false" />
-    </div>
-
-    <!-- ENVOIS DE DOCUMENTS -->
-
-
-    <!-- NUMEROS -->
-    <div class="affairesDashboard">
-        <numerosAffaire :affaire="affaire" :typesAffaires="typesAffaires"/>
-    </div>
-
-    <!-- SUIVI D'AFFAIRE -->
-    <div class="affairesDashboard">
-        <suivi />
-    </div>
-
+            </md-card-content>    
+        </md-card>    
+    </div> 
+    
     <!-- PREAVIS -->
     <div class="affairesDashboard" v-if="affaire.type_id==typesAffaires.mutation">
         <preavis />
     </div>
-
+    
+    <!-- NUMEROS -->
+    <div class="affairesDashboard">
+        <numerosAffaire :affaire="affaire" :typesAffaires="typesAffaires"/>
+    </div>
+    
     <!-- FACTURATION -->
     <div class="affairesDashboard">
         <Facturation />
-    </div>
-
-    <!-- REMARQUE -->
-    <div class="affairesDashboard">
-        <Remarques />
     </div>
 
     <!-- CONTROLE TECHNIQUE MUTATION -->
@@ -97,11 +79,25 @@
         <SuiviMandat />
     </div>
 
+    <!-- DOCUMENTS -->
+    <div class="affairesDashboard">
+        <Documents v-if="false" />
+    </div>
+
+    <!-- REMARQUE -->
+    <div class="affairesDashboard">
+        <Remarques />
+    </div>
+    
+    <!-- SUIVI D'AFFAIRE -->
+    <div class="affairesDashboard">
+        <suivi />
+    </div>
 
     <!-- Duplication Affaire -->
-    <div>
+    <!-- <div>
         <DuplicationAffaire ref="duplicationAffaireForm" :affaire="affaire"/>
-    </div>
+    </div> -->
 
     <!-- Cloture Affaire -->
     <div>

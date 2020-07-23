@@ -8,7 +8,7 @@
                         <md-icon>keyboard_arrow_down</md-icon>
                     </md-button>
                 </md-card-expand-trigger>
-                Facturation
+                Devis et factures
                 <md-button class="md-primary newFactureBtn" v-on:click="newFacture()" v-if="showNewFactureBtn && !affaireReadonly">Nouvelle
                     facture</md-button>
             </div>
@@ -89,16 +89,19 @@
             <md-autocomplete v-model="selectedFacture.client" :md-options="clients_liste_select"
                 @md-changed="getClientSearch" md-dense :class="getValidationClass('client')">
                 <label>Client *</label>
+                <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                    Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                </template>
                 <span class="md-error" v-if="!$v.selectedFacture.client.required">Le client est obligatoire</span>
             </md-autocomplete>
 
             <md-field>
-                <label>Client-complement</label>
+                <label>Par</label>
                 <md-input v-model="selectedFacture.client_complement"></md-input>
             </md-field>
             
             <md-field>
-                <label>A l'attention de</label>
+                <label>À l'attention de</label>
                 <md-input v-model="selectedFacture.client_attention_de"></md-input>
             </md-field>
 

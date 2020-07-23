@@ -23,7 +23,7 @@ export default {
       this.$material.locale.firstDayOfAWeek = 1;
     }
   },
-  mounted: function(){    
+  mounted: function(){
     this.setDefaultDateFormat();
   }
 }

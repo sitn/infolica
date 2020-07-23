@@ -9,7 +9,7 @@
                         <md-icon>keyboard_arrow_down</md-icon>
                     </md-button>
                 </md-card-expand-trigger>
-                Préavis
+                Préavis (SCAT, SAGR, Service de l'urbanisme des villes)
                 <md-button class="md-primary newPreavisBtn" v-on:click="showPreavisDialog = !showPreavisDialog"
                     v-if="showNewPreavisBtn && !affaireReadonly">  
                     Nouveau préavis</md-button>
@@ -41,8 +41,8 @@
                                         <md-icon class="md-edit">edit</md-icon>
                                     </md-button>
                                     <md-button class="md-icon-button md-primary" 
-                                    title="Générer la demande de préavis"
-                                    @click="getDocument(item.service_id)">
+                                        title="Générer la demande de préavis"
+                                        @click="downloadModel(item.service_id)">
                                         <md-icon>save_alt</md-icon>
                                     </md-button>
                                 </md-table-cell>

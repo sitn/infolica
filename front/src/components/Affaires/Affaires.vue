@@ -84,10 +84,22 @@ export default {
      */
     async searchAffaires() {
       var formData = new FormData();
-      if (this.search.id) formData.append("id", this.search.id);
-      if (this.search.nom) formData.append("nom", this.search.nom);
-      if (this.search.cadastre) formData.append("cadastre", this.search.cadastre);
-      if (this.search.type) formData.append("type_affaire", this.search.type);
+      if (this.search.id) {
+        formData.append("id", this.search.id);
+      }
+      
+      if (this.search.nom) {
+        formData.append("nom", this.search.nom);
+      }
+      
+      if (this.search.cadastre) {
+        formData.append("cadastre", this.search.cadastre);
+      }
+      
+      if (this.search.type) {
+        formData.append("type_affaire", this.search.type);
+      }
+      
 
       this.$http
         .post(
@@ -112,8 +124,7 @@ export default {
      * Open numéro in new tab
      */
     doOpenAffaire(id) {
-      const routeData = this.$router.resolve({ name: "AffairesDashboard", params: {id}});
-      window.open(routeData.href, '_blank');
+      this.$router.push({ name: "AffairesDashboard", params: {id}});
     }
   },
 

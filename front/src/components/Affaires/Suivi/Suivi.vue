@@ -100,16 +100,14 @@ export default {
       if (this.new_etape.etape.id) {
         formData.append("etape_id", this.new_etape.etape.id);
       }
-      if (this.new_etape.date)
-        formData.append(
-          "date",
-          moment(
-            this.new_etape.date,
-            process.env.VUE_APP_DATEFORMAT_CLIENT
-          ).format(process.env.VUE_APP_DATEFORMAT_WS)
+      if (this.new_etape.date) {
+        formData.append("date",
+          moment(this.new_etape.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)
         );
-      if (this.new_etape.remarque)
+      }
+      if (this.new_etape.remarque) {
         formData.append("remarque", this.new_etape.remarque);
+      }
 
       this.$http
         .post(

@@ -4,7 +4,11 @@
 
 <script>
 var numeral = require("numeral");
-import { getCurrentDate, checkPermission, getCurrentUserRoleId } from "@/services/helper";
+import { getCurrentDate,
+         checkPermission,
+         getCurrentUserRoleId,
+         getClients,
+         filterList } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -84,7 +88,9 @@ export default {
               x.montant_tva = numeral(x.montant_tva).format("0.00"),
               x.montant_total = numeral(x.montant_total).format("0.00"),
               x.client_ = [
+                x.client_attention_de,
                 x.client_entreprise,
+                x.client_complement,
                 [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
                 x.client_adresse,
                 x.client_case_postale,
@@ -104,31 +110,14 @@ export default {
      * Liste des clients
      */
     async searchClients() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
-          {
-            withCredentials: true,
-            headers: {"Accept": "application/json"}
-          }
-        )
+      getClients()
         .then(response => {
           if (response && response.data) {
-            var tmp = response.data;
-            tmp.forEach(x => {
-              x.nom_ = [
-                x.entreprise,
-                [x.titre, x.nom, x.prenom].filter(Boolean).join(" "),
-                x.adresse,
-                x.case_postale,
-                [x.npa, x.localite].filter(Boolean).join(" ")
-              ].filter(Boolean).join(", ")
-            });
-            this.clients_liste = tmp.map(x => ({
+            this.clients_liste = response.data.map(x => ({
               id: x.id,
-              nom: x.nom_,
-              toLowerCase: () => x.nom_.toLowerCase(),
-              toString: () => x.nom_
+              nom: x.adresse_,
+              toLowerCase: () => x.adresse_.toLowerCase(),
+              toString: () => x.adresse_
             }));
           }
         })
@@ -138,19 +127,7 @@ export default {
      * Crée la liste de sélection du client lors de la création de facture
      */
     getClientSearch() {
-      this.clients_liste_select = [];
-      if (this.selectedFacture.client != null) {
-        if (this.selectedFacture.client.length < 3) {
-          return;
-        } else {
-          this.clients_liste_select = this.clients_liste
-            .filter(client_i => {
-              return client_i.nom
-                .toLowerCase()
-                .includes(this.selectedFacture.client.toLowerCase());
-            });
-        }
-      }
+      this.clients_liste_select = filterList(this.clients_liste, this.selectedFacture.client, 3)
     },
 
     /**
@@ -245,15 +222,33 @@ export default {
       formData.append("remarque", this.selectedFacture.remarque || null);
       formData.append("client_complement", this.selectedFacture.client_complement || null);
       formData.append("client_attention_de", this.selectedFacture.client_attention_de || null);
-      if (this.selectedFacture.date) formData.append("date", moment(this.selectedFacture.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      if (this.selectedFacture.client.id) formData.append("client_id", this.selectedFacture.client.id);
-      if (this.selectedFacture.montant_mo) formData.append("montant_mo", this.selectedFacture.montant_mo);
-      if (this.selectedFacture.montant_mat_diff) formData.append("montant_mat_diff", this.selectedFacture.montant_mat_diff);
-      if (this.selectedFacture.montant_rf) formData.append("montant_rf", this.selectedFacture.montant_rf);
-      if (this.selectedFacture.montant_tva) formData.append("montant_tva", this.selectedFacture.montant_tva);
-      if (this.selectedFacture.montant_total) formData.append("montant_total", this.selectedFacture.montant_total);
-      if (this.selectedFacture.indice_tva) formData.append("indice_tva", this.selectedFacture.indice_tva);
-      if (this.selectedFacture.indice_application_mo) formData.append("indice_application_mo", this.selectedFacture.indice_application_mo);
+      if (this.selectedFacture.date) {
+        formData.append("date", moment(this.selectedFacture.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
+      }
+      if (this.selectedFacture.client.id) {
+        formData.append("client_id", this.selectedFacture.client.id);
+      }
+      if (this.selectedFacture.montant_mo) {
+        formData.append("montant_mo", this.selectedFacture.montant_mo);
+      }
+      if (this.selectedFacture.montant_mat_diff) {
+        formData.append("montant_mat_diff", this.selectedFacture.montant_mat_diff);
+      }
+      if (this.selectedFacture.montant_rf) {
+        formData.append("montant_rf", this.selectedFacture.montant_rf);
+      }
+      if (this.selectedFacture.montant_tva) {
+        formData.append("montant_tva", this.selectedFacture.montant_tva);
+      }
+      if (this.selectedFacture.montant_total) {
+        formData.append("montant_total", this.selectedFacture.montant_total);
+      }
+      if (this.selectedFacture.indice_tva) {
+        formData.append("indice_tva", this.selectedFacture.indice_tva);
+      }
+      if (this.selectedFacture.indice_application_mo) {
+        formData.append("indice_application_mo", this.selectedFacture.indice_application_mo);
+      }
 
       // Type de requête selon si c'est une création ou une modification de facture
       if (this.createFacture) {
@@ -351,6 +346,14 @@ export default {
      */
     setFinanceFormat(key) {
       this.selectedFacture[key] = numeral(this.selectedFacture[key]).format('0.00');
+    },
+
+    /**
+     * openCreateClient
+     */
+    openCreateClient() {
+      let routedata = this.$router.resolve({ name: "ClientsNew" });
+      window.open(routedata.href, "_blank");
     }
   },
 

@@ -34,12 +34,24 @@ export default {
      */
     async searchNumeros() {
       var formData = new FormData();
-      if (this.search.numero) formData.append("numero", this.search.numero);
-      if (this.search.suffixe) formData.append("suffixe", this.search.suffixe);
-      if (this.search.cadastre) formData.append("cadastre_id", this.search.cadastre.id);
-      if (this.search.type) formData.append("type_numero_id", this.search.type.id);
-      if (this.search.etat) formData.append("etat_id", this.search.etat.id);
-      if (this.search.matDiff) formData.append("matDiff", this.search.matDiff);
+      if (this.search.numero) {
+        formData.append("numero", this.search.numero);
+      }
+      if (this.search.suffixe) {
+        formData.append("suffixe", this.search.suffixe);
+      }
+      if (this.search.cadastre) {
+        formData.append("cadastre_id", this.search.cadastre.id);
+      }
+      if (this.search.type) {
+        formData.append("type_numero_id", this.search.type.id);
+      }
+      if (this.search.etat) {
+        formData.append("etat_id", this.search.etat.id);
+      }
+      if (this.search.matDiff) {
+        formData.append("matDiff", this.search.matDiff);
+      }
 
       this.$http
         .post(
@@ -140,8 +152,7 @@ export default {
      * Open numéro in new tab
      */
     doOpenNumero(id) {
-      let routeData = this.$router.resolve({ name: "NumerosHistory", params: {id}});
-      window.open(routeData.href, '_blank');
+      this.$router.push({ name: "NumerosHistory", params: {id}});
     }
   },
 

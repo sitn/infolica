@@ -50,7 +50,7 @@ export default {
             if (this.numero.diff_entree && !this.numero.diff_sortie) {
               this.numero.diff = "Oui";
             }
-            if (!this.numero.suffixe){
+            if (!this.numero.suffixe) {
               this.numero.suffixe = "-"
             }
           }
@@ -153,8 +153,7 @@ export default {
      * Open numéro in new tab
      */
     doOpenAffaire(id) {
-      let routeData = this.$router.resolve({ name: "AffairesDashboard", params: {id}});
-      window.open(routeData.href, '_blank');
+      this.$router.push({ name: "AffairesDashboard", params: {id}});
     },
 
     /**
@@ -166,10 +165,12 @@ export default {
       .catch(err => handleException(err, this))
 
       this.numero_edit = Object.assign({} ,this.numero);
-      if (this.numero_edit.diff_entree)
+      if (this.numero_edit.diff_entree) {
         this.numero_edit.diff_entree = moment(this.numero_edit.diff_entree, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT)
-      if (this.numero_edit.diff_sortie)
+      }
+      if (this.numero_edit.diff_sortie) {
         this.numero_edit.diff_sortie = moment(this.numero_edit.diff_entree, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT)
+      }
       this.editionActivated = true;
     },
 
@@ -263,7 +264,9 @@ export default {
       formData.append("numero_id", num.id);
       formData.append("date_entree", moment(num.diff_entree, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       
-      if (num.diff_id) formData.append("id", num.diff_id);
+      if (num.diff_id) {
+        formData.append("id", num.diff_id);
+      }
       
       // Si une date est donnée, la stocker, sinon la supprimer
       num.diff_sortie !== null ? 

@@ -59,7 +59,7 @@
           <div class="md-layout-item md-small-size-100">
             <md-field style="background-color: lightgrey;">
               <label for="represente_par">Représenté par (non éditable)</label>
-              <md-input name="represente_par" id="represente_par" v-model="form.represente_par" :disabled="sending" readonly />
+              <md-input name="represente_par" id="represente_par" v-model="form.represente_par" disabled />
             </md-field>
           </div>
         </div>
@@ -104,14 +104,15 @@
             <md-field>
               <label for="tel_fixe">Télphone fixe</label>
               <md-input name="tel_fixe" id="tel_fixe" v-model="form.tel_fixe" :disabled="sending" />
+              <span class="md-helper-text">Format: 032 123 45 67</span>
             </md-field>
           </div>
-
-
+          
           <div class="md-layout-item md-small-size-100 md-size-50">
             <md-field>
               <label for="tel_portable">Téléphone portable</label>
               <md-input name="tel_portable" id="tel_portable" v-model="form.tel_portable" :disabled="sending" />
+              <span class="md-helper-text">Format: 079 123 45 67</span>
             </md-field>
           </div>
         </div>
@@ -129,6 +130,7 @@
             <md-field>
               <label for="fax">Fax</label>
               <md-input name="fax" id="fax" v-model="form.fax" :disabled="sending" />
+              <span class="md-helper-text">Format: 032 123 45 67</span>
             </md-field>
           </div>
         </div>
@@ -158,7 +160,6 @@
             </md-datepicker>
           </div>
         </div>
-
 
       </md-card-content>
 

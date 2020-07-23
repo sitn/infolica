@@ -8,7 +8,7 @@
                         <md-icon>keyboard_arrow_down</md-icon>
                     </md-button>
                 </md-card-expand-trigger>
-                Suivi du mandat
+                Suivi du mandat (Validation du responsable des données cadastrales)
                 <md-button class="md-primary newSuiviMandatBtn" v-on:click="newSuiviMandat()"
                     v-if="needToCreateSuiviMandat && showNewSuiviMandatBtn && !affaireReadonly">Créer le suivi</md-button>
             </div>
@@ -77,7 +77,6 @@
                                 <md-field v-if="suiviMandat.pdt_21">
                                     <label>Remarques</label>
                                     <md-textarea v-model="suiviMandat.pdt_22"></md-textarea>
-                                </md-field>
                                 </md-field>
 
                                 <!-- <md-checkbox class="md-primary" v-model="suiviMandat.pdt_31">

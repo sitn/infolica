@@ -192,10 +192,11 @@ def courrier_affaire_view(request):
     # Get request params
     template = request.params['template']
     values = request.params['values']
+    output_file_name = request.params['output_file_name'] if 'output_file_name' in request.params else template
 
     # Set output file name
     date_time = datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = template + "_" + date_time + '.docx'
+    filename = output_file_name + "_" + date_time + '.docx'
     file_path = os.path.join(temporary_directory, filename)
 
     # Set context

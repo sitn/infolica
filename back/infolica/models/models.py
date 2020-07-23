@@ -90,7 +90,7 @@ class Affaire(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     no_access = Column(Text)
     nom = Column(Text)
-    client_commande_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
+    client_commande_id = Column(BigInteger, ForeignKey(Client.id))
     client_commande_complement = Column(Text)
     client_envoi_id = Column(BigInteger, ForeignKey(Client.id))
     client_envoi_complement = Column(Text)

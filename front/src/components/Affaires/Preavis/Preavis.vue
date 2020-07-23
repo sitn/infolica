@@ -3,7 +3,7 @@
 
 
 <script>
-import { getCurrentDate, checkPermission } from "@/services/helper";
+import { getCurrentDate, checkPermission, getDocument } from "@/services/helper";
 import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -62,8 +62,12 @@ export default {
         .then(response => {
           if (response.data) {
             this.affaire_preavis = response.data;
-            if (this.affaire_preavis.date_demande) this.affaire_preavis.date_demande = moment(this.affaire_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
-            if (this.affaire_preavis.date_reponse) this.affaire_preavis.date_reponse = moment(this.affaire_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            if (this.affaire_preavis.date_demande) {
+              this.affaire_preavis.date_demande = moment(this.affaire_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            }
+            if (this.affaire_preavis.date_reponse) {
+              this.affaire_preavis.date_reponse = moment(this.affaire_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            }
           }
         })
         .catch(err => {
@@ -149,7 +153,7 @@ export default {
           toLowerCase: () => x.nom.toLowerCase(),
           toString: () => x.nom
         }))[0];
-      if (curr_preavis)
+      if (curr_preavis) {
         this.new_preavis.preavis = this.preavis_type_liste
           .filter(data => data.nom === curr_preavis.preavis)
           .map(x => ({
@@ -158,6 +162,7 @@ export default {
             toLowerCase: () => x.nom.toLowerCase(),
             toString: () => x.nom
           }))[0];
+      }
       this.modifyPreavis = true;
       this.showPreavisDialog = true;
     },
@@ -225,19 +230,23 @@ export default {
         formData.append("service_id", this.new_preavis.service.id);
         this.lastRecord = this.new_preavis.service.nom;
       }
-      if (this.new_preavis.preavis)
+      if (this.new_preavis.preavis) {
         formData.append("preavis_type_id", this.new_preavis.preavis.id);
-      if (this.new_preavis.date_demande)
-        formData.append(
-          "date_demande",
+      }
+      if (this.new_preavis.date_demande) {
+        formData.append("date_demande",
           moment(this.new_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      if (this.new_preavis.date_reponse)
-        formData.append(
-          "date_reponse",
+      }
+      if (this.new_preavis.date_reponse) {
+        formData.append("date_reponse",
           moment(this.new_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      if (this.new_preavis.remarque)
+      }
+      if (this.new_preavis.remarque) {
         formData.append("remarque", this.new_preavis.remarque);
-      if (this.new_preavis.id) formData.append("id", this.new_preavis.id);
+      }
+      if (this.new_preavis.id){
+        formData.append("id", this.new_preavis.id);
+      }
 
       return formData;
     },
@@ -289,9 +298,9 @@ export default {
     },
 
     /**
-     * getDocument pour préavis
+     * getModel pour préavis
      */
-    getDocument(service_id) {
+    async downloadModel(service_id) {
       let form = {};
 
       const service_ = this.services_liste_bk.filter(x => x.id === service_id).pop();
@@ -310,8 +319,18 @@ export default {
         [affaire_.client_commande_npa, affaire_.client_commande_localite].filter(Boolean).join(" ")
       ].filter(Boolean).join("\n");
       
+      let observation = {
+        titre: "",
+        contenu: ""
+      };
+      if (service_id === Number(process.env.VUE_APP_SERVICE_SCAT)) {
+        observation.titre = "Observation:",
+        observation.contenu = "Pour autant que vous le jugiez utile, veuillez transmettre le dossier au service des forêts ou au service de la viticulture."
+      }
+
       let formData = new FormData();
-      formData.append("template", service_.abreviation)
+      formData.append("template", "Preavis")
+      formData.append("output_file_name", service_.abreviation)
       formData.append("values", JSON.stringify({
         ADRESSE_SERVICE: form.adresse_service,
         DATE_ENVOI: String(getCurrentDate()),
@@ -320,72 +339,16 @@ export default {
         ADRESSE_DEMANDEUR: form.adresse_demandeur,
         CADASTRE: affaire_.cadastre,
         CONCERNE: affaire_.nom,
+        OBSERVATION_TITRE: observation.titre,
+        OBSERVATION: observation.contenu,
         ANNEXES: ""
       }));
 
-    this.$http
-      .post(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT,
-        formData,
-        {
-          withCredentials: true,
-          headers: { Accept: "application/html" }
-        }
-      )
+      getDocument(formData)
       .then(response => {
-        if (response && response.data) {
-          this.downloadGeneratedDocument(response.data.filename).then(
-            this.deleteGeneratedDocument(response.data.filename)
-          );
-        }
+          this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'")
       })
-      .catch(err => {
-        handleException(err, this);
-      });
-    },
-
-    /**
-     * Download GeneratedDocument
-     */
-    downloadGeneratedDocument(filename) {
-      return new Promise(() => {
-        let url =
-          process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
-          "?filename=" +
-          filename;
-        window.open(url, "_blank");
-      });
-    },
-
-    /**
-     * Delete generated document
-     */
-    deleteGeneratedDocument(filename) {
-      this.$http
-        .delete(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT +
-            "?filename=" +
-            filename,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/html" }
-          }
-        )
-        .then(response => {
-          if (response && response.data) {
-            this.$root.$emit(
-              "ShowMessage",
-              "Le fichier '" +
-                filename +
-                "' se trouve dans le dossier 'Téléchargement'"
-            );
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
+      .catch(err => handleException(err, this));
     }
   },
 
