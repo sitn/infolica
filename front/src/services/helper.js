@@ -153,7 +153,7 @@ export const setClientsAdresse_ = function(clients, sep=", ") {
             [x.titre, x.prenom, x.nom].filter(Boolean).join(" "),
             x.adresse,
             x.case_postale !== null? "Case postale " + x.case_postale: null,
-            [x.npa, x.localite].filter(Boolean).join(" ") 
+            [x.npa, x.localite].filter(Boolean).join(" ")
         ].filter(Boolean).join(sep);
     });
 
@@ -161,7 +161,7 @@ export const setClientsAdresse_ = function(clients, sep=", ") {
         clients = clients.pop();
     }
 
-    return clients
+    return clients;
 }
 
 /**
@@ -171,7 +171,7 @@ export const getCurrentDate = function () {
     var today = new Date();
     var date =
         ("0" + today.getDate()).slice(-2) + "." + ("0" + (today.getMonth() + 1)).slice(-2) + "." + today.getFullYear();
-    return date
+    return date;
 };
 
 /**
@@ -183,7 +183,7 @@ export const stringifyAutocomplete = function(liste) {
         nom: x.nom,
         toString: () => x.nom.toString(),
         toLowerCase: () => x.nom.toLowerCase()
-    }))
+    }));
 };
 
 /**
@@ -255,7 +255,7 @@ export const filterList = function(list, searchTerm, nLetters=0) {
     let result = [];
 
     if (typeof searchTerm !== "string") {
-        return []
+        return [];
     }
 
     if (searchTerm !== null) {
@@ -263,13 +263,13 @@ export const filterList = function(list, searchTerm, nLetters=0) {
 
         let idx = searchTerm_.indexOf("");
         if (idx > -1) {
-            searchTerm_.splice(idx, 1)
+            searchTerm_.splice(idx, 1);
         }
 
         if (searchTerm.length >= nLetters) {
             result = list.filter(x => {
                 return !searchTerm_.some(y => {
-                    return !x.nom.toLowerCase().includes(y.toLowerCase())   
+                    return !x.nom.toLowerCase().includes(y.toLowerCase());
                 });
             });
         }
