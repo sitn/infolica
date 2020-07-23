@@ -253,6 +253,11 @@ const deleteGeneratedDocument = async function(filename) {
  */
 export const filterList = function(list, searchTerm, nLetters=0) {
     let result = [];
+
+    if (typeof searchTerm !== "string") {
+        return []
+    }
+
     if (searchTerm !== null) {
         let searchTerm_ = searchTerm.split(" ");
 
