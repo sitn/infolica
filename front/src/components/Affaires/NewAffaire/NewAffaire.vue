@@ -9,7 +9,8 @@ import { handleException } from "@/services/exceptionsHandler";
 import { required } from "vuelidate/lib/validators";
 import { getCurrentDate,
          getClients,
-         filterList } from "@/services/helper";
+         filterList,
+         stringifyAutocomplete } from "@/services/helper";
 import Autocomplete from "vuejs-auto-complete";
 const moment = require("moment");
 export default {
@@ -38,14 +39,12 @@ export default {
       selectedNouveauxNumeros: [],
       form: {
         nom: null,
+        cadastre: null,
         client_commande: null,
         client_commande_complement: null,
         client_envoi: null,
         client_envoi_complement: null,
-        technicien_id: null,
-        type_id: null,
-        cadastre_id: null,
-        date_ouverture: getCurrentDate(),
+        date_ouverture: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
         date_validation: null,
         date_cloture: null,
         localisation_E: null,
@@ -55,7 +54,9 @@ export default {
         affaire_base: null,
         remarque: null,
         affaire_base_id: null,
-        affaire_modif_type_id: null
+        affaire_modif_type: null,
+        technicien_id: null,
+        type: null
       },
       dataSaved: false,
       sending: false,
@@ -72,13 +73,13 @@ export default {
 
     if (this.showClientsForm) {
       form = {
-        type_id: {
+        type: {
           required
         },
         technicien_id: {
           required
         },
-        cadastre_id: {
+        cadastre: {
           required
         },
         date_ouverture: {
@@ -100,13 +101,13 @@ export default {
       };
     } else {
       form = {
-        type_id: {
+        type: {
           required
         },
         technicien_id: {
           required
         },
-        cadastre_id: {
+        cadastre: {
           required
         },
         date_ouverture: {
@@ -119,7 +120,7 @@ export default {
     }
 
     if (this.type_modification_bool) {
-      form.affaire_modif_type_id = {required}  
+      form.affaire_modif_type = {required}  
     }
 
     return {form, client_facture}
@@ -210,7 +211,7 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
-            this.types_affaires_list = response.data;
+            this.types_affaires_list = stringifyAutocomplete(response.data);
           }
         })
         //Error
@@ -287,7 +288,7 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
-            this.cadastres_list = response.data;
+            this.cadastres_list = stringifyAutocomplete(response.data);
           }
         })
         //Error
@@ -399,7 +400,7 @@ export default {
       var formData = new FormData();
       formData.append('affaire_id_mere', this.form.affaire_base_id);
       formData.append('affaire_id_fille', affaire_id);
-      formData.append('type_id', this.form.affaire_modif_type_id);
+      formData.append('type_id', this.form.affaire_modif_type.id);
       formData.append("date", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       return new Promise((resolve, reject) => {
         this.$http.post(
@@ -442,7 +443,7 @@ export default {
      */
     initPostData() {
       var formData = new FormData();
-      formData.append("type_id", this.form.type_id);
+      formData.append("type_id", this.form.type.id);
       if (this.form.nom) {
         formData.append("nom", this.form.nom);
       }
@@ -458,8 +459,8 @@ export default {
       if (this.form.technicien_id) {
         formData.append("technicien_id", this.form.technicien_id);
       }
-      if (this.form.cadastre_id) {
-        formData.append("cadastre_id", this.form.cadastre_id);
+      if (this.form.cadastre && this.form.cadastre.id) {
+        formData.append("cadastre_id", this.form.cadastre.id);
       }
       if (this.form.localisation_E) {
         formData.append("localisation_E", this.form.localisation_E);
@@ -601,16 +602,16 @@ export default {
      * Search SITN endpoint
      */
     searchSITNEndpoint(input) {
-      let cadastre = null;
-      if (this.form.cadastre_id !== null) {
-        cadastre = this.cadastres_list.filter(
-          x => x.id === this.form.cadastre_id
+      let cadastre_ = null;
+      if (this.form.cadastre.id !== null) {
+        cadastre_ = this.cadastres_list.filter(
+          x => x.id === this.form.cadastre.id
         )[0].nom;
       }
 
       return (
         process.env.VUE_APP_SITN_SEARCH_SERVICE_URL +
-        [input, cadastre, "egrid"].filter(Boolean).join(" ")
+        [input, cadastre_, "egrid"].filter(Boolean).join(" ")
       );
     },
 
@@ -660,13 +661,13 @@ export default {
      * On Select Type affaire
      */
     onSelectType() {
-      if (this.form.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION)){
+      if (this.form.type.id === Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION)){
         this.type_modification_bool = true;
       } else {
         this.type_modification_bool = false;
       }
       // this.showClientsForm = this.form.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION)? false: true;
-      if (this.form.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION)) {
+      if (this.form.type.id === Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION)) {
         this.showClientsForm = false;
         this.form.client_commande = null;
         this.form.client_envoi = null;
@@ -691,12 +692,7 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-          this.typesModficiationAffaire_list = response.data.map(x => ({
-            id: x.id,
-            nom: x.nom,
-            toLowerCase: () => x.nom.toLowerCase(),
-            toString: () => x.nom.toString()
-          }));
+          this.typesModficiationAffaire_list = stringifyAutocomplete(response.data)
         }
       }).catch(err => handleException(err, this));
     },
@@ -752,7 +748,7 @@ export default {
      */
     fillValuesFromModificationAffaire(){
       if(this.selectedModificationAffaire){
-        this.form.cadastre_id = this.selectedModificationAffaire.cadastre_id;
+        this.form.cadastre = this.cadastres_list.filter(x => x.id === this.selectedModificationAffaire.cadastre_id)[0];
         this.form.nom = this.selectedModificationAffaire.nom;
         this.form.nom_ = this.selectedModificationAffaire.nom; // garder le nom pas modifié en mémoire
         this.form.vref = this.selectedModificationAffaire.vref;
@@ -760,7 +756,7 @@ export default {
         this.form.client_commande_complement = this.selectedModificationAffaire.client_commande_complement;
         this.form.client_envoi = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_envoi_id)[0];
         this.form.client_envoi_complement = this.selectedModificationAffaire.client_envoi_complement;
-        this.form.date_ouverture =  getCurrentDate();
+        this.form.date_ouverture =  moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
         this.form.localisation_E = this.selectedModificationAffaire.localisation_e;
         this.form.localisation_N = this.selectedModificationAffaire.localisation_n;
 
@@ -774,8 +770,8 @@ export default {
      * On select type modif update nom_affaire
      */
     typeModifSelected() {
-      this.form.nom = (this.form.affaire_modif_type_id?
-                       this.typesModficiationAffaire_list.filter(x => x.id === this.form.affaire_modif_type_id) + " : " : null) + this.form.nom_;
+      this.form.nom = (this.form.affaire_modif_type.id?
+                       this.typesModficiationAffaire_list.filter(x => x.id === this.form.affaire_modif_type.id) + " : " : null) + this.form.nom_;
     },
 
     /**

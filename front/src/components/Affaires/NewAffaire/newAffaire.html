@@ -10,16 +10,17 @@
                 <!-- Cadastre et opérateur -->
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field :class="getValidationClass($v.form.cadastre_id)">
-                            <label for="cadastre_id">Cadastre</label>
-                            <md-select name="cadastre_id" id="cadastre_id" v-model="form.cadastre_id"
-                            :disabled="sending" required md-dense>
-                            <md-option v-for="item in cadastres_list" :key="item.id" :value="item.id">{{item.nom}}
-                            </md-option>
-                        </md-select>
-                        <span class="md-error" v-if="!$v.form.cadastre_id.required">Le type cadastre est
-                            obligatoire</span>
-                        </md-field>
+                        <md-autocomplete v-model="form.cadastre" 
+                                         md-dense required
+                                         :md-options="cadastres_list"
+                                         :class="getValidationClass($v.form.cadastre)">
+                            <label>Cadastre</label>
+                            <template slot="md-autocomplete-item" slot-scope="{ item, term }">
+                                {{ item.nom }}
+                            </template>
+                            <span class="md-error" v-if="!$v.form.cadastre.required">Le type cadastre est
+                                obligatoire</span>
+                        </md-autocomplete>
                     </div>
 
                     <div class="md-layout-item md-small-size-100 md-size-50">
@@ -40,15 +41,18 @@
                 <!-- Type d'affaire et affaire de base -->
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field :class="getValidationClass($v.form.type_id)">
-                            <label for="type_id">Type affaire</label>
-                            <md-select name="type_id" id="type_id" v-model="form.type_id" :disabled="sending" @md-selected="onSelectType" required md-dense>
-                                <md-option v-for="item in types_affaires_list" :key="item.id" :value="item.id">
-                                    {{item.nom}}</md-option>
-                                </md-select>
-                            <span class="md-error" v-if="!$v.form.type_id.required">Le type d'affaire est
+                        <md-autocomplete v-model="form.type" 
+                            md-dense required
+                            @md-selected="onSelectType"
+                            :md-options="types_affaires_list"
+                            :class="getValidationClass($v.form.type)">
+                            <label>Type d'affaire</label>
+                            <template slot="md-autocomplete-item" slot-scope="{ item, term }">
+                                {{ item.nom }}
+                            </template>
+                            <span class="md-error" v-if="!$v.form.type.required">Le type d'affaire est
                                 obligatoire</span>
-                        </md-field>
+                        </md-autocomplete>
                     </div>
 
                     <div class="md-layout-item md-small-size-100 md-size-50" v-if="type_modification_bool">
@@ -63,10 +67,38 @@
                             </md-button>
 
                             <md-button class="md-primary md-icon-button modifAffaireActionBtn" title="Afficher cette affaire" 
-                            v-if="type_modification_bool && this.form.affaire_base_id"
-                            @click="doOpenAffaireModification()">
-                            <md-icon>open_in_new</md-icon>
+                                v-if="type_modification_bool && this.form.affaire_base_id"
+                                @click="doOpenAffaireModification()">
+                                <md-icon>open_in_new</md-icon>
                             </md-button>
+                        </md-field>
+                    </div>
+                </div>
+                
+                <div class="md-layout md-gutter" v-if="type_modification_bool">
+                    <!-- Type de modification -->
+                    <div class="md-layout-item md-small-size-100 md-size-50">
+                        <md-autocomplete v-model="form.affaire_modif_type" 
+                            md-dense required
+                            @md-selected="typeModifSelected"
+                            :md-options="typesModficiationAffaire_list"
+                            :class="getValidationClass($v.form.affaire_modif_type)">
+                            <label>Type de modification</label>
+                            <template slot="md-autocomplete-item" slot-scope="{ item, term }">
+                                {{ item.nom }}
+                            </template>
+                            <span class="md-error" v-if="!$v.form.affaire_modif_type.required">Le type de modification d'affaire est
+                                obligatoire</span>
+                        </md-autocomplete>
+                    </div>
+                </div>
+                                    
+                <!-- Description de l'affaire -->
+                <div class="md-gutter me-layout">
+                    <div class="md-layout-item md-size-100">
+                        <md-field>
+                            <label>Description</label>
+                            <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending" />
                         </md-field>
                     </div>
                 </div>
@@ -141,45 +173,9 @@
                         </md-card-expand>
                     </md-card>
                 </div>
-
-                <div class="md-layout md-gutter" v-if="type_modification_bool">
-                    <!-- Type de modification -->
-                    <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field :class="getValidationClass($v.form.affaire_modif_type_id)">
-                            <label>Type de modification</label>
-                            
-                            <md-select v-model="form.affaire_modif_type_id" @md-selected="typeModifSelected" required md-dense>
-                                <md-option v-for="item in typesModficiationAffaire_list" :key="item.id" :value="item.id">
-                                    {{item.nom}}</md-option>
-                                </md-select>
-                            <span class="md-error" v-if="!$v.form.affaire_modif_type_id.required">Le type de modification d'affaire est
-                                obligatoire</span>
-                        </md-field>
-                    </div>
-                </div>
-
-                <!-- Nom de l'affaire -->
-                <div class="md-gutter me-layout">
-                    <div class="md-layout-item md-size-100">
-                        <md-field>
-                            <label>Description</label>
-                            <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending" />
-                        </md-field>
-                    </div>
-                </div>
-
-
-                <!-- v-ref -->
-                <div class="md-layout md-gutter">
-                    <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field :class="getValidationClass($v.form.vref)">
-                            <label for="vref">v/ref</label>
-                            <md-input name="vref" id="vref" v-model="form.vref" :disabled="sending" />
-                        </md-field>
-                    </div>
-                </div>
-
+                
                 <br>
+
                 <!-- Remarques -->
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100 md-size-100">
@@ -190,12 +186,22 @@
                         </md-field>
                     </div>
                 </div>
-
+                
                 <br>
 
+                <md-divider></md-divider>
+                
+                <!-- v-ref -->
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-small-size-100 md-size-50">
+                        <md-field :class="getValidationClass($v.form.vref)">
+                            <label for="vref">v/ref</label>
+                            <md-input name="vref" id="vref" v-model="form.vref" :disabled="sending" />
+                        </md-field>
+                    </div>
+                </div>
                 
                 <div v-if="showClientsForm">
-                    <md-divider></md-divider>
 
                     <!-- Client DEMANDEUR et ligne complément -->
                     <div class="md-layout md-gutter">
