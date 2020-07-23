@@ -152,6 +152,9 @@
                             <div class="md-layout-item md-size-25">
                                 <md-autocomplete v-model="suiviMandat.visa" :md-options="chefsProjetMO_liste" md-dense>
                                     <label>Visa</label>
+                                    <template slot="md-autocomplete-item" slot-scope="{ item, term }">
+                                        {{ item.nom }}
+                                    </template>
                                 </md-autocomplete>
                             </div>
                             <div class="md-layout-item md-size-25">
@@ -178,7 +181,13 @@
         </md-card-expand>
     </md-card>
 
-    <!-- Message de confirmation que les modifications ont été faites correctement -->
-    <md-snackbar :md-active.sync="showCreatedSuiviMandat">Le suivi du mandat a été créé avec succès</md-snackbar>
-    <md-snackbar :md-active.sync="showModifiedSuiviMandat">Le suivi du mandat a été modifié avec succès</md-snackbar>
+    <md-dialog-confirm
+    :md-active.sync="confirmDialogActive"
+    md-title="Date de validation"
+    md-content="Mettre à jour la date de validation de l'affaire?"
+    md-confirm-text="Oui"
+    md-cancel-text="Non"
+    @md-cancel="confirmDialogActive = false"
+    @md-confirm="updateAffaireDateValidation" />
+
 </div>

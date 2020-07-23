@@ -13,12 +13,13 @@ export default {
   props: {},
   data: () => ({
     affaireReadonly: true,
+    confirmDialogActive: false,
+    confirmUpdateAffaireDateValidation: false,
     showNewSuiviMandatBtn: false,
     showModifiedSuiviMandat: false,
     needToCreateSuiviMandat: false,
     operateurs_liste: [],
     chefsProjetMO_liste: [],
-    showCreatedSuiviMandat: false,
     suiviMandat: {}
   }),
 
@@ -52,13 +53,13 @@ export default {
                 this.suiviMandat.ap_33 = moment(this.suiviMandat.ap_33, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
               }
               if (this.suiviMandat.av_32 !== null) {
-                this.suiviMandat.av_32 = this.chefsProjetMO_liste.filter(x => x.id === this.suiviMandat.av_32).pop().nom;
+                this.suiviMandat.av_32 = this.chefsProjetMO_liste.filter(x => x.id === this.suiviMandat.av_32).pop();
               }
               if (this.suiviMandat.ap_32 !== null) {
-                this.suiviMandat.ap_32 = this.chefsProjetMO_liste.filter(x => x.id === this.suiviMandat.ap_32).pop().nom;
+                this.suiviMandat.ap_32 = this.chefsProjetMO_liste.filter(x => x.id === this.suiviMandat.ap_32).pop();
               }
               if (this.suiviMandat.visa !== null) {
-                this.suiviMandat.visa = this.chefsProjetMO_liste.filter(x => x.id === this.suiviMandat.visa).pop().nom;
+                this.suiviMandat.visa = this.chefsProjetMO_liste.filter(x => x.id === this.suiviMandat.visa).pop();
               } 
             }else {
               // Il n'existe pas encore de suivi de mandat pour cette affaire
@@ -124,7 +125,6 @@ export default {
         )
         .then(response => {
           if (response) {
-            this.showCreatedSuiviMandat = true;
             this.searchSuiviMandat();
             this.needToCreateSuiviMandat = false;
           }
@@ -238,14 +238,37 @@ export default {
         )
         .then(response => {
           if (response) {
-            this.showModifiedSuiviMandat = true;
+            this.$root.$emit("ShowMessage", "Le suivi du mandat a été mis à jour avec succès");
             this.searchSuiviMandat();
+            if (this.suiviMandat.date !== null) {
+              this.confirmDialogActive = true;
+            }
           }
         })
         .catch(err => {
           handleException(err, this);
         });
-    }
+    },
+
+    /**
+     * Update affaire date validation
+     */
+    updateAffaireDateValidation(){
+      let formData = new FormData();
+      formData.append("id_affaire", this.$route.params.id);
+      formData.append("date_validation", moment(this.suiviMandat.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
+
+      this.$http.put(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(() => this.$parent.setAffaire())
+      .catch(err => handleException(err, this));
+    },
+
   },
 
   mounted: function() {
