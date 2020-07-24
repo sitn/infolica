@@ -139,6 +139,7 @@ numero_projet_id = 1
 numero_vigueur_id = 2
 numero_abandonne_id = 3
 numero_supprime_id = 4
+numero_artefact_id = 5
 
 # ID cadastres-binômes pour la réservation de numéros
 cadastres_ChauxDeFonds_Eplatures_id = 60, 70

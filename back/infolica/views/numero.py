@@ -44,7 +44,8 @@ def etats_numeros_view(request):
     """
     Return all etats_numeros
     """
-    query = request.dbsession.query(NumeroEtat).all()
+    id_artefact = request.registry.settings['numero_artefact_id']
+    query = request.dbsession.query(NumeroEtat).filter(NumeroEtat.id != id_artefact).all()
     return Utils.serialize_many(query)
 
 
