@@ -71,20 +71,25 @@
         
         <md-dialog-content>
             
+            <div style="text-align: right;">
+                <md-button class="md-primary md-dense md-elevation-3" @click="searchClients">Recharger la liste des clients <md-icon>replay</md-icon></md-button>
+            </div>
+            <br>
+
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-50">
                     <md-field :class="getValidationClass('sap')">
                         <label>SAP</label>
                         <md-input v-model="selectedFacture.sap" type="number"></md-input>
-                    </md-field>
-                </div>
+                    </md-field>    
+                </div>    
 
                 <div class="md-layout-item md-size-50">
                     <md-datepicker v-model="selectedFacture.date" md-immediately>
                         <label>Date</label>
-                    </md-datepicker>
-                </div>
-            </div>
+                    </md-datepicker>    
+                </div>    
+            </div>    
 
             <md-autocomplete v-model="selectedFacture.client" :md-options="clients_liste_select"
                 @md-changed="getClientSearch" md-dense :class="getValidationClass('client')">
