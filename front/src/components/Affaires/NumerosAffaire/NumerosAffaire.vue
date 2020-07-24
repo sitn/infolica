@@ -36,7 +36,13 @@ export default {
       affaireReadonly: true,
       numerosMoLoading: true,
       showQuittancePCOPDialog: false,
-      showBalance: false
+      showBalance: false,
+      types_numeros: {
+        bf: Number(process.env.VUE_APP_NUMERO_TYPE_BF),
+        ddp: Number(process.env.VUE_APP_NUMERO_TYPE_DDP),
+        ppe: Number(process.env.VUE_APP_NUMERO_TYPE_PPE),
+        pcop: Number(process.env.VUE_APP_NUMERO_TYPE_PCOP)
+      }
       // numeros_base_relations: []
     };
   },
