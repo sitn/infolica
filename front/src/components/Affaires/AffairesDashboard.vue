@@ -23,9 +23,7 @@ import moment from "moment";
 
 export default {
   name: "AffairesDashboard",
-  props: {
-
-  },
+  props: {},
   components: {
     InfosGenerales,
     MapHandler,
