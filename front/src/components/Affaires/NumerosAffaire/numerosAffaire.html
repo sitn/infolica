@@ -131,15 +131,15 @@
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Mat diff" class="actionsColumn">
                                                     <!-- Si le numéro est différé -->
-                                                    <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif ">
-                                                        <md-button v-if="item.numero_type==='Bien-fonds'"  @click="doUpdateDiffererNumero(item)" 
+                                                    <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif && item.active">
+                                                        <md-button v-if="item.numero_type_id===types_numeros.bf"  @click="doUpdateDiffererNumero(item)" 
                                                             class="md-accent md-raised md-icon-button md-dense">
                                                             <md-icon>access_time</md-icon>
                                                         </md-button>
                                                     </div>
                                                     <!-- Si le numéro n'est pas différé -->
-                                                    <div v-if="item.numero_diff_entree === null && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif">
-                                                        <md-button v-if="item.numero_type==='Bien-fonds'"
+                                                    <div v-if="item.numero_diff_entree === null && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif && item.active">
+                                                        <md-button v-if="item.numero_type_id===types_numeros.bf"
                                                             class="md-primary md-icon-button md-dense" @click="doCreateDiffererNumero(item)">
                                                             <md-icon>access_time</md-icon>
                                                         </md-button>
