@@ -220,8 +220,7 @@
                             <template slot="md-autocomplete-empty" slot-scope="{ term }">
                                 Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
                             </template>
-                            <span class="md-error" v-if="!$v.form.client_commande.required">Le demandeur est
-                                obligatoire</span>
+                            <span class="md-error" v-if="!$v.form.client_commande.required">Le demandeur est obligatoire</span>
                             </md-autocomplete>
                         </div>
                     </div>
