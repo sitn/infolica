@@ -391,8 +391,9 @@ export default {
       this.isModeCreate = true;
 
       // ne pas signaler le champ "unité vide" si le type de numéro n'est pas unité de PPE
+      const numero_type_ppe_id = Number(process.env.VUE_APP_NUMERO_TYPE_PPE);
       if (this.search.type) {
-        if (this.search.type.id == 3) {
+        if (this.search.type.id === numero_type_ppe_id) {
           this.isModeCreatePPE = true;
         }
       }
@@ -400,7 +401,7 @@ export default {
       this.$v.$touch();
 
       if (!this.$v.$invalid) {
-        if (this.search.type.id !== 3) {
+        if (this.search.type.id !== numero_type_ppe_id) {
           this.search.suffixe = null;
         }
         this.onConfirmCreateNumero();

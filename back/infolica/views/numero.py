@@ -175,18 +175,21 @@ def numeros_by_id_delete_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
 
+    settings = request.registry.settings
+    projet_id = int(settings['numero_projet_id'])
+    abandonne_id = int(settings['numero_abandonne_id'])
+
     # Get numero by id
     id = request.matchdict['id']
     query = request.dbsession.query(Numero).filter(
         Numero.id == id).first()
 
     if query:
-        if query.etat_id == 1:  # projet
-            query.etat_id = 3
-        elif query.etat_id == 3:  # abandonné
-            query.etat_id = 1
-        # elif query.etat_id == 2: # vigueur
-        #     query.etat_id = 4
+        if query.etat_id == projet_id:
+            query.etat_id = abandonne_id
+        elif query.etat_id == abandonne_id:
+            query.etat_id = projet_id
+
 
 ###########################################################
 # NUMERO ETAT HISTO
