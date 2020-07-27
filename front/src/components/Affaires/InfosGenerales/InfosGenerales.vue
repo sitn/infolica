@@ -212,8 +212,8 @@ export default {
       this.form.typeAffaire = this.typesAffairesListe
       .filter(x => x.id === this.affaire.type_id)[0];
 
-      this.form.client_commande = this.affaire.client_commande_nom_.replaceAll("\n", ", ");
-      this.form.client_envoi = this.affaire.client_envoi_nom_.replaceAll("\n", ", ");
+      this.form.client_commande = this.affaire.client_commande_nom_.replace(/\n/g, ", ");
+      this.form.client_envoi = this.affaire.client_envoi_nom_.replace(/\n/g, ", ");
       this.form.client_envoi_complement = this.affaire.client_envoi_complement;
 
       this.infoGenReadonly = false;
