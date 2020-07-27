@@ -8,7 +8,11 @@ import {setCurrentUserFunctions} from '@/services/helper';
 
 export default {
   name: 'Login',
-  props: {
+  props: {},
+  data: () => {
+    return {
+      showProgess: false
+    }
   },
   methods:{
 
@@ -16,6 +20,7 @@ export default {
          * Login
          */
         async doLogin () {
+            this.showProgess = true;
             var formData = new FormData();
             formData.append("login", this.$refs.username.value);
             formData.append("password", this.$refs.userpass.value);
@@ -36,6 +41,7 @@ export default {
             })
             //Error 
             .catch(err => {
+              this.showProgess = false;
               handleException(err, this);
             })
           },
