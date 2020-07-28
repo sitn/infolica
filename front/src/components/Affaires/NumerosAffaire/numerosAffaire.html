@@ -202,7 +202,7 @@
 
                     <!-- Balance des biens-fonds -->
                     <md-card-content v-if="showBalance && affaire.type_id==typesAffaires.mutation">
-                        <Balance :affaire_numeros_all="affaire_numeros_all" />
+                        <Balance :affaire_numeros_all="affaire_numeros_all" :affaire="affaire" />
                     </md-card-content>
                     
                 </div>    

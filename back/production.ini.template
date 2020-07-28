@@ -167,6 +167,8 @@ mails_templates_directory = /*TO COMPLETE*/
 ######################################################################################
 temporary_directory = /*TO COMPLETE*/
 
+fichier_balance_prefix = Des_
+
 
 retry.attempts = 3
 

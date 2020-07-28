@@ -169,6 +169,7 @@ mails_templates_directory = /path/to/mail_templates_dorectory
 ######################################################################################
 temporary_directory = /path/to/temporary_directory
 
+fichier_balance_prefix = 
 
 
 retry.attempts = 3

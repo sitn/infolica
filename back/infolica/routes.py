@@ -152,6 +152,5 @@ def includeme(config):
     config.add_route('service_by_id','/infolica/api/services/{id}')
     config.add_route('services','/infolica/api/services')
     config.add_route('services_s','/infolica/api/services/')
-
-
-
+    #Balance
+    config.add_route('balance_by_affaire_id', '/infolica/api/balance/{id}')

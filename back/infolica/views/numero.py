@@ -24,7 +24,21 @@ def numeros_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(VNumeros).all()
+    numero = int(request.params['numero']) if 'numero' in request.params else None
+    cadastre_id = int(request.params['cadastre_id']) if 'cadastre_id' in request.params else None
+    type_id = int(request.params['type_id']) if 'type_id' in request.params else None
+
+    query = request.dbsession.query(VNumeros)
+    
+    if numero:
+        query = query.filter(VNumeros.numero == numero)
+    if cadastre_id:
+        query = query.filter(VNumeros.cadastre_id == cadastre_id)
+    if type_id:
+        query = query.filter(VNumeros.type_numero_id == type_id)
+
+    query = query.all()
+
     return Utils.serialize_many(query)
 
 
