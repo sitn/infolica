@@ -22,8 +22,30 @@
                             v-model="form.nombre"
                             @focus="$event.target.select()"
                             required type="number" />
-                    <span class="md-error" v-if="!$v.form.nombre.required">Combien de numéros faut-il réserver?</span>
-                    <span class="md-error" v-if="!$v.form.nombre.minValue">Réserver au moins un numéro</span>
+                        <span class="md-error" v-if="!$v.form.nombre.required">Combien de numéros faut-il réserver?</span>
+                        <span class="md-error" v-if="!$v.form.nombre.minValue">Réserver au moins un numéro</span>
+                    </md-field>
+                </div>
+            
+                <div class="md-layout-item md-size-50" v-if="affaire.reservation_numeros_types_id.includes(types_numeros.ppe) ||
+                                                             affaire.reservation_numeros_types_id.includes(types_numeros.pcop)">
+                    <md-autocomplete :md-options="numerosBaseListeFiltered"
+                        v-model="form.numeroBase"
+                        @md-changed="filterNumeroBase"
+                        :class="getValidationClass('numeroBase')"
+                        md-dense>
+                        <label>Bien-fonds de base</label>
+                        <span class="md-error" v-if="!$v.form.numeroBase.required">Le numéro de base est obligatoire</span>
+                    </md-autocomplete>
+                </div>
+                
+                <div class="md-layout-item md-size-50" v-if="affaire.reservation_numeros_types_id.includes(types_numeros.ppe)">
+                    <md-field :class="getValidationClass('ppe_suffixe_start')">
+                        <label>Première unité (lettre)</label>
+                        <md-input v-model="form.ppe_suffixe_start"
+                                  onkeypress="return /[A-HJ-Z]/i.test(event.key)" 
+                                  maxlength="2" />
+                        <span class="md-error" v-if="!$v.form.ppe_suffixe_start.required">La lettre de la première unité à réserver est obligatoire</span>
                     </md-field>
                 </div>
             </div>

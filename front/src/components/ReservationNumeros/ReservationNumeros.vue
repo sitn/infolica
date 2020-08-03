@@ -11,7 +11,9 @@ import { required, minValue } from "vuelidate/lib/validators";
 export default {
   name: "ReservationNumeros",
   props: {
-    affaire: {type: Object}
+    affaire: {type: Object},
+    typesAffaires: {type: Object},
+    types_numeros: {type: Object}
   },
   components: {},
   mixins: [validationMixin],
@@ -28,12 +30,16 @@ export default {
         cadastre: null,
         nombre: null,
         type_id: null,
+        numeroBase: null,
+        ppe_suffixe_start: null
       },
       alertReservation: {
         show: false,
         saveReservation: false,
         text: ''
-      }
+      },
+      numerosBaseListe: [],
+      numerosBaseListeFiltered: []
     };
   },
 
@@ -47,16 +53,13 @@ export default {
       }
     };
 
-    // if (this.reservation.nb_ddp > 0) {
-    //   reservation.ddp_base = { required };
-    // }
-    // if (this.reservation.nb_ppe > 0) {
-    //   reservation.ppe_base = { required };
-    //   reservation.ppe_suffixe_start = { required };
-    // }
-    // if (this.reservation.nb_pcop > 0) {
-    //   reservation.pcop_base = { required };
-    // }
+    if (this.affaire.type_id === this.typesAffaires.ppe || this.affaire.type_id === this.typesAffaires.pcop) {
+      form.numeroBase = { required };
+    }
+
+    if (this.affaire.type_id === this.typesAffaires.ppe) {
+      form.ppe_suffixe_start = { required };
+    }
 
     return { form };
   },
@@ -113,6 +116,7 @@ export default {
      */
     openReservationDialog() {
       this.initializeForm();
+      this.getNumerosBase();
       this.showReservationDialog = true;
     },
 
@@ -125,10 +129,18 @@ export default {
       formData.append("nombre", this.form.nombre);
       formData.append("cadastre_id", this.form.cadastre.id);
       formData.append("etat_id", Number(process.env.VUE_APP_NUMERO_PROJET_ID));
+      if ((this.affaire.type_id === this.typesAffaires.ppe || this.affaire.type_id === this.typesAffaires.pcop) && this.form.numeroBase !== null && this.form.numeroBase.id) {
+        formData.append("numero_base_id", this.form.numeroBase.id);
+      }
+      if (this.affaire.type_id === this.typesAffaires.ppe && this.form.ppe_suffixe_start !== null) {
+        formData.append("ppe_suffixe_start", this.form.ppe_suffixe_start);
+      }
       
       //Type de numéro selon le type d'affaire
-      if (this.affaire.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION)) {
+      if (this.affaire.type_id === this.typesAffaires.mutation) {
         this.form.type_id = Number(process.env.VUE_APP_NUMERO_TYPE_BF);
+      } else {
+        this.form.type_id = Number(this.affaire.reservation_numeros_types_id.pop())
       }
       formData.append("type_id", this.form.type_id);
       
@@ -168,6 +180,8 @@ export default {
     initializeForm() {
       this.form.cadastre = this.cadastre_liste.filter(x => x.id === this.affaire.cadastre_id).pop();
       this.form.nombre = 0;
+      this.form.numeroBase = null;
+      this.form.ppe_suffixe_start = null;
     },
 
     /**
@@ -201,6 +215,36 @@ export default {
           this.saveReservationNumeros();
         }
       }
+    },
+
+    /**
+     * Retourne les numéros en vigueur et en projet dans le cadastre sélectionné
+     */
+    async getNumerosBase() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ENDPOINT +
+        "?cadastre_id=" + this.form.cadastre.id +
+        "&type_id=" + process.env.VUE_APP_NUMERO_TYPE_BF + "," + process.env.VUE_APP_NUMERO_TYPE_DDP +
+        "&etat_id=" + process.env.VUE_APP_NUMERO_PROJET_ID + "," +  process.env.VUE_APP_NUMERO_VIGUEUR_ID,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.numerosBaseListe = stringifyAutocomplete(response.data, "numero");
+          this.numerosBaseListeFiltered = this.numerosBaseListe.slice(0,20);
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+
+    /**
+     * Filter numero base in numero_base_liste
+     */
+    filterNumeroBase() {
+      this.numerosBaseListeFiltered = this.numerosBaseListe;
+      this.numerosBaseListeFiltered.filter(x => x.nom.includes(String(this.form.numeroBase))).slice(0,20);
     }
   },
 

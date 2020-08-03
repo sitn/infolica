@@ -25,19 +25,22 @@ def numeros_view(request):
         raise exc.HTTPForbidden()
 
     numero = int(request.params['numero']) if 'numero' in request.params else None
-    cadastre_id = int(request.params['cadastre_id']) if 'cadastre_id' in request.params else None
-    type_id = int(request.params['type_id']) if 'type_id' in request.params else None
+    cadastre_id = [int(a) for a in request.params['cadastre_id'].split(",")] if 'cadastre_id' in request.params else None
+    type_id = [int(a) for a in request.params['type_id'].split(",")] if 'type_id' in request.params else None
+    etat_id = [int(a) for a in request.params['etat_id'].split(",")] if 'etat_id' in request.params else None
 
     query = request.dbsession.query(VNumeros)
     
     if numero:
         query = query.filter(VNumeros.numero == numero)
     if cadastre_id:
-        query = query.filter(VNumeros.cadastre_id == cadastre_id)
+        query = query.filter(VNumeros.cadastre_id.in_(cadastre_id))
     if type_id:
-        query = query.filter(VNumeros.type_numero_id == type_id)
+        query = query.filter(VNumeros.type_numero_id.in_(type_id))
+    if etat_id:
+        query = query.filter(VNumeros.etat_id.in_(etat_id))
 
-    query = query.all()
+    query = query.order_by(VNumeros.numero.asc()).all()
 
     return Utils.serialize_many(query)
 

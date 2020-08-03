@@ -77,7 +77,7 @@
                     </div>
 
                     <!-- NUMEROS RESERVES (nouveaux numéros) -->
-                    <div class="md-layout-item md-size-55" style="padding-left: 0" v-if="affaire.reservation_numeros_types_id !== null">
+                    <div class="md-layout-item md-size-55" style="padding-left: 0">
                         <md-card-content>
 
                             <md-card>
@@ -88,7 +88,7 @@
                                     </div>
                                     <div class="md-layout-item buttonRightAlign">
                                         <md-button class="md-primary" v-on:click="callOpenQuittancePCOPDialog" v-if="!affaireReadonly">Quittance PCOP</md-button>
-                                        <md-button class="md-primary" v-on:click="callOpenReservationDialog" v-if="!affaireReadonly">Réservation</md-button>
+                                        <md-button class="md-primary" v-on:click="callOpenReservationDialog" v-if="!affaireReadonly && affaire.reservation_numeros_types_id !== null">Réservation</md-button>
                                     </div>
                                 </div>
                                 </md-card-header>
@@ -108,14 +108,8 @@
                                             <!-- <md-table-cell md-label="Type" md-sort-by="numero_type">
                                                 {{ item.numero_type }}
                                             </md-table-cell> -->
-                                            <!-- <md-table-cell md-label="Plan" md-sort-by="numero_plan_id">
-                                                {{ item.numero_plan_id }}
-                                            </md-table-cell> -->
                                             <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}<span v-if="item.numero_suffixe"> / {{ item.numero_suffixe }}</span>
                                             </md-table-cell>
-                                            <!-- <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">
-                                                {{ item.numero_suffixe }}
-                                            </md-table-cell> -->
                                             <md-table-cell md-label="Immeuble de base" md-sort-by="numero_base">
                                                 {{ item.numero_base }}<span v-if="item.numero_base_suffixe"> /
                                                     {{ item.numero_base_suffixe }}</span>
@@ -214,7 +208,10 @@
     <!-- Référence de numéros -->
     <ReferenceNumeros ref="formReference" />
     <!-- Réservation de numéros -->
-    <ReservationNumeros ref="formReservation" :affaire="affaire" />
+    <ReservationNumeros ref="formReservation"
+                        :affaire="affaire" 
+                        :typesAffaires="typesAffaires"
+                        :types_numeros="types_numeros" />
     <!-- Quittance pour les numéros de parts de copropriété réservés -->
     <QuittancePCOP :affaire="affaire" 
                    :affaire_numeros_anciens="affaire_numeros_anciens" 

@@ -177,12 +177,12 @@ export const getCurrentDate = function () {
 /**
  * Prépare la liste pour le md-complete
  */
-export const stringifyAutocomplete = function(liste) {
+export const stringifyAutocomplete = function(liste, nom="nom") {
     return liste.map(x => ({
         id: x.id,
-        nom: x.nom,
-        toString: () => x.nom.toString(),
-        toLowerCase: () => x.nom.toLowerCase()
+        nom: String(x[nom]),
+        toString: () => String(x[nom]).toString(),
+        toLowerCase: () => String(x[nom]).toLowerCase()
     }));
 };
 
