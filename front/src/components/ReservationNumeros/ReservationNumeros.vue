@@ -3,14 +3,16 @@
 
 
 <script>
-import { getCadastres } from "@/services/helper";
+import { getCadastres, stringifyAutocomplete } from "@/services/helper";
 import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
-import { required } from "vuelidate/lib/validators";
+import { required, minValue } from "vuelidate/lib/validators";
 
 export default {
   name: "ReservationNumeros",
-  props: {},
+  props: {
+    affaire: {type: Object}
+  },
   components: {},
   mixins: [validationMixin],
   data: () => {
@@ -22,45 +24,41 @@ export default {
         PPE: null,
         PCOP: null
       },
-      reservation: {
-        affaire_id: null,
+      form: {
         cadastre: null,
-        nb_bf: 0,
-        nb_ddp: 0,
-        ddp_base: null,
-        nb_ppe: 0,
-        ppe_suffixe_start: null,
-        ppe_base: 0,
-        nb_pcop: 0,
-        pcop_base: 0,
-        nb_pfp3: 0,
-        nb_paux: 0,
-        nb_bat: 0,
-        nb_dp: 0,
-        nb_pcs: 0,
-        plan_id: null
+        nombre: null,
+        type_id: null,
+      },
+      alertReservation: {
+        show: false,
+        saveReservation: false,
+        text: ''
       }
     };
   },
 
   // Validations
   validations() {
-    var reservation = {
-      cadastre: { required }
+    var form = {
+      cadastre: { required },
+      nombre: { 
+        required,
+        minValue: minValue(1)
+      }
     };
-    
-    if (this.reservation.nb_ddp > 0) {
-      reservation.ddp_base = { required };
-    }
-    if (this.reservation.nb_ppe > 0) {
-      reservation.ppe_base = { required };
-      reservation.ppe_suffixe_start = { required };
-    }
-    if (this.reservation.nb_pcop > 0) {
-      reservation.pcop_base = { required };
-    }
 
-    return { reservation };
+    // if (this.reservation.nb_ddp > 0) {
+    //   reservation.ddp_base = { required };
+    // }
+    // if (this.reservation.nb_ppe > 0) {
+    //   reservation.ppe_base = { required };
+    //   reservation.ppe_suffixe_start = { required };
+    // }
+    // if (this.reservation.nb_pcop > 0) {
+    //   reservation.pcop_base = { required };
+    // }
+
+    return { form };
   },
 
   methods: {
@@ -71,50 +69,12 @@ export default {
       getCadastres()
         .then(response => {
           if (response && response.data) {
-            this.cadastre_liste = response.data.map(x => ({
-              id: x.id,
-              nom: x.nom,
-              toLowerCase: () => x.nom.toLowerCase(),
-              toString: () => x.nom
-            }));
+            this.cadastre_liste = stringifyAutocomplete(response.data);
           }
         })
-
         .catch(err => {
           handleException(err, this);
         });
-    },
-
-    /*
-     * Init default cadastre
-     */
-    async initDefaultCadastre() {
-      return new Promise((resolve, reject) => {
-        var affaire_cadastre;
-
-        this.$http
-          .get(
-            process.env.VUE_APP_API_URL +
-              process.env.VUE_APP_AFFAIRES_ENDPOINT +
-              this.$route.params.id,
-            {
-              withCredentials: true,
-              headers: { Accept: "application/json" }
-            }
-          )
-          .then(response => {
-            if (response && response.data) {
-              affaire_cadastre = {
-                id: response.data.cadastre_id,
-                nom: response.data.cadastre,
-                toLowerCase: () => response.data.cadastre.toLowerCase(),
-                toString: () => response.data.cadastre
-              };
-            }
-            resolve(affaire_cadastre);
-          })
-          .catch(() => reject);
-      });
     },
 
     /*
@@ -161,57 +121,19 @@ export default {
      */
     saveReservationNumeros() {
       var formData = new FormData();
-      formData.append("affaire_id", this.$route.params.id);
-      if (this.reservation.cadastre.id) {
-        formData.append("cadastre_id", this.reservation.cadastre.id);
+      formData.append("affaire_id", this.affaire.id);
+      formData.append("nombre", this.form.nombre);
+      formData.append("cadastre_id", this.form.cadastre.id);
+      formData.append("etat_id", Number(process.env.VUE_APP_NUMERO_PROJET_ID));
+      
+      //Type de numéro selon le type d'affaire
+      if (this.affaire.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION)) {
+        this.form.type_id = Number(process.env.VUE_APP_NUMERO_TYPE_BF);
       }
-      if (this.reservation.nb_bf) {
-        formData.append("bf", this.reservation.nb_bf);
-      }
-      if (this.reservation.nb_ddp) {
-        formData.append("ddp", this.reservation.nb_ddp);
-      }
-      if (this.reservation.ddp_base) {
-        formData.append("ddp_base", this.reservation.ddp_base);
-      }
-      if (this.reservation.nb_ppe) {
-        formData.append("ppe", this.reservation.nb_ppe);
-      }
-      if (this.reservation.ppe_suffixe_start) {
-        formData.append("ppe_unite", this.reservation.ppe_suffixe_start);
-      }
-      if (this.reservation.ppe_base) {
-        formData.append("ppe_base", this.reservation.ppe_base);
-      }
-      if (this.reservation.nb_pcop) {
-        formData.append("pcop", this.reservation.nb_pcop);
-      }
-      if (this.reservation.pcop_base) {
-        formData.append("pcop_base", this.reservation.pcop_base);
-      }
-      if (this.reservation.nb_pfp3) {
-        formData.append("pfp3", this.reservation.nb_pfp3);
-      }
-      if (this.reservation.nb_paux) {
-        formData.append("paux", this.reservation.nb_paux);
-      }
-      if (this.reservation.nb_bat) {
-        formData.append("bat", this.reservation.nb_bat);
-      }
-      if (this.reservation.nb_dp) {
-        formData.append("dp", this.reservation.nb_dp);
-      }
-      if (this.reservation.nb_pcs) {
-        formData.append("pcs", this.reservation.nb_pcs);
-      }
-      if (this.reservation.plan_id) {
-        formData.append("plan_id", this.reservation.plan_id);
-      }
-
-      this.$http
-        .post(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_RESERVATION_NUMEROS_ENDPOINT,
+      formData.append("type_id", this.form.type_id);
+      
+      this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_RESERVATION_NUMEROS_ENDPOINT,
           formData,
           {
             withCredentials: true,
@@ -222,13 +144,13 @@ export default {
           if (response.data) {
             this.$parent.searchAffaireNumeros();
             this.$parent.searchAffaireNewNumerosMo();
-            this.$root.$emit("ShowMessage", "Le(s) numéro(s) réservé(s) ont été correctement ajouté(s) à l'affaire")
+            this.$root.$emit("ShowMessage", "Le(s) numéro(s) réservé(s) ont été correctement rattaché(s) à l'affaire")
           }
         })
         .catch(err => {
           handleException(err, this);
         });
-      this.showReservationDialog = false;
+      // this.showReservationDialog = false;
       this.initializeForm();
     },
 
@@ -243,30 +165,16 @@ export default {
     /**
      * Initialise le formulaire de réservation de numéros
      */
-    async initializeForm() {
-      this.reservation.cadastre = await this.initDefaultCadastre();
-      this.reservation.nb_bf = 0;
-      this.reservation.nb_ddp = 0;
-      this.reservation.ddp_base = null;
-      this.reservation.nb_ppe = 0;
-      this.reservation.ppe_suffixe_start = null;
-      this.reservation.ppe_base = null;
-      this.reservation.nb_pcop = 0;
-      this.reservation.pcop_base = null;
-      this.reservation.nb_pfp3 = 0;
-      this.reservation.nb_paux = 0;
-      this.reservation.nb_bat = 0;
-      this.reservation.nb_dp = 0;
-      this.reservation.nb_pcs = 0;
-      this.reservation.plan_id = null;
-      this.filterAffaireNumeros();
+    initializeForm() {
+      this.form.cadastre = this.cadastre_liste.filter(x => x.id === this.affaire.cadastre_id).pop();
+      this.form.nombre = 0;
     },
 
     /**
      * Get validation class par fieldname
      */
     getValidationClass(fieldName) {
-      const field = this.$v.reservation[fieldName];
+      const field = this.$v.form[fieldName];
 
       if (field) {
         return {
@@ -279,10 +187,19 @@ export default {
      * Confirmer l'édition de la facture et l'enregistrer
      */
     onConfirmReservationNumeros() {
+      
       this.$v.$touch();
 
       if (!this.$v.$invalid) {
-        this.saveReservationNumeros();
+        this.showReservationDialog = false;
+      
+        this.form.nombre = Number(this.form.nombre);
+        if (this.form.nombre >= 10) {
+          this.alertReservation.text = "En cliquant sur 'confirmer', " + this.form.nombre + " numéros de bien-fonds vont être réservés."
+          this.alertReservation.show = true;
+        } else {
+          this.saveReservationNumeros();
+        }
       }
     }
   },

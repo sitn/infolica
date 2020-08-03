@@ -7,6 +7,7 @@ from sqlalchemy import (
     Text,
     Date,
     Boolean,
+    ARRAY,
     ForeignKey,
     UniqueConstraint,
 )
@@ -82,6 +83,7 @@ class AffaireType(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
+    reservation_numeros_types_id = Column(ARRAY(BigInteger))
 
 
 class Affaire(Base):
@@ -136,6 +138,7 @@ class ModificationAffaireType(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
+    affaire_source_type_id = Column(BigInteger, ForeignKey(AffaireType.id))
 
 
 class ModificationAffaire(Base):
@@ -693,6 +696,7 @@ class VAffaire(Base):
     type_id = Column(BigInteger)
     vref = Column(Text)
     chemin = Column(Text)
+    reservation_numeros_types_id = Column(ARRAY(BigInteger))
 
 
 class VEnvois(Base):

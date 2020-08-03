@@ -31,4 +31,6 @@
 
 .md-dialog {
     z-index: 6; 
+    width: 80%;
+    margin: auto;
 }
