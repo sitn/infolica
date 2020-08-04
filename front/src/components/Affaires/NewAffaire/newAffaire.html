@@ -210,82 +210,93 @@
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-small-size-100 md-size-100">
                             <md-autocomplete id="client_commande" v-model="form.client_commande"
-                            :md-options="search_clients_list" md-dense
-                            @md-changed="searchClients(form.client_commande)"
-                            @md-selected="defaultCompleteClients(form.client_commande)"
-                            :class="getValidationClass($v.form.client_commande)"
-                            required>
-                            
-                            <label>Commandé par</label>
-                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
-                            </template>
-                            <span class="md-error" v-if="!$v.form.client_commande.required">Le demandeur est obligatoire</span>
+                                :md-options="search_clients_list" md-dense
+                                @md-changed="searchClients(form.client_commande)"
+                                @md-selected="defaultCompleteClients(form.client_commande)"
+                                :class="getValidationClass($v.form.client_commande)"
+                                required>
+                                
+                                <label>Commandé par</label>
+                                <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                    Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                                </template>
+                                <span class="md-error" v-if="!$v.form.client_commande.required">Le demandeur est obligatoire</span>
                             </md-autocomplete>
+                        </div>
+
+                        <div class="md-layout-item md-size-50 md-small-size-100">
+                            <md-field>
+                                <label>À l'attention de... (optionnel)</label>
+                                <md-input></md-input>
+                            </md-field>
                         </div>
                     </div>
                     
+                    <br>
                     <md-divider></md-divider>
                     
                     <!-- Client ENVOI et ligne complément -->
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-small-size-100 md-size-100">
                             <md-autocomplete id="client_envoi_id" v-model="form.client_envoi"
-                            :md-options="search_clients_list" md-dense
-                            @md-changed="searchClients(form.client_envoi)"
-                            :class="getValidationClass($v.form.client_envoi)"
-                            required>
-                            
-                            <label>Envoyer à</label>
-                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
-                            </template>
-                            <span class="md-error" v-if="!$v.form.client_envoi.required">Le client envoi est
-                                obligatoire</span>
+                                :md-options="search_clients_list" md-dense
+                                @md-changed="searchClients(form.client_envoi)"
+                                :class="getValidationClass($v.form.client_envoi)"
+                                required>
+                                
+                                <label>Envoyer à</label>
+                                <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                    Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                                </template>
+                                <span class="md-error" v-if="!$v.form.client_envoi.required">Le client envoi est
+                                    obligatoire</span>
                             </md-autocomplete>
                         </div>
                         
                         <div class="md-layout-item md-small-size-100 md-size-50">
                             <md-field>
-                                <label>Par</label>
-                                <span class="md-prefix">Par </span>
+                                <label>À l'attention de... (optionnel)</label>
                                 <md-input v-model="form.client_envoi_complement" />
                             </md-field>
                         </div>
                     </div>
                     
+                    <br>
                     <md-divider></md-divider>
                     
                     <!-- Client FACTURE et ligne complément -->
                     <div class="md-layout md-gutter">
-                        <div class="md-layout-item md-small-size-100 md-size-100">
-                            <md-autocomplete id="client_facture_id" v-model="client_facture"
-                            :md-options="search_clients_list" md-dense
-                            @md-changed="searchClients(client_facture)"
-                            :class="getValidationClass($v.client_facture.id)"
-                            required>
-                            <label>Facturer à</label>
-                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
-                            </template>
-                            <span class="md-error" v-if="!$v.client_facture.id.required">Le client facture est
-                                obligatoire</span>
-                            </md-autocomplete>
-                        </div>
-                        
                         <div class="md-layout-item md-small-size-100 md-size-50">
                             <md-field>
-                                <label>Par</label>
-                                <span class="md-prefix">Par </span>
+                                <label>À l'attention de... (optionnel)</label>
                                 <md-input v-model="client_facture_complement" />
                             </md-field>
                         </div>
-                        <div class="md-layout-item md-size-50 md-small-size-100">
-                            <md-field>
-                                <label>À l'attention de</label>
-                                <span class="md-prefix">À l'attention de </span>
-                                <md-input v-model="client_facture_attention_de" />
-                            </md-field>
+
+                        <div class="md-layout-item md-small-size-100 md-size-100">                            
+                            <md-autocomplete id="client_facture_id" v-model="client_facture"
+                                :md-options="search_clients_list" md-dense
+                                @md-changed="searchClients(client_facture)"
+                                :class="getValidationClass($v.client_facture.id)"
+                                required>
+                                <label>Facturer à (débiteur)</label>
+                                <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                    Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                                </template>
+                                <span class="md-error" v-if="!$v.client_facture.id.required">Le client facture est
+                                    obligatoire</span>
+                            </md-autocomplete>
+                        </div>
+
+                        <div class="md-layout-item md-small-size-100 md-size-100">
+                            <md-autocomplete v-model="client_facture_co"
+                                :md-options="search_clients_list" md-dense
+                                @md-changed="searchClients(client_facture_co)" >
+                                <label>c/o (si adresse de facturation différente de celle du débiteur)</label>
+                                <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                    Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                                </template>
+                            </md-autocomplete>
                         </div>
                     </div>
                     
@@ -298,10 +309,10 @@
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-50 md-size-25">
                         <md-datepicker v-model="form.date_ouverture" md-immediately
-                        :class="getValidationClass($v.form.date_ouverture)">
-                        <label>Date d'ouverture</label>
-                    </md-datepicker>
-                </div>
+                            :class="getValidationClass($v.form.date_ouverture)">
+                            <label>Date d'ouverture</label>
+                        </md-datepicker>
+                    </div>
                 </div>
 
                 <br />

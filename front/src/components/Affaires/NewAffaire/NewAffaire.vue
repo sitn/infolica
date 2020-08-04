@@ -30,6 +30,7 @@ export default {
       cadastres_list: [],
       sitn_search_categories: null,
       client_facture: null,
+      client_facture_co: null,
       client_facture_complement: null,
       client_facture_attention_de: null,
       selectedModificationAffaire: null,
@@ -63,7 +64,7 @@ export default {
       lastRecord: null,
       type_modification_bool: false,
       typesModficiationAffaire_list: [],
-      showClientsForm: true,
+      showClientsForm: true
     };
   },
   // Validations
@@ -369,7 +370,10 @@ export default {
           formData.append("client_attention_de", "À l'attention de " + this.client_facture_attention_de);
         }
         if (this.client_facture_complement !== null) {
-          formData.append("client_complement", "Par " + this.client_facture_complement);
+          formData.append("client_complement", this.client_facture_complement);
+        }
+        if (this.client_facture_co !== null && this.client_facture_co.id !== null) {
+          formData.append("client_co_id", this.client_facture_co.id);
         }
         this.$http
           .post(
