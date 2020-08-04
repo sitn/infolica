@@ -25,6 +25,7 @@ export default {
       infoGenReadonly: true,
       affaireReadonly: true,
       operateursListe: [],
+      typesAffairesListe_all: [],
       typesAffairesListe: [],
       affaires_source: [],
       affaires_destination: [],
@@ -209,7 +210,7 @@ export default {
         .filter(x => x.id === this.affaire.responsable_id)[0];
       }
 
-      this.form.typeAffaire = this.typesAffairesListe
+      this.form.typeAffaire = this.typesAffairesListe_all
       .filter(x => x.id === this.affaire.type_id)[0];
 
       this.form.client_commande = this.affaire.client_commande_nom_.replace(/\n/g, ", ");
@@ -232,17 +233,24 @@ export default {
      * get cadastres
      */
     async initTypesAffairesListe() {
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_AFFAIRES_ENDPOINT,
-        {
-          withCredentials: true,
-          headers: {Accept: "application/json"}
-        }
-      ).then(response => {
-        if (response && response.data) {
-          this.typesAffairesListe = stringifyAutocomplete(response.data);
-        }
-      }).catch(err => handleException(err, this))
+      if (this.affaire.modif_affaire_type_id_vers !== null) {
+        this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_AFFAIRES_ENDPOINT,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => {
+          if (response && response.data) {
+            this.typesAffairesListe_all = stringifyAutocomplete(response.data)
+            this.typesAffairesListe = this.typesAffairesListe_all.filter(x => {
+              return this.affaire.modif_affaire_type_id_vers.includes(x.id);
+            });
+          }
+        }).catch(err => handleException(err, this))
+      } else {
+        this.typesAffairesListe = [];
+      }
     },
 
     /**

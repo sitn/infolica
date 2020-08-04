@@ -11,7 +11,7 @@
                 </div>
                 
                 <div class="md-layout-item md-size-50 md-small-size-100">
-                    <md-field v-if="infoGenReadonly">
+                    <md-field v-if="infoGenReadonly || affaire.modif_affaire_type_id_vers === null">
                         <label>Type</label>
                         <md-input v-model="affaire.type_affaire" readonly></md-input>
                     </md-field>

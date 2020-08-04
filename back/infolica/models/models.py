@@ -84,6 +84,7 @@ class AffaireType(Base):
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
     reservation_numeros_types_id = Column(ARRAY(BigInteger))
+    modif_affaire_type_id_vers = Column(ARRAY(BigInteger))
 
 
 class Affaire(Base):
@@ -138,7 +139,8 @@ class ModificationAffaireType(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
-    affaire_source_type_id = Column(BigInteger, ForeignKey(AffaireType.id))
+    reservation_numeros_types_id = Column(ARRAY(BigInteger))
+    affaire_source_type_id = Column(ARRAY(BigInteger))
 
 
 class ModificationAffaire(Base):
@@ -697,6 +699,10 @@ class VAffaire(Base):
     vref = Column(Text)
     chemin = Column(Text)
     reservation_numeros_types_id = Column(ARRAY(BigInteger))
+    modif_affaire_type_id_vers = Column(ARRAY(BigInteger))
+    modification_type_id = Column(BigInteger)
+    modification_type = Column(Text)
+    modification_affaire_id_mere = Column(BigInteger)
 
 
 class VEnvois(Base):
