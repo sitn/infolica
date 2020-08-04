@@ -37,7 +37,8 @@ import { validationMixin } from 'vuelidate'
         mail: null,
         entree: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
         no_sap: null,
-        no_bdp_bdee: null
+        no_bdp_bdee: null,
+        co: null
       },
 
       dataSaved: false,
@@ -97,6 +98,7 @@ import { validationMixin } from 'vuelidate'
         this.form.entree = null;
         this.form.no_sap = null;
         this.form.no_bdp_bdee = null;
+        this.form.co = null;
       },
 
       /*
@@ -183,7 +185,8 @@ import { validationMixin } from 'vuelidate'
         formData.append("titre", this.form.titre || null);
         formData.append("nom", this.form.nom || null);
         formData.append("prenom", this.form.prenom || null);
-        formData.append("represente_par", this.form.represente_par || null);
+        // formData.append("represente_par", this.form.represente_par || null);
+        formData.append("co", this.form.co || null);
         formData.append("adresse", this.form.adresse || null);
         formData.append("npa", this.form.npa || null);
         formData.append("localite", this.form.localite || null);
@@ -249,6 +252,7 @@ import { validationMixin } from 'vuelidate'
             this.form.nom = response.data.nom;
             this.form.prenom = response.data.prenom;
             this.form.represente_par = response.data.represente_par;
+            this.form.co = response.data.co;
             this.form.adresse = response.data.adresse;
             this.form.npa = response.data.npa;
             this.form.localite = response.data.localite;

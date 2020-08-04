@@ -55,11 +55,20 @@
         </div>
 
         <!-- Représenté par  -->
-        <div class="md-layout md-guttermd-size-100">
+        <div class="md-layout md-gutter md-size-100">
           <div class="md-layout-item md-small-size-100">
             <md-field style="background-color: lightgrey;">
               <label for="represente_par">Représenté par (non éditable)</label>
               <md-input name="represente_par" id="represente_par" v-model="form.represente_par" disabled />
+            </md-field>
+          </div>
+        </div>
+
+        <div class="md-layout md-gutter">
+          <div class="md-layout-item">
+            <md-field>
+              <label>c/o</label>
+              <md-input v-model="form.co" :disabled="sending"></md-input>
             </md-field>
           </div>
         </div>
