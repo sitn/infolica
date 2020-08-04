@@ -8,7 +8,8 @@ import { getCurrentDate,
          checkPermission,
          getCurrentUserRoleId,
          getClients,
-         filterList } from "@/services/helper";
+         filterList,
+         stringifyAutocomplete } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -37,9 +38,8 @@ export default {
       sap: null,
       date: null,
       client: null,
-      client_id: null,
+      client_co: null,
       client_complement: null,
-      client_attention_de: null,
       montant_mo: null,
       montant_mat_diff: null,
       montant_rf: null,
@@ -79,23 +79,63 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
-            var tmp = response.data;
+            let tmp = response.data;
             tmp.forEach(x => {
-              x.date = x.date !== null? moment(x.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
-              x.montant_mo = numeral(x.montant_mo).format("0.00"),
-              x.montant_mat_diff = numeral(x.montant_mat_diff).format("0.00"),
-              x.montant_rf = numeral(x.montant_rf).format("0.00"),
-              x.montant_tva = numeral(x.montant_tva).format("0.00"),
-              x.montant_total = numeral(x.montant_total).format("0.00"),
+              x.date = x.date !== null? moment(x.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null;
+              x.montant_mo = numeral(x.montant_mo).format("0.00");
+              x.montant_mat_diff = numeral(x.montant_mat_diff).format("0.00");
+              x.montant_rf = numeral(x.montant_rf).format("0.00");
+              x.montant_tva = numeral(x.montant_tva).format("0.00");
+              x.montant_total = numeral(x.montant_total).format("0.00");
+
+              // Composer l'adresse de facturation
+              x.adresse_facturation_ = "";
+              if (x.client_complement !== null) {
+                x.adresse_facturation_ = [
+                  x.client_complement,
+                  x.client_entreprise? ["Par " + x.client_entreprise, [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" ")].filter(Boolean).join(", "): "Par " + [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
+                  x.client_co,
+                  x.client_adresse,
+                  x.client_case_postale,
+                  [x.client_npa, x.client_localite].filter(Boolean).join(" ")
+                ].filter(Boolean).join(", ");
+              } else if (x.client_co_id !== null) {
+                x.adresse_facturation_ = [
+                  [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
+                  x.client_co_co? [x.client_co_co, x.client_co_adresse].filter(Boolean).join(", "): "c/o "+ x.client_co_adresse,
+                  x.client_co_case_postale,
+                  [x.client_co_npa, x.client_co_localite].filter(Boolean).join(" ")
+                ].filter(Boolean).join(", ");
+              } else {
+                x.adresse_facturation_ = [
+                  x.client_entreprise,
+                  [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
+                  x.client_co,
+                  x.client_adresse,
+                  x.client_case_postale,
+                  [x.client_npa, x.client_localite].filter(Boolean).join(" ")
+                ].filter(Boolean).join(", ");
+              }
+
+              
               x.client_ = [
-                x.client_attention_de,
-                x.client_entreprise,
                 x.client_complement,
+                x.client_entreprise,
                 [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
+                x.client_co,
                 x.client_adresse,
                 x.client_case_postale,
                 [x.client_npa, x.client_localite].filter(Boolean).join(" ")
-              ].filter(Boolean).join(", ")
+              ].filter(Boolean).join(", ");
+              
+              x.client_co_ = [
+                x.client_co_entreprise,
+                [x.client_co_titre, x.client_co_nom, x.client_co_prenom].filter(Boolean).join(" "),
+                x.client_co_co,
+                x.client_co_adresse,
+                x.client_co_case_postale,
+                [x.client_co_npa, x.client_co_localite].filter(Boolean).join(" ")
+              ].filter(Boolean).join(", ");
             });
 
             this.affaire_factures = tmp;
@@ -113,12 +153,7 @@ export default {
       getClients()
         .then(response => {
           if (response && response.data) {
-            this.clients_liste = response.data.map(x => ({
-              id: x.id,
-              nom: x.adresse_,
-              toLowerCase: () => x.adresse_.toLowerCase(),
-              toString: () => x.adresse_
-            }));
+            this.clients_liste = stringifyAutocomplete(response.data, "adresse_");
           }
         })
     },
@@ -126,8 +161,8 @@ export default {
     /**
      * Crée la liste de sélection du client lors de la création de facture
      */
-    getClientSearch() {
-      this.clients_liste_select = filterList(this.clients_liste, this.selectedFacture.client, 3)
+    getClientSearch(term) {
+      this.clients_liste_select = filterList(this.clients_liste, term, 3)
     },
 
     /**
@@ -145,15 +180,15 @@ export default {
      * Edit facture
      */
     openFactureEdition(data) {
-      var tmp = this.affaire_factures.filter(x => x.id === data.id).pop();
+      let tmp = this.affaire_factures.filter(x => x.id === data.id).pop();
       this.selectedFacture = {
         id: tmp.id,
         sap: tmp.sap,
         date: tmp.date !== null? tmp.date: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
-        client: tmp.client_,
+        client: this.clients_liste.filter(x => x.id === data.client_id).pop(),
         client_: tmp.client_,
+        client_co: data.client_co_id? this.clients_liste.filter(x => x.id === data.client_co_id).pop(): null,
         client_complement: tmp.client_complement,
-        client_attention_de: tmp.client_attention_de,
         montant_mo: numeral(tmp.montant_mo).format('0.00'),
         montant_mat_diff: numeral(tmp.montant_mat_diff).format('0.00'),
         montant_rf: numeral(tmp.montant_rf).format('0.00'),
@@ -174,8 +209,8 @@ export default {
         sap: null,
         date: getCurrentDate(),
         client: null,
+        client_co: null,
         client_complement: null,
-        client_attention_de: null,
         montant_mo: numeral(0).format('0.00'),
         montant_mat_diff: numeral(0).format('0.00'),
         montant_rf: numeral(0).format('0.00'),
@@ -221,13 +256,20 @@ export default {
       formData.append("sap", this.selectedFacture.sap || null);
       formData.append("remarque", this.selectedFacture.remarque || null);
       formData.append("client_complement", this.selectedFacture.client_complement || null);
-      formData.append("client_attention_de", this.selectedFacture.client_attention_de || null);
+      
       if (this.selectedFacture.date) {
         formData.append("date", moment(this.selectedFacture.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       }
       if (this.selectedFacture.client.id) {
         formData.append("client_id", this.selectedFacture.client.id);
       }
+      
+      if (this.selectedFacture.client_co !== null && this.selectedFacture.client_co.id) {
+        formData.append("client_co_id", this.selectedFacture.client_co.id);
+      } else {
+        formData.append("client_co_id", null);
+      }
+
       if (this.selectedFacture.montant_mo) {
         formData.append("montant_mo", this.selectedFacture.montant_mo);
       }
