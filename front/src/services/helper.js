@@ -151,7 +151,7 @@ export const setClientsAdresse_ = function(clients, sep=", ") {
         x.adresse_ = [
             x.entreprise,
             [x.titre, x.prenom, x.nom].filter(Boolean).join(" "),
-            x.co? "c/o " + x.co: null,
+            x.co,
             x.adresse,
             x.case_postale !== null? "Case postale " + x.case_postale: null,
             [x.npa, x.localite].filter(Boolean).join(" ")

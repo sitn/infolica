@@ -124,40 +124,59 @@
                         </md-field>
                     </div>
                 </div>
-    
+
                 <!-- Clients (edition) -->
                 <div class="md-layout md-gutter" v-else>
-                    <div class="md-layout-item md-size-100 md-small-size-100">
-                        <md-autocomplete v-model="form.client_commande"
-                            :md-options="searchClientsListe"
-                            @md-changed="searchClients(form.client_commande)"
-                            required md-dense>
-                            
-                            <label><strong style="color: blue">Demandeur</strong></label>
-                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
-                            </template>
-                        </md-autocomplete>
-                    </div>
-    
-                    <div class="md-layout-item md-size-100 md-small-size-100">
-                        <md-autocomplete v-model="form.client_envoi"
-                            :md-options="searchClientsListe"
-                            @md-changed="searchClients(form.client_envoi)"
-                            required md-dense>
-                            
-                            <label><strong style="color: blue">Client envoi</strong></label>
-                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
-                            </template>
-                        </md-autocomplete>
-                    </div>
-                    <div class="md-layout-item md-size-50 md-small-size-100" style="float: right;">
-                        <md-field>
-                            <label>Par</label>
-                            <md-input v-model="form.client_envoi_complement" ></md-input>
-                        </md-field>
-                    </div>
+                    <md-card style="margin: 15px;">
+                        <md-card-header>
+                            <div class="md-subhead">Demandeur</div>
+                        </md-card-header>
+                        <md-card-content>
+                            <div class="md-layout-item md-size-100 md-small-size-100">
+                                <md-autocomplete v-model="form.client_commande"
+                                    :md-options="searchClientsListe"
+                                    @md-changed="searchClients(form.client_commande)"
+                                    required md-dense>
+                                    <label><strong style="color: blue">Demandeur</strong></label>
+                                    <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                                    </template>
+                                </md-autocomplete>
+                            </div>
+                            <div class="md-layout-item md-size-50 md-small-size-100">
+                                <md-field>
+                                    <label>À l'attention de...</label>
+                                    <md-input v-model="form.client_commande_complement" ></md-input>
+                                </md-field>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+
+                    <md-card style="margin: 15px;">
+                        <md-card-header>
+                            <div class="md-subhead">Envoi</div>
+                        </md-card-header>
+                        <md-card-content>
+                            <div class="md-layout-item md-size-100 md-small-size-100">
+                                <md-autocomplete v-model="form.client_envoi"
+                                    :md-options="searchClientsListe"
+                                    @md-changed="searchClients(form.client_envoi)"
+                                    required md-dense>
+                                    <label><strong style="color: blue">Client envoi</strong></label>
+                                    <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                                    </template>
+                                </md-autocomplete>
+                            </div>
+                            <div class="md-layout-item md-size-50 md-small-size-100">
+                                <md-field>
+                                    <label>À l'attention de...</label>
+                                    <md-input v-model="form.client_envoi_complement" ></md-input>
+                                </md-field>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                    
                 </div>
             </div>
 

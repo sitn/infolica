@@ -179,13 +179,16 @@ import { validationMixin } from 'vuelidate'
       * Handle save data success
       */
       initPostData () {
+        if (this.form.co !== null && !this.form.co.startsWith("c/o ")) {
+          this.form.co = "c/o " + this.form.co;
+        }
+
         var formData = new FormData();
         formData.append("type_client", this.form.type_client);
         formData.append("entreprise", this.form.entreprise || null);
         formData.append("titre", this.form.titre || null);
         formData.append("nom", this.form.nom || null);
         formData.append("prenom", this.form.prenom || null);
-        // formData.append("represente_par", this.form.represente_par || null);
         formData.append("co", this.form.co || null);
         formData.append("adresse", this.form.adresse || null);
         formData.append("npa", this.form.npa || null);
