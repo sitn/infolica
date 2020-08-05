@@ -67,7 +67,7 @@
         <div class="md-layout md-gutter">
           <div class="md-layout-item">
             <md-field>
-              <label>c/o</label>
+              <label>Complément</label>
               <md-input v-model="form.co" :disabled="sending"></md-input>
             </md-field>
           </div>
@@ -111,7 +111,7 @@
         <div class="md-layout md-gutter">
           <div class="md-layout-item md-small-size-100 md-size-50">
             <md-field>
-              <label for="tel_fixe">Téléphone fixe</label>
+              <label for="tel_fixe">Téléphone 1</label>
               <md-input name="tel_fixe" id="tel_fixe" v-model="form.tel_fixe" :disabled="sending" />
               <span class="md-helper-text">Format: 032 123 45 67</span>
             </md-field>
@@ -119,7 +119,7 @@
           
           <div class="md-layout-item md-small-size-100 md-size-50">
             <md-field>
-              <label for="tel_portable">Téléphone portable</label>
+              <label for="tel_portable">Téléphone 2</label>
               <md-input name="tel_portable" id="tel_portable" v-model="form.tel_portable" :disabled="sending" />
               <span class="md-helper-text">Format: 079 123 45 67</span>
             </md-field>
@@ -133,13 +133,6 @@
               <label for="mail">Email</label>
               <md-input type="mail" name="mail" id="mail" v-model="form.mail" :disabled="sending" />
               <span class="md-error" v-if="!$v.form.mail.email">Adresse mail invalide</span>
-            </md-field>
-          </div>
-          <div class="md-layout-item md-small-size-100 md-size-50">
-            <md-field>
-              <label for="fax">Fax</label>
-              <md-input name="fax" id="fax" v-model="form.fax" :disabled="sending" />
-              <span class="md-helper-text">Format: 032 123 45 67</span>
             </md-field>
           </div>
         </div>

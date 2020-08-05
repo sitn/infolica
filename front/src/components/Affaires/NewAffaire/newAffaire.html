@@ -224,10 +224,10 @@
                             </md-autocomplete>
                         </div>
 
-                        <div class="md-layout-item md-size-50 md-small-size-100">
+                        <div class="md-layout-item md-size-50 md-small-size-100" v-if="showClientComplement(form.client_commande)">
                             <md-field>
-                                <label>À l'attention de... (optionnel)</label>
-                                <md-input></md-input>
+                                <label>À l'attention de...</label>
+                                <md-input v-model="form.client_commande_complement"></md-input>
                             </md-field>
                         </div>
                     </div>
@@ -253,9 +253,9 @@
                             </md-autocomplete>
                         </div>
                         
-                        <div class="md-layout-item md-small-size-100 md-size-50">
+                        <div class="md-layout-item md-small-size-100 md-size-50" v-if="showClientComplement(form.client_envoi)">
                             <md-field>
-                                <label>À l'attention de... (optionnel)</label>
+                                <label>À l'attention de...</label>
                                 <md-input v-model="form.client_envoi_complement" />
                             </md-field>
                         </div>
@@ -268,8 +268,8 @@
                     <div class="md-layout md-gutter md-alignment-center-left">
                         <div class="md-layout-item md-small-size-100 md-size-50">
                             <md-field>
-                                <label>À l'attention de... / Hoirie... / PPE... (optionnel)</label>
-                                <md-input v-model="client_facture_complement" />
+                                <label>Hoirie... / PPE... (optionnel)</label>
+                                <md-input v-model="client_facture_premiere_ligne" />
                             </md-field>
                         </div>
 
@@ -286,6 +286,13 @@
                                 <span class="md-error" v-if="!$v.client_facture.id.required">Le client facture est
                                     obligatoire</span>
                             </md-autocomplete>
+                        </div>
+
+                        <div class="md-layout-item md-small-size-100 md-size-50" v-if="showClientComplement(client_facture)">
+                            <md-field>
+                                <label>À l'attention de...</label>
+                                <md-input v-model="client_facture_complement" />
+                            </md-field>
                         </div>
                         
                         <div class="md-layout-item md-size-100">

@@ -28,6 +28,7 @@ export default {
       deleteFactureMessage: "",
       deleteFactureId: null,
       clients_liste: [],
+      clients_liste_type: [],
       clients_liste_select: [],
       affaire_factures: [],
       showFactureDialog: false,
@@ -41,6 +42,7 @@ export default {
         client: null,
         client_co: null,
         client_complement: null,
+        client_premiere_ligne: null,
         montant_mo: null,
         montant_mat_diff: null,
         montant_rf: null,
@@ -110,26 +112,34 @@ export default {
 
               // Composer l'adresse de facturation
               x.adresse_facturation_ = "";
-              if (x.client_complement !== null) {
+              if (x.client_premiere_ligne !== null) {
+                // Cas hoirie, PPE ou personne représentée
                 x.adresse_facturation_ = [
-                  x.client_complement,
-                  x.client_entreprise? ["Par " + x.client_entreprise, [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" ")].filter(Boolean).join(", "): "Par " + [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
+                  x.client_premiere_ligne,
+                  x.client_entreprise !== null?
+                    ["Par " + x.client_entreprise, x.client_complement !== null? x.complement:
+                      [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" ")].filter(Boolean).join(", "):
+                    "Par " + [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
                   x.client_co,
                   x.client_adresse,
                   x.client_case_postale,
                   [x.client_npa, x.client_localite].filter(Boolean).join(" ")
                 ].filter(Boolean).join(", ");
-              } else if (x.client_co_id !== null) {
+              } else if (this.show_co) {
+                // Cas envoi adresse différente de celle du débiteur
                 x.adresse_facturation_ = [
                   [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
-                  x.client_co_co? [x.client_co_co, x.client_co_adresse].filter(Boolean).join(", "): "c/o "+ x.client_co_adresse,
+                  ["c/o", x.client_co_titre, x.client_co_nom, x.client_co_prenom].filter(Boolean).join(" "),
+                  x.client_co_co,
+                  x.client_co_adresse,
                   x.client_co_case_postale,
                   [x.client_co_npa, x.client_co_localite].filter(Boolean).join(" ")
                 ].filter(Boolean).join(", ");
               } else {
+                // Cas adresse facturation = adresse débiteur
                 x.adresse_facturation_ = [
                   x.client_entreprise,
-                  [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
+                  x.client_complement? x.client_complement: [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
                   x.client_co,
                   x.client_adresse,
                   x.client_case_postale,
@@ -139,8 +149,8 @@ export default {
 
               
               x.client_ = [
-                x.client_complement,
                 x.client_entreprise,
+                x.client_complement,
                 [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
                 x.client_co,
                 x.client_adresse,
@@ -149,8 +159,8 @@ export default {
               ].filter(Boolean).join(", ");
               
               x.client_co_ = [
-                x.client_co_entreprise,
                 [x.client_co_titre, x.client_co_nom, x.client_co_prenom].filter(Boolean).join(" "),
+                x.client_co_entreprise,
                 x.client_co_co,
                 x.client_co_adresse,
                 x.client_co_case_postale,
@@ -174,6 +184,10 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.clients_liste = stringifyAutocomplete(response.data, "adresse_");
+            this.clients_liste_type = response.data.map(x => ({
+              id: x.id,
+              type_id: x.type_client
+            }));
           }
         })
     },
@@ -209,6 +223,7 @@ export default {
         client_: tmp.client_,
         client_co: data.client_co_id? this.clients_liste.filter(x => x.id === data.client_co_id).pop(): null,
         client_complement: tmp.client_complement,
+        client_premiere_ligne: tmp.client_premiere_ligne,
         montant_mo: numeral(tmp.montant_mo).format('0.00'),
         montant_mat_diff: numeral(tmp.montant_mat_diff).format('0.00'),
         montant_rf: numeral(tmp.montant_rf).format('0.00'),
@@ -216,7 +231,6 @@ export default {
         montant_total: numeral(tmp.montant_total).format('0.00'),
         remarque: tmp.remarque
       }
-      // this.selectedFacture.client = this.selectedFacture.client_;
       this.showFactureDialog = true;
     },
 
@@ -231,6 +245,7 @@ export default {
         client: null,
         client_co: null,
         client_complement: null,
+        client_premiere_ligne: null,
         montant_mo: numeral(0).format('0.00'),
         montant_mat_diff: numeral(0).format('0.00'),
         montant_rf: numeral(0).format('0.00'),
@@ -276,6 +291,7 @@ export default {
       formData.append("sap", this.selectedFacture.sap || null);
       formData.append("remarque", this.selectedFacture.remarque || null);
       formData.append("client_complement", this.selectedFacture.client_complement || null);
+      formData.append("client_premiere_ligne", this.selectedFacture.client_premiere_ligne || null);
       
       if (this.selectedFacture.date) {
         formData.append("date", moment(this.selectedFacture.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
@@ -416,6 +432,19 @@ export default {
     openCreateClient() {
       let routedata = this.$router.resolve({ name: "ClientsNew" });
       window.open(routedata.href, "_blank");
+    },
+
+    /**
+     * Affiche le complément client si le client est une entreprise
+     */
+    showClientComplement(client) {
+      if (client && client.id) {
+        let tmp = this.clients_liste_type.filter(x => x.id === client.id).pop();
+        if (tmp.type_id === 2) {
+          return true;
+        }
+      }
+      return false;
     }
   },
 

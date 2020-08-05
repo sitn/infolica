@@ -91,9 +91,13 @@
                 </div>    
             </div>    
  
+            <md-divider></md-divider>
+            <md-subheader>Adresse de la facture</md-subheader>
+            <md-divider></md-divider>
+
             <md-field>
-                <label>À l'attention de... / Hoirie... / PPE... (optionnel)</label>
-                <md-input v-model="selectedFacture.client_complement"></md-input>
+                <label>Hoirie... / PPE... (optionnel)</label>
+                <md-input v-model="selectedFacture.client_premiere_ligne"></md-input>
             </md-field>
 
             <md-autocomplete v-model="selectedFacture.client"
@@ -107,6 +111,11 @@
                 </template>
                 <span class="md-error" v-if="!$v.selectedFacture.client.required">Le client est obligatoire</span>
             </md-autocomplete>
+
+            <md-field v-if="showClientComplement(selectedFacture.client)">
+                <label>À l'attention de...</label>
+                <md-input v-model="selectedFacture.client_complement"></md-input>
+            </md-field>
             
             <md-checkbox v-model="show_co">c/o (Envoyer à une adresse différente du débiteur)</md-checkbox>
             <div v-if="show_co">

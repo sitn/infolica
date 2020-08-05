@@ -25,6 +25,7 @@ export default {
     return {
       types_affaires_list: [],
       clients_list: [],
+      clients_liste_type: [],
       search_clients_list: [],
       operateurs_list: [],
       cadastres_list: [],
@@ -32,7 +33,7 @@ export default {
       client_facture: null,
       client_facture_co: null,
       client_facture_complement: null,
-      client_facture_attention_de: null,
+      client_facture_premiere_ligne: null,
       selectedModificationAffaire: null,
       affaire_numeros_anciens: [],
       affaire_numeros_nouveaux: [],
@@ -214,6 +215,10 @@ export default {
       .then(response => {
         if (response && response.data) {
           this.clients_list = stringifyAutocomplete(response.data, "adresse_");
+          this.clients_liste_type = response.data.map(x => ({
+            id: x.id,
+            type_id: x.type_client
+          }));
         }
       })
       //Error
@@ -346,11 +351,11 @@ export default {
         var formData = new FormData();
         formData.append("affaire_id", affaire_id);
         formData.append("client_id", this.client_facture.id);
-        if (this.client_facture_attention_de !== null) {
-          formData.append("client_attention_de", this.client_facture_attention_de);
-        }
         if (this.client_facture_complement !== null) {
           formData.append("client_complement", this.client_facture_complement);
+        }
+        if (this.client_facture_premiere_ligne !== null) {
+          formData.append("client_premiere_ligne", this.client_facture_premiere_ligne);
         }
         if (this.show_co && this.client_facture_co !== null && this.client_facture_co.id !== null) {
           formData.append("client_co_id", this.client_facture_co.id);
@@ -434,10 +439,13 @@ export default {
       if (this.form.client_commande && this.form.client_commande.id) {
         formData.append("client_commande_id", this.form.client_commande.id);
       }
+      if (this.form.client_commande_complement && this.showClientComplement(this.form.client_commande)) {
+        formData.append("client_commande_complement", this.form.client_commande_complement);
+      }
       if (this.form.client_envoi && this.form.client_envoi.id) {
         formData.append("client_envoi_id", this.form.client_envoi.id);
       }
-      if (this.form.client_envoi_complement) {
+      if (this.form.client_envoi_complement && this.showClientComplement(this.form.client_envoi)) {
         formData.append("client_envoi_complement", this.form.client_envoi_complement);
       }
       if (this.form.technicien_id) {
@@ -658,7 +666,7 @@ export default {
         this.form.client_envoi_complement = null;
         this.client_facture = null;
         this.client_facture_complement = null;
-        this.client_facture_attention_de = null;
+        this.client_facture_premiere_ligne = null;
       } else {
         this.showClientsForm = true;
       }
@@ -819,6 +827,19 @@ export default {
      */
     onSelectNumsNouveux(items) {
       this.selectedNouveauxNumeros = items;
+    },
+
+    /**
+     * Affiche le complément client si le client est une entreprise
+     */
+    showClientComplement(client) {
+      if (client && client.id) {
+        let tmp = this.clients_liste_type.filter(x => x.id === client.id).pop();
+        if (tmp.type_id === 2) {
+          return true;
+        }
+      }
+      return false;
     }
   },
 
