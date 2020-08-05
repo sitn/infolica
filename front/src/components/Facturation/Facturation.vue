@@ -20,46 +20,66 @@ export default {
   name: "Facturation",
   mixins: [validationMixin],
   props: {},
-  data: () => ({
-    affaireReadonly: true,
-    showNewFactureBtn: false,
-    deleteFactureActive: false,
-    deleteFactureMessage: "",
-    deleteFactureId: null,
-    clients_liste: [],
-    clients_liste_select: [],
-    affaire_factures: [],
-    showFactureDialog: false,
-    createFacture: false,
-    lastRecordSAP: null,
-    dataSaved: null,
-    selectedFacture: {
-      id: null,
-      sap: null,
-      date: null,
-      client: null,
-      client_co: null,
-      client_complement: null,
-      montant_mo: null,
-      montant_mat_diff: null,
-      montant_rf: null,
-      montant_tva: null,
-      montant_total: null,
-      remarque: null
+  data: () => {
+    return {
+      affaireReadonly: true,
+      showNewFactureBtn: false,
+      deleteFactureActive: false,
+      deleteFactureMessage: "",
+      deleteFactureId: null,
+      clients_liste: [],
+      clients_liste_select: [],
+      affaire_factures: [],
+      showFactureDialog: false,
+      createFacture: false,
+      lastRecordSAP: null,
+      dataSaved: null,
+      selectedFacture: {
+        id: null,
+        sap: null,
+        date: null,
+        client: null,
+        client_co: null,
+        client_complement: null,
+        montant_mo: null,
+        montant_mat_diff: null,
+        montant_rf: null,
+        montant_tva: null,
+        montant_total: null,
+        remarque: null
+      },
+      show_co: false
     }
-  }),
+  },
 
   // Validations
-  validations: {
-    selectedFacture: {
-      date: { required },
-      client: { required },
-      montant_mo: { required },
-      montant_mat_diff: { required },
-      montant_rf: { required },
-      montant_tva: { required },
-      montant_total: { required }
+  validations() {
+    let selectedFacture = {};
+
+    if (this.show_co) {
+      selectedFacture = {
+        date: { required },
+        client: { required },
+        montant_mo: { required },
+        montant_mat_diff: { required },
+        montant_rf: { required },
+        montant_tva: { required },
+        montant_total: { required },
+        client_co: {required}
+      };
+    } else {
+      selectedFacture = {
+        date: { required },
+        client: { required },
+        montant_mo: { required },
+        montant_mat_diff: { required },
+        montant_rf: { required },
+        montant_tva: { required },
+        montant_total: { required }
+      };
     }
+
+    return { selectedFacture };
   },
 
   methods: {

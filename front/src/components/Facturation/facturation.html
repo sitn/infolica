@@ -78,9 +78,9 @@
 
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-50">
-                    <md-field :class="getValidationClass('sap')">
+                    <md-field>
                         <label>SAP</label>
-                        <md-input v-model="selectedFacture.sap" type="number"></md-input>
+                        <md-input v-model="selectedFacture.sap"></md-input>
                     </md-field>    
                 </div>    
 
@@ -92,27 +92,33 @@
             </div>    
  
             <md-field>
-                <label>À l'attention de... / Hoirie... / PPE...</label>
+                <label>À l'attention de... / Hoirie... / PPE... (optionnel)</label>
                 <md-input v-model="selectedFacture.client_complement"></md-input>
             </md-field>
 
-            <md-autocomplete v-model="selectedFacture.client" :md-options="clients_liste_select"
-                @md-changed="getClientSearch(selectedFacture.client)" md-dense :class="getValidationClass('client')" required>
-                <label>Client</label>
+            <md-autocomplete v-model="selectedFacture.client"
+                :md-options="clients_liste_select"
+                @md-changed="getClientSearch(selectedFacture.client)"
+                :class="getValidationClass('client')"
+                required md-dense>
+                <label>Facturer à (débiteur)</label>
                 <template slot="md-autocomplete-empty" slot-scope="{ term }">
                     Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
                 </template>
                 <span class="md-error" v-if="!$v.selectedFacture.client.required">Le client est obligatoire</span>
             </md-autocomplete>
             
-            <md-autocomplete v-model="selectedFacture.client_co" :md-options="clients_liste_select"
-                @md-changed="getClientSearch(selectedFacture.client_co)" md-dense>
-                <label>c/o</label>
-                <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                    Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
-                </template>
-                <span class="md-error" v-if="!$v.selectedFacture.client.required">Le client est obligatoire</span>
-            </md-autocomplete>
+            <md-checkbox v-model="show_co">c/o (Envoyer à une adresse différente du débiteur)</md-checkbox>
+            <div v-if="show_co">
+                <md-autocomplete v-model="selectedFacture.client_co" :md-options="clients_liste_select"
+                :class="getValidationClass('client_co')" @md-changed="getClientSearch(selectedFacture.client_co)" md-dense>
+                    <label>c/o</label>
+                    <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                    </template>
+                    <span class="md-error" v-if="!$v.selectedFacture.client_co.required">L'adresse c/o est obligatoire</span>
+                </md-autocomplete>
+            </div>
 
             <div style="float: right; width: 50%;">
                 <md-field :class="getValidationClass('montant_mo')">

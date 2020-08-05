@@ -207,7 +207,7 @@
                 <div v-if="showClientsForm">
 
                     <!-- Client DEMANDEUR et ligne complément -->
-                    <div class="md-layout md-gutter">
+                    <div class="md-layout md-gutter md-alignment-center-left">
                         <div class="md-layout-item md-small-size-100 md-size-100">
                             <md-autocomplete id="client_commande" v-model="form.client_commande"
                                 :md-options="search_clients_list" md-dense
@@ -236,7 +236,7 @@
                     <md-divider></md-divider>
                     
                     <!-- Client ENVOI et ligne complément -->
-                    <div class="md-layout md-gutter">
+                    <div class="md-layout md-gutter md-alignment-center-left">
                         <div class="md-layout-item md-small-size-100 md-size-100">
                             <md-autocomplete id="client_envoi_id" v-model="form.client_envoi"
                                 :md-options="search_clients_list" md-dense
@@ -265,10 +265,10 @@
                     <md-divider></md-divider>
                     
                     <!-- Client FACTURE et ligne complément -->
-                    <div class="md-layout md-gutter">
+                    <div class="md-layout md-gutter md-alignment-center-left">
                         <div class="md-layout-item md-small-size-100 md-size-50">
                             <md-field>
-                                <label>À l'attention de... (optionnel)</label>
+                                <label>À l'attention de... / Hoirie... / PPE... (optionnel)</label>
                                 <md-input v-model="client_facture_complement" />
                             </md-field>
                         </div>
@@ -287,15 +287,22 @@
                                     obligatoire</span>
                             </md-autocomplete>
                         </div>
-
-                        <div class="md-layout-item md-small-size-100 md-size-100">
+                        
+                        <div class="md-layout-item md-size-100">
+                            <md-checkbox v-model="show_co">c/o (Envoyer à une adresse différente du débiteur)</md-checkbox>
+                        </div>
+                        <div class="md-layout-item md-small-size-100 md-size-100" v-if="show_co">
                             <md-autocomplete v-model="client_facture_co"
                                 :md-options="search_clients_list" md-dense
-                                @md-changed="searchClients(client_facture_co)" >
-                                <label>c/o (si adresse de facturation différente de celle du débiteur)</label>
+                                :class="getValidationClass($v.client_facture_co.id)"
+                                @md-changed="searchClients(client_facture_co)"
+                                required>
+                                <label>c/o</label>
                                 <template slot="md-autocomplete-empty" slot-scope="{ term }">
                                     Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
                                 </template>
+                                <span class="md-error" v-if="!$v.client_facture.id.required">L'adresse c/o est
+                                    obligatoire</span>
                             </md-autocomplete>
                         </div>
                     </div>

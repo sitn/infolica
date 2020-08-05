@@ -64,59 +64,44 @@ export default {
       lastRecord: null,
       type_modification_bool: false,
       typesModficiationAffaire_list: [],
-      showClientsForm: true
+      showClientsForm: true,
+      show_co: false
     };
   },
   // Validations
   validations() {
     let form = {};
     let client_facture = {};
+    let client_facture_co = {};
 
     if (this.showClientsForm) {
       form = {
-        type: {
-          required
-        },
-        technicien_id: {
-          required
-        },
-        cadastre: {
-          required
-        },
-        date_ouverture: {
-          required
-        },
-        localisation: {
-          required
-        },
-        client_commande: {
-          required
-        },
-        client_envoi: {
-          required
-        }
+        type: {required},
+        technicien_id: {required},
+        cadastre: {required},
+        date_ouverture: {required},
+        localisation: {required},
+        client_commande: {required},
+        client_envoi: {required}
       };
 
       client_facture = {
         id: {required}
       };
+  
+      if (this.show_co) {
+        client_facture_co = {
+          id : { required }
+        }
+      }
+
     } else {
       form = {
-        type: {
-          required
-        },
-        technicien_id: {
-          required
-        },
-        cadastre: {
-          required
-        },
-        date_ouverture: {
-          required
-        },
-        localisation: {
-          required
-        }
+        type: {required},
+        technicien_id: {required},
+        cadastre: {required},
+        date_ouverture: {required},
+        localisation: {required}
       };
     }
 
@@ -124,7 +109,7 @@ export default {
       form.affaire_modif_type = {required}  
     }
 
-    return {form, client_facture}
+    return {form, client_facture, client_facture_co}
   },
 
   methods: {
@@ -228,12 +213,7 @@ export default {
       getClients()
       .then(response => {
         if (response && response.data) {
-          this.clients_list = response.data.map(x => ({
-            id: x.id,
-            nom: x.adresse_,
-            toLowerCase: () => x.adresse_.toLowerCase(),
-            toString: () => x.adresse_
-          }));
+          this.clients_list = stringifyAutocomplete(response.data, "adresse_");
         }
       })
       //Error
@@ -367,12 +347,12 @@ export default {
         formData.append("affaire_id", affaire_id);
         formData.append("client_id", this.client_facture.id);
         if (this.client_facture_attention_de !== null) {
-          formData.append("client_attention_de", "À l'attention de " + this.client_facture_attention_de);
+          formData.append("client_attention_de", this.client_facture_attention_de);
         }
         if (this.client_facture_complement !== null) {
           formData.append("client_complement", this.client_facture_complement);
         }
-        if (this.client_facture_co !== null && this.client_facture_co.id !== null) {
+        if (this.show_co && this.client_facture_co !== null && this.client_facture_co.id !== null) {
           formData.append("client_co_id", this.client_facture_co.id);
         }
         this.$http
@@ -458,7 +438,7 @@ export default {
         formData.append("client_envoi_id", this.form.client_envoi.id);
       }
       if (this.form.client_envoi_complement) {
-        formData.append("client_envoi_complement", "Par " + this.form.client_envoi_complement);
+        formData.append("client_envoi_complement", this.form.client_envoi_complement);
       }
       if (this.form.technicien_id) {
         formData.append("technicien_id", this.form.technicien_id);
