@@ -27,8 +27,9 @@
                     </md-field>
                 </div>
             
-                <div class="md-layout-item md-size-50" v-if="affaire.reservation_numeros_types_id.includes(types_numeros.ppe) ||
-                                                             affaire.reservation_numeros_types_id.includes(types_numeros.pcop)">
+                <div class="md-layout-item md-size-50" v-if="affaire.reservation_numeros_types_id !== null &&
+                                                             (affaire.reservation_numeros_types_id.includes(types_numeros.ppe) ||
+                                                             affaire.reservation_numeros_types_id.includes(types_numeros.pcop))">
                     <md-autocomplete :md-options="numerosBaseListeFiltered"
                         v-model="form.numeroBase"
                         @md-changed="filterNumeroBase"
@@ -39,7 +40,8 @@
                     </md-autocomplete>
                 </div>
                 
-                <div class="md-layout-item md-size-50" v-if="affaire.reservation_numeros_types_id.includes(types_numeros.ppe)">
+                <div class="md-layout-item md-size-50" v-if="affaire.reservation_numeros_types_id !== null &&
+                                                             affaire.reservation_numeros_types_id.includes(types_numeros.ppe)">
                     <md-field :class="getValidationClass('ppe_suffixe_start')">
                         <label>Première unité (lettre)</label>
                         <md-input v-model="form.ppe_suffixe_start"

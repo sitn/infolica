@@ -19,13 +19,17 @@ export default {
   mixins: [validationMixin],
   data: () => {
     return {
-      showReservationDialog: false,
-      cadastre_liste: [],
       affaire_numeros_base: {
         DDP: null,
         PPE: null,
         PCOP: null
       },
+      alertReservation: {
+        show: false,
+        saveReservation: false,
+        text: ''
+      },
+      cadastre_liste: [],
       form: {
         cadastre: null,
         nombre: null,
@@ -33,13 +37,9 @@ export default {
         numeroBase: null,
         ppe_suffixe_start: null
       },
-      alertReservation: {
-        show: false,
-        saveReservation: false,
-        text: ''
-      },
       numerosBaseListe: [],
-      numerosBaseListeFiltered: []
+      numerosBaseListeFiltered: [],
+      showReservationDialog: false
     };
   },
 
