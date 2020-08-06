@@ -51,7 +51,7 @@ def types_numeros_view(request):
     """
     Return all types_numeros
     """
-    query = request.dbsession.query(NumeroType).all()
+    query = request.dbsession.query(NumeroType).filter(NumeroType.ordre != None).order_by(NumeroType.ordre.asc()).all()
     return Utils.serialize_many(query)
 
 
@@ -425,11 +425,10 @@ def affaire_numero_new_view(request, params=None):
 # NUMERO- AFFAIRE
 ###########################################################
 
-
 @view_config(route_name='numero_affaires_by_numero_id', request_method='GET', renderer='json')
 def numeros_affaire_view(request):
     """
-    Add new affaire-numero
+    Get new affaire-numero
     """
     # Check connected
     if not Utils.check_connected(request):

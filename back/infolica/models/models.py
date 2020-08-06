@@ -437,8 +437,9 @@ class NumeroType(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
-
-
+    ordre = Column(BigInteger)
+    
+    
 class NumeroEtat(Base):
     __tablename__ = 'numero_etat'
     __table_args__ = {'schema': 'infolica'}

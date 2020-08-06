@@ -1,21 +1,8 @@
 <div class="numerosHistory">
-    
-    
-    <md-card>
-        <!-- Results Header -->
-        <md-card-header>
-            <div class="md-layout mg-gutter">
-                <div class="md-layout-item">
-                    <div class="md-title"><strong>Consultation d'immeuble</strong></div>
-                </div>
-                <div class="md-layout-item">
-                    <div style="text-align: right;">
-                        <md-button class="md-accent md-raised" @click="openEditionNumero" v-if="editNumeroAllowed">Editer</md-button>
-                    </div>
-                </div>
-            </div>
-        </md-card-header>
-    </md-card>
+    <md-toolbar>
+        <h1 style="flex: 1;">Consultation d'immeuble</h1>
+        <md-button class="md-accent md-raised" @click="openEditionNumero" v-if="editNumeroAllowed">Editer</md-button>
+    </md-toolbar>
     
     <!-- EDITION DE NUMERO -->
     <md-card v-if="editionActivated">
@@ -194,7 +181,6 @@
                     <md-table-cell md-label="Affaire" md-sort-by="affaire_id" style="width: 10%;">{{ item.affaire_id }}</md-table-cell>
                     <md-table-cell md-label="Nom de l'affaire" md-sort-by="affaire_nom" style="width: 15%;">{{ item.affaire_nom }}</md-table-cell>
                     <md-table-cell md-label="Type" md-sort-by="affaire_type" style="width: 20%;">{{ item.affaire_type }}</md-table-cell>
-                    <md-table-cell md-label="Informations" md-sort-by="affaire_information" style="width: 30%;">{{ item.affaire_information }}</md-table-cell>
                     <md-table-cell md-label="Date" md-sort-by="affaire_date" style="width: 10%;">{{ item.affaire_date | formatDate }}</md-table-cell>
                     <md-table-cell md-label="Consulter" class="actionsColumn" style="width: 15%;">
                         <md-button class="md-icon-button md-primary" v-on:click="doOpenAffaire(item.affaire_id)">
