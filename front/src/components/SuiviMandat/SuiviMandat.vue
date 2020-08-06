@@ -13,13 +13,13 @@ export default {
   props: {},
   data: () => ({
     affaireReadonly: true,
+    chefsProjetMO_liste: [],
     confirmDialogActive: false,
     confirmUpdateAffaireDateValidation: false,
-    showNewSuiviMandatBtn: false,
-    showModifiedSuiviMandat: false,
     needToCreateSuiviMandat: false,
     operateurs_liste: [],
-    chefsProjetMO_liste: [],
+    showModifiedSuiviMandat: false,
+    showNewSuiviMandatBtn: false,
     suiviMandat: {}
   }),
 
@@ -218,12 +218,16 @@ export default {
       if (this.suiviMandat.ap_42) {
         formData.append("ap_42", this.suiviMandat.ap_42);
       }
-      if (this.suiviMandat.visa) {
+      if (this.suiviMandat.visa && this.suiviMandat.visa !== "") {
         formData.append("visa", this.suiviMandat.visa.id);
+      } else {
+        formData.append("visa", null);
       }
       if (this.suiviMandat.date) {
         formData.append("date",
           moment(this.suiviMandat.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
+      } else {
+        formData.append("date", null);
       }
 
       this.$http
