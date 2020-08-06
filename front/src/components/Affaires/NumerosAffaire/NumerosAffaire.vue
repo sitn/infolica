@@ -32,11 +32,11 @@ export default {
       affaire_numeros_anciens: [],
       affaire_numeros_nouveaux: [],
       affaire_numeros_nouveaux_mo: [],
-      showNumerosMO: true,
       affaireReadonly: true,
+      showNumerosMO: true,
       numerosMoLoading: true,
-      showQuittancePCOPDialog: false,
       showBalance: false,
+      showQuittancePCOPDialog: false,
       types_numeros: {
         bf: Number(process.env.VUE_APP_NUMERO_TYPE_BF),
         ddp: Number(process.env.VUE_APP_NUMERO_TYPE_DDP),
