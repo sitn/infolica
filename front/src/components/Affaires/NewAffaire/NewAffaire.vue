@@ -23,50 +23,54 @@ export default {
   },
   data: () => {
     return {
-      types_affaires_list: [],
-      clients_list: [],
-      clients_liste_type: [],
-      search_clients_list: [],
-      operateurs_list: [],
+      affaire_numeros_anciens: [],
+      affaire_numeros_nouveaux: [],
       cadastres_list: [],
-      sitn_search_categories: null,
       client_facture: null,
       client_facture_co: null,
       client_facture_complement: null,
       client_facture_premiere_ligne: null,
-      selectedModificationAffaire: null,
-      affaire_numeros_anciens: [],
-      affaire_numeros_nouveaux: [],
-      selectedAnciensNumeros: [],
-      selectedNouveauxNumeros: [],
+      clients_list: [],
+      clients_liste_type: [],
+      clients_types_config: {
+        personne_morale: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID),
+        personne_physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID)
+      },
+      dataSaved: false,
       form: {
-        nom: null,
+        affaire_base: null,
+        affaire_base_id: null,
+        affaire_modif_type: null,
         cadastre: null,
         client_commande: null,
         client_commande_complement: null,
         client_envoi: null,
         client_envoi_complement: null,
+        date_cloture: null,
         date_ouverture: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
         date_validation: null,
-        date_cloture: null,
+        localisation: null,
         localisation_E: null,
         localisation_N: null,
-        localisation: null,
-        vref: null,
-        affaire_base: null,
+        nom: null,
         remarque: null,
-        affaire_base_id: null,
-        affaire_modif_type: null,
         technicien_id: null,
-        type: null
+        type: null,
+        vref: null
       },
-      dataSaved: false,
-      sending: false,
       lastRecord: null,
-      type_modification_bool: false,
-      typesModficiationAffaire_list: [],
+      operateurs_list: [],
+      search_clients_list: [],
+      selectedAnciensNumeros: [],
+      selectedModificationAffaire: null,
+      selectedNouveauxNumeros: [],
+      sending: false,
       showClientsForm: true,
-      show_co: false
+      show_co: false,
+      sitn_search_categories: null,
+      types_affaires_list: [],
+      type_modification_bool: false,
+      typesModficiationAffaire_list: []
     };
   },
   // Validations
@@ -835,7 +839,7 @@ export default {
     showClientComplement(client) {
       if (client && client.id) {
         let tmp = this.clients_liste_type.filter(x => x.id === client.id).pop();
-        if (tmp.type_id === 2) {
+        if (tmp.type_id === this.clients_types_config.personne_morale) {
           return true;
         }
       }

@@ -22,35 +22,39 @@ export default {
   props: {},
   data: () => {
     return {
+      affaire_factures: [],
       affaireReadonly: true,
-      showNewFactureBtn: false,
-      deleteFactureActive: false,
-      deleteFactureMessage: "",
-      deleteFactureId: null,
       clients_liste: [],
       clients_liste_type: [],
       clients_liste_select: [],
-      affaire_factures: [],
-      showFactureDialog: false,
+      clients_types_config: {
+        personne_physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID),
+        personne_morale: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID)
+      },
       createFacture: false,
-      lastRecordSAP: null,
       dataSaved: null,
+      deleteFactureActive: false,
+      deleteFactureId: null,
+      deleteFactureMessage: "",
+      lastRecordSAP: null,
       selectedFacture: {
         id: null,
-        sap: null,
-        date: null,
         client: null,
         client_co: null,
         client_complement: null,
         client_premiere_ligne: null,
-        montant_mo: null,
+        date: null,
         montant_mat_diff: null,
+        montant_mo: null,
         montant_rf: null,
-        montant_tva: null,
         montant_total: null,
-        remarque: null
+        montant_tva: null,
+        remarque: null,
+        sap: null
       },
-      show_co: false
+      show_co: false,
+      showNewFactureBtn: false,
+      showFactureDialog: false
     }
   },
 
@@ -440,7 +444,7 @@ export default {
     showClientComplement(client) {
       if (client && client.id) {
         let tmp = this.clients_liste_type.filter(x => x.id === client.id).pop();
-        if (tmp.type_id === 2) {
+        if (tmp.type_id === this.clients_types_config.personne_morale) {
           return true;
         }
       }
