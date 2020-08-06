@@ -12,9 +12,9 @@
         <div class="md-layout md-gutter">
           <div class="md-layout-item md-small-size-100 md-size-50">
             <md-field :class="getValidationClass('type_client')">
-              <label for="type_client">Type client *</label>
-              <md-select name="type_client" id="type_client" v-model="form.type_client" md-dense :disabled="sending">
-                <md-option v-for="item in types_clients_list" :key="item.id" :value="item.id">{{item.nom}}</md-option>
+              <label for="type_client">Type client</label>
+              <md-select name="type_client" id="type_client" v-model="form.type_client" md-dense :disabled="sending" required>
+                <md-option v-for="item in types_clients_list" :key="item.id" :value="item.id">{{ item.nom }}</md-option>
               </md-select>
               <span class="md-error" v-if="!$v.form.type_client.required">Le type client est obligatoire</span>
             </md-field>
@@ -23,22 +23,26 @@
 
         <!-- Entreprise et Titre -->
         <div class="md-layout md-gutter">
-          <div class="md-layout-item md-small-size-100 md-size-50">
+          <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.type_client === clients_types_config.personne_morale">
             <md-field>
               <label for="entreprise">Entreprise</label>
               <md-input name="entreprise" id="entreprise" v-model="form.entreprise" :disabled="sending" />
             </md-field>
           </div>
-          <div class="md-layout-item md-small-size-100 md-size-50">
+          <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.type_client === clients_types_config.personne_physique">
             <md-field>
-              <label for="titre">Titre</label>
-              <md-input name="titre" id="titre" v-model="form.titre" :disabled="sending" />
+              <label>Titre</label>
+              <md-select v-model="form.titre">
+                <md-option value="Monsieur" selected>Monsieur</md-option>
+                <md-option value="Madame">Madame</md-option>
+                <md-option value="Maître">Maître</md-option>
+              </md-select>
             </md-field>
           </div>
         </div>
 
         <!-- Nom et Prénom -->
-        <div class="md-layout md-gutter">
+        <div class="md-layout md-gutter" v-if="form.type_client === clients_types_config.personne_physique">
           <div class="md-layout-item md-small-size-100 md-size-50">
             <md-field :class="getValidationClass('nom')">
               <label for="nom">Nom</label>
@@ -50,16 +54,6 @@
             <md-field :class="getValidationClass('prenom')">
               <label for="prenom">Prénom</label>
               <md-input name="prenom" id="prenom" v-model="form.prenom" :disabled="sending" />
-            </md-field>
-          </div>
-        </div>
-
-        <!-- Représenté par  -->
-        <div class="md-layout md-gutter md-size-100">
-          <div class="md-layout-item md-small-size-100">
-            <md-field style="background-color: lightgrey;">
-              <label for="represente_par">Représenté par (non éditable)</label>
-              <md-input name="represente_par" id="represente_par" v-model="form.represente_par" disabled />
             </md-field>
           </div>
         </div>

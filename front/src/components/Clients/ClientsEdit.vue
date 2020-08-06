@@ -17,13 +17,18 @@ import { validationMixin } from 'vuelidate'
     name: 'FormValidation',
     mixins: [validationMixin],
     data: () => ({
-      types_clients_list: [],
       //Mode : new or edit
       mode: 'new',
+      clients_types_config: {
+        personne_physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID),
+        personne_morale: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID)
+      },
+      lastRecord: null,
+      dataSaved: false,
       form: {
-        type_client: null,
+        type_client: 1, //default selection
         entreprise: null,
-        titre: null,
+        titre: "Monsieur", //default selection
         nom: null,
         prenom: null,
         represente_par: null,
@@ -40,24 +45,16 @@ import { validationMixin } from 'vuelidate'
         no_bdp_bdee: null,
         co: null
       },
-
-      dataSaved: false,
       sending: false,
-      lastRecord: null
+      types_clients_list: []
     }),
 
     // Validations
     validations: {
       form: {
-        type_client: {
-          required
-        },
-        entree: {
-          required
-        },
-        mail: {
-          email
-        }
+        type_client: { required },
+        entree: { required },
+        mail: { email }
       }
     },
     
@@ -185,10 +182,17 @@ import { validationMixin } from 'vuelidate'
 
         var formData = new FormData();
         formData.append("type_client", this.form.type_client);
-        formData.append("entreprise", this.form.entreprise || null);
-        formData.append("titre", this.form.titre || null);
-        formData.append("nom", this.form.nom || null);
-        formData.append("prenom", this.form.prenom || null);
+        if (this.form.type_client === this.clients_types_config.personne_morale) {
+          formData.append("entreprise", this.form.entreprise);
+          formData.append("titre", null);
+          formData.append("nom", null);
+          formData.append("prenom", null);
+        } else {
+          formData.append("entreprise", null);
+          formData.append("titre", this.form.titre);
+          formData.append("nom", this.form.nom);
+          formData.append("prenom", this.form.prenom);
+        }
         formData.append("co", this.form.co || null);
         formData.append("adresse", this.form.adresse || null);
         formData.append("npa", this.form.npa || null);
