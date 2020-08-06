@@ -80,37 +80,6 @@ export default {
         });
     },
 
-    /*
-     * Retourne tous les numéros concernés par l'affaire
-     * Possibilité de filtrer en fonction du type de numéros
-     */
-    filterAffaireNumeros() {
-      this.affaire_numeros = this.$parent.affaire_numeros_all;
-
-      // Pour les DDP
-      this.affaire_numeros_base.DDP = this.affaire_numeros.filter(x => {
-        return (
-          (x.numero_type === "Bien-fonds") |
-          (x.numero_type === "Droit distinct et permanent (DDP)")
-        );
-      });
-      // Pour les PPE et les DDP
-      this.affaire_numeros_base.PPE = this.affaire_numeros.filter(x => {
-        return (
-          (x.numero_type === "Bien-fonds") |
-          (x.numero_type === "Droit distinct et permanent (DDP)")
-        );
-      });
-      // Pour les PCOP
-      this.affaire_numeros_base.PCOP = this.affaire_numeros.filter(x => {
-        return (
-          (x.numero_type === "Bien-fonds") |
-          (x.numero_type === "Droit distinct et permanent (DDP)") |
-          (x.numero_type === "Unité de PPE")
-        );
-      });
-    },
-
     /**
      * Open reservation numéros dialog
      */
@@ -140,7 +109,7 @@ export default {
       if (this.affaire.type_id === this.typesAffaires.mutation) {
         this.form.type_id = Number(process.env.VUE_APP_NUMERO_TYPE_BF);
       } else {
-        this.form.type_id = Number(this.affaire.reservation_numeros_types_id.pop())
+        this.form.type_id = Number(this.affaire.reservation_numeros_types_id[0]);
       }
       formData.append("type_id", this.form.type_id);
       
@@ -155,7 +124,6 @@ export default {
         .then(response => {
           if (response.data) {
             this.$parent.searchAffaireNumeros();
-            this.$parent.searchAffaireNewNumerosMo();
             this.$root.$emit("ShowMessage", "Le(s) numéro(s) réservé(s) ont été correctement rattaché(s) à l'affaire")
           }
         })
