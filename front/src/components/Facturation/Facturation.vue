@@ -117,7 +117,7 @@ export default {
               // Composer l'adresse de facturation
               x.adresse_facturation_ = "";
               if (x.client_premiere_ligne !== null) {
-                // Cas hoirie, PPE ou personne représentée
+                // Cas hoirie, PPE ou personne représentée (par)
                 x.adresse_facturation_ = [
                   x.client_premiere_ligne,
                   x.client_entreprise !== null?
@@ -129,7 +129,7 @@ export default {
                   x.client_case_postale,
                   [x.client_npa, x.client_localite].filter(Boolean).join(" ")
                 ].filter(Boolean).join(", ");
-              } else if (this.show_co) {
+              } else if (x.client_co_id !== null) {
                 // Cas envoi adresse différente de celle du débiteur
                 x.adresse_facturation_ = [
                   [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
@@ -219,6 +219,7 @@ export default {
      */
     openFactureEdition(data) {
       let tmp = this.affaire_factures.filter(x => x.id === data.id).pop();
+      this.show_co = tmp.client_co_id !== null? true: false;
       this.selectedFacture = {
         id: tmp.id,
         sap: tmp.sap,
