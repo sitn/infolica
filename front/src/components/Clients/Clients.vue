@@ -13,18 +13,22 @@ export default {
   props: {},
   data: () => ({
       clients: [],
-      deleteClientActive: false,
-      editClientClientAllowed: false,
-      deleteMessage: '',
-      currentDeleteId: null,
       clients_list: [],
-      search_clients_list: [],
+      currentDeleteId: null,
+      deleteClientActive: false,
+      deleteMessage: '',
+      editClientClientAllowed: false,
       search: {
-        client_id: null,
         adresse: null,
+        client_id: null,
+        entreprise: null,
         localite: null,
-        mail: null
-      }
+        mail: null,
+        nom: null,
+        npa: null,
+        prenom: null
+      },
+      search_clients_list: [],
   }),
   methods: {
         /**
@@ -33,17 +37,30 @@ export default {
         async searchClients () {
           var formData = new FormData();
 
-          if(this.search.client_id)
+          if(this.search.nom !== null) {
+            formData.append("nom", this.search.nom);
+          }
+          if(this.search.prenom !== null) {
+            formData.append("prenom", this.search.prenom);
+          }
+          if(this.search.entreprise !== null) {
+            formData.append("entreprise", this.search.entreprise);
+          }
+          if(this.search.client_id !== null && this.search.client_id.id) {
             formData.append("id", this.search.client_id.id);
-
-          if(this.search.adresse)
+          }
+          if(this.search.npa !== null) {
+            formData.append("npa", this.search.npa);
+          }
+          if(this.search.adresse !== null) {
             formData.append("adresse", this.search.adresse);
-
-          if(this.search.localite)
+          }
+          if(this.search.localite !== null) {
             formData.append("localite", this.search.localite);
-
-          if(this.search.mail)
+          }
+          if(this.search.mail !== null) {
             formData.append("mail", this.search.mail);
+          }
 
           this.$http.post(
             process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_ENDPOINT, 
