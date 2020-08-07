@@ -130,8 +130,8 @@ export default {
         _this.affaire = obj;
         _this.affaireLoaded = true;
         _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
-        _this.cloreAffaireEnabled = _this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined;
-        _this.parentAffaireReadOnly = (_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined);
+        _this.cloreAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined) && (_this.affaire.date_envoi === null || _this.affaire.date_envoi === undefined);
+        _this.parentAffaireReadOnly = (_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
 
         //If admin, allow edit
         if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)){
