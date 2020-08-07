@@ -7,6 +7,7 @@ from sqlalchemy import (
     Text,
     Date,
     Boolean,
+    ARRAY,
     ForeignKey,
     UniqueConstraint,
 )
@@ -52,6 +53,7 @@ class Client(Base):
     nom = Column(Text)
     prenom = Column(Text)
     represente_par = Column(Text)
+    co = Column(Text)
     adresse = Column(Text)
     npa = Column(Text)
     localite = Column(Text)
@@ -82,6 +84,8 @@ class AffaireType(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
+    reservation_numeros_types_id = Column(ARRAY(BigInteger))
+    modif_affaire_type_id_vers = Column(ARRAY(BigInteger))
 
 
 class Affaire(Base):
@@ -136,6 +140,8 @@ class ModificationAffaireType(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
+    reservation_numeros_types_id = Column(ARRAY(BigInteger))
+    affaire_source_type_id = Column(ARRAY(BigInteger))
 
 
 class ModificationAffaire(Base):
@@ -156,8 +162,9 @@ class Facture(Base):
     sap = Column(Text)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
+    client_co_id = Column(BigInteger, ForeignKey(Client.id))
     client_complement = Column(Text)
-    client_attention_de = Column(Text)
+    client_premiere_ligne = Column(Text)
     indice_application_mo = Column(Float, default=1.2)
     indice_tva = Column(Float, default=7.7)
     montant_mo = Column(Float, default=0.0, nullable=False)
@@ -430,8 +437,9 @@ class NumeroType(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
-
-
+    ordre = Column(BigInteger)
+    
+    
 class NumeroEtat(Base):
     __tablename__ = 'numero_etat'
     __table_args__ = {'schema': 'infolica'}
@@ -651,6 +659,7 @@ class VAffaire(Base):
     client_commande_prenom = Column(Text)
     client_commande_complement = Column(Text)
     client_commande_adresse = Column(Text)
+    client_commande_co = Column(Text)
     client_commande_npa = Column(Text)
     client_commande_localite = Column(Text)
     client_commande_tel_fixe = Column(Text)
@@ -665,6 +674,7 @@ class VAffaire(Base):
     client_envoi_nom = Column(Text)
     client_envoi_prenom = Column(Text)
     client_envoi_complement = Column(Text)
+    client_envoi_co = Column(Text)
     client_envoi_adresse = Column(Text)
     client_envoi_npa = Column(Text)
     client_envoi_localite = Column(Text)
@@ -693,6 +703,11 @@ class VAffaire(Base):
     type_id = Column(BigInteger)
     vref = Column(Text)
     chemin = Column(Text)
+    reservation_numeros_types_id = Column(ARRAY(BigInteger))
+    modif_affaire_type_id_vers = Column(ARRAY(BigInteger))
+    modification_type_id = Column(BigInteger)
+    modification_type = Column(Text)
+    modification_affaire_id_mere = Column(BigInteger)
 
 
 class VEnvois(Base):
@@ -827,6 +842,7 @@ class VFactures(Base):
     client_titre = Column(Text)
     client_nom = Column(Text)
     client_prenom = Column(Text)
+    client_co = Column(Text)
     client_adresse = Column(Text)
     client_npa = Column(Text)
     client_localite = Column(Text)
@@ -839,6 +855,26 @@ class VFactures(Base):
     client_sortie = Column(Date)
     client_no_sap = Column(Text)
     client_no_bdp_bdee = Column(Text)
+    client_complement = Column(Text)
+    client_premiere_ligne = Column(Text)
+    client_co_id = Column(BigInteger)
+    client_co_entreprise = Column(Text)
+    client_co_titre = Column(Text)
+    client_co_nom = Column(Text)
+    client_co_prenom = Column(Text)
+    client_co_co = Column(Text)
+    client_co_adresse = Column(Text)
+    client_co_npa = Column(Text)
+    client_co_localite = Column(Text)
+    client_co_case_postale = Column(Text)
+    client_co_tel_fixe = Column(Text)
+    client_co_fax = Column(Text)
+    client_co_tel_portable = Column(Text)
+    client_co_mail = Column(Text)
+    client_co_entree = Column(Date)
+    client_co_sortie = Column(Date)
+    client_co_no_sap = Column(Text)
+    client_co_no_bdp_bdee = Column(Text)
     indice_application_mo = Column(Float)
     indice_tva = Column(Float)
     montant_mo = Column(Float)
@@ -848,5 +884,3 @@ class VFactures(Base):
     montant_total = Column(Float)
     date = Column(Date)
     remarque = Column(Text)
-    client_complement = Column(Text)
-    client_attention_de = Column(Text)

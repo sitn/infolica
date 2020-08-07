@@ -1,7 +1,7 @@
 <div class="clientsEdit">
 
-  <md-toolbar :md-elevation="1">
-    <div class="md-title" style="font-weight: 700;">Client</div>
+  <md-toolbar>
+    <h1 style="flex: 1;">Edition de clients</h1>
   </md-toolbar>
 
   <form novalidate class="md-layout" @submit.prevent="validateForm">
@@ -12,9 +12,9 @@
         <div class="md-layout md-gutter">
           <div class="md-layout-item md-small-size-100 md-size-50">
             <md-field :class="getValidationClass('type_client')">
-              <label for="type_client">Type client *</label>
-              <md-select name="type_client" id="type_client" v-model="form.type_client" md-dense :disabled="sending">
-                <md-option v-for="item in types_clients_list" :key="item.id" :value="item.id">{{item.nom}}</md-option>
+              <label for="type_client">Type client</label>
+              <md-select name="type_client" id="type_client" v-model="form.type_client" md-dense :disabled="sending" required>
+                <md-option v-for="item in types_clients_list" :key="item.id" :value="item.id">{{ item.nom }}</md-option>
               </md-select>
               <span class="md-error" v-if="!$v.form.type_client.required">Le type client est obligatoire</span>
             </md-field>
@@ -23,22 +23,26 @@
 
         <!-- Entreprise et Titre -->
         <div class="md-layout md-gutter">
-          <div class="md-layout-item md-small-size-100 md-size-50">
+          <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.type_client === clients_types_config.personne_morale">
             <md-field>
               <label for="entreprise">Entreprise</label>
               <md-input name="entreprise" id="entreprise" v-model="form.entreprise" :disabled="sending" />
             </md-field>
           </div>
-          <div class="md-layout-item md-small-size-100 md-size-50">
+          <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.type_client === clients_types_config.personne_physique">
             <md-field>
-              <label for="titre">Titre</label>
-              <md-input name="titre" id="titre" v-model="form.titre" :disabled="sending" />
+              <label>Titre</label>
+              <md-select v-model="form.titre">
+                <md-option value="Monsieur" selected>Monsieur</md-option>
+                <md-option value="Madame">Madame</md-option>
+                <md-option value="Maître">Maître</md-option>
+              </md-select>
             </md-field>
           </div>
         </div>
 
         <!-- Nom et Prénom -->
-        <div class="md-layout md-gutter">
+        <div class="md-layout md-gutter" v-if="form.type_client === clients_types_config.personne_physique">
           <div class="md-layout-item md-small-size-100 md-size-50">
             <md-field :class="getValidationClass('nom')">
               <label for="nom">Nom</label>
@@ -54,12 +58,11 @@
           </div>
         </div>
 
-        <!-- Représenté par  -->
-        <div class="md-layout md-guttermd-size-100">
-          <div class="md-layout-item md-small-size-100">
-            <md-field style="background-color: lightgrey;">
-              <label for="represente_par">Représenté par (non éditable)</label>
-              <md-input name="represente_par" id="represente_par" v-model="form.represente_par" disabled />
+        <div class="md-layout md-gutter">
+          <div class="md-layout-item">
+            <md-field>
+              <label>Complément</label>
+              <md-input v-model="form.co" :disabled="sending"></md-input>
             </md-field>
           </div>
         </div>
@@ -102,7 +105,7 @@
         <div class="md-layout md-gutter">
           <div class="md-layout-item md-small-size-100 md-size-50">
             <md-field>
-              <label for="tel_fixe">Téléphone fixe</label>
+              <label for="tel_fixe">Téléphone 1</label>
               <md-input name="tel_fixe" id="tel_fixe" v-model="form.tel_fixe" :disabled="sending" />
               <span class="md-helper-text">Format: 032 123 45 67</span>
             </md-field>
@@ -110,7 +113,7 @@
           
           <div class="md-layout-item md-small-size-100 md-size-50">
             <md-field>
-              <label for="tel_portable">Téléphone portable</label>
+              <label for="tel_portable">Téléphone 2</label>
               <md-input name="tel_portable" id="tel_portable" v-model="form.tel_portable" :disabled="sending" />
               <span class="md-helper-text">Format: 079 123 45 67</span>
             </md-field>
@@ -124,13 +127,6 @@
               <label for="mail">Email</label>
               <md-input type="mail" name="mail" id="mail" v-model="form.mail" :disabled="sending" />
               <span class="md-error" v-if="!$v.form.mail.email">Adresse mail invalide</span>
-            </md-field>
-          </div>
-          <div class="md-layout-item md-small-size-100 md-size-50">
-            <md-field>
-              <label for="fax">Fax</label>
-              <md-input name="fax" id="fax" v-model="form.fax" :disabled="sending" />
-              <span class="md-helper-text">Format: 032 123 45 67</span>
             </md-field>
           </div>
         </div>

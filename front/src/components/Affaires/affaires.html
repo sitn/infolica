@@ -1,17 +1,9 @@
 <div class="affaires">
 
-    <md-card>
-        <md-card-header>
-            <div class="md-layout md-gutter">
-                <div class="md-layout-item">
-                    <div class="md-title" style="font-weight: 700" >Affaires</div>
-                </div>
-                <div class="md-layout-item buttonRightAlign">
-                    <md-button class="md-raised md-accent buttonRightAlign" v-if="newAffaireAllowed" @click="$router.push({name: 'NewAffaire'})">Nouvelle affaire</md-button>
-                </div>
-            </div>
-        </md-card-header>
-    </md-card>
+    <md-toolbar>
+        <h1 style="flex: 1;">Affaires</h1>
+        <md-button class="md-raised md-accent buttonRightAlign" v-if="newAffaireAllowed" @click="$router.push({name: 'NewAffaire'})">Nouvelle affaire</md-button>
+    </md-toolbar>
 
     <!-- Search -->
     <md-card>
@@ -69,6 +61,17 @@
                         </div>
                     </div>
 
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-size-50">
+                            <md-autocomplete v-model="search.client"
+                                :md-options="searchClientsListe"
+                                @md-changed="filterClients(search.client)"
+                                md-dense>
+                                <label>Client</label>
+                            </md-autocomplete>
+                        </div>
+                    </div>
+
                     <!-- Search Actions -->
                     <md-card-actions>
                         <md-button class="md-raised"
@@ -99,7 +102,7 @@
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell md-label="Id" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
                         <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
-                        <md-table-cell md-label="Nom" md-sort-by="nom">{{ item.nom }}</md-table-cell>
+                        <md-table-cell md-label="Description" md-sort-by="nom">{{ item.nom }}</md-table-cell>
                         <md-table-cell md-label="Type" md-sort-by="type_affaire">{{ item.type_affaire }}</md-table-cell>
                         <md-table-cell md-label="Client" md-sort-by="client_commande_nom">{{ item.client_commande_nom }}
                         </md-table-cell>

@@ -25,11 +25,11 @@
                                 <div class="md-title">Avant l'affaire</div>
 
                                 <md-checkbox class="md-primary" v-model="suiviMandat.av_21">
-                                    Création de l'affaire dans TimeLead
+                                    Création de l'affaire dans CATS
                                 </md-checkbox>
 
                                 <md-checkbox class="md-primary" v-model="suiviMandat.av_31">
-                                    Véréfication par le chef de projet de la MO
+                                    Vérification par le chef de projet de la MO
                                 </md-checkbox>
 
                                 <div class="md-layout md-gutter" v-if="suiviMandat.av_31">
@@ -152,9 +152,6 @@
                             <div class="md-layout-item md-size-25">
                                 <md-autocomplete v-model="suiviMandat.visa" :md-options="chefsProjetMO_liste" md-dense>
                                     <label>Visa</label>
-                                    <template slot="md-autocomplete-item" slot-scope="{ item, term }">
-                                        {{ item.nom }}
-                                    </template>
                                 </md-autocomplete>
                             </div>
                             <div class="md-layout-item md-size-25">

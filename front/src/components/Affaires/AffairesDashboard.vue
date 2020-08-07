@@ -86,7 +86,8 @@ export default {
 
               obj["client_commande_nom_"] = [
                 obj.client_commande_entreprise,
-                [obj.client_commande_titre, obj.client_commande_nom, obj.client_commande_prenom].filter(Boolean).join(" "),
+                obj.client_commande_complement? obj.client_commande_complement: [obj.client_commande_titre, obj.client_commande_nom, obj.client_commande_prenom].filter(Boolean).join(" "),
+                obj.client_commande_co,
                 obj.client_commande_adresse,
                 obj.client_commande_case_postale,
                 [obj.client_commande_npa, obj.client_commande_localite].filter(Boolean).join(" ")]
@@ -94,8 +95,8 @@ export default {
 
               obj["client_envoi_nom_"] = [
                 obj.client_envoi_entreprise,
-                [obj.client_envoi_titre, obj.client_envoi_nom, obj.client_envoi_prenom].filter(Boolean).join(" "),
-                obj.client_envoi_complement !== null? obj.client_envoi_complement: null,
+                obj.client_envoi_complement !== null? obj.client_envoi_complement: [obj.client_envoi_titre, obj.client_envoi_nom, obj.client_envoi_prenom].filter(Boolean).join(" "),
+                obj.client_envoi_co,
                 obj.client_envoi_adresse,
                 obj.client_envoi_case_postale,
                 [obj.client_envoi_npa, obj.client_envoi_localite].filter(Boolean).join(" ")]
@@ -129,8 +130,8 @@ export default {
         _this.affaire = obj;
         _this.affaireLoaded = true;
         _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
-        _this.cloreAffaireEnabled = _this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined;
-        _this.parentAffaireReadOnly = (_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined);
+        _this.cloreAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined) && (_this.affaire.date_envoi === null || _this.affaire.date_envoi === undefined);
+        _this.parentAffaireReadOnly = (_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
 
         //If admin, allow edit
         if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)){

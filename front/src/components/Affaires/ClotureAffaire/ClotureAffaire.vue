@@ -70,18 +70,30 @@ export default {
      * Créer la prédiction de l'état du numéro
      */
     setPredictedFutureState(data, base) {
+      
+      let num_type = {
+        ancien_id: Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID),
+        nouveau_id: Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID)
+      };
+      
+      let num_etat = {
+        projet_id: Number(process.env.VUE_APP_NUMERO_PROJET_ID),
+        vigueur_id: Number(process.env.VUE_APP_NUMERO_VIGUEUR_ID),
+        supprime_id: Number(process.env.VUE_APP_NUMERO_SUPPRIME_ID)
+      };
+
       data.forEach(element => {
         element.numero_etatFutur_id = element.numero_etat_id;
 
         // Cas des numéros projetés, non mat-diff, à passer de projet à validé
-        if (element.affaire_numero_type_id === process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID && 
-            element.numero_etat_id === process.env.VUE_APP_NUMERO_PROJET_ID) {
-          element.numero_etatFutur_id = 2;
+        if (element.affaire_numero_type_id === num_type.nouveau_id && 
+            element.numero_etat_id === num_etat.projet_id) {
+          element.numero_etatFutur_id = num_etat.vigueur_id;
         } 
         // Cas des numéros référencés à supprimer
-        else if (element.affaire_numero_type_id === process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID) {
+        else if (element.affaire_numero_type_id === num_type.ancien_id) {
           if (~base.includes(element.numero_id)) {
-            element.numero_etatFutur_id = process.env.VUE_APP_NUMERO_SUPPRIME_ID;
+            element.numero_etatFutur_id = num_etat.supprime_id;
           }
         }
       });

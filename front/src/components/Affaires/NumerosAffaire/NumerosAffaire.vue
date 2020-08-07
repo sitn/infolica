@@ -32,11 +32,11 @@ export default {
       affaire_numeros_anciens: [],
       affaire_numeros_nouveaux: [],
       affaire_numeros_nouveaux_mo: [],
-      showNumerosMO: true,
       affaireReadonly: true,
+      showNumerosMO: true,
       numerosMoLoading: true,
-      showQuittancePCOPDialog: false,
       showBalance: false,
+      showQuittancePCOPDialog: false,
       types_numeros: {
         bf: Number(process.env.VUE_APP_NUMERO_TYPE_BF),
         ddp: Number(process.env.VUE_APP_NUMERO_TYPE_DDP),
@@ -65,7 +65,7 @@ export default {
           }
         )
         .then(response => {
-          const routeAffaireData = this.$router.resolve({ name: "Affaires"});
+          const routeAffaireData = this.$router.resolve({ name: "Affaires" });
 
           if (response && response.data) {
             this.affaire_numeros_all = response.data;

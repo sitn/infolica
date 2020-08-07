@@ -6,6 +6,9 @@
 import {
   getCadastres,
   getTypesAffaires,
+  getClients,
+  filterList,
+  stringifyAutocomplete,
   checkPermission
 } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler';
@@ -14,16 +17,19 @@ export default {
   name: "Affaires",
   props: {},
   data: () => ({
-    cadastre_liste: [],
-    types_affaires: [],
     affaires: [],
+    clients: [],
+    cadastre_liste: [],
     newAffaireAllowed: false,
     search: {
       id: null,
       nom: null,
       cadastre: "",
       type: "",
-    }
+      client: null
+    },
+    searchClientsListe: [],
+    types_affaires: []
   }),
 
   methods: {
@@ -68,6 +74,24 @@ export default {
         });
     },
    
+    /**
+     * init clients liste
+     */
+    async initClientsListe() {
+      getClients()
+      .then(response => {
+        if (response && response.data) {
+          this.clients = stringifyAutocomplete(response.data, "adresse_");
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * filter clients liste by search term
+     */
+    filterClients(searchTerm) {
+      this.searchClientsListe = filterList(this.clients, searchTerm, 3).slice(0,20);
+    },
 
     /**
      * Clear the form
@@ -77,6 +101,7 @@ export default {
       this.search.nom = null;
       this.search.cadastre = "";
       this.search.type = "";
+      this.search.client = null
     },
     
     /*
@@ -100,6 +125,9 @@ export default {
         formData.append("type_affaire", this.search.type);
       }
       
+      if (this.search.client && this.search.client.id !== null) {
+        formData.append("client_id", this.search.client.id);
+      }
 
       this.$http
         .post(
@@ -132,6 +160,7 @@ export default {
     this.initCadastresList();
     this.initTypesAffairesList();
     this.searchAffaires();
+    this.initClientsListe();
   }
 };
 </script>

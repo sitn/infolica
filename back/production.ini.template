@@ -137,6 +137,11 @@ numero_projet_id = 1
 numero_vigueur_id = 2
 numero_abandonne_id = 3
 numero_supprime_id = 4
+numero_artefact_id = 5
+
+# ID Affaire-numero-type
+affaire_numero_type_ancien_id = 1
+affaire_numero_type_nouveau_id = 2
 
 # ID cadastres-binômes pour la réservation de numéros
 cadastres_ChauxDeFonds_Eplatures_id = 60,70
@@ -145,26 +150,14 @@ cadastres_Neuchatel_Coudre_id = 1,63
 cadastres_Sauge_StAubin_id = 22,67
 
 ######################################################################################
-# Chemins dossiers affaires
+# Accès aux dossiers
 ######################################################################################
-#affaireTemplateDir = /*TO COMPLETE*/
 affaires_directory = /*TO COMPLETE*/
-
-######################################################################################
-# Access-Control-Allow-Origin
-######################################################################################
 access_control_allow_origin = http://127.0.0.1:81
-
-######################################################################################
-# Mails templates directory
-######################################################################################
 mails_templates_directory = /*TO COMPLETE*/
-
-
-######################################################################################
-# Temporary directory
-######################################################################################
 temporary_directory = /*TO COMPLETE*/
+
+fichier_balance_prefix = Des_
 
 
 retry.attempts = 3

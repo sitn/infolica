@@ -17,13 +17,18 @@ import { validationMixin } from 'vuelidate'
     name: 'FormValidation',
     mixins: [validationMixin],
     data: () => ({
-      types_clients_list: [],
       //Mode : new or edit
       mode: 'new',
+      clients_types_config: {
+        personne_physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID),
+        personne_morale: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID)
+      },
+      lastRecord: null,
+      dataSaved: false,
       form: {
-        type_client: null,
+        type_client: 1, //default selection
         entreprise: null,
-        titre: null,
+        titre: "Monsieur", //default selection
         nom: null,
         prenom: null,
         represente_par: null,
@@ -37,26 +42,19 @@ import { validationMixin } from 'vuelidate'
         mail: null,
         entree: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
         no_sap: null,
-        no_bdp_bdee: null
+        no_bdp_bdee: null,
+        co: null
       },
-
-      dataSaved: false,
       sending: false,
-      lastRecord: null
+      types_clients_list: []
     }),
 
     // Validations
     validations: {
       form: {
-        type_client: {
-          required
-        },
-        entree: {
-          required
-        },
-        mail: {
-          email
-        }
+        type_client: { required },
+        entree: { required },
+        mail: { email }
       }
     },
     
@@ -97,6 +95,7 @@ import { validationMixin } from 'vuelidate'
         this.form.entree = null;
         this.form.no_sap = null;
         this.form.no_bdp_bdee = null;
+        this.form.co = null;
       },
 
       /*
@@ -177,13 +176,24 @@ import { validationMixin } from 'vuelidate'
       * Handle save data success
       */
       initPostData () {
+        if (this.form.co !== null && !this.form.co.startsWith("c/o ")) {
+          this.form.co = "c/o " + this.form.co;
+        }
+
         var formData = new FormData();
         formData.append("type_client", this.form.type_client);
-        formData.append("entreprise", this.form.entreprise || null);
-        formData.append("titre", this.form.titre || null);
-        formData.append("nom", this.form.nom || null);
-        formData.append("prenom", this.form.prenom || null);
-        formData.append("represente_par", this.form.represente_par || null);
+        if (this.form.type_client === this.clients_types_config.personne_morale) {
+          formData.append("entreprise", this.form.entreprise);
+          formData.append("titre", null);
+          formData.append("nom", null);
+          formData.append("prenom", null);
+        } else {
+          formData.append("entreprise", null);
+          formData.append("titre", this.form.titre);
+          formData.append("nom", this.form.nom);
+          formData.append("prenom", this.form.prenom);
+        }
+        formData.append("co", this.form.co || null);
         formData.append("adresse", this.form.adresse || null);
         formData.append("npa", this.form.npa || null);
         formData.append("localite", this.form.localite || null);
@@ -249,6 +259,7 @@ import { validationMixin } from 'vuelidate'
             this.form.nom = response.data.nom;
             this.form.prenom = response.data.prenom;
             this.form.represente_par = response.data.represente_par;
+            this.form.co = response.data.co;
             this.form.adresse = response.data.adresse;
             this.form.npa = response.data.npa;
             this.form.localite = response.data.localite;

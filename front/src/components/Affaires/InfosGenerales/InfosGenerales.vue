@@ -25,6 +25,7 @@ export default {
       infoGenReadonly: true,
       affaireReadonly: true,
       operateursListe: [],
+      typesAffairesListe_all: [],
       typesAffairesListe: [],
       affaires_source: [],
       affaires_destination: [],
@@ -37,6 +38,7 @@ export default {
         responsable: null,
         typeAffaire: null,
         client_commande: null,
+        client_commande_complement: null,
         client_envoi: null,
         client_envoi_complement: null
       },
@@ -147,6 +149,7 @@ export default {
         formData.append("date_cloture", null);
       }
 
+      formData.append("client_commande_complement", this.form.client_commande_complement || null);
       formData.append("client_envoi_complement", this.form.client_envoi_complement || null);
       formData.append("localisation_E", this.affaire.localisation_e);
       formData.append("localisation_N", this.affaire.localisation_n);
@@ -209,11 +212,12 @@ export default {
         .filter(x => x.id === this.affaire.responsable_id)[0];
       }
 
-      this.form.typeAffaire = this.typesAffairesListe
+      this.form.typeAffaire = this.typesAffairesListe_all
       .filter(x => x.id === this.affaire.type_id)[0];
 
-      this.form.client_commande = this.affaire.client_commande_nom_.replaceAll("\n", ", ");
-      this.form.client_envoi = this.affaire.client_envoi_nom_.replaceAll("\n", ", ");
+      this.form.client_commande = this.clientsListe.filter(x => x.id === this.affaire.client_commande_id).pop();
+      this.form.client_commande_complement = this.affaire.client_commande_complement;
+      this.form.client_envoi = this.clientsListe.filter(x => x.id === this.affaire.client_envoi_id);
       this.form.client_envoi_complement = this.affaire.client_envoi_complement;
 
       this.infoGenReadonly = false;
@@ -232,17 +236,26 @@ export default {
      * get cadastres
      */
     async initTypesAffairesListe() {
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_AFFAIRES_ENDPOINT,
-        {
-          withCredentials: true,
-          headers: {Accept: "application/json"}
-        }
-      ).then(response => {
-        if (response && response.data) {
-          this.typesAffairesListe = stringifyAutocomplete(response.data);
-        }
-      }).catch(err => handleException(err, this))
+      
+        this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_AFFAIRES_ENDPOINT,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => {
+          if (response && response.data) {
+            this.typesAffairesListe_all = stringifyAutocomplete(response.data);
+            if (this.affaire.modif_affaire_type_id_vers !== null) {
+              this.typesAffairesListe = this.typesAffairesListe_all.filter(x => {
+                return this.affaire.modif_affaire_type_id_vers.includes(x.id);
+            });
+            } else {
+              this.typesAffairesListe = [];
+            }
+          }
+        }).catch(err => handleException(err, this))
+      
     },
 
     /**

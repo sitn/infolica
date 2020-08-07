@@ -151,6 +151,7 @@ export const setClientsAdresse_ = function(clients, sep=", ") {
         x.adresse_ = [
             x.entreprise,
             [x.titre, x.prenom, x.nom].filter(Boolean).join(" "),
+            x.co,
             x.adresse,
             x.case_postale !== null? "Case postale " + x.case_postale: null,
             [x.npa, x.localite].filter(Boolean).join(" ")
@@ -177,12 +178,12 @@ export const getCurrentDate = function () {
 /**
  * Prépare la liste pour le md-complete
  */
-export const stringifyAutocomplete = function(liste) {
+export const stringifyAutocomplete = function(liste, nom="nom") {
     return liste.map(x => ({
         id: x.id,
-        nom: x.nom,
-        toString: () => x.nom.toString(),
-        toLowerCase: () => x.nom.toLowerCase()
+        nom: String(x[nom]),
+        toString: () => String(x[nom]).toString(),
+        toLowerCase: () => String(x[nom]).toLowerCase()
     }));
 };
 

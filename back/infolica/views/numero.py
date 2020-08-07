@@ -24,7 +24,24 @@ def numeros_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(VNumeros).all()
+    numero = int(request.params['numero']) if 'numero' in request.params else None
+    cadastre_id = [int(a) for a in request.params['cadastre_id'].split(",")] if 'cadastre_id' in request.params else None
+    type_id = [int(a) for a in request.params['type_id'].split(",")] if 'type_id' in request.params else None
+    etat_id = [int(a) for a in request.params['etat_id'].split(",")] if 'etat_id' in request.params else None
+
+    query = request.dbsession.query(VNumeros)
+    
+    if numero:
+        query = query.filter(VNumeros.numero == numero)
+    if cadastre_id:
+        query = query.filter(VNumeros.cadastre_id.in_(cadastre_id))
+    if type_id:
+        query = query.filter(VNumeros.type_numero_id.in_(type_id))
+    if etat_id:
+        query = query.filter(VNumeros.etat_id.in_(etat_id))
+
+    query = query.order_by(VNumeros.numero.asc()).all()
+
     return Utils.serialize_many(query)
 
 
@@ -34,7 +51,7 @@ def types_numeros_view(request):
     """
     Return all types_numeros
     """
-    query = request.dbsession.query(NumeroType).all()
+    query = request.dbsession.query(NumeroType).filter(NumeroType.ordre != None).order_by(NumeroType.ordre.asc()).all()
     return Utils.serialize_many(query)
 
 
@@ -44,7 +61,8 @@ def etats_numeros_view(request):
     """
     Return all etats_numeros
     """
-    query = request.dbsession.query(NumeroEtat).all()
+    id_artefact = request.registry.settings['numero_artefact_id']
+    query = request.dbsession.query(NumeroEtat).filter(NumeroEtat.id != id_artefact).all()
     return Utils.serialize_many(query)
 
 
@@ -174,18 +192,21 @@ def numeros_by_id_delete_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
 
+    settings = request.registry.settings
+    projet_id = int(settings['numero_projet_id'])
+    abandonne_id = int(settings['numero_abandonne_id'])
+
     # Get numero by id
     id = request.matchdict['id']
     query = request.dbsession.query(Numero).filter(
         Numero.id == id).first()
 
     if query:
-        if query.etat_id == 1:  # projet
-            query.etat_id = 3
-        elif query.etat_id == 3:  # abandonné
-            query.etat_id = 1
-        # elif query.etat_id == 2: # vigueur
-        #     query.etat_id = 4
+        if query.etat_id == projet_id:
+            query.etat_id = abandonne_id
+        elif query.etat_id == abandonne_id:
+            query.etat_id = projet_id
+
 
 ###########################################################
 # NUMERO ETAT HISTO
@@ -404,11 +425,10 @@ def affaire_numero_new_view(request, params=None):
 # NUMERO- AFFAIRE
 ###########################################################
 
-
 @view_config(route_name='numero_affaires_by_numero_id', request_method='GET', renderer='json')
 def numeros_affaire_view(request):
     """
-    Add new affaire-numero
+    Get new affaire-numero
     """
     # Check connected
     if not Utils.check_connected(request):

@@ -15,7 +15,6 @@ def numero_base_relations_view(request):
     """
     Get new numero_base_relations
     """
-    # get data
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
@@ -35,7 +34,6 @@ def numero_associe_relations_view(request):
     """
     Get new numero_associe_relations
     """
-    # get data
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()

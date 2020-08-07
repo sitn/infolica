@@ -25,8 +25,8 @@
                                 <md-table-cell md-label="SAP" md-sort-by="sap" style="width: 5%;">{{ item.sap }}
                                 </md-table-cell>
                                 <md-table-cell md-label="Date" md-sort-by="date" style="width: 5%;">{{ item.date }}</md-table-cell>
-                                <md-table-cell md-label="Client" md-sort-by="client_"  style="width: 15%;">
-                                    {{ item.client_ }}
+                                <md-table-cell md-label="Client" md-sort-by="adresse_facturation_"  style="width: 15%;">
+                                    {{ item.adresse_facturation_ }}
                                 </md-table-cell>
                                 <md-table-cell md-label="MO" md-sort-by="montant_mo" style="width: 10%;">CHF
                                     {{ item.montant_mo }}</md-table-cell>
@@ -78,9 +78,9 @@
 
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-50">
-                    <md-field :class="getValidationClass('sap')">
+                    <md-field>
                         <label>SAP</label>
-                        <md-input v-model="selectedFacture.sap" type="number"></md-input>
+                        <md-input v-model="selectedFacture.sap"></md-input>
                     </md-field>    
                 </div>    
 
@@ -90,26 +90,48 @@
                     </md-datepicker>    
                 </div>    
             </div>    
+ 
+            <md-divider></md-divider>
+            <md-subheader>Adresse de la facture</md-subheader>
+            <md-divider></md-divider>
 
-            <md-autocomplete v-model="selectedFacture.client" :md-options="clients_liste_select"
-                @md-changed="getClientSearch" md-dense :class="getValidationClass('client')">
-                <label>Client *</label>
+            <md-field>
+                <label>Hoirie... / PPE... (optionnel)</label>
+                <md-input v-model="selectedFacture.client_premiere_ligne"></md-input>
+            </md-field>
+
+            <md-autocomplete v-model="selectedFacture.client"
+                :md-options="clients_liste_select"
+                @md-changed="getClientSearch(selectedFacture.client)"
+                :class="getValidationClass('client')"
+                required md-dense>
+                <label>Facturer à (débiteur)</label>
                 <template slot="md-autocomplete-empty" slot-scope="{ term }">
                     Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
                 </template>
                 <span class="md-error" v-if="!$v.selectedFacture.client.required">Le client est obligatoire</span>
             </md-autocomplete>
 
-            <md-field>
-                <label>Par</label>
+            <md-field v-if="showClientComplement(selectedFacture.client)">
+                <label>À l'attention de...</label>
                 <md-input v-model="selectedFacture.client_complement"></md-input>
             </md-field>
             
-            <md-field>
-                <label>À l'attention de</label>
-                <md-input v-model="selectedFacture.client_attention_de"></md-input>
-            </md-field>
+            <md-checkbox v-model="show_co">c/o (Envoyer à une adresse différente du débiteur)</md-checkbox>
+            <div v-if="show_co">
+                <md-autocomplete v-model="selectedFacture.client_co" :md-options="clients_liste_select"
+                :class="getValidationClass('client_co')" @md-changed="getClientSearch(selectedFacture.client_co)" md-dense>
+                    <label>c/o</label>
+                    <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                    </template>
+                    <span class="md-error" v-if="!$v.selectedFacture.client_co.required">L'adresse c/o est obligatoire</span>
+                </md-autocomplete>
+            </div>
 
+            <br>
+            <md-divider/>
+            <br>
             <div style="float: right; width: 50%;">
                 <md-field :class="getValidationClass('montant_mo')">
                     <label>Montant MO</label>
