@@ -61,6 +61,17 @@
                         </div>
                     </div>
 
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-size-50">
+                            <md-autocomplete v-model="search.client"
+                                :md-options="searchClientsListe"
+                                @md-changed="filterClients(search.client)"
+                                md-dense>
+                                <label>Client</label>
+                            </md-autocomplete>
+                        </div>
+                    </div>
+
                     <!-- Search Actions -->
                     <md-card-actions>
                         <md-button class="md-raised"

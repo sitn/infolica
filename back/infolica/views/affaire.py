@@ -6,8 +6,10 @@ from pyramid.response import FileResponse
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Affaire, AffaireType, ModificationAffaireType
-from infolica.models.models import ModificationAffaire, VAffaire
+from infolica.models.models import ModificationAffaire, VAffaire, Facture
 from infolica.scripts.utils import Utils
+
+from sqlalchemy import or_
 
 import os
 import json
@@ -61,10 +63,45 @@ def affaires_search_view(request):
 
     settings = request.registry.settings
     search_limit = int(settings['search_limit'])
-    conditions = Utils.get_search_conditions(
-        VAffaire, request.params)
-    query = request.dbsession.query(VAffaire).filter(
-        *conditions).order_by(VAffaire.id.desc()).limit(search_limit).all()
+    
+    params_affaires = {}
+    client = None
+    client_in_params = False
+    for key in request.params.keys():
+        if "client" in key:
+            client = request.params[key]
+            client_in_params = True
+            params_affaires["client_commande_id"] = request.params[key]
+            params_affaires["client_envoi_id"] = request.params[key]
+        else:
+            params_affaires[key] = request.params[key]
+    
+    # Chercher les affaires par les clients de facture
+    affaires_id_by_clients_facture = []
+    if client_in_params:
+        query_facture = request.dbsession.query(Facture).filter(or_(
+            Facture.client_id == client,
+            Facture.client_co_id == client,
+        )).all()
+
+        # Récupérer la liste des id des affaires retenues
+        for facture in query_facture:
+            affaires_id_by_clients_facture.append(int(facture.affaire_id))
+    
+    # Chercher les affaires par les conditions (sauf client_facture)
+    conditions = Utils.get_search_conditions(VAffaire, params_affaires)
+    query = request.dbsession.query(VAffaire)
+    if len(affaires_id_by_clients_facture) > 0:
+        query = query.filter(or_(
+            *conditions,
+            VAffaire.id.in_(affaires_id_by_clients_facture)
+        ))
+    else:
+        query = query.filter(*conditions)
+
+
+
+    query = query.order_by(VAffaire.id.desc()).limit(search_limit).all()
     return Utils.serialize_many(query)
 
 
