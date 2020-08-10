@@ -356,7 +356,7 @@ export default {
         formData.append("affaire_id", affaire_id);
         formData.append("client_id", this.client_facture.id);
         if (this.client_facture_complement !== null) {
-          formData.append("client_complement", this.client_facture_complement);
+          formData.append("client_complement", "À l'att. de " + this.client_facture_complement);
         }
         if (this.client_facture_premiere_ligne !== null) {
           formData.append("client_premiere_ligne", this.client_facture_premiere_ligne);
@@ -444,13 +444,13 @@ export default {
         formData.append("client_commande_id", this.form.client_commande.id);
       }
       if (this.form.client_commande_complement && this.showClientComplement(this.form.client_commande)) {
-        formData.append("client_commande_complement", this.form.client_commande_complement);
+        formData.append("client_commande_complement", "À l'att. de " + this.form.client_commande_complement);
       }
       if (this.form.client_envoi && this.form.client_envoi.id) {
         formData.append("client_envoi_id", this.form.client_envoi.id);
       }
       if (this.form.client_envoi_complement && this.showClientComplement(this.form.client_envoi)) {
-        formData.append("client_envoi_complement", this.form.client_envoi_complement);
+        formData.append("client_envoi_complement", "À l'att. de " + this.form.client_envoi_complement);
       }
       if (this.form.technicien_id) {
         formData.append("technicien_id", this.form.technicien_id);

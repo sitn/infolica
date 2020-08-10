@@ -187,19 +187,6 @@
                     </div>
                 </div>
                 
-                <br>
-
-                <md-divider></md-divider>
-                
-                <!-- v-ref -->
-                <div class="md-layout md-gutter">
-                    <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field :class="getValidationClass($v.form.vref)">
-                            <label for="vref">v/ref</label>
-                            <md-input name="vref" id="vref" v-model="form.vref" :disabled="sending" />
-                        </md-field>
-                    </div>
-                </div>
                 <div style="text-align: right;">
                     <md-button class="md-primary md-dense md-elevation-3" @click="initClientsList">Recharger la liste des clients <md-icon>replay</md-icon></md-button>
                 </div>
@@ -227,13 +214,24 @@
                         <div class="md-layout-item md-size-50 md-small-size-100" v-if="showClientComplement(form.client_commande)">
                             <md-field>
                                 <label>À l'attention de...</label>
+                                <span class="md-prefix">À l'att. de </span>
                                 <md-input v-model="form.client_commande_complement"></md-input>
                             </md-field>
                         </div>
                     </div>
                     
+                    <!-- v-ref -->
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-small-size-100 md-size-50">
+                            <md-field :class="getValidationClass($v.form.vref)">
+                                <label for="vref">v/ref</label>
+                                <md-input name="vref" id="vref" v-model="form.vref" :disabled="sending" />
+                            </md-field>
+                        </div>
+                    </div>
+
                     <br>
-                    <md-divider></md-divider>
+                    <md-divider style="background-color: blue;"></md-divider>
                     
                     <!-- Client ENVOI et ligne complément -->
                     <div class="md-layout md-gutter md-alignment-center-left">
@@ -256,13 +254,14 @@
                         <div class="md-layout-item md-small-size-100 md-size-50" v-if="showClientComplement(form.client_envoi)">
                             <md-field>
                                 <label>À l'attention de...</label>
+                                <span class="md-prefix">À l'att. de </span>
                                 <md-input v-model="form.client_envoi_complement" />
                             </md-field>
                         </div>
                     </div>
                     
                     <br>
-                    <md-divider></md-divider>
+                    <md-divider style="background-color: blue;"></md-divider>
                     
                     <!-- Client FACTURE et ligne complément -->
                     <div class="md-layout md-gutter md-alignment-center-left">
@@ -291,6 +290,7 @@
                         <div class="md-layout-item md-small-size-100 md-size-50" v-if="showClientComplement(client_facture)">
                             <md-field>
                                 <label>À l'attention de...</label>
+                                <span class="md-prefix">À l'att. de </span>
                                 <md-input v-model="client_facture_complement" />
                             </md-field>
                         </div>
@@ -315,7 +315,7 @@
                     </div>
                     
                     
-                    <md-divider></md-divider>
+                    <md-divider style="background-color: blue;"></md-divider>
                     <br />
                 </div>
                 
