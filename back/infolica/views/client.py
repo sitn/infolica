@@ -3,7 +3,7 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models import Constant
-from infolica.models.models import Client, ClientType
+from infolica.models.models import Client, ClientType, ClientMoralPersonne
 from infolica.scripts.utils import Utils
 
 from datetime import datetime
@@ -140,5 +140,87 @@ def clients_delete_view(request):
             Client.__tablename__, id_client))
 
     model.sortie = datetime.utcnow()
+
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Client.__tablename__))
+
+
+# ClientMoralPersonnes
+@view_config(route_name='client_moral_personnes_by_client_id', request_method='GET', renderer='json')
+def types_client_moral_personnes_by_client_id_view(request):
+    """
+    Return all people in client_moral
+    """
+    client_id = request.matchdict['client_id'] if 'client_id' in request.matchdict else None
+
+    query = request.dbsession.query(ClientMoralPersonne).filter(ClientMoralPersonne.client_id == client_id).all()
+    return Utils.serialize_many(query)
+
+
+@view_config(route_name='client_moral_personnes', request_method='POST', renderer='json')
+@view_config(route_name='client_moral_personnes_s', request_method='POST', renderer='json')
+def clients_moral_personne_new_view(request):
+    """
+    Add new contact in entreprise
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['client_edition']):
+        raise exc.HTTPForbidden()
+
+    # Get clientMoralPersonne instance
+    model = Utils.set_model_record(ClientMoralPersonne(), request.params)
+
+    request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ClientMoralPersonne.__tablename__))
+
+
+@view_config(route_name='client_moral_personnes', request_method='PUT', renderer='json')
+@view_config(route_name='client_moral_personnes_s', request_method='PUT', renderer='json')
+def clients_moral_personne_update_view(request):
+    """
+    Update contact in entreprise
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['client_edition']):
+        raise exc.HTTPForbidden()
+
+    client_moral_personne_id = request.params["id"] if "id" in request.params else None
+    
+    model = request.dbsession.query(ClientMoralPersonne).filter(
+        ClientMoralPersonne.id == client_moral_personne_id).first()
+
+    # If result is empty
+    if not model:
+        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
+            ClientMoralPersonne.__tablename__, client_moral_personne_id))
+
+    # Read params client
+    model = Utils.set_model_record(model, request.params)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ClientMoralPersonne.__tablename__))
+
+
+@view_config(route_name='client_moral_personnes', request_method='DELETE', renderer='json')
+@view_config(route_name='client_moral_personnes_s', request_method='DELETE', renderer='json')
+def client_moral_personnes_delete_view(request):
+    """
+    Delete client_moral_personnes
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['client_edition']):
+        raise exc.HTTPForbidden()
+
+    # Get client_id
+    client_moral_personne_id = request.params['id'] if 'id' in request.params else None
+
+    model = request.dbsession.query(ClientMoralPersonne).filter(
+        ClientMoralPersonne.id == client_moral_personne_id).first()
+
+    # If result is empty
+    if not model:
+        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
+            ClientMoralPersonne.__tablename__, client_moral_personne_id))
+
+    request.dbsession.delete(model)
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Client.__tablename__))
