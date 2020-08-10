@@ -32,6 +32,11 @@ export default {
       client_facture_premiere_ligne: null,
       clients_list: [],
       clients_liste_type: [],
+      client_moral_personnes: {
+        commande: [],
+        envoi: [],
+        facture: []
+      },
       clients_types_config: {
         personne_morale: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID),
         personne_physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID)
@@ -223,6 +228,8 @@ export default {
             id: x.id,
             type_id: x.type_client
           }));
+          
+          this.updateContact();
         }
       })
       //Error
@@ -637,12 +644,16 @@ export default {
      * Complète par défaut les clients envoi et facture
      */
     defaultCompleteClients(client) {
-      if (this.form.client_envoi === null || this.form.client_envoi === "") {
-        this.form.client_envoi = client;
-      }
-      if (this.client_facture === null || this.client_facture === "") {
-        this.client_facture = client;
-      }
+      this.initClientMoralPersonnes(client.id, 'commande').then(() => {
+        if (this.form.client_envoi === null || this.form.client_envoi === "") {
+          this.form.client_envoi = client;
+          this.client_moral_personnes.envoi = this.client_moral_personnes.commande;
+        }
+        if (this.client_facture === null || this.client_facture === "") {
+          this.client_facture = client;
+          this.client_moral_personnes.facture = this.client_moral_personnes.commande;
+        }
+      });
     },
 
     /**
@@ -844,6 +855,55 @@ export default {
         }
       }
       return false;
+    },
+
+    /**
+     * Init liste of people working in an entreprise
+     */
+    async initClientMoralPersonnes(client_id, client_type) {
+      return new Promise((resolve) => {
+        if (client_id) {
+          this.$http.get(
+            process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_CLIENT_MORAL_PERSONNES_ENDPOINT + "/" +
+            client_id,
+            {
+              withCredentials: true,
+              headers: {Accept: "application/json"}
+            }
+          ).then(response => {
+            if (response && response.data) {
+              let tmp = [];
+              response.data.forEach(x => tmp.push([x.titre, x.nom, x.prenom].filter(Boolean).join(" ")));
+              this.client_moral_personnes[client_type] = tmp;
+              resolve(tmp);
+            }
+          }).catch(err => this.handleException(err, this));
+        }
+      });
+    },
+
+    /**
+     * open create contact
+     */
+    openCreateContact(client_id) {
+      let routeData = this.$router.resolve({name: "ClientsEdit", params: {id: client_id}});
+      window.open(routeData.href, "_blank");
+    },
+
+    /**
+     * Update contact when 
+     */
+    async updateContact() {
+      if (this.form.client_commande !== null && this.form.client_commande.id !== null) {
+        this.initClientMoralPersonnes(this.form.client_commande.id, 'commande');
+      }
+      if (this.form.client_envoi !== null && this.form.client_envoi.id !== null) {
+        this.initClientMoralPersonnes(this.form.client_envoi.id, 'envoi');
+      }
+      if (this.client_facture !== null && this.client_facture.id !== null) {
+        this.initClientMoralPersonnes(this.client_facture.id, 'facture');
+      }
     }
   },
 

@@ -310,7 +310,6 @@ import { validationMixin } from 'vuelidate'
        * Init formulaire create new contact
        */
       openContactDialog(data=null) {
-        alert(data)
         if (data === null) {
           this.contact_form = {
             id: null,

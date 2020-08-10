@@ -212,11 +212,14 @@
                         </div>
 
                         <div class="md-layout-item md-size-50 md-small-size-100" v-if="showClientComplement(form.client_commande)">
-                            <md-field>
+                            <md-autocomplete v-model="form.client_commande_complement"
+                                :md-options="client_moral_personnes.commande"
+                                md-dense>
                                 <label>À l'attention de...</label>
-                                <span class="md-prefix">À l'att. de </span>
-                                <md-input v-model="form.client_commande_complement"></md-input>
-                            </md-field>
+                                <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                    Le contact "{{ term }}" n'existe pas dans la base. <a @click="openCreateContact(form.client_commande.id)">Le créer !</a>
+                                </template>
+                            </md-autocomplete>
                         </div>
                     </div>
                     
@@ -239,6 +242,7 @@
                             <md-autocomplete id="client_envoi_id" v-model="form.client_envoi"
                                 :md-options="search_clients_list" md-dense
                                 @md-changed="searchClients(form.client_envoi)"
+                                @md-selected="initClientMoralPersonnes(form.client_envoi.id, 'envoi')"
                                 :class="getValidationClass($v.form.client_envoi)"
                                 required>
                                 
@@ -252,11 +256,14 @@
                         </div>
                         
                         <div class="md-layout-item md-small-size-100 md-size-50" v-if="showClientComplement(form.client_envoi)">
-                            <md-field>
+                            <md-autocomplete v-model="form.client_envoi_complement"
+                                :md-options="client_moral_personnes.envoi"
+                                md-dense>
                                 <label>À l'attention de...</label>
-                                <span class="md-prefix">À l'att. de </span>
-                                <md-input v-model="form.client_envoi_complement" />
-                            </md-field>
+                                <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                    Le contact "{{ term }}" n'existe pas dans la base. <a @click="openCreateContact(form.client_envoi.id)">Le créer !</a>
+                                </template>
+                            </md-autocomplete>
                         </div>
                     </div>
                     
@@ -276,6 +283,7 @@
                             <md-autocomplete id="client_facture_id" v-model="client_facture"
                                 :md-options="search_clients_list" md-dense
                                 @md-changed="searchClients(client_facture)"
+                                @md-selected="initClientMoralPersonnes(client_facture.id, 'facture')"
                                 :class="getValidationClass($v.client_facture.id)"
                                 required>
                                 <label>Facturer à (débiteur)</label>
@@ -288,11 +296,14 @@
                         </div>
 
                         <div class="md-layout-item md-small-size-100 md-size-50" v-if="showClientComplement(client_facture)">
-                            <md-field>
+                            <md-autocomplete v-model="client_facture_complement"
+                                :md-options="client_moral_personnes.facture"
+                                md-dense>
                                 <label>À l'attention de...</label>
-                                <span class="md-prefix">À l'att. de </span>
-                                <md-input v-model="client_facture_complement" />
-                            </md-field>
+                                <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                    Le contact "{{ term }}" n'existe pas dans la base. <a @click="openCreateContact(client_facture.id)">Le créer !</a>
+                                </template>
+                            </md-autocomplete>
                         </div>
                         
                         <div class="md-layout-item md-size-100">
