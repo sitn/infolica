@@ -329,7 +329,12 @@ export default {
             if (this.type_modification_bool) {
               promises.push(this.postAffaireRelation(id_new_affaire));
               if ((this.selectedAnciensNumeros.length + this.selectedNouveauxNumeros.length) > 0 ) {
+                //désactiver la relation numéro-affaire, créer une liaison sur la nouvelle affaire et mise à jour de la relation des numéros dans la nouvelle affaire
                 promises.push(this.updateNumerosAffaire(id_new_affaire));
+              }
+              if (this.selectedAnciensNumeros.length === this.affaire_numeros_anciens.length && this.selectedNouveauxNumeros.length === this.affaire_numeros_nouveaux.length) {
+                // Si tous les numéros sont sélectionnés, clôre l'affaire de base !
+                promises.push(this.cloreAffaireBase());
               }
             }
             Promise.all(promises)
@@ -581,6 +586,28 @@ export default {
     },
 
     /**
+     * Affaire de modification: tous les numéros sont récupérés par l'affaire fille:
+     * cloturer l'affaire de base
+     */
+    async cloreAffaireBase() {
+      let formData = new FormData();
+      formData.append("id_affaire", this.form.affaire_base_id);
+      formData.append("date_cloture", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
+      
+      return new Promise((resolve, reject) => {
+        this.$http.put(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
+    /**
      * Handle save data success
      */
     handleSaveDataSuccess(response) {
@@ -779,8 +806,13 @@ export default {
      */
     fillValuesFromModificationAffaire(){
       if(this.selectedModificationAffaire){
+        let modif_type = "";
+        if (this.form.affaire_modif_type !== null && this.form.affaire_modif_type.nom) {
+          modif_type = this.form.affaire_modif_type.nom + " : ";
+        }
+
         this.form.cadastre = this.cadastres_list.filter(x => x.id === this.selectedModificationAffaire.cadastre_id)[0];
-        this.form.nom = this.selectedModificationAffaire.nom;
+        this.form.nom = modif_type + this.selectedModificationAffaire.nom;
         this.form.nom_ = this.selectedModificationAffaire.nom; // garder le nom pas modifié en mémoire
         this.form.vref = this.selectedModificationAffaire.vref;
         this.form.client_commande = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_commande_id)[0];
@@ -794,6 +826,9 @@ export default {
         //Handle localisation
         if(this.selectedModificationAffaire.localisation_e && this.selectedModificationAffaire.localisation_n)
           this.handleLocalisation(this.selectedModificationAffaire.localisation_e, this.selectedModificationAffaire.localisation_n, true);
+
+        // Update lists contacts in clients
+        this.updateContact();
       }
     },
 
