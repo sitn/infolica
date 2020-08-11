@@ -55,7 +55,25 @@
                         </md-autocomplete>
                     </div>
 
-                    <div class="md-layout-item md-small-size-100 md-size-50" v-if="type_modification_bool">
+                    <!-- Type de modification -->
+                    <div class="md-layout-item md-small-size-100 md-size-50"  v-if="type_modification_bool">
+                        <md-autocomplete v-model="form.affaire_modif_type" 
+                            md-dense required
+                            @md-selected="typeModifSelected"
+                            :md-options="typesModficiationAffaire_list"
+                            :class="getValidationClass($v.form.affaire_modif_type)">
+                            <label>Type de modification</label>
+                            <template slot="md-autocomplete-item" slot-scope="{ item, term }">
+                                {{ item.nom }}
+                            </template>
+                            <span class="md-error" v-if="!$v.form.affaire_modif_type.required">Le type de modification d'affaire est
+                                obligatoire</span>
+                        </md-autocomplete>
+                    </div>
+                </div>
+                
+                <div class="md-layout md-gutter" v-if="type_modification_bool">
+                    <div class="md-layout-item md-small-size-100 md-size-50">
                         <md-field>
                             <label>Affaire de base</label>
                             <md-input v-model="form.affaire_base_id" required />
@@ -75,24 +93,6 @@
                     </div>
                 </div>
                 
-                <div class="md-layout md-gutter" v-if="type_modification_bool">
-                    <!-- Type de modification -->
-                    <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-autocomplete v-model="form.affaire_modif_type" 
-                            md-dense required
-                            @md-selected="typeModifSelected"
-                            :md-options="typesModficiationAffaire_list"
-                            :class="getValidationClass($v.form.affaire_modif_type)">
-                            <label>Type de modification</label>
-                            <template slot="md-autocomplete-item" slot-scope="{ item, term }">
-                                {{ item.nom }}
-                            </template>
-                            <span class="md-error" v-if="!$v.form.affaire_modif_type.required">Le type de modification d'affaire est
-                                obligatoire</span>
-                        </md-autocomplete>
-                    </div>
-                </div>
-                                    
                 <!-- Description de l'affaire -->
                 <div class="md-gutter me-layout">
                     <div class="md-layout-item md-size-100">
@@ -132,6 +132,7 @@
                                         <md-table v-model="affaire_numeros_anciens" md-sort="numero" md-sort-order="desc" @md-selected="onSelectNumsAnciens" md-fixed-header md-card>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple">
                                                 <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}
+                                                    <span v-if="item.numero_suffixe !== null"> / {{ item.numero_suffixe }}</span>
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Type" md-sort-by="numero_type">
                                                     {{ item.numero_type }}
@@ -154,6 +155,7 @@
                                         <md-table v-model="affaire_numeros_nouveaux" md-sort="numero" md-sort-order="desc" @md-selected="onSelectNumsNouveux" md-fixed-header md-card>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple">
                                                 <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}
+                                                    <span v-if="item.numero_suffixe !== null"> / {{ item.numero_suffixe }}</span>
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Type" md-sort-by="numero_type">
                                                     {{ item.numero_type }}

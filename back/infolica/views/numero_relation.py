@@ -7,6 +7,8 @@ from infolica.models.constant import Constant
 from infolica.models.models import NumeroRelation, VNumerosRelations
 from infolica.scripts.utils import Utils
 
+from sqlalchemy import and_
+
 
 @view_config(route_name='numeros_relations', request_method='GET', renderer='json')
 @view_config(route_name='numeros_relations_s', request_method='GET', renderer='json')
@@ -82,6 +84,42 @@ def numeros_relations_new_view(request, params=None):
     model = Utils.set_model_record(NumeroRelation(), params)
 
     request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroRelation.__tablename__))
+
+
+@view_config(route_name='numeros_relations', request_method='PUT', renderer='json')
+@view_config(route_name='numeros_relations_s', request_method='PUT', renderer='json')
+def numeros_relations_update_view(request):
+    """
+    Update new numeros_relations
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+    
+    model = request.dbsession.query(NumeroRelation)
+
+    # get instance
+    if "id" in request.params:
+        numrel_id = request.params["id"]
+        model = model.filter(NumeroRelation.id == numrel_id)
+    else:
+        num_base_id = request.params["numero_id_base"]
+        num_associe_id = request.params["numero_id_associe"]
+        affaire_old_id = request.params["affaire_old_id"]
+
+        model = model.filter(and_(
+            NumeroRelation.numero_id_base == num_base_id,
+            NumeroRelation.numero_id_associe == num_associe_id,
+            NumeroRelation.affaire_id == affaire_old_id,
+        ))
+
+    model = model.first()
+    
+    # update instance
+    if model != None and "affaire_new_id" in request.params:
+        model.affaire_id = request.params["affaire_new_id"] if "affaire_new_id" in request.params else None
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroRelation.__tablename__))
 

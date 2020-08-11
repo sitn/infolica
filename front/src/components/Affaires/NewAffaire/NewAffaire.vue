@@ -504,6 +504,7 @@ export default {
       this.selectedNouveauxNumeros.forEach(x => {
         promises.push(this.deactivateNumeroAffaires(x, affaire_destination_id));
         promises.push(this.postAffaireNumero(x, affaire_destination_id));
+        promises.push(this.updateNumeroRelation(x.numero_base_id, x.numero_id, x.affaire_id, affaire_destination_id));
       });
 
       Promise.all(promises)
@@ -515,7 +516,7 @@ export default {
      * desactiver_numeros_affaires dans affaire base
      */
     async deactivateNumeroAffaires(affnum, affaire_destination_id) {
-      var formData = new FormData();
+      let formData = new FormData();
       formData.append("id", affnum.id);
       formData.append("actif", false);
       formData.append("affaire_destination_id", affaire_destination_id);
@@ -531,6 +532,29 @@ export default {
         ).then(response => resolve(response))
         .catch(err => reject(err));
       });
+    },
+
+    /**
+     * Update numero_relation
+     */
+    async updateNumeroRelation(num_base_id, num_associe_id, old_affaire_id, new_affaire_id) {
+      let formData = new FormData();
+      formData.append("numero_id_base", num_base_id);
+      formData.append("numero_id_associe", num_associe_id);
+      formData.append("affaire_old_id", old_affaire_id);
+      formData.append("affaire_new_id", new_affaire_id);
+
+      return new Promise((resolve, reject) => {
+        this.$http.put(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_RELATIONS_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      })
     },
 
     /**
