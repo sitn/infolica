@@ -46,7 +46,14 @@ import { validationMixin } from 'vuelidate'
         co: null
       },
       sending: false,
-      types_clients_list: []
+      types_clients_list: [],
+      client_moral_personnes: [],
+      showDialogAddNewContact: false,
+      contact_form: {
+        titre: "Monsieur", //default
+        nom: null,
+        prenom: null,
+      }
     }),
 
     // Validations
@@ -278,7 +285,118 @@ import { validationMixin } from 'vuelidate'
           this.sending = false
           handleException(err, this);  
         });
+      },
+
+      /**
+       * Init liste of people working in an entreprise
+       */
+      async initClientMoralPersonnes(client_id) {
+        this.$http.get(
+          process.env.VUE_APP_API_URL +
+          process.env.VUE_APP_CLIENT_MORAL_PERSONNES_ENDPOINT + "/" +
+          client_id,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => {
+          if (response && response.data) {
+            this.client_moral_personnes = response.data;
+          }
+        }).catch(err => this.handleException(err, this));
+      },
+
+      /**
+       * Init formulaire create new contact
+       */
+      openContactDialog(data=null) {
+        if (data === null) {
+          this.contact_form = {
+            id: null,
+            titre: "Monsieur", //default
+            nom: null,
+            prenom: null,
+          };
+        } else {
+          this.contact_form = {
+            id: data.id,
+            titre: data.titre,
+            nom: data.nom,
+            prenom: data.prenom,
+          };
+        }
+
+        this.showDialogAddNewContact = true;
+      },
+
+      /**
+       * Add new contact in entreprise
+       */
+      async editNewContactEntreprise() {
+        let createMode = true;
+        let formData = new FormData();
+        if (this.contact_form.id !== null) {
+          formData.append("id", this.contact_form.id);
+          createMode = false;
+        }
+        formData.append("client_id", this.$route.params.id);
+        formData.append("titre", this.contact_form.titre);
+        formData.append("nom", this.contact_form.nom);
+        formData.append("prenom", this.contact_form.prenom);
+
+        let req = null;
+        let message = "Le contact a bien été ";
+        if (createMode) {
+          req = this.$http.post(
+            process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_CLIENT_MORAL_PERSONNES_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: {"Accept": "application/json"}
+            }
+          );
+
+          message += "enregistré";
+        } else {
+          req = this.$http.put(
+            process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_CLIENT_MORAL_PERSONNES_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: {"Accept": "application/json"}
+            }
+          );
+
+          message += "mis à jour";
+        }
+        req.then(() => {
+          this.$root.$emit("showMessage", message);
+          this.initClientMoralPersonnes(this.$route.params.id);
+          this.showDialogAddNewContact = false;
+        }).catch(err => handleException(err, this));
+      },
+
+      /**
+       * delete contact in entreprise
+       */
+      async deleteContacEntreprise(contact_id) {
+        this.$http.delete(
+          process.env.VUE_APP_API_URL +
+          process.env.VUE_APP_CLIENT_MORAL_PERSONNES_ENDPOINT +
+          "?id=" + contact_id,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+        ).then(() => {
+          this.$root.$emit("showMessage", "Le contact a bien été supprimé");
+          this.initClientMoralPersonnes(this.$route.params.id);
+        }).catch(err => handleException(err, this));
       }
+
+
     },
 
     mounted: function(){
@@ -295,6 +413,7 @@ import { validationMixin } from 'vuelidate'
       if(this.mode === 'edit'){
         var id = this.$route.params.id;
         this.initEditData(id);
+        this.initClientMoralPersonnes(id);
       }
     }
   }

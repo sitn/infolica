@@ -32,6 +32,11 @@ export default {
       client_facture_premiere_ligne: null,
       clients_list: [],
       clients_liste_type: [],
+      client_moral_personnes: {
+        commande: [],
+        envoi: [],
+        facture: []
+      },
       clients_types_config: {
         personne_morale: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID),
         personne_physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID)
@@ -223,6 +228,8 @@ export default {
             id: x.id,
             type_id: x.type_client
           }));
+          
+          this.updateContact();
         }
       })
       //Error
@@ -322,7 +329,12 @@ export default {
             if (this.type_modification_bool) {
               promises.push(this.postAffaireRelation(id_new_affaire));
               if ((this.selectedAnciensNumeros.length + this.selectedNouveauxNumeros.length) > 0 ) {
+                //désactiver la relation numéro-affaire, créer une liaison sur la nouvelle affaire et mise à jour de la relation des numéros dans la nouvelle affaire
                 promises.push(this.updateNumerosAffaire(id_new_affaire));
+              }
+              if (this.selectedAnciensNumeros.length === this.affaire_numeros_anciens.length && this.selectedNouveauxNumeros.length === this.affaire_numeros_nouveaux.length) {
+                // Si tous les numéros sont sélectionnés, clôre l'affaire de base !
+                promises.push(this.cloreAffaireBase());
               }
             }
             Promise.all(promises)
@@ -356,7 +368,7 @@ export default {
         formData.append("affaire_id", affaire_id);
         formData.append("client_id", this.client_facture.id);
         if (this.client_facture_complement !== null) {
-          formData.append("client_complement", this.client_facture_complement);
+          formData.append("client_complement", "À l'att. de " + this.client_facture_complement);
         }
         if (this.client_facture_premiere_ligne !== null) {
           formData.append("client_premiere_ligne", this.client_facture_premiere_ligne);
@@ -444,13 +456,13 @@ export default {
         formData.append("client_commande_id", this.form.client_commande.id);
       }
       if (this.form.client_commande_complement && this.showClientComplement(this.form.client_commande)) {
-        formData.append("client_commande_complement", this.form.client_commande_complement);
+        formData.append("client_commande_complement", "À l'att. de " + this.form.client_commande_complement);
       }
       if (this.form.client_envoi && this.form.client_envoi.id) {
         formData.append("client_envoi_id", this.form.client_envoi.id);
       }
       if (this.form.client_envoi_complement && this.showClientComplement(this.form.client_envoi)) {
-        formData.append("client_envoi_complement", this.form.client_envoi_complement);
+        formData.append("client_envoi_complement", "À l'att. de " + this.form.client_envoi_complement);
       }
       if (this.form.technicien_id) {
         formData.append("technicien_id", this.form.technicien_id);
@@ -497,6 +509,7 @@ export default {
       this.selectedNouveauxNumeros.forEach(x => {
         promises.push(this.deactivateNumeroAffaires(x, affaire_destination_id));
         promises.push(this.postAffaireNumero(x, affaire_destination_id));
+        promises.push(this.updateNumeroRelation(x.numero_base_id, x.numero_id, x.affaire_id, affaire_destination_id));
       });
 
       Promise.all(promises)
@@ -508,7 +521,7 @@ export default {
      * desactiver_numeros_affaires dans affaire base
      */
     async deactivateNumeroAffaires(affnum, affaire_destination_id) {
-      var formData = new FormData();
+      let formData = new FormData();
       formData.append("id", affnum.id);
       formData.append("actif", false);
       formData.append("affaire_destination_id", affaire_destination_id);
@@ -527,6 +540,29 @@ export default {
     },
 
     /**
+     * Update numero_relation
+     */
+    async updateNumeroRelation(num_base_id, num_associe_id, old_affaire_id, new_affaire_id) {
+      let formData = new FormData();
+      formData.append("numero_id_base", num_base_id);
+      formData.append("numero_id_associe", num_associe_id);
+      formData.append("affaire_old_id", old_affaire_id);
+      formData.append("affaire_new_id", new_affaire_id);
+
+      return new Promise((resolve, reject) => {
+        this.$http.put(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_RELATIONS_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      })
+    },
+
+    /**
      * Create new numero_affaire relation
      */
     async postAffaireNumero(affnum, affaire_destination_id) {
@@ -539,6 +575,28 @@ export default {
       return new Promise((resolve, reject) => {
         this.$http.post(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
+    /**
+     * Affaire de modification: tous les numéros sont récupérés par l'affaire fille:
+     * cloturer l'affaire de base
+     */
+    async cloreAffaireBase() {
+      let formData = new FormData();
+      formData.append("id_affaire", this.form.affaire_base_id);
+      formData.append("date_cloture", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
+      
+      return new Promise((resolve, reject) => {
+        this.$http.put(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
           formData,
           {
             withCredentials: true,
@@ -637,12 +695,16 @@ export default {
      * Complète par défaut les clients envoi et facture
      */
     defaultCompleteClients(client) {
-      if (this.form.client_envoi === null || this.form.client_envoi === "") {
-        this.form.client_envoi = client;
-      }
-      if (this.client_facture === null || this.client_facture === "") {
-        this.client_facture = client;
-      }
+      this.initClientMoralPersonnes(client.id, 'commande').then(() => {
+        if (this.form.client_envoi === null || this.form.client_envoi === "") {
+          this.form.client_envoi = client;
+          this.client_moral_personnes.envoi = this.client_moral_personnes.commande;
+        }
+        if (this.client_facture === null || this.client_facture === "") {
+          this.client_facture = client;
+          this.client_moral_personnes.facture = this.client_moral_personnes.commande;
+        }
+      });
     },
 
     /**
@@ -744,8 +806,13 @@ export default {
      */
     fillValuesFromModificationAffaire(){
       if(this.selectedModificationAffaire){
+        let modif_type = "";
+        if (this.form.affaire_modif_type !== null && this.form.affaire_modif_type.nom) {
+          modif_type = this.form.affaire_modif_type.nom + " : ";
+        }
+
         this.form.cadastre = this.cadastres_list.filter(x => x.id === this.selectedModificationAffaire.cadastre_id)[0];
-        this.form.nom = this.selectedModificationAffaire.nom;
+        this.form.nom = modif_type + this.selectedModificationAffaire.nom;
         this.form.nom_ = this.selectedModificationAffaire.nom; // garder le nom pas modifié en mémoire
         this.form.vref = this.selectedModificationAffaire.vref;
         this.form.client_commande = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_commande_id)[0];
@@ -759,6 +826,9 @@ export default {
         //Handle localisation
         if(this.selectedModificationAffaire.localisation_e && this.selectedModificationAffaire.localisation_n)
           this.handleLocalisation(this.selectedModificationAffaire.localisation_e, this.selectedModificationAffaire.localisation_n, true);
+
+        // Update lists contacts in clients
+        this.updateContact();
       }
     },
 
@@ -844,6 +914,55 @@ export default {
         }
       }
       return false;
+    },
+
+    /**
+     * Init liste of people working in an entreprise
+     */
+    async initClientMoralPersonnes(client_id, client_type) {
+      return new Promise((resolve) => {
+        if (client_id) {
+          this.$http.get(
+            process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_CLIENT_MORAL_PERSONNES_ENDPOINT + "/" +
+            client_id,
+            {
+              withCredentials: true,
+              headers: {Accept: "application/json"}
+            }
+          ).then(response => {
+            if (response && response.data) {
+              let tmp = [];
+              response.data.forEach(x => tmp.push([x.titre, x.nom, x.prenom].filter(Boolean).join(" ")));
+              this.client_moral_personnes[client_type] = tmp;
+              resolve(tmp);
+            }
+          }).catch(err => this.handleException(err, this));
+        }
+      });
+    },
+
+    /**
+     * open create contact
+     */
+    openCreateContact(client_id) {
+      let routeData = this.$router.resolve({name: "ClientsEdit", params: {id: client_id}});
+      window.open(routeData.href, "_blank");
+    },
+
+    /**
+     * Update contact when 
+     */
+    async updateContact() {
+      if (this.form.client_commande !== null && this.form.client_commande.id !== null) {
+        this.initClientMoralPersonnes(this.form.client_commande.id, 'commande');
+      }
+      if (this.form.client_envoi !== null && this.form.client_envoi.id !== null) {
+        this.initClientMoralPersonnes(this.form.client_envoi.id, 'envoi');
+      }
+      if (this.client_facture !== null && this.client_facture.id !== null) {
+        this.initClientMoralPersonnes(this.client_facture.id, 'facture');
+      }
     }
   },
 

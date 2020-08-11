@@ -77,7 +77,7 @@
                     </div>
 
                     <!-- NUMEROS RESERVES (nouveaux numéros) -->
-                    <div class="md-layout-item md-size-55" style="padding-left: 0">
+                    <div class="md-layout-item md-size-55" style="padding-left: 0" v-if="[typesAffaires.mutation, typesAffaires.ppe, typesAffaires.pcop, typesAffaires.modification].includes(affaire.type_id)">
                         <md-card-content>
 
                             <md-card>

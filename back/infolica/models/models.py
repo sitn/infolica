@@ -68,6 +68,16 @@ class Client(Base):
     no_bdp_bdee = Column(Text)
 
 
+class ClientMoralPersonne(Base):
+    __tablename__ = 'client_moral_personne'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
+    titre = Column(Text)
+    nom = Column(Text, nullable=False)
+    prenom = Column(Text, nullable=False)
+
+
 class Plan(Base):
     __tablename__ = 'plan'
     __table_args__ = {'schema': 'infolica'}
