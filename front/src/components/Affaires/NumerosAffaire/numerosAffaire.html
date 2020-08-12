@@ -16,7 +16,9 @@
             <md-card-expand-content>
                 <div class="md-layout md-gutter">
                     <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
-                    <div class="md-layout-item md-size-45" style="padding-right: 0" v-if="affaire.type_id === typesAffaires.mutation">
+                    <div class="md-layout-item md-size-45" style="padding-right: 0" v-if="affaire.type_id === typesAffaires.mutation ||
+                                                                                          affaire.type_id === typesAffaires.autre ||
+                                                                                          (affaire.type_id === typesAffaires.modification && affaire.modification_type_id === typesAffaires.modification_type.abandon_partiel)">
                         <md-card-content>
 
                             <md-card>
@@ -53,14 +55,8 @@
                                                 <md-table-cell md-label="Etat" md-sort-by="numero_etat">
                                                     {{ item.numero_etat }}
                                                 </md-table-cell>
-                                                <md-table-cell md-label="Repris par">    
+                                                <md-table-cell md-label="Repris par" md-sort-by="affaire_destination_id">    
                                                     <a v-bind:href="item.affaire_destination_href">{{item.affaire_destination_id }}</a>
-                                                </md-table-cell>
-                                                <md-table-cell md-label="Action" class="actionsColumn">
-                                                    <md-button class="md-icon-button md-dense md-accent" v-if="!affaireReadonly && item.affaire_numero_actif && !affaire.date_cloture"
-                                                        v-on:click="onDeleteReferenceNumero(item)">
-                                                        <md-icon>delete</md-icon>
-                                                    </md-button>
                                                 </md-table-cell>
                                             </md-table-row>
                                         </md-table>
@@ -109,7 +105,7 @@
                                                     class="md-primary md-dense">
                                                 </md-switch>
                                             </md-table-cell>
-                                            <md-table-cell md-label="Repris par"><a v-bind:href="item.affaire_destination_href">{{item.affaire_destination_id }}</a></md-table-cell>
+                                            <md-table-cell md-label="Repris par" md-sort-by="affaire_destination_id"><a v-bind:href="item.affaire_destination_href">{{item.affaire_destination_id }}</a></md-table-cell>
                                             <md-table-cell md-label="Mat diff" class="actionsColumn">
                                                 <!-- Si le numéro est différé -->
                                                 <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif && item.active">

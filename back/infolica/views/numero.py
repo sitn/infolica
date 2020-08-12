@@ -397,7 +397,44 @@ def affaire_numero_update_view(request):
 
     record = Utils.set_model_record(record, request.params)
 
-    return
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireNumero.__tablename__))
+
+
+@view_config(route_name='affaire_numeros', request_method='DELETE', renderer='json')
+@view_config(route_name='affaire_numeros_s', request_method='DELETE', renderer='json')
+def affaire_numero_delete_view(request):
+    """
+    delete numeros_affaires
+    """
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+
+    affnum_id = None
+    affaire_id = None
+    numero_id = None
+    record = None
+    if "id" in request.params:
+        affnum_id = request.params["id"]
+        record = request.dbsession.query(AffaireNumero).filter(AffaireNumero.id == affnum_id).first()
+    elif "affaire_id" in request.params and "numero_id" in request.params:
+        affaire_id = request.params["affaire_id"]
+        numero_id = request.params["numero_id"]
+        record = request.dbsession.query(AffaireNumero).filter(and_(
+            AffaireNumero.affaire_id == affaire_id,
+            AffaireNumero.numero_id == numero_id
+        )).first()
+    else:
+        raise CustomError(CustomError.INCOMPLETE_REQUEST)
+
+    request.dbsession.delete(record)
+
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(AffaireNumero.__tablename__, affnum_id))
+
+    record = Utils.set_model_record(record, request.params)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(AffaireNumero.__tablename__))
 
 
 @view_config(route_name='affaire_numeros', request_method='POST', renderer='json')
@@ -428,7 +465,7 @@ def affaire_numero_new_view(request, params=None):
 @view_config(route_name='numero_affaires_by_numero_id', request_method='GET', renderer='json')
 def numeros_affaire_view(request):
     """
-    Get new affaire-numero
+    Get new affaires by numero_id
     """
     # Check connected
     if not Utils.check_connected(request):

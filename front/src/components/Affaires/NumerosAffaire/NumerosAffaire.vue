@@ -155,41 +155,6 @@ export default {
       }
     },
 
-    /**
-     * Supprimer numéro référencé
-     */
-    onDeleteReferenceNumero(numero) {
-      // Contrôler qu'aucun numéro n'a été défini sur ce numéro de base!
-      if (this.isNumeroBaseInAffaire(numero) === false) {
-        this.$http
-          .delete(
-            process.env.VUE_APP_API_URL +
-              process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT +
-              "?affaire_id=" +
-              this.$route.params.id +
-              "&numero_id=" +
-              numero.numero_id,
-            {
-              withCredentials: true,
-              headers: { Accept: "application/json" }
-            }
-          )
-          .then(response => {
-            if (response.data) {
-              this.searchAffaireNumeros();
-              this.$root.$emit(
-                "ShowMessage",
-                "Le numéro " +
-                  numero.numero +
-                  " a été délié de l'affaire avec succès"
-              );
-            }
-          })
-          .catch(err => {
-            handleException(err, this);
-          });
-      }
-    },
 
     /**
      * Abandonner/rétablir un numéro réservé

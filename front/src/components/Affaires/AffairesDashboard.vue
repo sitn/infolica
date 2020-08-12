@@ -58,7 +58,10 @@ export default {
         revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
         remaniement_parcellaire: Number(process.env.VUE_APP_TYPE_AFFAIRE_REMANIEMENT_PARCELLAIRE),
         servitude: Number(process.env.VUE_APP_TYPE_AFFAIRE_SERVITUDE),
-        autre: Number(process.env.VUE_APP_TYPE_AFFAIRE_AUTRE)
+        autre: Number(process.env.VUE_APP_TYPE_AFFAIRE_AUTRE),
+        modification_type: {
+          abandon_partiel: Number(process.env.VUE_APP_TYPE_MODIFICATION_ABANDON_PARTIEL_ID)
+        }
       }
       // numeros_base_associes = []
     };

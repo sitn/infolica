@@ -134,10 +134,21 @@ def numeros_relations_delete_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
 
-    numero_relation_id = request.params["numero_relation_id"] if "numero_relation_id" in request.params else None
-
-    # Get numeros_relations instance
-    model = request.dbsession.query(NumeroRelation).filter(NumeroRelation.id == numero_relation_id).first()
+    model = None
+    numero_relation_id = None
+    if "numero_relation_id" in request.params:
+        numero_relation_id = request.params["numero_relation_id"]
+        model = request.dbsession.query(NumeroRelation).filter(NumeroRelation.id == numero_relation_id).first()
+    elif "numero_base_id" in request.params and "affaire_id" in request.params:
+        numero_base_id = int(request.params["numero_base_id"])
+        affaire_id = int(request.params["affaire_id"])
+        numero_relation_id = "numero_base_id=" + request.params["numero_base_id"] + " & affaire_id=" + request.params["affaire_id"]
+        model = request.dbsession.query(NumeroRelation).filter(and_(
+            NumeroRelation.numero_id_base == numero_base_id,
+            NumeroRelation.affaire_id == affaire_id
+        )).first()
+    else:
+        raise CustomError.INCOMPLETE_REQUEST
 
     if not model:
         raise CustomError(
