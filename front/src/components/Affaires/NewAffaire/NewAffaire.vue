@@ -306,8 +306,8 @@ export default {
      */
     saveData() {
       this.sending = true;
-      var formData = this.initPostData();
-      var url =
+      let formData = this.initPostData();
+      let url =
         process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT;
       this.$http
         .post(url, formData, {
@@ -318,7 +318,7 @@ export default {
           const _response = response;
           const id_new_affaire = response.data;
           if (response && response.data) {
-            var promises = [];
+            let promises = [];
             // Enregistrer une facture vide
             if (this.showClientsForm){
               promises.push(this.postFacture(id_new_affaire));
@@ -326,6 +326,7 @@ export default {
             if (this.form.remarque !== null) {
               promises.push(this.postRemarqueAffaire(id_new_affaire));
             }
+
             if (this.type_modification_bool) {
               promises.push(this.postAffaireRelation(id_new_affaire));
               if ((this.selectedAnciensNumeros.length + this.selectedNouveauxNumeros.length) > 0 ) {
@@ -335,6 +336,10 @@ export default {
               if (this.selectedAnciensNumeros.length === this.affaire_numeros_anciens.length && this.selectedNouveauxNumeros.length === this.affaire_numeros_nouveaux.length) {
                 // Si tous les numéros sont sélectionnés, clôre l'affaire de base !
                 promises.push(this.cloreAffaireBase());
+              }
+              if (this.form.affaire_modif_type.id === Number(process.env.VUE_APP_TYPE_MODIFICATION_ABANDON_PARTIEL_ID)) {
+                // supprimer les bf référencés à l'affaire
+                promises.push(this.abandonPartiel(id_new_affaire));
               }
             }
             Promise.all(promises)
@@ -346,10 +351,9 @@ export default {
               });
 
             }).catch(err => {
-                handleException(err, this);
-                this.sending = false;
-              });
-
+              handleException(err, this);
+              this.sending = false;
+            });
           }
         })
         //Error
@@ -384,16 +388,7 @@ export default {
               withCredentials: true,
               headers: { Accept: "applicatoin/json" }
             }
-          )
-          .then(response => {
-            if (response && response.data) {
-              this.$root.$emit(
-                "ShowMessage",
-                "Une facture a correctement été créée dans l'affaire"
-              );
-              resolve(response);
-            }
-          })
+          ).then(response => resolve(response))
           .catch(err => reject(err));
       });
     },
@@ -605,6 +600,108 @@ export default {
         ).then(response => resolve(response))
         .catch(err => reject(err));
       });
+    },
+
+    /**
+     * Abandonner numeros_references à une affaire (abandon partiel)
+     */
+    async abandonPartiel(affaire_fille_id) {
+      return new Promise((resolve, reject) => {
+        let affaire_mere_id = Number(this.form.affaire_base_id);
+        
+        let affaire_numerosRelations = [];
+        this.getNumerosRelationInAffaire(affaire_mere_id)
+        .then(response => affaire_numerosRelations = response.data)
+        .catch(err => handleException(err, this));
+
+        let promises = [];
+        let tmp = [];
+        this.selectedAnciensNumeros.forEach(x => {
+          // mise à jour de la relation affaire-numéro
+          // promises.push(this.deleteNumeroAffaire(x.numero_id, affaire_mere_id));
+          // mise à jour de la relation entres numéros si elle existe
+          tmp = affaire_numerosRelations.filter(numrel => numrel.numero_base_id === x.numero_id && numrel.affaire_id === affaire_mere_id);
+          if (tmp.length > 0) {
+            promises.push(this.deleteNumeroRelation(x.numero_id, affaire_mere_id));
+          }
+        });
+        promises.push(this.clotureAffaire(affaire_fille_id));
+        
+        Promise.all(promises)
+        .then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
+  /**
+   * Get numeros relations in affaire mere
+   */
+  async getNumerosRelationInAffaire(affaire_id) {
+    return new Promise((resolve, reject) => {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_RELATIONS_BY_AFFAIREID_ENDPOINT + affaire_id,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => resolve(response))
+      .catch(err => reject(err));
+    });
+  },
+
+  // /**
+  //  * Supprimer la relation numéro-affaire pour une affaire modif suppression partielle
+  //  */
+    // async deleteNumeroAffaire(numero_id, affaire_id) {
+    //   return new Promise((resolve, reject) => {
+    //     this.$http.delete(
+    //       process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
+    //       "?numero_id=" + numero_id + "&affaire_id=" + affaire_id,
+    //       {
+    //         withCredentials: true,
+    //         headers: {Accept: "application/json"}
+    //       }
+    //     ).then(response => resolve(response))
+    //     .catch(err => reject(err));
+    //   });
+    // },
+
+    /**
+     * Delete numero relation in case of affaire modif suppression partielle
+     */
+    async deleteNumeroRelation(numero_base_id, affaire_id) {
+      return new Promise((resolve, reject) => {
+        this.$http.delete(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_RELATIONS_ENDPOINT +
+          "?numero_base_id=" + numero_base_id + "&affaire_id=" + affaire_id,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
+    /**
+     * Cloture affaire de suppression partielle
+     */
+    async clotureAffaire(affaire_id) {
+      return new Promise((resolve, reject) => {
+        let formData = new FormData();
+        formData.append("id_affaire", affaire_id);
+        formData.append("date_cloture", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
+  
+        this.$http.put(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      })
     },
 
     /**

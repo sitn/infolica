@@ -4,7 +4,7 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
-import { getCurrentDate, checkPermission } from "@/services/helper";
+import { getCurrentDate, checkPermission, getDocument } from "@/services/helper";
 import ReferenceNumeros from "@/components/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/ReservationNumeros/ReservationNumeros.vue";
 import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue";
@@ -57,7 +57,7 @@ export default {
         this.$http
         .get(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
+            process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT + "/" +
             this.$route.params.id,
           {
             withCredentials: true,
@@ -155,41 +155,6 @@ export default {
       }
     },
 
-    /**
-     * Supprimer numéro référencé
-     */
-    onDeleteReferenceNumero(numero) {
-      // Contrôler qu'aucun numéro n'a été défini sur ce numéro de base!
-      if (this.isNumeroBaseInAffaire(numero) === false) {
-        this.$http
-          .delete(
-            process.env.VUE_APP_API_URL +
-              process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT +
-              "?affaire_id=" +
-              this.$route.params.id +
-              "&numero_id=" +
-              numero.numero_id,
-            {
-              withCredentials: true,
-              headers: { Accept: "application/json" }
-            }
-          )
-          .then(response => {
-            if (response.data) {
-              this.searchAffaireNumeros();
-              this.$root.$emit(
-                "ShowMessage",
-                "Le numéro " +
-                  numero.numero +
-                  " a été délié de l'affaire avec succès"
-              );
-            }
-          })
-          .catch(err => {
-            handleException(err, this);
-          });
-      }
-    },
 
     /**
      * Abandonner/rétablir un numéro réservé
@@ -386,6 +351,50 @@ export default {
      */
     async showBalance_() {
       this.showBalance = await this.affaire.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION);
+    },
+
+    /**
+     * Génère une quittance des numéros réservés dans l'affaire
+     */
+    async doQuittanceNumerosReserves() {
+      let tmp = this.getCadastresNumerosNumerosBases(this.affaire_numeros_nouveaux);
+      let cadastres = tmp[0];
+      let numeros = tmp[1];
+      let numeros_bases = tmp[2];
+
+      let formData = new FormData();
+      formData.append("template", "NumerosReserves");
+      formData.append("values", JSON.stringify({
+        "affaire_id": this.affaire.id,
+        "date": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        "cadastre": cadastres,
+        "numero": numeros,
+        "numero_base": numeros_bases
+      }));
+
+      getDocument(formData).then(response => {
+        this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'");
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Return lists of cadastre, numero and numero_base for quittance numeros_reserves
+     */
+    getCadastresNumerosNumerosBases(numeros_reserves) {
+      let cadastres = [];
+      let numeros = [];
+      let numeros_bases = [];
+
+      numeros_reserves.forEach(x => {
+        cadastres.push(x.numero_cadastre);
+        numeros.push(x.numero_suffixe !== null? x.numero + " / " + x.numero_suffixe: x.numero);
+        numeros_bases.push(x.numero_base);
+      });
+
+      cadastres = cadastres.join("\n");
+      numeros = numeros.join("\n");
+      numeros_bases = numeros_bases.join("\n");
+      return [cadastres, numeros, numeros_bases];
     }
 
   },
