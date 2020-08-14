@@ -17,7 +17,8 @@ import ControlePPE from "@/components/Affaires/ControlePPE/ControlePPE.vue";
 import SuiviMandat from "@/components/SuiviMandat/SuiviMandat.vue";
 import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
 
-import {checkPermission} from '@/services/helper'
+import { handleException } from "@/services/exceptionsHandler";
+import { checkPermission, getDocument } from '@/services/helper'
 
 import moment from "moment";
 
@@ -43,11 +44,11 @@ export default {
     return {
       affaire: {},
       affaireLoaded: false,
-      mapLoaded: false,
-      editAffaireAllowed: true,
-      parentparentAffaireReadOnly: false,
       cloreAffaireEnabled: false,
       duplicationAffaireForm: null,
+      editAffaireAllowed: true,
+      mapLoaded: false,
+      parentparentAffaireReadOnly: false,
       typesAffaires: {
         mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION),
         cadastration: Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION),
@@ -221,6 +222,97 @@ export default {
         this.center.x = this.affaire.localisation_e;
         this.center.y = this.affaire.localisation_n;
       }
+    },
+
+    /**
+     * Génère le bordereau de l'affaire (document DEMANDE)
+     */
+    async generateBordereauAffaire() {
+      let formData = this.fillFormDataBordereauAffaire();
+      getDocument(formData).then(response => {
+        this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'")
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Get and fill formData for bordereau-affaire
+     */
+    fillFormDataBordereauAffaire() {
+      let tmp = this.$refs.facturation.affaire_factures.map(x => ({
+        adresse: x.client_.replace(/, /gi, "\n"),
+        tel: x.client_co_id === null? x.client_tel_fixe: x.client_co_tel_fixe,
+        tel_port: x.client_co_id === null? x.client_tel_portable: x.client_co_tel_portable,
+        mail: x.client_co_id === null? x.client_mail: x.client_co_mail,
+        facture: [x.sap !== null? x.sap: "-", String((Number(x.montant_mo) + Number(x.montant_rf)).toFixed(2)), x.montant_mat_diff, x.montant_tva, x.montant_total].join("\n")
+      }));
+      
+      let factures = [];
+      for (let i = 0; i < 3; i++) {
+        if (i < tmp.length) {
+          factures.push(tmp[i]);
+        } else {
+          factures.push({
+            adresse: null,
+            tel: null,
+            tel_port: null,
+            mail: null,
+            facture: null
+          })
+        }
+
+      }
+      
+      let formData = new FormData();
+      formData.append("template", "Demande");
+      formData.append("values", JSON.stringify({
+        "AFFAIRE_ID": this.affaire.id,
+        "OPERATEUR": [this.affaire.technicien_prenom, this.affaire.technicien_nom].filter(Boolean).join (" "),
+        "CLIENT_COMMANDE_ADRESSE": this.affaire.client_commande_nom_,
+        "CLIENT_COMMANDE_TEL": this.affaire.client_commande_tel_fixe,
+        "CLIENT_COMMANDE_TEL_PORT": this.affaire.client_commande_tel_portable,
+        "CLIENT_COMMANDE_MAIL": this.affaire.client_commande_mail,
+        "CLIENT_ENVOI_ADRESSE": this.affaire.client_envoi_nom_,
+        "CLIENT_ENVOI_TEL": this.affaire.client_envoi_tel_fixe,
+        "CLIENT_ENVOI_TEL_PORT": this.affaire.client_envoi_tel_portable,
+        "CLIENT_ENVOI_MAIL": this.affaire.client_envoi_mail,
+        "CLIENT_FACTURE1_ADRESSE": factures[0].adresse,
+        "CLIENT_FACTURE1_TEL": factures[0].tel,
+        "CLIENT_FACTURE1_TEL_PORT": factures[0].tel_port,
+        "CLIENT_FACTURE1_MAIL": factures[0].mail,
+        "FACTURE_1": factures[0].facture,
+        "CLIENT_FACTURE2_ADRESSE": factures[1].adresse,
+        "CLIENT_FACTURE2_TEL": factures[1].tel,
+        "CLIENT_FACTURE2_TEL_PORT": factures[1].tel_port,
+        "CLIENT_FACTURE2_MAIL": factures[1].mail,
+        "FACTURE_2": factures[1].facture,
+        "CLIENT_FACTURE3_ADRESSE": factures[2].adresse,
+        "CLIENT_FACTURE3_TEL": factures[2].tel,
+        "CLIENT_FACTURE3_TEL_PORT": factures[2].tel_port,
+        "CLIENT_FACTURE3_MAIL": factures[2].mail,
+        "FACTURE_3": factures[2].facture,
+        "AFFAIRE_TYPE": this.affaire.type_affaire,
+        "MODIFICATION_TYPE": this.affaire.modification_type,
+        "AFFAIRE_DE_BASE": this.affaire.modification_affaire_id_mere,
+        "NUMEROS_BASES": this.$refs.numeros.affaire_numeros_anciens.map(x => x.numero).join(", "),
+        "NUMEROS_RESERVES": this.$refs.numeros.affaire_numeros_nouveaux.map(x => x.numero).join(", "),
+        "CADASTRE": this.affaire.cadastre,
+        "DESCRIPTION": this.affaire.nom,
+        // "REMARQUES": 
+        "DATE": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        "DATE_ENVOI_SCAT": this.affaire.preavis_scat_date_demande !== null? moment(this.affaire.preavis_scat_date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
+        "DATE_RETOUR_SCAT": this.affaire.preavis_scat_date_reponse !== null? moment(this.affaire.preavis_scat_date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
+        "DATE_ENVOI_SAGR": this.affaire.preavis_sagr_date_demande !== null? moment(this.affaire.preavis_sagr_date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
+        "DATE_RETOUR_SAGR": this.affaire.preavis_sagr_date_reponse !== null? moment(this.affaire.preavis_sagr_date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
+        "DATE_ENVOI_SENE": this.affaire.preavis_sene_date_demande !== null? moment(this.affaire.preavis_sene_date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
+        "DATE_RETOUR_SENE": this.affaire.preavis_sene_date_reponse !== null? moment(this.affaire.preavis_sene_date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
+        "DATE_ENVOI_RF": this.affaire.preavis_rf_date_demande !== null? moment(this.affaire.preavis_rf_date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
+        "DATE_RETOUR_RF": this.affaire.preavis_rf_date_reponse !== null? moment(this.affaire.preavis_rf_date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
+        "DATE_ENVOI": this.affaire.date_envoi !== null? moment(this.affaire.date_envoi, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
+        "DATE_CLOTURE": this.affaire.date_cloture !== null? moment(this.affaire.date_cloture, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null
+      }));
+
+      return formData;
+    
     }
   },
 

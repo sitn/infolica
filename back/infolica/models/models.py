@@ -718,6 +718,14 @@ class VAffaire(Base):
     modification_type_id = Column(BigInteger)
     modification_type = Column(Text)
     modification_affaire_id_mere = Column(BigInteger)
+    preavis_scat_date_demande = Column(Date)
+    preavis_scat_date_reponse = Column(Date)
+    preavis_sagr_date_demande = Column(Date)
+    preavis_sagr_date_reponse = Column(Date)
+    preavis_sene_date_demande = Column(Date)
+    preavis_sene_date_reponse = Column(Date)
+    preavis_rf_date_demande = Column(Date)
+    preavis_rf_date_reponse = Column(Date)
 
 
 class VEnvois(Base):
