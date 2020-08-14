@@ -944,7 +944,7 @@ export default {
       this.$http
       .get(
         process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
+          process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT + "/" +
           this.form.affaire_base_id + "?affaire_numero_actif=true",
         {
           withCredentials: true,
