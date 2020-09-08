@@ -6,7 +6,7 @@
             Affaire {{ affaire.id }}
             <span v-if="affaire.no_access != null">[{{ affaire.no_access }}]</span>
         </h1>
-        <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="generateBordereauAffaire">Boredereau de l'affaire</md-button>
+        <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="generateBordereauAffaire">Bordereau de l'affaire</md-button>
         <md-button class="md-primary md-raised" v-if="editAffaireAllowed && false" v-on:click="duplicateAffaire">Modification / Visa</md-button>
         <md-button class="md-accent md-raised" v-if="editAffaireAllowed && cloreAffaireEnabled" v-on:click="callClotureAffaire">Clôturer</md-button>
     </md-toolbar>
@@ -45,7 +45,7 @@
     
     <!-- PREAVIS -->
     <div class="affairesDashboard" v-if="affaire.type_id==typesAffaires.mutation">
-        <preavis />
+        <preavis :affaire="affaire" />
     </div>
     
     <!-- NUMEROS -->
