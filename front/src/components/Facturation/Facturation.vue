@@ -9,7 +9,8 @@ import { getCurrentDate,
          getCurrentUserRoleId,
          getClients,
          filterList,
-         stringifyAutocomplete } from "@/services/helper";
+         stringifyAutocomplete,
+         getDocument } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -19,7 +20,10 @@ const moment = require('moment')
 export default {
   name: "Facturation",
   mixins: [validationMixin],
-  props: {},
+  props: {
+    affaire: Object,
+    typesAffaires: Object
+    },
   data: () => {
     return {
       affaire_factures: [],
@@ -450,6 +454,73 @@ export default {
         }
       }
       return false;
+    },
+
+    /**
+     * Generate documents cadastration
+     */
+    generateDocuments(facture) {
+      this.generateLettreProprietaire(facture);
+      this.generateReqRF();
+    },
+
+    /**
+     * Générer lettre propriétaire (Cadastration)
+     */
+    async generateLettreProprietaire(facture) {
+      let formData = this.fillDataLettreProprietaire(facture);
+      getDocument(formData).then(response => {
+        this.$root.$emit("ShowMessage", "Le fichier '" + response + "' se trouve dans le dossier 'Téléchargement'")
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Remplir le formulaire pour la lettre au propriétaire (cadastration)
+     */
+    fillDataLettreProprietaire(facture) {
+      let formData = new FormData();
+      formData.append("template", "LettreCad");
+      formData.append("values", JSON.stringify({
+        "ADRESSE_PROPRIETAIRE": facture.adresse_facturation_.replace(/, /gi, "\n"),
+        "NREF": this.affaire.id,
+        "VREF": "__A_MODIFIER__",
+        "DATE_ENVOI": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        "TITRE": facture.client_titre,
+        "BIEN_FONDS": "__A_MODIFIER__",
+        "CADASTRE": this.affaire.cadastre,
+        "NO_NOTE_FRAIS": facture.sap,
+        "MONTANT": facture.montant_total
+      }));
+
+      return formData;
+    },
+
+    /**
+     * Générer réquisition pour le RF (Cadastration)
+     */
+    async generateReqRF() {
+      let formData = this.fillDataReqRF();
+      getDocument(formData).then(response => {
+        this.$root.$emit("ShowMessage", "Le fichier '" + response + "' se trouve dans le dossier 'Téléchargement'")
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Remplir le formulaire pour la requisition au RF (cadastration)
+     */
+    fillDataReqRF() {
+      let formData = new FormData();
+      formData.append("template", "ReqCad");
+      formData.append("values", JSON.stringify({
+        "ANNEE": new Date().getFullYear(),
+        "DATE_PLAN_ORIGINE": "JJ.MM.AAAA",
+        "DATE_PLAN_CADASTRATION": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        "BIEN_FONDS": "__A_MODIFIER__",
+        "CADASTRE": this.affaire.cadastre,
+        "DATE": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+      }));
+
+      return formData;
     }
   },
 
