@@ -23,11 +23,11 @@
                                 <md-table-cell md-label="SAP" md-sort-by="sap" style="width: 5%;">{{ item.sap }}</md-table-cell>
                                 <md-table-cell md-label="Date" md-sort-by="date" style="width: 5%;">{{ item.date }}</md-table-cell>
                                 <md-table-cell md-label="Client" md-sort-by="adresse_facturation_" style="width: 15%;">{{ item.adresse_facturation_ }}</md-table-cell>
-                                <md-table-cell md-label="MO" md-sort-by="montant_mo" style="width: 10%;">CHF {{ item.montant_mo }}</md-table-cell>
-                                <md-table-cell md-label="Mat Diff" md-sort-by="montant_mat_diff" style="width: 10%;">CHF {{ item.montant_mat_diff }}</md-table-cell>
-                                <md-table-cell md-label="RF" md-sort-by="montant_rf" style="width: 10%;">CHF {{ item.montant_rf }}</md-table-cell>
-                                <md-table-cell md-label="TVA" md-sort-by="montant_tva" style="width: 10%;">CHF {{ item.montant_tva }}</md-table-cell>
-                                <md-table-cell md-label="Total" md-sort-by="montant_total" style="width: 10%;">CHF {{ item.montant_total }}</md-table-cell>
+                                <md-table-cell md-label="MO" md-sort-by="montant_mo" style="width: 5%;">CHF {{ item.montant_mo }}</md-table-cell>
+                                <md-table-cell md-label="Mat Diff" md-sort-by="montant_mat_diff" style="width: 5%;">CHF {{ item.montant_mat_diff }}</md-table-cell>
+                                <md-table-cell md-label="RF" md-sort-by="montant_rf" style="width: 5%;">CHF {{ item.montant_rf }}</md-table-cell>
+                                <md-table-cell md-label="TVA" md-sort-by="montant_tva" style="width: 5%;">CHF {{ item.montant_tva }}</md-table-cell>
+                                <md-table-cell md-label="Total" md-sort-by="montant_total" style="width: 5%;">CHF {{ item.montant_total }}</md-table-cell>
                                 <md-table-cell md-label="Remarque" md-sort-by="remarque" style="width: 10%;">{{ item.remarque }}</md-table-cell>
                                 <md-table-cell md-label="Actions" class="actionsColumn" v-if="!affaireReadonly" style="width: 15%;">
                                     <md-button class="md-icon-button md-primary md-dense" @click="openFactureEdition(item)">

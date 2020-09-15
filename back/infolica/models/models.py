@@ -12,6 +12,8 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 
+from geoalchemy2 import Geometry
+
 import datetime
 from .constant import Constant
 from .meta import Base
@@ -78,14 +80,47 @@ class ClientMoralPersonne(Base):
     prenom = Column(Text, nullable=False)
 
 
+# class Plan(Base):
+#     __tablename__ = 'plan'
+#     __table_args__ = {'schema': 'infolica'}
+#     id = Column(BigInteger, primary_key=True, autoincrement=True)
+#     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
+#     nom = Column(Text, nullable=False)
+#     echelle = Column(BigInteger, nullable=False)
+#     chemin = Column(Text)
+
+
 class Plan(Base):
-    __tablename__ = 'plan'
+    __tablename__ = 'mo_distr_plan'
     __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
-    nom = Column(Text, nullable=False)
-    echelle = Column(BigInteger, nullable=False)
-    chemin = Column(Text)
+    idobj = Column(Text, primary_key=True)
+    id_obj2 = Column(Text)
+    planno = Column(Text)
+    typlan = Column(Text)
+    datmev = Column(Text)
+    statut = Column(Text)
+    echell = Column(Integer)
+    idborplan = Column(Text)
+    idrepplan = Column(Text)
+    base = Column(Text)
+    geom = Column(Geometry("POLYGON"))
+
+
+# class Plan(Base):
+#     __tablename__ = 'mo_distr_plan'
+#     __table_args__ = {'schema': 'infolica'}
+#     idobj = Column(Text(length=40), primary_key=True)
+#     id_obj2 = Column(Text(length=20))
+#     planno = Column(Text(length=5))
+#     typlan = Column(Text(length=15))
+#     datmev = Column(Text(length=25))
+#     statut = Column(Text(length=40))
+#     echell = Column(Integer)
+#     idborplan = Column(Text(length=40))
+#     idrepplan = Column(Text(length=40))
+#     base = Column(Text(length=50))
+#     geom = Column(Geometry("POLYGON"))
+
 
 
 class AffaireType(Base):
@@ -621,9 +656,9 @@ class Numero(Base):
     numero = Column(BigInteger, nullable=False)
     suffixe = Column(Text)
     etat_id = Column(BigInteger, ForeignKey(NumeroEtat.id), nullable=False)
-    plan_id = Column(BigInteger, ForeignKey(Plan.id))
+    # plan_id = Column(BigInteger, ForeignKey(Plan.id))
 
-    UniqueConstraint(cadastre_id, type_id, plan_id, numero)
+    UniqueConstraint(cadastre_id, type_id, numero)
 
 
 class ReservationNumeros(Base):
@@ -632,7 +667,7 @@ class ReservationNumeros(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
-    plan_id = Column(BigInteger, ForeignKey(Plan.id), nullable=False)
+    plan_id = Column(Text, ForeignKey(Plan.idobj), nullable=False)
     type_id = Column(BigInteger, ForeignKey(NumeroType.id), nullable=False)
     numero_de = Column(BigInteger)
     numero_a = Column(BigInteger)
@@ -795,7 +830,7 @@ class VNumeros(Base):
     diff_entree = Column(Date)
     diff_sortie = Column(Date)
     diff_affaire_id = Column(BigInteger)
-    plan_id = Column(BigInteger)
+    # plan_id = Column(BigInteger)
 
 
 class VNumerosAffaires(Base):
