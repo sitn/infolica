@@ -113,9 +113,9 @@ export default {
         formData.append("nom", this.affaire.nom || null);
       }
 
-      if (this.affaire.information !== null) {
-        formData.append("information", this.affaire.information || null);
-      }
+      // if (this.affaire.information !== null) {
+      //   formData.append("information", this.affaire.information || null);
+      // }
 
       if (this.affaire.vref !== null) {
         formData.append("vref", this.affaire.vref || null);

@@ -15,7 +15,7 @@ import os
 import json
 from datetime import datetime
 from docxtpl import DocxTemplate, RichText
-
+from shutil import copytree
 
 ###########################################################
 # AFFAIRE
@@ -169,8 +169,8 @@ def affaires_new_view(request):
     model.chemin = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
 
     # Copier le dossier __template pour une nouvelle affaire
-    # copy_tree(request.registry.settings['affaireTemplateDir'], model.chemin)
-    os.mkdir(model.chemin)
+    copytree(request.registry.settings['affaireTemplateDir'], model.chemin)
+
     return model.id
 
 

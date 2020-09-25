@@ -12,6 +12,8 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 
+from geoalchemy2 import Geometry
+
 import datetime
 from .constant import Constant
 from .meta import Base
@@ -78,14 +80,47 @@ class ClientMoralPersonne(Base):
     prenom = Column(Text, nullable=False)
 
 
+# class Plan(Base):
+#     __tablename__ = 'plan'
+#     __table_args__ = {'schema': 'infolica'}
+#     id = Column(BigInteger, primary_key=True, autoincrement=True)
+#     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
+#     nom = Column(Text, nullable=False)
+#     echelle = Column(BigInteger, nullable=False)
+#     chemin = Column(Text)
+
+
 class Plan(Base):
-    __tablename__ = 'plan'
+    __tablename__ = 'mo_distr_plan'
     __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
-    nom = Column(Text, nullable=False)
-    echelle = Column(BigInteger, nullable=False)
-    chemin = Column(Text)
+    idobj = Column(Text, primary_key=True)
+    id_obj2 = Column(Text)
+    planno = Column(Text)
+    typlan = Column(Text)
+    datmev = Column(Text)
+    statut = Column(Text)
+    echell = Column(Integer)
+    idborplan = Column(Text)
+    idrepplan = Column(Text)
+    base = Column(Text)
+    geom = Column(Geometry("POLYGON"))
+
+
+# class Plan(Base):
+#     __tablename__ = 'mo_distr_plan'
+#     __table_args__ = {'schema': 'infolica'}
+#     idobj = Column(Text(length=40), primary_key=True)
+#     id_obj2 = Column(Text(length=20))
+#     planno = Column(Text(length=5))
+#     typlan = Column(Text(length=15))
+#     datmev = Column(Text(length=25))
+#     statut = Column(Text(length=40))
+#     echell = Column(Integer)
+#     idborplan = Column(Text(length=40))
+#     idrepplan = Column(Text(length=40))
+#     base = Column(Text(length=50))
+#     geom = Column(Geometry("POLYGON"))
+
 
 
 class AffaireType(Base):
@@ -360,86 +395,241 @@ class ControlePPE(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-    doss_proj_1 = Column(Boolean)  # Faisabilité de la PPE (projet de division, Bien-fonds en vigueur?)
-    doss_proj_2 = Column(Boolean)  # Aucune PPE ne doit être déjà constituée sur le bien-fonds concerné
-    psit_1 = Column(Boolean)  # Contrôler la référence de la source des données cadastrales et de sa date d’émission
-    psit_2 = Column(Boolean)  # Nord, échelle 1:500
-    psit_3 = Column(Boolean)  # Contenu du plan (bâtiment projet) et graphisme de la couche bien-fonds
-    psit_4 = Column(Boolean)  # Contrôle de l'échelle (kutch)
-    psit_5 = Column(
-        Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …. – Plan de situation - XXX, architecte, signature, date)
-    psit_6 = Column(
-        Boolean)  # Droits de jouissance clairement définis (liseré traitillé même couleur que l'unité concernée) "Droit de jouissance au profit de l'unité …"
-    psit_7 = Column(
-        Boolean)  # Places de parcs extérieures numérotées (uniquement si les places ne sont pas constituées en droit de jouissance)
-    pamext_1 = Column(
-        Boolean)  # Ce plan n'est pas un document obligatoire, mais si l'architecte décide de le joindre avec le dossier le contrôle sera identique au plan de situation (Échelle ≠ 1:500)
-    pet_1 = Column(Boolean)  # Nord (pas obligatoire), Échelle 1:100
-    pet_2 = Column(Boolean)  # Contrôle de l'échelle (kutch)
-    pet_3 = Column(Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …, architecte, signature, date)
-    pet_4 = Column(Boolean)  # Cotes générales
-    pet_5 = Column(
-        Boolean)  # Informations superflues à supprimer (surfaces des pièces, matériaux, limites de bien-fonds etc.)
-    pet_6 = Column(Boolean)  # Appellations des locaux
-    pet_7 = Column(
-        Boolean)  # Faisabilité d'unité d'étage: Un tout indépendant; Local physiquement fermé (surface minimum); Certain degré d'autonomie économique; Accès propre
-    pet_8 = Column(
-        Boolean)  # Distribution lettres unités (de bas en haut / A, B, … Z, AA, AB etc.). Le "i" n'est pas utilisé!
-    pet_9 = Column(
-        Boolean)  # Les annexes ont les mêmes lettres et mêmes couleurs de liserés que les unités concernées. Chiffres arabe (EX A1, B3, D1 etc.)
-    pet_10 = Column(
-        Boolean)  # Périmètres (liserés) des unités d'étages clairement dessinés (zone tampon / éviter la couleur jaune)
-    pet_11 = Column(
-        Boolean)  # Murs porteurs, piliers, poutres, gaines techniques etc ne font pas parties des parties exclusives -> parties communes -> liserés de couleur
-    pet_12 = Column(
-        Boolean)  # Conditions pièce -> appellation "chambre": Surface minimum: 10m2; Surface éclairage ≥ 1/8ème surface plancher; Local physiquement fermé
-    pet_13 = Column(Boolean)  # La pièce ne peut pas être considérée comme chambre -> "disponible"
-    pet_14 = Column(Boolean)  # Y a-t-il une surface plancher sous l'escalier ou un réduit (local fermé)
-    pet_15 = Column(
-        Boolean)  # Les vides (escaliers, vide sur chambres, etc.) doivent être hachurés avec la même couleur que l'unité concernée
-    pet_16 = Column(
-        Boolean)  # Accès aux parties communes par des parties privées (rares exceptions -> servitude de passage)
-    pet_17 = Column(
-        Boolean)  # Les balcons font partie de l'unité ou sont des droits de jouissance (parties construites)
-    pet_18 = Column(Boolean)  # Autres bâtiments sur le bien-fonds concerné -> plans d'étages, façades, coupes
-    pet_19 = Column(Boolean)  # Concordance des appellations sur les plans d'étages avec les formules de légende
-    pet_20 = Column(Boolean)  # Lignes de coupes sur tous les plans d'étages
-    pet_21 = Column(Boolean)  # Surfaces PDF Viewer (tolérance jusqu'à 2 %)
-    pco_1 = Column(Boolean)  # Échelle 1:100
-    pco_2 = Column(Boolean)  # Sans liseré ni lettre d'unité
-    pco_3 = Column(Boolean)  # Contrôle de l'échelle (kutch)
-    pco_4 = Column(Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …., architecte, signature, date)
-    pco_5 = Column(
-        Boolean)  # Les appellations, si notées sur les plans de coupe, doivent correspondre avec les appellations des plans d'étages
-    pco_6 = Column(Boolean)  # Concordance de la / les coupe(s) avec les plans d'étages (par plaquage)
-    pco_7 = Column(Boolean)  # Informations superflues à supprimer (surfaces des pièces, matériaux, etc.)
-    facade_1 = Column(Boolean)  # Échelle 1:100
-    facade_2 = Column(Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …., architecte, signature, date)
-    facade_3 = Column(Boolean)  # Sans liseré ni lettre d'unité
-    facade_4 = Column(
-        Boolean)  # Concordance avec tous les plans d'étages (ouvertures, portes, fenêtres, velux, cheminées) -> plaquage
-    form_leg_1 = Column(Boolean)  # Titres (Cadastre de …– Plan de situation – XXX - PPE sur le bien-fonds ….)
-    form_leg_2 = Column(
-        Boolean)  # Situation de l'unité juridique dans l'espace (appartement ouest, extrême ouest, N° entrée etc.)
-    form_leg_3 = Column(
-        Boolean)  # Étages clairement définis (1er étage, niveau -1, etc.) concordance avec les plans d'étages
-    form_leg_4 = Column(
-        Boolean)  # Concordance entre les appellations des pièces sur les plans d'étages avec la formule de légende
-    form_leg_5 = Column(Boolean)  # Les éléments de liaison doivent être notés (escalier, escalier escamotable)
-    form_leg_6 = Column(Boolean)  # Appellations avec quantité (1 cuisine, 3 chambres etc.)
-    form_leg_7 = Column(Boolean)  # Mise en page (unités en duplex, Annexes etc.)
-    form_leg_8 = Column(Boolean)  # Concordance surfaces architecte avec surfaces obtenues par PDF Viewer (tol 2%)
-    form_leg_9 = Column(Boolean)  # Récapitulatif
-    fact_1 = Column(Boolean)  # 1 mandat
-    fact_2 = Column(Boolean)  # X unités simples ou complexes (unités juridiques, annexes)
-    fact_3 = Column(
-        Boolean)  # Droits de jouissance X surfaces (seulement si les surfaces sont notées sur les plans d'étage)
-    fact_4 = Column(Boolean)  # Régie (séances, renseignements, contrôle dossier supplémentaire etc)
-    fact_5 = Column(Boolean)  # Données numériques fournies ou plan de situation
-    fact_6 = Column(Boolean)  # Report des montants de la facture sur le formulaire de demande
-    fact_7 = Column(Boolean)  # Impression facture -> datée et signée
-    visa = Column(BigInteger, ForeignKey(Operateur.id))
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
     date = Column(Date)
+    gen_1 = Column(Boolean)
+    gen_2 = Column(Boolean)
+    gen_3 = Column(Boolean)
+    gen_4 = Column(Boolean)
+    gen_5 = Column(Boolean)
+    gen_6 = Column(Boolean)
+    gen_7 = Column(Boolean)
+    gen_8 = Column(Boolean)
+    gen_9 = Column(Boolean)
+    gen_remarque = Column(Text)
+    dos_a = Column(Boolean)
+    dos_b = Column(Boolean)
+    dos_c = Column(Boolean)
+    dos_d = Column(Boolean)
+    dos_e = Column(Boolean)
+    dos_f = Column(Boolean)
+    dos_g = Column(Boolean)
+    dos_h = Column(Boolean)
+    dos_remarque = Column(Text)
+    jur_a = Column(Boolean)
+    jur_b = Column(Boolean)
+    jur_c = Column(Boolean)
+    jur_d = Column(Boolean)
+    jur_remarque = Column(Text)
+    psit_a = Column(Boolean)
+    psit_b = Column(Boolean)
+    psit_c = Column(Boolean)
+    psit_d = Column(Boolean)
+    psit_e = Column(Boolean)
+    psit_f = Column(Boolean)
+    psit_g = Column(Boolean)
+    psit_h = Column(Boolean)
+    psit_i = Column(Boolean)
+    psit_j = Column(Boolean)
+    psit_k = Column(Boolean)
+    psit_l = Column(Boolean)
+    psit_m = Column(Boolean)
+    psit_n = Column(Boolean)
+    psit_o = Column(Boolean)
+    psit_p = Column(Boolean)
+    psit_q = Column(Boolean)
+    psit_r = Column(Boolean)
+    psit_remarque = Column(Text)
+    pet_a = Column(Boolean)
+    pet_b = Column(Boolean)
+    pet_c = Column(Boolean)
+    pet_d = Column(Boolean)
+    pet_e = Column(Boolean)
+    pet_f = Column(Boolean)
+    pet_g = Column(Boolean)
+    pet_h = Column(Boolean)
+    pet_i = Column(Boolean)
+    pet_j = Column(Boolean)
+    pet_k = Column(Boolean)
+    pet_l = Column(Boolean)
+    pet_m = Column(Boolean)
+    pet_n = Column(Boolean)
+    pet_o = Column(Boolean)
+    pet_p = Column(Boolean)
+    pet_q = Column(Boolean)
+    pet_r = Column(Boolean)
+    pet_remarque = Column(Text)
+    cart_a = Column(Boolean)
+    cart_b = Column(Boolean)
+    cart_c = Column(Boolean)
+    cart_d = Column(Boolean)
+    cart_e = Column(Boolean)
+    cart_f = Column(Boolean)
+    cart_g = Column(Boolean)
+    cart_h = Column(Boolean)
+    cart_i = Column(Boolean)
+    cart_j = Column(Boolean)
+    cart_remarque = Column(Text)
+    uet_a = Column(Boolean)
+    uet_b = Column(Boolean)
+    uet_c = Column(Boolean)
+    uet_d = Column(Boolean)
+    uet_e = Column(Boolean)
+    uet_f = Column(Boolean)
+    uet_g = Column(Boolean)
+    uet_h = Column(Boolean)
+    uet_i = Column(Boolean)
+    uet_j = Column(Boolean)
+    uet_k = Column(Boolean)
+    uet_l = Column(Boolean)
+    uet_m = Column(Boolean)
+    uet_n = Column(Boolean)
+    uet_o = Column(Boolean)
+    uet_p = Column(Boolean)
+    uet_q = Column(Boolean)
+    uet_r = Column(Boolean)
+    uet_s = Column(Boolean)
+    uet_t = Column(Boolean)
+    uet_u = Column(Boolean)
+    uet_v = Column(Boolean)
+    uet_w = Column(Boolean)
+    uet_x = Column(Boolean)
+    uet_y = Column(Boolean)
+    uet_z = Column(Boolean)
+    uet_aa = Column(Boolean)
+    uet_ab = Column(Boolean)
+    uet_ac = Column(Boolean)
+    uet_ad = Column(Boolean)
+    uet_ae = Column(Boolean)
+    uet_aremarque = Column(Text)
+    dup_a = Column(Boolean)
+    dup_b = Column(Boolean)
+    dup_c = Column(Boolean)
+    dup_d = Column(Boolean)
+    dup_e = Column(Boolean)
+    dup_f = Column(Boolean)
+    dup_g = Column(Boolean)
+    dup_h = Column(Boolean)
+    dup_i = Column(Boolean)
+    dup_remarque = Column(Text)
+    leg_a = Column(Boolean)
+    leg_b = Column(Boolean)
+    leg_c = Column(Boolean)
+    leg_d = Column(Boolean)
+    leg_e = Column(Boolean)
+    leg_f = Column(Boolean)
+    leg_g = Column(Boolean)
+    leg_h = Column(Boolean)
+    leg_i = Column(Boolean)
+    leg_j = Column(Boolean)
+    leg_k = Column(Boolean)
+    leg_l = Column(Boolean)
+    leg_m = Column(Boolean)
+    leg_n = Column(Boolean)
+    leg_o = Column(Boolean)
+    leg_p = Column(Boolean)
+    leg_q = Column(Boolean)
+    leg_r = Column(Boolean)
+    leg_s = Column(Boolean)
+    leg_t = Column(Boolean)
+    leg_u = Column(Boolean)
+    leg_v = Column(Boolean)
+    leg_w = Column(Boolean)
+    leg_x = Column(Boolean)
+    leg_y = Column(Boolean)
+    leg_remarque = Column(Text)
+    balsurf_a = Column(Boolean)
+    balsurf_b = Column(Boolean)
+    balsurf_c = Column(Boolean)
+    balsurf_d = Column(Boolean)
+    balsurf_remarque = Column(Text)
+
+
+# class ControlePPE(Base):
+#     __tablename__ = 'controle_ppe'
+#     __table_args__ = {'schema': 'infolica'}
+#     id = Column(BigInteger, primary_key=True, autoincrement=True)
+#     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
+#     doss_proj_1 = Column(Boolean)  # Faisabilité de la PPE (projet de division, Bien-fonds en vigueur?)
+#     doss_proj_2 = Column(Boolean)  # Aucune PPE ne doit être déjà constituée sur le bien-fonds concerné
+#     psit_1 = Column(Boolean)  # Contrôler la référence de la source des données cadastrales et de sa date d’émission
+#     psit_2 = Column(Boolean)  # Nord, échelle 1:500
+#     psit_3 = Column(Boolean)  # Contenu du plan (bâtiment projet) et graphisme de la couche bien-fonds
+#     psit_4 = Column(Boolean)  # Contrôle de l'échelle (kutch)
+#     psit_5 = Column(
+#         Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …. – Plan de situation - XXX, architecte, signature, date)
+#     psit_6 = Column(
+#         Boolean)  # Droits de jouissance clairement définis (liseré traitillé même couleur que l'unité concernée) "Droit de jouissance au profit de l'unité …"
+#     psit_7 = Column(
+#         Boolean)  # Places de parcs extérieures numérotées (uniquement si les places ne sont pas constituées en droit de jouissance)
+#     pamext_1 = Column(
+#         Boolean)  # Ce plan n'est pas un document obligatoire, mais si l'architecte décide de le joindre avec le dossier le contrôle sera identique au plan de situation (Échelle ≠ 1:500)
+#     pet_1 = Column(Boolean)  # Nord (pas obligatoire), Échelle 1:100
+#     pet_2 = Column(Boolean)  # Contrôle de l'échelle (kutch)
+#     pet_3 = Column(Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …, architecte, signature, date)
+#     pet_4 = Column(Boolean)  # Cotes générales
+#     pet_5 = Column(
+#         Boolean)  # Informations superflues à supprimer (surfaces des pièces, matériaux, limites de bien-fonds etc.)
+#     pet_6 = Column(Boolean)  # Appellations des locaux
+#     pet_7 = Column(
+#         Boolean)  # Faisabilité d'unité d'étage: Un tout indépendant; Local physiquement fermé (surface minimum); Certain degré d'autonomie économique; Accès propre
+#     pet_8 = Column(
+#         Boolean)  # Distribution lettres unités (de bas en haut / A, B, … Z, AA, AB etc.). Le "i" n'est pas utilisé!
+#     pet_9 = Column(
+#         Boolean)  # Les annexes ont les mêmes lettres et mêmes couleurs de liserés que les unités concernées. Chiffres arabe (EX A1, B3, D1 etc.)
+#     pet_10 = Column(
+#         Boolean)  # Périmètres (liserés) des unités d'étages clairement dessinés (zone tampon / éviter la couleur jaune)
+#     pet_11 = Column(
+#         Boolean)  # Murs porteurs, piliers, poutres, gaines techniques etc ne font pas parties des parties exclusives -> parties communes -> liserés de couleur
+#     pet_12 = Column(
+#         Boolean)  # Conditions pièce -> appellation "chambre": Surface minimum: 10m2; Surface éclairage ≥ 1/8ème surface plancher; Local physiquement fermé
+#     pet_13 = Column(Boolean)  # La pièce ne peut pas être considérée comme chambre -> "disponible"
+#     pet_14 = Column(Boolean)  # Y a-t-il une surface plancher sous l'escalier ou un réduit (local fermé)
+#     pet_15 = Column(
+#         Boolean)  # Les vides (escaliers, vide sur chambres, etc.) doivent être hachurés avec la même couleur que l'unité concernée
+#     pet_16 = Column(
+#         Boolean)  # Accès aux parties communes par des parties privées (rares exceptions -> servitude de passage)
+#     pet_17 = Column(
+#         Boolean)  # Les balcons font partie de l'unité ou sont des droits de jouissance (parties construites)
+#     pet_18 = Column(Boolean)  # Autres bâtiments sur le bien-fonds concerné -> plans d'étages, façades, coupes
+#     pet_19 = Column(Boolean)  # Concordance des appellations sur les plans d'étages avec les formules de légende
+#     pet_20 = Column(Boolean)  # Lignes de coupes sur tous les plans d'étages
+#     pet_21 = Column(Boolean)  # Surfaces PDF Viewer (tolérance jusqu'à 2 %)
+#     pco_1 = Column(Boolean)  # Échelle 1:100
+#     pco_2 = Column(Boolean)  # Sans liseré ni lettre d'unité
+#     pco_3 = Column(Boolean)  # Contrôle de l'échelle (kutch)
+#     pco_4 = Column(Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …., architecte, signature, date)
+#     pco_5 = Column(
+#         Boolean)  # Les appellations, si notées sur les plans de coupe, doivent correspondre avec les appellations des plans d'étages
+#     pco_6 = Column(Boolean)  # Concordance de la / les coupe(s) avec les plans d'étages (par plaquage)
+#     pco_7 = Column(Boolean)  # Informations superflues à supprimer (surfaces des pièces, matériaux, etc.)
+#     facade_1 = Column(Boolean)  # Échelle 1:100
+#     facade_2 = Column(Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …., architecte, signature, date)
+#     facade_3 = Column(Boolean)  # Sans liseré ni lettre d'unité
+#     facade_4 = Column(
+#         Boolean)  # Concordance avec tous les plans d'étages (ouvertures, portes, fenêtres, velux, cheminées) -> plaquage
+#     form_leg_1 = Column(Boolean)  # Titres (Cadastre de …– Plan de situation – XXX - PPE sur le bien-fonds ….)
+#     form_leg_2 = Column(
+#         Boolean)  # Situation de l'unité juridique dans l'espace (appartement ouest, extrême ouest, N° entrée etc.)
+#     form_leg_3 = Column(
+#         Boolean)  # Étages clairement définis (1er étage, niveau -1, etc.) concordance avec les plans d'étages
+#     form_leg_4 = Column(
+#         Boolean)  # Concordance entre les appellations des pièces sur les plans d'étages avec la formule de légende
+#     form_leg_5 = Column(Boolean)  # Les éléments de liaison doivent être notés (escalier, escalier escamotable)
+#     form_leg_6 = Column(Boolean)  # Appellations avec quantité (1 cuisine, 3 chambres etc.)
+#     form_leg_7 = Column(Boolean)  # Mise en page (unités en duplex, Annexes etc.)
+#     form_leg_8 = Column(Boolean)  # Concordance surfaces architecte avec surfaces obtenues par PDF Viewer (tol 2%)
+#     form_leg_9 = Column(Boolean)  # Récapitulatif
+#     fact_1 = Column(Boolean)  # 1 mandat
+#     fact_2 = Column(Boolean)  # X unités simples ou complexes (unités juridiques, annexes)
+#     fact_3 = Column(
+#         Boolean)  # Droits de jouissance X surfaces (seulement si les surfaces sont notées sur les plans d'étage)
+#     fact_4 = Column(Boolean)  # Régie (séances, renseignements, contrôle dossier supplémentaire etc)
+#     fact_5 = Column(Boolean)  # Données numériques fournies ou plan de situation
+#     fact_6 = Column(Boolean)  # Report des montants de la facture sur le formulaire de demande
+#     fact_7 = Column(Boolean)  # Impression facture -> datée et signée
+#     visa = Column(BigInteger, ForeignKey(Operateur.id))
+#     date = Column(Date)
 
 
 class NumeroType(Base):
@@ -466,9 +656,24 @@ class Numero(Base):
     numero = Column(BigInteger, nullable=False)
     suffixe = Column(Text)
     etat_id = Column(BigInteger, ForeignKey(NumeroEtat.id), nullable=False)
-    plan_id = Column(BigInteger, ForeignKey(Plan.id))
+    # plan_id = Column(BigInteger, ForeignKey(Plan.id))
 
-    UniqueConstraint(cadastre_id, type_id, plan_id, numero)
+    UniqueConstraint(cadastre_id, type_id, numero)
+
+
+class ReservationNumeros(Base):
+    __tablename__ = 'reservation_numeros'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
+    cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
+    plan_id = Column(Text, ForeignKey(Plan.idobj), nullable=False)
+    type_id = Column(BigInteger, ForeignKey(NumeroType.id), nullable=False)
+    numero_de = Column(BigInteger)
+    numero_a = Column(BigInteger)
+    date = Column(Date, default=datetime.datetime.utcnow)
+    remarque = Column(Text)
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
 
 
 class NumeroEtatHisto(Base):
@@ -542,13 +747,16 @@ class Service(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     service = Column(Text, nullable=False)
     abreviation = Column(Text, nullable=False)
+    titre = Column(Text)
     nom = Column(Text)
     prenom = Column(Text)
     adresse = Column(Text)
+    case_postale = Column(Text)
     npa = Column(Text)
     localite = Column(Text)
     telephone = Column(Text)
     mail = Column(Text)
+    ordre = Column(BigInteger)
 
 
 class PreavisType(Base):
@@ -602,11 +810,13 @@ class FonctionRole(Base):
     role_id = Column(BigInteger, ForeignKey(Role.id), nullable=False)
 
 # ======================== VUES ========================
+# Ajouter l'information
 
 
 class VNumeros(Base):
     __tablename__ = 'v_numeros'
-    __table_args__ = {'schema': 'infolica'}
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     cadastre = Column(Text)
     cadastre_id = Column(BigInteger)
@@ -620,12 +830,13 @@ class VNumeros(Base):
     diff_entree = Column(Date)
     diff_sortie = Column(Date)
     diff_affaire_id = Column(BigInteger)
-    plan_id = Column(BigInteger)
+    # plan_id = Column(BigInteger)
 
 
 class VNumerosAffaires(Base):
     __tablename__ = 'v_numeros_affaires'
-    __table_args__ = {'schema': 'infolica'}
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     numero_id = Column(BigInteger)
     affaire_id = Column(BigInteger)
@@ -658,7 +869,8 @@ class VNumerosAffaires(Base):
 
 class VAffaire(Base):
     __tablename__ = 'v_affaires'
-    __table_args__ = {'schema': 'infolica'}
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     no_access = Column(Text)
     nom = Column(Text)
@@ -730,7 +942,8 @@ class VAffaire(Base):
 
 class VEnvois(Base):
     __tablename__ = 'v_envois'
-    __table_args__ = {'schema': 'infolica'}
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger)
     affaire_nom = Column(Text)
@@ -747,7 +960,8 @@ class VEnvois(Base):
 
 class VEtapesAffaires(Base):
     __tablename__ = 'v_etapes_affaires'
-    __table_args__ = {'schema': 'infolica'}
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
     affaire_id = Column(BigInteger, primary_key=True)
     affaire_nom = Column(Text)
     etape = Column(Text, primary_key=True)
@@ -760,7 +974,8 @@ class VEtapesAffaires(Base):
 
 class VAffairesPreavis(Base):
     __tablename__ = 'v_affaires_preavis'
-    __table_args__ = {'schema': 'infolica'}
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger)
     service = Column(Text)
@@ -774,7 +989,8 @@ class VAffairesPreavis(Base):
 
 class VTableauBord(Base):
     __tablename__ = 'v_tableau_de_bord'
-    __table_args__ = {'schema': 'infolica'}
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
     affaire_id = Column(BigInteger, primary_key=True)
     affaire_nom = Column(Text)
     delai = Column(Integer)
@@ -794,7 +1010,8 @@ class VTableauBord(Base):
 
 class VEmolumentsFactures(Base):
     __tablename__ = 'v_emoluments_factures'
-    __table_args__ = {'schema': 'infolica'}
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
     facture_id = Column(BigInteger, primary_key=True)
     domaine = Column(Text)
     categorie = Column(Text)
@@ -810,7 +1027,8 @@ class VEmolumentsFactures(Base):
 
 class VNumerosRelations(Base):
     __tablename__ = 'v_numeros_relations'
-    __table_args__ = {'schema': 'infolica'}
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
     affaire_id = Column(BigInteger)
     numero_relation_id = Column(BigInteger, primary_key=True)
     numero_base_id = Column(BigInteger)
@@ -839,7 +1057,8 @@ class VNumerosRelations(Base):
 
 class VDocumentsAffaires(Base):
     __tablename__ = 'v_documents_affaires'
-    __table_args__ = {'schema': 'infolica'}
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     nom = Column(Text)
     chemin = Column(Text)
@@ -850,7 +1069,8 @@ class VDocumentsAffaires(Base):
 
 class VFactures(Base):
     __tablename__ = 'v_factures'
-    __table_args__ = {'schema': 'infolica'}
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger)
     affaire_vref = Column(Text)

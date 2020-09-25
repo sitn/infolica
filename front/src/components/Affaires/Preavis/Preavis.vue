@@ -12,7 +12,9 @@ import moment from "moment";
 export default {
   name: "preavis",
   mixins: [validationMixin],
-  props: {},
+  props: {
+    affaire: {}
+  },
   components: {},
   data: () => {
     return {
@@ -118,7 +120,7 @@ export default {
         .then(response => {
           if (response.data) {
             this.services_liste_bk = response.data;
-            this.services_liste = response.data.map(x => ({
+            this.services_liste = response.data.filter(x => x.ordre !== null).map(x => ({
               id: x.id,
               nom: x.abreviation,
               toLowerCase: () => x.abreviation.toLowerCase(),
@@ -302,21 +304,37 @@ export default {
      */
     async downloadModel(service_id) {
       let form = {};
+      
+      service_id = Number(service_id)
+      if (service_id === Number(process.env.VUE_APP_SERVICE_SCAT)) {
+        // SCAT, adresser au service de l'urbanisme des villes si besoin
+        if (this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_NEUCHATEL_ID) || this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_LA_COUDRE_ID)) {
+          service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_NEUCHATEL_ID);
+        }
+        else if (this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_LA_CHAUX_DE_FONDS_ID) || this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_LES_EPLATURES_ID)) {
+          service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_LA_CHAUX_DE_FONDS_ID);
+        }
+        else if (this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_LE_LOCLE_ID)) {
+          service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_LE_LOCLE_ID);
+        }
+        alert(service_id)
+      }
 
       const service_ = this.services_liste_bk.filter(x => x.id === service_id).pop();
       form.adresse_service = [
         service_.service,
+        [service_.titre, service_.prenom, service_.nom].filter(Boolean).join(" ") !== ""? "À l'att. de " + [service_.titre, service_.prenom, service_.nom].filter(Boolean).join(" "): null, 
         service_.adresse,
+        service_.case_postale,
         [service_.npa, service_.localite].filter(Boolean).join(" ")
       ].filter(Boolean).join("\n");
 
-      const affaire_ = this.$parent.affaire;
       form.adresse_demandeur = [
-        affaire_.client_commande_entreprise,
-        [affaire_.client_commande_titre, affaire_.client_commande_prenom, affaire_.client_commande_nom].filter(Boolean).join(" "),
-        affaire_.client_commande_adresse,
-        affaire_.client_commande_case_postale,
-        [affaire_.client_commande_npa, affaire_.client_commande_localite].filter(Boolean).join(" ")
+        this.affaire.client_commande_entreprise,
+        [this.affaire.client_commande_titre, this.affaire.client_commande_prenom, this.affaire.client_commande_nom].filter(Boolean).join(" "),
+        this.affaire.client_commande_adresse,
+        this.affaire.client_commande_case_postale,
+        [this.affaire.client_commande_npa, this.affaire.client_commande_localite].filter(Boolean).join(" ")
       ].filter(Boolean).join("\n");
       
       let observation = {
@@ -334,11 +352,11 @@ export default {
       formData.append("values", JSON.stringify({
         ADRESSE_SERVICE: form.adresse_service,
         DATE_ENVOI: String(getCurrentDate()),
-        NREF: affaire_.id,
-        DATE_DEMANDE: String(affaire_.date_ouverture),
+        NREF: this.affaire.id,
+        DATE_DEMANDE: String(this.affaire.date_ouverture),
         ADRESSE_DEMANDEUR: form.adresse_demandeur,
-        CADASTRE: affaire_.cadastre,
-        CONCERNE: affaire_.nom,
+        CADASTRE: this.affaire.cadastre,
+        CONCERNE: this.affaire.nom,
         OBSERVATION_TITRE: observation.titre,
         OBSERVATION: observation.contenu,
         ANNEXES: ""
@@ -361,6 +379,3 @@ export default {
   }
 };
 </script>
-
-
-

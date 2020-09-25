@@ -40,7 +40,7 @@ def services_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    records = request.dbsession.query(Service).all()
+    records = request.dbsession.query(Service).order_by(Service.ordre.asc()).all()
 
     return Utils.serialize_many(records)
 
