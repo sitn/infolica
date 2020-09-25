@@ -153,6 +153,7 @@ cadastres_Sauge_StAubin_id = 22,67
 # Accès aux dossiers
 ######################################################################################
 affaires_directory = /*TO COMPLETE*/
+affaireTemplateDir = /*TO COMPLETE*/
 access_control_allow_origin = http://127.0.0.1:81
 mails_templates_directory = /*TO COMPLETE*/
 temporary_directory = /*TO COMPLETE*/
