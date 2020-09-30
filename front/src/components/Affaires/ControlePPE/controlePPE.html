@@ -10,7 +10,7 @@
                 </md-card-expand-trigger>
                 Contrôle PPE
                 <md-button class="md-primary newControlePPEBtn" v-on:click="newControlePPE()"
-                    v-if="needToCreateControlePPE && showNewControlePPEBtn && !affaireReadonly">Créer le contrôle</md-button>
+                    v-if="showNewControlePPEBtn && !affaireReadonly">Nouveau contrôle</md-button>
             </div>
         </md-card-header>
 
@@ -20,6 +20,16 @@
                 <md-card-content v-bind:class="{ disabledElement: affaireReadonly }">
                     <div v-if="controlePPE.id">
                         <div class="md-title">Checklist de contrôle des dossiers PPE</div>
+                        <p>
+                            Contrôle du :
+                            <md-field style="width: 300px; display: inline-block">
+                                <md-select v-model="currentControle" @md-selected="updateControleByDate" md-dense>
+                                    <md-option v-for="item in controlePPE_dates_liste" :key="item.id" :value="item.id">{{ item.nom }}</md-option>
+                                </md-select>
+                            </md-field> 
+                        </p>
+                        
+                        <md-checkbox class="md-primary" v-model="check_all" @change="updateCheckboxesState">Tout cocher</md-checkbox>
 
                         <div class="md-layout md-gutter md-alignment-top-space-between">
                             <div class="md-layout-item md-size-30 md-small-size-50 md-card">
@@ -207,17 +217,19 @@
                                 <md-checkbox class="md-primary" v-model="controlePPE.balsurf_d">9.d) Surfaces échangéess</md-checkbox>
                                 <md-field><label>Remarques</label><md-textarea md-autogrow v-model="controlePPE.balsurf_remarque"></md-textarea></md-field>
                             </div>
-                        </div>
 
-                        <div class="md-alignment-bottom-center">
-                            <div class="md-layout-item md-size-30 md-alignment-center-bottom-center">
-                                <md-datepicker v-model="controlePPE.date" md-immediately></md-datepicker>
+                            <div class="md-layout-item md-size-20 md-small-size-20" style="position: absolute; bottom: 80px; right: 10px;">
+                                <div class="md-alignment-bottom-right">
 
-                                <md-autocomplete v-model="controlePPE.operateur" :md-options="operateurs_liste" @md-changed="getFormOperateur" md-dense>
-                                    <label>Opérateur</label>
-                                </md-autocomplete>
+                                    <md-datepicker v-model="controlePPE.date" md-immediately></md-datepicker>
+
+                                    <md-autocomplete v-model="controlePPE.operateur" :md-options="operateurs_liste" @md-changed="getFormOperateur" md-dense>
+                                        <label>Opérateur</label>
+                                    </md-autocomplete>
+                                </div>
                             </div>
                         </div>
+
 
                         <div class="md-layout md-alignment-bottom-right">
                             <md-button class="md-accent md-raised" v-on:click="onCancelEditControlePPE" v-if="!affaireReadonly">

@@ -13,13 +13,15 @@ export default {
   name: "ControlePPE",
   props: {},
   data: () => ({
-    showNewControlePPEBtn: false,
     affaireReadonly: true,
-    needToCreateControlePPE: false,
-    operateurs_liste: [],
-    showCreatedControlePPE: false,
+    check_all: false,
     controlePPE: {},
     controlePPE_all: [],
+    controlePPE_dates_liste: [],
+    currentControle: null,
+    operateurs_liste: [],
+    showCreatedControlePPE: false,
+    showNewControlePPEBtn: false,
   }),
 
   methods: {
@@ -40,18 +42,24 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
-            this.controlePPE_all = response.data; // keep in memory all controles PPE
-            this.controlePPE = this.controlePPE_all[this.controlePPE_all.length - 1] // only show the last one
+            let tmp = response.data;
 
-            if (this.controlePPE.operateur_id) {
-              this.controlePPE.operateur = this.operateurs_liste.filter(x => x.id === this.controlePPE.operateur_id)[0];
-            }
-            if (this.controlePPE.date) {
-              this.controlePPE.date = moment(this.controlePPE.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
-            }
-          } else {
-            // Il n'existe pas encore de suivi de mandat pour cette affaire
-            this.needToCreateControlePPE = true;
+            tmp.forEach(x => {
+              if (x.operateur_id) {
+                x.operateur = this.operateurs_liste.filter(y => y.id === x.operateur_id)[0];
+              }
+              if (x.date) {
+                x.date = moment(x.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+              }
+              
+              x.nom_ = [x.id, x.date, x.operateur.nom].join(" - ")
+            });
+
+            this.controlePPE_all = tmp; // keep in memory all controles PPE
+            this.controlePPE_dates_liste = stringifyAutocomplete(tmp, "nom_");
+
+            this.controlePPE = this.controlePPE_all[this.controlePPE_all.length - 1] // only show the last one
+            this.currentControle = this.controlePPE.id;
           }
         })
         .catch(err => {
@@ -107,7 +115,6 @@ export default {
           if (response) {
             this.$root.$emit("ShowMessage", "Le formulaire de contrôle a été créé avec succès")
             this.searchControlePPE();
-            this.needToCreateControlePPE = false;
           }
         })
         .catch(err => {
@@ -299,6 +306,24 @@ export default {
     getFormOperateur() {
       if (typeof this.controlePPE.operateur === "string") {
         this.controlePPE.operateur = this.operateurs_liste.filter(x => x.nom === this.controlePPE.operateur)[0];
+      }
+    },
+
+    /**
+     * Update view controle formulaire by date
+     */
+    updateControleByDate(controle_id) {
+      this.controlePPE = this.controlePPE_all.filter(x => x.id === controle_id)[0];
+    },
+
+    /**
+     * Update state of all checkboxes of formulaire
+     */
+    updateCheckboxesState(state) {
+      for (const key in this.controlePPE) {
+        if (key !== "id" && key !== "date" && key !== "operateur" && key !== "affaire_id" && !key.includes("remarque")) {
+          this.controlePPE[key] = state;
+        }
       }
     }
   },
