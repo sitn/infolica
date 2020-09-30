@@ -50,12 +50,12 @@ def controles_ppe_by_affaire_id_view(request):
     # Get controle mutation id
     affaire_id = request.id = request.matchdict['id']
     query = request.dbsession.query(ControlePPE).filter(
-        ControlePPE.affaire_id == affaire_id).first()
+        ControlePPE.affaire_id == affaire_id).all()
 
     if query is None:
         return None
 
-    return Utils.serialize_one(query)
+    return Utils.serialize_many(query)
 
 
 @view_config(route_name='controles_ppe', request_method='POST', renderer='json')
