@@ -30,6 +30,7 @@ export default {
       affaire_id: null,
       affaire_numeros_all: [],
       affaire_numeros_anciens: [],
+      affaire_numeros_mo: [],
       affaire_numeros_nouveaux: [],
       affaire_numeros_nouveaux_mo: [],
       affaireReadonly: true,
@@ -111,7 +112,7 @@ export default {
     async searchAffaireNewNumerosMo() {
       this.$http.get(
         process.env.VUE_APP_API_URL +
-        process.env.VUE_APP_AFFAIRE_NEW_NUMEROS_MO_ENDPOINT +
+        process.env.VUE_APP_AFFAIRE_NUMEROS_MO_ENDPOINT +
         this.$route.params.id,
         {
           withCredentials: true,
