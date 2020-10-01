@@ -231,7 +231,7 @@
                         </div>
 
 
-                        <div class="md-layout md-alignment-bottom-right">
+                        <div class="md-layout md-alignment-bottom-right" v-if="showCancelSaveBtn">
                             <md-button class="md-accent md-raised" v-on:click="onCancelEditControlePPE" v-if="!affaireReadonly">
                                 Annuler
                             </md-button>
