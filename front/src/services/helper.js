@@ -182,8 +182,8 @@ export const stringifyAutocomplete = function(liste, nom="nom") {
     return liste.map(x => ({
         id: x.id,
         nom: String(x[nom]),
-        toString: () => String(x[nom]).toString(),
-        toLowerCase: () => String(x[nom]).toLowerCase()
+        toLowerCase: () => String(x[nom]).toLowerCase(),
+        toString: () => String(x[nom])
     }));
 };
 
