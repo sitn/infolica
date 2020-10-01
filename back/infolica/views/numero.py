@@ -279,10 +279,10 @@ def affaire_numeros_view(request):
     return Utils.serialize_many(records)
 
 
-@view_config(route_name='affaire_new_numeros_MO_by_affaire_id', request_method='GET', renderer='json')
+@view_config(route_name='affaire_numeros_MO_by_affaire_id', request_method='GET', renderer='json')
 def affaire_new_numeros_mo_view(request):
     """
-    Return all new numeros MO in affaire
+    Return all numeros MO in affaire
     """
     # Check connected
     if not Utils.check_connected(request):
@@ -294,14 +294,22 @@ def affaire_new_numeros_mo_view(request):
     settings = request.registry.settings
 
     numeros_mo_type_id = [
-        settings['numero_pfp3_id'],
-        settings['numero_bat_id'],
-        settings['numero_pcs_id'],
-        settings['numero_paux_id'],
-        settings['numero_pdet_id'],
-        settings['numero_dp_id']
+        int(settings['numero_pfp3_id']),
+        int(settings['numero_bat_id']),
+        int(settings['numero_pcs_id']),
+        int(settings['numero_paux_id']),
+        int(settings['numero_pdet_id']),
+        int(settings['numero_dp_id'])
     ]
 
+    # # Contenu de la table VNumerosAffaires avec les numéros de la MO
+    # query = request.dbsession.query(VNumerosAffaires).filter(
+    #     and_(
+    #         VNumerosAffaires.affaire_id == affaire_id,
+    #         VNumerosAffaires.numero_type_id.in_(numeros_mo_type_id)
+    #     )
+    # )
+    
     # Contenu de la table VNumerosAffaires avec les numéros de la MO
     query = request.dbsession.query(VNumerosAffaires).filter(
         and_(
