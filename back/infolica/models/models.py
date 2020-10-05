@@ -670,7 +670,7 @@ class Numero(Base):
     UniqueConstraint(cadastre_id, type_id, numero)
 
 
-class ReservationNumeros(Base):
+class ReservationNumerosMO(Base):
     __tablename__ = 'reservation_numeros'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)

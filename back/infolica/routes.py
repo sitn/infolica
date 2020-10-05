@@ -159,3 +159,4 @@ def includeme(config):
     config.add_route('balance_by_affaire_id', '/infolica/api/balance/{id}')
     #Reservation_numeros_mo
     config.add_route('reservation_numeros_mo_by_affaire_id', '/infolica/api/reservation_numeros_mo/{id}')
+    config.add_route('reservation_numeros_mo', '/infolica/api/reservation_numeros_mo')

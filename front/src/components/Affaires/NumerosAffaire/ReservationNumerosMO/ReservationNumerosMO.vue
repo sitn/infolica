@@ -19,6 +19,7 @@ export default {
     return {
       reservationNumerosMO: [],
       showReservationNumerosMO: true,
+      showReservationNumerosMODialog: false,
     };
   },
 
