@@ -1,0 +1,26 @@
+<div class="reservationNumerosMO">
+    <md-card v-if="affaire.type_id===typesAffaires.mutation">
+        <md-card-header>
+            <div class="md-title">Numéros de la MO</div>
+        </md-card-header>
+
+        <md-card-content>
+            <div v-if="reservationNumerosMO[0]">
+                <md-table v-model="reservationNumerosMO" md-sort="cadastre_id" md-sort-order="desc" md-fixed-header md-dense>
+                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                        <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
+                        <md-table-cell md-label="Type" md-sort-by="type">{{ item.type_numero }}</md-table-cell>
+                        <md-table-cell md-label="Plan" md-sort-by="plan_id">{{ item.plan_no }}</md-table-cell>
+                        <md-table-cell md-label="De" md-sort-by="numero_de">{{ item.numero_de }}</md-table-cell>
+                        <md-table-cell md-label="À" md-sort-by="numero_a">{{ item.numero_a }}</md-table-cell>
+                        <md-table-cell md-label="Nombre" md-sort-by="nombre">{{ item.nombre }}</md-table-cell>
+                        <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}</md-table-cell>
+                    </md-table-row>
+                </md-table>
+            </div>
+            <div v-else>
+                <em>Aucune réservation de points de la MO</em>
+            </div>
+        </md-card-content>
+    </md-card>
+</div>
