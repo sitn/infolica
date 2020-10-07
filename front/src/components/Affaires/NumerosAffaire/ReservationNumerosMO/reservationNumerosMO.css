@@ -9,3 +9,9 @@
     width: 100%;
     margin: auto;
 }
+
+.md-dialog {
+    z-index: 6;
+    width: 1200px;
+    margin: auto;
+}

@@ -160,3 +160,5 @@ def includeme(config):
     #Reservation_numeros_mo
     config.add_route('reservation_numeros_mo_by_affaire_id', '/infolica/api/reservation_numeros_mo/{id}')
     config.add_route('reservation_numeros_mo', '/infolica/api/reservation_numeros_mo')
+    #Plans MO
+    config.add_route('plans_mo', '/infolica/api/plans_mo')

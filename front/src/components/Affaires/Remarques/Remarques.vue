@@ -65,9 +65,7 @@ export default {
           formData.append("remarque", this.new_remarque.remarque);
         }
         formData.append("date", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-        formData.append("operateur_id",
-          JSON.parse(localStorage.getItem("infolica_user")).id
-        );
+        formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
         formData.append("affaire_id", this.$route.params.id);
 
         this.$http

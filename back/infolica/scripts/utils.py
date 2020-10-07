@@ -48,7 +48,7 @@ class Utils(object):
         d = _query.__dict__
         item = {}
         for n in d.keys():
-            if n != '_sa_instance_state':
+            if n != '_sa_instance_state' and n != 'geom':
                 if isinstance(d[n], (datetime, date)):
                     item[n] = d[n].isoformat()
                 else:
@@ -69,7 +69,7 @@ class Utils(object):
             d = u.__dict__
             item = {}
             for n in d.keys():
-                if n != '_sa_instance_state':
+                if n != '_sa_instance_state' and n != 'geom':
                     if isinstance(d[n], (datetime, date)):
                         item[n] = d[n].isoformat()
                     else:

@@ -44,7 +44,12 @@ export default {
         bf: Number(process.env.VUE_APP_NUMERO_TYPE_BF),
         ddp: Number(process.env.VUE_APP_NUMERO_TYPE_DDP),
         ppe: Number(process.env.VUE_APP_NUMERO_TYPE_PPE),
-        pcop: Number(process.env.VUE_APP_NUMERO_TYPE_PCOP)
+        pcop: Number(process.env.VUE_APP_NUMERO_TYPE_PCOP),
+        pfp3: Number(process.env.VUE_APP_NUMERO_TYPE_PFP3),
+        paux: Number(process.env.VUE_APP_NUMERO_TYPE_PAUX),
+        bat: Number(process.env.VUE_APP_NUMERO_TYPE_BAT),
+        pdet: Number(process.env.VUE_APP_NUMERO_TYPE_PDET),
+        dp: Number(process.env.VUE_APP_NUMERO_TYPE_DP)
       }
       // numeros_base_relations: []
     };

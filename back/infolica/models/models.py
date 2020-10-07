@@ -676,7 +676,7 @@ class ReservationNumerosMO(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
-    plan_id = Column(Text, ForeignKey(Plan.idobj), nullable=False)
+    plan_id = Column(Text, ForeignKey(Plan.idobj))
     type_id = Column(BigInteger, ForeignKey(NumeroType.id), nullable=False)
     numero_de = Column(BigInteger)
     numero_a = Column(BigInteger)
@@ -1160,3 +1160,20 @@ class VReservationNumerosMO(Base):
     plan_idorplan = Column(String(length=40))
     plan_idrepplan = Column(String(length=40))
     plan_base = Column(String(length=50))
+
+class VPlan(Base):
+    __tablename__ = 'v_plans_mo'
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
+    idobj = Column(Text, primary_key=True)
+    id_obj2 = Column(Text)
+    cadastre_id = Column(BigInteger)
+    cadastre = Column(Text)
+    planno = Column(Integer)
+    typlan = Column(Text)
+    datmev = Column(Text)
+    statut = Column(Text)
+    echell = Column(Integer)
+    idborplan = Column(Text)
+    idrepplan = Column(Text)
+    base = Column(Text)
