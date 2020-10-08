@@ -176,6 +176,11 @@
         md-cancel-text="Annuler"
         @md-cancel="confirmDialog.show=false"
         @md-confirm="confirmDialog.onConfirm" />
-        <!-- @md-confirm="doCreateDiffererNumero" /> -->
+
+    <md-dialog-alert
+        :md-active.sync="showAlertMatDiffDialog"
+        md-title="Opération non autorisée"
+        md-content="L'affaire doit avoir le statut 'envoyé' pour supprimer la mention 'mat diff' des numéros différés."
+        md-confirm-text="Ok" />
 
 </div>

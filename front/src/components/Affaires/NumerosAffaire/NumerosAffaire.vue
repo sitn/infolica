@@ -40,11 +40,12 @@ export default {
         show: false,
         title: '',
         content: '',
-        onContirm: null,
+        onConfirm: () => {}
       },
       showNumerosMO: true,
       numerosMoLoading: true,
       showBalance: false,
+      showAlertMatDiffDialog: false,
       showQuittancePCOPDialog: false,
       types_numeros: {
         bf: Number(process.env.VUE_APP_NUMERO_TYPE_BF),
@@ -268,12 +269,16 @@ export default {
           onConfirm: () => this.doCreateDiffererNumero(numero)
         };
       } else if (etat === "sortie") {
-        this.confirmDialog = {
-          title: "Matérialisation différée",
-          content: "Le numéro " + numero.numero + " va quitter la matérialisation différée.",
-          show: true,
-          onConfirm: () => this.doUpdateDiffererNumero(numero)
-        };
+        if (this.affaire.date_envoi !== null) {
+          this.confirmDialog = {
+            title: "Matérialisation différée",
+            content: "Le numéro " + numero.numero + " va quitter la matérialisation différée.",
+            show: true,
+            onConfirm: () => this.doUpdateDiffererNumero(numero)
+          };
+        } else {
+          this.showAlertMatDiffDialog = true;
+        }
       }
     },
 
