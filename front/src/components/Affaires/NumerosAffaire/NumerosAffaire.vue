@@ -36,6 +36,12 @@ export default {
       affaire_numeros_nouveaux: [],
       affaire_numeros_nouveaux_mo: [],
       affaireReadonly: true,
+      confirmDialog: {
+        show: false,
+        title: '',
+        content: '',
+        onContirm: null,
+      },
       showNumerosMO: true,
       numerosMoLoading: true,
       showBalance: false,
@@ -251,18 +257,34 @@ export default {
     },
 
     /**
+     * Confirm create numero différé
+     */
+    confirmCreateDiffererNumero(numero, etat) {
+      if (etat === "entree") {
+        this.confirmDialog = {
+          title: "Matérialisation différée",
+          content: "Le numéro " + numero.numero + " va entrer en matérialisation différée.",
+          show: true,
+          onConfirm: () => this.doCreateDiffererNumero(numero)
+        };
+      } else if (etat === "sortie") {
+        this.confirmDialog = {
+          title: "Matérialisation différée",
+          content: "Le numéro " + numero.numero + " va quitter la matérialisation différée.",
+          show: true,
+          onConfirm: () => this.doUpdateDiffererNumero(numero)
+        };
+      }
+    },
+
+    /**
      * Créer Différer un numéro
      */
-    doCreateDiffererNumero(numero) {
+    async doCreateDiffererNumero(numero) {
       var formData = new FormData();
       formData.append("numero_id", numero.numero_id);
       formData.append("affaire_id", this.$route.params.id)
-      formData.append(
-        "date_entree",
-        moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(
-          process.env.VUE_APP_DATEFORMAT_WS
-        )
-      );
+      formData.append("date_entree", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
 
       this.$http
         .post(
@@ -277,10 +299,7 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.searchAffaireNumeros();
-            this.$root.$emit(
-              "ShowMessage",
-              "Le numéro " + numero.numero + " a été différé"
-            );
+            this.$root.$emit("ShowMessage", "Le numéro " + numero.numero + " a été différé");
           }
         })
         .catch(err => {
@@ -291,17 +310,12 @@ export default {
     /**
      * Mettre à jour Différer un numéro
      */
-    doUpdateDiffererNumero(numero) {
+    async doUpdateDiffererNumero(numero) {
       var formData = new FormData();
       formData.append("numero_diff_id", numero.numero_diff_id);
       formData.append("numero_id", numero.numero_id);
       formData.append("date_entree", numero.numero_diff_entree);
-      formData.append(
-        "date_sortie",
-        moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(
-          process.env.VUE_APP_DATEFORMAT_WS
-        )
-      );
+      formData.append("date_sortie", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
 
       this.$http
         .put(
@@ -316,12 +330,7 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.searchAffaireNumeros();
-            this.$root.$emit(
-              "ShowMessage",
-              "La mention 'différé' du numéro " +
-                numero.numero +
-                " a été correctement supprimée"
-            );
+            this.$root.$emit("ShowMessage", "La mention 'différé' du numéro " + numero.numero + " a été correctement supprimée");
           }
         })
         .catch(err => {
