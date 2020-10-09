@@ -178,9 +178,9 @@ export const getCurrentDate = function () {
 /**
  * Prépare la liste pour le md-complete
  */
-export const stringifyAutocomplete = function(liste, nom="nom") {
+export const stringifyAutocomplete = function(liste, nom="nom", id="id") {
     return liste.map(x => ({
-        id: x.id,
+        id: x[id],
         nom: String(x[nom]),
         toLowerCase: () => String(x[nom]).toLowerCase(),
         toString: () => String(x[nom])

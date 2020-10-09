@@ -1,0 +1,106 @@
+<div class="reservationNumerosMO">
+    <md-card v-if="affaire.type_id===typesAffaires.mutation">
+        <md-card-header>
+            <div class="md-title" style="float: left;">Numéros de la MO</div>
+            <div style="float: right;">
+                <md-button class="md-primary" @click="showReservationNumerosMODialog = true">Réserver</md-button>
+            </div>
+        </md-card-header>
+
+        <md-card-content>
+            <div v-if="reservationNumerosMO[0]">
+                <md-table v-model="reservationNumerosMO" md-sort="cadastre_id" md-sort-order="desc" md-fixed-header md-dense md-fixed-header>
+                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                        <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
+                        <md-table-cell md-label="Type" md-sort-by="type">{{ item.type_numero }}</md-table-cell>
+                        <md-table-cell md-label="Plan" md-sort-by="plan_id">{{ item.plan_no }}</md-table-cell>
+                        <md-table-cell md-label="De" md-sort-by="numero_de">{{ item.numero_de }}</md-table-cell>
+                        <md-table-cell md-label="À" md-sort-by="numero_a">{{ item.numero_a }}</md-table-cell>
+                        <md-table-cell md-label="Nombre" md-sort-by="nombre">{{ item.nombre }}</md-table-cell>
+                        <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}</md-table-cell>
+                    </md-table-row>
+                </md-table>
+            </div>
+            <div v-else>
+                <em>Aucune réservation de points de la MO</em>
+            </div>
+        </md-card-content>
+    </md-card>
+
+
+    <md-dialog :md-active.sync="showReservationNumerosMODialog">
+        <md-dialog-title>Réservation de numéros MO</md-dialog-title>
+        <md-dialog-content>
+            <div class="md-gutter md-layout">
+                <div class="md-layout-item md-size-50">
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-size-100">
+                            <!-- Cadastre -->
+                            <md-autocomplete v-model="form.cadastre"
+                                             :md-options="cadastreListe"
+                                             @md-changed="changeCadastre"
+                                             md-dense>
+                                <label>Cadastre</label>
+                            </md-autocomplete>
+                        </div>
+        
+                        <md-divider></md-divider>
+        
+                        <div class="md-layout-item md-size-100">
+                            <!-- Points PFP3 -->
+                            <md-field>
+                                <label>Nb PFP3</label>
+                                <md-input style="text-align: right;" v-model="form.pfp3" @focus="$event.target.select()" type="number" min="0"></md-input>
+                            </md-field>
+                        </div>
+                        <div class="md-layout-item md-size-100">
+                            <!-- Points de auxiliaires -->
+                            <md-field>
+                                <label>Nb Points auxiliaires</label>
+                                <md-input style="text-align: right;" v-model="form.paux" @focus="$event.target.select()" type="number" min="0"></md-input>
+                            </md-field>
+                        </div>
+                        <div class="md-layout-item md-size-100">
+                            <!-- Points Bâtiments -->
+                            <md-field>
+                                <label>Nb Bâtiments</label>
+                                <md-input style="text-align: right;" v-model="form.bat" @focus="$event.target.select()" type="number" min="0"></md-input>
+                            </md-field>
+                        </div>
+                        <div class="md-layout-item md-size-50">
+                            <!-- Points de détail -->
+                            <md-autocomplete style="text-align: right;" v-model="form.plan" :md-options="plansMOListe_cadastre" md-dense>
+                                <label>Plan</label>
+                            </md-autocomplete>
+                        </div>
+                        <div class="md-layout-item md-size-50">
+                            <md-field>
+                                <label>Nb Points de détail</label>
+                                <md-input style="text-align: right;" v-model="form.pdet" @focus="$event.target.select()" type="number" min="0"></md-input>
+                            </md-field>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Domaines publics -->
+                <div class="md-layout-item md-size-50">
+                    <md-field>
+                        <label>Nb DP</label>
+                        <md-input style="text-align: right;" v-model="form.dp" @focus="$event.target.select()" type="number" min="0"></md-input>
+                    </md-field>
+                    <md-field>
+                        <label>Remarques</label>
+                        <md-textarea v-model="form.remarque"></md-textarea>
+                    </md-field>
+                    
+                    <!-- Boutons annuler / enregistrer -->
+                    <div style="  position: absolute; bottom: 8px; right: 16px;">
+                        <md-button class="md-accent" @click="resetReservation">Annuler</md-button>
+                        <md-button class="md-primary" @click="saveReservation">Enregistrer</md-button>
+                    </div>
+                </div>
+            </div>
+        </md-dialog-content>
+    </md-dialog>
+
+</div>

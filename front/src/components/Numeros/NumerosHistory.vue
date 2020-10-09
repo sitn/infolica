@@ -169,7 +169,7 @@ export default {
         this.numero_edit.diff_entree = moment(this.numero_edit.diff_entree, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT)
       }
       if (this.numero_edit.diff_sortie) {
-        this.numero_edit.diff_sortie = moment(this.numero_edit.diff_entree, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT)
+        this.numero_edit.diff_sortie = moment(this.numero_edit.diff_sortie, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT)
       }
       this.editionActivated = true;
     },
@@ -239,7 +239,7 @@ export default {
       var formData = new FormData();
       formData.append("numero_id", num.id);
       formData.append("numero_etat_id", num.etat_id);
-      formData.append("date", moment(new Date()).format("YYYY-MM-DD"));
+      formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
 
       return new Promise((resolve, reject) => {
         this.$http.post(
@@ -270,8 +270,7 @@ export default {
       
       // Si une date est donnée, la stocker, sinon la supprimer
       num.diff_sortie !== null ? 
-        formData.append("date_sortie", moment(num.diff_sortie, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)):
-        formData.append("date_sortie", null)
+        formData.append("date_sortie", moment(num.diff_sortie, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)): formData.append("date_sortie", null);
 
       return new Promise((resolve, reject) => {
         var req

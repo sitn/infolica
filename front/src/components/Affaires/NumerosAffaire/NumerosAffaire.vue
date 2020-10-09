@@ -8,6 +8,7 @@ import { getCurrentDate, checkPermission, getDocument } from "@/services/helper"
 import ReferenceNumeros from "@/components/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/ReservationNumeros/ReservationNumeros.vue";
 import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue";
+import ReservationNumerosMO from "@/components/Affaires/NumerosAffaire/ReservationNumerosMO/ReservationNumerosMO.vue";
 import Balance from "@/components/Affaires/Balance/Balance.vue";
 
 
@@ -23,6 +24,7 @@ export default {
     ReferenceNumeros,
     ReservationNumeros,
     QuittancePCOP,
+    ReservationNumerosMO,
     Balance
   },
   data: () => {
@@ -34,15 +36,28 @@ export default {
       affaire_numeros_nouveaux: [],
       affaire_numeros_nouveaux_mo: [],
       affaireReadonly: true,
+      confirmDialog: {
+        show: false,
+        title: '',
+        content: '',
+        onConfirm: () => {}
+      },
       showNumerosMO: true,
       numerosMoLoading: true,
       showBalance: false,
+      showAlertMatDiffDialog: false,
+      showBtnReqRadMatDiff: false,
       showQuittancePCOPDialog: false,
       types_numeros: {
         bf: Number(process.env.VUE_APP_NUMERO_TYPE_BF),
         ddp: Number(process.env.VUE_APP_NUMERO_TYPE_DDP),
         ppe: Number(process.env.VUE_APP_NUMERO_TYPE_PPE),
-        pcop: Number(process.env.VUE_APP_NUMERO_TYPE_PCOP)
+        pcop: Number(process.env.VUE_APP_NUMERO_TYPE_PCOP),
+        pfp3: Number(process.env.VUE_APP_NUMERO_TYPE_PFP3),
+        paux: Number(process.env.VUE_APP_NUMERO_TYPE_PAUX),
+        bat: Number(process.env.VUE_APP_NUMERO_TYPE_BAT),
+        pdet: Number(process.env.VUE_APP_NUMERO_TYPE_PDET),
+        dp: Number(process.env.VUE_APP_NUMERO_TYPE_DP)
       }
       // numeros_base_relations: []
     };
@@ -244,18 +259,38 @@ export default {
     },
 
     /**
+     * Confirm create numero différé
+     */
+    confirmCreateDiffererNumero(numero, etat) {
+      if (etat === "entree") {
+        this.confirmDialog = {
+          title: "Matérialisation différée",
+          content: "Le numéro " + numero.numero + " va entrer en matérialisation différée.",
+          show: true,
+          onConfirm: () => this.doCreateDiffererNumero(numero)
+        };
+      } else if (etat === "sortie") {
+        if (this.affaire.date_envoi !== null) {
+          this.confirmDialog = {
+            title: "Matérialisation différée",
+            content: "Le numéro " + numero.numero + " va quitter la matérialisation différée.",
+            show: true,
+            onConfirm: () => this.doUpdateDiffererNumero(numero)
+          };
+        } else {
+          this.showAlertMatDiffDialog = true;
+        }
+      }
+    },
+
+    /**
      * Créer Différer un numéro
      */
-    doCreateDiffererNumero(numero) {
+    async doCreateDiffererNumero(numero) {
       var formData = new FormData();
       formData.append("numero_id", numero.numero_id);
       formData.append("affaire_id", this.$route.params.id)
-      formData.append(
-        "date_entree",
-        moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(
-          process.env.VUE_APP_DATEFORMAT_WS
-        )
-      );
+      formData.append("date_entree", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
 
       this.$http
         .post(
@@ -270,10 +305,7 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.searchAffaireNumeros();
-            this.$root.$emit(
-              "ShowMessage",
-              "Le numéro " + numero.numero + " a été différé"
-            );
+            this.$root.$emit("ShowMessage", "Le numéro " + numero.numero + " a été différé");
           }
         })
         .catch(err => {
@@ -284,17 +316,12 @@ export default {
     /**
      * Mettre à jour Différer un numéro
      */
-    doUpdateDiffererNumero(numero) {
+    async doUpdateDiffererNumero(numero) {
       var formData = new FormData();
       formData.append("numero_diff_id", numero.numero_diff_id);
       formData.append("numero_id", numero.numero_id);
       formData.append("date_entree", numero.numero_diff_entree);
-      formData.append(
-        "date_sortie",
-        moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(
-          process.env.VUE_APP_DATEFORMAT_WS
-        )
-      );
+      formData.append("date_sortie", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
 
       this.$http
         .put(
@@ -309,12 +336,7 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.searchAffaireNumeros();
-            this.$root.$emit(
-              "ShowMessage",
-              "La mention 'différé' du numéro " +
-                numero.numero +
-                " a été correctement supprimée"
-            );
+            this.$root.$emit("ShowMessage", "La mention 'différé' du numéro " + numero.numero + " a été correctement supprimée");
           }
         })
         .catch(err => {
@@ -396,18 +418,49 @@ export default {
       numeros = numeros.join("\n");
       numeros_bases = numeros_bases.join("\n");
       return [cadastres, numeros, numeros_bases];
-    }
+    },
+
+    /**
+     * Get REQ Radiation mention DIFFERE
+     */
+    async getReqRadMatDiff() {
+      // récupérer les numéros de BF concernés par la radiation de MatDiff
+      let numerosDifferes = [];
+      this.affaire_numeros_nouveaux.forEach(x => {
+        if (x.numero_diff_entree !== null && x.numero_diff_sortie === null) {
+          numerosDifferes.push(x.numero);
+        }
+      });
+
+      let formData = new FormData();
+      formData.append("template", "ReqMatDiff");
+      formData.append("values", JSON.stringify({
+        "ANNEE": new Date().getFullYear(),
+        "CADASTRE": this.affaire.cadastre,
+        "BIENS_FONDS": numerosDifferes.filter(Boolean).join(", "),
+        "DATE": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT)
+      }));
+
+      getDocument(formData).then(response => {
+        this.$root.$emit("ShowMessage", "Le fichier '" + response + "' se trouve dans le dossier 'Téléchargement'");
+      }).catch(err => handleException(err, this));
+    },
 
   },
   mounted: function() {
-    this.searchAffaireNumeros();
+    this.searchAffaireNumeros().then(() => {
+      // Show or not button req radiation mat diff
+      this.showBtnReqRadMatDiff = this.affaire.date_envoi !== null && this.affaire.type_id === this.typesAffaires.mutation && 
+                                  this.affaire_numeros_nouveaux.some(x => x.numero_diff_entree !== null && x.numero_diff_sortie === null);
+    });
+    
     this.searchAffaireNewNumerosMo();
     this.showBalance_();
 
     this.$root.$on('UpdateNumerosAffaires', () =>{
       this.searchAffaireNumeros();
     });
-    
+
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };

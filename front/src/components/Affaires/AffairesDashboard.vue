@@ -230,7 +230,7 @@ export default {
     async generateBordereauAffaire() {
       let formData = this.fillFormDataBordereauAffaire();
       getDocument(formData).then(response => {
-        this.$root.$emit("ShowMessage", "Le fichier '" + response + "' se trouve dans le dossier 'Téléchargement'")
+        this.$root.$emit("ShowMessage", "Le fichier '" + response + "' se trouve dans le dossier 'Téléchargement'");
       }).catch(err => handleException(err, this));
     },
 

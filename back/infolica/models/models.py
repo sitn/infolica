@@ -5,6 +5,7 @@ from sqlalchemy import (
     BigInteger,
     Float,
     Text,
+    String,
     Date,
     Boolean,
     ARRAY,
@@ -669,13 +670,13 @@ class Numero(Base):
     UniqueConstraint(cadastre_id, type_id, numero)
 
 
-class ReservationNumeros(Base):
+class ReservationNumerosMO(Base):
     __tablename__ = 'reservation_numeros'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
-    plan_id = Column(Text, ForeignKey(Plan.idobj), nullable=False)
+    plan_id = Column(Text, ForeignKey(Plan.idobj))
     type_id = Column(BigInteger, ForeignKey(NumeroType.id), nullable=False)
     numero_de = Column(BigInteger)
     numero_a = Column(BigInteger)
@@ -1130,3 +1131,49 @@ class VFactures(Base):
     montant_total = Column(Float)
     date = Column(Date)
     remarque = Column(Text)
+
+
+class VReservationNumerosMO(Base):
+    __tablename__ = "v_reservation_numeros_mo"
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
+    id = Column(BigInteger, primary_key=True)
+    affaire_id = Column(BigInteger)
+    cadastre_id = Column(BigInteger)
+    cadastre = Column(Text)
+    type_id = Column(BigInteger)
+    type_numero = Column(Text)
+    numero_de = Column(BigInteger)
+    numero_a = Column(BigInteger)
+    date = Column(Date)
+    remarque = Column(Text)
+    operateur_id = Column(BigInteger)
+    operateur_nom = Column(Text)
+    operateur_prenom = Column(Text)
+    plan_id = Column(String(length=40))
+    plan_id2 = Column(String(length=20))
+    plan_no = Column(String(length=5))
+    plan_type = Column(String(length=15))
+    plan_datemev = Column(String(length=25))
+    plan_statut = Column(String(length=40))
+    plan_echelle = Column(Integer)
+    plan_idorplan = Column(String(length=40))
+    plan_idrepplan = Column(String(length=40))
+    plan_base = Column(String(length=50))
+
+class VPlan(Base):
+    __tablename__ = 'v_plans_mo'
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
+    idobj = Column(Text, primary_key=True)
+    id_obj2 = Column(Text)
+    cadastre_id = Column(BigInteger)
+    cadastre = Column(Text)
+    planno = Column(Integer)
+    typlan = Column(Text)
+    datmev = Column(Text)
+    statut = Column(Text)
+    echell = Column(Integer)
+    idborplan = Column(Text)
+    idrepplan = Column(Text)
+    base = Column(Text)

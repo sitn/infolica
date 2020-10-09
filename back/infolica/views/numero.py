@@ -524,10 +524,14 @@ def numero_differe_update_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
 
-    numdiff_id = request.params["numero_diff_id"] if "numero_diff_id" in request.params else None
+    if "numero_diff_id" in request.params:
+        numdiff_id = request.params["numero_diff_id"]
+        record = request.dbsession.query(NumeroDiffere).filter(NumeroDiffere.id == numdiff_id).first()
+    
+    if "numero_id" in request.params:
+        num_id = request.params["numero_id"]
+        record = request.dbsession.query(NumeroDiffere).filter(NumeroDiffere.numero_id == num_id).first()
 
     # update numero_differe
-    record = request.dbsession.query(NumeroDiffere).filter(NumeroDiffere.id == numdiff_id).first()
     record = Utils.set_model_record(record, request.params)
-
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroDiffere.__tablename__))
