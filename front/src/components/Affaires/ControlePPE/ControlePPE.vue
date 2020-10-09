@@ -63,8 +63,8 @@ export default {
             this.currentControle = this.controlePPE.id;
           }
         })
-        .catch(() => {
-          this.initForm();
+        .catch(err => {
+          handleException(err, this);
         });
     },
 
@@ -512,6 +512,7 @@ export default {
   mounted: function() {
     this.searchControlePPE();
     this.searchOperateurs();
+    this.initForm();
 
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_CONTROLE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
