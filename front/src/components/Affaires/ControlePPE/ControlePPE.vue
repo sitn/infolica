@@ -63,8 +63,8 @@ export default {
             this.currentControle = this.controlePPE.id;
           }
         })
-        .catch(err => {
-          handleException(err, this);
+        .catch(() => {
+          this.initForm();
         });
     },
 
@@ -175,14 +175,14 @@ export default {
       formData.append("psit_p", this.controlePPE.psit_p);
       formData.append("psit_q", this.controlePPE.psit_q);
       formData.append("psit_r", this.controlePPE.psit_r);
-      formData.append("psit_s", this.controlePPE.psit_r);
-      formData.append("psit_t", this.controlePPE.psit_r);
-      formData.append("psit_u", this.controlePPE.psit_r);
-      formData.append("psit_v", this.controlePPE.psit_r);
-      formData.append("psit_w", this.controlePPE.psit_r);
-      formData.append("psit_x", this.controlePPE.psit_r);
-      formData.append("psit_y", this.controlePPE.psit_r);
-      formData.append("psit_z", this.controlePPE.psit_r);
+      formData.append("psit_s", this.controlePPE.psit_s);
+      formData.append("psit_t", this.controlePPE.psit_t);
+      formData.append("psit_u", this.controlePPE.psit_u);
+      formData.append("psit_v", this.controlePPE.psit_v);
+      formData.append("psit_w", this.controlePPE.psit_w);
+      formData.append("psit_x", this.controlePPE.psit_x);
+      formData.append("psit_y", this.controlePPE.psit_y);
+      formData.append("psit_z", this.controlePPE.psit_z);
       if (this.controlePPE.psit_remarque) {formData.append("psit_remarque", this.controlePPE.psit_remarque)}
       formData.append("pet_a", this.controlePPE.pet_a);
       formData.append("pet_b", this.controlePPE.pet_b);
@@ -343,6 +343,168 @@ export default {
         if (key !== "id" && key !== "date" && key !== "operateur" && key !== "affaire_id" && !key.includes("remarque")) {
           this.controlePPE[key] = state;
         }
+      }
+    },
+
+    /**
+     * init form
+     */
+    initForm() {
+      this.controlePPE = {
+        gen_1: false,
+        gen_2: false,
+        gen_3: false,
+        gen_4: false,
+        gen_5: false,
+        gen_6: false,
+        gen_7: false,
+        gen_8: false,
+        gen_9: false,
+        gen_remarque: '',
+        dos_a: false,
+        dos_b: false,
+        dos_c: false,
+        dos_d: false,
+        dos_e: false,
+        dos_f: false,
+        dos_g: false,
+        dos_h: false,
+        dos_remarque: '',
+        jur_a: false,
+        jur_b: false,
+        jur_c: false,
+        jur_d: false,
+        jur_remarque: '',
+        psit_a: false,
+        psit_b: false,
+        psit_c: false,
+        psit_d: false,
+        psit_e: false,
+        psit_f: false,
+        psit_g: false,
+        psit_h: false,
+        psit_i: false,
+        psit_j: false,
+        psit_k: false,
+        psit_l: false,
+        psit_m: false,
+        psit_n: false,
+        psit_o: false,
+        psit_p: false,
+        psit_q: false,
+        psit_r: false,
+        psit_s: false,
+        psit_t: false,
+        psit_u: false,
+        psit_v: false,
+        psit_w: false,
+        psit_x: false,
+        psit_y: false,
+        psit_z: false,
+        psit_remarque: '',
+        pet_a: false,
+        pet_b: false,
+        pet_c: false,
+        pet_d: false,
+        pet_e: false,
+        pet_f: false,
+        pet_g: false,
+        pet_h: false,
+        pet_i: false,
+        pet_j: false,
+        pet_k: false,
+        pet_l: false,
+        pet_m: false,
+        pet_n: false,
+        pet_o: false,
+        pet_p: false,
+        pet_q: false,
+        pet_r: false,
+        pet_remarque: '',
+        cart_a: false,
+        cart_b: false,
+        cart_c: false,
+        cart_d: false,
+        cart_e: false,
+        cart_f: false,
+        cart_g: false,
+        cart_h: false,
+        cart_i: false,
+        cart_j: false,
+        cart_remarque: '',
+        uet_a: false,
+        uet_b: false,
+        uet_c: false,
+        uet_d: false,
+        uet_e: false,
+        uet_f: false,
+        uet_g: false,
+        uet_h: false,
+        uet_i: false,
+        uet_j: false,
+        uet_k: false,
+        uet_l: false,
+        uet_m: false,
+        uet_n: false,
+        uet_o: false,
+        uet_p: false,
+        uet_q: false,
+        uet_r: false,
+        uet_s: false,
+        uet_t: false,
+        uet_u: false,
+        uet_v: false,
+        uet_w: false,
+        uet_x: false,
+        uet_y: false,
+        uet_z: false,
+        uet_aa: false,
+        uet_ab: false,
+        uet_ac: false,
+        uet_ad: false,
+        uet_ae: false,
+        uet_remarque: '',
+        dup_a: false,
+        dup_b: false,
+        dup_c: false,
+        dup_d: false,
+        dup_e: false,
+        dup_f: false,
+        dup_g: false,
+        dup_h: false,
+        dup_i: false,
+        dup_remarque: '',
+        leg_a: false,
+        leg_b: false,
+        leg_c: false,
+        leg_d: false,
+        leg_e: false,
+        leg_f: false,
+        leg_g: false,
+        leg_h: false,
+        leg_i: false,
+        leg_j: false,
+        leg_k: false,
+        leg_l: false,
+        leg_m: false,
+        leg_n: false,
+        leg_o: false,
+        leg_p: false,
+        leg_q: false,
+        leg_r: false,
+        leg_s: false,
+        leg_t: false,
+        leg_u: false,
+        leg_v: false,
+        leg_w: false,
+        leg_x: false,
+        leg_y: false,
+        leg_remarque: '',
+        balsurf_a: false,
+        balsurf_b: false,
+        balsurf_c: false,
+        balsurf_d: false,
+        balsurf_remarque: ''
       }
     }
   },
