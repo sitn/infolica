@@ -83,6 +83,7 @@
                                         <div class="md-title">Immeubles réservés</div>
                                     </div>
                                     <div class="md-layout-item buttonRightAlign">
+                                        <md-button class="md-primary" @click="getReqRadMatDiff" v-if="showBtnReqRadMatDiff">Req radiation MatDiff</md-button>
                                         <md-button class="md-primary" v-on:click="doQuittanceNumerosReserves" v-if="affaire_numeros_nouveaux.length > 0">Quittance</md-button>
                                         <md-button class="md-primary" v-on:click="callOpenQuittancePCOPDialog" v-if="!affaireReadonly && affaire.type_id === typesAffaires.pcop">Quittance PCOP</md-button>
                                         <md-button class="md-primary" v-on:click="callOpenReservationDialog" v-if="!affaireReadonly && affaire.reservation_numeros_types_id !== null">Réservation</md-button>
