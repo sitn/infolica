@@ -317,7 +317,6 @@ export default {
         else if (this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_LE_LOCLE_ID)) {
           service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_LE_LOCLE_ID);
         }
-        alert(service_id)
       }
 
       const service_ = this.services_liste_bk.filter(x => x.id === service_id).pop();
