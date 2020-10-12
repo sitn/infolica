@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*--
 from datetime import date, datetime
 from sqlalchemy import func, and_, desc
-from infolica.models.models import Numero, AffaireNumero, Fonction, Role, FonctionRole
+from infolica.models.models import Numero, AffaireNumero, Fonction, Role, FonctionRole, ReservationNumerosMO
 from infolica.scripts.ldap_query import LDAPQuery
 import json
 import os
@@ -163,6 +163,21 @@ class Utils(object):
         result = query.order_by(desc(Numero.numero)).limit(1).first()
         numero = result.numero if result else 0
         return numero
+
+    @classmethod
+    def last_number_mo(cls, request, cadastre_id, type_id, plan_id=None):
+        """
+        Return last number MO taking into account twin cadastres
+        """
+        query = request.dbsession.query(func.max(ReservationNumerosMO.numero_a)).filter(and_(
+            ReservationNumerosMO.cadastre_id == cadastre_id,
+            ReservationNumerosMO.type_id == type_id
+        ))
+
+        if plan_id:
+            query = query.filter(ReservationNumerosMO.plan_id == plan_id)
+
+        return 0 if query.first()[0] is None else query.first()[0]
 
     @classmethod
     def _params(cls, **kwargs):
