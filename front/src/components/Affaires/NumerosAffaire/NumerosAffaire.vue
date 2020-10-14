@@ -18,7 +18,7 @@ export default {
   name: "NumerosAffaire",
   props: {
     affaire: Object,
-    typesAffaires: Object
+    typesAffaires: Object,
   },
   components: {
     ReferenceNumeros,

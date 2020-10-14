@@ -101,11 +101,11 @@
                                             <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
                                             <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}<span v-if="item.numero_suffixe"> / {{ item.numero_suffixe }}</span></md-table-cell>
                                             <md-table-cell md-label="Immeuble de base" md-sort-by="numero_base">{{ item.numero_base }}<span v-if="item.numero_base_suffixe"> / {{ item.numero_base_suffixe }}</span></md-table-cell>
-                                            <md-table-cell md-label="Projet" class="actionsColumn">
+                                            <md-table-cell md-label="Etat" class="actionsColumn">
                                                 <md-switch v-model="item.active" v-if="!affaireReadonly && item.affaire_numero_actif && !affaire.date_cloture"
                                                     @change="onDeleteReserveNumero(item.numero_id)"
                                                     class="md-primary md-dense">
-                                                </md-switch>
+                                                </md-switch> ({{ item.numero_etat }})
                                             </md-table-cell>
                                             <md-table-cell md-label="Repris par" md-sort-by="affaire_destination_id"><a v-bind:href="item.affaire_destination_href">{{item.affaire_destination_id }}</a></md-table-cell>
                                             <md-table-cell md-label="Mat diff" class="actionsColumn">
