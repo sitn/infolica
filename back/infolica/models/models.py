@@ -194,6 +194,7 @@ class Facture(Base):
     montant_total = Column(Float, default=0.0, nullable=False)
     date = Column(Date)
     remarque = Column(Text)
+    numeros = Column(ARRAY(BigInteger))
 
 
 class TableauEmoluments(Base):
@@ -1106,6 +1107,7 @@ class VFactures(Base):
     montant_total = Column(Float)
     date = Column(Date)
     remarque = Column(Text)
+    numeros = Column(ARRAY(BigInteger))
 
 
 class VReservationNumerosMO(Base):

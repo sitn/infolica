@@ -17,6 +17,7 @@
                 <div class="md-layout md-gutter">
                     <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
                     <div class="md-layout-item md-size-45" style="padding-right: 0" v-if="affaire.type_id === typesAffaires.mutation ||
+                                                                                          affaire.type_id === typesAffaires.cadastration ||
                                                                                           affaire.type_id === typesAffaires.autre ||
                                                                                           (affaire.type_id === typesAffaires.modification && affaire.modification_type_id === typesAffaires.modification_type.abandon_partiel)">
                         <md-card-content>
