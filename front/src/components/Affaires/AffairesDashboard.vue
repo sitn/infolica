@@ -42,6 +42,7 @@ export default {
   },
   data() {
     return {
+      abandonAffaireEnabled: true,
       affaire: {},
       affaireLoaded: false,
       cloreAffaireEnabled: false,
@@ -49,6 +50,7 @@ export default {
       editAffaireAllowed: true,
       mapLoaded: false,
       parentparentAffaireReadOnly: false,
+      showConfirmAbandonAffaireDialog: false,
       typesAffaires: {
         mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION),
         cadastration: Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION),
@@ -134,7 +136,8 @@ export default {
         _this.affaire = obj;
         _this.affaireLoaded = true;
         _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
-        _this.cloreAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined) && (_this.affaire.date_envoi === null || _this.affaire.date_envoi === undefined);
+        _this.abandonAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined);
+        _this.cloreAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
         _this.parentAffaireReadOnly = (_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
 
         //If admin, allow edit
@@ -189,6 +192,84 @@ export default {
       this.$refs.clotureAffaireForm.openClotureDialog();
     },
 
+    /**
+     * Abandon affaire
+     */
+    async callAbandonAffaire() {
+      let formData = new FormData();
+      formData.append("id_affaire", this.affaire.id);
+      formData.append("abandon", true);
+      formData.append("date_cloture", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
+
+      this.$http.put(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          //update etat numeros reserves and numero etat histo
+          let promises = [];
+          this.$refs.numeros.affaire_numeros_nouveaux.forEach(x => {
+            if (x.numero_etat_id === Number(process.env.VUE_APP_NUMERO_PROJET_ID)) {
+              promises.push(this.updateNumeroEtat(x, Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)));
+              promises.push(this.postNumeroEtatHisto(x, Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)));
+            }
+          })
+          Promise.all(promises)
+          .then(() => {
+            this.$router.go();
+          })
+          .catch(err => handleException(err, this));
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Update numeros reserves
+     */
+    async updateNumeroEtat(numero, nouvel_etat_id) {
+      return new Promise((resolve, reject) => {
+        let formData = new FormData();
+        formData.append("id", numero.numero_id);
+        formData.append("etat_id", nouvel_etat_id);
+
+        this.$http.put(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response)
+        ).catch(err => reject(err));
+      });
+    },
+    
+    /**
+     * post numeros etat histo
+     */
+    async postNumeroEtatHisto(numero, nouvel_etat_id) {
+      return new Promise((resolve, reject) => {
+        let formData = new FormData();
+        formData.append("numero_id", numero.numero_id);
+        formData.append("numero_etat_id", nouvel_etat_id);
+        formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
+
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ETAT_HISTO_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response)
+        ).catch(err => reject(err));
+      });
+    },
+    
     /**
      * Duplicate affaire
      */

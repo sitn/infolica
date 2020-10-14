@@ -7,6 +7,8 @@ from infolica.models.constant import Constant
 from infolica.models.models import Facture, VFactures
 from infolica.scripts.utils import Utils
 
+import json
+
 ###########################################################
 # FACTURE
 ###########################################################
@@ -53,8 +55,15 @@ def factures_new_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise exc.HTTPForbidden()
 
+    params = {}
+    for key in request.params:
+        if key == "numeros":
+            params[key] = json.loads(request.params[key])
+        else: 
+            params[key] = request.params[key]
+
     model = Facture()
-    model = Utils.set_model_record(model, request.params)
+    model = Utils.set_model_record(model, params)
 
     request.dbsession.add(model)
 
@@ -81,11 +90,18 @@ def factures_update_view(request):
     facture_record = request.dbsession.query(Facture).filter(
         Facture.id == id_facture).first()
 
+    params = {}
+    for key in request.params:
+        if key == "numeros":
+            params[key] = json.loads(request.params[key])
+        else: 
+            params[key] = request.params[key]
+
     if not facture_record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(Facture.__tablename__, id_facture))
 
-    facture_record = Utils.set_model_record(facture_record, request.params)
+    facture_record = Utils.set_model_record(facture_record, params)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Facture.__tablename__))
 

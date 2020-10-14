@@ -81,16 +81,6 @@ class ClientMoralPersonne(Base):
     prenom = Column(Text, nullable=False)
 
 
-# class Plan(Base):
-#     __tablename__ = 'plan'
-#     __table_args__ = {'schema': 'infolica'}
-#     id = Column(BigInteger, primary_key=True, autoincrement=True)
-#     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
-#     nom = Column(Text, nullable=False)
-#     echelle = Column(BigInteger, nullable=False)
-#     chemin = Column(Text)
-
-
 class Plan(Base):
     __tablename__ = 'mo_distr_plan'
     __table_args__ = {'schema': 'infolica'}
@@ -105,23 +95,6 @@ class Plan(Base):
     idrepplan = Column(Text)
     base = Column(Text)
     geom = Column(Geometry("POLYGON"))
-
-
-# class Plan(Base):
-#     __tablename__ = 'mo_distr_plan'
-#     __table_args__ = {'schema': 'infolica'}
-#     idobj = Column(Text(length=40), primary_key=True)
-#     id_obj2 = Column(Text(length=20))
-#     planno = Column(Text(length=5))
-#     typlan = Column(Text(length=15))
-#     datmev = Column(Text(length=25))
-#     statut = Column(Text(length=40))
-#     echell = Column(Integer)
-#     idborplan = Column(Text(length=40))
-#     idrepplan = Column(Text(length=40))
-#     base = Column(Text(length=50))
-#     geom = Column(Geometry("POLYGON"))
-
 
 
 class AffaireType(Base):
@@ -160,6 +133,7 @@ class Affaire(Base):
     localisation_N = Column(Float, nullable=False)
     vref = Column(Text)
     chemin = Column(Text)
+    abandon = Column(Boolean)
 
 
 class AffaireEtapeIndex(Base):
@@ -220,6 +194,7 @@ class Facture(Base):
     montant_total = Column(Float, default=0.0, nullable=False)
     date = Column(Date)
     remarque = Column(Text)
+    numeros = Column(ARRAY(BigInteger))
 
 
 class TableauEmoluments(Base):
@@ -947,6 +922,7 @@ class VAffaire(Base):
     preavis_sene_date_reponse = Column(Date)
     preavis_rf_date_demande = Column(Date)
     preavis_rf_date_reponse = Column(Date)
+    abandon = Column(Boolean)
 
 
 class VEnvois(Base):
@@ -1131,6 +1107,7 @@ class VFactures(Base):
     montant_total = Column(Float)
     date = Column(Date)
     remarque = Column(Text)
+    numeros = Column(ARRAY(BigInteger))
 
 
 class VReservationNumerosMO(Base):

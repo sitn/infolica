@@ -139,7 +139,7 @@ export default {
         formData.append("date_envoi", this.affaire.date_envoi?
           moment(this.affaire.date_envoi, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
       } else {
-        formData.append("date_cloture", null);
+        formData.append("date_envoi", null);
       }
 
       if (this.affaire.date_cloture) {

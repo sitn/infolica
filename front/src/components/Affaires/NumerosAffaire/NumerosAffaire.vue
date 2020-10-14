@@ -18,7 +18,7 @@ export default {
   name: "NumerosAffaire",
   props: {
     affaire: Object,
-    typesAffaires: Object
+    typesAffaires: Object,
   },
   components: {
     ReferenceNumeros,
@@ -425,9 +425,11 @@ export default {
      */
     async getReqRadMatDiff() {
       // récupérer les numéros de BF concernés par la radiation de MatDiff
+      let now = new Date();
       let numerosDifferes = [];
       this.affaire_numeros_nouveaux.forEach(x => {
-        if (x.numero_diff_entree !== null && x.numero_diff_sortie === null) {
+        if (x.numero_diff_entree !== null && x.numero_diff_sortie === null &&
+            now - moment(x.numero_diff_sortie) < 604800000) { // 604800000 ms = 1 semaine
           numerosDifferes.push(x.numero);
         }
       });

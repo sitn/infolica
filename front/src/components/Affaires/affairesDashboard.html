@@ -6,16 +6,29 @@
             Affaire {{ affaire.id }}
             <span v-if="affaire.no_access != null">[{{ affaire.no_access }}]</span>
         </h1>
-        <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="generateBordereauAffaire">Bordereau de l'affaire</md-button>
-        <md-button class="md-primary md-raised" v-if="editAffaireAllowed && false" v-on:click="duplicateAffaire">Modification / Visa</md-button>
-        <md-button class="md-accent md-raised" v-if="editAffaireAllowed && cloreAffaireEnabled" v-on:click="callClotureAffaire">Clôturer</md-button>
+        <div style="position: absolute; right: 80px;">
+            <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="generateBordereauAffaire">Bordereau de l'affaire</md-button>
+            <md-button class="md-primary md-raised" v-if="editAffaireAllowed && false" v-on:click="duplicateAffaire">Modification / Visa</md-button>
+            <!-- <md-button class="md-accent md-raised" v-if="editAffaireAllowed && cloreAffaireEnabled" v-on:click="callClotureAffaire">Clôturer</md-button> -->
+        </div v-if="(abandonAffaireEnabled || cloreAffaireEnabled) && editAffaireAllowed">
+            <md-speed-dial style="position: absolute; top: 3px; right: 10px; align-items: flex-end;" 
+                md-direction="bottom" 
+                md-dense>
+                <md-speed-dial-target class="md-accent" md-dense>
+                    <md-icon>block</md-icon>
+                </md-speed-dial-target>
+                
+                <md-speed-dial-content style="align-items: flex-end;">
+                    <md-button class="md-accent" @click="callClotureAffaire" v-if="cloreAffaireEnabled" md-dense>Cloturer</md-button>
+                    <md-button class="md-accent" @click="showConfirmAbandonAffaireDialog = true" v-if="abandonAffaireEnabled" md-dense>Abandonner</md-button>
+                </md-speed-dial-content>
+            </md-speed-dial>
     </md-toolbar>
 
     <!-- INFORMATIONS GENERALES -->
     <div class="leftColumn">
         <InfosGenerales @modify-off="modifyOff" :affaire="affaire" :typesAffaires="typesAffaires" />
     </div>
-
 
     <!-- MAP -->
     <div class="rightColumn">
@@ -95,5 +108,16 @@
     <div>
         <ClotureAffaire ref="clotureAffaireForm" />
     </div>
+
+
+    <!-- Dialog de confirmation de l'abandon d'une affaire -->
+    <md-dialog-confirm
+      :md-active.sync="showConfirmAbandonAffaireDialog"
+      md-title="Abandon de l'affaire"
+      md-content="<p>En abandonnant l'affaire, tous les numéros réservés seront abandonnés.</p> <p>Confirmer l'abandon de l'affaire?</p>"
+      md-confirm-text="Confirmer"
+      md-cancel-text="Annuler"
+      @md-cancel="showConfirmAbandonAffaireDialog = false"
+      @md-confirm="callAbandonAffaire" />
 
 </div>

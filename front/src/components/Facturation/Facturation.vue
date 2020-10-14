@@ -27,6 +27,7 @@ export default {
   data: () => {
     return {
       affaire_factures: [],
+      numeros_references:[],
       affaireReadonly: true,
       clients_liste: [],
       clients_liste_type: [],
@@ -53,6 +54,7 @@ export default {
         montant_rf: null,
         montant_total: null,
         montant_tva: null,
+        numeros: null,
         remarque: null,
         sap: null
       },
@@ -117,6 +119,9 @@ export default {
               x.montant_rf = numeral(x.montant_rf).format("0.00");
               x.montant_tva = numeral(x.montant_tva).format("0.00");
               x.montant_total = numeral(x.montant_total).format("0.00");
+              if (x.numeros === null) {
+                x.numeros = [];
+              }
 
               // Composer l'adresse de facturation
               x.adresse_facturation_ = "";
@@ -207,6 +212,27 @@ export default {
       this.clients_liste_select = filterList(this.clients_liste, term, 3)
     },
 
+    /*
+     * SEARCH AFFAIRE NUMEROS
+     */
+    async searchAffaireNumeros() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT + "/" + this.$route.params.id,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      )
+      .then(response => {
+        if (response && response.data) {
+          this.numeros_references = response.data.filter(x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID));
+        }
+      })
+      .catch(err => {
+        handleException(err, this);
+      });
+    },
+
     /**
      * Calcul le montant total de la facture à la volée lors de l'édition
      */
@@ -238,6 +264,7 @@ export default {
         montant_rf: numeral(tmp.montant_rf).format('0.00'),
         montant_tva: numeral(tmp.montant_tva).format('0.00'),
         montant_total: numeral(tmp.montant_total).format('0.00'),
+        numeros: tmp.numeros,
         remarque: tmp.remarque
       }
       this.showFactureDialog = true;
@@ -260,6 +287,7 @@ export default {
         montant_rf: numeral(0).format('0.00'),
         montant_tva: numeral(0).format('0.00'),
         montant_total: numeral(0).format('0.00'),
+        numeros: null,
         remarque: null
       };
       this.showFactureDialog = true;
@@ -335,6 +363,9 @@ export default {
       }
       if (this.selectedFacture.indice_application_mo) {
         formData.append("indice_application_mo", this.selectedFacture.indice_application_mo);
+      }
+      if (this.selectedFacture.numeros) {
+        formData.append("numeros", JSON.stringify(this.selectedFacture.numeros));
       }
 
       // Type de requête selon si c'est une création ou une modification de facture
@@ -521,12 +552,19 @@ export default {
       }));
 
       return formData;
+    },
+
+    onSelectNumeroReference(data) {
+      this.selectedFacture.numeros = [];
+      data.forEach(x => this.selectedFacture.numeros.push(x.numero_id));
     }
+
   },
 
   mounted: function() {
     this.searchClients();
     this.searchAffaireFactures();
+    this.searchAffaireNumeros();
 
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) || this.$parent.parentAffaireReadOnly;
 

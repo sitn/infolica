@@ -40,19 +40,44 @@ def reservation_numeros_mo_new_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
 
-    cadastre_id = request.params["cadastre_id"]
-    type_id = request.params["type_id"]
+    # get cadastres jumeaux
+    cadastres_ChauxDeFonds_Eplatures_id = [int(i) for i in request.registry.settings['cadastres_ChauxDeFonds_Eplatures_id'].split(",")]
+    cadastres_BrotPlamboz_Plamboz_id = [int(i) for i in request.registry.settings['cadastres_BrotPlamboz_Plamboz_id'].split(",")]
+    cadastres_Neuchatel_Coudre_id = [int(i) for i in request.registry.settings['cadastres_Neuchatel_Coudre_id'].split(",")]
+    cadastres_Sauge_StAubin_id = [int(i) for i in request.registry.settings['cadastres_Sauge_StAubin_id'].split(",")]
+    
+    # get request params
+    cadastre_id = int(request.params["cadastre_id"])
+    type_id = int(request.params["type_id"])
+    plan_id = int(request.params["plan_id"]) if "plan_id" in request.params else None
 
-    # get max number in db by number type, cadastre and plan if necessary
-    query = request.dbsession.query(func.max(ReservationNumerosMO.numero_a)).filter(and_(
-        ReservationNumerosMO.cadastre_id == cadastre_id,
-        ReservationNumerosMO.type_id == type_id
-    ))
-
-    if "plan_id" in request.params:
-        query = query.filter(ReservationNumerosMO.plan_id == request.params["plan_id"])
-
-    max_reservation = 0 if query.first()[0] is None else query.first()[0]
+    # Corriger la liste des cadastres où la réservation de numéros se fait sur deux cadastres
+    if cadastre_id in cadastres_ChauxDeFonds_Eplatures_id:
+        # Cadastre de la Chaux-de-Fonds et des Eplatures
+        max_reservation = max(
+            Utils.last_number_mo(request, cadastres_ChauxDeFonds_Eplatures_id[0], type_id, plan_id),
+            Utils.last_number_mo(request, cadastres_ChauxDeFonds_Eplatures_id[1], type_id, plan_id)
+        )
+    elif cadastre_id in cadastres_BrotPlamboz_Plamboz_id:
+        # Cadastre de Brot-Plamboz et Plamboz
+        max_reservation = max(
+            Utils.last_number_mo(request, cadastres_BrotPlamboz_Plamboz_id[0], type_id, plan_id),
+            Utils.last_number_mo(request, cadastres_BrotPlamboz_Plamboz_id[1], type_id, plan_id)
+        )
+    elif cadastre_id in cadastres_Neuchatel_Coudre_id:
+        # Cadastre de Neuchâtel et de la Coudre
+        max_reservation = max(
+            Utils.last_number_mo(request, cadastres_Neuchatel_Coudre_id[0], type_id, plan_id),
+            Utils.last_number_mo(request, cadastres_Neuchatel_Coudre_id[1], type_id, plan_id)
+        )
+    elif cadastre_id in cadastres_Sauge_StAubin_id:
+        # Cadastre de Sauge et de Saint-Aubin
+        max_reservation = max(
+            Utils.last_number_mo(request, cadastres_Sauge_StAubin_id[0], type_id, plan_id),
+            Utils.last_number_mo(request, cadastres_Sauge_StAubin_id[1], type_id, plan_id)
+        )
+    else:
+        max_reservation = Utils.last_number_mo(request, cadastre_id, type_id, plan_id)
 
     # get params into mutable dict
     params = {}
@@ -70,3 +95,62 @@ def reservation_numeros_mo_new_view(request):
     request.dbsession.add(model)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ReservationNumerosMO.__tablename__))
+
+
+def savePointMO(request, affaire_id, cadastre_id, numero_type, n_numeros, etat_id):
+    settings = request.registry.settings
+    cadastres_ChauxDeFonds_Eplatures_id = settings['cadastres_ChauxDeFonds_Eplatures_id'].split(",")
+    cadastres_ChauxDeFonds_Eplatures_id = [
+        int(cadastres_ChauxDeFonds_Eplatures_id[0]),
+        int(cadastres_ChauxDeFonds_Eplatures_id[1])
+    ]
+    cadastres_BrotPlamboz_Plamboz_id = settings['cadastres_BrotPlamboz_Plamboz_id'].split(",")
+    cadastres_BrotPlamboz_Plamboz_id = [
+        int(cadastres_BrotPlamboz_Plamboz_id[0]),
+        int(cadastres_BrotPlamboz_Plamboz_id[1])
+    ]
+    cadastres_Neuchatel_Coudre_id = settings['cadastres_Neuchatel_Coudre_id'].split(",")
+    cadastres_Neuchatel_Coudre_id = [
+        int(cadastres_Neuchatel_Coudre_id[0]),
+        int(cadastres_Neuchatel_Coudre_id[1])
+    ]
+    cadastres_Sauge_StAubin_id = settings['cadastres_Sauge_StAubin_id'].split(",")
+    cadastres_Sauge_StAubin_id = [int(cadastres_Sauge_StAubin_id[0]), int(cadastres_Sauge_StAubin_id[1])]
+
+    # Corriger la liste des cadastres où la réservation de numéros se fait sur deux cadastres
+    if cadastre_id == cadastres_ChauxDeFonds_Eplatures_id[0] or cadastre_id == cadastres_ChauxDeFonds_Eplatures_id[1]:
+        # Cadastre de la Chaux-de-Fonds et des Eplatures
+        ln = max(
+            Utils.last_number(request, cadastres_ChauxDeFonds_Eplatures_id[0], [numero_type]),
+            Utils.last_number(request, cadastres_ChauxDeFonds_Eplatures_id[1], [numero_type])
+        )
+    elif cadastre_id == cadastres_BrotPlamboz_Plamboz_id[0] or cadastre_id == cadastres_BrotPlamboz_Plamboz_id[1]:
+        # Cadastre de Brot-Plamboz et Plamboz
+        ln = max(
+            Utils.last_number(request, cadastres_BrotPlamboz_Plamboz_id[0], [numero_type]),
+            Utils.last_number(request, cadastres_BrotPlamboz_Plamboz_id[1], [numero_type])
+        )
+    elif cadastre_id == cadastres_Neuchatel_Coudre_id[0] or cadastre_id == cadastres_Neuchatel_Coudre_id[1]:
+        # Cadastre de Neuchâtel et de la Coudre
+        ln = max(
+            Utils.last_number(request, cadastres_Neuchatel_Coudre_id[0], [numero_type]),
+            Utils.last_number(request, cadastres_Neuchatel_Coudre_id[1], [numero_type])
+        )
+    elif cadastre_id == cadastres_Sauge_StAubin_id[0] or cadastre_id == cadastres_Sauge_StAubin_id[1]:
+        # Cadastre de Sauge et de Saint-Aubin
+        ln = max(
+            Utils.last_number(request, cadastres_Sauge_StAubin_id[0], [numero_type]),
+            Utils.last_number(request, cadastres_Sauge_StAubin_id[1], [numero_type])
+        )
+    else:
+        ln = Utils.last_number(request, cadastre_id, [numero_type])
+
+    for i in range(n_numeros):
+        # enregistrer un nouveau numéro
+        params = Utils._params(
+            cadastre_id=cadastre_id, type_id=numero_type, etat_id=etat_id, numero=ln + i+1)
+        numero_id = numeros_new_view(request, params)
+        # enregistrer le lien affaire-numéro
+        params = Utils._params(
+            affaire_id=affaire_id, numero_id=numero_id, actif=True, type_id=2)
+        affaire_numero_new_view(request, params)
