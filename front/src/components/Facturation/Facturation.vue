@@ -119,8 +119,14 @@ export default {
               x.montant_rf = numeral(x.montant_rf).format("0.00");
               x.montant_tva = numeral(x.montant_tva).format("0.00");
               x.montant_total = numeral(x.montant_total).format("0.00");
-              if (x.numeros === null) {
+              if (x.numeros === undefined || x.numeros === null) {
+                x.numeros_id = [];
                 x.numeros = [];
+              } else {
+                x.numeros_id = x.numeros;
+                let tmp2 = [];
+                x.numeros.forEach(y => tmp2.push(this.numeros_references.filter(z => z.numero_id === y)[0].numero));
+                x.numeros = tmp2;
               }
 
               // Composer l'adresse de facturation
@@ -216,20 +222,24 @@ export default {
      * SEARCH AFFAIRE NUMEROS
      */
     async searchAffaireNumeros() {
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT + "/" + this.$route.params.id,
-        {
-          withCredentials: true,
-          headers: { Accept: "application/json" }
-        }
-      )
-      .then(response => {
-        if (response && response.data) {
-          this.numeros_references = response.data.filter(x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID));
-        }
-      })
-      .catch(err => {
-        handleException(err, this);
+      return new Promise((resolve, reject) => {
+        this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT + "/" + this.$route.params.id,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        )
+        .then(response => {
+          if (response && response.data) {
+            this.numeros_references = response.data.filter(x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID));
+            resolve(this.numeros_references);
+          }
+        })
+        .catch(err => {
+          handleException(err, this);
+          reject(err);
+        });
       });
     },
 
@@ -364,8 +374,10 @@ export default {
       if (this.selectedFacture.indice_application_mo) {
         formData.append("indice_application_mo", this.selectedFacture.indice_application_mo);
       }
-      if (this.selectedFacture.numeros) {
-        formData.append("numeros", JSON.stringify(this.selectedFacture.numeros));
+      if (this.selectedFacture.numeros_id) {
+        formData.append("numeros", JSON.stringify(this.selectedFacture.numeros_id));
+      } else {
+        formData.append("numeros", null);
       }
 
       // Type de requête selon si c'est une création ou une modification de facture
@@ -555,16 +567,20 @@ export default {
     },
 
     onSelectNumeroReference(data) {
+      this.selectedFacture.numeros_id = [];
       this.selectedFacture.numeros = [];
-      data.forEach(x => this.selectedFacture.numeros.push(x.numero_id));
+      data.forEach(x => {
+        this.selectedFacture.numeros_id.push(x.numero_id);
+        this.selectedFacture.numeros.push(x.numero_id);
+      });
     }
-
   },
 
   mounted: function() {
     this.searchClients();
-    this.searchAffaireFactures();
-    this.searchAffaireNumeros();
+    this.searchAffaireNumeros().then(() => {
+      this.searchAffaireFactures();
+    });
 
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) || this.$parent.parentAffaireReadOnly;
 

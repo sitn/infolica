@@ -67,16 +67,18 @@ export default {
      */
     async getClientAffaire() {
       return new Promise((resolve, reject) => {
-        this.$http.get(
-          process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_CLIENTS_ENDPOINT +
-          "/" + this.affaire.client_commande_id,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/json" }
-          }
-        ).then(response => resolve(response))
-        .catch(err => reject(err));
+        if (this.affaire.client_commande_id !== null) { // cadastration = pas de client commande généralement
+          this.$http.get(
+            process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_CLIENTS_ENDPOINT +
+            "/" + this.affaire.client_commande_id,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          ).then(response => resolve(response))
+          .catch(err => reject(err));
+        }
       })
     },
 
