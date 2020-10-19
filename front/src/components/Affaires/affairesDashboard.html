@@ -2,27 +2,33 @@
 
     <!-- TITRE -->
     <md-toolbar>
-        <h1 style="flex: 1;">
-            Affaire {{ affaire.id }}
-            <span v-if="affaire.no_access != null">[{{ affaire.no_access }}]</span>
-        </h1>
-        <div style="position: absolute; right: 80px;">
-            <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="generateBordereauAffaire">Bordereau de l'affaire</md-button>
-            <md-button class="md-primary md-raised" v-if="editAffaireAllowed && false" v-on:click="duplicateAffaire">Modification / Visa</md-button>
-            <!-- <md-button class="md-accent md-raised" v-if="editAffaireAllowed && cloreAffaireEnabled" v-on:click="callClotureAffaire">Clôturer</md-button> -->
-        </div v-if="(abandonAffaireEnabled || cloreAffaireEnabled) && editAffaireAllowed">
-            <md-speed-dial style="position: absolute; top: 3px; right: 10px; align-items: flex-end;" 
-                md-direction="bottom" 
-                md-dense>
-                <md-speed-dial-target class="md-accent" md-dense>
-                    <md-icon>block</md-icon>
-                </md-speed-dial-target>
-                
-                <md-speed-dial-content style="align-items: flex-end;">
-                    <md-button class="md-accent" @click="callClotureAffaire" v-if="cloreAffaireEnabled" md-dense>Cloturer</md-button>
-                    <md-button class="md-accent" @click="showConfirmAbandonAffaireDialog = true" v-if="abandonAffaireEnabled" md-dense>Abandonner</md-button>
-                </md-speed-dial-content>
-            </md-speed-dial>
+        <div style="width: 96% " class="md-layout md-gutter md-alignment-center-space-between">
+            <div class="md-layout-item">
+                <h1>
+                    Affaire {{ affaire.id }}
+                    <span v-if="affaire.no_access != null">[{{ affaire.no_access }}]</span>
+                    <span v-if="affaire.abandon === true"> - ABANDONNE</span>
+                </h1>
+            </div>
+
+            <div class="md-layout-item" style="text-align: right;">
+                <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="generateBordereauAffaire">Bordereau de l'affaire</md-button>
+                <md-button class="md-primary md-raised" v-if="editAffaireAllowed && false" v-on:click="duplicateAffaire">Modification / Visa</md-button>
+
+                <md-speed-dial style="align-items: flex-end;"
+                    md-direction="bottom" class="md-fixed">
+                    <md-speed-dial-target class="md-accent" md-dense>
+                        <md-icon>block</md-icon>
+                    </md-speed-dial-target>
+
+                    <md-speed-dial-content style="align-items: flex-end;">
+                        <md-button class="md-accent" @click="callClotureAffaire" v-if="cloreAffaireEnabled" md-dense>Cloturer</md-button>
+                        <md-button class="md-accent" @click="showConfirmAbandonAffaireDialog = true" v-if="abandonAffaireEnabled" md-dense>Abandonner</md-button>
+                    </md-speed-dial-content>
+                </md-speed-dial>
+            </div>
+
+        </div>
     </md-toolbar>
 
     <!-- INFORMATIONS GENERALES -->
