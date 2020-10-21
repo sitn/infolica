@@ -7,6 +7,7 @@ from sqlalchemy import (
     Text,
     String,
     Date,
+    DateTime,
     Boolean,
     ARRAY,
     ForeignKey,
@@ -793,8 +794,20 @@ class FonctionRole(Base):
     fonction_id = Column(BigInteger, ForeignKey(Fonction.id), nullable=False)
     role_id = Column(BigInteger, ForeignKey(Role.id), nullable=False)
 
+
+# class EtapeAffaire(Base):
+#     __tablename__ = 'v_etapes_affaires'
+#     __table_args__ = {'schema': 'infolica'}
+#     id = Column(BigInteger, primary_key=True, autoincrement=True)
+#     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
+#     etape_id = Column(AffaireEtapeIndex)
+#     datetime = Column(DateTime)
+#     remarque = Column(Text)
+
+
 # ======================== VUES ========================
-# Ajouter l'information
+# Ajouter l'information 'info': dict(is_view=True) aux vues 
+# pour qu'elles ne soient pas prises en compte dans les migrations par Alembic
 
 
 class VNumeros(Base):
@@ -1154,3 +1167,76 @@ class VPlan(Base):
     idborplan = Column(Text)
     idrepplan = Column(Text)
     base = Column(Text)
+
+
+# ========================================================
+#               TELETRAVAIL COVID-19
+# ========================================================
+
+class Etape_tele(Base):
+    __tablename__ = "etape"
+    __table_args__ = {'schema': 'teletravail'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
+
+class AffaireType_tele(Base):
+    __tablename__ = "affaire_type"
+    __table_args__ = {'schema': 'teletravail'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
+    ordre = Column(BigInteger, nullable=False)
+    logique_etapes = Column(ARRAY(BigInteger))
+
+class Affaire_tele(Base):
+    __tablename__ = "affaire"
+    __table_args__ = {'schema': 'teletravail'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    type_id = Column(BigInteger, ForeignKey(AffaireType_tele.id), nullable=False)
+    nom = Column(Text, nullable=False)
+    actuelle_etape_id = Column(BigInteger, ForeignKey(Etape_tele.id), nullable=False)
+    datetime_ouverture = Column(DateTime, nullable=False)
+    datetime_cloture = Column(DateTime)
+    remarque = Column(Text)
+
+class SuiviAffaire_tele(Base):
+    __tablename__ = "suivi_affaire"
+    __table_args__ = {'schema': 'teletravail'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
+    affaire_id = Column(BigInteger, ForeignKey(Affaire_tele.id), nullable=False)
+    datetime = Column(DateTime, nullable=False)
+    etape_id = Column(BigInteger, ForeignKey(Etape_tele.id), nullable=False)
+    remarque = Column(Text)
+
+class VSuiviAffaire_tele(Base):
+    __tablename__ = "v_suivi_affaires"
+    __table_args__ = {'schema': 'teletravail',
+                      'info': dict(is_view=True)}
+    suivi_affaire_id = Column(BigInteger, primary_key=True)
+    operateur_id = Column(BigInteger)
+    operateur_nom = Column(Text)
+    operateur_prenom = Column(Text)
+    affaire_id = Column(BigInteger)
+    affaire_nom = Column(Text)
+    affaire_type_id = Column(BigInteger)
+    affaire_type = Column(Text)
+    affaire_type_logique_etapes = Column(ARRAY(BigInteger))
+    datetime = Column(DateTime)
+    etape_id = Column(BigInteger)
+    etape = Column(Text)
+    remarque = Column(Text)
+
+class VAffaire_tele(Base):
+    __tablename__ = "v_affaires"
+    __table_args__ = {'schema': 'teletravail',
+                      'info': dict(is_view=True)}
+    affaire_id = Column(BigInteger, primary_key=True)
+    affaire_nom = Column(Text)
+    affaire_type_id = Column(BigInteger)
+    affaire_type = Column(Text)
+    affaire_type_logique_etapes = Column(ARRAY(BigInteger))
+    etape_id = Column(BigInteger)
+    etape = Column(Text)
+    affaire_remarque = Column(Text)
+    datetime_ouverture = Column(DateTime)
+    datetime_cloture = Column(DateTime)
