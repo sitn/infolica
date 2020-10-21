@@ -10,6 +10,7 @@ import Numeros from './components/Numeros/Numeros.vue'
 import NumerosHistory from './components/Numeros/NumerosHistory.vue'
 import About from './components/About/About.vue'
 import Login from './components/Login/Login.vue'
+import SuiviAffaire from './components/SuiviAffaire/SuiviAffaire.vue'
 
 const routes = [
     { path: '/infolica/', component: Affaires, redirect:'/infolica/affaires', name: 'Home' },    
@@ -25,7 +26,8 @@ const routes = [
     { path: '/infolica/login', component: Login, name: 'Login' },
     { path: '/infolica/numeros', component: Numeros, name: 'Numeros' },
     { path: '/infolica/numeros/:id', component: NumerosHistory, name: 'NumerosHistory' },
-    { path: '/infolica/apropos', component: About, name: 'About' }
+    { path: '/infolica/apropos', component: About, name: 'About' },
+    { path: '/infolica/suiviaffaire', component: SuiviAffaire, name: 'SuiviAffaire' }
 ];
 
 export default routes;

@@ -49,7 +49,7 @@ def reservation_numeros_mo_new_view(request):
     # get request params
     cadastre_id = int(request.params["cadastre_id"])
     type_id = int(request.params["type_id"])
-    plan_id = int(request.params["plan_id"]) if "plan_id" in request.params else None
+    plan_id = request.params["plan_id"] if "plan_id" in request.params else None
 
     # Corriger la liste des cadastres où la réservation de numéros se fait sur deux cadastres
     if cadastre_id in cadastres_ChauxDeFonds_Eplatures_id:

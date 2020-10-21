@@ -336,6 +336,7 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.searchAffaireNumeros();
+            this.showBtnReqRadMatDiff = true;
             this.$root.$emit("ShowMessage", "La mention 'différé' du numéro " + numero.numero + " a été correctement supprimée");
           }
         })
@@ -428,7 +429,7 @@ export default {
       let now = new Date();
       let numerosDifferes = [];
       this.affaire_numeros_nouveaux.forEach(x => {
-        if (x.numero_diff_entree !== null && x.numero_diff_sortie === null &&
+        if (x.numero_diff_entree !== null && x.numero_diff_sortie !== null &&
             now - moment(x.numero_diff_sortie) < 604800000) { // 604800000 ms = 1 semaine
           numerosDifferes.push(x.numero);
         }
