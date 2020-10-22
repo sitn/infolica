@@ -1,8 +1,10 @@
 <div id="SuiviAffaire">
     <md-card>
         <md-card-header>
-            <div class="md-layout md-gutter md-alignment"></div>
-            <h1>Suivi technique des dossiers</h1>
+            <md-toolbar>
+                <h1 style="flex: 1">Suivi technique des dossiers</h1>
+                <!-- <md-button class="md-raised md-accent" @click="openInfolicaTest">Infolica version test</md-button> -->
+            </md-toolbar>
         </md-card-header>
         
         <md-card-content>
@@ -23,9 +25,9 @@
                     <md-table-cell style="width: 5%;" md-label="2e ctrl (LF/FS)"><md-button class="md-raised" @click="openNewEtapeDialog(item)" v-if="item.dashboard[7]">{{ item.dashboard[7] }}</md-button></md-table-cell>
                     <md-table-cell style="width: 5%;" md-label="Valid tech (DGY)"><md-button class="md-raised" @click="openNewEtapeDialog(item)" v-if="item.dashboard[8]">{{ item.dashboard[8] }}</md-button></md-table-cell>
                     <md-table-cell style="width: 5%;" md-label="Finalisation (PDE/SE)"><md-button class="md-raised" @click="openNewEtapeDialog(item)" v-if="item.dashboard[9]">{{ item.dashboard[9] }}</md-button></md-table-cell>
-                    <md-table-cell style="width: 5%;" md-label="Signatures (propriétaires)"><md-button class="md-raised" @click="openNewEtapeDialog(item)" v-if="item.dashboard[10]">{{ item.dashboard[10] }}</md-button></md-table-cell>
-                    <md-table-cell style="width: 5%;" md-label="Signature (LF/FS)"><md-button class="md-raised" @click="openNewEtapeDialog(item)" v-if="item.dashboard[11]">{{ item.dashboard[11] }}</md-button></md-table-cell>
-                    <md-table-cell style="width: 5%;" md-label="Valid (DGY)"><md-button class="md-raised" @click="openNewEtapeDialog(item)" v-if="item.dashboard[12]">{{ item.dashboard[12] }}</md-button></md-table-cell>
+                    <md-table-cell style="width: 5%;" md-label="Signatures-Art.35 (LF/FS)"><md-button class="md-raised" @click="openNewEtapeDialog(item)" v-if="item.dashboard[10]">{{ item.dashboard[10] }}</md-button></md-table-cell>
+                    <!-- <md-table-cell style="width: 5%;" md-label="Signature (LF/FS)"><md-button class="md-raised" @click="openNewEtapeDialog(item)" v-if="item.dashboard[11]">{{ item.dashboard[11] }}</md-button></md-table-cell> -->
+                    <md-table-cell style="width: 5%;" md-label="Valid-Art.35  (DGY)"><md-button class="md-raised" @click="openNewEtapeDialog(item)" v-if="item.dashboard[12]">{{ item.dashboard[12] }}</md-button></md-table-cell>
                     <!-- <md-table-cell style="width: 5%;" md-label="Courrier (PDE/SE)"><md-button class="md-raised" @click="openNewEtapeDialog(item)">{{ item.dashboard[13] }}</md-button></md-table-cell>
                     <md-table-cell style="width: 5%;" md-label="RF"><md-button class="md-raised" @click="openNewEtapeDialog(item)">{{ item.dashboard[14] }}</md-button></md-table-cell> -->
                 </md-table-row>

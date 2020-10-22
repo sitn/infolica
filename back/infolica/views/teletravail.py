@@ -110,7 +110,7 @@ def affaire_tele_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(VAffaire_tele).filter(VAffaire_tele.etape_id < 14).order_by(VAffaire_tele.affaire_id).all()
+    query = request.dbsession.query(VAffaire_tele).filter(VAffaire_tele.datetime_cloture == None).order_by(VAffaire_tele.affaire_id.desc()).all()
     return Utils.serialize_many(query)
 
 

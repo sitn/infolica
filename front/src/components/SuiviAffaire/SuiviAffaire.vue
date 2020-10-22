@@ -187,15 +187,18 @@ export default {
     /**
      * Set new state
      */
-    setNewState() {
+    setNewState(affaire_id=null, etape_id=null) {
         this.etape = {
             id: null,
             operateur_id: JSON.parse(localStorage.getItem("infolica_user")).id,
-            affaire_id: this.affaire.id,
+            affaire_id: affaire_id === null? this.affaire.id: affaire_id,
             datetime: moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),
             etape: this.affaireEtapes_autocomplete.filter(x => x.id === this.affaire.actuelle_etape_id)[0],
             remarque: null
         };
+        if (etape_id !== null) {
+            this.etape.etape = {id: etape_id};
+        }
     },
 
     /**
@@ -249,7 +252,10 @@ export default {
     async updateAffaire() {
         let formData = new FormData();
         formData.append("id", this.affaire.affaire_id);
-        formData.append("actuelle_etape_id", this.affaire.prochaine_etape_id)
+        formData.append("actuelle_etape_id", this.affaire.prochaine_etape_id);
+        if (this.affaire.prochaine_etape_id > 13) {
+            formData.append("datetime_cloture", moment(new Date()).format("YYYY-MM-DD hh:mm:ss"))
+        }
 
         this.$http.put(
             process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_TELE_ENDPOINT,
@@ -261,15 +267,29 @@ export default {
         ).then(() => {
             this.$root.$emit("ShowMessage", "La nouvelle étape a bien été saisie.");
             this.showNewEtapeDialog = false
+
+            this.setNewState(this.affaire.affaire_id, this.affaire.prochaine_etape_id);
+            this.postNewState();
+
             this.getAffaire();
         }).catch(err => handleException(err, this));
-    }
+    },
+
+    // /**
+    //  * open infolica test
+    //  */
+    // openInfolicaTest() {
+    //     this.$router.push({ name: "Affaires"});
+    //     document.getElementById("header").style.display = "initial";
+    // }
+
+
   },
 
   mounted: function() {
     let header = document.getElementById("header");
     if (header !== null) {
-        header.remove();
+        header.style.display = "none";
     }
     this.getAffaireTypes();
     this.getAffaire();
