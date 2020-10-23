@@ -106,6 +106,7 @@ class AffaireType(Base):
     ordre = Column(BigInteger)
     reservation_numeros_types_id = Column(ARRAY(BigInteger))
     modif_affaire_type_id_vers = Column(ARRAY(BigInteger))
+    logique_processus = Column(ARRAY(BigInteger))
 
 
 class Affaire(Base):

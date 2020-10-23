@@ -14,12 +14,12 @@
             <div class="md-layout-item" style="text-align: right;">
                 <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="generateBordereauAffaire">Bordereau de l'affaire</md-button>
                 <md-button class="md-primary md-raised" v-if="editAffaireAllowed && false" v-on:click="duplicateAffaire">Modification / Visa</md-button>
-
+                
                 <md-speed-dial style="align-items: flex-end;"
                     md-direction="bottom" class="md-fixed">
-                    <md-speed-dial-target class="md-accent" md-dense>
+                    <md-button class="md-accent md-raised">
                         <md-icon>block</md-icon>
-                    </md-speed-dial-target>
+                    </md-button>
 
                     <md-speed-dial-content style="align-items: flex-end;">
                         <md-button class="md-accent" @click="callClotureAffaire" v-if="cloreAffaireEnabled" md-dense>Cloturer</md-button>
