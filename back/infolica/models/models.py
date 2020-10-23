@@ -1178,6 +1178,7 @@ class Etape_tele(Base):
     __table_args__ = {'schema': 'teletravail'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
+    ordre = Column(BigInteger)
 
 class AffaireType_tele(Base):
     __tablename__ = "affaire_type"

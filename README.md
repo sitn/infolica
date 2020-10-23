@@ -55,7 +55,7 @@ npm install
 
 Then build with:
 ```
-npm run build
+npm run build [-- --mode production]
 ```
 
 
