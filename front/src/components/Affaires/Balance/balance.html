@@ -3,7 +3,9 @@
         <md-card-header>
             <div class="md-title">Balance</div>
             <!-- <md-button @click="initBFArrays" class="md-raised">Récupérer la balance</md-button> -->
-            <md-button @click="getBalanceFromFile" class="md-raised">Récupérer la balance</md-button>
+            <!-- <md-button @click="getBalanceFromFile" class="md-raised">Récupérer la balance</md-button> -->
+            <md-button @click="getMutationNames" class="md-raised">Récupérer la balance</md-button>
+            <md-button @click="refreshBalanceTable" class="md-raised"><md-icon>refresh</md-icon></md-button>
         </md-card-header>
 
         <md-card-content v-if="numeros_relations_matrice[0]">

@@ -474,6 +474,38 @@ export default {
       })
     },
 
+    /**
+     * Refresh balance table
+     */
+    async refreshBalanceTable() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_GENERATE_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(() => {})
+      .catch(err => handleException(err, this));
+    },
+
+    /**
+     * Get mutation names from geos balance table
+     */
+    async getMutationNames() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_MUTATION_NAMES_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          console.log(response.data);
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+
 
   },
   mounted: function() {

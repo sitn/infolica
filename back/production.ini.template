@@ -6,6 +6,10 @@
 [app:main]
 use = egg:infolica
 
+infolica_mail = 
+infolica_smtp = 
+infolica_balance_mail = 
+
 pyramid.reload_templates = false
 pyramid.debug_authorization = false
 pyramid.debug_notfound = false

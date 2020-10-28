@@ -796,6 +796,32 @@ class FonctionRole(Base):
     role_id = Column(BigInteger, ForeignKey(Role.id), nullable=False)
 
 
+class GeosBalance(Base):
+    __tablename__ = 'geos_balance'
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
+    idobj = Column(String(40), primary_key=True)
+    base = Column(String(50))
+    numero_new = Column(String(50))
+    cad_new = Column(Integer)
+    parcel_new = Column(String(20))
+    superficie_new = Column(Integer)
+    numero_old = Column(String(50))
+    cad_old = Column(Integer)
+    parcel_old = Column(String(20))
+    superficie_old = Column(Integer)
+    superficie_partie = Column(Integer)
+    mutation = Column(String(50))
+    mutation_desc = Column(String(200))
+    egrid_old = Column(String(50))
+    gid_geom_new = Column(String(50))
+    gid_numero_new = Column(String(50))
+    gid_geom_old = Column(String(50))
+    gid_numero_old = Column(String(50))
+    gid_mutation = Column(String(50))
+    geom = Column(Geometry('POINT'))
+
+
 # class EtapeAffaire(Base):
 #     __tablename__ = 'v_etapes_affaires'
 #     __table_args__ = {'schema': 'infolica'}
