@@ -88,7 +88,7 @@ export default {
             if (response && response.data) {
                 let tmp = response.data;
                 tmp.forEach(x => {
-                    x.dashboard = new Array(15);
+                    x.dashboard = new Array(16);
                     x.dashboard[x.etape_id-1] = x.affaire_nom;
                 });
                 this.affaires = tmp;
@@ -253,7 +253,7 @@ export default {
         let formData = new FormData();
         formData.append("id", this.affaire.affaire_id);
         formData.append("actuelle_etape_id", this.affaire.prochaine_etape_id);
-        if (this.affaire.prochaine_etape_id > 13) {
+        if (this.affaire.prochaine_etape_id == 14 || this.affaire.prochaine_etape_id == 15) {
             formData.append("datetime_cloture", moment(new Date()).format("YYYY-MM-DD hh:mm:ss"))
         }
 
