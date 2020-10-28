@@ -19,7 +19,7 @@ def affaire_type_tele_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(AffaireType_tele).order_by(AffaireType_tele.id.asc()).all()
+    query = request.dbsession.query(AffaireType_tele).filter(AffaireType_tele.ordre != None).order_by(AffaireType_tele.ordre.asc()).all()
     return Utils.serialize_many(query)
 
 
@@ -34,7 +34,7 @@ def affaire_etape_tele_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(Etape_tele).order_by(Etape_tele.ordre.asc()).all()
+    query = request.dbsession.query(Etape_tele).filter(Etape_tele.ordre != None).order_by(Etape_tele.ordre.asc()).all()
     return Utils.serialize_many(query)
 
 
