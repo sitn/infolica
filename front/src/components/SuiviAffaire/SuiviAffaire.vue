@@ -318,6 +318,8 @@ export default {
     this.getEtapes();
     this.getSuiviAffaire();
 
+    setInterval(() => { this.getAffaire() }, 60000); // Recharge le tableau toutes les minutes
+
   }
 };
 </script>
