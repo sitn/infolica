@@ -167,3 +167,4 @@ def includeme(config):
     config.add_route('affaire_type_tele', '/infolica/api/affaire_type_tele')
     config.add_route('affaire_etape_tele', '/infolica/api/affaire_etape_tele')
     config.add_route('suivi_affaire_tele', '/infolica/api/suivi_affaire_tele')
+    config.add_route('affaire_etape_mail_tele', 'infolica/api/affaire_etape_mail_tele')

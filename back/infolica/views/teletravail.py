@@ -6,6 +6,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Affaire_tele, VAffaire_tele, Etape_tele, SuiviAffaire_tele, VSuiviAffaire_tele, AffaireType_tele
 from infolica.scripts.utils import Utils
+from infolica.scripts.mailer import send_mail
 
 
 # AFFAIRE TYPE
@@ -35,6 +36,7 @@ def affaire_etape_tele_view(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(Etape_tele).filter(Etape_tele.ordre != None).order_by(Etape_tele.ordre.asc()).all()
+
     return Utils.serialize_many(query)
 
 
@@ -152,3 +154,32 @@ def affaire_tele_update_view(request):
     request.dbsession.add(record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire_tele.__tablename__))
+
+
+# AFFAIRE ETAPE
+
+@view_config(route_name='affaire_etape_mail_tele', request_method='POST', renderer='json')
+def affaire_etape_mail_tele_view(request):
+    """
+    Send mail
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    affaire_nom = request.params["affaire_nom"] if "affaire_nom" in request.params else None
+    etape_id = int(request.params["etape_id"]) if "etape_id" in request.params else None
+
+    # get etape and contact
+    etape = Utils.serialize_one(request.dbsession.query(Etape_tele).filter(Etape_tele.id == etape_id).first())
+
+    if not etape["mail"]:
+        return "No e-mail set for this step"
+    
+    mail_list = etape["mail"].replace(" ", "").split(",")
+    subject = "Suivi Affaire - Infolica"
+    text = "L'affaire '{}' est en attente pour l'étape '{}'\n\nCe mail est généré automatiquement.\nNe pas répondre à cette adresse e-mail.".format(affaire_nom, etape["nom"])
+
+    send_mail(request, mail_list, text, subject)
+
+    return "E-mail correctly sent"
