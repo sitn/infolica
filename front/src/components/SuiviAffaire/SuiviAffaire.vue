@@ -88,8 +88,9 @@ export default {
             if (response && response.data) {
                 let tmp = response.data;
                 tmp.forEach(x => {
-                    x.dashboard = new Array(16);
-                    x.dashboard[x.etape_id-1] = x.affaire_nom;
+                    for (let i=0; i<16; i++) {
+                        x["dashboard_" + i.toString()] = i === x.etape_id-1? x.affaire_nom: null;
+                    }
                 });
                 this.affaires = tmp;
             }
@@ -197,7 +198,8 @@ export default {
             remarque: null
         };
         if (etape_id !== null) {
-            this.etape.etape = {id: etape_id};
+            this.etape.etape = this.affaireEtapes_autocomplete.filter(x => x.id === etape_id)[0];
+            // this.etape.etape = {id: etape_id};
         }
     },
 
@@ -270,9 +272,29 @@ export default {
 
             this.setNewState(this.affaire.affaire_id, this.affaire.prochaine_etape_id);
             this.postNewState();
+            this.sendMail(this.affaire.affaire_nom, this.etape.etape.id);
 
             this.getAffaire();
         }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Send e-mail @ new etape
+     */
+    async sendMail(affaire_nom, etape_id) {
+        let formData = new FormData();
+        formData.append("affaire_nom", affaire_nom);
+        formData.append("etape_id", etape_id);
+
+        this.$http.post(
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_ETAPE_AFFAIRE_MAIL_TELE_ENDPOINT,
+            formData,
+            {
+                withCredentials: true,
+                headers: {Accept: "application/json"}
+            }
+        ).then(()=> {})
+        .catch(err => handleException(err, this));
     },
 
     // /**
@@ -295,6 +317,8 @@ export default {
     this.getAffaire();
     this.getEtapes();
     this.getSuiviAffaire();
+
+    setInterval(() => { this.getAffaire() }, 60000); // Recharge le tableau toutes les minutes
 
   }
 };

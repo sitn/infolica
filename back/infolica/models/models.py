@@ -1179,6 +1179,7 @@ class Etape_tele(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
+    mail = Column(Text)
 
 class AffaireType_tele(Base):
     __tablename__ = "affaire_type"
