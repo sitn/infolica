@@ -1,4 +1,23 @@
 <div id="SuiviAffaire">
+    <!-- Info Bulle -->
+    <md-card v-if="((new Date('2020/11/04').getTime() - new Date().getTime()))/(1000*3600*24) > 0" style="background-color: #ABBAEA;" id="info1">
+        <md-card-content>
+            <div class="md-gutter md-layout">
+                <div class="md-layout-item md-size-95">
+                    <h3 style="margin: 0;">Mises à jour du 30 octobre 2020</h3>
+                    <ul style="margin-bottom: 0;">
+                        <li>Ajout de la possibilité de trier sur les colonnes (faire remonter les affaires en attente dans l'étape)</li>
+                        <li>Quand une nouvelle étape est enregistrée, un mail est automatiquement envoyé au(x) responsable(s) de l'étape suivante (à l'exception des chefs d'équipe et du secrétariat) </li>
+                        <li>Le tableau se réactualise toutes les minutes automatiquement (efface le tri sur les colonnes s'il est défini)</li>
+                    </ul>
+                </div>
+                <div class="md-layout-item md-size-5">
+                    <md-button onclick="document.getElementById('info1').style.display = 'none'" class="md-icon-button" md-dense><md-icon>close</md-icon></md-button>
+                </div>
+            </div>
+        </md-card-content>
+    </md-card>
+
     <md-card>
         <md-card-header>
             <md-toolbar>
@@ -10,7 +29,7 @@
         <md-card-content>
             <md-button class="md-primary md-raised" @click="showNewAffaireDialog=true">Nouvelle affaire</md-button>
 
-            <md-table v-model="affaires" md-sort="id" md-sort-order="desc" md-card>
+            <md-table v-model="affaires" md-sort="id" md-sort-order="desc" md-card style="height: 780px;">
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <!-- <md-table-cell md-label="Nom" md-sort-by="affaire_nom">{{ item.affaire_nom }}</md-table-cell> -->
                     <md-table-cell md-label="affaire_id" md-sort-by="affaire_id" v-if="false">{{ item.affaire_id }}</md-table-cell>
