@@ -176,7 +176,15 @@ def affaire_etape_mail_tele_view(request):
     if not etape["mail"]:
         return "No e-mail set for this step"
     
-    mail_list = etape["mail"].replace(" ", "").split(",")
+    if "email_adresse" in request.params:
+        if request.params["email_adresse"]:
+            mail_list = [request.params["email_adresse"]]
+        else:
+            return "No e-mail adress given for this step"
+        
+    else:
+        mail_list = etape["mail"].replace(" ", "").split(",")
+    
     subject = "Suivi Affaire - Infolica"
     text = "L'affaire '{}' est en attente pour l'étape '{}'\n\nCe mail est généré automatiquement.\nNe pas répondre à cette adresse e-mail.".format(affaire_nom, etape["nom"])
 
