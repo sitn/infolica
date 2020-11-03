@@ -15,6 +15,7 @@ export default {
         affaires: [],
         affaireTypes: [],
         affaireTypes_autocomplete: [],
+        affaireEtapes: [],
         affaireEtapes_autocomplete: [],
         affaire: {
             id: null,
@@ -29,9 +30,12 @@ export default {
             affaire: null,
             datetime: null,
             etape: null,
-            remarque: null
+            remarque: null,
+            mailadress: null,
         },
         dialogEtape: null,
+        mailAdressList: [],
+        showMailChefEquipe: false,
         showNewAffaireDialog: false,
         showNewEtapeDialog: false,
         suiviAffaires: [],
@@ -88,7 +92,7 @@ export default {
             if (response && response.data) {
                 let tmp = response.data;
                 tmp.forEach(x => {
-                    for (let i=0; i<16; i++) {
+                    for (let i=0; i<17; i++) {
                         x["dashboard_" + i.toString()] = i === x.etape_id-1? x.affaire_nom: null;
                     }
                 });
@@ -110,6 +114,10 @@ export default {
         ).then(response => {
             if (response && response.data) {
                 this.getSuiviAffaire();
+                this.affaireEtapes = response.data;
+                this.affaireEtapes.forEach(x=> {
+                    x.mail = x.mail.replace(/\s/g, '').split(",");
+                });
                 this.affaireEtapes_autocomplete = stringifyAutocomplete(response.data);
             }
         }).catch(err => handleException(err, this));
@@ -141,7 +149,8 @@ export default {
             affaire: null,
             datetime: null,
             etape: null,
-            remarque: null
+            remarque: null,
+            mailadress: null
         };
     },
 
@@ -189,17 +198,14 @@ export default {
      * Set new state
      */
     setNewState(affaire_id=null, etape_id=null) {
-        this.etape = {
-            id: null,
-            operateur_id: JSON.parse(localStorage.getItem("infolica_user")).id,
-            affaire_id: affaire_id === null? this.affaire.id: affaire_id,
-            datetime: moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),
-            etape: this.affaireEtapes_autocomplete.filter(x => x.id === this.affaire.actuelle_etape_id)[0],
-            remarque: null
-        };
+        this.etape.id = null,
+        this.etape.operateur_id = JSON.parse(localStorage.getItem("infolica_user")).id,
+        this.etape.affaire_id = affaire_id === null? this.affaire.id: affaire_id,
+        this.etape.datetime = moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),
+        this.etape.etape = this.affaireEtapes_autocomplete.filter(x => x.id === this.affaire.actuelle_etape_id)[0],
+        this.etape.remarque = null
         if (etape_id !== null) {
             this.etape.etape = this.affaireEtapes_autocomplete.filter(x => x.id === etape_id)[0];
-            // this.etape.etape = {id: etape_id};
         }
     },
 
@@ -234,7 +240,8 @@ export default {
     openNewEtapeDialog(data) {
         this.affaire = this.affaires.filter(x => x.affaire_id === data.affaire_id)[0];
         this.affaire.prochaine_etape_id = this.affaire.affaire_type_logique_etapes[this.affaire.affaire_type_logique_etapes.indexOf(this.affaire.etape_id)+1];
-        
+        this.setProchaineEtapeId({id: this.affaire.prochaine_etape_id});
+
         this.affaire.actuelle_etape = this.affaireEtapes_autocomplete.filter(x => x.id === this.affaire.etape_id)[0];
         this.affaire.prochaine_etape = this.affaireEtapes_autocomplete.filter(x => x.id === this.affaire.prochaine_etape_id)[0];
         
@@ -246,6 +253,14 @@ export default {
      */
     setProchaineEtapeId(data) {
         this.affaire.prochaine_etape_id = data.id;
+
+        if (data.id === 2) {
+            this.mailAdressList = this.affaireEtapes[1].mail;
+            this.showMailChefEquipe = true;
+        } else {
+            this.showMailChefEquipe = false;
+            this.mailAdressList = [];
+        }
     },
 
     /**
@@ -255,7 +270,7 @@ export default {
         let formData = new FormData();
         formData.append("id", this.affaire.affaire_id);
         formData.append("actuelle_etape_id", this.affaire.prochaine_etape_id);
-        if (this.affaire.prochaine_etape_id == 14 || this.affaire.prochaine_etape_id == 15) {
+        if (this.affaire.prochaine_etape_id == 14 || this.affaire.prochaine_etape_id == 15 || this.affaire.prochaine_etape_id == 17) {
             formData.append("datetime_cloture", moment(new Date()).format("YYYY-MM-DD hh:mm:ss"))
         }
 
@@ -285,6 +300,9 @@ export default {
         let formData = new FormData();
         formData.append("affaire_nom", affaire_nom);
         formData.append("etape_id", etape_id);
+        if (etape_id === 2) {
+            formData.append("email_adresse", this.etape.mailadress)
+        }
 
         this.$http.post(
             process.env.VUE_APP_API_URL + process.env.VUE_APP_ETAPE_AFFAIRE_MAIL_TELE_ENDPOINT,
