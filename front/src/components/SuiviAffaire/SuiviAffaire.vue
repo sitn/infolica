@@ -114,10 +114,13 @@ export default {
         ).then(response => {
             if (response && response.data) {
                 this.getSuiviAffaire();
-                this.affaireEtapes = response.data;
-                this.affaireEtapes.forEach(x=> {
-                    x.mail = x.mail.replace(/\s/g, '').split(",");
+                let tmp = response.data;
+                tmp.forEach(x => {
+                    if (x.mail !== null) {
+                        x.mail = x.mail.replace(/\s/g, '').split(",");
+                    }
                 });
+                this.affaireEtapes = tmp;
                 this.affaireEtapes_autocomplete = stringifyAutocomplete(response.data);
             }
         }).catch(err => handleException(err, this));
