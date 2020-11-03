@@ -1,23 +1,15 @@
 <div id="SuiviAffaire">
     <!-- Info Bulle -->
-    <md-card v-if="((new Date('2020/11/04').getTime() - new Date().getTime()))/(1000*3600*24) > 0" style="background-color: #ABBAEA;" id="info1">
+    <md-card v-if="((new Date('2020/11/05').getTime() - new Date().getTime()))/(1000*3600*24) > 0" style="background-color: #ABBAEA;" id="info1">
         <md-card-content>
             <div class="md-gutter md-layout">
                 <div class="md-layout-item md-size-95">
-                    <h2 style="margin: 0;">Mises à jour du 30 octobre 2020</h2>
-                    <br>
-                    <b>Nouveautés</b>
+                    <h2 style="margin: 0;">Mise à jour du 3 novembre 2020</h2>
                     <ul style="margin-bottom: 0;">
-                        <li>Ajout de la possibilité de trier sur les colonnes (faire remonter les affaires en attente dans l'étape)</li>
-                        <li>Quand une nouvelle étape est enregistrée, un mail est automatiquement envoyé au(x) responsable(s) de l'étape suivante (à l'exception des chefs d'équipe et du secrétariat) </li>
-                        <li>Le tableau se réactualise toutes les minutes automatiquement (efface le tri sur les colonnes s'il est défini)</li>
+                        <li>Envoyer un mail d'info au chef d'équipe en charge de l'affaire pour l'étape "travaux"</li>
+                        <li>Mise à jour du cheminement des affaires</li>
                     </ul>
-                    <br>
-                    <b>Remarques</b>
-                    <ul style="margin-bottom: 0;">
-                        <li>Utiliser la combinaison CTRL + F pour effecuter une recherche d'affaire dans le tableau</li>
-                        <li>Une fois connecté à l'application, vous pouvez utiliser le lien courrant pour y accéder sans avoir à retaper vos informations d'authentification. L'authentification est nécessaire après chaque fermeture du navigateur.</li>
-                    </ul>
+                    
                 </div>
                 <div class="md-layout-item md-size-5">
                     <md-button onclick="document.getElementById('info1').style.display = 'none'" class="md-icon-button" md-dense><md-icon>close</md-icon></md-button>
@@ -50,8 +42,8 @@
                     <md-table-cell md-sort-by="dashboard_6" md-label="Prép. doc. final (PDE/SE)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_6">{{ item.dashboard_6 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_7" md-label="2e ctrl (LF/FS)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_7">{{ item.dashboard_7 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_9" md-label="Finalisation (PDE/SE)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_9">{{ item.dashboard_9 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_8" md-label="Valid tech (DGY)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_8">{{ item.dashboard_8 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_10" md-label="Signatures-Art.35 (LF/FS)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_10">{{ item.dashboard_10 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_8" md-label="Valid tech (DGY)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_8">{{ item.dashboard_8 }}</md-button></md-table-cell>
                 </md-table-row>
             </md-table>
         </md-card-content>
