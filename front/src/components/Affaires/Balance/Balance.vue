@@ -16,6 +16,7 @@ export default {
     return {
       // numeros_liste = [],
       cadastres_liste: [],
+      mutation_names: [],
       numeros_anciens: [],
       numeros_nouveaux: [],
       numeros_relations: [],
@@ -23,6 +24,10 @@ export default {
       numeros_relations_matrice: [],
       numeros_types_liste: [],
       oldBF_toCreate: [],
+      selectedMutation: {
+        nom: null,
+        numeros: []
+      },
       showConfirmationCreateNumber: false
     };
   },
@@ -500,12 +505,29 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-          console.log(response.data);
+          this.mutation_names = JSON.parse(response.data);
+          // this.mutation_names = response.data;
         }
       }).catch(err => handleException(err, this));
     },
 
-
+    /**
+     * Get balance from mutation name
+     */
+    async getBalanceByMutationName() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_ENDPOINT + "?mutation_name=" + this.selectedMutation.nom,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          let tmp = response.data;
+        }
+      }).catch(err => handleException(err, this));
+    },
+    
 
   },
   mounted: function() {

@@ -158,7 +158,7 @@ def includeme(config):
     #Balance
     config.add_route('balance_generate_table', '/infolica/api/balance_generate')
     config.add_route('balance_mutation_names', '/infolica/api/balance_mutation_names')
-    config.add_route('balance_by_affaire_id', '/infolica/api/balance/{id}')
+    config.add_route('balance_by_affaire_id', '/infolica/api/balance')
     #Reservation_numeros_mo
     config.add_route('reservation_numeros_mo_by_affaire_id', '/infolica/api/reservation_numeros_mo/{id}')
     config.add_route('reservation_numeros_mo', '/infolica/api/reservation_numeros_mo')
