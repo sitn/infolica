@@ -174,7 +174,7 @@ export default {
         formData.append("nom", this.affaire.nom);
         formData.append("type_id", this.affaire.type.id);
         formData.append("actuelle_etape_id", this.affaire.actuelle_etape_id);
-        formData.append("datetime_ouverture", moment(new Date()).format("YYYY-MM-DD hh:mm:ss"));
+        formData.append("datetime_ouverture", moment(new Date()).format("YYYY-MM-DD HH:mm:ss"));
         formData.append("remarque", this.affaire.remarque);
 
         this.$http.post(
@@ -204,7 +204,7 @@ export default {
         this.etape.id = null,
         this.etape.operateur_id = JSON.parse(localStorage.getItem("infolica_user")).id,
         this.etape.affaire_id = affaire_id === null? this.affaire.id: affaire_id,
-        this.etape.datetime = moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),
+        this.etape.datetime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
         this.etape.etape = this.affaireEtapes_autocomplete.filter(x => x.id === this.affaire.actuelle_etape_id)[0],
         this.etape.remarque = null
         if (etape_id !== null) {
@@ -274,7 +274,7 @@ export default {
         formData.append("id", this.affaire.affaire_id);
         formData.append("actuelle_etape_id", this.affaire.prochaine_etape_id);
         if (this.affaire.prochaine_etape_id == 14 || this.affaire.prochaine_etape_id == 15 || this.affaire.prochaine_etape_id == 17) {
-            formData.append("datetime_cloture", moment(new Date()).format("YYYY-MM-DD hh:mm:ss"))
+            formData.append("datetime_cloture", moment(new Date()).format("YYYY-MM-DD HH:mm:ss"))
         }
 
         this.$http.put(
