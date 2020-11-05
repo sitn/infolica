@@ -14,12 +14,11 @@
 
         <md-card-expand>
             <md-card-expand-content>
-                <div class="md-layout md-gutter">
+                <div class="md-layout md-gutter md-alignment-space-between">
                     <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
-                    <div class="md-layout-item md-size-45" style="padding-right: 0" v-if="affaire.type_id === typesAffaires.mutation ||
-                                                                                          affaire.type_id === typesAffaires.cadastration ||
-                                                                                          affaire.type_id === typesAffaires.autre ||
-                                                                                          (affaire.type_id === typesAffaires.modification && affaire.modification_type_id === typesAffaires.modification_type.abandon_partiel)">
+                    <div class="md-layout-item md-size-45" v-if= "affaire.type_id === typesAffaires.cadastration ||
+                                                                  affaire.type_id === typesAffaires.autre ||
+                                                                  (affaire.type_id === typesAffaires.modification && affaire.modification_type_id === typesAffaires.modification_type.abandon_partiel)">
                         <md-card-content>
 
                             <md-card>
@@ -74,7 +73,7 @@
                     </div>
 
                     <!-- NUMEROS RESERVES (nouveaux numéros) -->
-                    <div class="md-layout-item md-size-55" style="padding-left: 0" v-if="[typesAffaires.mutation, typesAffaires.ppe, typesAffaires.pcop, typesAffaires.modification].includes(affaire.type_id)">
+                    <div class="md-layout-item md-size-55" v-if="[typesAffaires.mutation, typesAffaires.ppe, typesAffaires.pcop, typesAffaires.modification].includes(affaire.type_id)">
                         <md-card-content>
 
                             <md-card>
@@ -139,16 +138,22 @@
                         </md-card-content>
                     </div>
                     
-                    <!-- Numéros de la MO -->
-                    <ReservationNumerosMO :affaire="affaire"
-                                          :typesAffaires="typesAffaires"
-                                          :types_numeros="types_numeros"></ReservationNumerosMO>
+                    <div class="md-layout-item md-size-50">
+                        <!-- Numéros de la MO -->
+                        <md-card-content>
+                            <ReservationNumerosMO :affaire="affaire"
+                                                  :typesAffaires="typesAffaires"
+                                                  :types_numeros="types_numeros"></ReservationNumerosMO>
+                        </md-card-content>
+                    </div>
 
-                    <!-- Balance des biens-fonds -->
-                    <md-card-content v-if="showBalance && affaire.type_id==typesAffaires.mutation">
-                        <Balance :affaire_numeros_all="affaire_numeros_all"
-                                 :affaire="affaire" />
-                    </md-card-content>
+                    <div class="md-layout-item md-size-100" v-if="showBalance && affaire.type_id==typesAffaires.mutation">
+                        <!-- Balance des biens-fonds -->
+                        <md-card-content>
+                            <Balance :affaire_numeros_all="affaire_numeros_all"
+                                     :affaire="affaire" />
+                        </md-card-content>
+                    </div>
                     
                 </div>    
                 

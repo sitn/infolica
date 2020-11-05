@@ -822,16 +822,6 @@ class GeosBalance(Base):
     geom = Column(Geometry('POINT'))
 
 
-# class EtapeAffaire(Base):
-#     __tablename__ = 'v_etapes_affaires'
-#     __table_args__ = {'schema': 'infolica'}
-#     id = Column(BigInteger, primary_key=True, autoincrement=True)
-#     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
-#     etape_id = Column(AffaireEtapeIndex)
-#     datetime = Column(DateTime)
-#     remarque = Column(Text)
-
-
 # ======================== VUES ========================
 # Ajouter l'information 'info': dict(is_view=True) aux vues 
 # pour qu'elles ne soient pas prises en compte dans les migrations par Alembic

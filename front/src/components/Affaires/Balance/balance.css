@@ -2,4 +2,9 @@
     float: left;
     text-align: center;
     writing-mode: sideways-lr;
+    min-width: 25px;
+}
+
+.balance .md-toolbar {
+    min-height: 25px;
 }
