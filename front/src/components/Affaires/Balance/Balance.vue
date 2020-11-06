@@ -16,6 +16,11 @@ export default {
     return {
       // numeros_liste = [],
       cadastres_liste: [],
+      checkBFBalance: {
+        show: false,
+        title: "",
+        content: ""
+      },
       mutation_names: [],
       numeros_anciens: [],
       numeros_nouveaux: [],
@@ -597,8 +602,18 @@ export default {
      */
     saveBalance() {
       let relations = this.getRelations();
-      console.log(relations)
-      this.checkExistingBF(relations);
+      console.log(relations);
+      let checkBF = this.checkExistingBF(relations);
+      console.log(checkBF);
+      if (checkBF.newBF_not_in_numeros_reserves.length > 0) {
+        this.checkBFBalance = {
+          show: true,
+          title: "Balance incorrecte !",
+          content: "<p>Les numéros " + checkBF.newBF_not_in_numeros_reserves.join(", ") + " ne figurent pas dans les biens-fonds réservés.</p>\
+                    <p>La balance n'est pas enregistrée.\n</p>"
+        }
+        return;
+      }
       // postBalance();
 
     },
@@ -661,7 +676,10 @@ export default {
       console.log("numeros_reserves_not_in_newBF = ", numeros_reserves_not_in_newBF);
 
       //Check if oldBF already exist in DB
-
+      // let promises = [];
+      
+      return {newBF_not_in_numeros_reserves: newBF_not_in_numeros_reserves,
+              numeros_reserves_not_in_newBF: numeros_reserves_not_in_newBF};
     },
 
 

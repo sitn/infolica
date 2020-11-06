@@ -110,4 +110,11 @@
             <md-button class="md-primary" @click="onCreateOldBF">Enregistrer</md-button>
         </md-dialog-actions>
     </md-dialog>
+
+    <!-- Dialog balance incorrecte -->
+    <md-dialog-alert :md-active.sync="checkBFBalance.show"
+                     :md-title="checkBFBalance.title"
+                     :md-content="checkBFBalance.content"
+                     style="width: 700px; margin: auto;" />
+
 </div>
