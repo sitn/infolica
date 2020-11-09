@@ -36,7 +36,6 @@
                     <md-table-cell md-sort-by="dashboard_0" md-label="Coordination (DGY)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_0">{{ item.dashboard_0 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_1" md-label="Travaux (c. éq.)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_1">{{ item.dashboard_1 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_2" md-label="Ctrl tech (DGY)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_2">{{ item.dashboard_2 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_3" md-label="Dés. propres (PDE/SE)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_3">{{ item.dashboard_3 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_4" md-label="Report serv. (BB)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_4">{{ item.dashboard_4 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_5" md-label="1er ctrl (LF/FS)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_5">{{ item.dashboard_5 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_6" md-label="Prép. doc. final (PDE/SE)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_6">{{ item.dashboard_6 }}</md-button></md-table-cell>
@@ -78,11 +77,11 @@
 
 
     <!-- Dialog pour la création de nouvelle étape dans l'affaire -->
-    <md-dialog :md-active.sync="showNewEtapeDialog" style="z-index: 6; margin: auto;">
+    <md-dialog :md-active.sync="showNewEtapeDialog" style="z-index: 6; margin: auto; width: 1000px;">
         <md-dialog-title>Nouvelle étape de l'affaire '{{ affaire.affaire_nom }}'</md-dialog-title>
 
         <md-dialog-content>
-            <div class="md-layout md-gutter">
+            <div class="md-layout md-gutter md-alignment-top-space-between">
                 <div class="md-layout-item md-size-45">
                     <!-- Nom de l'étape en cours -->
                     <md-field>
@@ -97,12 +96,36 @@
                         <label>Prochaine étape</label>
                     </md-autocomplete>
 
-                    <md-field v-if="showMailChefEquipe" >
+                    <md-field v-if="showMailChefEquipe">
                         <label>Chef d'équipe</label>
                         <md-select v-model="etape.mailadress" md-dense>
                             <md-option v-for="item in mailAdressList" :key="item" :value="item">{{ item }}</md-option>
                         </md-select>
                     </md-field>
+                    
+                </div>
+                <div class="md-layout-item md-size-100">
+                    
+                    <md-field>
+                        <label>Remarques</label>
+                        <md-textarea v-model="etape.remarque" md-autogrow></md-textarea>
+                    </md-field>
+                </div>
+                
+                <md-divider/>
+                
+                <div class="md-layout-item md-size-100">
+                    <md-table v-model="suiviAffaires" md-card>
+                        <md-table-toolbar>
+                            <h3>Historique des étapes</h3>
+                        </md-table-toolbar>
+                        <md-table-row slot="md-table-row" slot-scope="{ item }">
+                            <md-table-cell style="width: 15%;" md-label="Horodateur">{{ item.datetime }}</md-table-cell>
+                            <md-table-cell style="width: 30%;" md-label="Etape">{{ item.etape }}</md-table-cell>
+                            <md-table-cell style="width: 15%;" md-label="Déclanché par">{{ item.operateur_prenom }}</md-table-cell>
+                            <md-table-cell style="width: 40%;" md-label="Remarque">{{ item.remarque }}</md-table-cell>
+                        </md-table-row>
+                    </md-table>
                 </div>
             </div>
 

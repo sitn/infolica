@@ -156,7 +156,7 @@ def affaire_tele_update_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire_tele.__tablename__))
 
 
-# AFFAIRE ETAPE
+# SEND MAIL
 
 @view_config(route_name='affaire_etape_mail_tele', request_method='POST', renderer='json')
 def affaire_etape_mail_tele_view(request):
@@ -177,7 +177,7 @@ def affaire_etape_mail_tele_view(request):
         return "No e-mail set for this step"
     
     if "email_adresse" in request.params:
-        if request.params["email_adresse"]:
+        if request.params["email_adresse"] and request.params["email_adresse"] != "null":
             mail_list = [request.params["email_adresse"]]
         else:
             return "No e-mail adress given for this step"
