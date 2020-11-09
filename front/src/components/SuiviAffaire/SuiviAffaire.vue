@@ -242,6 +242,7 @@ export default {
      * open new etape dialog
      */
     openNewEtapeDialog(data) {
+        this.initFormEtape();
         this.affaire = this.affaires.filter(x => x.affaire_id === data.affaire_id)[0];
         this.affaire.prochaine_etape_id = this.affaire.affaire_type_logique_etapes[this.affaire.affaire_type_logique_etapes.indexOf(this.affaire.etape_id)+1];
         this.setProchaineEtapeId({id: this.affaire.prochaine_etape_id});
@@ -250,7 +251,6 @@ export default {
         this.affaire.prochaine_etape = this.affaireEtapes_autocomplete.filter(x => x.id === this.affaire.prochaine_etape_id)[0];
         
         this.suiviAffaires = this.suiviAffaires_bk.filter(x => x.affaire_id === data.affaire_id);
-        this.initFormEtape();
 
         this.showNewEtapeDialog = true;
     },
