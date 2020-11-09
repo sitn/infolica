@@ -1,13 +1,16 @@
 <div id="SuiviAffaire">
     <!-- Info Bulle -->
-    <md-card v-if="((new Date('2020/11/05').getTime() - new Date().getTime()))/(1000*3600*24) > 0" style="background-color: #ABBAEA;" id="info1">
+    <md-card v-if="((new Date('2020/11/10').getTime() - new Date().getTime()))/(1000*3600*24) > 0" style="background-color: #ABBAEA;" id="info1">
         <md-card-content>
             <div class="md-gutter md-layout">
                 <div class="md-layout-item md-size-95">
-                    <h2 style="margin: 0;">Mise à jour du 3 novembre 2020</h2>
+                    <h2 style="margin: 0;">Mise à jour du 9 novembre 2020</h2>
                     <ul style="margin-bottom: 0;">
-                        <li>Envoyer un mail d'info au chef d'équipe en charge de l'affaire pour l'étape "travaux"</li>
-                        <li>Mise à jour du cheminement des affaires</li>
+                        <li>Etape dés. propres supprimée</li>
+                        <li>Ajout d'un commentaire à l'étape (optionnel)</li>
+                        <li>Affichage de l'historique des étapes dans le dialogue d'une nouvelle étape</li>
+                        <li>Correction d'un bug qui envoyait un mail à tous les chefs d'équipe quand l'affaire passait à l'étape "travaux" et qu'aucun chef d'étuipe n'était spécifié</li>
+                        <li>Simplification de la dernière étape de l'affaire (suppression des étapes "courrier" et "RF", remplacées par l'étape "fin de processus")</li>
                     </ul>
                     
                 </div>
