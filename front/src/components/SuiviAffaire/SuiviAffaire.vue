@@ -39,6 +39,7 @@ export default {
         showNewAffaireDialog: false,
         showNewEtapeDialog: false,
         suiviAffaires: [],
+        suiviAffaires_bk: [],
     }
   },
 
@@ -73,7 +74,8 @@ export default {
             }
         ).then(response => {
             if (response && response.data) {
-                this.suiviAffaires = response.data;
+                this.suiviAffaires_bk = response.data;
+                this.suiviAffaires_bk.forEach(x => x.datetime = x.datetime.replace("T", ", "));
             }
         }).catch(err => handleException(err, this));
     },
@@ -114,10 +116,13 @@ export default {
         ).then(response => {
             if (response && response.data) {
                 this.getSuiviAffaire();
-                this.affaireEtapes = response.data;
-                this.affaireEtapes.forEach(x=> {
-                    x.mail = x.mail.replace(/\s/g, '').split(",");
+                let tmp = response.data;
+                tmp.forEach(x => {
+                    if (x.mail !== null) {
+                        x.mail = x.mail.replace(/\s/g, '').split(",");
+                    }
                 });
+                this.affaireEtapes = tmp;
                 this.affaireEtapes_autocomplete = stringifyAutocomplete(response.data);
             }
         }).catch(err => handleException(err, this));
@@ -171,7 +176,7 @@ export default {
         formData.append("nom", this.affaire.nom);
         formData.append("type_id", this.affaire.type.id);
         formData.append("actuelle_etape_id", this.affaire.actuelle_etape_id);
-        formData.append("datetime_ouverture", moment(new Date()).format("YYYY-MM-DD hh:mm:ss"));
+        formData.append("datetime_ouverture", moment(new Date()).format("YYYY-MM-DD HH:mm:ss"));
         formData.append("remarque", this.affaire.remarque);
 
         this.$http.post(
@@ -195,15 +200,14 @@ export default {
     },
 
     /**
-     * Set new state
+     * Set new state right before save
      */
     setNewState(affaire_id=null, etape_id=null) {
-        this.etape.id = null,
-        this.etape.operateur_id = JSON.parse(localStorage.getItem("infolica_user")).id,
-        this.etape.affaire_id = affaire_id === null? this.affaire.id: affaire_id,
-        this.etape.datetime = moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),
-        this.etape.etape = this.affaireEtapes_autocomplete.filter(x => x.id === this.affaire.actuelle_etape_id)[0],
-        this.etape.remarque = null
+        this.etape.id = null;
+        this.etape.operateur_id = JSON.parse(localStorage.getItem("infolica_user")).id;
+        this.etape.affaire_id = affaire_id === null? this.affaire.id: affaire_id;
+        this.etape.datetime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+        this.etape.etape = this.affaireEtapes_autocomplete.filter(x => x.id === this.affaire.actuelle_etape_id)[0];
         if (etape_id !== null) {
             this.etape.etape = this.affaireEtapes_autocomplete.filter(x => x.id === etape_id)[0];
         }
@@ -238,6 +242,7 @@ export default {
      * open new etape dialog
      */
     openNewEtapeDialog(data) {
+        this.initFormEtape();
         this.affaire = this.affaires.filter(x => x.affaire_id === data.affaire_id)[0];
         this.affaire.prochaine_etape_id = this.affaire.affaire_type_logique_etapes[this.affaire.affaire_type_logique_etapes.indexOf(this.affaire.etape_id)+1];
         this.setProchaineEtapeId({id: this.affaire.prochaine_etape_id});
@@ -245,6 +250,8 @@ export default {
         this.affaire.actuelle_etape = this.affaireEtapes_autocomplete.filter(x => x.id === this.affaire.etape_id)[0];
         this.affaire.prochaine_etape = this.affaireEtapes_autocomplete.filter(x => x.id === this.affaire.prochaine_etape_id)[0];
         
+        this.suiviAffaires = this.suiviAffaires_bk.filter(x => x.affaire_id === data.affaire_id);
+
         this.showNewEtapeDialog = true;
     },
     
@@ -256,9 +263,11 @@ export default {
 
         if (data.id === 2) {
             this.mailAdressList = this.affaireEtapes[1].mail;
+            this.etape.mailadress = this.mailAdressList[0];
             this.showMailChefEquipe = true;
         } else {
             this.showMailChefEquipe = false;
+            this.etape.mailadress = null;
             this.mailAdressList = [];
         }
     },
@@ -271,7 +280,7 @@ export default {
         formData.append("id", this.affaire.affaire_id);
         formData.append("actuelle_etape_id", this.affaire.prochaine_etape_id);
         if (this.affaire.prochaine_etape_id == 14 || this.affaire.prochaine_etape_id == 15 || this.affaire.prochaine_etape_id == 17) {
-            formData.append("datetime_cloture", moment(new Date()).format("YYYY-MM-DD hh:mm:ss"))
+            formData.append("datetime_cloture", moment(new Date()).format("YYYY-MM-DD HH:mm:ss"))
         }
 
         this.$http.put(
@@ -290,6 +299,7 @@ export default {
             this.sendMail(this.affaire.affaire_nom, this.etape.etape.id);
 
             this.getAffaire();
+            this.getSuiviAffaire();
         }).catch(err => handleException(err, this));
     },
 
@@ -336,7 +346,11 @@ export default {
     this.getEtapes();
     this.getSuiviAffaire();
 
-    setInterval(() => { this.getAffaire() }, 60000); // Recharge le tableau toutes les minutes
+    setInterval(() => {
+            this.getAffaire();
+            this.getSuiviAffaire();
+        },
+        60000); // Recharge le tableau toutes les minutes
 
   }
 };

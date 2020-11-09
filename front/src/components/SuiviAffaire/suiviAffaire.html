@@ -1,23 +1,18 @@
 <div id="SuiviAffaire">
     <!-- Info Bulle -->
-    <md-card v-if="((new Date('2020/11/04').getTime() - new Date().getTime()))/(1000*3600*24) > 0" style="background-color: #ABBAEA;" id="info1">
+    <md-card v-if="((new Date('2020/11/10').getTime() - new Date().getTime()))/(1000*3600*24) > 0" style="background-color: #ABBAEA;" id="info1">
         <md-card-content>
             <div class="md-gutter md-layout">
                 <div class="md-layout-item md-size-95">
-                    <h2 style="margin: 0;">Mises à jour du 30 octobre 2020</h2>
-                    <br>
-                    <b>Nouveautés</b>
+                    <h2 style="margin: 0;">Mise à jour du 9 novembre 2020</h2>
                     <ul style="margin-bottom: 0;">
-                        <li>Ajout de la possibilité de trier sur les colonnes (faire remonter les affaires en attente dans l'étape)</li>
-                        <li>Quand une nouvelle étape est enregistrée, un mail est automatiquement envoyé au(x) responsable(s) de l'étape suivante (à l'exception des chefs d'équipe et du secrétariat) </li>
-                        <li>Le tableau se réactualise toutes les minutes automatiquement (efface le tri sur les colonnes s'il est défini)</li>
+                        <li>Etape dés. propres supprimée</li>
+                        <li>Ajout d'un commentaire à l'étape (optionnel)</li>
+                        <li>Affichage de l'historique des étapes dans le dialogue d'une nouvelle étape</li>
+                        <li>Correction d'un bug qui envoyait un mail à tous les chefs d'équipe quand l'affaire passait à l'étape "travaux" et qu'aucun chef d'étuipe n'était spécifié</li>
+                        <li>Simplification de la dernière étape de l'affaire (suppression des étapes "courrier" et "RF", remplacées par l'étape "fin de processus")</li>
                     </ul>
-                    <br>
-                    <b>Remarques</b>
-                    <ul style="margin-bottom: 0;">
-                        <li>Utiliser la combinaison CTRL + F pour effecuter une recherche d'affaire dans le tableau</li>
-                        <li>Une fois connecté à l'application, vous pouvez utiliser le lien courrant pour y accéder sans avoir à retaper vos informations d'authentification. L'authentification est nécessaire après chaque fermeture du navigateur.</li>
-                    </ul>
+                    
                 </div>
                 <div class="md-layout-item md-size-5">
                     <md-button onclick="document.getElementById('info1').style.display = 'none'" class="md-icon-button" md-dense><md-icon>close</md-icon></md-button>
@@ -44,14 +39,13 @@
                     <md-table-cell md-sort-by="dashboard_0" md-label="Coordination (DGY)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_0">{{ item.dashboard_0 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_1" md-label="Travaux (c. éq.)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_1">{{ item.dashboard_1 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_2" md-label="Ctrl tech (DGY)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_2">{{ item.dashboard_2 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_3" md-label="Dés. propres (PDE/SE)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_3">{{ item.dashboard_3 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_4" md-label="Report serv. (BB)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_4">{{ item.dashboard_4 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_5" md-label="1er ctrl (LF/FS)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_5">{{ item.dashboard_5 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_6" md-label="Prép. doc. final (PDE/SE)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_6">{{ item.dashboard_6 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_7" md-label="2e ctrl (LF/FS)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_7">{{ item.dashboard_7 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_9" md-label="Finalisation (PDE/SE)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_9">{{ item.dashboard_9 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_8" md-label="Valid tech (DGY)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_8">{{ item.dashboard_8 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_10" md-label="Signatures-Art.35 (LF/FS)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_10">{{ item.dashboard_10 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_8" md-label="Valid tech (DGY)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_8">{{ item.dashboard_8 }}</md-button></md-table-cell>
                 </md-table-row>
             </md-table>
         </md-card-content>
@@ -86,11 +80,11 @@
 
 
     <!-- Dialog pour la création de nouvelle étape dans l'affaire -->
-    <md-dialog :md-active.sync="showNewEtapeDialog" style="z-index: 6; margin: auto;">
+    <md-dialog :md-active.sync="showNewEtapeDialog" style="z-index: 6; margin: auto; width: 1000px;">
         <md-dialog-title>Nouvelle étape de l'affaire '{{ affaire.affaire_nom }}'</md-dialog-title>
 
         <md-dialog-content>
-            <div class="md-layout md-gutter">
+            <div class="md-layout md-gutter md-alignment-top-space-between">
                 <div class="md-layout-item md-size-45">
                     <!-- Nom de l'étape en cours -->
                     <md-field>
@@ -105,12 +99,36 @@
                         <label>Prochaine étape</label>
                     </md-autocomplete>
 
-                    <md-field v-if="showMailChefEquipe" >
+                    <md-field v-if="showMailChefEquipe">
                         <label>Chef d'équipe</label>
                         <md-select v-model="etape.mailadress" md-dense>
                             <md-option v-for="item in mailAdressList" :key="item" :value="item">{{ item }}</md-option>
                         </md-select>
                     </md-field>
+                    
+                </div>
+                <div class="md-layout-item md-size-100">
+                    
+                    <md-field>
+                        <label>Remarques</label>
+                        <md-textarea v-model="etape.remarque" md-autogrow></md-textarea>
+                    </md-field>
+                </div>
+                
+                <md-divider/>
+                
+                <div class="md-layout-item md-size-100">
+                    <md-table v-model="suiviAffaires" md-card>
+                        <md-table-toolbar>
+                            <h3>Historique des étapes</h3>
+                        </md-table-toolbar>
+                        <md-table-row slot="md-table-row" slot-scope="{ item }">
+                            <md-table-cell style="width: 15%;" md-label="Horodateur">{{ item.datetime }}</md-table-cell>
+                            <md-table-cell style="width: 30%;" md-label="Etape">{{ item.etape }}</md-table-cell>
+                            <md-table-cell style="width: 15%;" md-label="Déclanché par">{{ item.operateur_prenom }}</md-table-cell>
+                            <md-table-cell style="width: 40%;" md-label="Remarque">{{ item.remarque }}</md-table-cell>
+                        </md-table-row>
+                    </md-table>
                 </div>
             </div>
 
