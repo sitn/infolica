@@ -531,93 +531,6 @@ class ControlePPE(Base):
     balsurf_remarque = Column(Text)
 
 
-# class ControlePPE(Base):
-#     __tablename__ = 'controle_ppe'
-#     __table_args__ = {'schema': 'infolica'}
-#     id = Column(BigInteger, primary_key=True, autoincrement=True)
-#     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-#     doss_proj_1 = Column(Boolean)  # Faisabilité de la PPE (projet de division, Bien-fonds en vigueur?)
-#     doss_proj_2 = Column(Boolean)  # Aucune PPE ne doit être déjà constituée sur le bien-fonds concerné
-#     psit_1 = Column(Boolean)  # Contrôler la référence de la source des données cadastrales et de sa date d’émission
-#     psit_2 = Column(Boolean)  # Nord, échelle 1:500
-#     psit_3 = Column(Boolean)  # Contenu du plan (bâtiment projet) et graphisme de la couche bien-fonds
-#     psit_4 = Column(Boolean)  # Contrôle de l'échelle (kutch)
-#     psit_5 = Column(
-#         Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …. – Plan de situation - XXX, architecte, signature, date)
-#     psit_6 = Column(
-#         Boolean)  # Droits de jouissance clairement définis (liseré traitillé même couleur que l'unité concernée) "Droit de jouissance au profit de l'unité …"
-#     psit_7 = Column(
-#         Boolean)  # Places de parcs extérieures numérotées (uniquement si les places ne sont pas constituées en droit de jouissance)
-#     pamext_1 = Column(
-#         Boolean)  # Ce plan n'est pas un document obligatoire, mais si l'architecte décide de le joindre avec le dossier le contrôle sera identique au plan de situation (Échelle ≠ 1:500)
-#     pet_1 = Column(Boolean)  # Nord (pas obligatoire), Échelle 1:100
-#     pet_2 = Column(Boolean)  # Contrôle de l'échelle (kutch)
-#     pet_3 = Column(Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …, architecte, signature, date)
-#     pet_4 = Column(Boolean)  # Cotes générales
-#     pet_5 = Column(
-#         Boolean)  # Informations superflues à supprimer (surfaces des pièces, matériaux, limites de bien-fonds etc.)
-#     pet_6 = Column(Boolean)  # Appellations des locaux
-#     pet_7 = Column(
-#         Boolean)  # Faisabilité d'unité d'étage: Un tout indépendant; Local physiquement fermé (surface minimum); Certain degré d'autonomie économique; Accès propre
-#     pet_8 = Column(
-#         Boolean)  # Distribution lettres unités (de bas en haut / A, B, … Z, AA, AB etc.). Le "i" n'est pas utilisé!
-#     pet_9 = Column(
-#         Boolean)  # Les annexes ont les mêmes lettres et mêmes couleurs de liserés que les unités concernées. Chiffres arabe (EX A1, B3, D1 etc.)
-#     pet_10 = Column(
-#         Boolean)  # Périmètres (liserés) des unités d'étages clairement dessinés (zone tampon / éviter la couleur jaune)
-#     pet_11 = Column(
-#         Boolean)  # Murs porteurs, piliers, poutres, gaines techniques etc ne font pas parties des parties exclusives -> parties communes -> liserés de couleur
-#     pet_12 = Column(
-#         Boolean)  # Conditions pièce -> appellation "chambre": Surface minimum: 10m2; Surface éclairage ≥ 1/8ème surface plancher; Local physiquement fermé
-#     pet_13 = Column(Boolean)  # La pièce ne peut pas être considérée comme chambre -> "disponible"
-#     pet_14 = Column(Boolean)  # Y a-t-il une surface plancher sous l'escalier ou un réduit (local fermé)
-#     pet_15 = Column(
-#         Boolean)  # Les vides (escaliers, vide sur chambres, etc.) doivent être hachurés avec la même couleur que l'unité concernée
-#     pet_16 = Column(
-#         Boolean)  # Accès aux parties communes par des parties privées (rares exceptions -> servitude de passage)
-#     pet_17 = Column(
-#         Boolean)  # Les balcons font partie de l'unité ou sont des droits de jouissance (parties construites)
-#     pet_18 = Column(Boolean)  # Autres bâtiments sur le bien-fonds concerné -> plans d'étages, façades, coupes
-#     pet_19 = Column(Boolean)  # Concordance des appellations sur les plans d'étages avec les formules de légende
-#     pet_20 = Column(Boolean)  # Lignes de coupes sur tous les plans d'étages
-#     pet_21 = Column(Boolean)  # Surfaces PDF Viewer (tolérance jusqu'à 2 %)
-#     pco_1 = Column(Boolean)  # Échelle 1:100
-#     pco_2 = Column(Boolean)  # Sans liseré ni lettre d'unité
-#     pco_3 = Column(Boolean)  # Contrôle de l'échelle (kutch)
-#     pco_4 = Column(Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …., architecte, signature, date)
-#     pco_5 = Column(
-#         Boolean)  # Les appellations, si notées sur les plans de coupe, doivent correspondre avec les appellations des plans d'étages
-#     pco_6 = Column(Boolean)  # Concordance de la / les coupe(s) avec les plans d'étages (par plaquage)
-#     pco_7 = Column(Boolean)  # Informations superflues à supprimer (surfaces des pièces, matériaux, etc.)
-#     facade_1 = Column(Boolean)  # Échelle 1:100
-#     facade_2 = Column(Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …., architecte, signature, date)
-#     facade_3 = Column(Boolean)  # Sans liseré ni lettre d'unité
-#     facade_4 = Column(
-#         Boolean)  # Concordance avec tous les plans d'étages (ouvertures, portes, fenêtres, velux, cheminées) -> plaquage
-#     form_leg_1 = Column(Boolean)  # Titres (Cadastre de …– Plan de situation – XXX - PPE sur le bien-fonds ….)
-#     form_leg_2 = Column(
-#         Boolean)  # Situation de l'unité juridique dans l'espace (appartement ouest, extrême ouest, N° entrée etc.)
-#     form_leg_3 = Column(
-#         Boolean)  # Étages clairement définis (1er étage, niveau -1, etc.) concordance avec les plans d'étages
-#     form_leg_4 = Column(
-#         Boolean)  # Concordance entre les appellations des pièces sur les plans d'étages avec la formule de légende
-#     form_leg_5 = Column(Boolean)  # Les éléments de liaison doivent être notés (escalier, escalier escamotable)
-#     form_leg_6 = Column(Boolean)  # Appellations avec quantité (1 cuisine, 3 chambres etc.)
-#     form_leg_7 = Column(Boolean)  # Mise en page (unités en duplex, Annexes etc.)
-#     form_leg_8 = Column(Boolean)  # Concordance surfaces architecte avec surfaces obtenues par PDF Viewer (tol 2%)
-#     form_leg_9 = Column(Boolean)  # Récapitulatif
-#     fact_1 = Column(Boolean)  # 1 mandat
-#     fact_2 = Column(Boolean)  # X unités simples ou complexes (unités juridiques, annexes)
-#     fact_3 = Column(
-#         Boolean)  # Droits de jouissance X surfaces (seulement si les surfaces sont notées sur les plans d'étage)
-#     fact_4 = Column(Boolean)  # Régie (séances, renseignements, contrôle dossier supplémentaire etc)
-#     fact_5 = Column(Boolean)  # Données numériques fournies ou plan de situation
-#     fact_6 = Column(Boolean)  # Report des montants de la facture sur le formulaire de demande
-#     fact_7 = Column(Boolean)  # Impression facture -> datée et signée
-#     visa = Column(BigInteger, ForeignKey(Operateur.id))
-#     date = Column(Date)
-
-
 class NumeroType(Base):
     __tablename__ = 'numero_type'
     __table_args__ = {'schema': 'infolica'}
@@ -952,6 +865,10 @@ class VAffaire(Base):
     preavis_sene_date_reponse = Column(Date)
     preavis_rf_date_demande = Column(Date)
     preavis_rf_date_reponse = Column(Date)
+    etape_id = Column(BigInteger)
+    etape = Column(Text)
+    etape_date = Column(Date)
+    etape_remarque = Column(Text)
     abandon = Column(Boolean)
 
 
