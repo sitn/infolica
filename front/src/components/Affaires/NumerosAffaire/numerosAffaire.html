@@ -16,9 +16,9 @@
             <md-card-expand-content>
                 <div class="md-layout md-gutter md-alignment-space-between">
                     <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
-                    <div class="md-layout-item md-size-45" v-if= "affaire.type_id === typesAffaires.cadastration ||
-                                                                  affaire.type_id === typesAffaires.autre ||
-                                                                  (affaire.type_id === typesAffaires.modification && affaire.modification_type_id === typesAffaires.modification_type.abandon_partiel)">
+                    <div class="md-layout-item md-size-45" v-if= "affaire.type_id === typesAffaires_conf.cadastration ||
+                                                                  affaire.type_id === typesAffaires_conf.autre ||
+                                                                  (affaire.type_id === typesAffaires_conf.modification && affaire.modification_type_id === typesAffaires_conf.modification_type.abandon_partiel)">
                         <md-card-content>
 
                             <md-card>
@@ -73,7 +73,7 @@
                     </div>
 
                     <!-- NUMEROS RESERVES (nouveaux numéros) -->
-                    <div class="md-layout-item md-size-55" v-if="[typesAffaires.mutation, typesAffaires.ppe, typesAffaires.pcop, typesAffaires.modification].includes(affaire.type_id)">
+                    <div class="md-layout-item md-size-55" v-if="[typesAffaires_conf.mutation, typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.modification].includes(affaire.type_id)">
                         <md-card-content>
 
                             <md-card>
@@ -85,7 +85,7 @@
                                     <div class="md-layout-item buttonRightAlign">
                                         <md-button class="md-primary" @click="getReqRadMatDiff" v-if="showBtnReqRadMatDiff" title="Générer la réquisition des BF sortis de la mat. diff. dans les 7 derniers jours">Req radiation MatDiff</md-button>
                                         <md-button class="md-primary" @click="doQuittanceNumerosReserves" v-if="affaire_numeros_nouveaux.length > 0">Quittance</md-button>
-                                        <md-button class="md-primary" @click="callOpenQuittancePCOPDialog" v-if="!affaireReadonly && affaire.type_id === typesAffaires.pcop">Quittance PCOP</md-button>
+                                        <md-button class="md-primary" @click="callOpenQuittancePCOPDialog" v-if="!affaireReadonly && affaire.type_id === typesAffaires_conf.pcop">Quittance PCOP</md-button>
                                         <md-button class="md-primary" @click="callOpenReservationDialog" v-if="!affaireReadonly && affaire.reservation_numeros_types_id !== null">Réservation</md-button>
                                     </div>
                                 </div>
@@ -142,12 +142,12 @@
                         <!-- Numéros de la MO -->
                         <md-card-content>
                             <ReservationNumerosMO :affaire="affaire"
-                                                  :typesAffaires="typesAffaires"
+                                                  :typesAffaires_conf="typesAffaires_conf"
                                                   :types_numeros="types_numeros"></ReservationNumerosMO>
                         </md-card-content>
                     </div>
 
-                    <div class="md-layout-item md-size-100" v-if="showBalance && affaire.type_id==typesAffaires.mutation">
+                    <div class="md-layout-item md-size-100" v-if="showBalance && affaire.type_id==typesAffaires_conf.mutation">
                         <!-- Balance des biens-fonds -->
                         <md-card-content>
                             <Balance :affaire_numeros_all="affaire_numeros_all"
@@ -166,7 +166,7 @@
     <!-- Réservation de numéros -->
     <ReservationNumeros ref="formReservation"
                         :affaire="affaire" 
-                        :typesAffaires="typesAffaires"
+                        :typesAffaires_conf="typesAffaires_conf"
                         :types_numeros="types_numeros" />
     <!-- Quittance pour les numéros de parts de copropriété réservés -->
     <QuittancePCOP :affaire="affaire" 

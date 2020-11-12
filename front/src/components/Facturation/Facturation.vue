@@ -22,7 +22,7 @@ export default {
   mixins: [validationMixin],
   props: {
     affaire: Object,
-    typesAffaires: Object
+    typesAffaires_conf: Object
     },
   data: () => {
     return {

@@ -15,7 +15,7 @@ const moment = require("moment");
 export default {
   name: "InfosGénérales",
   props: {
-    typesAffaires: {type: Object},
+    typesAffaires_conf: {type: Object},
     affaire: {type: Object}
     },
   components: {},
