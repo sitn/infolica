@@ -73,6 +73,7 @@ export default {
       showClientsForm: true,
       show_co: false,
       sitn_search_categories: null,
+      types_affaires_list_bk: [],
       types_affaires_list: [],
       type_modification_bool: false,
       typesModficiationAffaire_list: []
@@ -207,6 +208,7 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
+            this.types_affaires_list_bk = response.data;
             this.types_affaires_list = stringifyAutocomplete(response.data);
           }
         })
@@ -326,7 +328,10 @@ export default {
             if (this.form.remarque !== null) {
               promises.push(this.postRemarqueAffaire(id_new_affaire));
             }
+            // Crée la première étape de l'affaire
+            promises.push(this.postAffaireEtape(id_new_affaire));
 
+            // Si l'affaire est de type modification ...
             if (this.type_modification_bool) {
               promises.push(this.postAffaireRelation(id_new_affaire));
               if ((this.selectedAnciensNumeros.length + this.selectedNouveauxNumeros.length) > 0 ) {
@@ -1060,7 +1065,36 @@ export default {
       if (this.client_facture !== null && this.client_facture.id !== null) {
         this.initClientMoralPersonnes(this.client_facture.id, 'facture');
       }
-    }
+    },
+
+    /**
+     * Créer la première étape de l'affaire dans le suivi
+     */
+    async postAffaireEtape(affaire_id) {
+      return new Promise((resolve, reject) => {
+        // get first step of affaire by selected type
+        let etape_id = Number(process.env.VUE_APP_PREMIERE_ETAPE_DEFAUT_ID);
+        let tmp = this.types_affaires_list_bk.filter(x => x.id === this.form.type.id)[0];
+        if (tmp.logique_processus) {
+          etape_id = tmp.logique_processus[0];
+        }
+
+        let formData = new FormData();
+        formData.append("affaire_id", affaire_id);
+        formData.append("etape_id", etape_id);
+        formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
+        
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_ETAPES_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      })
+    },
   },
 
   mounted: function() {

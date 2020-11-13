@@ -8,7 +8,7 @@
                         <md-icon>keyboard_arrow_down</md-icon>
                     </md-button>
                 </md-card-expand-trigger>
-                Contrôle Mutation (Chef de projet)
+                Contrôle Mutation (Chef d'équipe)
                 <md-button class="md-primary newControleMutationBtn" v-on:click="newControleMutation()"
                     v-if="needToCreateControleMutation && showNewControleMutationBtn && !affaireReadonly">Créer le contrôle</md-button>
             </div>
@@ -19,10 +19,46 @@
 
                 <md-card-content v-bind:class="{ disabledElement: affaireReadonly }">
                     <div v-if="controleMutation.id">
+                        <!-- Données internes -->
+                        <md-card class="controleMutationForm">
+                            <md-card-content>
+                                <div class="md-title">DONNEES INTERNES</div>
+
+                                <div class="md-subhead">Terrain</div>
+                                <md-checkbox class="md-primary" v-model="a">Levés préliminaires</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Matérialisations</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Levés</md-checkbox>
+                                
+                                <div class="md-subhead">Terrain</div>
+                                <md-checkbox class="md-primary" v-model="a">Calculs préliminaires</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Calculs définitifs</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Calculs spéciaux</md-checkbox>
+                                
+                                
+                                <md-checkbox class="md-primary" v-model="a">Envoi au client</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Retour du client</md-checkbox>
+                                
+                                
+                                <md-checkbox class="md-primary" v-model="a">Création de la mutation dans la BD</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Contrôles de cohérences e.o.</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Production des désignations</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Production plan de mutation (papier)</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Production plan de mutation (PDF)</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Enregistrement de la documentation</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Etat de la mutation "En cours / Libérée"</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Tableau des émoluments</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Transmission au géomètre cantonal</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Transmission au secrétariat</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Validation technique de la mutation</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="a">Annulation de la mutation</md-checkbox>
+
+                            </md-card-content>
+                        </md-card>
+
                         <!-- BIENS_FONDS -->
                         <md-card class="controleMutationForm">
                             <md-card-content>
-                                <div class="md-title">BIENS_FONDS</div>
+                                <div class="md-title">BIENS-FONDS</div>
 
                                 <md-checkbox class="md-primary" v-model="controleMutation.bf_1">
                                     Contrôler les numéros des points limites ainsi que la valeur, la précision et la
@@ -52,7 +88,7 @@
                         <!-- COUVERTURE_DU_SOL -->
                         <md-card class="controleMutationForm">
                             <md-card-content>
-                                <div class="md-title">COUVERTURE_DU_SOL</div>
+                                <div class="md-title">COUVERTURE DU SOL</div>
 
                                 <md-checkbox class="md-primary" v-model="controleMutation.cs_1">
                                     Contrôler les numéros des points particuliers "660" ainsi que la valeur, la
@@ -87,7 +123,7 @@
                         <!-- OBJETS_DIVERS -->
                         <md-card class="controleMutationForm">
                             <md-card-content>
-                                <div class="md-title">OBJETS_DIVERS</div>
+                                <div class="md-title">OBJETS DIVERS</div>
 
                                 <md-checkbox class="md-primary" v-model="controleMutation.od_1">
                                     Tous les points de constructions "760" sont supprimés.
@@ -118,7 +154,7 @@
                         <!-- ADRESSES_DES_BATIMENTS -->
                         <md-card class="controleMutationForm">
                             <md-card-content>
-                                <div class="md-title">ADRESSES_DES_BATIMENTS</div>
+                                <div class="md-title">ADRESSES DES BATIMENTS</div>
 
                                 <md-checkbox class="md-primary" v-model="controleMutation.bat_1">
                                     Contrôler dans la table « Adresses_des_batiments => Mise_a_jourBAT » qu’il y a bien

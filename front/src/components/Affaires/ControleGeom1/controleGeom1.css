@@ -1,0 +1,8 @@
+.controleGeom1 {
+    width: 100%;
+    float: left;
+}
+
+.controleGeom1 .md-checkbox {
+    display: flex;
+}

@@ -74,6 +74,11 @@
         </md-card>
     </div>
 
+    <!-- SUIVI D'AFFAIRE -->
+    <div class="affairesDashboard">
+        <suivi />
+    </div>
+
     <!-- PREAVIS -->
     <div class="affairesDashboard" v-if="affaire.type_id==typesAffaires_conf.mutation">
         <preavis :affaire="affaire" />
@@ -92,6 +97,16 @@
     <!-- CONTROLE TECHNIQUE MUTATION -->
     <div class="affairesDashboard">
         <ControleMutation v-if="affaire.type_id===typesAffaires_conf.mutation" />
+    </div>
+    
+    <!-- 1ER CONTROLE DU GEOMETRE CANTONAL -->
+    <div class="affairesDashboard" v-if="affaire.type_id===typesAffaires_conf.mutation || affaire.type_id===typesAffaires_conf.modification">
+        <ControleGeom1 />
+    </div>
+
+    <!-- 2EME CONTROLE DU GEOMETRE CANTONAL -->
+    <div class="affairesDashboard">
+        <ControleGeom2 />
     </div>
 
     <!-- CONTROLE TECHNIQUE PPE -->
@@ -114,10 +129,6 @@
         <Remarques />
     </div>
 
-    <!-- SUIVI D'AFFAIRE -->
-    <div class="affairesDashboard">
-        <suivi />
-    </div>
 
     <!-- Duplication Affaire -->
     <!-- <div>

@@ -13,6 +13,8 @@ import DuplicationAffaire from "@/components/Affaires/DuplicationAffaire/Duplica
 import Facturation from "@/components/Facturation/Facturation.vue";
 import Remarques from "@/components/Affaires/Remarques/Remarques.vue";
 import ControleMutation from "@/components/Affaires/ControleMutation/ControleMutation.vue";
+import ControleGeom1 from "@/components/Affaires/ControleGeom1/ControleGeom1.vue";
+import ControleGeom2 from "@/components/Affaires/ControleGeom2/ControleGeom2.vue";
 import ControlePPE from "@/components/Affaires/ControlePPE/ControlePPE.vue";
 import SuiviMandat from "@/components/SuiviMandat/SuiviMandat.vue";
 import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
@@ -35,6 +37,8 @@ export default {
     Facturation,
     Remarques,
     ControleMutation,
+    ControleGeom1,
+    ControleGeom2,
     ControlePPE,
     SuiviMandat,
     DuplicationAffaire,

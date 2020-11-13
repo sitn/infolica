@@ -1,0 +1,59 @@
+<div class="controleGeom1">
+    <md-card>
+        <md-card-header>
+            <div class="md-title">
+                <md-card-expand-trigger>
+                    <md-button class="md-icon-button expandCollapseBtn"
+                        @click.native="showNewControleMutationBtn = !showNewControleMutationBtn">
+                        <md-icon>keyboard_arrow_down</md-icon>
+                    </md-button>
+                </md-card-expand-trigger>
+                1er contrôle (géomètre cantonnal)
+                <md-button class="md-primary newControleMutationBtn" v-on:click="newControleMutation()"
+                    v-if="needToCreateControleMutation && showNewControleMutationBtn && !affaireReadonly">Créer le contrôle</md-button>
+            </div>
+        </md-card-header>
+
+        <md-card-expand>
+            <md-card-expand-content>
+
+                <md-card-content v-bind:class="{ disabledElement: affaireReadonly }">
+                    <div v-if="controleMutation.id">
+                        <!-- BIENS_FONDS -->
+                        <md-card class="controleMutationForm">
+                            <md-card-content>
+                                <div class="md-title">BIENS_FONDS</div>
+
+                                <md-checkbox class="md-primary" v-model="controleMutation.bf_1">
+                                    Contrôler les numéros des points limites ainsi que la valeur, la précision et la
+                                    fiabilité des points sont en adéquations avec le niveau de tolérance de la zone de
+                                    travail.
+                                </md-checkbox>
+
+                                <md-checkbox class="md-primary" v-model="controleMutation.bf_2">
+                                    Contrôler dans la table « Bien_fonds => Mise_a_jourBF » qu’il y que les nouveaux
+                                    biens-fonds créés dans votre affaire et qu'il n'y a pas de biens-fonds sans
+                                    géométrie.
+                                </md-checkbox>
+
+                                <md-checkbox class="md-primary" v-model="controleMutation.bf_3">
+                                    Contrôler dans la table « Bien_fonds » que l’attribut « Validation_juridique » est
+                                    non pour les nouveaux biens-fonds sauf pour les nouveaux DP.
+                                </md-checkbox>
+
+                                <md-checkbox class="md-primary" v-model="controleMutation.bf_4">
+                                    Contrôler dans la table « Biens_fonds.PosImmeuble » que les éléments suivants sont
+                                    corrects (Hali=Center, Vali=Half, Grandeur=Petite.petite).
+                                </md-checkbox>
+
+                            </md-card-content>
+                        </md-card>
+                    </div>
+                    <div v-else>
+                        <em>Aucun contrôle</em>
+                    </div>
+                </md-card-content>
+            </md-card-expand-content>
+        </md-card-expand>
+    </md-card>
+</div>
