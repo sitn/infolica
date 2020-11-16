@@ -177,7 +177,9 @@ export default {
         formData.append("type_id", this.affaire.type.id);
         formData.append("actuelle_etape_id", this.affaire.actuelle_etape_id);
         formData.append("datetime_ouverture", moment(new Date()).format("YYYY-MM-DD HH:mm:ss"));
-        formData.append("remarque", this.affaire.remarque);
+        if (this.affaire.remarque) {
+            formData.append("remarque", this.affaire.remarque);
+        }
 
         this.$http.post(
             process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_TELE_ENDPOINT,
@@ -217,12 +219,19 @@ export default {
      * Post new state
      */
     async postNewState() {
+        if (this.etape.etape.id === 2) {
+            this.etape.remarque = this.etape.remarque? this.etape.remarque + " - ": "";
+            this.etape.remarque += "Attribué à : " + this.etape.mailadress;
+        }
+
         let formData = new FormData();
         formData.append("operateur_id", this.etape.operateur_id);
         formData.append("affaire_id", this.etape.affaire_id);
         formData.append("datetime", this.etape.datetime);
         formData.append("etape_id", this.etape.etape.id);
-        formData.append("remarque", this.etape.remarque);
+        if (this.etape.remarque) {
+            formData.append("remarque", this.etape.remarque);
+        }
 
         this.$http.post(
             process.env.VUE_APP_API_URL + process.env.VUE_APP_SUIVI_AFFAIRE_TELE_ENDPOINT,

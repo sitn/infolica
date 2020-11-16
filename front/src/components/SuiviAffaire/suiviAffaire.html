@@ -1,16 +1,14 @@
 <div id="SuiviAffaire">
     <!-- Info Bulle -->
-    <md-card v-if="((new Date('2020/11/10').getTime() - new Date().getTime()))/(1000*3600*24) > 0" style="background-color: #ABBAEA;" id="info1">
+    <md-card v-if="((new Date('2020/11/18').getTime() - new Date().getTime()))/(1000*3600*24) > 0" style="background-color: #ABBAEA;" id="info1">
         <md-card-content>
             <div class="md-gutter md-layout">
                 <div class="md-layout-item md-size-95">
-                    <h2 style="margin: 0;">Mise à jour du 9 novembre 2020</h2>
+                    <h2 style="margin: 0;">Mise à jour du 16 novembre 2020</h2>
                     <ul style="margin-bottom: 0;">
-                        <li>Etape dés. propres supprimée</li>
-                        <li>Ajout d'un commentaire à l'étape (optionnel)</li>
-                        <li>Affichage de l'historique des étapes dans le dialogue d'une nouvelle étape</li>
-                        <li>Correction d'un bug qui envoyait un mail à tous les chefs d'équipe quand l'affaire passait à l'étape "travaux" et qu'aucun chef d'étuipe n'était spécifié</li>
-                        <li>Simplification de la dernière étape de l'affaire (suppression des étapes "courrier" et "RF", remplacées par l'étape "fin de processus")</li>
+                        <li>Ajout automatique du contact sélectionné dans les remarques pour l'étape des travaux. On garde ainsi une trace de la personne à qui est attribuée l'affaire.</li>
+                        <li>Ajout d'une contrainte d'unicité sur le nom de l'affaire. Une erreur est levée lorsqu'on crée une affaire avec un nom existant déjà dans la base.</li>
+                        <li>Récupération de l'historique des affaires N4261 et N4270.</li>
                     </ul>
                     
                 </div>
