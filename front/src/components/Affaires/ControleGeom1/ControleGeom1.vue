@@ -9,7 +9,7 @@ import {checkPermission} from '@/services/helper';
 const moment = require('moment')
 
 export default {
-  name: "ControleMutation",
+  name: "controleGeom1",
   props: {},
   data: () => ({
     affaireReadonly: true,

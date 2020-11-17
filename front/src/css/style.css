@@ -56,3 +56,7 @@ input[type=number] {
 .buttonRightAlign {
     text-align: right;
 }
+
+.md-datepicker {
+    width: 200px !important;
+}

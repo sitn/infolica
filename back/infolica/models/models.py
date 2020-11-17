@@ -322,48 +322,52 @@ class ControleMutation(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
-    bf_1 = Column(
-        Boolean)  # Contrôler les numéros des points limites ainsi que la valeur, la prévision et la fiabilité des points sont en adéquation avec le niveau de tolérence de la zone de travail
-    bf_2 = Column(
-        Boolean)  # Contrôler dans la table « Bien_fonds => Mise_a_jourBF » qu’il y que les nouveaux biens-fonds créés dans votre affaire et qu'il n'y a pas de biens-fonds sans géométrie
-    bf_3 = Column(
-        Boolean)  # Contrôler dans la table « Bien_fonds » que l’attribut « Validation_juridique » est non pour les nouveaux biens-fonds sauf pour les nouveaux DP.
-    bf_4 = Column(
-        Boolean)  # Contrôler dans la table « Biens_fonds.PosImmeuble » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.petite).
-    cs_1 = Column(
-        Boolean)  # Contrôler les numéros des points particuliers "660" ainsi que la valeur, la précision et la fiabilité des points sont en adéquations avec le niveau de tolérance de la zone de travail.
-    cs_2 = Column(
-        Boolean)  # Contrôler dans la table « Couverture_du_sol => Mise_a_jourCS » qu’il y a que les nouvelles surfaces créées dans votre affaire qu'il n'y a pas de surfaces sans géométrie.
-    cs_3 = Column(
-        Boolean)  # Contrôler dans la table « Couverture_du_sol => PosNumero_de_batiment » que les éléments suivants sont corrects (Hali=Center, Vali=Base, Grandeur=Petite.tres_petite).
+    terrain_1 = Column(Date)  # Terrain - Levés préliminaires
+    terrain_2 = Column(Date)  # Terrain - Matérialisations
+    terrain_3 = Column(Date)  # Terrain - Levés
+    bureau_1 = Column(Date)  # Bureau - Calculs préliminaires
+    bureau_2 = Column(Date)  # Bureau - Calculs définitifs
+    bureau_3 = Column(Date)  # Bureau - Calculs spéciaux
+    envoi_cl_1 = Column(Date)  # Situation_affaire - Envoi au client
+    retour_cl_2 = Column(Date)  # Sitation_affaire - Retour du client
+    suivi_1 = Column(Date)  # Suivi - Création de la mutation dans la BD
+    suivi_2 = Column(Date)  # Suivi - Contrôles de cohérences e.o.
+    suivi_3 = Column(Date)  # Suivi - Production des désignations
+    suivi_4 = Column(Date)  # Suivi - Production plan de mutation (papier)
+    suivi_5 = Column(Date)  # Suivi - Production plan de mutation (PDF)
+    suivi_6 = Column(Date)  # Suivi - Enregistrement de la documentation
+    suivi_7 = Column(Date)  # Suivi - État de la mutation "En cours / Libérée"
+    suivi_8 = Column(Date)  # Suivi - Tableau des émoluments
+    suivi_9 = Column(Date)  # Suivi - Transmission au géomètre cantonal
+    suivi_10 = Column(Date)  # Suivi - Transmission au secrétariat
+    suivi_11 = Column(Date)  # Suivi - Validation technique de la mutation
+    suivi_12 = Column(Date)  # Suivi - Annulation de la mutation
+    bf_1 = Column(Boolean)  # Contrôler les numéros des points limites ainsi que la valeur, la prévision et la fiabilité des points sont en adéquation avec le niveau de tolérence de la zone de travail
+    bf_2 = Column(Boolean)  # Contrôler dans la table « Bien_fonds => Mise_a_jourBF » qu’il y que les nouveaux biens-fonds créés dans votre affaire et qu'il n'y a pas de biens-fonds sans géométrie
+    bf_3 = Column(Boolean)  # Contrôler dans la table « Bien_fonds » que l’attribut « Validation_juridique » est non pour les nouveaux biens-fonds sauf pour les nouveaux DP.
+    bf_4 = Column(Boolean)  # Contrôler dans la table « Biens_fonds.PosImmeuble » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.petite).
+    cs_1 = Column(Boolean)  # Contrôler les numéros des points particuliers "660" ainsi que la valeur, la précision et la fiabilité des points sont en adéquations avec le niveau de tolérance de la zone de travail.
+    cs_2 = Column(Boolean)  # Contrôler dans la table « Couverture_du_sol => Mise_a_jourCS » qu’il y a que les nouvelles surfaces créées dans votre affaire qu'il n'y a pas de surfaces sans géométrie.
+    cs_3 = Column(Boolean)  # Contrôler dans la table « Couverture_du_sol => PosNumero_de_batiment » que les éléments suivants sont corrects (Hali=Center, Vali=Base, Grandeur=Petite.tres_petite).
     cs_4 = Column(Boolean)  # Insérer les points dans la base Acces des bâtiments projets (voir Processus)
     cs_5 = Column(Boolean)  # Contrôler la géométrie des EGID (01.01.2012).
     od_1 = Column(Boolean)  # Tous les points de constructions "760" sont supprimés.
-    od_2 = Column(
-        Boolean)  # Contrôler les nouveaux éléments créés dans votre affaire et qu'il n'y a pas d'objets divers sans géométrie.
+    od_2 = Column(Boolean)  # Contrôler les nouveaux éléments créés dans votre affaire et qu'il n'y a pas d'objets divers sans géométrie.
     od_3 = Column(Boolean)  # Contrôler que les bâtiments souterrains ont les bons numéros et une désignation.
     od_4 = Column(Boolean)  # Insérer les points dans la base Acces des bâtiments projets (voir Processus)
-    od_5 = Column(
-        Boolean)  # Contrôler que l'attribut « Objets_divers => SymboleElement_surfacique » est rempli pour les piscines.
-    bat_1 = Column(
-        Boolean)  # Contrôler dans la table « Adresses_des_batiments => Mise_a_jourBAT » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.
-    bat_2 = Column(
-        Boolean)  # Contrôler dans la table « Adresses_des_batiments => PosNumero_maison » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.assez_petite).
+    od_5 = Column(Boolean)  # Contrôler que l'attribut « Objets_divers => SymboleElement_surfacique » est rempli pour les piscines.
+    bat_1 = Column(Boolean)  # Contrôler dans la table « Adresses_des_batiments => Mise_a_jourBAT » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.
+    bat_2 = Column(Boolean)  # Contrôler dans la table « Adresses_des_batiments => PosNumero_maison » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.assez_petite).
     bat_3 = Column(Boolean)  # Contrôler que les points adresses sont dans les géométries.
-    serv_1 = Column(
-        Boolean)  # Contrôler dans la table « Servitudes => Mise_a_jourSE » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.
-    serv_2 = Column(
-        Boolean)  # Contrôler dans la table « Servitudes => Servitude_surface » ou « Servitudes => Servitude_ligne » ou « Servitudes => Servitude_point » que l’attribut « Validite » est en_projet pour les nouvelles servitudes.
-    serv_3 = Column(
-        Boolean)  # Contrôler dans la table « Servitudes => PosNumero_de_servitude » que les éléments suivants sont corrects (Hali=Left, Vali=Base, Grandeur= -).
+    serv_1 = Column(Boolean)  # Contrôler dans la table « Servitudes => Mise_a_jourSE » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.
+    serv_2 = Column(Boolean)  # Contrôler dans la table « Servitudes => Servitude_surface » ou « Servitudes => Servitude_ligne » ou « Servitudes => Servitude_point » que l’attribut « Validite » est en_projet pour les nouvelles servitudes.
+    serv_3 = Column(Boolean)  # Contrôler dans la table « Servitudes => PosNumero_de_servitude » que les éléments suivants sont corrects (Hali=Left, Vali=Base, Grandeur= -).
     nom_1 = Column(Boolean)  # A partir de deux noms locaux pour un bien-fonds vérifier si cela est exact.
     suiv_mut_1 = Column(Boolean)  # Supprimer dans la gestion des mutations les « Topic » qui ne sont pas utilisés.
     suiv_mut_2 = Column(Boolean)  # Mutation "En cours/Libérée".
     div_1 = Column(Boolean)  # Épurations des fichiers dans le répertoire de l’affaire.
-    div_2 = Column(
-        Boolean)  # Contrôler que vous avez bien saisi le dernier numéro de point de l’affaire concernée dans le programme « Réservation des numéros ».
-    div_3 = Column(
-        Boolean)  # Contrôler rigoureusement les désignations, la balance ainsi que les observations pour le registre foncier.
+    div_2 = Column(Boolean)  # Contrôler que vous avez bien saisi le dernier numéro de point de l’affaire concernée dans le programme « Réservation des numéros ».
+    div_3 = Column(Boolean)  # Contrôler rigoureusement les désignations, la balance ainsi que les observations pour le registre foncier.
     visa = Column(BigInteger, ForeignKey(Operateur.id))
     date = Column(Date)
 

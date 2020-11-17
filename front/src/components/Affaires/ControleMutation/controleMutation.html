@@ -22,35 +22,92 @@
                         <!-- Données internes -->
                         <md-card class="controleMutationForm">
                             <md-card-content>
-                                <div class="md-title">DONNEES INTERNES</div>
+                                <div class="md-title">SUIVI INTERNES</div>
+                                <br>
 
-                                <div class="md-subhead">Terrain</div>
-                                <md-checkbox class="md-primary" v-model="a">Levés préliminaires</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Matérialisations</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Levés</md-checkbox>
-                                
-                                <div class="md-subhead">Terrain</div>
-                                <md-checkbox class="md-primary" v-model="a">Calculs préliminaires</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Calculs définitifs</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Calculs spéciaux</md-checkbox>
-                                
-                                
-                                <md-checkbox class="md-primary" v-model="a">Envoi au client</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Retour du client</md-checkbox>
-                                
-                                
-                                <md-checkbox class="md-primary" v-model="a">Création de la mutation dans la BD</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Contrôles de cohérences e.o.</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Production des désignations</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Production plan de mutation (papier)</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Production plan de mutation (PDF)</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Enregistrement de la documentation</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Etat de la mutation "En cours / Libérée"</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Tableau des émoluments</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Transmission au géomètre cantonal</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Transmission au secrétariat</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Validation technique de la mutation</md-checkbox>
-                                <md-checkbox class="md-primary" v-model="a">Annulation de la mutation</md-checkbox>
+                                <div class="md-layout md-gutter md-space-between">
+                                    <div class="md-layout-item md-size-50 md-medium-size-100">
+                                        <div class="md-subhead">Terrain</div>
+                                        <md-checkbox class="md-primary" v-model="terrain_1">Levés préliminaires</md-checkbox>
+                                        <md-checkbox class="md-primary" v-model="terrain_2">Matérialisations</md-checkbox>
+                                        <md-checkbox class="md-primary" v-model="terrain_3">Levés</md-checkbox>
+                                        
+                                        <div class="md-subhead">Bureau</div>
+                                        <md-checkbox class="md-primary" v-model="bureau_1">Calculs préliminaires</md-checkbox>
+                                        <md-checkbox class="md-primary" v-model="bureau_2">Calculs définitifs</md-checkbox>
+                                        <md-checkbox class="md-primary" v-model="bureau_3">Calculs spéciaux</md-checkbox>
+                                        
+                                        
+                                        <div class="md-subhead">Situation de l'affaire</div>
+                                        <md-checkbox class="md-primary" v-model="envoi_cl_1">Envoi au client</md-checkbox>
+                                        <md-checkbox class="md-primary" v-model="retour_cl_2">Retour du client</md-checkbox>        
+                                    </div>
+                                    
+                                    <div class="md-layout-item md-size-50 md-medium-size-100">
+                                        <div class="md-subhead">Suivi</div>
+                                        <div class="md-layout md-gutter">
+                                            <div class="md-layout-item md-size-100" style="height: 35px;">
+                                                <md-checkbox class="md-primary" v-model="suivi_1" style="float: left;">Création de la mutation dans la BD</md-checkbox>
+                                                <md-datepicker v-model="suivi_1" style="float: right; margin: 0px; padding-top: 3px; min-height: 35px;"></md-datepicker>
+                                            </div>
+
+                                            <div class="md-layout-item md-size-100" style="height: 35px;">
+                                                <md-checkbox class="md-primary" v-model="suivi_2" style="float: left;">Contrôles de cohérences e.o.</md-checkbox>
+                                                <md-datepicker v-model="suivi_2" style="float: right; margin: 0px; padding-top: 3px; min-height: 35px;"></md-datepicker>
+                                            </div>
+
+                                            <div class="md-layout-item md-size-100" style="height: 35px;">
+                                                <md-checkbox class="md-primary" v-model="suivi_3" style="float: left;">Production des désignations</md-checkbox>
+                                                <md-datepicker v-model="suivi_3" style="float: right; margin: 0px; padding-top: 3px; min-height: 35px;"></md-datepicker>
+                                            </div>
+
+                                            <div class="md-layout-item md-size-100" style="height: 35px;">
+                                                <md-checkbox class="md-primary" v-model="suivi_4" style="float: left;">Production plan de mutation (papier)</md-checkbox>
+                                                <md-datepicker v-model="suivi_4" style="float: right; margin: 0px; padding-top: 3px; min-height: 35px;"></md-datepicker>
+                                            </div>
+
+                                            <div class="md-layout-item md-size-100" style="height: 35px;">
+                                                <md-checkbox class="md-primary" v-model="suivi_5" style="float: left;">Production plan de mutation (PDF)</md-checkbox>
+                                                <md-datepicker v-model="suivi_4" style="float: right; margin: 0px; padding-top: 3px; min-height: 35px;"></md-datepicker>
+                                            </div>
+
+                                            <div class="md-layout-item md-size-100" style="height: 35px;">
+                                                <md-checkbox class="md-primary" v-model="suivi_6" style="float: left;">Enregistrement de la documentation</md-checkbox>
+                                                <md-datepicker v-model="suivi_4" style="float: right; margin: 0px; padding-top: 3px; min-height: 35px;"></md-datepicker>
+                                            </div>
+
+                                            <div class="md-layout-item md-size-100" style="height: 35px;">
+                                                <md-checkbox class="md-primary" v-model="suivi_7" style="float: left;">État de la mutation "En cours / Libérée"</md-checkbox>
+                                                <md-datepicker v-model="suivi_4" style="float: right; margin: 0px; padding-top: 3px; min-height: 35px;"></md-datepicker>
+                                            </div>
+
+                                            <div class="md-layout-item md-size-100" style="height: 35px;">
+                                                <md-checkbox class="md-primary" v-model="suivi_8" style="float: left;">Tableau des émoluments</md-checkbox>
+                                                <md-datepicker v-model="suivi_4" style="float: right; margin: 0px; padding-top: 3px; min-height: 35px;"></md-datepicker>
+                                            </div>
+
+                                            <div class="md-layout-item md-size-100" style="height: 35px;">
+                                                <md-checkbox class="md-primary" v-model="suivi_9" style="float: left;">Transmission au géomètre cantonal</md-checkbox>
+                                                <md-datepicker v-model="suivi_4" style="float: right; margin: 0px; padding-top: 3px; min-height: 35px;"></md-datepicker>
+                                            </div>
+
+                                            <div class="md-layout-item md-size-100" style="height: 35px;">
+                                                <md-checkbox class="md-primary" v-model="suivi_10" style="float: left;">Transmission au secrétariat</md-checkbox>
+                                                <md-datepicker v-model="suivi_4" style="float: right; margin: 0px; padding-top: 3px; min-height: 35px;"></md-datepicker>
+                                            </div>
+
+                                            <div class="md-layout-item md-size-100" style="height: 35px;">
+                                                <md-checkbox class="md-primary" v-model="suivi_11" style="float: left;">Validation technique de la mutation</md-checkbox>
+                                                <md-datepicker v-model="suivi_4" style="float: right; margin: 0px; padding-top: 3px; min-height: 35px;"></md-datepicker>
+                                            </div>
+
+                                            <div class="md-layout-item md-size-100" style="height: 35px;">
+                                                <md-checkbox class="md-primary" v-model="suivi_12" style="float: left;">Annulation de la mutation</md-checkbox>
+                                                <md-datepicker v-model="suivi_4" style="float: right; margin: 0px; padding-top: 3px; min-height: 35px;"></md-datepicker>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </md-card-content>
                         </md-card>
