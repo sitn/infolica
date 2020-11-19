@@ -76,7 +76,24 @@ export default {
       types_affaires_list_bk: [],
       types_affaires_list: [],
       type_modification_bool: false,
-      typesModficiationAffaire_list: []
+      typesModficiationAffaire_list: [],
+
+      typesAffaires_conf: {
+        mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION),
+        cadastration: Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION),
+        ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_PPE),
+        pcop: Number(process.env.VUE_APP_TYPE_AFFAIRE_PCOP),
+        maj_periodique: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAJ_PERIODIQUE),
+        modification: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION),
+        revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
+        remaniement_parcellaire: Number(process.env.VUE_APP_TYPE_AFFAIRE_REMANIEMENT_PARCELLAIRE),
+        servitude: Number(process.env.VUE_APP_TYPE_AFFAIRE_SERVITUDE),
+        retablissement_pfp3: Number(process.env.VUE_APP_TYPE_AFFAIRE_RETABLISSEMENT_PFP3),
+        autre: Number(process.env.VUE_APP_TYPE_AFFAIRE_AUTRE),
+        modification_type: {
+          abandon_partiel: Number(process.env.VUE_APP_TYPE_MODIFICATION_ABANDON_PARTIEL_ID)
+        }
+      }
     };
   },
   // Validations
@@ -333,6 +350,11 @@ export default {
 
             // Créer le contrôle du géomètre
             promises.push(this.postControleGeometre(id_new_affaire));
+
+           // Si affaire type mutation: créer le controle Mutation du chef d'équipe
+            if ([this.typesAffaires_conf.mutation, this.typesAffaires_conf.cadastration, this.typesAffaires_conf.modification, this.typesAffaires_conf.revision_abornement].includes(this.form.type.id)) {
+              promises.push(this.postControleMutation(id_new_affaire));
+            }
 
             // Si l'affaire est de type modification ...
             if (this.type_modification_bool) {
@@ -1102,7 +1124,7 @@ export default {
     /**
      * Créer le contrôle du géomètre à l'ouverture de l'affaire
      */
-    postControleGeometre(id_new_affaire) {
+    async postControleGeometre(id_new_affaire) {
       let formData = new FormData();
       formData.append("affaire_id", id_new_affaire);
       
@@ -1117,7 +1139,29 @@ export default {
         ).then(response => resolve(response))
         .catch(err => reject(err));
       });
-    }
+    },
+
+    /**
+     * Créer le contrôleMutation du chef d'équipe à l'ouverture de l'affaire
+     */
+    async postControleMutation(id_new_affaire) {
+      let formData = new FormData();
+      formData.append("affaire_id", id_new_affaire);
+      
+      return new Promise((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_CONTROLE_MUTATION_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
+
 
   },
 
