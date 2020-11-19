@@ -3,10 +3,6 @@
     float: left;
 }
 
-.suiviMandat .md-checkbox {
-  display: flex;
-}
-
 .suiviMandat .suiviMandatForm {
     width: 32%;
     /*float: left;*/

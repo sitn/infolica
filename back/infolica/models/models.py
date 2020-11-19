@@ -535,6 +535,62 @@ class ControlePPE(Base):
     balsurf_remarque = Column(Text)
 
 
+class ControleGeometre(Base):
+    __tablename__ = 'controle_geometre'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    affaire_id = (BigInteger, ForeignKey(Affaire.id))
+    check_1 = Column(Boolean)  # Nom du cadastre et n° de bien-fonds corrects (cf extrait RF) et identiques sur tous les documents
+    check_2 = Column(Boolean)  # Tous les biens-fonds concernés existent au registre foncier (d’après l’extrait RF), sinon ajouter une observation concernant l’ordre de dépôt des dossiers au RF
+    check_3 = Column(Boolean)  # Vérifier le bien-fondé des servitudes ainsi que leur faisabilité
+    check_4 = Column(Boolean)  # Sommes des surfaces de l’état descriptif
+    check_5 = Column(Boolean)  # Les surfaces « ancien état » de la balance correspondent aux surfaces RF
+    check_6 = Column(Boolean)  # Sommes des surfaces de la balance
+    check_7 = Column(Boolean)  # Les éventuelles différences de m2 sont bien expliquées (a priori, pas de correction des surfaces des nouveaux biens-fonds)
+    check_8 = Column(Boolean)  # Les provenances sont cohérentes
+    check_9 = Column(Boolean)  # La surface des DDP ne change pas entre l’ancien état et le nouvel état, sinon mettre un commentaire concernant le changement de surface du DDP
+    check_10 = Column(Boolean)  # BB a inscrit le montant pour le report des servitudes dans le fichier excel
+    check_11 = Column(Boolean)  # Les titres sont cohérents sur tous les documents
+    check_12 = Column(Boolean)  # Le dossier respecte les indications du SCAT / SAGR / SENE
+    check_13 = Column(Boolean)  # BB a pris en compte les indications du SCAT / SAGR / SENE
+    check_14 = Column(Boolean)  # Chaque nouveau BF ait un accès au DP
+    check_15 = Column(Boolean)  # Nom du cadastre et n° de bien-fonds corrects (cf extrait RF) et identiques sur tous les documents
+    check_16 = Column(Boolean)  # Les titres sont cohérents sur tous les documents
+    check_17 = Column(Boolean)  # Cohérence des provenances
+    check_18 = Column(Boolean)  # Nombre de documents: « fait en x plans, x désignations et x formules de report des servitude »
+    check_19 = Column(Boolean)  # Tampon(s) et date(s) sur la dernière feuille
+    check_20 = Column(Boolean)  # Mention « sans frais » indiquée le cas échéant (surtout changement dans ses natures)
+    check_21 = Column(Boolean)  # Le n° du BF est visible sur le plan
+    check_22 = Column(Boolean)  # Tampon(s) et date(s)
+    check_23 = Column(Boolean)  # Titre de la facture
+    check_24 = Column(Boolean)  # Quantité et désignation (n° BF + cadastre) des articles facturés
+    check_25 = Column(Boolean)  # Prix unitaire des articles facturés (cf fichier excel)
+    check_26 = Column(Boolean)  # Si le destinataire de la facture est différent de celui des documents, vérifier que l’enveloppe contenant les documents porte la bonne adresse et qu’il y a 2 enveloppes
+    check_27 = Column(Boolean)  # Lettre A sur l’enveloppe (quand pour acte notarié)
+    check_28 = Column(Boolean)  # Présence de la lettre d’information à propos de la cadastration d’office
+    check_29 = Column(Boolean)  # Eléments saisis manuellement (cf exemples)
+    check_30 = Column(Boolean)  # Eléments issus d’Infolica (cf exemples)
+    check_31 = Column(Boolean)  # Paragraphes spécifiques si une PPE et constituée sur le fond de base ou si une mention de « Constitution de PPE avant la construction du bâtiment » figure
+    check_32 = Column(Boolean)  # Eléments saisis manuellement (cf exemples)
+    check_33 = Column(Boolean)  # Chaque bâtiment a un numéro
+    check_34 = Column(Boolean)  # Vérifier que le nom du propriétaire est entier
+    check_35 = Column(Boolean)  # La surface du bien-fonds est la même que celle inscrite au RF
+    check_36 = Column(Boolean)  # Vérifier les sommes des surfaces de l’état descriptif
+    check_37 = Column(Boolean)  # Chaque bâtiment a un numéro
+    check_38 = Column(Boolean)  # Pertinence de la désignation de bâtiment
+    check_39 = Column(Boolean)  # Phrase « DUPLICATA du plan du … »
+    check_40 = Column(Boolean)  # Phrase « DUPLICATA du plan du … »
+    check_41 = Column(Boolean)  # Contrôle de l’indication « Visa » ou « Modification »
+    check_42 = Column(Boolean)  # Contrôle de l’indication « Visa » ou « Modification »
+    check_43 = Column(Boolean)  # contrôler si la servitude telle qu’elle est prévue est pertinente et possible. Il est possible qu’il faille diviser les géométries des servitudes pour représenter les différentes utilisations.
+    check_44 = Column(Boolean)  # Le nombre de points est le même que sur le plan
+    check_45 = Column(Boolean)  # Le montant est correct (~300.- par PL)
+    check_46 = Column(Boolean)  # Le nombre de points est le même que sur le plan
+    check_47 = Column(Boolean)  # Le montant est correct (~ 380.- par PFP)
+    remarque = Column(Text)
+
+
+
 class NumeroType(Base):
     __tablename__ = 'numero_type'
     __table_args__ = {'schema': 'infolica'}

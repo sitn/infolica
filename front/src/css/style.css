@@ -42,6 +42,13 @@ body {
     margin: 4px;
 }
 
+.md-checkbox {
+    display: flex !important;
+}
+
+.md-checkbox .md-checkbox-label {
+    height: auto !important;
+}
 
 /* Suppression molette input type number */
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {

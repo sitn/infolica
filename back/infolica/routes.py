@@ -57,6 +57,10 @@ def includeme(config):
     config.add_route('controles_ppe_s','/infolica/api/controles_ppe/')
     config.add_route('controle_ppe_by_id', '/infolica/api/controles_ppe/{id}')
     config.add_route('controle_ppe_by_affaire_id', '/infolica/api/affaire_controles_ppe/{id}')
+    #Controle_geometre
+    config.add_route('controle_geometre','/infolica/api/controle_geometre')
+    config.add_route('controle_geometre_s','/infolica/api/controle_geometre/')
+    config.add_route('controle_geometre_by_affaire_id', '/infolica/api/affaire_controle_geometre/{id}')
     #Numéros
     config.add_route('numeros','/infolica/api/numeros')
     config.add_route('numeros_s','/infolica/api/numeros/')

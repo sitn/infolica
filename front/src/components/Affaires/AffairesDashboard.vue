@@ -13,8 +13,7 @@ import DuplicationAffaire from "@/components/Affaires/DuplicationAffaire/Duplica
 import Facturation from "@/components/Facturation/Facturation.vue";
 import Remarques from "@/components/Affaires/Remarques/Remarques.vue";
 import ControleMutation from "@/components/Affaires/ControleMutation/ControleMutation.vue";
-import ControleGeom1 from "@/components/Affaires/ControleGeom1/ControleGeom1.vue";
-import ControleGeom2 from "@/components/Affaires/ControleGeom2/ControleGeom2.vue";
+import ControleGeometre from "@/components/Affaires/ControleGeometre/ControleGeometre.vue";
 import ControlePPE from "@/components/Affaires/ControlePPE/ControlePPE.vue";
 import SuiviMandat from "@/components/SuiviMandat/SuiviMandat.vue";
 import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
@@ -37,8 +36,7 @@ export default {
     Facturation,
     Remarques,
     ControleMutation,
-    ControleGeom1,
-    ControleGeom2,
+    ControleGeometre,
     ControlePPE,
     SuiviMandat,
     DuplicationAffaire,
@@ -73,6 +71,7 @@ export default {
         revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
         remaniement_parcellaire: Number(process.env.VUE_APP_TYPE_AFFAIRE_REMANIEMENT_PARCELLAIRE),
         servitude: Number(process.env.VUE_APP_TYPE_AFFAIRE_SERVITUDE),
+        retablissement_pfp3: Number(process.env.VUE_APP_TYPE_AFFAIRE_RETABLISSEMENT_PFP3),
         autre: Number(process.env.VUE_APP_TYPE_AFFAIRE_AUTRE),
         modification_type: {
           abandon_partiel: Number(process.env.VUE_APP_TYPE_MODIFICATION_ABANDON_PARTIEL_ID)

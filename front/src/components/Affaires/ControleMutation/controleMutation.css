@@ -3,13 +3,8 @@
     float: left;
 }
 
-.controleMutation .md-checkbox {
-  display: flex;
-}
-
 .controleMutation .controleMutationForm {
     width: 95%;
-    /*float: left;*/
 }
 
 .controleMutation .newControleMutationBtn {
