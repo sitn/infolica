@@ -7,7 +7,7 @@
                         <md-icon>keyboard_arrow_down</md-icon>
                     </md-button>
                 </md-card-expand-trigger>
-                Contrôle (géomètre cantonnal)
+                Contrôle (Géomètre cantonnal)
             </div>
         </md-card-header>
 
@@ -158,12 +158,20 @@
                         <div class="md-layout-item md-size-75 md-small-size-100">
                             <md-field>
                                 <label>Remarques</label>
-                                <md-textarea></md-textarea>
+                                <md-textarea v-model="controleGeometre.remarque"></md-textarea>
                             </md-field>
                         </div>
 
                         <div class="ma-layout-item md-size-25 md-small-size-100">
-                            <md-button>test</md-button>
+                            <md-field>
+                                <md-input v-model="controleGeometre.date" readonly></md-input>
+                            </md-field>
+                            <md-field>
+                                <md-input v-model="operateur.nom" readonly></md-input>
+                            </md-field>
+                            
+                            <md-button class="md-accent" @click="searchControleGeometre()">Annuler</md-button>
+                            <md-button class="md-primary" @click="updateControleGeometre()">Enregistrer</md-button>
                         </div>
 
                     </div>

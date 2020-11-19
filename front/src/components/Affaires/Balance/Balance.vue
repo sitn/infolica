@@ -602,9 +602,7 @@ export default {
      */
     saveBalance() {
       let relations = this.getRelations();
-      console.log(relations);
       let checkBF = this.checkExistingBF(relations);
-      console.log(checkBF);
       if (checkBF.newBF_not_in_numeros_reserves.length > 0) {
         this.checkBFBalance = {
           show: true,
@@ -640,10 +638,10 @@ export default {
      */
     checkExistingBF(relations) {
       // get old and new BF lists
-      let oldBF = [];
+      // eslint-disable-next-line no-unused-vars
+      let oldBF = []; // currently unused variable, update comment above
       let newBF = [];
       [oldBF, newBF] = this.transpose(relations);
-      console.log(oldBF)
 
       // get simplified list of reserved BF (cadastreId_BF)
       let reservedBF = [];
@@ -665,7 +663,6 @@ export default {
           }
         }
       });
-      console.log("newBF_not_in_numeros_reserves = ", newBF_not_in_numeros_reserves);
 
       //Check if reserved BF are all in newBF (potential DDP)
       reservedBF.forEach(x => {
@@ -673,7 +670,6 @@ export default {
           numeros_reserves_not_in_newBF.push(x);
         }
       });
-      console.log("numeros_reserves_not_in_newBF = ", numeros_reserves_not_in_newBF);
 
       //Check if oldBF already exist in DB
       // let promises = [];

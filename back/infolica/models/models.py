@@ -539,7 +539,7 @@ class ControleGeometre(Base):
     __tablename__ = 'controle_geometre'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    affaire_id = (BigInteger, ForeignKey(Affaire.id))
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     check_1 = Column(Boolean)  # Nom du cadastre et n° de bien-fonds corrects (cf extrait RF) et identiques sur tous les documents
     check_2 = Column(Boolean)  # Tous les biens-fonds concernés existent au registre foncier (d’après l’extrait RF), sinon ajouter une observation concernant l’ordre de dépôt des dossiers au RF
     check_3 = Column(Boolean)  # Vérifier le bien-fondé des servitudes ainsi que leur faisabilité
@@ -587,6 +587,8 @@ class ControleGeometre(Base):
     check_45 = Column(Boolean)  # Le montant est correct (~300.- par PL)
     check_46 = Column(Boolean)  # Le nombre de points est le même que sur le plan
     check_47 = Column(Boolean)  # Le montant est correct (~ 380.- par PFP)
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
+    date = Column(Date)
     remarque = Column(Text)
 
 

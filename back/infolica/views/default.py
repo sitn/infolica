@@ -65,6 +65,8 @@ def test_error(exc, request):
 @view_config(route_name='client_moral_personnes_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='reservation_numeros_mo', request_method='OPTIONS', renderer='json')
 @view_config(route_name='affaire_tele', request_method='OPTIONS', renderer='json')
+@view_config(route_name='controle_geometre', request_method='OPTIONS', renderer='json')
+@view_config(route_name='controle_geometre_s', request_method='OPTIONS', renderer='json')
 def options_response_view(request):
     """
     Common OPTION RESPONSE

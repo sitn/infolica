@@ -19,7 +19,7 @@ def controle_geometre_by_affaire_id_view(request):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id
-    affaire_id = request.id = request.matchdict['id']
+    affaire_id = request.matchdict['id']
     query = request.dbsession.query(ControleGeometre).filter(
         ControleGeometre.affaire_id == affaire_id).first()
 
