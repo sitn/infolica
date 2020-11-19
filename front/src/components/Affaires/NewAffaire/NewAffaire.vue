@@ -331,6 +331,9 @@ export default {
             // Crée la première étape de l'affaire
             promises.push(this.postAffaireEtape(id_new_affaire));
 
+            // Créer le contrôle du géomètre
+            promises.push(this.postControleGeometre(id_new_affaire));
+
             // Si l'affaire est de type modification ...
             if (this.type_modification_bool) {
               promises.push(this.postAffaireRelation(id_new_affaire));
@@ -1095,6 +1098,27 @@ export default {
         .catch(err => reject(err));
       })
     },
+    
+    /**
+     * Créer le contrôle du géomètre à l'ouverture de l'affaire
+     */
+    postControleGeometre(id_new_affaire) {
+      let formData = new FormData();
+      formData.append("affaire_id", id_new_affaire);
+      
+      return new Promise((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_CONTROLE_GEOMETRE_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    }
+
   },
 
   mounted: function() {
