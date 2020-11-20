@@ -98,22 +98,21 @@
     <div class="affairesDashboard">
         <ControleMutation v-if="affaire.type_id===typesAffaires_conf.mutation" />
     </div>
-    
-    <!-- 1ER CONTROLE DU GEOMETRE CANTONAL -->
-    <div class="affairesDashboard">
-        <ControleGeometre :typesAffaires_conf="typesAffaires_conf" :affaire="affaire" />
-    </div>
-
-    <!-- CONTROLE TECHNIQUE PPE -->
-    <div class="affairesDashboard">
-        <ControlePPE v-if="affaire.type_id===typesAffaires_conf.ppe" />
-    </div>
 
     <!-- SUIVI DU MANDAT -->
     <div class="affairesDashboard" v-if="affaire.type_id===typesAffaires_conf.mutation">
         <SuiviMandat />
     </div>
 
+    <!-- CONTROLE TECHNIQUE PPE (Technicien)-->
+    <div class="affairesDashboard">
+        <ControlePPE v-if="affaire.type_id===typesAffaires_conf.ppe" />
+    </div>    
+    
+    <!-- CONTROLE DU GEOMETRE CANTONAL -->
+    <div class="affairesDashboard">
+        <ControleGeometre :typesAffaires_conf="typesAffaires_conf" :affaire="affaire" />
+    </div>        
     <!-- DOCUMENTS -->
     <div class="affairesDashboard">
         <Documents v-if="false" />
