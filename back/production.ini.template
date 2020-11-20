@@ -6,9 +6,9 @@
 [app:main]
 use = egg:infolica
 
-infolica_mail = 
-infolica_smtp = 
-infolica_balance_mail = 
+infolica_mail = /*TO COMPLETE*/
+infolica_smtp = /*TO COMPLETE*/
+infolica_balance_mail = /*TO COMPLETE*/
 
 pyramid.reload_templates = false
 pyramid.debug_authorization = false
@@ -147,6 +147,12 @@ numero_artefact_id = 5
 affaire_numero_type_ancien_id = 1
 affaire_numero_type_nouveau_id = 2
 
+# ID numeros relations types
+numero_relation_mutation_id = 1
+numero_relation_ddp_id = 2
+numero_relation_ppe_id = 3
+numero_relation_pcop_id = 4
+
 # ID cadastres-binômes pour la réservation de numéros
 cadastres_ChauxDeFonds_Eplatures_id = 60,70
 cadastres_BrotPlamboz_Plamboz_id = 59,69
@@ -158,11 +164,15 @@ cadastres_Sauge_StAubin_id = 22,67
 ######################################################################################
 affaires_directory = /*TO COMPLETE*/
 affaireTemplateDir = /*TO COMPLETE*/
-access_control_allow_origin = http://127.0.0.1:81
 mails_templates_directory = /*TO COMPLETE*/
 temporary_directory = /*TO COMPLETE*/
-
 fichier_balance_prefix = Des_
+
+######################################################################################
+# Access-Control-Allow-Origin
+######################################################################################
+access_control_allow_origin = http://127.0.0.1:81
+
 
 
 retry.attempts = 3
