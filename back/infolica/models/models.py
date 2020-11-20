@@ -377,7 +377,7 @@ class ControlePPE(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-    operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
     date = Column(Date)
     gen_1 = Column(Boolean)
     gen_2 = Column(Boolean)
