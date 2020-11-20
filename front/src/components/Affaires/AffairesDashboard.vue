@@ -19,7 +19,7 @@ import SuiviMandat from "@/components/SuiviMandat/SuiviMandat.vue";
 import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { getTypesAffaires, checkPermission, getDocument, stringifyAutocomplete } from '@/services/helper'
+import { getTypesAffaires, checkPermission, getDocument, stringifyAutocomplete, logAffaireEtape } from '@/services/helper'
 
 import moment from "moment";
 
@@ -253,6 +253,9 @@ export default {
           })
           Promise.all(promises)
           .then(() => {
+            //Log edition facture
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_ABANDON_ID));
+
             this.$router.go();
           })
           .catch(err => handleException(err, this));
@@ -356,26 +359,12 @@ export default {
      * Enregistrer la nouvelle étape
      */
     async updateAffaireEtape() {
-      let formData = new FormData();
-      formData.append("affaire_id", this.affaire.id);
-      formData.append("etape_id", this.etapeAffaire.prochaine.id);
-      formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
-      if (this.etapeAffaire.remarque) {
-        formData.append("remarque", this.etapeAffaire.remarque);
-      }
-      
-      this.$http.post(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_ETAPES_ENDPOINT,
-        formData,
-        {
-          withCredentials: true,
-          headers: {Accept: "application/json"}
-        }
-      ).then(() => {
+      logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine.id, this.etapeAffaire.remarque)
+      .then(() => {
         this.$root.$emit("ShowMessage", "L'étape a bien été mise à jour");
         this.etapeAffaire.showDialog = false;
         this.setAffaire();
-      }).catch(err => handleException(err, this));
+      })
     },
 
     /**

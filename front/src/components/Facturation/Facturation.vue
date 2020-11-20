@@ -10,7 +10,8 @@ import { getCurrentDate,
          getClients,
          filterList,
          stringifyAutocomplete,
-         getDocument } from "@/services/helper";
+         getDocument,
+         logAffaireEtape } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -406,6 +407,10 @@ export default {
           if (response.data) {
             this.lastRecordSAP = this.selectedFacture.sap;
             this.dataSaved = true;
+
+            //Log edition facture
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_ID), "Édition");
+
             this.searchAffaireFactures();
             this.$root.$emit("ShowMessage", "La facture a été enregistrée avec succès")
           }
@@ -455,6 +460,10 @@ export default {
         )
         .then(response => {
           if (response.data) {
+            
+            //Log edition facture
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_ID), "Suppression");
+
             this.searchAffaireFactures();
           }
         })

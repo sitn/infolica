@@ -3,12 +3,14 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
-import { getEtatsNumeros, stringifyAutocomplete } from "@/services/helper.js";
+import { getEtatsNumeros, stringifyAutocomplete, logAffaireEtape } from "@/services/helper.js";
 import moment from "moment";
 
 export default {
   name: "ClotureAffaire",
-  props: {},
+  props: {
+    affaire: Object
+  },
   component: {},
   data: () => {
     return {
@@ -145,8 +147,11 @@ export default {
           this.AjoutDateClotureAffaire()
           .then(() => {
             this.$router.go(0);
-            this.$parent.setAffaire(); 
-            this.$root.$emit("ShowMessage", "L'affaire " + this.$route.params.id + " a été clôturées avec succès");         
+            this.$parent.setAffaire();
+            this.$root.$emit("ShowMessage", "L'affaire " + this.$route.params.id + " a été clôturées avec succès");
+
+            //Log edition facture
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CLOTURE_ID));
           })
           .catch(err => handleException(err, this));
         }

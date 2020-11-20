@@ -144,6 +144,7 @@ class AffaireEtapeIndex(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
+    priorite = Column(Integer)
 
 
 class AffaireEtape(Base):
@@ -151,8 +152,9 @@ class AffaireEtape(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
     etape_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id), nullable=False)
-    date = Column(Date, default=datetime.datetime.utcnow(), nullable=False)
+    datetime = Column(DateTime, nullable=False)
     remarque = Column(Text)
 
 
@@ -929,8 +931,12 @@ class VAffaire(Base):
     preavis_rf_date_reponse = Column(Date)
     etape_id = Column(BigInteger)
     etape = Column(Text)
-    etape_date = Column(Date)
+    etape_datetime = Column(DateTime)
     etape_remarque = Column(Text)
+    etape_operateur_id = Column(BigInteger)
+    etape_operateur_nom = Column(Text)
+    etape_operateur_prenom = Column(Text)
+    etape_priorite = Column(Integer)
     abandon = Column(Boolean)
 
 
@@ -956,14 +962,17 @@ class VEtapesAffaires(Base):
     __tablename__ = 'v_etapes_affaires'
     __table_args__ = {'schema': 'infolica',
                       'info': dict(is_view=True)}
-    affaire_id = Column(BigInteger, primary_key=True)
-    affaire_nom = Column(Text)
-    etape = Column(Text, primary_key=True)
-    date_etape = Column(Date, primary_key=True)
-    affaire_liee_id = Column(BigInteger)
-    affaire_liee_nom = Column(Text)
-    service_nom = Column(Text, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
+    affaire_id = Column(BigInteger)
+    etape_id = Column(BigInteger)
+    etape = Column(Text)
     remarque = Column(Text)
+    datetime = Column(DateTime)
+    operateur_id = Column(BigInteger)
+    operateur_nom = Column(Text)
+    operateur_prenom = Column(Text)
+    etape_ordre = Column(BigInteger)
+    etape_priorite = Column(Integer)
 
 
 class VAffairesPreavis(Base):

@@ -10,7 +10,8 @@ import { required } from "vuelidate/lib/validators";
 import { getCurrentDate,
          getClients,
          filterList,
-         stringifyAutocomplete } from "@/services/helper";
+         stringifyAutocomplete,
+         logAffaireEtape } from "@/services/helper";
 import Autocomplete from "vuejs-auto-complete";
 const moment = require("moment");
 
@@ -1109,20 +1110,9 @@ export default {
         if (tmp.logique_processus) {
           etape_id = tmp.logique_processus[0];
         }
-
-        let formData = new FormData();
-        formData.append("affaire_id", affaire_id);
-        formData.append("etape_id", etape_id);
-        formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
         
-        this.$http.post(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_ETAPES_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: {Accept: "application/json"}
-          }
-        ).then(response => resolve(response))
+        logAffaireEtape(affaire_id, etape_id)
+        .then(response => resolve(response))
         .catch(err => reject(err));
       })
     },

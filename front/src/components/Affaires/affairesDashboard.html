@@ -96,17 +96,17 @@
 
     <!-- CONTROLE TECHNIQUE MUTATION -->
     <div class="affairesDashboard">
-        <ControleMutation v-if="affaire.type_id===typesAffaires_conf.mutation" />
+        <ControleMutation v-if="affaire.type_id===typesAffaires_conf.mutation" :affaire="affaire" />
     </div>
 
     <!-- SUIVI DU MANDAT -->
-    <div class="affairesDashboard" v-if="affaire.type_id===typesAffaires_conf.mutation">
-        <SuiviMandat />
+    <div class="affairesDashboard" v-if="affaire.type_id===typesAffaires_conf.mutation" >
+        <SuiviMandat :affaire="affaire" />
     </div>
 
     <!-- CONTROLE TECHNIQUE PPE (Technicien)-->
     <div class="affairesDashboard">
-        <ControlePPE v-if="affaire.type_id===typesAffaires_conf.ppe" />
+        <ControlePPE v-if="affaire.type_id===typesAffaires_conf.ppe" :affaire="affaire" />
     </div>    
     
     <!-- CONTROLE DU GEOMETRE CANTONAL -->
@@ -120,7 +120,7 @@
 
     <!-- REMARQUE -->
     <div class="affairesDashboard">
-        <Remarques />
+        <Remarques :affaire="affaire" />
     </div>
 
 
@@ -131,7 +131,7 @@
 
     <!-- Cloture Affaire -->
     <div>
-        <ClotureAffaire ref="clotureAffaireForm" />
+        <ClotureAffaire ref="clotureAffaireForm" :affaire="affaire" />
     </div>
 
 

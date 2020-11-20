@@ -4,8 +4,7 @@
 }
 
 .suivi .md-table {
-    width: 40%;
-    margin: auto;
+    width: fit-content;
 }
 
 .suivi .newEtapeBtn {

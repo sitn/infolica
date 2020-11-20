@@ -1,4 +1,4 @@
-
+import { handleException } from "@/services/exceptionsHandler";
 import axios from 'axios';
 const moment = require('moment')
 
@@ -292,3 +292,31 @@ export const setDateFormatClient = function(obj) {
     }
     return obj;
 }
+
+/**
+ * Log new step
+ */
+export const logAffaireEtape = async function(affaire_id, etape_id, remarque=null) {
+    let formData = new FormData();
+    formData.append("affaire_id", affaire_id);
+    formData.append("etape_id", etape_id);
+    formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
+    formData.append("datetime", moment(new Date()).format(process.env.VUE_APP_DATETIMEFORMAT_WS));
+    if (remarque) {
+        formData.append("remarque", remarque);
+    }
+
+    return new Promise(resolve => {
+        axios.post(
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_ETAPES_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: {"Accept": "application/json"}
+            }
+        ).then(response => resolve(response))
+        .catch(err => handleException(err));
+    });
+}
+
+

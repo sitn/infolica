@@ -4,7 +4,7 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission} from '@/services/helper';
+import {checkPermission, logAffaireEtape} from '@/services/helper';
 
 const moment = require('moment')
 
@@ -161,6 +161,10 @@ export default {
         .then(response => {
           if (response) {
             this.$root.$emit("ShowMessage", "Le formulaire de contrôle a été mis à jour avec succès")
+            
+            //Log edition facture
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CONTROLE_GEOMETRE_ID), "Edition du formulaire");
+            
             this.searchControleGeometre();
           }
         })

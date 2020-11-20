@@ -3,13 +3,15 @@
 
 
 <script>
-import { getCurrentDate, checkPermission } from "@/services/helper";
+import { getCurrentDate, checkPermission, logAffaireEtape } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import moment from "moment"
 
 export default {
   name: "affaireRemarques",
-  props: {},
+  props: {
+    affaire: Object
+  },
   components: {},
   data: () => ({
     affaireReadonly: true,
@@ -81,6 +83,9 @@ export default {
           .then(response => {
             if (response.data) {
               this.searchAffaireRemarques();
+
+              //Log edition facture
+              logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_REMARQUE_ID), "Création d'une remarque");
             }
           })
           .catch(err => {

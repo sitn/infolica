@@ -4,13 +4,15 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission, setDateFormatClient} from '@/services/helper';
+import {checkPermission, setDateFormatClient, logAffaireEtape} from '@/services/helper';
 
 const moment = require('moment')
 
 export default {
   name: "ControleMutation",
-  props: {},
+  props: {
+    affaire: Object
+  },
   data: () => ({
     affaireReadonly: true,
     showNewControleMutationBtn: false,
@@ -205,6 +207,9 @@ export default {
           if (response) {
             this.$root.$emit("ShowMessage", "Le formulaire de contrôle a été mis à jour avec succès")
             this.searchControleMutation();
+
+            //Log edition facture
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CONTROLE_MUTATION_ID), "Edition du formulaire");
           }
         })
         .catch(err => {

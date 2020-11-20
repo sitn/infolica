@@ -3,7 +3,7 @@
 
 
 <script>
-import { getCurrentDate, checkPermission, getDocument } from "@/services/helper";
+import { getCurrentDate, checkPermission, getDocument, logAffaireEtape } from "@/services/helper";
 import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -188,6 +188,7 @@ export default {
       var formData = this.fillData();
 
       var req;
+      let remarqueEtapeStatut = "";
       // Modification de préavis
       if (this.modifyPreavis) {
         req = this.$http.put(
@@ -198,6 +199,7 @@ export default {
             headers: { Accept: "application/json" }
           }
         );
+        remarqueEtapeStatut = "Retour"
       } else {
         // Création d'un nouveau préavis
         req = this.$http.post(
@@ -208,6 +210,7 @@ export default {
             headers: { Accept: "application/json" }
           }
         );
+        remarqueEtapeStatut = "Demande"
       }
       req
         .then(response => {
@@ -215,6 +218,10 @@ export default {
             this.searchAffairePreavis();
             // handle success
             this.$root.$emit("ShowMessage", "Le préavis au " + this.lastRecord + " a été enregistrée avec succès")
+
+            // log etape
+            let remarqueEtape = this.lastRecord + " - " + remarqueEtapeStatut;
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_PREAVIS_ID), remarqueEtape);
           }
         })
         .catch(err => {
@@ -363,10 +370,32 @@ export default {
 
       getDocument(formData)
       .then(response => {
-          this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'")
+          this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'");
+
+          // Log l'étape de téléchargement du document
+          let service_nom = this.services_liste_bk.filter(x => x.id === service_id)[0].service;
+          let remarque = service_nom + " - " + "Téléchargement modèle préavis";
+          logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_PREAVIS_ID), remarque);
       })
       .catch(err => handleException(err, this));
+    },
+
+    /**
+     * Open preavis dialog
+     */
+    openPreavisDialog() {
+      this.new_preavis = {
+        id: null,
+        service: null,
+        preavis: null,
+        date_demande: getCurrentDate(),
+        date_reponse: null,
+        remarque: null
+      }
+
+      this.showPreavisDialog = true;
     }
+
   },
 
   mounted: function() {

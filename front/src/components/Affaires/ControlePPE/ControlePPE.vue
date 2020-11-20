@@ -5,13 +5,16 @@
 <script>
 import {handleException} from '@/services/exceptionsHandler';
 import {checkPermission,
-        stringifyAutocomplete} from '@/services/helper';
+        stringifyAutocomplete,
+        logAffaireEtape} from '@/services/helper';
 
 const moment = require('moment')
 
 export default {
   name: "ControlePPE",
-  props: {},
+  props: {
+    affaire: Object
+  },
   data: () => ({
     affaireReadonly: true,
     check_all: false,
@@ -117,6 +120,10 @@ export default {
         .then(response => {
           if (response) {
             this.$root.$emit("ShowMessage", "Le formulaire de contrôle a été créé avec succès")
+
+            //Log edition facture
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CONTROLE_PPE_ID), "Création d'un nouveau formulaire");
+
             this.searchControlePPE();
           }
         })
@@ -305,6 +312,9 @@ export default {
             this.$root.$emit("ShowMessage", "Le formulaire de contrôle a été mis à jour avec succès");
             this.check_all = false;
             this.searchControlePPE();
+
+            //Log edition facture
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CONTROLE_PPE_ID), "Edition du formulaire");
           }
         })
         .catch(err => {
