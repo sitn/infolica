@@ -44,6 +44,7 @@
                     <md-table-cell md-sort-by="dashboard_9" md-label="Finalisation (PDE/SE)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_9">{{ item.dashboard_9 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_10" md-label="Signatures-Art.35 (LF/FS)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_10">{{ item.dashboard_10 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_8" md-label="Valid tech (DGY)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_8">{{ item.dashboard_8 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_16" md-label="Fin de processus (<30 j)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_16">{{ item.dashboard_16 }}</md-button></md-table-cell>
                 </md-table-row>
             </md-table>
         </md-card-content>
@@ -79,10 +80,15 @@
 
     <!-- Dialog pour la création de nouvelle étape dans l'affaire -->
     <md-dialog :md-active.sync="showNewEtapeDialog" style="z-index: 6; margin: auto; width: 1000px;">
-        <md-dialog-title>Nouvelle étape de l'affaire '{{ affaire.affaire_nom }}'</md-dialog-title>
+        <!-- Titre si l'affaire n'est pas terminée -->
+        <md-dialog-title v-if="affaire.actuelle_etape && affaire.actuelle_etape.id !== affaireProcessEndID">Nouvelle étape de l'affaire '{{ affaire.affaire_nom }}'</md-dialog-title>
+        <!-- Titre si l'affaire est terminée -->
+        <md-dialog-title v-else>Suivi de l'affaire '{{ affaire.affaire_nom }}'</md-dialog-title>
 
         <md-dialog-content>
-            <div class="md-layout md-gutter md-alignment-top-space-between">
+            <div class="md-layout md-gutter md-alignment-top-space-between" v-if="affaire.actuelle_etape && affaire.actuelle_etape.id !== affaireProcessEndID">
+            
+                <!-- Formulaire de nouvelle étape -->
                 <div class="md-layout-item md-size-45">
                     <!-- Nom de l'étape en cours -->
                     <md-field>
@@ -112,9 +118,12 @@
                         <md-textarea v-model="etape.remarque" md-autogrow></md-textarea>
                     </md-field>
                 </div>
-                
-                <md-divider/>
-                
+            </div>
+            
+            <md-divider/>
+            
+            <div class="md-layout md-gutter md-alignment-top-space-between">
+                <!-- Table de l'historique de l'affaire -->
                 <div class="md-layout-item md-size-100">
                     <md-table v-model="suiviAffaires" md-card>
                         <md-table-toolbar>
@@ -134,8 +143,14 @@
         </md-dialog-content>
 
         <md-dialog-actions>
-            <md-button class="md-accent" @click="initFormAffaire">Annuler</md-button>
-            <md-button class="md-primary" @click="updateAffaire">Enregistrer</md-button>
+            <!-- Boutons -->
+            <div v-if="affaire.actuelle_etape && affaire.actuelle_etape.id !== affaireProcessEndID">
+                <md-button class="md-accent" @click="initFormAffaire">Annuler</md-button>
+                <md-button class="md-primary" @click="updateAffaire">Enregistrer</md-button>
+            </div>
+            <div v-else>
+                <md-button class="md-primary" @click="showNewEtapeDialog = false">Ok</md-button>
+            </div>
         </md-dialog-actions>
     </md-dialog>
 

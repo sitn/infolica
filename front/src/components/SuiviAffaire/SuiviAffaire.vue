@@ -40,6 +40,7 @@ export default {
         showNewEtapeDialog: false,
         suiviAffaires: [],
         suiviAffaires_bk: [],
+        affaireProcessEndID: Number(process.env.VUE_APP_TELETRAVAIL_FIN_PROCESSUS_ID)
     }
   },
 

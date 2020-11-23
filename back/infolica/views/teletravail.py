@@ -2,11 +2,15 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
+from sqlalchemy import or_
+
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Affaire_tele, VAffaire_tele, Etape_tele, SuiviAffaire_tele, VSuiviAffaire_tele, AffaireType_tele
 from infolica.scripts.utils import Utils
 from infolica.scripts.mailer import send_mail
+
+import datetime
 
 
 # AFFAIRE TYPE
@@ -111,8 +115,14 @@ def affaire_tele_view(request):
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
-
-    query = request.dbsession.query(VAffaire_tele).filter(VAffaire_tele.datetime_cloture == None).order_by(VAffaire_tele.affaire_id.desc()).all()
+    
+    timedelta = int(request.registry.settings['affaire_show_timedelta'])
+    oldDate = datetime.datetime.date(datetime.datetime.now()) - datetime.timedelta(days=timedelta)
+    query = request.dbsession.query(VAffaire_tele).filter(or_(
+        VAffaire_tele.datetime_cloture >= oldDate, 
+        VAffaire_tele.datetime_cloture == None)
+    ).order_by(VAffaire_tele.affaire_id.desc()).all()
+    
     return Utils.serialize_many(query)
 
 
