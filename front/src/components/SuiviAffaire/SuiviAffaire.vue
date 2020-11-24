@@ -13,6 +13,7 @@ export default {
   data: () => {
     return {
         affaires: [],
+        affaires_bk: [],
         affaireTypes: [],
         affaireTypes_autocomplete: [],
         affaireEtapes: [],
@@ -40,7 +41,9 @@ export default {
         showNewEtapeDialog: false,
         suiviAffaires: [],
         suiviAffaires_bk: [],
-        affaireProcessEndID: Number(process.env.VUE_APP_TELETRAVAIL_FIN_PROCESSUS_ID)
+        affaireProcessEndID: Number(process.env.VUE_APP_TELETRAVAIL_FIN_PROCESSUS_ID),
+        showFinProcessus: false,
+        searchAffaire: '',
     }
   },
 
@@ -100,6 +103,10 @@ export default {
                     }
                 });
                 this.affaires = tmp;
+                this.affaires_bk = tmp;
+
+                // update affaire list on showFinProcessus
+                this.updateTable();
             }
         }).catch(err => handleException(err, this));
     },
@@ -333,6 +340,23 @@ export default {
             }
         ).then(()=> {})
         .catch(err => handleException(err, this));
+    },
+    
+    /**
+     * Update table and content to show or not FinProcessus step
+     */
+    updateTable() {
+        // filter affaires by showing or not Fin Processus
+        if (this.showFinProcessus) {
+            this.affaires = this.affaires_bk;
+        } else {
+            this.affaires = this.affaires_bk.filter(x => x.actuelle_etape_id !== this.affaireProcessEndID && x.datetime_cloture === null);
+        }
+        
+        // filter affaires by name if specified
+        if (this.searchAffaire !== null && this.searchAffaire !== '') {
+            this.affaires = this. affaires.filter(x => x.affaire_nom.toLowerCase().includes(this.searchAffaire.toLowerCase()));
+        }
     },
 
     // /**
