@@ -1,5 +1,6 @@
-
+import { handleException } from "@/services/exceptionsHandler";
 import axios from 'axios';
+const moment = require('moment')
 
 /**
  * Check if the user is logged in
@@ -277,3 +278,45 @@ export const filterList = function(list, searchTerm, nLetters=0) {
     }
     return result.slice(0,20);
 };
+
+/**
+ * Set date format 
+ */
+export const setDateFormatClient = function(obj) {
+    // test dates to set them to client format
+    const dateRegex = /^\d{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])$/;
+    for (const property in obj) {
+      if (dateRegex.test(obj[property])) {
+        obj[property] = moment(obj[property], process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+      }
+    }
+    return obj;
+}
+
+/**
+ * Log new step
+ */
+export const logAffaireEtape = async function(affaire_id, etape_id, remarque=null) {
+    let formData = new FormData();
+    formData.append("affaire_id", affaire_id);
+    formData.append("etape_id", etape_id);
+    formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
+    formData.append("datetime", moment(new Date()).format(process.env.VUE_APP_DATETIMEFORMAT_WS));
+    if (remarque) {
+        formData.append("remarque", remarque);
+    }
+
+    return new Promise(resolve => {
+        axios.post(
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_ETAPES_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: {"Accept": "application/json"}
+            }
+        ).then(response => resolve(response))
+        .catch(err => handleException(err));
+    });
+}
+
+

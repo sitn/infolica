@@ -3,10 +3,6 @@
     float: left;
 }
 
-.controlePPE .md-checkbox {
-  display: flex;
-}
-
 .controlePPE .controlePPEForm {
     width: 95%;
     /*float: left;*/

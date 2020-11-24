@@ -12,7 +12,7 @@ export default {
   name: "ReservationNumeros",
   props: {
     affaire: {type: Object},
-    typesAffaires: {type: Object},
+    typesAffaires_conf: {type: Object},
     types_numeros: {type: Object}
   },
   components: {},
@@ -53,11 +53,11 @@ export default {
       }
     };
 
-    if (this.affaire.type_id === this.typesAffaires.ppe || this.affaire.type_id === this.typesAffaires.pcop) {
+    if (this.affaire.type_id === this.typesAffaires_conf.ppe || this.affaire.type_id === this.typesAffaires_conf.pcop) {
       form.numeroBase = { required };
     }
 
-    if (this.affaire.type_id === this.typesAffaires.ppe) {
+    if (this.affaire.type_id === this.typesAffaires_conf.ppe) {
       form.ppe_suffixe_start = { required };
     }
 
@@ -98,15 +98,15 @@ export default {
       formData.append("nombre", this.form.nombre);
       formData.append("cadastre_id", this.form.cadastre.id);
       formData.append("etat_id", Number(process.env.VUE_APP_NUMERO_PROJET_ID));
-      if ((this.affaire.type_id === this.typesAffaires.ppe || this.affaire.type_id === this.typesAffaires.pcop) && this.form.numeroBase !== null && this.form.numeroBase.id) {
+      if ((this.affaire.type_id === this.typesAffaires_conf.ppe || this.affaire.type_id === this.typesAffaires_conf.pcop) && this.form.numeroBase !== null && this.form.numeroBase.id) {
         formData.append("numero_base_id", this.form.numeroBase.id);
       }
-      if (this.affaire.type_id === this.typesAffaires.ppe && this.form.ppe_suffixe_start !== null) {
+      if (this.affaire.type_id === this.typesAffaires_conf.ppe && this.form.ppe_suffixe_start !== null) {
         formData.append("ppe_suffixe_start", this.form.ppe_suffixe_start);
       }
       
       //Type de numéro selon le type d'affaire
-      if (this.affaire.type_id === this.typesAffaires.mutation) {
+      if (this.affaire.type_id === this.typesAffaires_conf.mutation) {
         this.form.type_id = Number(process.env.VUE_APP_NUMERO_TYPE_BF);
       } else {
         this.form.type_id = Number(this.affaire.reservation_numeros_types_id[0]);

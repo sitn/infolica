@@ -10,9 +10,11 @@ import { required } from "vuelidate/lib/validators";
 import { getCurrentDate,
          getClients,
          filterList,
-         stringifyAutocomplete } from "@/services/helper";
+         stringifyAutocomplete,
+         logAffaireEtape } from "@/services/helper";
 import Autocomplete from "vuejs-auto-complete";
 const moment = require("moment");
+
 export default {
   name: "NewAffaire",
   mixins: [validationMixin],
@@ -73,9 +75,27 @@ export default {
       showClientsForm: true,
       show_co: false,
       sitn_search_categories: null,
+      types_affaires_list_bk: [],
       types_affaires_list: [],
       type_modification_bool: false,
-      typesModficiationAffaire_list: []
+      typesModficiationAffaire_list: [],
+
+      typesAffaires_conf: {
+        mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION),
+        cadastration: Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION),
+        ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_PPE),
+        pcop: Number(process.env.VUE_APP_TYPE_AFFAIRE_PCOP),
+        maj_periodique: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAJ_PERIODIQUE),
+        modification: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION),
+        revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
+        remaniement_parcellaire: Number(process.env.VUE_APP_TYPE_AFFAIRE_REMANIEMENT_PARCELLAIRE),
+        servitude: Number(process.env.VUE_APP_TYPE_AFFAIRE_SERVITUDE),
+        retablissement_pfp3: Number(process.env.VUE_APP_TYPE_AFFAIRE_RETABLISSEMENT_PFP3),
+        autre: Number(process.env.VUE_APP_TYPE_AFFAIRE_AUTRE),
+        modification_type: {
+          abandon_partiel: Number(process.env.VUE_APP_TYPE_MODIFICATION_ABANDON_PARTIEL_ID)
+        }
+      }
     };
   },
   // Validations
@@ -207,6 +227,7 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
+            this.types_affaires_list_bk = response.data;
             this.types_affaires_list = stringifyAutocomplete(response.data);
           }
         })
@@ -326,7 +347,23 @@ export default {
             if (this.form.remarque !== null) {
               promises.push(this.postRemarqueAffaire(id_new_affaire));
             }
+            // Crée la première étape de l'affaire
+            promises.push(this.postAffaireEtape(id_new_affaire));
 
+            // Créer le contrôle du géomètre
+            promises.push(this.postControleGeometre(id_new_affaire));
+
+           // Si affaire type mutation: créer le controle Mutation du chef d'équipe
+            if ([this.typesAffaires_conf.mutation, this.typesAffaires_conf.cadastration, this.typesAffaires_conf.modification, this.typesAffaires_conf.revision_abornement].includes(this.form.type.id)) {
+              promises.push(this.postControleMutation(id_new_affaire));
+            }
+
+           // Si affaire type ppe: créer le controle ppe
+            if (this.form.type.id === this.typesAffaires_conf.ppe) {
+              promises.push(this.postControlePPE(id_new_affaire));
+            }
+
+            // Si l'affaire est de type modification ...
             if (this.type_modification_bool) {
               promises.push(this.postAffaireRelation(id_new_affaire));
               if ((this.selectedAnciensNumeros.length + this.selectedNouveauxNumeros.length) > 0 ) {
@@ -1060,7 +1097,88 @@ export default {
       if (this.client_facture !== null && this.client_facture.id !== null) {
         this.initClientMoralPersonnes(this.client_facture.id, 'facture');
       }
-    }
+    },
+
+    /**
+     * Créer la première étape de l'affaire dans le suivi
+     */
+    async postAffaireEtape(affaire_id) {
+      return new Promise((resolve, reject) => {
+        // get first step of affaire by selected type
+        let etape_id = Number(process.env.VUE_APP_PREMIERE_ETAPE_DEFAUT_ID);
+        let tmp = this.types_affaires_list_bk.filter(x => x.id === this.form.type.id)[0];
+        if (tmp.logique_processus) {
+          etape_id = tmp.logique_processus[0];
+        }
+        
+        logAffaireEtape(affaire_id, etape_id)
+        .then(response => resolve(response))
+        .catch(err => reject(err));
+      })
+    },
+    
+    /**
+     * Créer le contrôle du géomètre à l'ouverture de l'affaire
+     */
+    async postControleGeometre(id_new_affaire) {
+      let formData = new FormData();
+      formData.append("affaire_id", id_new_affaire);
+      
+      return new Promise((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_CONTROLE_GEOMETRE_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
+    /**
+     * Créer le contrôleMutation du chef d'équipe à l'ouverture de l'affaire
+     */
+    async postControleMutation(id_new_affaire) {
+      let formData = new FormData();
+      formData.append("affaire_id", id_new_affaire);
+      
+      return new Promise((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_CONTROLE_MUTATION_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
+    /**
+     * Créer le contrôleMutation du chef d'équipe à l'ouverture de l'affaire
+     */
+    async postControlePPE(id_new_affaire) {
+      let formData = new FormData();
+      formData.append("affaire_id", id_new_affaire);
+      formData.append("operateur_id", this.form.technicien_id);
+      formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
+      
+      return new Promise((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_CONTROLE_PPE_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
   },
 
   mounted: function() {

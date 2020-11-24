@@ -4,7 +4,7 @@
     <md-toolbar>
         <div style="width: 96% " class="md-layout md-gutter md-alignment-center-space-between">
             <div class="md-layout-item">
-                <h1>
+                <h1 style="margin-bottom: 0px;">
                     Affaire {{ affaire.id }}
                     <span v-if="affaire.no_access != null">[{{ affaire.no_access }}]</span>
                     <span v-if="affaire.abandon === true"> - ABANDONNE</span>
@@ -12,14 +12,14 @@
             </div>
 
             <div class="md-layout-item" style="text-align: right;">
-                <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="generateBordereauAffaire">Bordereau de l'affaire</md-button>
+                <md-button class="md-primary md-raised" v-if="editAffaireAllowed" v-on:click="generateBordereauAffaire" title="Générer la page de demande de l'affaire">Bordereau de l'affaire</md-button>
                 <md-button class="md-primary md-raised" v-if="editAffaireAllowed && false" v-on:click="duplicateAffaire">Modification / Visa</md-button>
-
+                
                 <md-speed-dial style="align-items: flex-end;"
                     md-direction="bottom" class="md-fixed">
-                    <md-speed-dial-target class="md-accent" md-dense>
+                    <md-button class="md-accent md-raised">
                         <md-icon>block</md-icon>
-                    </md-speed-dial-target>
+                    </md-button>
 
                     <md-speed-dial-content style="align-items: flex-end;">
                         <md-button class="md-accent" @click="callClotureAffaire" v-if="cloreAffaireEnabled" md-dense>Cloturer</md-button>
@@ -27,13 +27,27 @@
                     </md-speed-dial-content>
                 </md-speed-dial>
             </div>
-
+        </div>
+        
+        <div class="md-layout md-gutter" style="width: 96%;">
+            <div class="md-layout-item md-size-100">
+                <p style="display: flex; align-items: flex-end; margin-top: 0px;">
+                    Étape : 
+                    <md-field style="width: 350px; margin-top: 0px; margin-bottom: -5px; margin-left: 10px;"><md-input v-model="affaire.etape" readonly></md-input></md-field>
+                    <md-button @click="openNewStateDialog"
+                               class="md-elevation-3 md-dense" 
+                               style="min-width: 40px; margin-bottom: -5px;" 
+                               title="Mettre à jour">
+                        <md-icon>double_arrow</md-icon>
+                    </md-button>
+                </p>
+            </div>
         </div>
     </md-toolbar>
 
     <!-- INFORMATIONS GENERALES -->
     <div class="leftColumn">
-        <InfosGenerales @modify-off="modifyOff" :affaire="affaire" :typesAffaires="typesAffaires" />
+        <InfosGenerales @modify-off="modifyOff" :affaire="affaire" :typesAffaires_conf="typesAffaires_conf" />
     </div>
 
     <!-- MAP -->
@@ -48,7 +62,7 @@
                             <md-input v-model="[affaire.localisation_e | 0, affaire.localisation_n | 0].join(' / ')" readonly></md-input>
                         </md-field>
                     </div>
-                    <div style="text-align: right;" class="md-layout-item" v-if="affaire.type_id===typesAffaires.mutation">
+                    <div style="text-align: right;" class="md-layout-item" v-if="affaire.type_id===typesAffaires_conf.mutation">
                         <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('environnement')">Environnement</md-button>
                         <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('amenagement_territoire')">Aménagement du territoire</md-button>
                     </div>
@@ -60,36 +74,45 @@
         </md-card>
     </div>
 
+    <!-- SUIVI D'AFFAIRE -->
+    <div class="affairesDashboard">
+        <suivi />
+    </div>
+
     <!-- PREAVIS -->
-    <div class="affairesDashboard" v-if="affaire.type_id==typesAffaires.mutation">
+    <div class="affairesDashboard" v-if="affaire.type_id==typesAffaires_conf.mutation">
         <preavis :affaire="affaire" />
     </div>
 
     <!-- NUMEROS -->
     <div class="affairesDashboard">
-        <numerosAffaire :affaire="affaire" :typesAffaires="typesAffaires" ref="numeros" />
+        <numerosAffaire :affaire="affaire" :typesAffaires_conf="typesAffaires_conf" ref="numeros" />
     </div>
 
     <!-- FACTURATION -->
     <div class="affairesDashboard">
-        <Facturation ref="facturation" :typesAffaires="typesAffaires" :affaire="affaire" />
+        <Facturation ref="facturation" :typesAffaires_conf="typesAffaires_conf" :affaire="affaire" />
     </div>
 
     <!-- CONTROLE TECHNIQUE MUTATION -->
     <div class="affairesDashboard">
-        <ControleMutation v-if="affaire.type_id===typesAffaires.mutation" />
-    </div>
-
-    <!-- CONTROLE TECHNIQUE PPE -->
-    <div class="affairesDashboard">
-        <ControlePPE v-if="affaire.type_id===typesAffaires.ppe" />
+        <ControleMutation v-if="affaire.type_id===typesAffaires_conf.mutation" :affaire="affaire" />
     </div>
 
     <!-- SUIVI DU MANDAT -->
-    <div class="affairesDashboard" v-if="affaire.type_id===typesAffaires.mutation">
-        <SuiviMandat />
+    <div class="affairesDashboard" v-if="affaire.type_id===typesAffaires_conf.mutation" >
+        <SuiviMandat :affaire="affaire" />
     </div>
 
+    <!-- CONTROLE TECHNIQUE PPE (Technicien)-->
+    <div class="affairesDashboard">
+        <ControlePPE v-if="affaire.type_id===typesAffaires_conf.ppe" :affaire="affaire" />
+    </div>    
+    
+    <!-- CONTROLE DU GEOMETRE CANTONAL -->
+    <div class="affairesDashboard">
+        <ControleGeometre :typesAffaires_conf="typesAffaires_conf" :affaire="affaire" />
+    </div>        
     <!-- DOCUMENTS -->
     <div class="affairesDashboard">
         <Documents v-if="false" />
@@ -97,13 +120,9 @@
 
     <!-- REMARQUE -->
     <div class="affairesDashboard">
-        <Remarques />
+        <Remarques :affaire="affaire" />
     </div>
 
-    <!-- SUIVI D'AFFAIRE -->
-    <div class="affairesDashboard">
-        <suivi />
-    </div>
 
     <!-- Duplication Affaire -->
     <!-- <div>
@@ -112,7 +131,7 @@
 
     <!-- Cloture Affaire -->
     <div>
-        <ClotureAffaire ref="clotureAffaireForm" />
+        <ClotureAffaire ref="clotureAffaireForm" :affaire="affaire" />
     </div>
 
 
@@ -125,5 +144,45 @@
       md-cancel-text="Annuler"
       @md-cancel="showConfirmAbandonAffaireDialog = false"
       @md-confirm="callAbandonAffaire" />
+
+
+    <!-- Dialog pour la création de nouvelle étape dans l'affaire -->
+    <md-dialog :md-active.sync="etapeAffaire.showDialog" style="z-index: 6; margin: auto; width: 900px;">
+        <md-dialog-title>Nouvelle étape</md-dialog-title>
+
+        <md-dialog-content>
+            <div class="md-layout md-gutter md-alignment-top-space-between">
+                <div class="md-layout-item">
+                    <!-- Nom de l'étape en cours -->
+                    <md-field>
+                        <label>Etape en cours</label>
+                        <md-input v-model="affaire.etape" readonly></md-input>
+                    </md-field>
+                </div>
+
+                <h3 style="margin-top: 24px">=></h3>
+
+                <div class="md-layout-item">
+                    <!-- Nom de la prochaine étape -->
+                    <md-autocomplete v-model="etapeAffaire.prochaine" :md-options="affaireEtapes" md-dense required>
+                        <label>Prochaine étape</label>
+                    </md-autocomplete>
+                </div>
+
+                <div class="md-layout-item md-size-100">
+                    <md-field>
+                        <label>Remarques</label>
+                        <md-textarea v-model="etapeAffaire.remarque" md-autogrow></md-textarea>
+                    </md-field>
+                </div>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions>
+            <md-button class="md-accent" @click="etapeAffaire.showDialog = false">Annuler</md-button>
+            <md-button class="md-primary" @click="updateAffaireEtape">Enregistrer</md-button>
+        </md-dialog-actions>
+    </md-dialog>
+    
 
 </div>

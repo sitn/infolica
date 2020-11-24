@@ -16,6 +16,12 @@ export default {
     return {
       // numeros_liste = [],
       cadastres_liste: [],
+      checkBFBalance: {
+        show: false,
+        title: "",
+        content: ""
+      },
+      mutation_names: [],
       numeros_anciens: [],
       numeros_nouveaux: [],
       numeros_relations: [],
@@ -23,7 +29,12 @@ export default {
       numeros_relations_matrice: [],
       numeros_types_liste: [],
       oldBF_toCreate: [],
-      showConfirmationCreateNumber: false
+      selectedMutation: {
+        nom: null,
+        numeros: []
+      },
+      showConfirmationCreateNumber: false,
+      tableau_balance: []
     };
   },
   methods: {
@@ -33,15 +44,13 @@ export default {
     initBFArrays() {
       this.numeros_anciens = this.affaire_numeros_all.filter(
         x =>
-          x.affaire_numero_type_id ===
-            Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID) &&
+          x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID) &&
           x.numero_type_id === Number(process.env.VUE_APP_NUMERO_TYPE_BF)
       );
 
       this.numeros_nouveaux = this.affaire_numeros_all.filter(
         x =>
-          x.affaire_numero_type_id ===
-            Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID) &&
+          x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID) &&
           x.numero_type_id === Number(process.env.VUE_APP_NUMERO_TYPE_BF) &&
           x.numero_etat_id !== Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)
       );
@@ -75,71 +84,71 @@ export default {
     /**
      * Get balance from file
      */
-    async getBalanceFromFile() {
-      // Get balance from file via webservice
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_ENDPOINT + this.$route.params.id,
-        {
-          withCredentials: true,
-          headers: {Accept: "application/json"}
-        }
-      ).then(response => {
-        if (response && response.data){
-          let tmp = JSON.parse(response.data);
+    // async getBalanceFromFile() {
+    //   // Get balance from file via webservice
+    //   this.$http.get(
+    //     process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_ENDPOINT + this.$route.params.id,
+    //     {
+    //       withCredentials: true,
+    //       headers: {Accept: "application/json"}
+    //     }
+    //   ).then(response => {
+    //     if (response && response.data){
+    //       let tmp = JSON.parse(response.data);
 
-          // Get old and new BF
-          let oldBF = [];
-          let newBF = [];
+    //       // Get old and new BF
+    //       let oldBF = [];
+    //       let newBF = [];
 
-          tmp.forEach(x => {
-            oldBF.push(x.old);
-            newBF.push(x.new);
-          });
+    //       tmp.forEach(x => {
+    //         oldBF.push(x.old);
+    //         newBF.push(x.new);
+    //       });
 
-          // Only keep unique BF
-          oldBF = [...new Set(oldBF)];
-          newBF = [...new Set(newBF)];
+    //       // Only keep unique BF
+    //       oldBF = [...new Set(oldBF)];
+    //       newBF = [...new Set(newBF)];
 
-          // Check if oldBF are existing numbers
-          let promises = [];
-          oldBF.forEach(number => {
-            promises.push(this.checkOldBF(number, this.affaire.cadastre_id, Number(process.env.VUE_APP_NUMERO_TYPE_BF))); // ================== !!! cadastre_id peut être différent !!
-          })
+    //       // Check if oldBF are existing numbers
+    //       let promises = [];
+    //       oldBF.forEach(number => {
+    //         promises.push(this.checkOldBF(number, this.affaire.cadastre_id, Number(process.env.VUE_APP_NUMERO_TYPE_BF))); // ================== !!! cadastre_id peut être différent !!
+    //       })
 
-          this.oldBF_toCreate = [];
-          this.numeros_anciens = [];
+    //       this.oldBF_toCreate = [];
+    //       this.numeros_anciens = [];
 
-          Promise.all(promises).then(responses => {
-            responses.forEach(response => {
-              if (response && response.data && response.data[0]) {
-                this.numeros_anciens = {
-                  id: response.data.id,
-                  numero: response.data.numero
-                }
-              } else {
-                const url = new URL(response.config.url)
-                const numero = Number(url.searchParams.get("numero"));
-                const cadastre_id = Number(url.searchParams.get("cadastre_id"));
-                const type_id = Number(url.searchParams.get("type_id"));
+    //       Promise.all(promises).then(responses => {
+    //         responses.forEach(response => {
+    //           if (response && response.data && response.data[0]) {
+    //             this.numeros_anciens = {
+    //               id: response.data.id,
+    //               numero: response.data.numero
+    //             }
+    //           } else {
+    //             const url = new URL(response.config.url)
+    //             const numero = Number(url.searchParams.get("numero"));
+    //             const cadastre_id = Number(url.searchParams.get("cadastre_id"));
+    //             const type_id = Number(url.searchParams.get("type_id"));
                 
-                this.oldBF_toCreate.push({
-                    numero: numero,
-                    cadastre: this.cadastres_liste.filter(x => x.id === cadastre_id).pop(),
-                    type: this.numeros_types_liste.filter(x => x.id === type_id).pop()
-                });
-              }
-            });
+    //             this.oldBF_toCreate.push({
+    //                 numero: numero,
+    //                 cadastre: this.cadastres_liste.filter(x => x.id === cadastre_id).pop(),
+    //                 type: this.numeros_types_liste.filter(x => x.id === type_id).pop()
+    //             });
+    //           }
+    //         });
             
-            // Ask the userconfirmation to create numbers that does not exist
-            if (this.oldBF_toCreate[0]) {
-              this.showConfirmationCreateNumber = true
-            }
-          }).catch(err => handleException(err, this));
+    //         // Ask the userconfirmation to create numbers that does not exist
+    //         if (this.oldBF_toCreate[0]) {
+    //           this.showConfirmationCreateNumber = true
+    //         }
+    //       }).catch(err => handleException(err, this));
           
-          this.numeros_relations = tmp;
-        }
-      }).catch(err => handleException(err, this));
-    },
+    //       this.numeros_relations = tmp;
+    //     }
+    //   }).catch(err => handleException(err, this));
+    // },
 
     /**
      * Check existing old bf
@@ -279,44 +288,44 @@ export default {
     /**
      * Initialiser la table des relations
      */
-    initTableRelation() {
-      // 1. retourne les relations
-      this.getNumerosRelations()
-      .then(response => {
-        this.numeros_relations = response;
-        this.numeros_relations_bk = response
+    // initTableRelation() {
+    //   // 1. retourne les relations
+    //   this.getNumerosRelations()
+    //   .then(response => {
+    //     this.numeros_relations = response;
+    //     this.numeros_relations_bk = response
 
-      // 2. construire la matrice des relations
-      this.numeros_relations_matrice = [];
+    //   // 2. construire la matrice des relations
+    //   this.numeros_relations_matrice = [];
 
-      this.numeros_anciens.forEach(x => {
-        var tmp_nouveaux = {};
+    //   this.numeros_anciens.forEach(x => {
+    //     var tmp_nouveaux = {};
 
-        this.numeros_nouveaux.forEach(y => {
-          var tmp = false;
-          tmp = this.numeros_relations.some(rel => {
-            if (rel.source_numero_id === x.numero_id && rel.destination_numero_id === y.numero_id) {
-              return true
-            } else {
-              return false
-            }
-          })
-          if (tmp) {
-            tmp_nouveaux[y.numero] = true;
-          } else {
-            tmp_nouveaux[y.numero] = false;
-          }
-        });
+    //     this.numeros_nouveaux.forEach(y => {
+    //       var tmp = false;
+    //       tmp = this.numeros_relations.some(rel => {
+    //         if (rel.source_numero_id === x.numero_id && rel.destination_numero_id === y.numero_id) {
+    //           return true
+    //         } else {
+    //           return false
+    //         }
+    //       })
+    //       if (tmp) {
+    //         tmp_nouveaux[y.numero] = true;
+    //       } else {
+    //         tmp_nouveaux[y.numero] = false;
+    //       }
+    //     });
 
-        this.numeros_relations_matrice.push({
-          source_numero: x.numero,
-          source_numero_id: x.numero_id,
-          destination: Object.assign({}, tmp_nouveaux)
-        });
-      });
-    })
-    .catch(err => handleException(err, this));
-    },
+    //     this.numeros_relations_matrice.push({
+    //       source_numero: x.numero,
+    //       source_numero_id: x.numero_id,
+    //       destination: Object.assign({}, tmp_nouveaux)
+    //     });
+    //   });
+    // })
+    // .catch(err => handleException(err, this));
+    // },
 
     /**
      * Update variable numeros_relations
@@ -402,35 +411,35 @@ export default {
       })
     },
 
-    /**
-     * Save new balance
-     */
-    saveBalance() {
-      // Ajouter les relations qui ont été établies
-      let relations_id = []; // enregistrer une liste des ID des relations existantes dans la BD
-      let promises = [];
-      this.numeros_relations.forEach(rel => {
-        if (rel.relation_id) {
-          relations_id.push(rel.relation_id);
-        } else {
-          // Si la relation est nouvelle (i.e. n'existe pas dans la BD)
-          promises.push(this.postRelation(rel));
-        }
-      });
+    // /**
+    //  * Save new balance
+    //  */
+    // saveBalance() {
+    //   // Ajouter les relations qui ont été établies
+    //   let relations_id = []; // enregistrer une liste des ID des relations existantes dans la BD
+    //   let promises = [];
+    //   this.numeros_relations.forEach(rel => {
+    //     if (rel.relation_id) {
+    //       relations_id.push(rel.relation_id);
+    //     } else {
+    //       // Si la relation est nouvelle (i.e. n'existe pas dans la BD)
+    //       promises.push(this.postRelation(rel));
+    //     }
+    //   });
 
-      // Supprimer les relations qui n'existent plus
-      this.numeros_relations_bk.forEach(rel => {
-        if (!relations_id.includes(rel.relation_id)) {
-          promises.push(this.deleteRelation(rel));
-        }
-      })
+    //   // Supprimer les relations qui n'existent plus
+    //   this.numeros_relations_bk.forEach(rel => {
+    //     if (!relations_id.includes(rel.relation_id)) {
+    //       promises.push(this.deleteRelation(rel));
+    //     }
+    //   })
     
-      Promise.all(promises)
-      .then(() => {
-        this.$root.$emit("ShowMessage", "La balance a bien été mise à jour")
-      })
-      .catch(err => handleException(err, this));
-    },
+    //   Promise.all(promises)
+    //   .then(() => {
+    //     this.$root.$emit("ShowMessage", "La balance a bien été mise à jour")
+    //   })
+    //   .catch(err => handleException(err, this));
+    // },
 
     /**
      * Create relation in db
@@ -472,6 +481,201 @@ export default {
         ).then(response => resolve(response))
         .catch(err => reject(err));
       })
+    },
+
+    /**
+     * Refresh balance table
+     */
+    async refreshBalanceTable() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_GENERATE_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(() => {})
+      .catch(err => handleException(err, this));
+    },
+
+    /**
+     * Get mutation names from geos balance table
+     */
+    async getMutationNames() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_MUTATION_NAMES_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.mutation_names = JSON.parse(response.data);
+          // this.mutation_names = response.data;
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Get balance from mutation name
+     */
+    async getBalanceByMutationName() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_ENDPOINT + "?mutation_name=" + this.selectedMutation.nom,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          let tmp = response.data;
+          let relation = [];
+
+          tmp.forEach(x => {
+            // prepare relation array
+            x.relation_old = [x.cad_old, x.parcel_old].join("_");
+            if (x.parcel_old.toLowerCase().includes("dp")) {
+              x.relation_old = "DP";
+            }
+            
+            x.relation_new = [x.cad_new, x.parcel_new].join("_");
+            if (x.parcel_new.toLowerCase().includes("dp")) {
+              x.relation_new = "DP";
+            }
+            // keep relation
+            relation.push([x.relation_old, x.relation_new]);
+          });
+
+          this.tableau_balance = this.constructTableauBalance(relation)
+        }
+      }).catch(err => handleException(err, this));
+    },
+    
+    /**
+     * Construct tableau balance
+     */
+    constructTableauBalance(relation) {
+      let oldBF = [];
+      let newBF = [];
+      [oldBF, newBF] = this.transpose(relation);
+      oldBF = [...new Set(oldBF)].sort();
+      newBF = [...new Set(newBF)].sort();
+
+      // include DP
+      if (!oldBF.includes("DP")) {
+        oldBF.push("DP");
+      }
+      if (!newBF.includes("DP")) {
+        newBF.push("DP");
+      }
+      
+      // // include RP
+      // if (!oldBF.includes("RP")) {
+      //   oldBF.push("RP");
+      // }
+      // if (!newBF.includes("RP")) {
+      //   newBF.push("RP");
+      // }
+
+      // Construct false balance object
+      let tableau = [];
+      oldBF.forEach(line => {
+        let oldBF_line = {oldBF: line};
+        let newBF_col = {};
+        newBF.forEach(col => {
+          newBF_col[col] =  relation.some(x => x.join(",") === [line, col].join(","));
+        });
+        oldBF_line["newBF"] = newBF_col;
+        tableau.push(oldBF_line)
+      });
+      return tableau;
+    },
+
+    /** 
+     * transpose matrix
+     */
+    transpose(m) {
+      return m[0].map((x,i) => m.map(x => x[i]))
+    },
+
+    /**
+     * Save balance
+     */
+    saveBalance() {
+      let relations = this.getRelations();
+      let checkBF = this.checkExistingBF(relations);
+      if (checkBF.newBF_not_in_numeros_reserves.length > 0) {
+        this.checkBFBalance = {
+          show: true,
+          title: "Balance incorrecte !",
+          content: "<p>Les numéros " + checkBF.newBF_not_in_numeros_reserves.join(", ") + " ne figurent pas dans les biens-fonds réservés.</p>\
+                    <p>La balance n'est pas enregistrée.\n</p>"
+        }
+        return;
+      }
+      // postBalance();
+
+    },
+
+    /**
+     * Get relations from tableauBalance
+     */
+    getRelations() {
+      let relations = [];
+
+      // detect modifications from initial
+      this.tableau_balance.forEach(tb => {
+        for (let prop in tb["newBF"]) {
+          if (tb["newBF"][prop]) {
+            relations.push([tb["oldBF"], prop])
+          }
+        }
+      });
+      return relations;
+    },
+
+    /**
+     * Check existing BF from relations
+     */
+    checkExistingBF(relations) {
+      // get old and new BF lists
+      // eslint-disable-next-line no-unused-vars
+      let oldBF = []; // currently unused variable, update comment above
+      let newBF = [];
+      [oldBF, newBF] = this.transpose(relations);
+
+      // get simplified list of reserved BF (cadastreId_BF)
+      let reservedBF = [];
+      this.affaire_numeros_all.forEach(x => {
+        if (x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID)) {
+          reservedBF.push([x.numero_cadastre_id, x.numero].join("_"));
+        }
+      });
+
+      let newBF_not_in_numeros_reserves = [];
+      let numeros_reserves_not_in_newBF = [];
+      // let old_not_existing_in_db = [];
+
+      //Check if new BF are reserved in this affaire
+      newBF.forEach(x => {
+        if (x.toLowerCase() !== "dp") {
+          if (!reservedBF.includes(x)) {
+            newBF_not_in_numeros_reserves.push(x);
+          }
+        }
+      });
+
+      //Check if reserved BF are all in newBF (potential DDP)
+      reservedBF.forEach(x => {
+        if (!newBF.includes(x)) {
+          numeros_reserves_not_in_newBF.push(x);
+        }
+      });
+
+      //Check if oldBF already exist in DB
+      // let promises = [];
+      
+      return {newBF_not_in_numeros_reserves: newBF_not_in_numeros_reserves,
+              numeros_reserves_not_in_newBF: numeros_reserves_not_in_newBF};
     },
 
 

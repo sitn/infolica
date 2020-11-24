@@ -18,7 +18,7 @@ export default {
   name: "NumerosAffaire",
   props: {
     affaire: Object,
-    typesAffaires: Object,
+    typesAffaires_conf: Object,
   },
   components: {
     ReferenceNumeros,
@@ -453,7 +453,7 @@ export default {
   mounted: function() {
     this.searchAffaireNumeros().then(() => {
       // Show or not button req radiation mat diff
-      this.showBtnReqRadMatDiff = this.affaire.date_envoi !== null && this.affaire.type_id === this.typesAffaires.mutation && 
+      this.showBtnReqRadMatDiff = this.affaire.date_envoi !== null && this.affaire.type_id === this.typesAffaires_conf.mutation && 
                                   this.affaire_numeros_nouveaux.some(x => x.numero_diff_entree !== null && x.numero_diff_sortie === null);
     });
     

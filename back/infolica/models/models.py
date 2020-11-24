@@ -106,6 +106,7 @@ class AffaireType(Base):
     ordre = Column(BigInteger)
     reservation_numeros_types_id = Column(ARRAY(BigInteger))
     modif_affaire_type_id_vers = Column(ARRAY(BigInteger))
+    logique_processus = Column(ARRAY(BigInteger))
 
 
 class Affaire(Base):
@@ -143,6 +144,7 @@ class AffaireEtapeIndex(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
+    priorite = Column(Integer)
 
 
 class AffaireEtape(Base):
@@ -150,8 +152,9 @@ class AffaireEtape(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
     etape_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id), nullable=False)
-    date = Column(Date, default=datetime.datetime.utcnow(), nullable=False)
+    datetime = Column(DateTime, nullable=False)
     remarque = Column(Text)
 
 
@@ -321,48 +324,52 @@ class ControleMutation(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
-    bf_1 = Column(
-        Boolean)  # Contrôler les numéros des points limites ainsi que la valeur, la prévision et la fiabilité des points sont en adéquation avec le niveau de tolérence de la zone de travail
-    bf_2 = Column(
-        Boolean)  # Contrôler dans la table « Bien_fonds => Mise_a_jourBF » qu’il y que les nouveaux biens-fonds créés dans votre affaire et qu'il n'y a pas de biens-fonds sans géométrie
-    bf_3 = Column(
-        Boolean)  # Contrôler dans la table « Bien_fonds » que l’attribut « Validation_juridique » est non pour les nouveaux biens-fonds sauf pour les nouveaux DP.
-    bf_4 = Column(
-        Boolean)  # Contrôler dans la table « Biens_fonds.PosImmeuble » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.petite).
-    cs_1 = Column(
-        Boolean)  # Contrôler les numéros des points particuliers "660" ainsi que la valeur, la précision et la fiabilité des points sont en adéquations avec le niveau de tolérance de la zone de travail.
-    cs_2 = Column(
-        Boolean)  # Contrôler dans la table « Couverture_du_sol => Mise_a_jourCS » qu’il y a que les nouvelles surfaces créées dans votre affaire qu'il n'y a pas de surfaces sans géométrie.
-    cs_3 = Column(
-        Boolean)  # Contrôler dans la table « Couverture_du_sol => PosNumero_de_batiment » que les éléments suivants sont corrects (Hali=Center, Vali=Base, Grandeur=Petite.tres_petite).
+    terrain_1 = Column(Date)  # Terrain - Levés préliminaires
+    terrain_2 = Column(Date)  # Terrain - Matérialisations
+    terrain_3 = Column(Date)  # Terrain - Levés
+    bureau_1 = Column(Date)  # Bureau - Calculs préliminaires
+    bureau_2 = Column(Date)  # Bureau - Calculs définitifs
+    bureau_3 = Column(Date)  # Bureau - Calculs spéciaux
+    envoi_cl_1 = Column(Date)  # Situation_affaire - Envoi au client
+    retour_cl_2 = Column(Date)  # Sitation_affaire - Retour du client
+    suivi_1 = Column(Date)  # Suivi - Création de la mutation dans la BD
+    suivi_2 = Column(Date)  # Suivi - Contrôles de cohérences e.o.
+    suivi_3 = Column(Date)  # Suivi - Production des désignations
+    suivi_4 = Column(Date)  # Suivi - Production plan de mutation (papier)
+    suivi_5 = Column(Date)  # Suivi - Production plan de mutation (PDF)
+    suivi_6 = Column(Date)  # Suivi - Enregistrement de la documentation
+    suivi_7 = Column(Date)  # Suivi - État de la mutation "En cours / Libérée"
+    suivi_8 = Column(Date)  # Suivi - Tableau des émoluments
+    suivi_9 = Column(Date)  # Suivi - Transmission au géomètre cantonal
+    suivi_10 = Column(Date)  # Suivi - Transmission au secrétariat
+    suivi_11 = Column(Date)  # Suivi - Validation technique de la mutation
+    suivi_12 = Column(Date)  # Suivi - Annulation de la mutation
+    bf_1 = Column(Boolean)  # Contrôler les numéros des points limites ainsi que la valeur, la prévision et la fiabilité des points sont en adéquation avec le niveau de tolérence de la zone de travail
+    bf_2 = Column(Boolean)  # Contrôler dans la table « Bien_fonds => Mise_a_jourBF » qu’il y que les nouveaux biens-fonds créés dans votre affaire et qu'il n'y a pas de biens-fonds sans géométrie
+    bf_3 = Column(Boolean)  # Contrôler dans la table « Bien_fonds » que l’attribut « Validation_juridique » est non pour les nouveaux biens-fonds sauf pour les nouveaux DP.
+    bf_4 = Column(Boolean)  # Contrôler dans la table « Biens_fonds.PosImmeuble » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.petite).
+    cs_1 = Column(Boolean)  # Contrôler les numéros des points particuliers "660" ainsi que la valeur, la précision et la fiabilité des points sont en adéquations avec le niveau de tolérance de la zone de travail.
+    cs_2 = Column(Boolean)  # Contrôler dans la table « Couverture_du_sol => Mise_a_jourCS » qu’il y a que les nouvelles surfaces créées dans votre affaire qu'il n'y a pas de surfaces sans géométrie.
+    cs_3 = Column(Boolean)  # Contrôler dans la table « Couverture_du_sol => PosNumero_de_batiment » que les éléments suivants sont corrects (Hali=Center, Vali=Base, Grandeur=Petite.tres_petite).
     cs_4 = Column(Boolean)  # Insérer les points dans la base Acces des bâtiments projets (voir Processus)
     cs_5 = Column(Boolean)  # Contrôler la géométrie des EGID (01.01.2012).
     od_1 = Column(Boolean)  # Tous les points de constructions "760" sont supprimés.
-    od_2 = Column(
-        Boolean)  # Contrôler les nouveaux éléments créés dans votre affaire et qu'il n'y a pas d'objets divers sans géométrie.
+    od_2 = Column(Boolean)  # Contrôler les nouveaux éléments créés dans votre affaire et qu'il n'y a pas d'objets divers sans géométrie.
     od_3 = Column(Boolean)  # Contrôler que les bâtiments souterrains ont les bons numéros et une désignation.
     od_4 = Column(Boolean)  # Insérer les points dans la base Acces des bâtiments projets (voir Processus)
-    od_5 = Column(
-        Boolean)  # Contrôler que l'attribut « Objets_divers => SymboleElement_surfacique » est rempli pour les piscines.
-    bat_1 = Column(
-        Boolean)  # Contrôler dans la table « Adresses_des_batiments => Mise_a_jourBAT » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.
-    bat_2 = Column(
-        Boolean)  # Contrôler dans la table « Adresses_des_batiments => PosNumero_maison » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.assez_petite).
+    od_5 = Column(Boolean)  # Contrôler que l'attribut « Objets_divers => SymboleElement_surfacique » est rempli pour les piscines.
+    bat_1 = Column(Boolean)  # Contrôler dans la table « Adresses_des_batiments => Mise_a_jourBAT » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.
+    bat_2 = Column(Boolean)  # Contrôler dans la table « Adresses_des_batiments => PosNumero_maison » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.assez_petite).
     bat_3 = Column(Boolean)  # Contrôler que les points adresses sont dans les géométries.
-    serv_1 = Column(
-        Boolean)  # Contrôler dans la table « Servitudes => Mise_a_jourSE » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.
-    serv_2 = Column(
-        Boolean)  # Contrôler dans la table « Servitudes => Servitude_surface » ou « Servitudes => Servitude_ligne » ou « Servitudes => Servitude_point » que l’attribut « Validite » est en_projet pour les nouvelles servitudes.
-    serv_3 = Column(
-        Boolean)  # Contrôler dans la table « Servitudes => PosNumero_de_servitude » que les éléments suivants sont corrects (Hali=Left, Vali=Base, Grandeur= -).
+    serv_1 = Column(Boolean)  # Contrôler dans la table « Servitudes => Mise_a_jourSE » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.
+    serv_2 = Column(Boolean)  # Contrôler dans la table « Servitudes => Servitude_surface » ou « Servitudes => Servitude_ligne » ou « Servitudes => Servitude_point » que l’attribut « Validite » est en_projet pour les nouvelles servitudes.
+    serv_3 = Column(Boolean)  # Contrôler dans la table « Servitudes => PosNumero_de_servitude » que les éléments suivants sont corrects (Hali=Left, Vali=Base, Grandeur= -).
     nom_1 = Column(Boolean)  # A partir de deux noms locaux pour un bien-fonds vérifier si cela est exact.
     suiv_mut_1 = Column(Boolean)  # Supprimer dans la gestion des mutations les « Topic » qui ne sont pas utilisés.
     suiv_mut_2 = Column(Boolean)  # Mutation "En cours/Libérée".
     div_1 = Column(Boolean)  # Épurations des fichiers dans le répertoire de l’affaire.
-    div_2 = Column(
-        Boolean)  # Contrôler que vous avez bien saisi le dernier numéro de point de l’affaire concernée dans le programme « Réservation des numéros ».
-    div_3 = Column(
-        Boolean)  # Contrôler rigoureusement les désignations, la balance ainsi que les observations pour le registre foncier.
+    div_2 = Column(Boolean)  # Contrôler que vous avez bien saisi le dernier numéro de point de l’affaire concernée dans le programme « Réservation des numéros ».
+    div_3 = Column(Boolean)  # Contrôler rigoureusement les désignations, la balance ainsi que les observations pour le registre foncier.
     visa = Column(BigInteger, ForeignKey(Operateur.id))
     date = Column(Date)
 
@@ -372,7 +379,7 @@ class ControlePPE(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-    operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
     date = Column(Date)
     gen_1 = Column(Boolean)
     gen_2 = Column(Boolean)
@@ -530,91 +537,62 @@ class ControlePPE(Base):
     balsurf_remarque = Column(Text)
 
 
-# class ControlePPE(Base):
-#     __tablename__ = 'controle_ppe'
-#     __table_args__ = {'schema': 'infolica'}
-#     id = Column(BigInteger, primary_key=True, autoincrement=True)
-#     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-#     doss_proj_1 = Column(Boolean)  # Faisabilité de la PPE (projet de division, Bien-fonds en vigueur?)
-#     doss_proj_2 = Column(Boolean)  # Aucune PPE ne doit être déjà constituée sur le bien-fonds concerné
-#     psit_1 = Column(Boolean)  # Contrôler la référence de la source des données cadastrales et de sa date d’émission
-#     psit_2 = Column(Boolean)  # Nord, échelle 1:500
-#     psit_3 = Column(Boolean)  # Contenu du plan (bâtiment projet) et graphisme de la couche bien-fonds
-#     psit_4 = Column(Boolean)  # Contrôle de l'échelle (kutch)
-#     psit_5 = Column(
-#         Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …. – Plan de situation - XXX, architecte, signature, date)
-#     psit_6 = Column(
-#         Boolean)  # Droits de jouissance clairement définis (liseré traitillé même couleur que l'unité concernée) "Droit de jouissance au profit de l'unité …"
-#     psit_7 = Column(
-#         Boolean)  # Places de parcs extérieures numérotées (uniquement si les places ne sont pas constituées en droit de jouissance)
-#     pamext_1 = Column(
-#         Boolean)  # Ce plan n'est pas un document obligatoire, mais si l'architecte décide de le joindre avec le dossier le contrôle sera identique au plan de situation (Échelle ≠ 1:500)
-#     pet_1 = Column(Boolean)  # Nord (pas obligatoire), Échelle 1:100
-#     pet_2 = Column(Boolean)  # Contrôle de l'échelle (kutch)
-#     pet_3 = Column(Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …, architecte, signature, date)
-#     pet_4 = Column(Boolean)  # Cotes générales
-#     pet_5 = Column(
-#         Boolean)  # Informations superflues à supprimer (surfaces des pièces, matériaux, limites de bien-fonds etc.)
-#     pet_6 = Column(Boolean)  # Appellations des locaux
-#     pet_7 = Column(
-#         Boolean)  # Faisabilité d'unité d'étage: Un tout indépendant; Local physiquement fermé (surface minimum); Certain degré d'autonomie économique; Accès propre
-#     pet_8 = Column(
-#         Boolean)  # Distribution lettres unités (de bas en haut / A, B, … Z, AA, AB etc.). Le "i" n'est pas utilisé!
-#     pet_9 = Column(
-#         Boolean)  # Les annexes ont les mêmes lettres et mêmes couleurs de liserés que les unités concernées. Chiffres arabe (EX A1, B3, D1 etc.)
-#     pet_10 = Column(
-#         Boolean)  # Périmètres (liserés) des unités d'étages clairement dessinés (zone tampon / éviter la couleur jaune)
-#     pet_11 = Column(
-#         Boolean)  # Murs porteurs, piliers, poutres, gaines techniques etc ne font pas parties des parties exclusives -> parties communes -> liserés de couleur
-#     pet_12 = Column(
-#         Boolean)  # Conditions pièce -> appellation "chambre": Surface minimum: 10m2; Surface éclairage ≥ 1/8ème surface plancher; Local physiquement fermé
-#     pet_13 = Column(Boolean)  # La pièce ne peut pas être considérée comme chambre -> "disponible"
-#     pet_14 = Column(Boolean)  # Y a-t-il une surface plancher sous l'escalier ou un réduit (local fermé)
-#     pet_15 = Column(
-#         Boolean)  # Les vides (escaliers, vide sur chambres, etc.) doivent être hachurés avec la même couleur que l'unité concernée
-#     pet_16 = Column(
-#         Boolean)  # Accès aux parties communes par des parties privées (rares exceptions -> servitude de passage)
-#     pet_17 = Column(
-#         Boolean)  # Les balcons font partie de l'unité ou sont des droits de jouissance (parties construites)
-#     pet_18 = Column(Boolean)  # Autres bâtiments sur le bien-fonds concerné -> plans d'étages, façades, coupes
-#     pet_19 = Column(Boolean)  # Concordance des appellations sur les plans d'étages avec les formules de légende
-#     pet_20 = Column(Boolean)  # Lignes de coupes sur tous les plans d'étages
-#     pet_21 = Column(Boolean)  # Surfaces PDF Viewer (tolérance jusqu'à 2 %)
-#     pco_1 = Column(Boolean)  # Échelle 1:100
-#     pco_2 = Column(Boolean)  # Sans liseré ni lettre d'unité
-#     pco_3 = Column(Boolean)  # Contrôle de l'échelle (kutch)
-#     pco_4 = Column(Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …., architecte, signature, date)
-#     pco_5 = Column(
-#         Boolean)  # Les appellations, si notées sur les plans de coupe, doivent correspondre avec les appellations des plans d'étages
-#     pco_6 = Column(Boolean)  # Concordance de la / les coupe(s) avec les plans d'étages (par plaquage)
-#     pco_7 = Column(Boolean)  # Informations superflues à supprimer (surfaces des pièces, matériaux, etc.)
-#     facade_1 = Column(Boolean)  # Échelle 1:100
-#     facade_2 = Column(Boolean)  # Cartouche (Cadastre de … PPE sur le bien-fonds …., architecte, signature, date)
-#     facade_3 = Column(Boolean)  # Sans liseré ni lettre d'unité
-#     facade_4 = Column(
-#         Boolean)  # Concordance avec tous les plans d'étages (ouvertures, portes, fenêtres, velux, cheminées) -> plaquage
-#     form_leg_1 = Column(Boolean)  # Titres (Cadastre de …– Plan de situation – XXX - PPE sur le bien-fonds ….)
-#     form_leg_2 = Column(
-#         Boolean)  # Situation de l'unité juridique dans l'espace (appartement ouest, extrême ouest, N° entrée etc.)
-#     form_leg_3 = Column(
-#         Boolean)  # Étages clairement définis (1er étage, niveau -1, etc.) concordance avec les plans d'étages
-#     form_leg_4 = Column(
-#         Boolean)  # Concordance entre les appellations des pièces sur les plans d'étages avec la formule de légende
-#     form_leg_5 = Column(Boolean)  # Les éléments de liaison doivent être notés (escalier, escalier escamotable)
-#     form_leg_6 = Column(Boolean)  # Appellations avec quantité (1 cuisine, 3 chambres etc.)
-#     form_leg_7 = Column(Boolean)  # Mise en page (unités en duplex, Annexes etc.)
-#     form_leg_8 = Column(Boolean)  # Concordance surfaces architecte avec surfaces obtenues par PDF Viewer (tol 2%)
-#     form_leg_9 = Column(Boolean)  # Récapitulatif
-#     fact_1 = Column(Boolean)  # 1 mandat
-#     fact_2 = Column(Boolean)  # X unités simples ou complexes (unités juridiques, annexes)
-#     fact_3 = Column(
-#         Boolean)  # Droits de jouissance X surfaces (seulement si les surfaces sont notées sur les plans d'étage)
-#     fact_4 = Column(Boolean)  # Régie (séances, renseignements, contrôle dossier supplémentaire etc)
-#     fact_5 = Column(Boolean)  # Données numériques fournies ou plan de situation
-#     fact_6 = Column(Boolean)  # Report des montants de la facture sur le formulaire de demande
-#     fact_7 = Column(Boolean)  # Impression facture -> datée et signée
-#     visa = Column(BigInteger, ForeignKey(Operateur.id))
-#     date = Column(Date)
+class ControleGeometre(Base):
+    __tablename__ = 'controle_geometre'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
+    check_1 = Column(Boolean)  # Nom du cadastre et n° de bien-fonds corrects (cf extrait RF) et identiques sur tous les documents
+    check_2 = Column(Boolean)  # Tous les biens-fonds concernés existent au registre foncier (d’après l’extrait RF), sinon ajouter une observation concernant l’ordre de dépôt des dossiers au RF
+    check_3 = Column(Boolean)  # Vérifier le bien-fondé des servitudes ainsi que leur faisabilité
+    check_4 = Column(Boolean)  # Sommes des surfaces de l’état descriptif
+    check_5 = Column(Boolean)  # Les surfaces « ancien état » de la balance correspondent aux surfaces RF
+    check_6 = Column(Boolean)  # Sommes des surfaces de la balance
+    check_7 = Column(Boolean)  # Les éventuelles différences de m2 sont bien expliquées (a priori, pas de correction des surfaces des nouveaux biens-fonds)
+    check_8 = Column(Boolean)  # Les provenances sont cohérentes
+    check_9 = Column(Boolean)  # La surface des DDP ne change pas entre l’ancien état et le nouvel état, sinon mettre un commentaire concernant le changement de surface du DDP
+    check_10 = Column(Boolean)  # BB a inscrit le montant pour le report des servitudes dans le fichier excel
+    check_11 = Column(Boolean)  # Les titres sont cohérents sur tous les documents
+    check_12 = Column(Boolean)  # Le dossier respecte les indications du SCAT / SAGR / SENE
+    check_13 = Column(Boolean)  # BB a pris en compte les indications du SCAT / SAGR / SENE
+    check_14 = Column(Boolean)  # Chaque nouveau BF ait un accès au DP
+    check_15 = Column(Boolean)  # Nom du cadastre et n° de bien-fonds corrects (cf extrait RF) et identiques sur tous les documents
+    check_16 = Column(Boolean)  # Les titres sont cohérents sur tous les documents
+    check_17 = Column(Boolean)  # Cohérence des provenances
+    check_18 = Column(Boolean)  # Nombre de documents: « fait en x plans, x désignations et x formules de report des servitude »
+    check_19 = Column(Boolean)  # Tampon(s) et date(s) sur la dernière feuille
+    check_20 = Column(Boolean)  # Mention « sans frais » indiquée le cas échéant (surtout changement dans ses natures)
+    check_21 = Column(Boolean)  # Le n° du BF est visible sur le plan
+    check_22 = Column(Boolean)  # Tampon(s) et date(s)
+    check_23 = Column(Boolean)  # Titre de la facture
+    check_24 = Column(Boolean)  # Quantité et désignation (n° BF + cadastre) des articles facturés
+    check_25 = Column(Boolean)  # Prix unitaire des articles facturés (cf fichier excel)
+    check_26 = Column(Boolean)  # Si le destinataire de la facture est différent de celui des documents, vérifier que l’enveloppe contenant les documents porte la bonne adresse et qu’il y a 2 enveloppes
+    check_27 = Column(Boolean)  # Lettre A sur l’enveloppe (quand pour acte notarié)
+    check_28 = Column(Boolean)  # Présence de la lettre d’information à propos de la cadastration d’office
+    check_29 = Column(Boolean)  # Eléments saisis manuellement (cf exemples)
+    check_30 = Column(Boolean)  # Eléments issus d’Infolica (cf exemples)
+    check_31 = Column(Boolean)  # Paragraphes spécifiques si une PPE et constituée sur le fond de base ou si une mention de « Constitution de PPE avant la construction du bâtiment » figure
+    check_32 = Column(Boolean)  # Eléments saisis manuellement (cf exemples)
+    check_33 = Column(Boolean)  # Chaque bâtiment a un numéro
+    check_34 = Column(Boolean)  # Vérifier que le nom du propriétaire est entier
+    check_35 = Column(Boolean)  # La surface du bien-fonds est la même que celle inscrite au RF
+    check_36 = Column(Boolean)  # Vérifier les sommes des surfaces de l’état descriptif
+    check_37 = Column(Boolean)  # Chaque bâtiment a un numéro
+    check_38 = Column(Boolean)  # Pertinence de la désignation de bâtiment
+    check_39 = Column(Boolean)  # Phrase « DUPLICATA du plan du … »
+    check_40 = Column(Boolean)  # Phrase « DUPLICATA du plan du … »
+    check_41 = Column(Boolean)  # Contrôle de l’indication « Visa » ou « Modification »
+    check_42 = Column(Boolean)  # Contrôle de l’indication « Visa » ou « Modification »
+    check_43 = Column(Boolean)  # contrôler si la servitude telle qu’elle est prévue est pertinente et possible. Il est possible qu’il faille diviser les géométries des servitudes pour représenter les différentes utilisations.
+    check_44 = Column(Boolean)  # Le nombre de points est le même que sur le plan
+    check_45 = Column(Boolean)  # Le montant est correct (~300.- par PL)
+    check_46 = Column(Boolean)  # Le nombre de points est le même que sur le plan
+    check_47 = Column(Boolean)  # Le montant est correct (~ 380.- par PFP)
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
+    date = Column(Date)
+    remarque = Column(Text)
+
 
 
 class NumeroType(Base):
@@ -795,14 +773,30 @@ class FonctionRole(Base):
     role_id = Column(BigInteger, ForeignKey(Role.id), nullable=False)
 
 
-# class EtapeAffaire(Base):
-#     __tablename__ = 'v_etapes_affaires'
-#     __table_args__ = {'schema': 'infolica'}
-#     id = Column(BigInteger, primary_key=True, autoincrement=True)
-#     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
-#     etape_id = Column(AffaireEtapeIndex)
-#     datetime = Column(DateTime)
-#     remarque = Column(Text)
+class GeosBalance(Base):
+    __tablename__ = 'geos_balance'
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
+    idobj = Column(String(40), primary_key=True)
+    base = Column(String(50))
+    numero_new = Column(String(50))
+    cad_new = Column(Integer)
+    parcel_new = Column(String(20))
+    superficie_new = Column(Integer)
+    numero_old = Column(String(50))
+    cad_old = Column(Integer)
+    parcel_old = Column(String(20))
+    superficie_old = Column(Integer)
+    superficie_partie = Column(Integer)
+    mutation = Column(String(50))
+    mutation_desc = Column(String(200))
+    egrid_old = Column(String(50))
+    gid_geom_new = Column(String(50))
+    gid_numero_new = Column(String(50))
+    gid_geom_old = Column(String(50))
+    gid_numero_old = Column(String(50))
+    gid_mutation = Column(String(50))
+    geom = Column(Geometry('POINT'))
 
 
 # ======================== VUES ========================
@@ -935,6 +929,14 @@ class VAffaire(Base):
     preavis_sene_date_reponse = Column(Date)
     preavis_rf_date_demande = Column(Date)
     preavis_rf_date_reponse = Column(Date)
+    etape_id = Column(BigInteger)
+    etape = Column(Text)
+    etape_datetime = Column(DateTime)
+    etape_remarque = Column(Text)
+    etape_operateur_id = Column(BigInteger)
+    etape_operateur_nom = Column(Text)
+    etape_operateur_prenom = Column(Text)
+    etape_priorite = Column(Integer)
     abandon = Column(Boolean)
 
 
@@ -960,14 +962,17 @@ class VEtapesAffaires(Base):
     __tablename__ = 'v_etapes_affaires'
     __table_args__ = {'schema': 'infolica',
                       'info': dict(is_view=True)}
-    affaire_id = Column(BigInteger, primary_key=True)
-    affaire_nom = Column(Text)
-    etape = Column(Text, primary_key=True)
-    date_etape = Column(Date, primary_key=True)
-    affaire_liee_id = Column(BigInteger)
-    affaire_liee_nom = Column(Text)
-    service_nom = Column(Text, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
+    affaire_id = Column(BigInteger)
+    etape_id = Column(BigInteger)
+    etape = Column(Text)
     remarque = Column(Text)
+    datetime = Column(DateTime)
+    operateur_id = Column(BigInteger)
+    operateur_nom = Column(Text)
+    operateur_prenom = Column(Text)
+    etape_ordre = Column(BigInteger)
+    etape_priorite = Column(Integer)
 
 
 class VAffairesPreavis(Base):

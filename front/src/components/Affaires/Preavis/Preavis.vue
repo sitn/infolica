@@ -3,7 +3,7 @@
 
 
 <script>
-import { getCurrentDate, checkPermission, getDocument } from "@/services/helper";
+import { getCurrentDate, checkPermission, getDocument, logAffaireEtape } from "@/services/helper";
 import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -34,7 +34,8 @@ export default {
         date_demande: getCurrentDate(),
         date_reponse: null,
         remarque: null
-      }
+      },
+      communeFusion: {},
     };
   },
 
@@ -188,6 +189,7 @@ export default {
       var formData = this.fillData();
 
       var req;
+      let remarqueEtapeStatut = "";
       // Modification de préavis
       if (this.modifyPreavis) {
         req = this.$http.put(
@@ -198,6 +200,7 @@ export default {
             headers: { Accept: "application/json" }
           }
         );
+        remarqueEtapeStatut = "Retour"
       } else {
         // Création d'un nouveau préavis
         req = this.$http.post(
@@ -208,6 +211,7 @@ export default {
             headers: { Accept: "application/json" }
           }
         );
+        remarqueEtapeStatut = "Demande"
       }
       req
         .then(response => {
@@ -215,6 +219,10 @@ export default {
             this.searchAffairePreavis();
             // handle success
             this.$root.$emit("ShowMessage", "Le préavis au " + this.lastRecord + " a été enregistrée avec succès")
+
+            // log etape
+            let remarqueEtape = this.lastRecord + " - " + remarqueEtapeStatut;
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_PREAVIS_ID), remarqueEtape);
           }
         })
         .catch(err => {
@@ -308,13 +316,13 @@ export default {
       service_id = Number(service_id)
       if (service_id === Number(process.env.VUE_APP_SERVICE_SCAT)) {
         // SCAT, adresser au service de l'urbanisme des villes si besoin
-        if (this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_NEUCHATEL_ID) || this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_LA_COUDRE_ID)) {
+        if (this.communeFusion.neuchatel.includes(this.affaire.cadastre_id)) {
           service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_NEUCHATEL_ID);
         }
-        else if (this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_LA_CHAUX_DE_FONDS_ID) || this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_LES_EPLATURES_ID)) {
+        else if (this.communeFusion.laChauxDeFonds.includes(this.affaire.cadastre_id)) {
           service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_LA_CHAUX_DE_FONDS_ID);
         }
-        else if (this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_LE_LOCLE_ID)) {
+        else if (this.communeFusion.leLocle.includes(this.affaire.cadastre_id)) {
           service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_LE_LOCLE_ID);
         }
       }
@@ -363,16 +371,57 @@ export default {
 
       getDocument(formData)
       .then(response => {
-          this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'")
+          this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'");
+
+          // Log l'étape de téléchargement du document
+          let service_nom = this.services_liste_bk.filter(x => x.id === service_id)[0].service;
+          let remarque = service_nom + " - " + "Téléchargement modèle préavis";
+          logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_PREAVIS_ID), remarque);
       })
       .catch(err => handleException(err, this));
+    },
+
+    /**
+     * Open preavis dialog
+     */
+    openPreavisDialog() {
+      this.new_preavis = {
+        id: null,
+        service: null,
+        preavis: null,
+        date_demande: getCurrentDate(),
+        date_reponse: null,
+        remarque: null
+      }
+
+      this.showPreavisDialog = true;
     }
+
   },
 
   mounted: function() {
     this.searchAffairePreavis();
     this.searchPreavisType();
     this.searchServices();
+
+    // Définit les cadastres fusionnés pour la demande de préavis au services de l'urbanisme des villes
+    this.communeFusion = {
+        neuchatel: [
+          Number(process.env.VUE_APP_CADASTRE_NEUCHATEL_ID),
+          Number(process.env.VUE_APP_CADASTRE_LA_COUDRE_ID),
+          Number(process.env.VUE_APP_CADASTRE_CORCELLES_CORMONDRECHE_ID),
+          Number(process.env.VUE_APP_CADASTRE_VALANGIN_ID),
+          Number(process.env.VUE_APP_CADASTRE_PESEUX_ID)
+        ],
+        laChauxDeFonds: [
+          Number(process.env.VUE_APP_CADASTRE_LA_CHAUX_DE_FONDS_ID),
+          Number(process.env.VUE_APP_CADASTRE_LES_EPLATURES_ID)
+        ],
+        leLocle: [
+          Number(process.env.VUE_APP_CADASTRE_LE_LOCLE_ID),
+          Number(process.env.VUE_APP_CADASTRE_LES_BRENETS_ID)
+        ]
+      }
 
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_PREAVIS_EDITION) || this.$parent.parentAffaireReadOnly;
   }

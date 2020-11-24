@@ -13,12 +13,13 @@ import DuplicationAffaire from "@/components/Affaires/DuplicationAffaire/Duplica
 import Facturation from "@/components/Facturation/Facturation.vue";
 import Remarques from "@/components/Affaires/Remarques/Remarques.vue";
 import ControleMutation from "@/components/Affaires/ControleMutation/ControleMutation.vue";
+import ControleGeometre from "@/components/Affaires/ControleGeometre/ControleGeometre.vue";
 import ControlePPE from "@/components/Affaires/ControlePPE/ControlePPE.vue";
 import SuiviMandat from "@/components/SuiviMandat/SuiviMandat.vue";
 import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { checkPermission, getDocument } from '@/services/helper'
+import { getTypesAffaires, checkPermission, getDocument, stringifyAutocomplete, logAffaireEtape } from '@/services/helper'
 
 import moment from "moment";
 
@@ -35,6 +36,7 @@ export default {
     Facturation,
     Remarques,
     ControleMutation,
+    ControleGeometre,
     ControlePPE,
     SuiviMandat,
     DuplicationAffaire,
@@ -44,6 +46,12 @@ export default {
     return {
       abandonAffaireEnabled: true,
       affaire: {},
+      affaireEtapes: [],
+      etapeAffaire: {
+        prochaine: null,
+        remarque: null,
+        showDialog: false,
+      },
       affaireLoaded: false,
       cloreAffaireEnabled: false,
       duplicationAffaireForm: null,
@@ -51,7 +59,9 @@ export default {
       mapLoaded: false,
       parentparentAffaireReadOnly: false,
       showConfirmAbandonAffaireDialog: false,
-      typesAffaires: {
+      suiviAffaireTheorique: [],
+      typesAffaires: [],
+      typesAffaires_conf: {
         mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION),
         cadastration: Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION),
         ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_PPE),
@@ -61,6 +71,7 @@ export default {
         revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
         remaniement_parcellaire: Number(process.env.VUE_APP_TYPE_AFFAIRE_REMANIEMENT_PARCELLAIRE),
         servitude: Number(process.env.VUE_APP_TYPE_AFFAIRE_SERVITUDE),
+        retablissement_pfp3: Number(process.env.VUE_APP_TYPE_AFFAIRE_RETABLISSEMENT_PFP3),
         autre: Number(process.env.VUE_APP_TYPE_AFFAIRE_AUTRE),
         modification_type: {
           abandon_partiel: Number(process.env.VUE_APP_TYPE_MODIFICATION_ABANDON_PARTIEL_ID)
@@ -125,6 +136,28 @@ export default {
           })
           .catch(() => reject);
       });
+    },
+
+    /**
+     * Search affaire etapes
+     */
+    async searchAffaireEtapes() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_ETAPES_INDEX_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      ).then(response => {
+        this.affaireEtapes = stringifyAutocomplete(response.data.filter(x => x.ordre !== null));
+        // get suivi d'affaire théorique
+        this.typesAffaires = getTypesAffaires().then(response => {
+          if (response && response.data) {
+            let tmp = response.data.filter(x => x.id === this.affaire.type_id)[0];
+            this.suiviAffaireTheorique = tmp.logique_processus;
+          }
+        })
+      }).catch(err => handleException(err, this));
     },
 
     /**
@@ -220,6 +253,9 @@ export default {
           })
           Promise.all(promises)
           .then(() => {
+            //Log edition facture
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_ABANDON_ID));
+
             this.$router.go();
           })
           .catch(err => handleException(err, this));
@@ -303,6 +339,32 @@ export default {
         this.center.x = this.affaire.localisation_e;
         this.center.y = this.affaire.localisation_n;
       }
+    },
+
+    /**
+     * open New state dialog
+     */
+    openNewStateDialog(){
+      // set next step prediction
+      this.etapeAffaire.prochaine = null;
+      if (this.suiviAffaireTheorique.includes(this.affaire.etape_id)) {
+        this.etapeAffaire.prochaine = this.affaireEtapes.filter(x => x.id === this.suiviAffaireTheorique[this.suiviAffaireTheorique.indexOf(this.affaire.etape_id)+1])[0];
+      }
+      this.etapeAffaire.remarque = null;
+
+      this.etapeAffaire.showDialog = true;
+    },
+
+    /**
+     * Enregistrer la nouvelle étape
+     */
+    async updateAffaireEtape() {
+      logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine.id, this.etapeAffaire.remarque)
+      .then(() => {
+        this.$root.$emit("ShowMessage", "L'étape a bien été mise à jour");
+        this.etapeAffaire.showDialog = false;
+        this.setAffaire();
+      })
     },
 
     /**
@@ -400,8 +462,8 @@ export default {
 
   mounted: function() {
     this.setAffaire();
+    this.searchAffaireEtapes();
     this.$root.$on('mapHandlerReady', () =>{
-
       this.showMap();
     });
   }

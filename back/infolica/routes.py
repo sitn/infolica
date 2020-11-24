@@ -57,6 +57,10 @@ def includeme(config):
     config.add_route('controles_ppe_s','/infolica/api/controles_ppe/')
     config.add_route('controle_ppe_by_id', '/infolica/api/controles_ppe/{id}')
     config.add_route('controle_ppe_by_affaire_id', '/infolica/api/affaire_controles_ppe/{id}')
+    #Controle_geometre
+    config.add_route('controle_geometre','/infolica/api/controle_geometre')
+    config.add_route('controle_geometre_s','/infolica/api/controle_geometre/')
+    config.add_route('controle_geometre_by_affaire_id', '/infolica/api/affaire_controle_geometre/{id}')
     #Numéros
     config.add_route('numeros','/infolica/api/numeros')
     config.add_route('numeros_s','/infolica/api/numeros/')
@@ -156,7 +160,9 @@ def includeme(config):
     config.add_route('services','/infolica/api/services')
     config.add_route('services_s','/infolica/api/services/')
     #Balance
-    config.add_route('balance_by_affaire_id', '/infolica/api/balance/{id}')
+    config.add_route('balance_generate_table', '/infolica/api/balance_generate')
+    config.add_route('balance_mutation_names', '/infolica/api/balance_mutation_names')
+    config.add_route('balance_by_affaire_id', '/infolica/api/balance')
     #Reservation_numeros_mo
     config.add_route('reservation_numeros_mo_by_affaire_id', '/infolica/api/reservation_numeros_mo/{id}')
     config.add_route('reservation_numeros_mo', '/infolica/api/reservation_numeros_mo')

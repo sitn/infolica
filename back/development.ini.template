@@ -6,6 +6,10 @@
 [app:main]
 use = egg:infolica
 
+infolica_mail = 
+infolica_smtp = 
+infolica_balance_mail = 
+
 pyramid.reload_templates = true
 pyramid.debug_authorization = false
 pyramid.debug_notfound = false
@@ -100,6 +104,7 @@ search_limit = 20
 # Les différentes permissions (fonctions)
 ######################################################################################
 fonction_admin = fonction_admin
+affaire_consultation = affaire_consultation
 affaire_edition = affaire_edition
 affaire_ppe_edition = affaire_ppe_edition
 affaire_revision_abornement_edition = affaire_revision_abornement_edition
@@ -112,6 +117,9 @@ affaire_etape_edition = affaire_etape_edition
 affaire_facture_edition = affaire_facture_edition
 affaire_preavis_edition = affaire_preavis_edition
 affaire_numero_edition = affaire_numero_edition
+numero_consultation = numero_consultation
+operateur_consultation = operateur_consultation
+client_consultation = client_consultation
 client_edition = client_edition
 
 ######################################################################################
@@ -144,6 +152,12 @@ numero_artefact_id = 5
 # ID Affaire-numero-type
 affaire_numero_type_ancien_id = 1
 affaire_numero_type_nouveau_id = 2
+
+# ID numeros relations types
+numero_relation_mutation_id = 1
+numero_relation_ddp_id = 2
+numero_relation_ppe_id = 3
+numero_relation_pcop_id = 4
 
 # ID cadastres-binômes pour la réservation de numéros
 cadastres_ChauxDeFonds_Eplatures_id = 60, 70

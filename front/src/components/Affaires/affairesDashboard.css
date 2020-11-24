@@ -26,7 +26,8 @@
 }
 
 #mapContainer {
-    width: 100%;
+    width: 95%;
+    margin: auto;
     height: 510px; /*valeur empirique*/
   }
 
@@ -34,4 +35,7 @@
     height: 620px;
 }
 
-
+.affairesDashboard p {
+    font-size: 18px;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}

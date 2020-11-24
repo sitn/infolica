@@ -3,7 +3,7 @@
 
 
 <script>
-import { getCurrentDate, checkPermission } from "@/services/helper";
+import { getCurrentDate, checkPermission, stringifyAutocomplete } from "@/services/helper";
 import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -18,6 +18,7 @@ export default {
   data: () => {
     return {
       affaire_suivi: [],
+      affaire_suivi_bk: [],
       etapes_list: [],
       showNewEtapeBtn: false,
       showEtapeDialog: false,
@@ -26,7 +27,8 @@ export default {
         etape: null,
         date: getCurrentDate(),
         remarque: null
-      }
+      },
+      cb_showDetail: false
     };
   },
 
@@ -55,12 +57,17 @@ export default {
         )
         .then(response => {
           if (response.data) {
-            this.affaire_suivi = response.data;
+            let tmp = response.data;
+            
+            tmp.forEach(x => {
+              x.datetime = moment(new Date(x.datetime)).format(process.env.VUE_APP_DATETIMEFORMAT_CLIENT);
+            });
+
+            this.affaire_suivi_bk = tmp;
+            this.updateAffaireSuiviShowList();
           }
         })
-        .catch(err => {
-          handleException(err, this);
-        });
+        .catch(err => handleException(err, this));
     },
 
     /*
@@ -77,13 +84,8 @@ export default {
           }
         )
         .then(response => {
-          if (response.data) {
-            this.etapes_list = response.data.map(x => ({
-              id: x.id,
-              nom: x.nom,
-              toLowerCase: () => x.nom.toLowerCase(),
-              toString: () => x.nom
-            }));
+          if (response && response.data) {
+            this.etapes_list = stringifyAutocomplete(response.data);
           }
         })
         .catch(err => {
@@ -170,6 +172,17 @@ export default {
         return {
           "md-invalid": field.$invalid && field.$dirty
         };
+      }
+    },
+
+    /**
+     * Update list of suivi affaire list on set priority
+     */
+    updateAffaireSuiviShowList() {
+      if (this.cb_showDetail) {
+        this.affaire_suivi = this.affaire_suivi_bk;
+      } else {
+        this.affaire_suivi = this.affaire_suivi_bk.filter(x => x.etape_priorite === 1);
       }
     }
   },

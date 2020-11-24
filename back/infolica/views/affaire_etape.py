@@ -50,7 +50,7 @@ def affaires_etapes_view(request):
 @view_config(route_name='etapes_s', request_method='POST', renderer='json')
 def etapes_new_view(request):
     """
-    POST remarque affaire
+    POST etapes affaire
     """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_etape_edition']):
@@ -67,7 +67,7 @@ def etapes_new_view(request):
 @view_config(route_name='etapes_by_id', request_method='DELETE', renderer='json')
 def etapes_delete_view(request):
     """
-    DELETE remarque affaire
+    DELETE etapes affaire
     """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_etape_edition']):

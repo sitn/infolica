@@ -4,13 +4,15 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission} from '@/services/helper';
+import {checkPermission, logAffaireEtape} from '@/services/helper';
 
 const moment = require("moment");
 
 export default {
   name: "SuiviMandat",
-  props: {},
+  props: {
+    affaire: Object
+  },
   data: () => ({
     affaireReadonly: true,
     chefsProjetMO_liste: [],
@@ -244,6 +246,10 @@ export default {
           if (response) {
             this.$root.$emit("ShowMessage", "Le suivi du mandat a été mis à jour avec succès");
             this.searchSuiviMandat();
+
+            //Log edition facture
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_VALIDATION_TECHNIQUE_ID), "Edition du formulaire");
+
             if (this.suiviMandat.date !== null) {
               this.confirmDialogActive = true;
             }
