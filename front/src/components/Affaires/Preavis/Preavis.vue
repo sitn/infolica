@@ -34,7 +34,8 @@ export default {
         date_demande: getCurrentDate(),
         date_reponse: null,
         remarque: null
-      }
+      },
+      communeFusion: {},
     };
   },
 
@@ -315,13 +316,13 @@ export default {
       service_id = Number(service_id)
       if (service_id === Number(process.env.VUE_APP_SERVICE_SCAT)) {
         // SCAT, adresser au service de l'urbanisme des villes si besoin
-        if (this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_NEUCHATEL_ID) || this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_LA_COUDRE_ID)) {
+        if (this.communeFusion.neuchatel.includes(this.affaire.cadastre_id)) {
           service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_NEUCHATEL_ID);
         }
-        else if (this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_LA_CHAUX_DE_FONDS_ID) || this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_LES_EPLATURES_ID)) {
+        else if (this.communeFusion.laChauxDeFonds.includes(this.affaire.cadastre_id)) {
           service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_LA_CHAUX_DE_FONDS_ID);
         }
-        else if (this.affaire.cadastre_id === Number(process.env.VUE_APP_CADASTRE_LE_LOCLE_ID)) {
+        else if (this.communeFusion.leLocle.includes(this.affaire.cadastre_id)) {
           service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_LE_LOCLE_ID);
         }
       }
@@ -402,6 +403,25 @@ export default {
     this.searchAffairePreavis();
     this.searchPreavisType();
     this.searchServices();
+
+    // Définit les cadastres fusionnés pour la demande de préavis au services de l'urbanisme des villes
+    this.communeFusion = {
+        neuchatel: [
+          Number(process.env.VUE_APP_CADASTRE_NEUCHATEL_ID),
+          Number(process.env.VUE_APP_CADASTRE_LA_COUDRE_ID),
+          Number(process.env.VUE_APP_CADASTRE_CORCELLES_CORMONDRECHE_ID),
+          Number(process.env.VUE_APP_CADASTRE_VALANGIN_ID),
+          Number(process.env.VUE_APP_CADASTRE_PESEUX_ID)
+        ],
+        laChauxDeFonds: [
+          Number(process.env.VUE_APP_CADASTRE_LA_CHAUX_DE_FONDS_ID),
+          Number(process.env.VUE_APP_CADASTRE_LES_EPLATURES_ID)
+        ],
+        leLocle: [
+          Number(process.env.VUE_APP_CADASTRE_LE_LOCLE_ID),
+          Number(process.env.VUE_APP_CADASTRE_LES_BRENETS_ID)
+        ]
+      }
 
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_PREAVIS_EDITION) || this.$parent.parentAffaireReadOnly;
   }
