@@ -20,128 +20,85 @@
                 <md-card-content v-bind:class="{ disabledElement: affaireReadonly }">
                     <div v-if="controleMutation.id">
                         <!-- Données internes -->
-                        <md-card class="controleMutationForm">
+                        <md-card>
                             <md-card-content>
-                                <div class="md-title">SUIVI INTERNES</div>
+                                <div class="md-title">SUIVI INTERNE</div>
                                 <br>
 
-                                <div class="md-layout md-gutter md-space-between">
-                                    <div class="md-layout-item md-size-50 md-medium-size-100">
-                                        
+                                <div class="md-layout md-gutter md-alignment top-space-between">
+                                    <div class="md-layout-item md-size-30 md-medium-size-100">
                                         <div class="md-subhead">Terrain</div>
-                                            
-                                        <md-checkbox class="md-primary" v-model="controleMutation.terrain_1" :value="setTrueValue('terrain_1')">
-                                            Levés préliminaires
-                                            <span v-if="controleMutation.terrain_1">({{ controleMutation.terrain_1 }})</span>
-                                        </md-checkbox>
+
+                                        <div class="justify">
+                                            <md-checkbox class="md-primary" v-model="controleMutation.terrain_1" :value="setTrueValue('terrain_1')">Levés préliminaires</md-checkbox>
+                                            <md-datepicker v-model="controleMutation.terrain_1" @md-closed="stringifyDate('terrain_1')" md-immediately></md-datepicker>
+                                        </div>
                                     
-                                        <md-checkbox class="md-primary" v-model="controleMutation.terrain_2" :value="setTrueValue('terrain_2')">
-                                            Matérialisations
-                                            <span v-if="controleMutation.terrain_2">({{ controleMutation.terrain_2 }})</span>
-                                        </md-checkbox>
-
-                                        <md-checkbox class="md-primary" v-model="controleMutation.terrain_3" :value="setTrueValue('terrain_3')">
-                                            Levés
-                                            <span v-if="controleMutation.terrain_3">({{ controleMutation.terrain_3 }})</span>
-                                        </md-checkbox>
-                                        
-                                        <br>
-
-                                        <div class="md-subhead">Bureau</div>
-                                        <md-checkbox class="md-primary" v-model="controleMutation.bureau_1" :value="setTrueValue('bureau_1')">
-                                            Calculs préliminaires
-                                            <span v-if="controleMutation.bureau_1">({{ controleMutation.bureau_1 }})</span>
-                                        </md-checkbox>
-
-                                        <md-checkbox class="md-primary" v-model="controleMutation.bureau_2" :value="setTrueValue('bureau_2')">
-                                            Calculs définitifs
-                                            <span v-if="controleMutation.bureau_2">({{ controleMutation.bureau_2 }})</span>
-                                        </md-checkbox>
-
-                                        <md-checkbox class="md-primary" v-model="controleMutation.bureau_3" :value="setTrueValue('bureau_3')">
-                                            Calculs spéciaux
-                                            <span v-if="controleMutation.bureau_3">({{ controleMutation.bureau_3 }})</span>
-                                        </md-checkbox>
-
-                                        <br>
-
-                                        <div class="md-subhead">Situation de l'affaire</div>
-                                        <md-checkbox class="md-primary" v-model="controleMutation.envoi_cl_1" :value="setTrueValue('envoi_cl_1')">
-                                            Envoi au client
-                                            <span v-if="controleMutation.envoi_cl_1">({{ controleMutation.envoi_cl_1 }})</span>
-                                        </md-checkbox>
-
-                                        <md-checkbox class="md-primary" v-model="controleMutation.retour_cl_2" :value="setTrueValue('retour_cl_2')">
-                                            Retour du client
-                                            <span v-if="controleMutation.retour_cl_2">({{ controleMutation.retour_cl_2 }})</span>
-                                        </md-checkbox>
+                                        <div class="justify">
+                                            <md-checkbox class="md-primary" v-model="controleMutation.terrain_2" :value="setTrueValue('terrain_2')">Matérialisations</md-checkbox>
+                                            <md-datepicker v-model="controleMutation.terrain_2" @md-closed="stringifyDate('terrain_2')" md-immediately></md-datepicker>
+                                        </div>
+                                    
+                                        <div class="justify">
+                                            <md-checkbox class="md-primary" v-model="controleMutation.terrain_3" :value="setTrueValue('terrain_3')">Levés</md-checkbox>
+                                            <md-datepicker v-model="controleMutation.terrain_3" @md-closed="stringifyDate('terrain_3')" md-immediately></md-datepicker>
+                                        </div>
                                     </div>
                                     
-                                    <div class="md-layout-item md-size-50 md-medium-size-100">
-                                        <div class="md-subhead">Suivi</div>
+                                    
+                                    <div class="md-layout-item md-size-30 md-medium-size-100">
+                                        <div class="md-subhead">Bureau</div>
+                                        
+                                        <div class="justify">
+                                            <md-checkbox class="md-primary" v-model="controleMutation.bureau_1" :value="setTrueValue('bureau_1')">Calculs préliminaires</md-checkbox>
+                                            <md-datepicker v-model="controleMutation.bureau_1" @md-closed="stringifyDate('bureau_1')" md-immediately></md-datepicker>
+                                        </div>
 
-                                        <md-checkbox class="md-primary" v-model="controleMutation.suivi_1" :value="setTrueValue('suivi_1')">
-                                            Création de la mutation dans la BD
-                                            <span v-if="controleMutation.suivi_1">({{ controleMutation.suivi_1 }})</span>
-                                        </md-checkbox>
+                                        <div class="justify">
+                                            <md-checkbox class="md-primary" v-model="controleMutation.bureau_2" :value="setTrueValue('bureau_2')">Calculs définitifs</md-checkbox>
+                                            <md-datepicker v-model="controleMutation.bureau_2" @md-closed="stringifyDate('bureau_2')" md-immediately></md-datepicker>
+                                        </div>
+                                        
+                                        <div class="justify">
+                                            <md-checkbox class="md-primary" v-model="controleMutation.bureau_3" :value="setTrueValue('bureau_3')">Calculs spéciaux</md-checkbox>
+                                            <md-datepicker v-model="controleMutation.bureau_3" @md-closed="stringifyDate('bureau_3')" md-immediately></md-datepicker>
+                                        </div>                                                
+                                    </div>
+                                    
+                                    
+                                    <div class="md-layout-item md-size-30 md-medium-size-100">
+                                        <div class="md-subhead">Situation de l'affaire</div>
+                                        
+                                        <div class="justify">
+                                            <md-checkbox class="md-primary" v-model="controleMutation.envoi_cl_1" :value="setTrueValue('envoi_cl_1')">Envoi au client</md-checkbox>
+                                            <md-datepicker v-model="controleMutation.envoi_cl_1" @md-closed="stringifyDate('envoi_cl_1')" md-immediately></md-datepicker>
+                                        </div>
 
-                                        <md-checkbox class="md-primary" v-model="controleMutation.suivi_2" :value="setTrueValue('suivi_2')">
-                                            Contrôles de cohérences e.o.
-                                            <span v-if="controleMutation.suivi_2">({{ controleMutation.suivi_2 }})</span>
-                                        </md-checkbox>
-
-                                        <md-checkbox class="md-primary" v-model="controleMutation.suivi_3" :value="setTrueValue('suivi_3')">
-                                            Production des désignations
-                                            <span v-if="controleMutation.suivi_3">({{ controleMutation.suivi_3 }})</span>
-                                        </md-checkbox>
-
-                                        <md-checkbox class="md-primary" v-model="controleMutation.suivi_4" :value="setTrueValue('suivi_4')">
-                                            Production plan de mutation (papier)
-                                            <span v-if="controleMutation.suivi_4">({{ controleMutation.suivi_4 }})</span>
-                                        </md-checkbox>
-
-                                        <md-checkbox class="md-primary" v-model="controleMutation.suivi_5" :value="setTrueValue('suivi_5')">
-                                            Production plan de mutation (PDF)
-                                            <span v-if="controleMutation.suivi_5">({{ controleMutation.suivi_5 }})</span>
-                                        </md-checkbox>
-
-                                        <md-checkbox class="md-primary" v-model="controleMutation.suivi_6" :value="setTrueValue('suivi_6')">
-                                            Enregistrement de la documentation
-                                            <span v-if="controleMutation.suivi_6">({{ controleMutation.suivi_6 }})</span>
-                                        </md-checkbox>
-
-                                        <md-checkbox class="md-primary" v-model="controleMutation.suivi_7" :value="setTrueValue('suivi_7')">
-                                            État de la mutation "En cours / Libérée"
-                                            <span v-if="controleMutation.suivi_7">({{ controleMutation.suivi_7 }})</span>
-                                        </md-checkbox>
-
-                                        <md-checkbox class="md-primary" v-model="controleMutation.suivi_8" :value="setTrueValue('suivi_8')">
-                                            Tableau des émoluments
-                                            <span v-if="controleMutation.suivi_8">({{ controleMutation.suivi_8 }})</span>
-                                        </md-checkbox>
-
-                                        <md-checkbox class="md-primary" v-model="controleMutation.suivi_9" :value="setTrueValue('suivi_9')">
-                                            Transmission au géomètre cantonal
-                                            <span v-if="controleMutation.suivi_9">({{ controleMutation.suivi_9 }})</span>
-                                        </md-checkbox>
-
-                                        <md-checkbox class="md-primary" v-model="controleMutation.suivi_10" :value="setTrueValue('suivi_10')">
-                                            Transmission au secrétariat
-                                            <span v-if="controleMutation.suivi_10">({{ controleMutation.suivi_10 }})</span>
-                                        </md-checkbox>
-
-                                        <md-checkbox class="md-primary" v-model="controleMutation.suivi_11" :value="setTrueValue('suivi_11')">
-                                            Validation technique de la mutation
-                                            <span v-if="controleMutation.suivi_11">({{ controleMutation.suivi_11 }})</span>
-                                        </md-checkbox>
-
-                                        <md-checkbox class="md-primary" v-model="controleMutation.suivi_12" :value="setTrueValue('suivi_12')">
-                                            Annulation de la mutation
-                                            <span v-if="controleMutation.suivi_12">({{ controleMutation.suivi_12 }})</span>
-                                        </md-checkbox>
-
+                                        <div class="justify">
+                                            <md-checkbox class="md-primary" v-model="controleMutation.retour_cl_2" :value="setTrueValue('retour_cl_2')">Retour du client</md-checkbox>
+                                            <md-datepicker v-model="controleMutation.retour_cl_2" @md-closed="stringifyDate('retour_cl_2')" md-immediately></md-datepicker>
+                                        </div>
                                     </div>
                                 </div>
+
+                            </md-card-content>
+                        </md-card>
+                        
+                        
+                        
+                        <div class="controleMutationFormParent">
+                        <md-card class="controleMutationForm">
+                            <md-card-content>
+                                <div class="md-title">PRODUCTION</div>
+
+                                <md-checkbox class="md-primary" v-model="controleMutation.suivi_1" :value="setTrueValue('suivi_1')">Création de la mutation dans la BD</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="controleMutation.suivi_2" :value="setTrueValue('suivi_2')">Contrôles de cohérences e.o.</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="controleMutation.suivi_3" :value="setTrueValue('suivi_3')">Production des désignations</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="controleMutation.suivi_4" :value="setTrueValue('suivi_4')">Production plan de mutation (papier)</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="controleMutation.suivi_5" :value="setTrueValue('suivi_5')">Production plan de mutation (PDF)</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="controleMutation.suivi_6" :value="setTrueValue('suivi_6')">Enregistrement de la documentation</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="controleMutation.suivi_7" :value="setTrueValue('suivi_7')">État de la mutation "En cours / Libérée"</md-checkbox>
+                                <md-checkbox class="md-primary" v-model="controleMutation.suivi_8" :value="setTrueValue('suivi_8')">Tableau des émoluments</md-checkbox>
 
                             </md-card-content>
                         </md-card>
@@ -341,6 +298,8 @@
                             </md-card-content>
                         </md-card>
 
+                        </div>
+                        <br>
 
                         <!-- Visa et date -->
                         <div class="md-layout md-gutter">
@@ -353,7 +312,7 @@
                                 </md-autocomplete>
                             </div>
                             <div class="md-layout-item md-size-25">
-                                <md-datepicker v-model="controleMutation.date" md-immediately>
+                                <md-datepicker v-model="controleMutation.date" md-immediately style="margin: auto; bottom: auto;">
                                     <label>Date</label>
                                 </md-datepicker>
                             </div>

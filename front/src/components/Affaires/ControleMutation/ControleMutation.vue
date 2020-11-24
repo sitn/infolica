@@ -124,6 +124,13 @@ export default {
     },
 
     /**
+     * Stringify Date
+     */
+    stringifyDate(key) {
+      this.controleMutation[key] = String(this.controleMutation[key]);
+    },
+
+    /**
      * set true-value
      */
     setTrueValue(element){
