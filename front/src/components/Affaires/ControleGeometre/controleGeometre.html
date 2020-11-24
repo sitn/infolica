@@ -162,16 +162,18 @@
                             </md-field>
                         </div>
 
-                        <div class="ma-layout-item md-size-25 md-small-size-100">
-                            <md-field>
-                                <md-input v-model="controleGeometre.date" readonly></md-input>
-                            </md-field>
-                            <md-field>
-                                <md-input v-model="operateur.nom" readonly></md-input>
-                            </md-field>
-                            
-                            <md-button class="md-accent" @click="searchControleGeometre()">Annuler</md-button>
-                            <md-button class="md-primary" @click="updateControleGeometre()">Enregistrer</md-button>
+                        <div class="md-layout-item md-size-25 md-small-size-100">
+                            <div style="float: right;">
+                                <md-field style="width: 200px">
+                                    <md-input v-model="controleGeometre.date" readonly></md-input>
+                                </md-field>
+                                <md-field style="width: 200px">
+                                    <md-input v-model="operateur.nom" readonly></md-input>
+                                </md-field>
+
+                                <md-button class="md-raised md-accent" @click="searchControleGeometre()">Annuler</md-button>
+                                <md-button class="md-raised md-primary" @click="updateControleGeometre()">Enregistrer</md-button>
+                            </div>
                         </div>
 
                     </div>
