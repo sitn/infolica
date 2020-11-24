@@ -1,14 +1,14 @@
 <div id="SuiviAffaire">
     <!-- Info Bulle -->
-    <md-card v-if="((new Date('2020/11/18').getTime() - new Date().getTime()))/(1000*3600*24) > 0" style="background-color: #ABBAEA;" id="info1">
+    <md-card v-if="((new Date('2020/11/25').getTime() - new Date().getTime()))/(1000*3600*24) > 0" style="background-color: #ABBAEA;" id="info1">
         <md-card-content>
             <div class="md-gutter md-layout">
                 <div class="md-layout-item md-size-95">
-                    <h2 style="margin: 0;">Mise à jour du 16 novembre 2020</h2>
+                    <h2 style="margin: 0;">Mise à jour du 24 novembre 2020</h2>
                     <ul style="margin-bottom: 0;">
-                        <li>Ajout automatique du contact sélectionné dans les remarques pour l'étape des travaux. On garde ainsi une trace de la personne à qui est attribuée l'affaire.</li>
-                        <li>Ajout d'une contrainte d'unicité sur le nom de l'affaire. Une erreur est levée lorsqu'on crée une affaire avec un nom existant déjà dans la base.</li>
-                        <li>Récupération de l'historique des affaires N4261 et N4270.</li>
+                        <li>Affichage de l'étape "Fin de processus" en bout de tableau jusqu'à 30 jours puis l'affaire disparait du tableau. Il est aussi possible de consulter l'historique de l'affaire en cliquant sur celle-ci.</li>
+                        <li>Les affaires en "Fin de processus" sont affichées à la demande (case à cocher "Afficher l'étape fin de processus").</li>
+                        <li>Ajout d'un filtre de recherche d'affaire par nom.</li>
                     </ul>
                     
                 </div>
@@ -28,7 +28,15 @@
         </md-card-header>
         
         <md-card-content>
-            <md-button class="md-primary md-raised" @click="showNewAffaireDialog=true">Nouvelle affaire</md-button>
+            <div style="display: flex;">
+                <md-button class="md-primary md-raised" @click="showNewAffaireDialog=true">Nouvelle affaire</md-button>
+                <md-field style="margin-left: 50px; width: 250px !important;">
+                    <label>Rechercher</label>
+                    <md-input v-model="searchAffaire" placeholder="Nom d'affaire" v-on:keyup="updateTable"></md-input>
+                </md-field>
+                <md-checkbox v-model="showFinProcessus" @change="updateTable" style="margin-left: 50px;">Afficher l'étape fin de processus</md-checkbox>
+            </div>
+
             <md-table v-model="affaires" md-sort="id" md-sort-order="desc" md-card>           
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <!-- <md-table-cell md-label="Nom" md-sort-by="affaire_nom">{{ item.affaire_nom }}</md-table-cell> -->
@@ -44,7 +52,7 @@
                     <md-table-cell md-sort-by="dashboard_9" md-label="Finalisation (PDE/SE)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_9">{{ item.dashboard_9 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_10" md-label="Signatures-Art.35 (LF/FS)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_10">{{ item.dashboard_10 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_8" md-label="Valid tech (DGY)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_8">{{ item.dashboard_8 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_16" md-label="Fin de processus (<30 j)"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_16">{{ item.dashboard_16 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_16" md-label="Fin de processus (<30 j)" v-if="showFinProcessus"><md-button class="md-raised md-dense" @click="openNewEtapeDialog(item)" v-if="item.dashboard_16">{{ item.dashboard_16 }}</md-button></md-table-cell>
                 </md-table-row>
             </md-table>
         </md-card-content>
