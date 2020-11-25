@@ -1,7 +1,7 @@
 <div class="affaireRemarques">
     <md-card>
         <!-- Results Header -->
-        <md-card-header>
+        <md-card-header class="justifyTitleBtn">
             <div class="md-title">
                 <md-card-expand-trigger>
                     <md-button class="md-icon-button expandCollapseBtn"
@@ -10,9 +10,8 @@
                     </md-button>
                 </md-card-expand-trigger>
                 Remarques
-                <md-button class="md-primary newRemarqueBtn" v-on:click="addRemarque()" v-if="showNewRemarqueBtn &&!affaireReadonly">
-                    Nouvelle remarque</md-button>
             </div>
+            <md-button class="md-primary" v-on:click="addRemarque()" v-if="showNewRemarqueBtn &&!affaireReadonly">Nouvelle remarque</md-button>
         </md-card-header>
 
         <md-card-expand>

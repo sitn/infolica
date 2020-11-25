@@ -1,7 +1,7 @@
 <div class="preavis">
     <md-card>
         <!-- Results Header -->
-        <md-card-header>
+        <md-card-header class="justifyTitleBtn">
             <div class="md-title">
                 <md-card-expand-trigger>
                     <md-button class="md-icon-button expandCollapseBtn"
@@ -10,10 +10,8 @@
                     </md-button>
                 </md-card-expand-trigger>
                 Préavis (SCAT, SAGR, Service de l'urbanisme des villes)
-                <md-button class="md-primary newPreavisBtn" v-on:click="openPreavisDialog()"
-                    v-if="showNewPreavisBtn && !affaireReadonly">  
-                    Nouveau préavis</md-button>
             </div>
+            <md-button class="md-primary" v-on:click="openPreavisDialog()" v-if="showNewPreavisBtn && !affaireReadonly">Nouveau préavis</md-button>
         </md-card-header>
 
         <md-card-expand>

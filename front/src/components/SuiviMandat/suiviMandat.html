@@ -1,6 +1,6 @@
 <div class="suiviMandat">
     <md-card>
-        <md-card-header>
+        <md-card-header class="justifyTitleBtn">
             <div class="md-title">
                 <md-card-expand-trigger>
                     <md-button class="md-icon-button expandCollapseBtn"
@@ -9,9 +9,10 @@
                     </md-button>
                 </md-card-expand-trigger>
                 Suivi du mandat (Validation du responsable des données cadastrales)
-                <md-button class="md-primary newSuiviMandatBtn" v-on:click="newSuiviMandat()"
-                    v-if="needToCreateSuiviMandat && showNewSuiviMandatBtn && !affaireReadonly">Créer le suivi</md-button>
             </div>
+
+            <md-button class="md-primary" v-on:click="newSuiviMandat()"
+                v-if="needToCreateSuiviMandat && showNewSuiviMandatBtn && !affaireReadonly">Créer le suivi</md-button>
         </md-card-header>
 
         <md-card-expand>

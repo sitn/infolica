@@ -1,6 +1,6 @@
 <div class="facturation">
     <md-card>
-        <md-card-header>
+        <md-card-header class="justifyTitleBtn">
             <div class="md-title">
                 <md-card-expand-trigger>
                     <md-button class="md-icon-button expandCollapseBtn" @click.native="showNewFactureBtn = !showNewFactureBtn">
@@ -8,8 +8,8 @@
                     </md-button>
                 </md-card-expand-trigger>
                 Devis et factures
-                <md-button class="md-primary newFactureBtn" v-on:click="newFacture()" v-if="showNewFactureBtn && !affaireReadonly">Nouvelle facture</md-button>
             </div>
+            <md-button class="md-primary" v-on:click="newFacture()" v-if="showNewFactureBtn && !affaireReadonly">Nouvelle facture</md-button>
         </md-card-header>
 
         <md-card-expand>

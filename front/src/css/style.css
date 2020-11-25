@@ -60,10 +60,11 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 
-.buttonRightAlign {
-    text-align: right;
-}
-
 .md-datepicker {
     width: 200px !important;
+}
+
+.justifyTitleBtn {
+    display: flex;
+    justify-content: space-between;
 }

@@ -26,8 +26,3 @@
 .md-dialog .currency {
     text-align: right !important;
 }
-
-.facturation .newFactureBtn {
-    right: 25px;
-    position: absolute;
-}

@@ -119,7 +119,8 @@ export default {
         )
         .then(response => {
           if (response) {
-            this.$root.$emit("ShowMessage", "Le formulaire de contrôle a été créé avec succès")
+            this.$root.$emit("ShowMessage", "Le formulaire de contrôle a été créé avec succès");
+            this.showCancelSaveBtn = true;
 
             //Log edition facture
             logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CONTROLE_PPE_ID), "Création d'un nouveau formulaire");

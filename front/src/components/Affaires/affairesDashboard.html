@@ -6,8 +6,8 @@
             <div class="md-layout-item">
                 <h1 style="margin-bottom: 0px;">
                     Affaire {{ affaire.id }}
-                    <span v-if="affaire.no_access != null">[{{ affaire.no_access }}]</span>
-                    <span v-if="affaire.abandon === true"> - ABANDONNE</span>
+                    <span v-if="affaire.no_access !== null">[{{ affaire.no_access }}]</span>
+                    <span v-if="affaire.abandon"> - ABANDONNE</span>
                 </h1>
             </div>
 

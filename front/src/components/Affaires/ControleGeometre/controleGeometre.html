@@ -1,29 +1,31 @@
 <div class="controleGeometre">
     <md-card>
-        <md-card-header>
+        <md-card-header class="justifyTitleBtn">
             <div class="md-title">
                 <md-card-expand-trigger>
-                    <md-button class="md-icon-button expandCollapseBtn">
+                    <md-button class="md-icon-button expandCollapseBtn" @click.native="showNewControleGeometreBtn = !showNewControleGeometreBtn">
                         <md-icon>keyboard_arrow_down</md-icon>
                     </md-button>
                 </md-card-expand-trigger>
                 Contrôle (Géomètre cantonnal)
             </div>
+
+            <md-button class="md-primary" v-if="!controleGeometre.id && showNewControleGeometreBtn" @click="createControleGeometre">Créer le formulaire</md-button>
         </md-card-header>
 
         <md-card-expand>
             <md-card-expand-content>
 
                 <md-card-content v-bind:class="{ disabledElement: affaireReadonly }">
-
-                    <div class="md-gutter md-layout">
-                        <div class="md-layout-item md-size-50 md-size-medium-100" 
-                             v-if="affaire.type_id === typesAffaires_conf.mutation || affaire.type_id === typesAffaires_conf.modification">
+                    <div v-if="controleGeometre.id">
+                        <div class="md-gutter md-layout">
+                            <div class="md-layout-item md-size-50 md-size-medium-100" 
+                            v-if="affaire.type_id === typesAffaires_conf.mutation || affaire.type_id === typesAffaires_conf.modification">
                             <md-card>
                                 <md-card-header>
                                     <div class="md-title">Contrôle préliminaire</div>
                                 </md-card-header>
-        
+                                
                                 <md-card-content>
                                     <div class="md-subhead">Tous</div>
                                     <md-checkbox class="md-primary" v-model="controleGeometre.check_1">Nom du cadastre et n° de bien-fonds corrects (cf extrait RF) et identiques sur tous les documents</md-checkbox>
@@ -32,15 +34,15 @@
                                         <md-checkbox class="md-primary" v-model="controleGeometre.check_11">Les titres sont cohérents sur tous les documents</md-checkbox>
                                         <md-checkbox class="md-primary" v-model="controleGeometre.check_12">Le dossier respecte les indications du SCAT / SAGR / SENE</md-checkbox>
                                     </div>
-        
-        
+                                    
+                                    
                                     <div class="md-subhead">Plan</div>
                                     <md-checkbox class="md-primary" v-model="controleGeometre.check_3">Vérifier le bien-fondé des servitudes ainsi que leur faisabilité</md-checkbox>
                                     <div v-if="affaire.type_id === typesAffaires_conf.mutation">
                                         <md-checkbox class="md-primary" v-model="controleGeometre.check_14">Chaque nouveau BF ait un accès au DP</md-checkbox>
                                     </div>
                                     
-        
+                                    
                                     <div class="md-subhead">État descriptif</div>
                                     <md-checkbox class="md-primary" v-model="controleGeometre.check_4">Sommes des surfaces de l’état descriptif</md-checkbox>
                                     <md-checkbox class="md-primary" v-model="controleGeometre.check_5">Les surfaces « ancien état » de la balance correspondent aux surfaces RF</md-checkbox>
@@ -49,135 +51,142 @@
                                     <md-checkbox class="md-primary" v-model="controleGeometre.check_8">Les provenances sont cohérentes</md-checkbox>
                                     <md-checkbox class="md-primary" v-model="controleGeometre.check_9">La surface des DDP ne change pas entre l’ancien état et le nouvel état, sinon mettre un commentaire concernant le changement de surface du DDP</md-checkbox>
                                     
-        
+                                    
                                     <div class="md-subhead">Facture</div>
-                                    <md-checkbox class="md-primary" v-model="controleGeometre.check_10">BB a inscrit le montant pour le report des servitudes dans le fichier excel</md-checkbox>
-                                    
-                                    <div v-if="affaire.type_id === typesAffaires_conf.mutation">
-                                        <div class="md-subhead">Report des servitudes</div>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_13">BB a pris en compte les indications du SCAT / SAGR / SENE</md-checkbox>
-                                    </div>
-                                    
-                                </md-card-content>
-                            </md-card>
-                        </div>
-
-                        <div class="md-layout-item md-size-50 md-size-medium-100">
-                            <md-card>
-                                <md-card-header>
-                                    <div class="md-title">Contrôle</div>
-                                </md-card-header>
-                                
-                                <md-card-content>
-                                    <div class="md-subhead">Tous</div>
-                                    <md-checkbox class="md-primary" v-model="controleGeometre.check_15">Nom du cadastre et n° de bien-fonds corrects (cf extrait RF) et identiques sur tous les documents</md-checkbox>
-                                    <md-checkbox class="md-primary" v-model="controleGeometre.check_16">Les titres sont cohérents sur tous les documents</md-checkbox>
-                                    <div v-if="affaire.type_id === typesAffaires_conf.cadastration">
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_28">Présence de la lettre d’information à propos de la cadastration d’office</md-checkbox>
-                                    </div>
-                                    
-        
-                                    <div class="md-subhead">Désignation</div>
-                                    <md-checkbox class="md-primary" v-model="controleGeometre.check_17">Cohérence des provenances</md-checkbox>
-                                    <md-checkbox class="md-primary" v-model="controleGeometre.check_18">Nombre de documents: « fait en x plans, x désignations et x formules de report des servitude »</md-checkbox>
-                                    <md-checkbox class="md-primary" v-model="controleGeometre.check_19">Tampon(s) et date(s) sur la dernière feuille</md-checkbox>
-                                    <md-checkbox class="md-primary" v-model="controleGeometre.check_20">Mention « sans frais » indiquée le cas échéant (surtout changement dans ses natures)</md-checkbox>
-                                    <div v-if="affaire.type_id === typesAffaires_conf.cadastration">
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_34">Vérifier que le nom du propriétaire est entier</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_35">La surface du bien-fonds est la même que celle inscrite au RF</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_36">Vérifier les sommes des surfaces de l’état descriptif</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_37">Chaque bâtiment a un numéro</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_38">Pertinence de la désignation de bâtiment</md-checkbox>
-                                    </div>
-                                    <div v-if="affaire.type_id === typesAffaires_conf.modification">
-                                        <!-- Ajouter condition seulement pour les duplicatas -->
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_40">Phrase « DUPLICATA du plan du … »</md-checkbox>    
-                                    </div>
-                                    <div v-if="affaire.type_id === typesAffaires_conf.modification">
-                                        <!-- Ajouter condition afficher que dans le cas de modification et visa -->
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_42">Contrôle de l’indication « Visa » ou « Modification »</md-checkbox>
-                                    </div>
-                                    
-        
-                                    <div class="md-subhead">Plan</div>
-                                    <md-checkbox class="md-primary" v-model="controleGeometre.check_21">Le n° du BF est visible sur le plan</md-checkbox>
-                                    <md-checkbox class="md-primary" v-model="controleGeometre.check_22">Tampon(s) et date(s)</md-checkbox>
-                                    <div v-if="affaire.type_id === typesAffaires_conf.cadastration">
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_33">Chaque bâtiment a un numéro</md-checkbox>
-                                    </div>
-                                    <div v-if="affaire.type_id === typesAffaires_conf.modification">
-                                        <!-- Ajouter condition seulement pour les duplicatas -->
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_39" v-if="affaire.type_id === typesAffaires_conf.modification">Phrase « DUPLICATA du plan du … »</md-checkbox>
-                                    </div>
-                                    <div v-if="affaire.type_id === typesAffaires_conf.modification">
-                                        <!-- Ajouter condition afficher que dans le cas de modification et visa -->
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_41">Contrôle de l’indication « Visa » ou « Modification »</md-checkbox>
-                                    </div>
-                                    <div v-if="affaire.type_id === typesAffaires_conf.servitude">
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_43">contrôler si la servitude telle qu’elle est prévue est pertinente et possible. Il est possible qu’il faille diviser les géométries des servitudes pour représenter les différentes utilisations.</md-checkbox>
-                                    </div>
-                                    
-        
-                                    <div class="md-subhead">Facture</div>
-                                    <md-checkbox class="md-primary" v-model="controleGeometre.check_23">Titre de la facture</md-checkbox>
-                                    <md-checkbox class="md-primary" v-model="controleGeometre.check_24">Quantité et désignation (n° BF + cadastre) des articles facturés</md-checkbox>
-                                    <md-checkbox class="md-primary" v-model="controleGeometre.check_25">Prix unitaire des articles facturés (cf fichier excel)</md-checkbox>
-                                    <md-checkbox class="md-primary" v-model="controleGeometre.check_26">Si le destinataire de la facture est différent de celui des documents, vérifier que l’enveloppe contenant les documents porte la bonne adresse et qu’il y a 2 enveloppes</md-checkbox>
-                                    <div v-if="affaire.type_id === typesAffaires_conf.revision_abornement">
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_44">Le nombre de points est le même que sur le plan</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_45">Le montant est correct (~300.- par PL)</md-checkbox>
-                                    </div>
-                                    <div v-if="affaire.type_id === typesAffaires_conf.retablissement_pfp3">
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_46">Le nombre de points est le même que sur le plan</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_47">Le montant est correct (~ 380.- par PFP)</md-checkbox>
-                                    </div>
-                                    
-        
-                                    <div class="md-subhead">Enveloppe</div>
-                                    <md-checkbox class="md-primary" v-model="controleGeometre.check_27">Lettre A sur l’enveloppe (quand pour acte notarié)</md-checkbox>
-        
-        
-                                    <div v-if="affaire.type_id === typesAffaires_conf.cadastration">
-                                        <div class="md-subhead">Lettre</div>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_29">Eléments saisis manuellement (cf exemples)</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_30">Eléments issus d’Infolica (cf exemples)</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_31">Paragraphes spécifiques si une PPE et constituée sur le fond de base ou si une mention de « Constitution de PPE avant la construction du bâtiment » figure</md-checkbox>
+                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_10">BB a inscrit le montant pour le report des servitudes dans le fichier excel</md-checkbox>
                                         
-                                        <div class="md-subhead">Réquisition</div>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_32">Eléments saisis manuellement (cf exemples)</md-checkbox>
-                                    </div>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.mutation">
+                                            <div class="md-subhead">Report des servitudes</div>
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_13">BB a pris en compte les indications du SCAT / SAGR / SENE</md-checkbox>
+                                        </div>
+                                        
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+                            
+                            <div class="md-layout-item md-size-50 md-size-medium-100">
+                                <md-card>
+                                    <md-card-header>
+                                        <div class="md-title">Contrôle</div>
+                                    </md-card-header>
                                     
-                                </md-card-content>
-                            </md-card>
-                        </div>
-                    </div>
+                                    <md-card-content>
+                                        <div class="md-subhead">Tous</div>
+                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_15">Nom du cadastre et n° de bien-fonds corrects (cf extrait RF) et identiques sur tous les documents</md-checkbox>
+                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_16">Les titres sont cohérents sur tous les documents</md-checkbox>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.cadastration">
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_28">Présence de la lettre d’information à propos de la cadastration d’office</md-checkbox>
+                                        </div>
+                                        
+                                        
+                                        <div class="md-subhead">Désignation</div>
+                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_17">Cohérence des provenances</md-checkbox>
+                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_18">Nombre de documents: « fait en x plans, x désignations et x formules de report des servitude »</md-checkbox>
+                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_19">Tampon(s) et date(s) sur la dernière feuille</md-checkbox>
+                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_20">Mention « sans frais » indiquée le cas échéant (surtout changement dans ses natures)</md-checkbox>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.cadastration">
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_34">Vérifier que le nom du propriétaire est entier</md-checkbox>
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_35">La surface du bien-fonds est la même que celle inscrite au RF</md-checkbox>
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_36">Vérifier les sommes des surfaces de l’état descriptif</md-checkbox>
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_37">Chaque bâtiment a un numéro</md-checkbox>
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_38">Pertinence de la désignation de bâtiment</md-checkbox>
+                                        </div>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.modification">
+                                            <!-- Ajouter condition seulement pour les duplicatas -->
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_40">Phrase « DUPLICATA du plan du … »</md-checkbox>    
+                                        </div>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.modification">
+                                            <!-- Ajouter condition afficher que dans le cas de modification et visa -->
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_42">Contrôle de l’indication « Visa » ou « Modification »</md-checkbox>
+                                        </div>
+                                        
+                                        
+                                        <div class="md-subhead">Plan</div>
+                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_21">Le n° du BF est visible sur le plan</md-checkbox>
+                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_22">Tampon(s) et date(s)</md-checkbox>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.cadastration">
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_33">Chaque bâtiment a un numéro</md-checkbox>
+                                        </div>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.modification">
+                                            <!-- Ajouter condition seulement pour les duplicatas -->
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_39" v-if="affaire.type_id === typesAffaires_conf.modification">Phrase « DUPLICATA du plan du … »</md-checkbox>
+                                        </div>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.modification">
+                                            <!-- Ajouter condition afficher que dans le cas de modification et visa -->
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_41">Contrôle de l’indication « Visa » ou « Modification »</md-checkbox>
+                                        </div>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.servitude">
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_43">contrôler si la servitude telle qu’elle est prévue est pertinente et possible. Il est possible qu’il faille diviser les géométries des servitudes pour représenter les différentes utilisations.</md-checkbox>
+                                        </div>
 
-                    <br>
 
-                    <div class="md-layout md-gutter">
-                        <div class="md-layout-item md-size-75 md-small-size-100">
-                            <md-field>
-                                <label>Remarques</label>
-                                <md-textarea v-model="controleGeometre.remarque"></md-textarea>
-                            </md-field>
-                        </div>
+                                        <div class="md-subhead">Facture</div>
+                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_23">Titre de la facture</md-checkbox>
+                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_24">Quantité et désignation (n° BF + cadastre) des articles facturés</md-checkbox>
+                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_25">Prix unitaire des articles facturés (cf fichier excel)</md-checkbox>
+                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_26">Si le destinataire de la facture est différent de celui des documents, vérifier que l’enveloppe contenant les documents porte la bonne adresse et qu’il y a 2 enveloppes</md-checkbox>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.revision_abornement">
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_44">Le nombre de points est le même que sur le plan</md-checkbox>
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_45">Le montant est correct (~300.- par PL)</md-checkbox>
+                                        </div>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.retablissement_pfp3">
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_46">Le nombre de points est le même que sur le plan</md-checkbox>
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_47">Le montant est correct (~ 380.- par PFP)</md-checkbox>
+                                        </div>
 
-                        <div class="md-layout-item md-size-25 md-small-size-100">
-                            <div style="float: right;">
-                                <md-field style="width: 200px">
-                                    <md-input v-model="controleGeometre.date" readonly></md-input>
-                                </md-field>
-                                <md-field style="width: 200px">
-                                    <md-input v-model="operateur.nom" readonly></md-input>
-                                </md-field>
 
-                                <md-button class="md-raised md-accent" @click="searchControleGeometre()">Annuler</md-button>
-                                <md-button class="md-raised md-primary" @click="updateControleGeometre()">Enregistrer</md-button>
+                                        <div class="md-subhead">Enveloppe</div>
+                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_27">Lettre A sur l’enveloppe (quand pour acte notarié)</md-checkbox>
+
+
+                                        <div v-if="affaire.type_id === typesAffaires_conf.cadastration">
+                                            <div class="md-subhead">Lettre</div>
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_29">Eléments saisis manuellement (cf exemples)</md-checkbox>
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_30">Eléments issus d’Infolica (cf exemples)</md-checkbox>
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_31">Paragraphes spécifiques si une PPE et constituée sur le fond de base ou si une mention de « Constitution de PPE avant la construction du bâtiment » figure</md-checkbox>
+
+                                            <div class="md-subhead">Réquisition</div>
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_32">Eléments saisis manuellement (cf exemples)</md-checkbox>
+                                        </div>
+
+                                    </md-card-content>
+                                </md-card>
                             </div>
                         </div>
+                        
+                        <br>
+                        
+                        <div class="md-layout md-gutter">
+                            <div class="md-layout-item md-size-75 md-small-size-100">
+                                <md-field>
+                                    <label>Remarques</label>
+                                    <md-textarea v-model="controleGeometre.remarque"></md-textarea>
+                                </md-field>
+                            </div>
+                            
+                            <div class="md-layout-item md-size-25 md-small-size-100">
+                                <div style="float: right;">
+                                    <md-field style="width: 200px">
+                                        <label>Date</label>
+                                        <md-input v-model="controleGeometre.date" readonly></md-input>
+                                    </md-field>
+                                    <md-field style="width: 200px">
+                                        <label>Opérateur</label>
+                                        <md-input v-model="operateur.nom" readonly></md-input>
+                                    </md-field>
+                                    
+                                    <md-button class="md-raised md-accent" @click="searchControleGeometre()">Annuler</md-button>
+                                    <md-button class="md-raised md-primary" @click="updateControleGeometre()">Enregistrer</md-button>
+                                </div>
+                            </div>
+                            
+                        </div>
 
                     </div>
-                    
+                    <div v-else>
+                        <em>Aucun contrôle</em>
+                    </div>
+
                 </md-card-content>
             </md-card-expand-content>
         </md-card-expand>

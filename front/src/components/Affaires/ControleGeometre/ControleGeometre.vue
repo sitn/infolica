@@ -21,7 +21,8 @@ export default {
     operateur: {
       id: null,
       nom: null
-    }
+    },
+    showNewControleGeometreBtn: false,
   }),
 
   methods: {
@@ -172,6 +173,30 @@ export default {
           handleException(err, this);
         });
     },
+
+    /**
+     * Create new controle geometre
+     */
+    async createControleGeometre() {
+      let formData = new FormData();
+      formData.append("affaire_id", this.affaire.id);
+
+      this.$http.post(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_CONTROLE_GEOMETRE_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.$root.$emit("ShowMessage", "Le formulaire de contrôle a bien été créé");
+          this.searchControleGeometre();
+        }
+      })
+      .catch(err => handleException(err, this));
+    }
+
   },
 
   mounted: function() {
