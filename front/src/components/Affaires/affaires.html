@@ -1,8 +1,8 @@
 <div class="affaires">
 
-    <md-toolbar>
-        <h1 style="flex: 1;">Affaires</h1>
-        <md-button class="md-raised md-accent buttonRightAlign" v-if="newAffaireAllowed" @click="$router.push({name: 'NewAffaire'})">Nouvelle affaire</md-button>
+    <md-toolbar class="justifyTitleBtn">
+            <h1>Affaires</h1>
+            <md-button class="md-raised md-accent" v-if="newAffaireAllowed" @click="$router.push({name: 'NewAffaire'})">Nouvelle affaire</md-button>
     </md-toolbar>
 
     <!-- Search -->

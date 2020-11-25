@@ -1,170 +1,170 @@
 <div class="clientsEdit">
 
   <md-toolbar>
-    <h1 style="flex: 1;">Edition de clients</h1>
+    <h1>Edition de clients</h1>
   </md-toolbar>
 
-    <md-card class="md-size-100 md-small-size-100">
-      <md-card-content>
+  <md-card class="md-size-100 md-small-size-100">
+    <md-card-content>
 
-        <!-- Type de client -->
-        <div class="md-layout md-gutter">
-          <div class="md-layout-item md-small-size-100 md-size-50">
-            <md-field :class="getValidationClass('type_client')">
-              <label for="type_client">Type client</label>
-              <md-select name="type_client" id="type_client" v-model="form.type_client" md-dense :disabled="sending" required>
-                <md-option v-for="item in types_clients_list" :key="item.id" :value="item.id">{{ item.nom }}</md-option>
-              </md-select>
-              <span class="md-error" v-if="!$v.form.type_client.required">Le type client est obligatoire</span>
-            </md-field>
-          </div>
+      <!-- Type de client -->
+      <div class="md-layout md-gutter">
+        <div class="md-layout-item md-small-size-100 md-size-50">
+          <md-field :class="getValidationClass('type_client')">
+            <label for="type_client">Type client</label>
+            <md-select name="type_client" id="type_client" v-model="form.type_client" md-dense :disabled="sending" required>
+              <md-option v-for="item in types_clients_list" :key="item.id" :value="item.id">{{ item.nom }}</md-option>
+            </md-select>
+            <span class="md-error" v-if="!$v.form.type_client.required">Le type client est obligatoire</span>
+          </md-field>
+        </div>
+      </div>
+
+      <!-- Entreprise et Titre -->
+      <div class="md-layout md-gutter">
+        <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.type_client === clients_types_config.personne_morale">
+          <md-field>
+            <label for="entreprise">Entreprise</label>
+            <md-input name="entreprise" id="entreprise" v-model="form.entreprise" :disabled="sending" />
+          </md-field>
+        </div>
+        <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.type_client === clients_types_config.personne_physique">
+          <md-field>
+            <label>Titre</label>
+            <md-select v-model="form.titre">
+              <md-option value="Monsieur" selected>Monsieur</md-option>
+              <md-option value="Madame">Madame</md-option>
+              <md-option value="Maître">Maître</md-option>
+            </md-select>
+          </md-field>
+        </div>
+      </div>
+
+      <!-- Nom et Prénom -->
+      <div class="md-layout md-gutter" v-if="form.type_client === clients_types_config.personne_physique">
+        <div class="md-layout-item md-small-size-100 md-size-50">
+          <md-field :class="getValidationClass('nom')">
+            <label for="nom">Nom</label>
+            <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending" />
+          </md-field>
         </div>
 
-        <!-- Entreprise et Titre -->
-        <div class="md-layout md-gutter">
-          <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.type_client === clients_types_config.personne_morale">
-            <md-field>
-              <label for="entreprise">Entreprise</label>
-              <md-input name="entreprise" id="entreprise" v-model="form.entreprise" :disabled="sending" />
-            </md-field>
-          </div>
-          <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.type_client === clients_types_config.personne_physique">
-            <md-field>
-              <label>Titre</label>
-              <md-select v-model="form.titre">
-                <md-option value="Monsieur" selected>Monsieur</md-option>
-                <md-option value="Madame">Madame</md-option>
-                <md-option value="Maître">Maître</md-option>
-              </md-select>
-            </md-field>
-          </div>
+        <div class="md-layout-item md-small-size-100 md-size-50">
+          <md-field :class="getValidationClass('prenom')">
+            <label for="prenom">Prénom</label>
+            <md-input name="prenom" id="prenom" v-model="form.prenom" :disabled="sending" />
+          </md-field>
+        </div>
+      </div>
+
+      <div class="md-layout md-gutter">
+        <div class="md-layout-item">
+          <md-field>
+            <label>Complément (co ou autre...)</label>
+            <md-input v-model="form.co" :disabled="sending"></md-input>
+          </md-field>
+        </div>
+      </div>
+
+      <!-- Adresse -->
+      <div class="md-layout md-gutter">
+        <div class="md-layout-item md-small-size-100 md-size-50">
+          <md-field>
+            <label for="adresse">Adresse</label>
+            <md-input name="adresse" id="adresse" v-model="form.adresse" :disabled="sending" />
+          </md-field>
         </div>
 
-        <!-- Nom et Prénom -->
-        <div class="md-layout md-gutter" v-if="form.type_client === clients_types_config.personne_physique">
-          <div class="md-layout-item md-small-size-100 md-size-50">
-            <md-field :class="getValidationClass('nom')">
-              <label for="nom">Nom</label>
-              <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending" />
-            </md-field>
-          </div>
-
-          <div class="md-layout-item md-small-size-100 md-size-50">
-            <md-field :class="getValidationClass('prenom')">
-              <label for="prenom">Prénom</label>
-              <md-input name="prenom" id="prenom" v-model="form.prenom" :disabled="sending" />
-            </md-field>
-          </div>
+        <div class="md-layout-item md-small-size-100 md-size-15">
+          <md-field>
+            <label for="npa">Npa</label>
+            <md-input name="npa" id="npa" v-model="form.npa" :disabled="sending" />
+          </md-field>
         </div>
 
-        <div class="md-layout md-gutter">
-          <div class="md-layout-item">
-            <md-field>
-              <label>Complément (co ou autre...)</label>
-              <md-input v-model="form.co" :disabled="sending"></md-input>
-            </md-field>
-          </div>
+        <div class="md-layout-item md-small-size-100 md-size-35">
+          <md-field>
+            <label for="localite">Localité</label>
+            <md-input name="localite" id="localite" v-model="form.localite" :disabled="sending" />
+          </md-field>
+        </div>
+      </div>
+
+      <!-- Case postale -->
+      <div class="md-layout md-gutter">
+        <div class="md-layout-item md-small-size-100 md-size-50">
+          <md-field>
+            <label for="case_postale">Case postale</label>
+            <md-input name="case_postale" id="case_postale" v-model="form.case_postale" :disabled="sending" />
+          </md-field>
+        </div>
+      </div>
+
+      <!-- Téléphones -->
+      <div class="md-layout md-gutter">
+        <div class="md-layout-item md-small-size-100 md-size-50">
+          <md-field>
+            <label for="tel_fixe">Téléphone fixe</label>
+            <md-input name="tel_fixe" id="tel_fixe" v-model="form.tel_fixe" :disabled="sending" />
+            <span class="md-helper-text">Format: 032 123 45 67</span>
+          </md-field>
+        </div>
+        
+        <div class="md-layout-item md-small-size-100 md-size-50">
+          <md-field>
+            <label for="tel_portable">Téléphone portable/autre</label>
+            <md-input name="tel_portable" id="tel_portable" v-model="form.tel_portable" :disabled="sending" />
+            <span class="md-helper-text">Format: 079 123 45 67</span>
+          </md-field>
+        </div>
+      </div>
+
+      <!-- Adresse mail et fax -->
+      <div class="md-layout md-gutter">
+        <div class="md-layout-item md-small-size-100 md-size-50">
+          <md-field :class="getValidationClass('mail')">
+            <label for="mail">Email</label>
+            <md-input type="mail" name="mail" id="mail" v-model="form.mail" :disabled="sending" />
+            <span class="md-error" v-if="!$v.form.mail.email">Adresse mail invalide</span>
+          </md-field>
+        </div>
+      </div>
+
+      <!-- NO SAP et NO BDP/BDEE -->
+      <div class="md-layout md-gutter">
+        <div class="md-layout-item md-small-size-100 md-size-50">
+          <md-field>
+            <label for="no_sap">No SAP</label>
+            <md-input name="no_sap" id="no_sap" v-model="form.no_sap" :disabled="sending" />
+          </md-field>
         </div>
 
-        <!-- Adresse -->
-        <div class="md-layout md-gutter">
-          <div class="md-layout-item md-small-size-100 md-size-50">
-            <md-field>
-              <label for="adresse">Adresse</label>
-              <md-input name="adresse" id="adresse" v-model="form.adresse" :disabled="sending" />
-            </md-field>
-          </div>
-
-          <div class="md-layout-item md-small-size-100 md-size-15">
-            <md-field>
-              <label for="npa">Npa</label>
-              <md-input name="npa" id="npa" v-model="form.npa" :disabled="sending" />
-            </md-field>
-          </div>
-
-          <div class="md-layout-item md-small-size-100 md-size-35">
-            <md-field>
-              <label for="localite">Localité</label>
-              <md-input name="localite" id="localite" v-model="form.localite" :disabled="sending" />
-            </md-field>
-          </div>
+        <div class="md-layout-item md-small-size-100 md-size-50">
+          <md-field>
+            <label for="no_bdp_bdee">No BDP ou BDEE</label>
+            <md-input name="no_bdp_bdee" id="no_bdp_bdee" v-model="form.no_bdp_bdee" :disabled="sending" />
+          </md-field>
         </div>
+      </div>
 
-        <!-- Case postale -->
-        <div class="md-layout md-gutter">
-          <div class="md-layout-item md-small-size-100 md-size-50">
-            <md-field>
-              <label for="case_postale">Case postale</label>
-              <md-input name="case_postale" id="case_postale" v-model="form.case_postale" :disabled="sending" />
-            </md-field>
-          </div>
+      <!-- Date d'entrée -->
+      <div class="md-layout md-gutter">
+        <div class="md-layout-item md-small-size-100 md-size-25">
+          <md-datepicker v-model="form.entree" md-immediately :class="getValidationClass('entree')">
+            <label>Date d'entrée *</label>
+          </md-datepicker>
         </div>
+      </div>
 
-        <!-- Téléphones -->
-        <div class="md-layout md-gutter">
-          <div class="md-layout-item md-small-size-100 md-size-50">
-            <md-field>
-              <label for="tel_fixe">Téléphone fixe</label>
-              <md-input name="tel_fixe" id="tel_fixe" v-model="form.tel_fixe" :disabled="sending" />
-              <span class="md-helper-text">Format: 032 123 45 67</span>
-            </md-field>
-          </div>
-          
-          <div class="md-layout-item md-small-size-100 md-size-50">
-            <md-field>
-              <label for="tel_portable">Téléphone portable/autre</label>
-              <md-input name="tel_portable" id="tel_portable" v-model="form.tel_portable" :disabled="sending" />
-              <span class="md-helper-text">Format: 079 123 45 67</span>
-            </md-field>
-          </div>
-        </div>
+    </md-card-content>
 
-        <!-- Adresse mail et fax -->
-        <div class="md-layout md-gutter">
-          <div class="md-layout-item md-small-size-100 md-size-50">
-            <md-field :class="getValidationClass('mail')">
-              <label for="mail">Email</label>
-              <md-input type="mail" name="mail" id="mail" v-model="form.mail" :disabled="sending" />
-              <span class="md-error" v-if="!$v.form.mail.email">Adresse mail invalide</span>
-            </md-field>
-          </div>
-        </div>
+    <md-progress-bar md-mode="indeterminate" v-if="sending" />
 
-        <!-- NO SAP et NO BDP/BDEE -->
-        <div class="md-layout md-gutter">
-          <div class="md-layout-item md-small-size-100 md-size-50">
-            <md-field>
-              <label for="no_sap">No SAP</label>
-              <md-input name="no_sap" id="no_sap" v-model="form.no_sap" :disabled="sending" />
-            </md-field>
-          </div>
-
-          <div class="md-layout-item md-small-size-100 md-size-50">
-            <md-field>
-              <label for="no_bdp_bdee">No BDP ou BDEE</label>
-              <md-input name="no_bdp_bdee" id="no_bdp_bdee" v-model="form.no_bdp_bdee" :disabled="sending" />
-            </md-field>
-          </div>
-        </div>
-
-        <!-- Date d'entrée -->
-        <div class="md-layout md-gutter">
-          <div class="md-layout-item md-small-size-100 md-size-25">
-            <md-datepicker v-model="form.entree" md-immediately :class="getValidationClass('entree')">
-              <label>Date d'entrée *</label>
-            </md-datepicker>
-          </div>
-        </div>
-
-      </md-card-content>
-
-      <md-progress-bar md-mode="indeterminate" v-if="sending" />
-
-      <md-card-actions>
-        <md-button class="md-raised" :disabled="sending" v-on:click="cancelEdit">Annuler</md-button>
-        <md-button class="md-raised md-primary" :disabled="sending" v-on:click="validateForm">Enregistrer</md-button>
-      </md-card-actions>
-    </md-card>
+    <md-card-actions>
+      <md-button class="md-raised" :disabled="sending" v-on:click="cancelEdit">Annuler</md-button>
+      <md-button class="md-raised md-primary" :disabled="sending" v-on:click="validateForm">Enregistrer</md-button>
+    </md-card-actions>
+  </md-card>
 
   <!-- Personnes travaillant dans une entreprise -->
   <md-card v-if="form.type_client === clients_types_config.personne_morale">

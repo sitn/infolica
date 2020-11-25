@@ -7,11 +7,6 @@
     width: 32%;
 }
 
-.controleMutation .newControleMutationBtn {
-    right: 25px;
-    position: absolute;
-}
-
 .controleMutation .justify {
     display: flex;
     justify-content: space-between;

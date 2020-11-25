@@ -5,10 +5,4 @@
 
 .suiviMandat .suiviMandatForm {
     width: 32%;
-    /*float: left;*/
-}
-
-.suiviMandat .newSuiviMandatBtn {
-    right: 25px;
-    position: absolute;
 }

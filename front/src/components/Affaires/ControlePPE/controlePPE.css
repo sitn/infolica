@@ -5,10 +5,5 @@
 
 .controlePPE .controlePPEForm {
     width: 95%;
-    /*float: left;*/
 }
 
-.controlePPE .newControlePPEBtn {
-    right: 25px;
-    position: absolute;
-}
