@@ -8,11 +8,14 @@ import Map from "ol/Map";
 import View from "ol/View";
 //import {defaults as defaultControls, ScaleLine} from 'ol/control';
 import TileLayer from "ol/layer/Tile";
-import TileWMS from "ol/source/TileWMS";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
+import {WMTSCapabilities} from "ol/format";
+import WMTS from "ol/source/WMTS";
+import {optionsFromCapabilities} from "ol/source/WMTS";
+
 
 import { Style, Circle, Fill, Stroke, RegularShape } from "ol/style";
 import GeoJSON from 'ol/format/GeoJSON';
@@ -43,18 +46,8 @@ export default {
       //Init marker style
       this.initMarkerStyle();
 
-      //WMS
-      const wmsSource = new TileWMS({
-        url: process.env.VUE_APP_WMS_URL,
-        params: {
-          LAYERS: "plan_cadastral_couleur",
-          TILED: false
-        }
-      });
-
-      const wmsLayer = new TileLayer({
-        source: wmsSource
-      });
+      // WMTS
+      this.wmtsLayer = new TileLayer();
 
       // Vector layer
       this.vectorSource = new VectorSource({
@@ -64,11 +57,13 @@ export default {
         source: this.vectorSource
       });
 
+      this.initWmtsSource();
+
       // Graphics layer
       this.initGraphicsLayer();
 
       // Map layers
-      const layers = [wmsLayer, this.vectorLayer, this.graphicsLayer];
+      const layers = [this.wmtsLayer, this.vectorLayer, this.graphicsLayer];
 
       //View
       this.view = new View({
@@ -209,6 +204,25 @@ export default {
       });
     },
 
+    initWmtsSource: function() {
+      this.$http
+          .get(
+            process.env.VUE_APP_WMTS_GETCAPABILITIES_URL
+          )
+          .then(response => {
+            const parser = new WMTSCapabilities();
+            const result = parser.read(response.data);
+            const WMTSoptions = optionsFromCapabilities(
+              result,{
+                layer: process.env.VUE_APP_WMTS_LAYER,
+                matrixSet: process.env.VUE_APP_MAP_PROJECTION
+              }
+            )
+            const source = new WMTS(WMTSoptions);
+            this.wmtsLayer.setSource(source);
+         });
+
+    },
     /**
      * Add graphic to graphics layer
      */
