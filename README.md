@@ -21,8 +21,10 @@ pip install -r requirements.txt
 ```
 
 Make your changes in config files.
-Rename `production.ini.template` to `production.ini`  
-Open the file and adapt `sqlalchemy.url`, `ldap_url` and `ldap_passwd` etc.
+Rename `production.ini.template` to `production.ini`.
+Open the file and adapt `sqlalchemy.url`, `ldap_url`, `ldap_passwd` and all the config according to your needs.
+
+> :warning: Infolica is based on PG Database and depends on some geographical components. Make sure to add the `postgis` extension to your database schema.
 
 Install the project in editable mode
 ```
