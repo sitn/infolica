@@ -176,6 +176,10 @@ temporary_directory = /path/to/temporary_directory
 
 fichier_balance_prefix = Des_
 
+authtkt_secret=secret_string_which_should_be_unbreakable
+authtkt_cookie_name=infolica_cookie
+authtk_samesite=None
+authtk_secure=True
 
 retry.attempts = 3
 

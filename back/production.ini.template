@@ -173,7 +173,11 @@ fichier_balance_prefix = Des_
 ######################################################################################
 access_control_allow_origin = http://127.0.0.1:81
 
-
+# cookie configuration
+authtkt_secret=secret_string_which_should_be_unbreakable
+authtkt_cookie_name=infolica_cookie
+authtk_samesite=Lax
+authtk_secure=False
 
 retry.attempts = 3
 
