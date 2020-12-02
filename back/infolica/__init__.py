@@ -20,9 +20,14 @@ def main(global_config, **settings):
         config.include('pyramid_ldap3')
         config.scan()
         config.add_subscriber(add_cors_headers_response_callback, NewRequest)
-
         config.set_authentication_policy(
-            AuthTktAuthenticationPolicy('secret', callback=groupfinder)
+            AuthTktAuthenticationPolicy(
+                settings["authtkt_secret"],
+                cookie_name=settings["authtkt_cookie_name"],
+                callback=groupfinder,
+                samesite=settings["authtk_samesite"],
+                secure=settings["authtk_secure"]
+            )
         )
         config.set_authorization_policy(
             ACLAuthorizationPolicy()
