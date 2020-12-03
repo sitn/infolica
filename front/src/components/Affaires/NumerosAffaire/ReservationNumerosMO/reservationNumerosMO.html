@@ -37,8 +37,10 @@
                             <md-autocomplete v-model="form.cadastre"
                                              :md-options="cadastreListe"
                                              @md-changed="changeCadastre"
-                                             md-dense>
+                                             md-dense
+                                             :class="getValidationClass('cadastre')">
                                 <label>Cadastre</label>
+                                <span class="md-error" v-if="!$v.form.cadastre.required">Sélectionner le cadastre</span>
                             </md-autocomplete>
                         </div>
         
