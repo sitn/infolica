@@ -4,7 +4,7 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
-import { checkPermission, getCadastres, stringifyAutocomplete } from "@/services/helper";
+import { checkPermission, getCadastres, stringifyAutocomplete, logAffaireEtape } from "@/services/helper";
 import { validationMixin } from "vuelidate";
 import { required, minValue, requiredIf } from "vuelidate/lib/validators";
 
@@ -164,11 +164,21 @@ export default {
      */
     saveReservation() {
       this.alertReservation.text = "<p>Cadastre: " + this.form.cadastre.nom + "</p>";
-      this.alertReservation.text += "<p>PFP3: " + this.form.pfp3 + "</p>";
-      this.alertReservation.text += "<p>Points auxiliaires: " + this.form.paux + "</p>";
-      this.alertReservation.text += "<p>Bâtiments: " + this.form.bat + "</p>";
-      this.alertReservation.text += "<p>Points de détail" + (this.form.pdet === 0? "": " sur plan " + this.form.plan) + ": " + this.form.pdet + "</p>";
-      this.alertReservation.text += "<p>Domaines publics: " + this.form.dp + "</p>";
+      if (Number(this.form.pfp3) > 0) {
+        this.alertReservation.text += "<p>PFP3: " + this.form.pfp3 + "</p>";
+      }
+      if (Number(this.form.paux) > 0) {
+        this.alertReservation.text += "<p>Points auxiliaires: " + this.form.paux + "</p>";
+      }
+      if (Number(this.form.bat) > 0) {
+        this.alertReservation.text += "<p>Bâtiments: " + this.form.bat + "</p>";
+      }
+      if (Number(this.form.pdet) > 0) {
+        this.alertReservation.text += "<p>Points de détail sur plan " + this.form.plan + ": " + this.form.pdet + "</p>";
+      }
+      if (Number(this.form.dp) > 0) {
+        this.alertReservation.text += "<p>Domaines publics: " + this.form.dp + "</p>";
+      }
       this.alertReservation.show = true;
     },
 
@@ -198,8 +208,16 @@ export default {
         if (response) {
           this.searchReservationNumerosMO();
           this.showReservationNumerosMODialog = false;
-          this.resetReservation();
           this.$root.$emit("ShowMessage", "Les numéros ont bien été enregistrés");
+          //Log edition facture
+          let comment = ["Cadastre: " + this.form.cadastre.nom,
+                         Number(this.form.pfp3) > 0? this.form.pfp3 + " PFP3 ": null,
+                         Number(this.form.paux) > 0? this.form.paux + " points auxiliaires ": null,
+                         Number(this.form.bat) > 0? this.form.bat + " bâtiments ": null,
+                         Number(this.form.pdet) > 0? this.form.pdet + " points de détail sur plan " + this.form.plan: null,
+                         Number(this.form.dp) > 0? this.form.dp + " domaines publics": null].join(", ");
+          logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_RESERVATION_NUMEROS_MO_ID), comment);
+          this.resetReservation();
         }
       }).catch(err => handleException(err, this));
     },
