@@ -6,7 +6,7 @@
 import { handleException } from "@/services/exceptionsHandler";
 import { checkPermission, getCadastres, stringifyAutocomplete } from "@/services/helper";
 import { validationMixin } from "vuelidate";
-import { required, minValue } from "vuelidate/lib/validators";
+import { required, minValue, requiredIf } from "vuelidate/lib/validators";
 
 const moment = require("moment");
 
@@ -62,6 +62,12 @@ export default {
         minValue: minValue(0)
       }
     }
+
+    form.plan = {
+      required: requiredIf(function() {return this.form.pdet > 0}), 
+    }
+
+
     return { form };
   },
 
@@ -157,16 +163,12 @@ export default {
      * on save reservation, if large amount of numbers
      */
     saveReservation() {
-      if (this.form.pfp3 === 0 && this.form.paux === 0 && this.form.bat === 0 && this.form.pdet === 0 && this.form.dp === 0){
-        this.alertReservation.text = "<p>Il n'y a pas de numéro à réserver.</p>";
-      } else {
-        this.alertReservation.text = "<p>Cadastre: " + this.form.cadastre.nom + "</p>";
-        this.alertReservation.text += "<p>PFP3: " + this.form.pfp3 + "</p>";
-        this.alertReservation.text += "<p>Points auxiliaires: " + this.form.paux + "</p>";
-        this.alertReservation.text += "<p>Bâtiments: " + this.form.bat + "</p>";
-        this.alertReservation.text += "<p>Points de détail" + (this.form.plan === ""? "": " sur plan " + this.form.plan) + ": " + this.form.pdet + "</p>";
-        this.alertReservation.text += "<p>Domaines publics: " + this.form.dp + "</p>";
-      }
+      this.alertReservation.text = "<p>Cadastre: " + this.form.cadastre.nom + "</p>";
+      this.alertReservation.text += "<p>PFP3: " + this.form.pfp3 + "</p>";
+      this.alertReservation.text += "<p>Points auxiliaires: " + this.form.paux + "</p>";
+      this.alertReservation.text += "<p>Bâtiments: " + this.form.bat + "</p>";
+      this.alertReservation.text += "<p>Points de détail" + (this.form.pdet === 0? "": " sur plan " + this.form.plan) + ": " + this.form.pdet + "</p>";
+      this.alertReservation.text += "<p>Domaines publics: " + this.form.dp + "</p>";
       this.alertReservation.show = true;
     },
 
@@ -253,7 +255,7 @@ export default {
 
       if (!this.$v.$invalid) {
 
-        if (this.form.pfp3 === 0 && this.form.paux === 0 && this.form.bat === 0 && this.form.pdet === 0 && this.form.dp === 0) {
+        if ((this.form.pfp3 === 0 || this.form.pfp3 === "0") && (this.form.paux === 0 || this.form.paux === "0") && (this.form.bat === 0 || this.form.bat === "0") && (this.form.pdet === 0 || this.form.pdet === "0") && (this.form.dp === 0 || this.form.dp === "0")) {
           this.reservationNumerosMODialog_errorMsg = "Aucun numéro à réserver...";
           return;
         } else {

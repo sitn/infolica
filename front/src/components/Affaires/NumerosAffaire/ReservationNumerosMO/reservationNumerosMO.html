@@ -73,8 +73,10 @@
                         </div>
                         <div class="md-layout-item md-size-50">
                             <!-- Points de détail -->
-                            <md-autocomplete style="text-align: right;" v-model="form.plan" :md-options="plansMOListe_cadastre" md-dense>
+                            <md-autocomplete style="text-align: right;" v-model="form.plan" :md-options="plansMOListe_cadastre" md-dense
+                                :class="getValidationClass('plan')">
                                 <label>Plan</label>
+                                <span class="md-error" v-if="!$v.form.plan.required">Sélectionner le plan</span>
                             </md-autocomplete>
                         </div>
                         <div class="md-layout-item md-size-50">
