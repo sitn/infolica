@@ -31,6 +31,7 @@ class Operateur(Base):
     responsable = Column(Boolean, default=False, nullable=False)
     entree = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     sortie = Column(Date)
+    mail = Column(Text)
 
 
 class Cadastre(Base):
@@ -289,7 +290,7 @@ class SuiviMandat(Base):
     __tablename__ = 'suivi_mandat'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     av_11 = Column(Boolean)  # CREATION DE L’AFFAIRE DANS INFOLICA
     av_12 = Column(Date)  # DATE CREATION DE L’AFFAIRE DANS INFOLICA
     av_21 = Column(Boolean)  # CREATION DE L’AFFAIRE DANSTIMELEAD
@@ -323,7 +324,7 @@ class ControleMutation(Base):
     __tablename__ = 'controle_mutation'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     terrain_1 = Column(Date)  # Terrain - Levés préliminaires
     terrain_2 = Column(Date)  # Terrain - Matérialisations
     terrain_3 = Column(Date)  # Terrain - Levés
@@ -797,6 +798,15 @@ class GeosBalance(Base):
     gid_numero_old = Column(String(50))
     gid_mutation = Column(String(50))
     geom = Column(Geometry('POINT'))
+
+
+class EtapeMailer(Base):
+    __tablename__ = 'etape_mailer'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    etape_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id), nullable=False)
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
+    sendmail = Column(Boolean)
 
 
 # ======================== VUES ========================
