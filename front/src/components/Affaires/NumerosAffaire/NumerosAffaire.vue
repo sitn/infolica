@@ -5,8 +5,8 @@
 <script>
 import { handleException } from "@/services/exceptionsHandler";
 import { getCurrentDate, checkPermission, getDocument } from "@/services/helper";
-import ReferenceNumeros from "@/components/ReferenceNumeros/ReferenceNumeros.vue";
-import ReservationNumeros from "@/components/ReservationNumeros/ReservationNumeros.vue";
+import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
+import ReservationNumeros from "@/components/Affaires/NumerosAffaire/ReservationNumeros/ReservationNumeros.vue";
 import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue";
 import ReservationNumerosMO from "@/components/Affaires/NumerosAffaire/ReservationNumerosMO/ReservationNumerosMO.vue";
 import Balance from "@/components/Affaires/Balance/Balance.vue";
