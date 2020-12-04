@@ -153,16 +153,6 @@
 
                         <!-- Visa et date -->
                         <div class="md-layout md-gutter">
-                            <div class="md-layout-item md-size-25">
-                                <md-autocomplete v-model="suiviMandat.visa" :md-options="chefsProjetMO_liste" md-dense>
-                                    <label>Visa</label>
-                                </md-autocomplete>
-                            </div>
-                            <div class="md-layout-item md-size-25">
-                                <md-datepicker v-model="suiviMandat.date" md-immediately>
-                                    <label>Date</label>
-                                </md-datepicker>
-                            </div>
                             <div class="md-layout md-alignment-bottom-right">
                                 <md-button class="md-accent md-raised" v-on:click="onCancelEditSuiviMandat" v-if="!affaireReadonly">
                                     Annuler
