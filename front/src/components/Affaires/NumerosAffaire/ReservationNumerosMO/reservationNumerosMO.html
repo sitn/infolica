@@ -37,8 +37,10 @@
                             <md-autocomplete v-model="form.cadastre"
                                              :md-options="cadastreListe"
                                              @md-changed="changeCadastre"
-                                             md-dense>
+                                             md-dense
+                                             :class="getValidationClass('cadastre')">
                                 <label>Cadastre</label>
+                                <span class="md-error" v-if="!$v.form.cadastre.required">Sélectionner le cadastre</span>
                             </md-autocomplete>
                         </div>
         
@@ -46,35 +48,45 @@
         
                         <div class="md-layout-item md-size-100">
                             <!-- Points PFP3 -->
-                            <md-field>
+                            <md-field :class="getValidationClass('pfp3')">
                                 <label>Nb PFP3</label>
                                 <md-input style="text-align: right;" v-model="form.pfp3" @focus="$event.target.select()" type="number" min="0"></md-input>
+                                <span class="md-error" v-if="!$v.form.pfp3.required">Combien de numéros faut-il réserver?</span>
+                                <span class="md-error" v-if="!$v.form.pfp3.minValue">Réserver au moins un numéro</span>
                             </md-field>
                         </div>
                         <div class="md-layout-item md-size-100">
                             <!-- Points de auxiliaires -->
-                            <md-field>
+                            <md-field :class="getValidationClass('paux')">
                                 <label>Nb Points auxiliaires</label>
                                 <md-input style="text-align: right;" v-model="form.paux" @focus="$event.target.select()" type="number" min="0"></md-input>
+                                <span class="md-error" v-if="!$v.form.paux.required">Combien de numéros faut-il réserver?</span>
+                                <span class="md-error" v-if="!$v.form.paux.minValue">Réserver au moins un numéro</span>
                             </md-field>
                         </div>
                         <div class="md-layout-item md-size-100">
                             <!-- Points Bâtiments -->
-                            <md-field>
+                            <md-field :class="getValidationClass('bat')">
                                 <label>Nb Bâtiments</label>
                                 <md-input style="text-align: right;" v-model="form.bat" @focus="$event.target.select()" type="number" min="0"></md-input>
+                                <span class="md-error" v-if="!$v.form.bat.required">Combien de numéros faut-il réserver?</span>
+                                <span class="md-error" v-if="!$v.form.bat.minValue">Réserver au moins un numéro</span>
                             </md-field>
                         </div>
                         <div class="md-layout-item md-size-50">
                             <!-- Points de détail -->
-                            <md-autocomplete style="text-align: right;" v-model="form.plan" :md-options="plansMOListe_cadastre" md-dense>
+                            <md-autocomplete style="text-align: right;" v-model="form.plan" :md-options="plansMOListe_cadastre" md-dense
+                                :class="getValidationClass('plan')">
                                 <label>Plan</label>
+                                <span class="md-error" v-if="!$v.form.plan.required">Sélectionner le plan</span>
                             </md-autocomplete>
                         </div>
                         <div class="md-layout-item md-size-50">
-                            <md-field>
+                            <md-field :class="getValidationClass('pdet')">
                                 <label>Nb Points de détail</label>
                                 <md-input style="text-align: right;" v-model="form.pdet" @focus="$event.target.select()" type="number" min="0"></md-input>
+                                <span class="md-error" v-if="!$v.form.pdet.required">Combien de numéros faut-il réserver?</span>
+                                <span class="md-error" v-if="!$v.form.pdet.minValue">Réserver au moins un numéro</span>
                             </md-field>
                         </div>
                     </div>
@@ -90,15 +102,29 @@
                         <label>Remarques</label>
                         <md-textarea v-model="form.remarque"></md-textarea>
                     </md-field>
+
+                    <p v-if="reservationNumerosMODialog_errorMsg" style="background-color: yellow"><md-icon class="md-accent" style="vertical-align: bottom;">warning</md-icon> {{ reservationNumerosMODialog_errorMsg }}</p>
                     
                     <!-- Boutons annuler / enregistrer -->
                     <div style="  position: absolute; bottom: 8px; right: 16px;">
                         <md-button class="md-accent" @click="resetReservation">Annuler</md-button>
-                        <md-button class="md-primary" @click="saveReservation">Enregistrer</md-button>
+                        <md-button class="md-primary" @click="validationReservation">Enregistrer</md-button>
                     </div>
                 </div>
             </div>
         </md-dialog-content>
     </md-dialog>
+
+
+    <!-- Confirmation réservation grand nombre de numéros -->
+    <md-dialog-confirm :md-active.sync="alertReservation.show"
+        md-title="Confirmation de réservation"
+        :md-content="alertReservation.text"
+        md-confirm-text="Confirmer"
+        md-cancel-text="Annuler"
+        @md-cancel="alertReservation.show = false;"
+        @md-confirm="alertReservation.show = false; confirmSaveReservation()"
+    />
+
 
 </div>

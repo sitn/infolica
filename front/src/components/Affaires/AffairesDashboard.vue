@@ -10,12 +10,12 @@ import Documents from "@/components/Affaires/Documents/Documents.vue";
 import Suivi from "@/components/Affaires/Suivi/Suivi.vue";
 import Preavis from "@/components/Affaires/Preavis/Preavis.vue";
 import DuplicationAffaire from "@/components/Affaires/DuplicationAffaire/DuplicationAffaire.vue";
-import Facturation from "@/components/Facturation/Facturation.vue";
+import Facturation from "@/components/Affaires/Facturation/Facturation.vue";
 import Remarques from "@/components/Affaires/Remarques/Remarques.vue";
 import ControleMutation from "@/components/Affaires/ControleMutation/ControleMutation.vue";
 import ControleGeometre from "@/components/Affaires/ControleGeometre/ControleGeometre.vue";
 import ControlePPE from "@/components/Affaires/ControlePPE/ControlePPE.vue";
-import SuiviMandat from "@/components/SuiviMandat/SuiviMandat.vue";
+import SuiviMandat from "@/components/Affaires/SuiviMandat/SuiviMandat.vue";
 import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";

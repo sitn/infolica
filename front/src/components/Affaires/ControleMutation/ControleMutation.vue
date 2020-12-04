@@ -195,11 +195,9 @@ export default {
       formData.append("div_1", this.controleMutation.div_1);
       formData.append("div_2", this.controleMutation.div_2);
       formData.append("div_3", this.controleMutation.div_3);
-      formData.append("date", moment(this.controleMutation.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      if (this.controleMutation.visa && this.controleMutation.visa.id) {
-        formData.append("visa", this.controleMutation.visa.id);
-      }
-
+      formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
+      formData.append("visa", JSON.parse(localStorage.getItem("infolica_user")).id);
+      
       this.$http
         .put(
           process.env.VUE_APP_API_URL +

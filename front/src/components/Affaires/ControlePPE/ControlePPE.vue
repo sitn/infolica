@@ -57,7 +57,7 @@ export default {
                   x.date = moment(x.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
                 }
 
-                x.nom_ = [x.id, x.date, x.operateur.nom].join(" - ")
+                x.nom_ = [x.date, x.operateur.nom].join(" - ")
               });
   
               this.controlePPE_all = tmp; // keep in memory all controles PPE
@@ -140,9 +140,6 @@ export default {
     onConfirmEditControlePPE() {
       var formData = new FormData();
       formData.append("id", this.controlePPE.id);
-      // formData.append("affaire_id", this.controlePPE.affaire_id);
-      // if (this.controlePPE.operateur && this.controlePPE.operateur.id) {formData.append("operateur_id", this.controlePPE.operateur.id)}
-      // if (this.controlePPE.date) {formData.append("date", this.controlePPE.date)}
       formData.append("gen_1", this.controlePPE.gen_1);
       formData.append("gen_2", this.controlePPE.gen_2);
       formData.append("gen_3", this.controlePPE.gen_3);

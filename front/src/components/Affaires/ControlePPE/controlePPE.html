@@ -218,17 +218,6 @@
                                 <md-checkbox class="md-primary" v-model="controlePPE.balsurf_d">9.d) Surfaces échangéess</md-checkbox>
                                 <md-field><label>Remarques</label><md-textarea md-autogrow v-model="controlePPE.balsurf_remarque"></md-textarea></md-field>
                             </div>
-
-                            <div class="md-layout-item md-size-20 md-small-size-20" style="position: absolute; bottom: 80px; right: 10px;">
-                                <div class="md-alignment-bottom-right">
-
-                                    <md-datepicker v-model="controlePPE.date" md-immediately></md-datepicker>
-
-                                    <md-autocomplete v-model="controlePPE.operateur" :md-options="operateurs_liste" @md-changed="getFormOperateur" md-dense>
-                                        <label>Opérateur</label>
-                                    </md-autocomplete>
-                                </div>
-                            </div>
                         </div>
 
 

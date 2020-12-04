@@ -17,8 +17,10 @@
 
         <md-card-expand>
             <md-card-expand-content>
-
                 <md-card-content v-bind:class="{ disabledElement: affaireReadonly }">
+                    
+                    <p v-if="controleMutation.date" style="margin-top: 0px;">Dernier contrôle effectué le {{controleMutation.date}} par {{controleMutation.visa.nom}}</p>
+                    
                     <div v-if="controleMutation.id">
                         <!-- Données internes -->
                         <md-card>
@@ -304,7 +306,7 @@
 
                         <!-- Visa et date -->
                         <div class="md-layout md-gutter">
-                            <div class="md-layout-item md-size-25">
+                            <!-- <div class="md-layout-item md-size-25">
                                 <md-autocomplete v-model="controleMutation.visa" :md-options="chefsProjetMO_liste" md-dense>
                                     <label>Visa</label>
                                     <template slot="md-autocomplete-item" slot-scope="{ item }">
@@ -316,7 +318,7 @@
                                 <md-datepicker v-model="controleMutation.date" md-immediately style="margin: auto; bottom: auto;">
                                     <label>Date</label>
                                 </md-datepicker>
-                            </div>
+                            </div> -->
                             <div class="md-layout md-alignment-bottom-right">
                                 <md-button class="md-accent md-raised" v-on:click="onCancelEditControleMutation" v-if="!affaireReadonly">
                                     Annuler

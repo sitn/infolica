@@ -4,7 +4,9 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
-import { checkPermission, getCadastres, stringifyAutocomplete } from "@/services/helper";
+import { checkPermission, getCadastres, stringifyAutocomplete, logAffaireEtape } from "@/services/helper";
+import { validationMixin } from "vuelidate";
+import { required, minValue, requiredIf } from "vuelidate/lib/validators";
 
 const moment = require("moment");
 
@@ -16,8 +18,14 @@ export default {
     types_numeros: Object
   },
   components: {},
+  mixins: [validationMixin],
   data: () => {
     return {
+      alertReservation: {
+        show: false,
+        saveReservation: false,
+        text: ''
+      },
       cadastreListe: [],
       form: {},
       plansMOListe: [],
@@ -25,7 +33,42 @@ export default {
       reservationNumerosMO: [],
       showReservationNumerosMO: true,
       showReservationNumerosMODialog: false,
+      reservationNumerosMODialog_errorMsg: "",
     };
+  },
+
+  // Validations
+  validations() {
+    let form = {
+      cadastre: {required},
+      pfp3: {
+        required,
+        minValue: minValue(0)
+      },
+      paux: {
+        required,
+        minValue: minValue(0)
+      },
+      bat: {
+        required,
+        minValue: minValue(0)
+      },
+      pdet: {
+        required,
+        minValue: minValue(0)
+      },
+      dp: {
+        required,
+        minValue: minValue(0)
+      }
+    }
+
+    form.plan = {
+      required: requiredIf(function() {return this.form.pdet > 0}), 
+    }
+
+
+    return { form };
   },
 
   methods: {
@@ -112,13 +155,37 @@ export default {
         plan: '',
         remarque: ''
       };
+      this.reservationNumerosMODialog_errorMsg = "";
       this.plansMOListe_cadastre = stringifyAutocomplete(this.plansMOListe.filter(x => x.cadastre_id === this.form.cadastre.id), "planno", "idobj");
     },
 
     /**
-     * On save reservation
+     * on save reservation, if large amount of numbers
      */
     saveReservation() {
+      this.alertReservation.text = "<p>Cadastre: " + this.form.cadastre.nom + "</p>";
+      if (Number(this.form.pfp3) > 0) {
+        this.alertReservation.text += "<p>PFP3: " + this.form.pfp3 + "</p>";
+      }
+      if (Number(this.form.paux) > 0) {
+        this.alertReservation.text += "<p>Points auxiliaires: " + this.form.paux + "</p>";
+      }
+      if (Number(this.form.bat) > 0) {
+        this.alertReservation.text += "<p>Bâtiments: " + this.form.bat + "</p>";
+      }
+      if (Number(this.form.pdet) > 0) {
+        this.alertReservation.text += "<p>Points de détail sur plan " + this.form.plan + ": " + this.form.pdet + "</p>";
+      }
+      if (Number(this.form.dp) > 0) {
+        this.alertReservation.text += "<p>Domaines publics: " + this.form.dp + "</p>";
+      }
+      this.alertReservation.show = true;
+    },
+
+    /**
+     * On confirm save reservation
+     */
+    async confirmSaveReservation() {
       let promises = [];
       
       if (this.form.pfp3 !== null && this.form.pfp3 !== '' && Number(this.form.pfp3)>0) {
@@ -141,8 +208,16 @@ export default {
         if (response) {
           this.searchReservationNumerosMO();
           this.showReservationNumerosMODialog = false;
-          this.resetReservation();
           this.$root.$emit("ShowMessage", "Les numéros ont bien été enregistrés");
+          //Log edition facture
+          let comment = ["Cadastre: " + this.form.cadastre.nom,
+                         Number(this.form.pfp3) > 0? this.form.pfp3 + " PFP3 ": null,
+                         Number(this.form.paux) > 0? this.form.paux + " points auxiliaires ": null,
+                         Number(this.form.bat) > 0? this.form.bat + " bâtiments ": null,
+                         Number(this.form.pdet) > 0? this.form.pdet + " points de détail sur plan " + this.form.plan: null,
+                         Number(this.form.dp) > 0? this.form.dp + " domaines publics": null].join(", ");
+          logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_RESERVATION_NUMEROS_MO_ID), comment);
+          this.resetReservation();
         }
       }).catch(err => handleException(err, this));
     },
@@ -176,6 +251,39 @@ export default {
       });
     },
 
+    /**
+     * Get validation class par fieldname
+     */
+    getValidationClass(fieldName) {
+      const field = this.$v.form[fieldName];
+
+      if (field) {
+        return {
+          "md-invalid": field.$invalid && field.$dirty
+        };
+      }
+    },
+
+    /**
+     * Validation du formulaire avant de l'enregistrer
+     */
+    validationReservation() {
+      
+      this.$v.$touch();
+
+      if (!this.$v.$invalid) {
+
+        if ((this.form.pfp3 === 0 || this.form.pfp3 === "0") && (this.form.paux === 0 || this.form.paux === "0") && (this.form.bat === 0 || this.form.bat === "0") && (this.form.pdet === 0 || this.form.pdet === "0") && (this.form.dp === 0 || this.form.dp === "0")) {
+          this.reservationNumerosMODialog_errorMsg = "Aucun numéro à réserver...";
+          return;
+        } else {
+          this.reservationNumerosMODialog_errorMsg = "";
+        }
+
+        this.showReservationDialog = false;
+        this.saveReservation();
+      }
+    },
 
   },
   mounted: function() {

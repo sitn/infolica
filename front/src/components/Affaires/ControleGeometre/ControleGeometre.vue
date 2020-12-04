@@ -47,14 +47,15 @@ export default {
 
             // Lier l'id du visa à son nom
             if (this.controleGeometre.operateur_id === null) {
-              this.controleGeometre.operateur_id = JSON.parse(localStorage.getItem("infolica_user")).id;
+              this.operateur = {id: null, nom: null};
+            } else {
+              this.operateur = this.operateurs_liste.filter(x => x.id === this.controleGeometre.operateur_id)[0];
             }
-            this.operateur = this.operateurs_liste.filter(x => x.id === this.controleGeometre.operateur_id)[0];
             
             if (this.controleGeometre.date) {
               this.controleGeometre.date = moment(this.controleGeometre.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
             } else {
-              this.controleGeometre.date = moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+              this.controleGeometre.date = null;
             }
           } 
         })
@@ -80,7 +81,7 @@ export default {
                 .filter(x => x.responsable)
                 .map(x => ({
                   id: x.id,
-                  nom: [x.nom, x.prenom].join(" "),
+                  nom: [x.prenom, x.nom].join(" "),
                   toLowerCase: () => [x.nom, x.prenom].join(" ").toLowerCase(),
                   toString: () => [x.nom, x.prenom].join(" ")
                 }));

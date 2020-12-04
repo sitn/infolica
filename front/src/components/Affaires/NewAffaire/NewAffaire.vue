@@ -353,6 +353,9 @@ export default {
             // Créer le contrôle du géomètre
             promises.push(this.postControleGeometre(id_new_affaire));
 
+            // Créer le formulaire de suivi du mandat
+            promises.push(this.postSuiviMandat(id_new_affaire));
+
            // Si affaire type mutation: créer le controle Mutation du chef d'équipe
             if ([this.typesAffaires_conf.mutation, this.typesAffaires_conf.cadastration, this.typesAffaires_conf.modification, this.typesAffaires_conf.revision_abornement].includes(this.form.type.id)) {
               promises.push(this.postControleMutation(id_new_affaire));
@@ -1163,12 +1166,30 @@ export default {
     async postControlePPE(id_new_affaire) {
       let formData = new FormData();
       formData.append("affaire_id", id_new_affaire);
-      formData.append("operateur_id", this.form.technicien_id);
-      formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
       
       return new Promise((resolve, reject) => {
         this.$http.post(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_CONTROLE_PPE_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+    
+    /**
+     * Créer le formulaire de suivi du mandat à l'ouverture de l'affaire
+     */
+    async postSuiviMandat(id_new_affaire) {
+      let formData = new FormData();
+      formData.append("affaire_id", id_new_affaire);
+      
+      return new Promise((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_SUIVI_MANDAT_ENDPOINT,
           formData,
           {
             withCredentials: true,

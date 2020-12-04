@@ -97,7 +97,7 @@ export default {
                 })
                 .map(x => ({
                   id: x.id,
-                  nom: [x.nom, x.prenom].join(" "),
+                  nom: [x.prenom, x.nom].join(" "),
                   toLowerCase: () => [x.nom, x.prenom].join(" ").toLowerCase(),
                   toString: () => [x.nom, x.prenom].join(" ")
                 }));
@@ -142,95 +142,31 @@ export default {
 
     onConfirmEditSuiviMandat() {
       var formData = new FormData();
-      if (this.suiviMandat.id) {
-        formData.append("id", this.suiviMandat.id);
-      }
-      if (this.suiviMandat.affaire_id) {
-        formData.append("affaire_id", this.suiviMandat.affaire_id);
-      }
-      if (this.suiviMandat.av_11) {
-        formData.append("av_11", this.suiviMandat.av_11);
-      }
-      if (this.suiviMandat.av_12) {
-        formData.append("av_12", this.suiviMandat.av_12);
-      }
-      if (this.suiviMandat.av_21) {
-        formData.append("av_21", this.suiviMandat.av_21);
-      }
-      if (this.suiviMandat.av_31) {
-        formData.append("av_31", this.suiviMandat.av_31);
-      }
-      if (this.suiviMandat.av_32 && this.suiviMandat.av_32.id) {
-        formData.append("av_32", this.suiviMandat.av_32.id);
-      }
-      if (this.suiviMandat.av_33) {
-        formData.append("av_33", moment(this.suiviMandat.av_33, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      }
-      if (this.suiviMandat.av_41) {
-        formData.append("av_41", this.suiviMandat.av_41);
-      }
-      if (this.suiviMandat.av_51) {
-        formData.append("av_51", this.suiviMandat.av_51);
-      }
-      if (this.suiviMandat.pdt_11) {
-        formData.append("pdt_11", this.suiviMandat.pdt_11);
-      }
-      if (this.suiviMandat.pdt_12) {
-        formData.append("pdt_12", this.suiviMandat.pdt_12);
-      }
-      if (this.suiviMandat.pdt_21) {
-        formData.append("pdt_21", this.suiviMandat.pdt_21);
-      }
-      if (this.suiviMandat.pdt_22) {
-        formData.append("pdt_22", this.suiviMandat.pdt_22);
-      }
-      if (this.suiviMandat.pdt_31) {
-        formData.append("pdt_31", this.suiviMandat.pdt_31);
-      }
-      if (this.suiviMandat.pdt_41) {
-        formData.append("pdt_41", this.suiviMandat.pdt_41);
-      }
-      if (this.suiviMandat.pdt_42) {
-        formData.append("pdt_42", this.suiviMandat.pdt_42);
-      }
-      if (this.suiviMandat.ap_11) {
-        formData.append("ap_11", this.suiviMandat.ap_11);
-      }
-      if (this.suiviMandat.ap_12) {
-        formData.append("ap_12", this.suiviMandat.ap_12);
-      }
-      if (this.suiviMandat.ap_21) {
-        formData.append("ap_21", this.suiviMandat.ap_21);
-      }
-      if (this.suiviMandat.ap_22) {
-        formData.append("ap_22", this.suiviMandat.ap_22);
-      }
-      if (this.suiviMandat.ap_31) {
-        formData.append("ap_31", this.suiviMandat.ap_31);
-      }
-      if (this.suiviMandat.ap_32 && this.suiviMandat.ap_32.id) {
-        formData.append("ap_32", this.suiviMandat.ap_32.id);
-      }
-      if (this.suiviMandat.ap_33) {
-        formData.append("ap_33", moment(this.suiviMandat.ap_33, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      }
-      if (this.suiviMandat.ap_41) {
-        formData.append("ap_41", this.suiviMandat.ap_41);
-      }
-      if (this.suiviMandat.ap_42) {
-        formData.append("ap_42", this.suiviMandat.ap_42);
-      }
-      if (this.suiviMandat.visa && this.suiviMandat.visa !== "") {
-        formData.append("visa", this.suiviMandat.visa.id);
-      } else {
-        formData.append("visa", null);
-      }
-      if (this.suiviMandat.date) {
-        formData.append("date",
-          moment(this.suiviMandat.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      } else {
-        formData.append("date", null);
-      }
+      formData.append("id", this.suiviMandat.id);
+      formData.append("affaire_id", this.suiviMandat.affaire_id);
+      formData.append("av_21", this.suiviMandat.av_21);
+      formData.append("av_31", this.suiviMandat.av_31);
+      if (this.suiviMandat.av_32 && this.suiviMandat.av_32.id) { formData.append("av_32", this.suiviMandat.av_32.id) }
+      if (this.suiviMandat.av_33) { formData.append("av_33", moment(this.suiviMandat.av_33, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)) }
+      formData.append("av_41", this.suiviMandat.av_41)
+      if (this.suiviMandat.av_51) { formData.append("av_51", this.suiviMandat.av_51) }
+      formData.append("pdt_11", this.suiviMandat.pdt_11);
+      if (this.suiviMandat.pdt_12) { formData.append("pdt_12", this.suiviMandat.pdt_12) }
+      formData.append("pdt_21", this.suiviMandat.pdt_21);
+      if (this.suiviMandat.pdt_22) { formData.append("pdt_22", this.suiviMandat.pdt_22) }
+      formData.append("pdt_41", this.suiviMandat.pdt_41);
+      if (this.suiviMandat.pdt_42) { formData.append("pdt_42", this.suiviMandat.pdt_42) }
+      formData.append("ap_11", this.suiviMandat.ap_11);
+      if (this.suiviMandat.ap_12) { formData.append("ap_12", this.suiviMandat.ap_12) }
+      formData.append("ap_21", this.suiviMandat.ap_21);
+      if (this.suiviMandat.ap_22) { formData.append("ap_22", this.suiviMandat.ap_22) }
+      formData.append("ap_31", this.suiviMandat.ap_31);
+      if (this.suiviMandat.ap_32 && this.suiviMandat.ap_32.id) { formData.append("ap_32", this.suiviMandat.ap_32.id) }
+      if (this.suiviMandat.ap_33) { formData.append("ap_33", moment(this.suiviMandat.ap_33, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)) }
+      formData.append("ap_41", this.suiviMandat.ap_41);
+      if (this.suiviMandat.ap_42) { formData.append("ap_42", this.suiviMandat.ap_42) }
+      formData.append("visa", JSON.parse(localStorage.getItem("infolica_user")).id);
+      formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
 
       this.$http
         .put(
