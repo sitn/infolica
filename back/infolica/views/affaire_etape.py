@@ -4,8 +4,9 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffaires
+from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffaires, VAffaire, EtapeMailer, Operateur
 from infolica.scripts.utils import Utils
+from infolica.scripts.mailer import send_mail
 
 ###########################################################
 # ETAPES AFFAIRE
@@ -60,6 +61,24 @@ def etapes_new_view(request):
     model = Utils.set_model_record(model, request.params)
 
     request.dbsession.add(model)
+
+    # send mail
+    affaire_etape_index = request.dbsession.query(AffaireEtapeIndex).filter(AffaireEtapeIndex.id == model.etape_id).first()
+    etape_mailer = request.dbsession.query(EtapeMailer).filter(model.etape_id == EtapeMailer.etape_id).all()
+    operateur = request.dbsession.query(Operateur).all()
+    mail_list = []
+    for em_i in etape_mailer:
+        if em_i.sendmail:
+            mail = next((op.mail for op in operateur if op.id == em_i.operateur_id), None)
+            if mail:
+                mail_list.append(mail)
+    if affaire_etape_index.priorite == int(request.registry.settings['affaire_etape_priorite_1']) and len(mail_list)>0:
+        # get affaire informations
+        affaire = request.dbsession.query(VAffaire).filter(VAffaire.id == model.affaire_id).first()
+        # get mails adresses
+        text = "L'affaire " + str(affaire.id) + " (" + affaire.nom + ") est en attente pour l'étape '"+ affaire_etape_index.nom +"'."
+        subject = "Infolica - affaire " + str(affaire.id)
+        send_mail(request, mail_list, text, subject)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireEtape.__tablename__))
 
