@@ -159,6 +159,12 @@ cadastres_BrotPlamboz_Plamboz_id = 59,69
 cadastres_Neuchatel_Coudre_id = 1,63
 cadastres_Sauge_StAubin_id = 22,67
 
+# Time delta to show last affaire in suivi_affaire in days
+affaire_show_timedelta = 30
+
+# Affaire etape priorites
+affaire_etape_priorite_1 = 1
+
 ######################################################################################
 # Accès aux dossiers
 ######################################################################################

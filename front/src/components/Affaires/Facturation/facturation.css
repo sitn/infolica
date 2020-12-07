@@ -9,7 +9,8 @@
 }
 
 .facturation .md-table {
-    width: 100%;
+    /* width: 100%; */
+    /* width: auto; */
     margin: auto;
 }
 

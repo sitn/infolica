@@ -180,10 +180,18 @@ class ModificationAffaire(Base):
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
+class FactureType(Base):
+    __tablename__ = 'facture_type'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
+
+
 class Facture(Base):
     __tablename__ = 'facture'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
+    type_id = Column(BigInteger, ForeignKey(FactureType.id), nullable=False)
     sap = Column(Text)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
@@ -1087,6 +1095,7 @@ class VFactures(Base):
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger)
     affaire_vref = Column(Text)
+    type_id = Column(BigInteger)
     sap = Column(Text)
     client_id = Column(BigInteger)
     client_entreprise = Column(Text)

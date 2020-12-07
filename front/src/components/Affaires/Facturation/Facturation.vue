@@ -27,6 +27,7 @@ export default {
     },
   data: () => {
     return {
+      affaire_devis: [],
       affaire_factures: [],
       numeros_references:[],
       affaireReadonly: true,
@@ -38,6 +39,10 @@ export default {
         personne_morale: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID)
       },
       createFacture: false,
+      configFactureTypeID: {
+        devis: Number(process.env.VUE_APP_FACTURE_TYPE_DEVIS_ID),
+        facture: Number(process.env.VUE_APP_FACTURE_TYPE_FACTURE_ID),
+      },
       dataSaved: null,
       deleteFactureActive: false,
       deleteFactureId: null,
@@ -188,7 +193,8 @@ export default {
               ].filter(Boolean).join(", ");
             });
 
-            this.affaire_factures = tmp;
+            this.affaire_devis = tmp.filter(x => x.type_id === this.configFactureTypeID.devis);
+            this.affaire_factures = tmp.filter(x => x.type_id === this.configFactureTypeID.facture);
           }
         })
         .catch(err => {
@@ -284,7 +290,7 @@ export default {
     /**
      * Créer une nouvelle facture
      */
-    newFacture() {
+    newFacture(facture_type) {
       this.selectedFacture = {
         id: null,
         sap: null,
@@ -301,6 +307,13 @@ export default {
         numeros: null,
         remarque: null
       };
+      
+      if (facture_type === 'devis') {
+        this.selectedFacture.type_id = this.configFactureTypeID.devis;
+      } else if (facture_type === 'facture') {
+        this.selectedFacture.type_id = this.configFactureTypeID.facture;
+      }
+      
       this.showFactureDialog = true;
       this.createFacture = true;
     },
@@ -340,6 +353,7 @@ export default {
       formData.append("remarque", this.selectedFacture.remarque || null);
       formData.append("client_complement", this.selectedFacture.client_complement || null);
       formData.append("client_premiere_ligne", this.selectedFacture.client_premiere_ligne || null);
+      formData.append("type_id", this.selectedFacture.type_id);
       
       if (this.selectedFacture.date) {
         formData.append("date", moment(this.selectedFacture.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
@@ -409,10 +423,19 @@ export default {
             this.dataSaved = true;
 
             //Log edition facture
-            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_ID), "Édition");
+            let facture_type = "";
+            let showMessage = "";
+            if (this.selectedFacture.type_id === this.configFactureTypeID.facture) {
+              facture_type = "facture";
+              showMessage = "La facture a été enregistrée avec succès";
+            } else if (this.selectedFacture.type_id === this.configFactureTypeID.devis) {
+              facture_type = "devis";
+              showMessage = "Le devis a été enregistré avec succès";
+            }
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_ID), "Édition de " + facture_type);
 
             this.searchAffaireFactures();
-            this.$root.$emit("ShowMessage", "La facture a été enregistrée avec succès")
+            this.$root.$emit("ShowMessage", showMessage);
           }
         })
         .catch(err => {
