@@ -9,13 +9,51 @@
                 </md-card-expand-trigger>
                 Devis et factures
             </div>
-            <md-button class="md-primary" v-on:click="newFacture()" v-if="showNewFactureBtn && !affaireReadonly">Nouvelle facture</md-button>
+            <div>
+                <md-button class="md-primary" v-on:click="newFacture('devis')" v-if="showNewFactureBtn && !affaireReadonly">Nouveau devis</md-button>
+                <md-button class="md-primary" v-on:click="newFacture('facture')" v-if="showNewFactureBtn && !affaireReadonly">Nouvelle facture</md-button>
+            </div>
         </md-card-header>
 
         <md-card-expand>
             <md-card-expand-content>
-
                 <md-card-content>
+                    <h3>Devis</h3>
+                    <div v-if="affaire_devis[0]">
+                        <md-table v-model="affaire_devis" md-sort="date" md-sort-order="desc" md-fixed-header>
+                            <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
+                                <md-table-cell md-label="SAP" md-sort-by="sap" style="width: 5%;">{{ item.sap }}</md-table-cell>
+                                <md-table-cell md-label="Date" md-sort-by="date" style="width: 5%;">{{ item.date }}</md-table-cell>
+                                <md-table-cell md-label="Biens-fonds" md-sort-by="numeros" style="width: 5%;" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
+                                <md-table-cell md-label="Client" md-sort-by="adresse_facturation_" style="width: 15%;">{{ item.adresse_facturation_ }}</md-table-cell>
+                                <md-table-cell md-label="MO" md-sort-by="montant_mo" style="width: 5%;">CHF {{ item.montant_mo }}</md-table-cell>
+                                <md-table-cell md-label="Mat Diff" md-sort-by="montant_mat_diff" style="width: 5%;">CHF {{ item.montant_mat_diff }}</md-table-cell>
+                                <md-table-cell md-label="RF" md-sort-by="montant_rf" style="width: 5%;">CHF {{ item.montant_rf }}</md-table-cell>
+                                <md-table-cell md-label="TVA" md-sort-by="montant_tva" style="width: 5%;">CHF {{ item.montant_tva }}</md-table-cell>
+                                <md-table-cell md-label="Total" md-sort-by="montant_total" style="width: 5%;">CHF {{ item.montant_total }}</md-table-cell>
+                                <md-table-cell md-label="Remarque" md-sort-by="remarque" style="width: 10%;">{{ item.remarque }}</md-table-cell>
+                                <md-table-cell md-label="Actions" class="actionsColumn" v-if="!affaireReadonly" style="width: 15%;">
+                                    <md-button class="md-icon-button md-primary md-dense" @click="openFactureEdition(item)">
+                                        <md-icon>edit</md-icon>
+                                    </md-button>
+                                    <md-button class="md-icon-button md-accent md-dense" v-on:click="callDeleteFacture(item)">
+                                        <md-icon>delete</md-icon>
+                                    </md-button>
+                                    <md-button class="md-primary md-icon-button md-dense" v-if="affaire.type_id === typesAffaires_conf.cadastration" v-on:click="generateDocuments(item)" title="Générer les documents pour le RF et le propriétaire">
+                                        <md-icon>save_alt</md-icon>
+                                    </md-button>
+                                </md-table-cell>
+                            </md-table-row>
+                        </md-table>
+                    </div>
+                    <div v-else>
+                        <em>Aucun devis</em>
+                    </div>
+                    
+                    <md-divider></md-divider>
+                    <h3>Factures</h3>
+
                     <div v-if="affaire_factures[0]">
                         <md-table v-model="affaire_factures" md-sort="date" md-sort-order="desc" md-fixed-header>
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
@@ -132,6 +170,7 @@
             <br>
             <md-divider />
             <br>
+
             <div style="float: right; width: 50%;">
                 <md-field :class="getValidationClass('montant_mo')">
                     <label>Montant MO</label>
