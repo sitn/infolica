@@ -274,7 +274,7 @@ class Utils(object):
 
     @classmethod
     def check_connected(cls, request):
-        auth_tkt = request.cookies.get('auth_tkt', default=None)
+        auth_tkt = request.cookies.get(request.registry.settings['authtkt_cookie_name'], default=None)
 
         if not auth_tkt:
             return False
