@@ -60,7 +60,7 @@ export default {
         localisation_E: null,
         localisation_N: null,
         nom: null,
-        remarque: null,
+        information: null,
         technicien_id: null,
         type: null,
         vref: null
@@ -344,9 +344,6 @@ export default {
             if (this.showClientsForm){
               promises.push(this.postFacture(id_new_affaire));
             } 
-            if (this.form.remarque !== null) {
-              promises.push(this.postRemarqueAffaire(id_new_affaire));
-            }
             // Crée la première étape de l'affaire
             promises.push(this.postAffaireEtape(id_new_affaire));
 
@@ -456,29 +453,6 @@ export default {
     },
 
     /**
-     * Post remarque affaire si remarque spécifiée
-     */
-    postRemarqueAffaire(affaire_id) {
-      var formData = new FormData();
-      formData.append("affaire_id", affaire_id);
-      formData.append("remarque", this.form.remarque);
-      formData.append("operateur_id", this.form.technicien_id);
-      formData.append("date", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-
-      return new Promise((resolve, reject) => {
-        this.$http.post(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_REMARQUES_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: {Accept: "application/json"}
-          }
-        ).then(response => resolve(response))
-        .catch(err => reject(err));
-      });
-    },
-
-    /**
      * Handle save data success
      */
     initPostData() {
@@ -486,6 +460,9 @@ export default {
       formData.append("type_id", this.form.type.id);
       if (this.form.nom) {
         formData.append("nom", this.form.nom);
+      }
+      if (this.form.information) {
+        formData.append("information", this.form.information);
       }
       if (this.form.client_commande && this.form.client_commande.id) {
         formData.append("client_commande_id", this.form.client_commande.id);

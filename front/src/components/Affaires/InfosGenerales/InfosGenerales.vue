@@ -105,6 +105,9 @@ export default {
       formData.append("id_affaire", this.affaire.id);
       formData.append("technicien_id", this.form.technicien.id);
       formData.append("type_id", this.form.typeAffaire.id);
+      formData.append("information", this.affaire.information);
+      formData.append("vref", this.affaire.vref || null);
+      
       if (this.form.responsable !== null) {
         formData.append("responsable_id", this.form.responsable.id);
       }
@@ -113,14 +116,6 @@ export default {
         formData.append("nom", this.affaire.nom || null);
       }
 
-      // if (this.affaire.information !== null) {
-      //   formData.append("information", this.affaire.information || null);
-      // }
-
-      if (this.affaire.vref !== null) {
-        formData.append("vref", this.affaire.vref || null);
-      }
-      
       if (this.form.client_commande && this.form.client_commande.id) {
         formData.append("client_commande_id", this.form.client_commande.id || null);
       }
