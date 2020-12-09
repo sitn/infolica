@@ -163,7 +163,7 @@ cadastres_Sauge_StAubin_id = 22,67
 affaire_show_timedelta = 30
 
 # Affaire etape priorites
-affaire_etape_priorite_1 = 1
+affaire_etape_priorite_1_id = 1
 
 ######################################################################################
 # Accès aux dossiers
