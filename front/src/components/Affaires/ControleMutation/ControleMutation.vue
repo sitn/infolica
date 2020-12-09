@@ -148,15 +148,6 @@ export default {
       var formData = new FormData();
       formData.append("id", this.controleMutation.id);
       formData.append("affaire_id", this.controleMutation.affaire_id);
-      
-      formData.append("terrain_1", this.controleMutation.terrain_1? moment(this.controleMutation.terrain_1, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
-      formData.append("terrain_2", this.controleMutation.terrain_2? moment(this.controleMutation.terrain_2, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
-      formData.append("terrain_3", this.controleMutation.terrain_3? moment(this.controleMutation.terrain_3, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
-      formData.append("bureau_1", this.controleMutation.bureau_1? moment(this.controleMutation.bureau_1, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
-      formData.append("bureau_2", this.controleMutation.bureau_2? moment(this.controleMutation.bureau_2, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
-      formData.append("bureau_3", this.controleMutation.bureau_3? moment(this.controleMutation.bureau_3, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
-      formData.append("envoi_cl_1", this.controleMutation.envoi_cl_1? moment(this.controleMutation.envoi_cl_1, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
-      formData.append("retour_cl_2", this.controleMutation.retour_cl_2? moment(this.controleMutation.retour_cl_2, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
       formData.append("suivi_1", this.controleMutation.suivi_1? moment(this.controleMutation.suivi_1, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
       formData.append("suivi_2", this.controleMutation.suivi_2? moment(this.controleMutation.suivi_2, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
       formData.append("suivi_3", this.controleMutation.suivi_3? moment(this.controleMutation.suivi_3, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
