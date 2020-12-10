@@ -136,7 +136,6 @@ export default {
      * Copier dans le presse-papier
      */
     copyToClipboard () {
-      // let copyText = document.querySelector(this.dossier_affaire);
       let copyText = document.querySelector("#dossier-affaire");
       copyText.setAttribute('type', 'text');
       copyText.select();

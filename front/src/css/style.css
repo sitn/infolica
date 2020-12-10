@@ -68,3 +68,7 @@ input[type=number] {
     display: flex;
     justify-content: space-between;
 }
+
+.md-button {
+    vertical-align: middle !important;
+}

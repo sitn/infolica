@@ -23,12 +23,14 @@
                     <div style="display: table-cell;">
                             Dossier de l'affaire: 
                             <input type="text" id="dossier-affaire" :value="dossier_affaire" style="width: 400px;" readonly>
-                            <md-button class="md-primary md-dense md-center-left" style="vertical-align: middle;" @click="copyToClipboard">copier</md-button>
+                            <md-button class="md-primary md-dense md-center-left" style="vertical-align: middle;" @click="copyToClipboard"><md-icon>content_copy</md-icon> copier</md-button>
                     </div>
 
                     <div class="md-gutter md-layout">
                         <div class="md-layout-item">
-                            <md-button class="md-icon-button" @click="searchAffaireDocuments"><md-icon>refresh</md-icon></md-button>
+                            <md-button class="md-primary" style="min-width: min-content;" title="Recharger la table" @click="searchAffaireDocuments">
+                                <md-icon>refresh</md-icon> Recharger la table
+                            </md-button>
                         </div>
                     </div>
                     <div v-if="documents[0]">
