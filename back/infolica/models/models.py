@@ -726,6 +726,7 @@ class Service(Base):
     telephone = Column(Text)
     mail = Column(Text)
     ordre = Column(BigInteger)
+    relpath = Column(Text)
 
 
 class PreavisType(Base):

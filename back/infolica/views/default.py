@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*--
 from pyramid.httpexceptions import HTTPForbidden, HTTPNoContent
 from pyramid.view import notfound_view_config, view_config
@@ -67,6 +68,7 @@ def test_error(exc, request):
 @view_config(route_name='affaire_tele', request_method='OPTIONS', renderer='json')
 @view_config(route_name='controle_geometre', request_method='OPTIONS', renderer='json')
 @view_config(route_name='controle_geometre_s', request_method='OPTIONS', renderer='json')
+@view_config(route_name='save_document', request_method='OPTIONS', renderer='json')
 def options_response_view(request):
     """
     Common OPTION RESPONSE
