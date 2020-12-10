@@ -113,38 +113,6 @@ export default {
       });
     },
 
-    /**
-     * Upload affaire document to server
-     */
-    uploadAffaireDocument() {
-      let _this = this;
-      let formData = new FormData();
-      
-      for( var i = 0; i < this.documentFiles.length; i++ ){
-        let file = this.documentFiles[i];
-
-        formData.append('affaire_doc_files[' + i + ']', file);
-      }
-
-      //formData.append('affaire_doc_files', this.documentFiles);
-      formData.append('affaire_id', this.$route.params.id);
-      formData.append('type_id', this.type_document);
-
-      axios.post(process.env.VUE_APP_API_URL +
-          process.env.VUE_APP_AFFAIRE_UPLOAD_DOCUMENTS_ENDPOINT,
-          formData, 
-          {
-              withCredentials: true,
-              headers: {'Content-Type': 'multipart/form-data'}
-          }
-        ).then(function () {
-         _this.$root.$emit("ShowMessage", "Le document " + _this.documentFilesName + " a été chargé avec succès");
-         _this.searchAffaireDocuments();
-        })
-        .catch(function (err) {
-          handleException(err, _this);
-        });
-    },
 
     /**
      * Handle file change
@@ -160,56 +128,9 @@ export default {
     */
     downloadFile(item) {
       const affaire_id = this.$route.params.id;
-      window.open(process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_DOWNLOAD_DOCUMENT_ENDPOINT + '?affaire_id=' + affaire_id + '&filename=' + item.nom);
+      window.open(process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_DOWNLOAD_DOCUMENT_ENDPOINT + '?affaire_id=' + affaire_id + '&relpath=' + item.relpath + '&filename=' + item.filename);
     },
 
-    /**
-     * Call delete document
-     */
-    callDeleteDoc (id, nom) {
-      this.currentDeleteDocId = id;
-      this.currentDeleteDocName = nom;
-      this.deleteDocMessage = "Confirmer la suppression du document '<strong>" + nom + "<strong>' ?";
-      this.deleteDocActive = true;
-    },
-
-
-    /**
-    * Delete document
-    */
-    onConfirmDeleteDoc () {
-       var formData = new FormData();
-      formData.append("id", this.currentDeleteDocId);
-      formData.append("nom", this.currentDeleteDocName);
-      formData.append('affaire_id', this.$route.params.id);     
-
-      this.$http
-        .delete(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_DELETE_DOCUMENT_ENDPOINT,
-          { 
-            data: formData,
-            withCredentials: true,
-            headers: {"Accept": "application/json"}
-          }
-        )
-        .then(response => {
-          if (response.data) {
-            this.searchAffaireDocuments();
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
-
-        this.currentDeleteDocId = null;
-    },
-
-    /**
-    * Cancel delete document
-    */
-    onCancelDeleteDoc () {
-      this.currentDeleteId = null;
-    },
 
     /**
      * Copier dans le presse-papier
@@ -230,7 +151,6 @@ export default {
 
   mounted: function() {
     this.searchAffaireDocuments();
-    this.initTypesDocumentsList();
     this.searchAffaireDossier();
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_ENVOIS_EDITION) || this.$parent.parentAffaireReadOnly;
   }
