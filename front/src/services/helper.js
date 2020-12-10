@@ -191,6 +191,22 @@ export const stringifyAutocomplete = function(liste, nom="nom", id="id") {
 /**
  * Générer les documents à partir des modèles
  */
+export const saveDocument = async function(formData) {
+    return new Promise((resolve, reject) => {
+        axios.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_SAVE_DOCUMENT_ENDPOINT,
+            formData,
+            {
+                withCredentials: true,
+                headers: { Accept: "application/html" }
+            }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+    });
+};
+
+/**
+ * Générer les documents à partir des modèles
+ */
 export const getDocument = async function(formData) {
     return new Promise((resolve, reject) => {
         axios.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_COURRIER_TEMPLATE_ENDPOINT,

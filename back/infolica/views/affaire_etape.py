@@ -2,6 +2,8 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
+from sqlalchemy import and_
+
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffaires, VAffaire, EtapeMailer, Operateur
@@ -72,13 +74,26 @@ def etapes_new_view(request):
             mail = next((op.mail for op in operateur if op.id == em_i.operateur_id), None)
             if mail:
                 mail_list.append(mail)
-    if affaire_etape_index.priorite == int(request.registry.settings['affaire_etape_priorite_1']) and len(mail_list)>0:
+    if affaire_etape_index.priorite == int(request.registry.settings['affaire_etape_priorite_1_id']) and len(mail_list)>0:
         # get affaire informations
         affaire = request.dbsession.query(VAffaire).filter(VAffaire.id == model.affaire_id).first()
-        # get mails adresses
-        text = "L'affaire " + str(affaire.id) + " (" + affaire.nom + ") est en attente pour l'étape '"+ affaire_etape_index.nom +"'."
+        # get list of done steps
+        lastSteps = request.dbsession.query(VEtapesAffaires).filter(
+            and_(
+                VEtapesAffaires.affaire_id == model.affaire_id,
+                VEtapesAffaires.etape_priorite == int(request.registry.settings['affaire_etape_priorite_1_id'])
+            )
+        ).order_by(VEtapesAffaires.id.desc()).all()
+        lastSteps = "".join(["<tr><td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
+                              <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{} {}</td>\
+                              <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
+                              <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
+                              </tr>".format(i.datetime, i.operateur_prenom, i.operateur_nom, i.etape, i.remarque if i.remarque else "") for i in lastSteps])
+        
+        text = "L'affaire <b>" + str(affaire.id) + " (" + affaire.nom + ")</b> est en attente pour l'étape <b>"+ affaire_etape_index.nom +"</b>."
+        text += ("<br><br><br><h4>Historique de l'affaire</h4><table style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'><tr><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Horodateur</th><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Opérateur</th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'><th>Etape</th><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Remarque</th></tr>" + lastSteps + "</table>") if lastSteps != "" else ""
         subject = "Infolica - affaire " + str(affaire.id)
-        send_mail(request, mail_list, text, subject)
+        send_mail(request, mail_list, "", subject, html=text)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireEtape.__tablename__))
 

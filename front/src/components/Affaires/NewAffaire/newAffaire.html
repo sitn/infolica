@@ -67,45 +67,46 @@
                         </template>
                         <span class="md-error" v-if="!$v.form.affaire_modif_type.required">Le type de modification d'affaire est
                             obligatoire</span>
-                    </md-autocomplete>
+                        </md-autocomplete>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="md-layout md-gutter" v-if="type_modification_bool">
-                <div class="md-layout-item md-small-size-100 md-size-50">
-                    <md-field>
-                        <label>Affaire de base</label>
-                        <md-input v-model="form.affaire_base_id" required />
-
-                        <md-button class="md-primary md-icon-button modifAffaireActionBtn" title="Sélectionner cette affaire"
-                        v-if="type_modification_bool && this.form.affaire_base_id"
-                        @click="doSelectAffaireModification()">
-                        <md-icon>remove_red_eye</md-icon>
-                        </md-button>
-
-                        <md-button class="md-primary md-icon-button modifAffaireActionBtn" title="Afficher cette affaire"
+                
+                <div class="md-layout md-gutter" v-if="type_modification_bool">
+                    <div class="md-layout-item md-small-size-100 md-size-50">
+                        <md-field>
+                            <label>Affaire de base</label>
+                            <md-input v-model="form.affaire_base_id" required />
+                            
+                            <md-button class="md-primary md-icon-button modifAffaireActionBtn" title="Sélectionner cette affaire"
                             v-if="type_modification_bool && this.form.affaire_base_id"
-                            @click="doOpenAffaireModification()">
-                            <md-icon>open_in_new</md-icon>
+                            @click="doSelectAffaireModification()">
+                            <md-icon>remove_red_eye</md-icon>
                         </md-button>
-                    </md-field>
-                </div>
+                        
+                        <md-button class="md-primary md-icon-button modifAffaireActionBtn" title="Afficher cette affaire"
+                        v-if="type_modification_bool && this.form.affaire_base_id"
+                        @click="doOpenAffaireModification()">
+                        <md-icon>open_in_new</md-icon>
+                    </md-button>
+                </md-field>
             </div>
-            
-            <!-- Description de l'affaire -->
-            <div class="md-gutter me-layout">
-                <div class="md-layout-item md-size-100">
-                    <md-field>
-                        <label>Description</label>
-                        <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending" />
-                    </md-field>
-                </div>
+        </div>
+        
+        <!-- Description de l'affaire -->
+        <div class="md-gutter me-layout">
+            <div class="md-layout-item md-size-100">
+                <md-field :class="getValidationClass($v.form.nom)">
+                    <label>Description</label>
+                    <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending" required />
+                    <span class="md-error" v-if="!$v.form.nom.required">La description de l'affaire est obligatoire</span>
+                </md-field>
             </div>
-
-            <!-- Si type d'affaire est "modification, afficher la zone de de sélection des biens-fonds" -->
-            <div class="md-layout md-gutter" v-if="type_modification_bool">
-                <md-card class="immeublesSelectDiv">
-                    <!-- Search Header -->
+        </div>
+        
+        <!-- Si type d'affaire est "modification, afficher la zone de de sélection des biens-fonds" -->
+        <div class="md-layout md-gutter" v-if="type_modification_bool">
+            <md-card class="immeublesSelectDiv">
+                <!-- Search Header -->
                     <md-card-header>
                         <div class="md-title">Sélection d'immeubles</div>
                     </md-card-header>
@@ -177,12 +178,12 @@
             
             <br>
 
-            <!-- Remarques -->
+            <!-- Information -->
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-small-size-100 md-size-100">
                     <md-field>
-                        <label for="nom">Remarques</label>
-                        <md-textarea name="remarque" id="remarque" v-model="form.remarque"
+                        <label for="information">Spécificités</label>
+                        <md-textarea name="information" id="information" v-model="form.information"
                         :disabled="sending" />
                     </md-field>
                 </div>

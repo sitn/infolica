@@ -3,7 +3,7 @@
 
 
 <script>
-import { getCurrentDate, checkPermission, getDocument, logAffaireEtape } from "@/services/helper";
+import { getCurrentDate, checkPermission, saveDocument, logAffaireEtape } from "@/services/helper";
 import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -185,13 +185,14 @@ export default {
     /**
      * Enregistrer une nouvelle étape
      */
-    saveNewPreavis: function() {
-      var formData = this.fillData();
+    async saveNewPreavis() {
+      let formData = this.fillData();
+      let service_id = this.new_preavis.service.id;
 
-      var req;
+      let req;
       let remarqueEtapeStatut = "";
-      // Modification de préavis
       if (this.modifyPreavis) {
+        // Modification de préavis
         req = this.$http.put(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_ENDPOINT,
           formData,
@@ -216,13 +217,21 @@ export default {
       req
         .then(response => {
           if (response.data) {
-            this.searchAffairePreavis();
-            // handle success
-            this.$root.$emit("ShowMessage", "Le préavis au " + this.lastRecord + " a été enregistrée avec succès")
-
-            // log etape
             let remarqueEtape = this.lastRecord + " - " + remarqueEtapeStatut;
+            
+            // download courrier preavis
+            if (!this.modifyPreavis) {
+              this.downloadModel(service_id);
+              remarqueEtape += " + fichier de demande enregistré dans le dossier de l'affaire";
+            }
+
+            // handle success
+            this.$root.$emit("ShowMessage", "Le préavis au " + this.lastRecord + " a été enregistrée avec succès");
+            
+            // log etape
             logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_PREAVIS_ID), remarqueEtape);
+            
+            this.searchAffairePreavis();
           }
         })
         .catch(err => {
@@ -327,7 +336,7 @@ export default {
         }
       }
 
-      const service_ = this.services_liste_bk.filter(x => x.id === service_id).pop();
+      const service_ = this.services_liste_bk.filter(x => x.id === service_id)[0];
       form.adresse_service = [
         service_.service,
         [service_.titre, service_.prenom, service_.nom].filter(Boolean).join(" ") !== ""? "À l'att. de " + [service_.titre, service_.prenom, service_.nom].filter(Boolean).join(" "): null, 
@@ -354,8 +363,9 @@ export default {
       }
 
       let formData = new FormData();
+      formData.append("affaire_id", this.affaire.id)
       formData.append("template", "Preavis")
-      formData.append("output_file_name", service_.abreviation)
+      formData.append("service_id", service_id)
       formData.append("values", JSON.stringify({
         ADRESSE_SERVICE: form.adresse_service,
         DATE_ENVOI: String(getCurrentDate()),
@@ -369,14 +379,9 @@ export default {
         ANNEXES: ""
       }));
 
-      getDocument(formData)
+      saveDocument(formData)
       .then(response => {
-          this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'");
-
-          // Log l'étape de téléchargement du document
-          let service_nom = this.services_liste_bk.filter(x => x.id === service_id)[0].service;
-          let remarque = service_nom + " - " + "Téléchargement modèle préavis";
-          logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_PREAVIS_ID), remarque);
+          this.$root.$emit("ShowMessage", "Le fichier '" + response.data.filename + " a été enregistré dans le dossier de l'affaire");
       })
       .catch(err => handleException(err, this));
     },
