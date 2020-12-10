@@ -121,14 +121,11 @@ class Affaire(Base):
     client_envoi_id = Column(BigInteger, ForeignKey(Client.id))
     client_envoi_complement = Column(Text)
     responsable_id = Column(BigInteger, ForeignKey(Operateur.id))
-    technicien_id = Column(BigInteger, ForeignKey(
-        Operateur.id), nullable=False)
-    type_id = Column(BigInteger, ForeignKey(
-        AffaireType.id), nullable=False)
+    technicien_id = Column(BigInteger, ForeignKey(Operateur.id))
+    type_id = Column(BigInteger, ForeignKey(AffaireType.id), nullable=False)
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
     information = Column(Text)
-    date_ouverture = Column(
-        Date, default=datetime.datetime.utcnow, nullable=False)
+    date_ouverture = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     date_validation = Column(Date)
     date_envoi = Column(Date)
     date_cloture = Column(Date)

@@ -109,6 +109,7 @@ export default {
         type: {required},
         technicien_id: {required},
         cadastre: {required},
+        nom: {required},
         date_ouverture: {required},
         localisation: {required},
         client_commande: {required},
@@ -130,6 +131,7 @@ export default {
         type: {required},
         technicien_id: {required},
         cadastre: {required},
+        nom: {required},
         date_ouverture: {required},
         localisation: {required}
       };
