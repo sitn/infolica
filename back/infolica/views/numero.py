@@ -110,6 +110,8 @@ def numeros_search_view(request):
         VNumeros.numero.desc()
     ).filter(*conditions)
 
+    query = query.filter(VNumeros.type_numero_id <= 4)
+
     # if option matDiff selected
     if matDiff:
         query = query.filter(
