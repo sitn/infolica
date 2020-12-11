@@ -26,9 +26,9 @@ def affaire_dossier_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    affaire_dossier = request.registry.settings["affaires_directory"]
+    affaire_dossier = request.registry.settings["affaires_directory_fullpath"]
     affaire_id = request.matchdict['id']
-    return os.path.join(affaire_dossier, affaire_id).replace('\\', '/')
+    return os.path.normpath(os.path.join(affaire_dossier, affaire_id))
 
 
 @view_config(route_name='affaire_documents_by_affaire_id', request_method='GET', renderer='json')

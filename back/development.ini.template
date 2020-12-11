@@ -175,6 +175,7 @@ affaire_etape_priorite_1_id = 1
 # Accès aux dossiers
 ######################################################################################
 affaires_directory = /path/to/affaires_directory
+affaires_directory_fullpath = /fullpath/to/affaires_directory
 affaireTemplateDir = /path/to/affaire_template_directory
 access_control_allow_origin = http://127.0.0.1:8080
 mails_templates_directory = /path/to/mail_templates_dorectory

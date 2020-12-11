@@ -36,7 +36,7 @@ def save_document_view(request):
         output_file_name = service.abreviation
         relPath = service.relpath
 
-    date_time = datetime.now().strftime("%Y%m%d%H%M%S")
+    date_time = datetime.now().strftime("%Y%m%d")
     filename = output_file_name + "_" + date_time + '.docx'
     file_path = os.path.normpath(os.path.join(affaires_directory, affaire_id, relPath, filename))
 
