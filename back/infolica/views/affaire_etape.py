@@ -10,11 +10,11 @@ from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffai
 from infolica.scripts.utils import Utils
 from infolica.scripts.mailer import send_mail
 
+import os
+
 ###########################################################
 # ETAPES AFFAIRE
 ###########################################################
-
-
 @view_config(route_name='etapes_index', request_method='GET', renderer='json')
 @view_config(route_name='etapes_index_s', request_method='GET', renderer='json')
 def etapes_index_view(request):
@@ -90,7 +90,7 @@ def etapes_new_view(request):
                               <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
                               </tr>".format(i.datetime, i.operateur_prenom, i.operateur_nom, i.etape, i.remarque if i.remarque else "") for i in lastSteps])
         
-        text = "L'affaire <b>" + str(affaire.id) + " (" + affaire.nom + ")</b> est en attente pour l'étape <b>"+ affaire_etape_index.nom +"</b>."
+        text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires', str(affaire.id)) + "'>" + str(affaire.id) + " (" + affaire.nom + ")</a></b> est en attente pour l'étape <b>"+ affaire_etape_index.nom +"</b>."
         text += ("<br><br><br><h4>Historique de l'affaire</h4><table style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'><tr><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Horodateur</th><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Opérateur</th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'><th>Etape</th><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Remarque</th></tr>" + lastSteps + "</table>") if lastSteps != "" else ""
         subject = "Infolica - affaire " + str(affaire.id)
         send_mail(request, mail_list, "", subject, html=text)

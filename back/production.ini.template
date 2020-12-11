@@ -6,6 +6,7 @@
 [app:main]
 use = egg:infolica
 
+infolica_url_base = /*TO COMPLETE*/
 infolica_mail = /*TO COMPLETE*/
 infolica_smtp = /*TO COMPLETE*/
 infolica_balance_mail = /*TO COMPLETE*/
