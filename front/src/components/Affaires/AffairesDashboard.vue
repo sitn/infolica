@@ -17,6 +17,7 @@ import ControleGeometre from "@/components/Affaires/ControleGeometre/ControleGeo
 import ControlePPE from "@/components/Affaires/ControlePPE/ControlePPE.vue";
 import SuiviMandat from "@/components/Affaires/SuiviMandat/SuiviMandat.vue";
 import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
+import ActivationAffaire from "@/components/Affaires/ActivationAffaire/ActivationAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
 import { getTypesAffaires, checkPermission, getDocument, stringifyAutocomplete, logAffaireEtape } from '@/services/helper'
@@ -40,7 +41,8 @@ export default {
     ControlePPE,
     SuiviMandat,
     DuplicationAffaire,
-    ClotureAffaire
+    ClotureAffaire,
+    ActivationAffaire
   },
   data() {
     return {
@@ -223,6 +225,13 @@ export default {
      */
     callClotureAffaire() {
       this.$refs.clotureAffaireForm.openClotureDialog();
+    },
+
+    /**
+     * Réactivation de l'affaire
+     */
+    callActivationAffaire() {
+      this.$refs.activationAffaire.openActivationDialog();
     },
 
     /**
