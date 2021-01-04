@@ -1,4 +1,4 @@
-<div class="clotureAffaire">
+<div class="activationAffaire">
   <md-dialog :md-active.sync="showActivationDialog">
     <md-dialog-title>Réactivation de l'affaire</md-dialog-title>
     
@@ -29,4 +29,12 @@
     </md-dialog-actions>
 
   </md-dialog>
+
+  <!-- Supprimer la balance ? -->
+  <md-dialog-alert
+      :md-active.sync="showBalanceAlertDialog"
+      md-title="Balance de l'affaire"
+      md-content="Vérifier l'exactitude de la balance!"
+      md-confirm-text="Reçu 5/5" />
+
 </div>

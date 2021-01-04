@@ -122,29 +122,6 @@ export default {
 
 
     /**
-     * Charger les réservations des numéros de la MO
-     */
-    async searchAffaireNewNumerosMo() {
-      this.$http.get(
-        process.env.VUE_APP_API_URL +
-        process.env.VUE_APP_AFFAIRE_NUMEROS_MO_ENDPOINT +
-        this.$route.params.id,
-        {
-          withCredentials: true,
-          headers: { Accept: "application/json" }
-        }
-      ).then(response => {
-        if (response && response.data) {
-          this.affaire_numeros_nouveaux_mo = response.data;
-        }
-      }).catch(err => {
-        handleException(err, this)
-      })
-      this.numerosMoLoading = false;
-    },
-
-
-    /**
      * Contrôler qu'un numéro de référence n'est pas une numéro de base pour un numéro
      * réservé dans l'affaire
      */
@@ -457,7 +434,6 @@ export default {
                                   this.affaire_numeros_nouveaux.some(x => x.numero_diff_entree !== null && x.numero_diff_sortie === null);
     });
     
-    this.searchAffaireNewNumerosMo();
     this.showBalance_();
 
     this.$root.$on('UpdateNumerosAffaires', () =>{

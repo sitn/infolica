@@ -405,11 +405,12 @@ export default {
     /**
      * Enregistre une facture vide avec l'adresse
      */
-    postFacture(affaire_id) {
+    async postFacture(affaire_id) {
       return new Promise((resolve, reject) => {
         var formData = new FormData();
         formData.append("affaire_id", affaire_id);
         formData.append("client_id", this.client_facture.id);
+        formData.append("type_id", Number(process.env.VUE_APP_FACTURE_TYPE_FACTURE_ID));
         if (this.client_facture_complement !== null) {
           formData.append("client_complement", "À l'att. de " + this.client_facture_complement);
         }

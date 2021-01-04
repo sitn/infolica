@@ -5,7 +5,6 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import Document, DocumentType, VDocumentsAffaires
 from infolica.scripts.utils import Utils
 
 import os
@@ -73,8 +72,11 @@ def download_affaire_document_view(request):
     relpath = request.params['relpath']
     filename = request.params['filename']
 
-    if affaire_id:
-        file_path = os.path.normpath(os.path.join(affaires_directory, affaire_id, relpath, filename))
+    file_path = os.path.normpath(os.path.join(affaires_directory, affaire_id, relpath, filename))
+    folder_path = os.path.exists(os.path.dirname(file_path))
+
+    if not folder_path:
+        Utils.create_affaire_folder(request, folder_path)
 
     import urllib
     response = FileResponse(file_path, request=request, cache_max_age=86400)

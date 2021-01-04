@@ -71,6 +71,7 @@ class Client(Base):
     sortie = Column(Date)
     no_sap = Column(Text)
     no_bdp_bdee = Column(Text)
+    no_access = Column(Text)
 
 
 class ClientMoralPersonne(Base):
@@ -134,6 +135,7 @@ class Affaire(Base):
     vref = Column(Text)
     chemin = Column(Text)
     abandon = Column(Boolean)
+    resume = Column(Text)
 
 
 class AffaireEtapeIndex(Base):
@@ -150,7 +152,7 @@ class AffaireEtape(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-    operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
     etape_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id), nullable=False)
     datetime = Column(DateTime, nullable=False)
     remarque = Column(Text)
@@ -195,8 +197,6 @@ class Facture(Base):
     client_co_id = Column(BigInteger, ForeignKey(Client.id))
     client_complement = Column(Text)
     client_premiere_ligne = Column(Text)
-    indice_application_mo = Column(Float, default=1.2)
-    indice_tva = Column(Float, default=7.7)
     montant_mo = Column(Float, default=0.0, nullable=False)
     montant_rf = Column(Float, default=0.0, nullable=False)
     montant_mat_diff = Column(Float, default=0.0, nullable=False)
@@ -232,65 +232,6 @@ class EmolumentFacture(Base):
     montant = Column(Float, default=0.0, nullable=False)
 
 
-class RemarqueAffaire(Base):
-    __tablename__ = 'remarque_affaire'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-    remarque = Column(Text, nullable=False)
-    operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
-    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
-
-
-class DocumentType(Base):
-    __tablename__ = 'document_type'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-
-
-class Document(Base):
-    __tablename__ = 'document'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-    chemin = Column(Text, nullable=False)
-    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-    type_id = Column(BigInteger, ForeignKey(DocumentType.id), nullable=False)
-
-class EnvoiType(Base):
-    __tablename__ = 'envoi_type'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-
-
-class Envoi(Base):
-    __tablename__ = 'envoi'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
-    client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
-    client_complement = Column(Text)
-    type_id = Column(BigInteger, ForeignKey(EnvoiType.id))
-    date = Column(Date, default=datetime.datetime.utcnow)
-
-
-class EnvoiDocument(Base):
-    __tablename__ = 'envoi_document'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    envoi_id = Column(BigInteger, ForeignKey(Envoi.id), nullable=False)
-    document_id = Column(BigInteger, ForeignKey(Document.id), nullable=False)
-
-
-class SuiviMandatStatut(Base):
-    __tablename__ = 'suivi_mandat_statut'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-
-
 class SuiviMandat(Base):
     __tablename__ = 'suivi_mandat'
     __table_args__ = {'schema': 'infolica'}
@@ -310,8 +251,7 @@ class SuiviMandat(Base):
     pdt_22 = Column(Text)  # REMARQUE CONTROLE DU TABLEAU DES EMOLUMENTS ET REPORT SUR LA DEMANDE
     pdt_31 = Column(Boolean)  # MATERIALISATION DIFFEREE (COPIE DU PLAN DE MUTATION)
     pdt_41 = Column(Boolean)  # CONTROLE DE L'ENREGISTREMENT DE TOUS LES DOCUMENTS (COURRIEL, COURRIER, PREAVIS, PLAN, ETC…)
-    pdt_42 = Column(
-        Text)  # REMARQUE CONTROLE DE L'ENREGISTREMENT DE TOUS LES DOCUMENTS (COURRIEL, COURRIER, PREAVIS, PLAN, ETC…)
+    pdt_42 = Column(Text)  # REMARQUE CONTROLE DE L'ENREGISTREMENT DE TOUS LES DOCUMENTS (COURRIEL, COURRIER, PREAVIS, PLAN, ETC…)
     ap_11 = Column(Boolean)  # RESPECT DES DIRECTIVES DU SCAT, SAGR OU SERVICE URBANISME
     ap_12 = Column(Text)  # REMARQUE RESPECT DES DIRECTIVES DU SCAT, SAGR OU SERVICE URBANISME
     ap_21 = Column(Boolean)  # STRUCTURE DES REPERTOIRES ET CONTENU
@@ -600,7 +540,6 @@ class ControleGeometre(Base):
     remarque = Column(Text)
 
 
-
 class NumeroType(Base):
     __tablename__ = 'numero_type'
     __table_args__ = {'schema': 'infolica'}
@@ -625,9 +564,9 @@ class Numero(Base):
     numero = Column(BigInteger, nullable=False)
     suffixe = Column(Text)
     etat_id = Column(BigInteger, ForeignKey(NumeroEtat.id), nullable=False)
-    # plan_id = Column(BigInteger, ForeignKey(Plan.id))
+    no_access = Column(Text)
 
-    UniqueConstraint(cadastre_id, type_id, numero)
+    UniqueConstraint(cadastre_id, type_id, numero, suffixe)
 
 
 class ReservationNumerosMO(Base):
@@ -682,14 +621,6 @@ class NumeroRelation(Base):
     relation_type_id = Column(BigInteger, ForeignKey(
         NumeroRelationType.id), nullable=False)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
-
-
-# class NumeroPlan(Base):
-#     __tablename__ = 'numero_plan'
-#     __table_args__ = {'schema': 'infolica'}
-#     id = Column(BigInteger, primary_key=True, autoincrement=True)
-#     numero_id = Column(BigInteger, ForeignKey(Numero.id), nullable=False)
-#     plan_id = Column(BigInteger, ForeignKey(Plan.id), nullable=False)
 
 
 class AffaireNumeroType(Base):
@@ -837,7 +768,6 @@ class VNumeros(Base):
     diff_entree = Column(Date)
     diff_sortie = Column(Date)
     diff_affaire_id = Column(BigInteger)
-    # plan_id = Column(BigInteger)
 
 
 class VNumerosAffaires(Base):
@@ -865,7 +795,6 @@ class VNumerosAffaires(Base):
     numero_diff_id = Column(Date)
     numero_diff_entree = Column(Date)
     numero_diff_sortie = Column(Date)
-    numero_plan_id = Column(BigInteger)
     numero_base_id = Column(BigInteger)
     numero_base_type = Column(Text)
     numero_base = Column(BigInteger)
@@ -1059,7 +988,6 @@ class VNumerosRelations(Base):
     numero_base_suffixe = Column(Text)
     numero_base_etat_id = Column(BigInteger)
     numero_base_etat = Column(Text)
-    numero_base_plan_id = Column(BigInteger)
     numero_associe_id = Column(BigInteger)
     numero_associe_cadastre_id = Column(BigInteger)
     numero_associe_cadastre = Column(Text)
@@ -1069,7 +997,6 @@ class VNumerosRelations(Base):
     numero_associe_suffixe = Column(Text)
     numero_associe_etat_id = Column(BigInteger)
     numero_associe_etat = Column(Text)
-    numero_associe_plan_id = Column(BigInteger)
     numero_relation_type_id = Column(BigInteger)
     numero_relation_type = Column(Text)
 
@@ -1133,8 +1060,6 @@ class VFactures(Base):
     client_co_sortie = Column(Date)
     client_co_no_sap = Column(Text)
     client_co_no_bdp_bdee = Column(Text)
-    indice_application_mo = Column(Float)
-    indice_tva = Column(Float)
     montant_mo = Column(Float)
     montant_mat_diff = Column(Float)
     montant_rf = Column(Float)
@@ -1197,14 +1122,16 @@ class VPlan(Base):
 
 class Etape_tele(Base):
     __tablename__ = "etape"
-    __table_args__ = {'schema': 'teletravail'}
+    __table_args__ = {'schema': 'teletravail',
+                      'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
 
 class AffaireType_tele(Base):
     __tablename__ = "affaire_type"
-    __table_args__ = {'schema': 'teletravail'}
+    __table_args__ = {'schema': 'teletravail',
+                      'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger, nullable=False)
@@ -1212,7 +1139,8 @@ class AffaireType_tele(Base):
 
 class Affaire_tele(Base):
     __tablename__ = "affaire"
-    __table_args__ = {'schema': 'teletravail'}
+    __table_args__ = {'schema': 'teletravail',
+                      'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     type_id = Column(BigInteger, ForeignKey(AffaireType_tele.id), nullable=False)
     nom = Column(Text, nullable=False)
@@ -1223,7 +1151,8 @@ class Affaire_tele(Base):
 
 class SuiviAffaire_tele(Base):
     __tablename__ = "suivi_affaire"
-    __table_args__ = {'schema': 'teletravail'}
+    __table_args__ = {'schema': 'teletravail',
+                      'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
     affaire_id = Column(BigInteger, ForeignKey(Affaire_tele.id), nullable=False)

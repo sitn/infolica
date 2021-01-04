@@ -81,74 +81,6 @@ export default {
       }).catch(err => handleException(err, this));
     },
 
-    /**
-     * Get balance from file
-     */
-    // async getBalanceFromFile() {
-    //   // Get balance from file via webservice
-    //   this.$http.get(
-    //     process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_ENDPOINT + this.$route.params.id,
-    //     {
-    //       withCredentials: true,
-    //       headers: {Accept: "application/json"}
-    //     }
-    //   ).then(response => {
-    //     if (response && response.data){
-    //       let tmp = JSON.parse(response.data);
-
-    //       // Get old and new BF
-    //       let oldBF = [];
-    //       let newBF = [];
-
-    //       tmp.forEach(x => {
-    //         oldBF.push(x.old);
-    //         newBF.push(x.new);
-    //       });
-
-    //       // Only keep unique BF
-    //       oldBF = [...new Set(oldBF)];
-    //       newBF = [...new Set(newBF)];
-
-    //       // Check if oldBF are existing numbers
-    //       let promises = [];
-    //       oldBF.forEach(number => {
-    //         promises.push(this.checkOldBF(number, this.affaire.cadastre_id, Number(process.env.VUE_APP_NUMERO_TYPE_BF))); // ================== !!! cadastre_id peut être différent !!
-    //       })
-
-    //       this.oldBF_toCreate = [];
-    //       this.numeros_anciens = [];
-
-    //       Promise.all(promises).then(responses => {
-    //         responses.forEach(response => {
-    //           if (response && response.data && response.data[0]) {
-    //             this.numeros_anciens = {
-    //               id: response.data.id,
-    //               numero: response.data.numero
-    //             }
-    //           } else {
-    //             const url = new URL(response.config.url)
-    //             const numero = Number(url.searchParams.get("numero"));
-    //             const cadastre_id = Number(url.searchParams.get("cadastre_id"));
-    //             const type_id = Number(url.searchParams.get("type_id"));
-                
-    //             this.oldBF_toCreate.push({
-    //                 numero: numero,
-    //                 cadastre: this.cadastres_liste.filter(x => x.id === cadastre_id).pop(),
-    //                 type: this.numeros_types_liste.filter(x => x.id === type_id).pop()
-    //             });
-    //           }
-    //         });
-            
-    //         // Ask the userconfirmation to create numbers that does not exist
-    //         if (this.oldBF_toCreate[0]) {
-    //           this.showConfirmationCreateNumber = true
-    //         }
-    //       }).catch(err => handleException(err, this));
-          
-    //       this.numeros_relations = tmp;
-    //     }
-    //   }).catch(err => handleException(err, this));
-    // },
 
     /**
      * Check existing old bf
@@ -283,49 +215,6 @@ export default {
 
 
     // =======================================================
-
-
-    /**
-     * Initialiser la table des relations
-     */
-    // initTableRelation() {
-    //   // 1. retourne les relations
-    //   this.getNumerosRelations()
-    //   .then(response => {
-    //     this.numeros_relations = response;
-    //     this.numeros_relations_bk = response
-
-    //   // 2. construire la matrice des relations
-    //   this.numeros_relations_matrice = [];
-
-    //   this.numeros_anciens.forEach(x => {
-    //     var tmp_nouveaux = {};
-
-    //     this.numeros_nouveaux.forEach(y => {
-    //       var tmp = false;
-    //       tmp = this.numeros_relations.some(rel => {
-    //         if (rel.source_numero_id === x.numero_id && rel.destination_numero_id === y.numero_id) {
-    //           return true
-    //         } else {
-    //           return false
-    //         }
-    //       })
-    //       if (tmp) {
-    //         tmp_nouveaux[y.numero] = true;
-    //       } else {
-    //         tmp_nouveaux[y.numero] = false;
-    //       }
-    //     });
-
-    //     this.numeros_relations_matrice.push({
-    //       source_numero: x.numero,
-    //       source_numero_id: x.numero_id,
-    //       destination: Object.assign({}, tmp_nouveaux)
-    //     });
-    //   });
-    // })
-    // .catch(err => handleException(err, this));
-    // },
 
     /**
      * Update variable numeros_relations

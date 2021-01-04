@@ -16,9 +16,10 @@ export default {
   component: {},
   data: () => {
     return {
-      showActivationDialog: false,
       affaire_numeros: [],
-      numero_etats_liste: []
+      numero_etats_liste: [],
+      showActivationDialog: false,
+      showBalanceAlertDialog: false,
     };
   },
   methods: {
@@ -43,6 +44,14 @@ export default {
         logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_ACTIVATION_ID));
         this.showActivationDialog = false;
         this.$router.go(0);
+
+        this.getAffaireNumerosRelation()
+        .then(response => {
+          if (response && response.data && response.data.length > 0) {
+            this.showBalanceAlertDialog = true;
+          }
+        }).catch(err => handleException(err, this));
+
       }).catch(err => handleException(err, this));
     },
 
@@ -165,6 +174,41 @@ export default {
         ).then(response => resolve(response))
         .catch(err => reject(err));
       });
+    },
+
+
+    /**
+     * Get affaire numeros relation
+     */
+    async getAffaireNumerosRelation() {
+      return new Promise((resolve, reject) => {
+        this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_RELATIONS_BY_AFFAIREID_ENDPOINT + this.affaire.id,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
+
+    /**
+     * Delete numeros relation in db
+     */
+    async deleteRelation(rel) {
+      return new Promise((resolve, reject) => {
+        this.$http.delete(
+          process.env.VUE_APP_API_URL +
+          process.env.VUE_APP_NUMEROS_RELATIONS_ENDPOINT + "?numero_relation_id=" +  rel.relation_id,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      })
     },
 
 

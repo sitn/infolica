@@ -15,7 +15,6 @@ import os
 import json
 from datetime import datetime
 from docxtpl import DocxTemplate, RichText
-from shutil import copytree, ignore_patterns
 
 ###########################################################
 # AFFAIRE
@@ -169,7 +168,7 @@ def affaires_new_view(request):
     model.chemin = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
 
     # Copier le dossier __template pour une nouvelle affaire
-    copytree(request.registry.settings['affaireTemplateDir'], model.chemin, ignore=ignore_patterns('Thumbs.db'))
+    Utils.create_affaire_folder(request, model.chemin)
 
     return model.id
 

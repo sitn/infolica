@@ -2,8 +2,6 @@
     <md-card>
         <md-card-header>
             <div class="md-title">Balance</div>
-            <!-- <md-button @click="initBFArrays" class="md-raised">Récupérer la balance</md-button> -->
-            <!-- <md-button @click="getBalanceFromFile" class="md-raised">Récupérer la balance</md-button> -->
             <md-button @click="getMutationNames" class="md-raised" title="Charger les noms d'affaires dans la BD">Récupérer la balance</md-button>
             <md-button @click="refreshBalanceTable" class="md-raised" title="Raffréchir la base de données"><md-icon>refresh</md-icon></md-button>
         </md-card-header>
@@ -78,7 +76,7 @@
 
 
     <!-- Dialog confirm creation of old numbers -->
-    <md-dialog :md-active="showConfirmationCreateNumber"
+    <!-- <md-dialog :md-active="showConfirmationCreateNumber"
         @md-clicked-outside="showConfirmationCreateNumber = false"
         style="z-index: 6;">
         <md-dialog-title>Confirmer la création des numéros</md-dialog-title>
@@ -109,12 +107,12 @@
             <md-button class="md-accent" @click="showConfirmationCreateNumber = false">Annuler</md-button>
             <md-button class="md-primary" @click="onCreateOldBF">Enregistrer</md-button>
         </md-dialog-actions>
-    </md-dialog>
+    </md-dialog> -->
 
     <!-- Dialog balance incorrecte -->
-    <md-dialog-alert :md-active.sync="checkBFBalance.show"
+    <!-- <md-dialog-alert :md-active.sync="checkBFBalance.show"
                      :md-title="checkBFBalance.title"
                      :md-content="checkBFBalance.content"
-                     style="width: 700px; margin: auto;" />
+                     style="width: 700px; margin: auto;" /> -->
 
 </div>
