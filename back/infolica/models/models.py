@@ -582,6 +582,7 @@ class ReservationNumerosMO(Base):
     date = Column(Date, default=datetime.datetime.utcnow)
     remarque = Column(Text)
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
+    affaire_no_access = Column(Text)
 
 
 class NumeroEtatHisto(Base):

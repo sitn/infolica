@@ -37,28 +37,28 @@ export default {
         async searchClients () {
           var formData = new FormData();
 
-          if(this.search.nom !== null) {
+          if(this.search.nom) {
             formData.append("nom", this.search.nom);
           }
-          if(this.search.prenom !== null) {
+          if(this.search.prenom) {
             formData.append("prenom", this.search.prenom);
           }
-          if(this.search.entreprise !== null) {
+          if(this.search.entreprise) {
             formData.append("entreprise", this.search.entreprise);
           }
-          if(this.search.client_id !== null && this.search.client_id.id) {
+          if(this.search.client_id && this.search.client_id.id) {
             formData.append("id", this.search.client_id.id);
           }
-          if(this.search.npa !== null) {
+          if(this.search.npa) {
             formData.append("npa", this.search.npa);
           }
-          if(this.search.adresse !== null) {
+          if(this.search.adresse) {
             formData.append("adresse", this.search.adresse);
           }
-          if(this.search.localite !== null) {
+          if(this.search.localite) {
             formData.append("localite", this.search.localite);
           }
-          if(this.search.mail !== null) {
+          if(this.search.mail) {
             formData.append("mail", this.search.mail);
           }
 
