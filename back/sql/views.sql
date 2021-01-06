@@ -116,18 +116,18 @@ as
             etidx.priorite,
             op3_1.nom AS operateur_nom,
             op3_1.prenom AS operateur_prenom
-        FROM infolica.affaire_etape et,
+        FROM infolica.affaire_etape et
+            left join infolica.operateur op3_1 on et.operateur_id = op3_1.id,
             infolica.affaire_etape_index etidx,
-            infolica.operateur op3_1,
             ( SELECT max(affaire_etape.id) AS id,
                 affaire_etape.affaire_id
             FROM infolica.affaire_etape,
                 infolica.affaire_etape_index
             WHERE affaire_etape.etape_id = affaire_etape_index.id AND affaire_etape_index.ordre IS NOT NULL
             GROUP BY affaire_etape.affaire_id) et2
-        WHERE et.id = et2.id AND et.operateur_id = op3_1.id AND et.etape_id = etidx.id) etape ON etape.affaire_id = aff.id
+        WHERE et.id = et2.id AND et.etape_id = etidx.id) etape ON etape.affaire_id = aff.id
         LEFT JOIN infolica.operateur op3 ON aff.technicien_id = op3.id
-    ORDER BY aff.id DESC;
+    ORDER BY aff.date_ouverture DESC;
 
 alter table infolica.v_affaires
 	owner to infolica;

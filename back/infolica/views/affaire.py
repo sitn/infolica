@@ -100,7 +100,7 @@ def affaires_search_view(request):
 
 
 
-    query = query.order_by(VAffaire.id.desc()).limit(search_limit).all()
+    query = query.limit(search_limit).all()
     return Utils.serialize_many(query)
 
 
