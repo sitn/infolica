@@ -3,6 +3,7 @@ from datetime import date, datetime
 from sqlalchemy import func, and_, desc
 from infolica.models.models import Numero, AffaireNumero, Fonction, Role, FonctionRole, ReservationNumerosMO
 from infolica.scripts.ldap_query import LDAPQuery
+from shutil import copytree, ignore_patterns
 import json
 import os
 
@@ -296,7 +297,8 @@ class Utils(object):
         return LDAPQuery.get_infolica_users(request)
 
     @classmethod
-    def create_affaire_folder(cls, affaire_folder):
+    def create_affaire_folder(cls, request, affaire_folder):
         if not os.path.isdir(affaire_folder):
-            os.mkdir(affaire_folder)
+            copytree(request.registry.settings['affaireTemplateDir'], affaire_folder, ignore=ignore_patterns('Thumbs.db'))
+
 

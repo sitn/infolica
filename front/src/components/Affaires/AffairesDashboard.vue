@@ -17,6 +17,7 @@ import ControleGeometre from "@/components/Affaires/ControleGeometre/ControleGeo
 import ControlePPE from "@/components/Affaires/ControlePPE/ControlePPE.vue";
 import SuiviMandat from "@/components/Affaires/SuiviMandat/SuiviMandat.vue";
 import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
+import ActivationAffaire from "@/components/Affaires/ActivationAffaire/ActivationAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
 import { getTypesAffaires, checkPermission, getDocument, stringifyAutocomplete, logAffaireEtape } from '@/services/helper'
@@ -40,7 +41,8 @@ export default {
     ControlePPE,
     SuiviMandat,
     DuplicationAffaire,
-    ClotureAffaire
+    ClotureAffaire,
+    ActivationAffaire
   },
   data() {
     return {
@@ -153,8 +155,7 @@ export default {
         // get suivi d'affaire théorique
         this.typesAffaires = getTypesAffaires().then(response => {
           if (response && response.data) {
-            let tmp = response.data.filter(x => x.id === this.affaire.type_id)[0];
-            this.suiviAffaireTheorique = tmp.logique_processus;
+            this.suiviAffaireTheorique = response.data.filter(x => x.id === this.affaire.type_id)[0].logique_processus;
           }
         })
       }).catch(err => handleException(err, this));
@@ -223,6 +224,13 @@ export default {
      */
     callClotureAffaire() {
       this.$refs.clotureAffaireForm.openClotureDialog();
+    },
+
+    /**
+     * Réactivation de l'affaire
+     */
+    callActivationAffaire() {
+      this.$refs.activationAffaire.openActivationDialog();
     },
 
     /**

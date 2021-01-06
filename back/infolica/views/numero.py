@@ -110,6 +110,8 @@ def numeros_search_view(request):
         VNumeros.numero.desc()
     ).filter(*conditions)
 
+    query = query.filter(VNumeros.type_numero_id <= 4)
+
     # if option matDiff selected
     if matDiff:
         query = query.filter(
@@ -275,115 +277,8 @@ def affaire_numeros_view(request):
         conditions.append(VNumerosAffaires.affaire_numero_actif == affaire_numero_actif)
 
     records = request.dbsession.query(VNumerosAffaires).filter(
-        *conditions).all()
+        *conditions).order_by(VNumerosAffaires.numero.desc()).all()
     return Utils.serialize_many(records)
-
-
-@view_config(route_name='affaire_numeros_MO_by_affaire_id', request_method='GET', renderer='json')
-def affaire_new_numeros_mo_view(request):
-    """
-    Return all numeros MO in affaire
-    """
-    # Check connected
-    if not Utils.check_connected(request):
-        raise exc.HTTPForbidden()
-
-    affaire_id = request.matchdict["id"]
-
-    # Récupérer les id des numéros de la MO
-    settings = request.registry.settings
-
-    numeros_mo_type_id = [
-        int(settings['numero_pfp3_id']),
-        int(settings['numero_bat_id']),
-        int(settings['numero_pcs_id']),
-        int(settings['numero_paux_id']),
-        int(settings['numero_pdet_id']),
-        int(settings['numero_dp_id'])
-    ]
-
-    # # Contenu de la table VNumerosAffaires avec les numéros de la MO
-    # query = request.dbsession.query(VNumerosAffaires).filter(
-    #     and_(
-    #         VNumerosAffaires.affaire_id == affaire_id,
-    #         VNumerosAffaires.numero_type_id.in_(numeros_mo_type_id)
-    #     )
-    # )
-    
-    # Contenu de la table VNumerosAffaires avec les numéros de la MO
-    query = request.dbsession.query(VNumerosAffaires).filter(
-        and_(
-            VNumerosAffaires.affaire_id == affaire_id,
-            VNumerosAffaires.numero_type_id.in_(numeros_mo_type_id)
-        )
-    )
-
-    records = query.all()
-
-    cadastres_id = list()
-    types_id = list()
-    plans_id = list()
-    for record in records:
-        cadastres_id.append(record.numero_cadastre_id)
-        types_id.append(record.numero_type_id)
-        plans_id.append(record.numero_plan_id)
-    # Retient les valeurs uniques
-    cadastres_id = set(cadastres_id)
-    types_id = set(types_id)
-    plans_id = set(plans_id)
-
-    reservations_ranges = list()
-    for cadastre_id in cadastres_id:
-        for type_id in types_id:
-            for plan_id in plans_id:
-                records = query.filter(
-                    and_(
-                        VNumerosAffaires.numero_cadastre_id == cadastre_id,
-                        VNumerosAffaires.numero_type_id == type_id,
-                        VNumerosAffaires.numero_plan_id == plan_id
-                    )
-                ).order_by(VNumerosAffaires.numero.asc()).all()
-
-                if len(records) == 0:
-                    continue
-
-                numeros = list()
-                for record in records:
-                    numeros.append(record.numero)
-
-                # Get lists of consecutive numbers [[de, à], [de, à], etc]
-                consecutive_diff = [x - numeros[i - 1] for i, x in enumerate(numeros)][1:]
-                diff_index_greaterthan1 = list(filter(lambda x: consecutive_diff[x] > 1, range(len(consecutive_diff))))
-
-                last_diff_idx = 0
-                for i, diff_idx in enumerate(diff_index_greaterthan1):
-
-                    reservations_ranges.append({
-                        "cadastre_id": cadastre_id,
-                        "type_id": type_id,
-                        "plan_id": plan_id,
-                        "numero_de": numeros[last_diff_idx],
-                        "numero_a": numeros[diff_idx],
-                        "cadastre": record.numero_cadastre,
-                        "numero_type": record.numero_type,
-                        "nombre": numeros[diff_idx] - numeros[last_diff_idx] + 1
-                    })
-
-                    last_diff_idx = diff_idx + 1
-
-                # Ne pas oublier la dernière série...
-                reservations_ranges.append({
-                    "cadastre_id": cadastre_id,
-                    "type_id": type_id,
-                    "plan_id": plan_id,
-                    "numero_de": numeros[last_diff_idx],
-                    "numero_a": numeros[-1],
-                    "cadastre": record.numero_cadastre,
-                    "numero_type": record.numero_type,
-                    "nombre": numeros[-1] - numeros[last_diff_idx] + 1
-                })
-
-    return json.loads(json.dumps(reservations_ranges))
 
 
 @view_config(route_name='affaire_numeros', request_method='PUT', renderer='json')
@@ -473,7 +368,7 @@ def affaire_numero_new_view(request, params=None):
 @view_config(route_name='numero_affaires_by_numero_id', request_method='GET', renderer='json')
 def numeros_affaire_view(request):
     """
-    Get new affaires by numero_id
+    Get affaires by numero_id
     """
     # Check connected
     if not Utils.check_connected(request):

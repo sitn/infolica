@@ -179,7 +179,7 @@
             <md-table v-model="numero_affaires" md-sort="affaire_date" md-sort-order="desc" md-fixed-header>
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell md-label="Affaire" md-sort-by="affaire_id" style="width: 10%;">{{ item.affaire_id }}</md-table-cell>
-                    <md-table-cell md-label="Nom de l'affaire" md-sort-by="affaire_nom" style="width: 15%;">{{ item.affaire_nom }}</md-table-cell>
+                    <md-table-cell md-label="Description" md-sort-by="affaire_nom" style="width: 15%;">{{ item.affaire_nom }}</md-table-cell>
                     <md-table-cell md-label="Type" md-sort-by="affaire_type" style="width: 20%;">{{ item.affaire_type }}</md-table-cell>
                     <md-table-cell md-label="Date" md-sort-by="affaire_date" style="width: 10%;">{{ item.affaire_date | formatDate }}</md-table-cell>
                     <md-table-cell md-label="Consulter" class="actionsColumn" style="width: 15%;">

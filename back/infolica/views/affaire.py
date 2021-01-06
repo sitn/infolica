@@ -15,7 +15,6 @@ import os
 import json
 from datetime import datetime
 from docxtpl import DocxTemplate, RichText
-from shutil import copytree
 
 ###########################################################
 # AFFAIRE
@@ -101,7 +100,7 @@ def affaires_search_view(request):
 
 
 
-    query = query.order_by(VAffaire.id.desc()).limit(search_limit).all()
+    query = query.limit(search_limit).all()
     return Utils.serialize_many(query)
 
 
@@ -169,7 +168,7 @@ def affaires_new_view(request):
     model.chemin = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
 
     # Copier le dossier __template pour une nouvelle affaire
-    copytree(request.registry.settings['affaireTemplateDir'], model.chemin)
+    Utils.create_affaire_folder(request, model.chemin)
 
     return model.id
 
@@ -232,7 +231,7 @@ def courrier_affaire_view(request):
     output_file_name = request.params['output_file_name'] if 'output_file_name' in request.params else template
 
     # Set output file name
-    date_time = datetime.now().strftime("%Y%m%d%H%M%S")
+    date_time = datetime.now().strftime("%Y%m%d")
     filename = output_file_name + "_" + date_time + '.docx'
     file_path = os.path.join(temporary_directory, filename)
 

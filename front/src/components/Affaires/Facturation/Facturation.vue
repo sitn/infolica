@@ -282,7 +282,7 @@ export default {
         montant_tva: numeral(tmp.montant_tva).format('0.00'),
         montant_total: numeral(tmp.montant_total).format('0.00'),
         numeros: tmp.numeros,
-        remarque: tmp.remarque
+        remarque: tmp.remarque,
       }
       this.showFactureDialog = true;
     },
@@ -353,8 +353,10 @@ export default {
       formData.append("remarque", this.selectedFacture.remarque || null);
       formData.append("client_complement", this.selectedFacture.client_complement || null);
       formData.append("client_premiere_ligne", this.selectedFacture.client_premiere_ligne || null);
-      formData.append("type_id", this.selectedFacture.type_id);
       
+      if (this.selectedFacture.type_id) {
+        formData.append("type_id", this.selectedFacture.type_id);
+      }
       if (this.selectedFacture.date) {
         formData.append("date", moment(this.selectedFacture.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       }
@@ -382,12 +384,6 @@ export default {
       }
       if (this.selectedFacture.montant_total) {
         formData.append("montant_total", this.selectedFacture.montant_total);
-      }
-      if (this.selectedFacture.indice_tva) {
-        formData.append("indice_tva", this.selectedFacture.indice_tva);
-      }
-      if (this.selectedFacture.indice_application_mo) {
-        formData.append("indice_application_mo", this.selectedFacture.indice_application_mo);
       }
       if (this.selectedFacture.numeros_id) {
         formData.append("numeros", JSON.stringify(this.selectedFacture.numeros_id));

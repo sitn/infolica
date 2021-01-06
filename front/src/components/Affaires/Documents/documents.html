@@ -34,7 +34,7 @@
                         </div>
                     </div>
                     <div v-if="documents[0]">
-                        <md-table v-model="documents" md-sort="relpath" md-sort-order="desc" md-fixed-header md-card>
+                        <md-table v-model="documents" md-sort="relpath" md-sort-order="asc" md-fixed-header md-card>
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                 <md-table-cell md-label="Dossier" md-sort-by="relpath">{{ item.relpath }}</md-table-cell>
                                 <md-table-cell md-label="Fichier" md-sort-by="filename">{{ item.filename }}</md-table-cell>
