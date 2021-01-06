@@ -155,8 +155,7 @@ export default {
         // get suivi d'affaire théorique
         this.typesAffaires = getTypesAffaires().then(response => {
           if (response && response.data) {
-            let tmp = response.data.filter(x => x.id === this.affaire.type_id)[0];
-            this.suiviAffaireTheorique = tmp.logique_processus;
+            this.suiviAffaireTheorique = response.data.filter(x => x.id === this.affaire.type_id)[0].logique_processus;
           }
         })
       }).catch(err => handleException(err, this));
