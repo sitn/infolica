@@ -60,6 +60,40 @@ Then build with:
 npm run build [-- --mode production]
 ```
 
+### Development
+
+When developping and to avoid getting cross-origin issues with the application cookie, one should proxy the whole application through Apache.
+
+To do so, you need Apache installed on your computer and add the following configuration:
+
+```
+<location /infolica_api>
+    Require all granted
+</location>
+<location /infolica/>
+    Require all granted
+</location>
+
+SSLProxyEngine on
+SSLProxyVerify none
+SSLProxyCheckPeerCN off
+ProxyPass "/infolica_api/" "http://localhost:6543/"
+ProxyPassReverse "/infolica_api/"  "http://localhost:6543/"
+ProxyPass "/infolica/" "http://localhost:8080/infolica/"
+ProxyPassReverse "/infolica/"  "http://localhost:8080/infolica/"
+
+ProxyPreserveHost On
+RequestHeader set X-Forwarded-Proto "https"
+RequestHeader set X-Forwarded-Port "443"
+ProxyRequests Off
+
+```
+
+Then in your local `.env.development.local` file:
+
+```
+VUE_APP_API_URL = "http://localhost/infolica_api/infolica/api"
+```
 
 ### Install and configure Apache
 If you already have an Apache with mod_wsgi enabled, switch to Apache configuration step.
