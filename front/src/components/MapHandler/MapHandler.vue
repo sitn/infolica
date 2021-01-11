@@ -15,8 +15,9 @@ import Point from "ol/geom/Point";
 import {WMTSCapabilities} from "ol/format";
 import WMTS from "ol/source/WMTS";
 import {optionsFromCapabilities} from "ol/source/WMTS";
-
-
+import proj4 from "proj4";
+import {register as proj_register} from "ol/proj/proj4";
+import {Projection} from "ol/proj";
 import { Style, Circle, Fill, Stroke, RegularShape } from "ol/style";
 import GeoJSON from 'ol/format/GeoJSON';
 
@@ -43,16 +44,14 @@ export default {
      * Init map
      */
     initMap: function(center, zoom) {
+
       //Init marker style
       this.initMarkerStyle();
-
       // WMTS
       this.wmtsLayer = new TileLayer();
 
       // Vector layer
-      this.vectorSource = new VectorSource({
-        projection: process.env.VUE_APP_MAP_PROJECTION
-      });
+      this.vectorSource = new VectorSource();
       this.vectorLayer = new VectorLayer({
         source: this.vectorSource
       });
@@ -65,15 +64,32 @@ export default {
       // Map layers
       const layers = [this.wmtsLayer, this.vectorLayer, this.graphicsLayer];
 
+
       //View
+
+      const _crs = process.env.VUE_APP_MAP_PROJECTION;
+      proj4.defs(_crs,
+       '+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333'
+       + ' +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel '
+       + '+towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs');
+      const _extent = [2420000, 1030000, 2900000, 1360000];
+    
+      proj_register(proj4);
+
+      const _projection = new Projection({
+        code: _crs,
+        extent: _extent,
+      });
+
       this.view = new View({
-        projection: process.env.VUE_APP_MAP_PROJECTION,
+        projection: _projection,
         center: center
           ? [center.x, center.y]
           : process.env.VUE_APP_MAP_DEFAULT_CENTER,
-        zoom: zoom
-      });
-
+        zoom: zoom,
+        minZoom: 0,
+        maxZoom: 17
+        });
       if (!this.map) {
 
         const interactions = new defaultInteractions({
@@ -119,7 +135,7 @@ export default {
               ? [center.x, center.y]
               : process.env.VUE_APP_MAP_DEFAULT_CENTER
           );
-      }
+      }    
     },
 
     /**
@@ -183,9 +199,7 @@ export default {
      * Init graphics layer
      */
     initGraphicsLayer: function(){
-      this.graphicsLayerSource = new VectorSource({
-        projection: process.env.VUE_APP_MAP_PROJECTION
-      });
+      this.graphicsLayerSource = new VectorSource();
       this.graphicsLayer = new VectorLayer({
         source: this.graphicsLayerSource,
         style: new Style({
@@ -215,7 +229,7 @@ export default {
             const WMTSoptions = optionsFromCapabilities(
               result,{
                 layer: process.env.VUE_APP_WMTS_LAYER,
-                matrixSet: process.env.VUE_APP_MAP_PROJECTION
+                matrixSet: this._crs
               }
             )
             const source = new WMTS(WMTSoptions);
@@ -223,7 +237,7 @@ export default {
          });
 
     },
-    /**
+/**
      * Add graphic to graphics layer
      */
     addGraphic: function(feature){
@@ -252,7 +266,6 @@ export default {
       }
     },
 
-
     /**
      * Add marker
      */
@@ -277,7 +290,6 @@ export default {
     clearMarkers: function() {
       this.vectorSource.clear();
     }
-
   },
 
   mounted: function() {
