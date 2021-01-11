@@ -237,7 +237,7 @@ export default {
          });
 
     },
-/**
+    /**
      * Add graphic to graphics layer
      */
     addGraphic: function(feature){
