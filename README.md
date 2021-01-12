@@ -33,7 +33,7 @@ pip install -e .
 
 To test if the backend is responding, type the following in your virtual env. It will serve your api.
 ```
-pserve development.ini
+pserve --reload development.ini
 ```
 In a web browser, check this url:
 ```
