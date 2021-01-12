@@ -190,16 +190,15 @@ import { validationMixin } from 'vuelidate'
         var formData = new FormData();
         formData.append("type_client", this.form.type_client);
         if (this.form.type_client === this.clients_types_config.personne_morale) {
-          formData.append("entreprise", this.form.entreprise);
           formData.append("titre", null);
           formData.append("nom", null);
           formData.append("prenom", null);
         } else {
-          formData.append("entreprise", null);
           formData.append("titre", this.form.titre);
           formData.append("nom", this.form.nom);
           formData.append("prenom", this.form.prenom);
         }
+        formData.append("entreprise", this.form.entreprise);
         formData.append("co", this.form.co || null);
         formData.append("adresse", this.form.adresse || null);
         formData.append("npa", this.form.npa || null);
