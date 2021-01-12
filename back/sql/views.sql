@@ -300,7 +300,8 @@ as
         tmp.numero_base_type,
         tmp.numero_base,
         tmp.numero_base_suffixe,
-        tmp.numero_base_etat
+        tmp.numero_base_etat,
+        aff.no_access as affaire_no_access
     FROM infolica.affaire_numero affnum
         LEFT JOIN ( SELECT numr.affaire_id,
             numr.numero_id_associe AS numero_associe_id,

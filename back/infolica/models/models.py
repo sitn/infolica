@@ -714,8 +714,7 @@ class FonctionRole(Base):
 
 class GeosBalance(Base):
     __tablename__ = 'geos_balance'
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __table_args__ = {'schema': 'infolica'}
     idobj = Column(String(40), primary_key=True)
     base = Column(String(50))
     numero_new = Column(String(50))

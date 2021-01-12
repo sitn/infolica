@@ -19,13 +19,6 @@ def cadastre_view(request):
     # if not Utils.check_connected(request):
     # raise exc.HTTPForbidden()
 
-    records = request.dbsession.query(Cadastre).order_by(Cadastre.nom).all()
-    cadastres = list()
+    records = request.dbsession.query(Cadastre).filter(Cadastre.id != request.registry.settings['cadastre_cantonal_id']).order_by(Cadastre.nom).all()
 
-    # Supprimer l'entrée "CADASTRE CANTONAL" de la liste
-    for record_i in records:
-        if not record_i.nom == "CADASTRE CANTONAL":
-            cadastres.append(record_i)
-
-    cadastres = Utils.serialize_many(cadastres)
-    return cadastres
+    return Utils.serialize_many(records)
