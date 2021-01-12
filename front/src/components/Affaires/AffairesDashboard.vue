@@ -165,7 +165,6 @@ export default {
      * Set affaire
      */
     async setAffaire() {
-      return new Promise(() => {
         let _this = this;
         this.searchAffaire().then(function(obj){
           _this.affaire = obj;
@@ -181,7 +180,7 @@ export default {
           }
   
           _this.showMap();
-      });
+          _this.searchAffaireEtapes();
       });
 
 
@@ -471,7 +470,7 @@ export default {
   },
 
   mounted: function() {
-    this.setAffaire().then( () => this.searchAffaireEtapes() );
+    this.setAffaire()
     this.$root.$on('mapHandlerReady', () =>{
       this.showMap();
     });
