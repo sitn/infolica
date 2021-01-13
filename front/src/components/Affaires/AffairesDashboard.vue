@@ -20,7 +20,7 @@ import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.
 import ActivationAffaire from "@/components/Affaires/ActivationAffaire/ActivationAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { getTypesAffaires, checkPermission, getDocument, stringifyAutocomplete, logAffaireEtape } from '@/services/helper'
+import { getTypesAffaires, getOperateurs, checkPermission, getDocument, stringifyAutocomplete, logAffaireEtape } from '@/services/helper'
 
 import moment from "moment";
 
@@ -59,6 +59,7 @@ export default {
       duplicationAffaireForm: null,
       editAffaireAllowed: true,
       mapLoaded: false,
+      chefs_equipe_list: [],
       parentparentAffaireReadOnly: false,
       showConfirmAbandonAffaireDialog: false,
       suiviAffaireTheorique: [],
@@ -78,7 +79,10 @@ export default {
         modification_type: {
           abandon_partiel: Number(process.env.VUE_APP_TYPE_MODIFICATION_ABANDON_PARTIEL_ID)
         }
-      }
+      },
+      etapes_affaire_conf: {
+        travaux_chef_equipe: Number(process.env.VUE_APP_ETAPE_TRAVAUX_CHEF_EQUIPE_ID)
+      },
       // numeros_base_associes = []
     };
   },
@@ -122,9 +126,6 @@ export default {
                 .filter(Boolean).join("\n");
 
               obj["technicien"] = [obj.technicien_prenom, obj.technicien_nom]
-                .filter(Boolean).join(" ");
-
-              obj["responsable"] = [obj.responsable_prenom, obj.responsable_nom]
                 .filter(Boolean).join(" ");
 
               Object.keys(obj).forEach(function(key) {
@@ -182,9 +183,24 @@ export default {
           _this.showMap();
           _this.searchAffaireEtapes();
       });
-
-
     },
+
+
+    /**
+     * Get chefs d'équipe
+     */
+    async getChefsEquipe() {
+      getOperateurs()
+      .then(response => {
+        if (response && response.data) {
+          this.chefs_equipe_list = response.data.filter(x => x.chef_equipe).map(x => ({
+            id: x.id,
+            nom: [x.prenom, x.nom].filter(Boolean).join(" ")
+          }));
+        }
+      }).catch(err => handleException(err, this))
+    },
+
 
     /**
      * Show map
@@ -356,10 +372,12 @@ export default {
     openNewStateDialog(){
       // set next step prediction
       this.etapeAffaire.prochaine = null;
+      this.etapeAffaire.chef_equipe_id = this.affaire.technicien_id || null;
+      this.etapeAffaire.remarque = null;
+      
       if (this.suiviAffaireTheorique.includes(this.affaire.etape_id)) {
         this.etapeAffaire.prochaine = this.affaireEtapes.filter(x => x.id === this.suiviAffaireTheorique[this.suiviAffaireTheorique.indexOf(this.affaire.etape_id)+1])[0];
       }
-      this.etapeAffaire.remarque = null;
 
       this.etapeAffaire.showDialog = true;
     },
@@ -368,7 +386,10 @@ export default {
      * Enregistrer la nouvelle étape
      */
     async updateAffaireEtape() {
-      logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine.id, this.etapeAffaire.remarque)
+      // fix value of this.etapeAffaire.chef_equipe_id to null if another step is selected
+      this.etapeAffaire.chef_equipe_id = this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.travaux_chef_equipe? this.etapeAffaire.chef_equipe_id: null;
+
+      logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine.id, this.etapeAffaire.remarque, this.etapeAffaire.chef_equipe_id)
       .then(() => {
         this.$root.$emit("ShowMessage", "L'étape a bien été mise à jour");
         this.etapeAffaire.showDialog = false;
@@ -471,6 +492,7 @@ export default {
 
   mounted: function() {
     this.setAffaire()
+    this.getChefsEquipe();
     this.$root.$on('mapHandlerReady', () =>{
       this.showMap();
     });

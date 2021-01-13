@@ -107,7 +107,6 @@ export default {
     if (this.showClientsForm) {
       form = {
         type: {required},
-        technicien_id: {required},
         cadastre: {required},
         nom: {required},
         date_ouverture: {required},
@@ -129,7 +128,6 @@ export default {
     } else {
       form = {
         type: {required},
-        technicien_id: {required},
         cadastre: {required},
         nom: {required},
         date_ouverture: {required},
@@ -275,17 +273,11 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
-            var tmp = response.data.map(x => ({
+            var tmp = response.data.filter(x => x.chef_equipe).map(x => ({
               id: x.id,
-              nom: [x.prenom, x.nom].join(" "),
-              responsable: x.responsable,
-              toLowerCase: () => [x.prenom, x.nom].join(" ").toLowerCase(),
-              toString: () => [x.prenom, x.nom].join(" ")
+              nom: [x.prenom, x.nom].filter(Boolean).join(" "),
             }));
             this.operateurs_list = tmp;
-            this.form.technicien_id = JSON.parse(
-              localStorage.getItem("infolica_user")
-            ).id;
           }
         })
         //Error

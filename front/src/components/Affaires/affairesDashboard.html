@@ -158,7 +158,7 @@
 
         <md-dialog-content>
             <div class="md-layout md-gutter md-alignment-top-space-between">
-                <div class="md-layout-item">
+                <div class="md-layout-item md-size-45">
                     <!-- Nom de l'étape en cours -->
                     <md-field>
                         <label>Etape en cours</label>
@@ -168,11 +168,22 @@
 
                 <h3 style="margin-top: 24px">=></h3>
 
-                <div class="md-layout-item">
+                <div class="md-layout-item md-size-45">
                     <!-- Nom de la prochaine étape -->
                     <md-autocomplete v-model="etapeAffaire.prochaine" :md-options="affaireEtapes" md-dense required>
                         <label>Prochaine étape</label>
                     </md-autocomplete>
+                </div>
+
+                <!-- <div class="md-layout-item md-size-45" v-if="showOperateursSelect"> -->
+                <div class="md-layout-item md-size-45" v-if="etapeAffaire.prochaine && etapeAffaire.prochaine.id && etapeAffaire.prochaine.id === etapes_affaire_conf.travaux_chef_equipe">
+                    <!-- Sélection du chef d'équipe -->
+                    <md-field>
+                        <label>Chef d'équipe</label>
+                        <md-select md-dense required v-model="etapeAffaire.chef_equipe_id">
+                            <md-option v-for="item in chefs_equipe_list" v-bind:key="item.id" v-bind:value="item.id" >{{ item.nom }}</md-option>
+                        </md-select>
+                    </md-field>
                 </div>
 
                 <div class="md-layout-item md-size-100">

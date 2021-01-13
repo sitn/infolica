@@ -163,9 +163,6 @@ export default {
       if (this.affaire.client_envoi_complement) {
         formData.append("client_envoi_complement", this.affaire.client_envoi_complement);
         }
-      if (this.affaire.responsable_id && this.affaire.responsable_id !== "-") {
-        formData.append("responsable_id", this.affaire.responsable_id);
-        }
       if (this.affaire.technicien_id) {
         formData.append("technicien_id", this.affaire.technicien_id);
         }

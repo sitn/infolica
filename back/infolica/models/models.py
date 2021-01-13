@@ -29,6 +29,7 @@ class Operateur(Base):
     prenom = Column(Text, nullable=False)
     login = Column(Text)  # , nullable=False)
     responsable = Column(Boolean, default=False, nullable=False)
+    chef_equipe = Column(Boolean, default=False, nullable=False)
     entree = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     sortie = Column(Date)
     mail = Column(Text)
@@ -97,7 +98,7 @@ class Plan(Base):
     idborplan = Column(Text)
     idrepplan = Column(Text)
     base = Column(Text)
-    geom = Column(Geometry("POLYGON"))
+    geom = Column(Geometry("MULTIPOLYGON"))
 
 
 class AffaireType(Base):
@@ -121,7 +122,6 @@ class Affaire(Base):
     client_commande_complement = Column(Text)
     client_envoi_id = Column(BigInteger, ForeignKey(Client.id))
     client_envoi_complement = Column(Text)
-    responsable_id = Column(BigInteger, ForeignKey(Operateur.id))
     technicien_id = Column(BigInteger, ForeignKey(Operateur.id))
     type_id = Column(BigInteger, ForeignKey(AffaireType.id), nullable=False)
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
@@ -575,7 +575,7 @@ class ReservationNumerosMO(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
-    plan_id = Column(Text, ForeignKey(Plan.idobj))
+    plan_id = Column(Text)
     type_id = Column(BigInteger, ForeignKey(NumeroType.id), nullable=False)
     numero_de = Column(BigInteger)
     numero_a = Column(BigInteger)
@@ -842,9 +842,6 @@ class VAffaire(Base):
     client_envoi_mail = Column(Text)
     client_envoi_no_sap = Column(Text)
     client_envoi_no_bdp_bdee = Column(Text)
-    responsable_id = Column(BigInteger)
-    responsable_nom = Column(Text)
-    responsable_prenom = Column(Text)
     technicien_id = Column(BigInteger)
     technicien_nom = Column(Text)
     technicien_prenom = Column(Text)

@@ -166,6 +166,22 @@ export const setClientsAdresse_ = function(clients, sep=", ") {
     return clients;
 }
 
+/*
+ * Get Operateurs
+ */
+export const getOperateurs = async function () {
+    return new Promise((resolve, reject) => {
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
+            {
+              withCredentials: true,
+              headers: {"Accept": "application/json"}
+            }
+        )
+        .then(response => resolve(response))
+        .catch(err => reject(err));
+    });
+};
+
 /**
  * Get date of the day in good format for BD
  */
@@ -312,7 +328,7 @@ export const setDateFormatClient = function(obj) {
 /**
  * Log new step
  */
-export const logAffaireEtape = async function(affaire_id, etape_id, remarque=null) {
+export const logAffaireEtape = async function(affaire_id, etape_id, remarque=null, chef_equipe_id=null) {
     let formData = new FormData();
     formData.append("affaire_id", affaire_id);
     formData.append("etape_id", etape_id);
@@ -320,6 +336,9 @@ export const logAffaireEtape = async function(affaire_id, etape_id, remarque=nul
     formData.append("datetime", moment(new Date()).format(process.env.VUE_APP_DATETIMEFORMAT_WS));
     if (remarque) {
         formData.append("remarque", remarque);
+    }
+    if (chef_equipe_id) {
+        formData.append("chef_equipe_id", chef_equipe_id);
     }
 
     return new Promise(resolve => {
