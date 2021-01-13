@@ -97,7 +97,7 @@ class Plan(Base):
     idborplan = Column(Text)
     idrepplan = Column(Text)
     base = Column(Text)
-    geom = Column(Geometry("POLYGON"))
+    geom = Column(Geometry("MULTIPOLYGON"))
 
 
 class AffaireType(Base):
@@ -575,7 +575,7 @@ class ReservationNumerosMO(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
-    plan_id = Column(Text, ForeignKey(Plan.idobj))
+    plan_id = Column(Text)
     type_id = Column(BigInteger, ForeignKey(NumeroType.id), nullable=False)
     numero_de = Column(BigInteger)
     numero_a = Column(BigInteger)
