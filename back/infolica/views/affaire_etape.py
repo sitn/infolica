@@ -6,7 +6,7 @@ from sqlalchemy import and_
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffaires, VAffaire, EtapeMailer, Operateur
+from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffaires, VAffaire, EtapeMailer, Operateur, Affaire
 from infolica.scripts.utils import Utils
 from infolica.scripts.mailer import send_mail
 
@@ -59,6 +59,8 @@ def etapes_new_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_etape_edition']):
         raise exc.HTTPForbidden()
 
+    chef_equipe_id = request.params['chef_equipe_id'] if 'chef_equipe_id' in request.params else None
+    
     model = AffaireEtape()
     model = Utils.set_model_record(model, request.params)
 
@@ -69,11 +71,22 @@ def etapes_new_view(request):
     etape_mailer = request.dbsession.query(EtapeMailer).filter(model.etape_id == EtapeMailer.etape_id).all()
     operateur = request.dbsession.query(Operateur).all()
     mail_list = []
+
+    # only when chef_equipe is specified
+    if chef_equipe_id:
+        mail_list.append( request.dbsession.query(Operateur).filter(Operateur.id == chef_equipe_id).first().mail )
+        # update chef d'équipe in affaire
+        affaire = request.dbsession.query(Affaire).filter(Affaire.id == model.affaire_id).first()
+        affaire.technicien_id = chef_equipe_id
+
+    # construct mail_list
     for em_i in etape_mailer:
         if em_i.sendmail:
             mail = next((op.mail for op in operateur if op.id == em_i.operateur_id), None)
             if mail:
                 mail_list.append(mail)
+    
+    # Send mail only if step prio is 1 and if mail_list not empty
     if affaire_etape_index.priorite == int(request.registry.settings['affaire_etape_priorite_1_id']) and len(mail_list)>0:
         # get affaire informations
         affaire = request.dbsession.query(VAffaire).filter(VAffaire.id == model.affaire_id).first()
