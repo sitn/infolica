@@ -22,7 +22,7 @@ def operateurs_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(Operateur).all()
+    query = request.dbsession.query(Operateur).filter(Operateur.sortie == None).all()
     return Utils.serialize_many(query)
 
 
