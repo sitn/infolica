@@ -36,9 +36,6 @@ as
         cle.no_sap AS client_envoi_no_sap,
         cle.no_bdp_bdee AS client_envoi_no_bdp_bdee,
         aff.client_envoi_complement,
-        op.id AS responsable_id,
-        op.nom AS responsable_nom,
-        op.prenom AS responsable_prenom,
         op2.id AS technicien_id,
         op2.nom AS technicien_nom,
         op2.prenom AS technicien_prenom,
@@ -80,7 +77,6 @@ as
     FROM infolica.affaire aff
         LEFT JOIN infolica.client cl ON aff.client_commande_id = cl.id
         LEFT JOIN infolica.client cle ON aff.client_envoi_id = cle.id
-        LEFT JOIN infolica.operateur op ON aff.responsable_id = op.id
         LEFT JOIN infolica.operateur op2 ON aff.technicien_id = op2.id
         LEFT JOIN infolica.affaire_type afft ON aff.type_id = afft.id
         LEFT JOIN infolica.cadastre cad ON aff.cadastre_id = cad.id
