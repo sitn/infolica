@@ -372,7 +372,7 @@ export default {
     openNewStateDialog(){
       // set next step prediction
       this.etapeAffaire.prochaine = null;
-      this.etapeAffaire.chef_equipe_id = null
+      this.etapeAffaire.chef_equipe_id = this.affaire.technicien_id || null;
       this.etapeAffaire.remarque = null;
       
       if (this.suiviAffaireTheorique.includes(this.affaire.etape_id)) {
@@ -387,7 +387,7 @@ export default {
      */
     async updateAffaireEtape() {
       // fix value of this.etapeAffaire.chef_equipe_id to null if another step is selected
-      this.etapeAffaire.chef_equipe_id = this.showOperateursSelect? this.etapeAffaire.chef_equipe_id: null;
+      this.etapeAffaire.chef_equipe_id = this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.travaux_chef_equipe? this.etapeAffaire.chef_equipe_id: null;
 
       logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine.id, this.etapeAffaire.remarque, this.etapeAffaire.chef_equipe_id)
       .then(() => {
