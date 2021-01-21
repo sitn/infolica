@@ -14,7 +14,6 @@ export default {
   name: "ReservationNumerosMO",
   props: {
     affaire: Object,
-    typesAffaires_conf: Object,
     types_numeros: Object
   },
   components: {},

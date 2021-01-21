@@ -14,13 +14,14 @@
 
         <md-card-expand>
             <md-card-expand-content>
-                <div class="md-layout md-gutter">
+                <md-card-content>
+                    
+                    <div class="md-layout md-gutter">
                     <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
-                    <div class="md-layout-item md-size-60" v-if="affaire.type_id === typesAffaires_conf.cadastration ||
-                                                                 affaire.type_id === typesAffaires_conf.autre ||
-                                                                (affaire.type_id === typesAffaires_conf.modification && affaire.modification_type_id === typesAffaires_conf.modification_type.abandon_partiel)">
-                        <md-card-content>
-
+                        <div class="md-layout-item md-size-60" v-if="affaire.type_id === typesAffaires_conf.cadastration ||
+                                                                    affaire.type_id === typesAffaires_conf.autre ||
+                                                                    (affaire.type_id === typesAffaires_conf.modification && affaire.modification_type_id === typesAffaires_conf.modification_type.abandon_partiel)">
+                    
                             <md-card>
                                 <md-card-header>
                                     <div class="justifyTitleBtn">
@@ -63,20 +64,15 @@
 
                                 </md-card-content>
                             </md-card>
-
-                        </md-card-content>
-
-                    </div>
-
-                    <!-- NUMEROS RESERVES (nouveaux numéros) -->
-                    <div class="md-layout-item md-size-60" v-if="[typesAffaires_conf.mutation, typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.modification].includes(affaire.type_id)">
-                        <md-card-content>
-
+                        </div>
+                        
+                        <!-- NUMEROS RESERVES (nouveaux numéros) -->
+                        <div class="md-layout-item md-size-60" v-if="[typesAffaires_conf.mutation, typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.modification].includes(affaire.type_id)">   
                             <md-card>
                                 <md-card-header>
                                     <div class="justifyTitleBtn">
                                         <div class="md-title">Immeubles réservés</div>
-
+                                        
                                         <div>
                                             <md-button class="md-primary" @click="getReqRadMatDiff" v-if="showBtnReqRadMatDiff" title="Générer la réquisition des BF sortis de la mat. diff. dans les 7 derniers jours">Req radiation MatDiff</md-button>
                                             <md-button class="md-primary" @click="doQuittanceNumerosReserves" v-if="affaire_numeros_nouveaux.length > 0">Quittance</md-button>
@@ -87,71 +83,68 @@
                                 </md-card-header>
                                 
                                 <md-card-content>
-                                <!-- Tableau des numéros réservés dans l'affaire -->
-                                <div v-if="affaire_numeros_nouveaux[0]">
-                                    <md-table v-model="affaire_numeros_nouveaux" md-sort="numero_etat"
-                                        md-sort-order="desc" md-fixed-header md-dense>
-                                        <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif || !item.active }">
-                                            <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">{{ item.numero_id }}</md-table-cell>
-                                            <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
-                                            <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}<span v-if="item.numero_suffixe"> / {{ item.numero_suffixe }}</span></md-table-cell>
-                                            <md-table-cell md-label="Immeuble de base" md-sort-by="numero_base">{{ item.numero_base }}<span v-if="item.numero_base_suffixe"> / {{ item.numero_base_suffixe }}</span></md-table-cell>
-                                            <md-table-cell md-label="Etat" class="actionsColumn">
-                                                <md-switch v-model="item.active" v-if="!affaireReadonly && item.affaire_numero_actif && !affaire.date_cloture"
-                                                    @change="onDeleteReserveNumero(item.numero_id)"
-                                                    class="md-primary md-dense">
-                                                </md-switch> ({{ item.numero_etat }})
-                                            </md-table-cell>
-                                            <md-table-cell md-label="Repris par" md-sort-by="affaire_destination_id"><a v-bind:href="item.affaire_destination_href">{{item.affaire_destination_id }}</a></md-table-cell>
-                                            <md-table-cell md-label="Mat diff" class="actionsColumn">
-                                                <!-- Si le numéro est différé -->
-                                                <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif && item.active">
-                                                    <md-button v-if="item.numero_type_id===types_numeros.bf"  @click="confirmCreateDiffererNumero(item, 'sortie')" 
-                                                        class="md-accent md-raised md-icon-button md-dense">
-                                                        <md-icon>access_time</md-icon>
-                                                    </md-button>
-                                                </div>
-                                                <!-- Si le numéro n'est pas encore différé -->
-                                                <div v-if="item.numero_diff_entree === null && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif && item.active">
-                                                    <md-button v-if="item.numero_type_id===types_numeros.bf"
-                                                        class="md-primary md-icon-button md-dense" @click="confirmCreateDiffererNumero(item, 'entree')">
-                                                        <md-icon>access_time</md-icon>
-                                                    </md-button>
-                                                </div>
-                                            </md-table-cell>
-                                        </md-table-row>
-                                    </md-table>
-                                </div>
-                                <div v-else>
-                                    <em>Aucun numéro</em>
-                                </div>
-
+                                    <!-- Tableau des numéros réservés dans l'affaire -->
+                                    <div v-if="affaire_numeros_nouveaux[0]">
+                                        <md-table v-model="affaire_numeros_nouveaux" md-sort="numero_etat"
+                                            md-sort-order="desc" md-fixed-header md-dense>
+                                            <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif || !item.active }">
+                                                <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">{{ item.numero_id }}</md-table-cell>
+                                                <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
+                                                <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}<span v-if="item.numero_suffixe"> / {{ item.numero_suffixe }}</span></md-table-cell>
+                                                <md-table-cell md-label="Immeuble de base" md-sort-by="numero_base">{{ item.numero_base }}<span v-if="item.numero_base_suffixe"> / {{ item.numero_base_suffixe }}</span></md-table-cell>
+                                                <md-table-cell md-label="Etat" class="actionsColumn">
+                                                    <md-switch v-model="item.active" v-if="!affaireReadonly && item.affaire_numero_actif && !affaire.date_cloture"
+                                                        @change="onDeleteReserveNumero(item.numero_id)"
+                                                        class="md-primary md-dense">
+                                                    </md-switch> ({{ item.numero_etat }})
+                                                </md-table-cell>
+                                                <md-table-cell md-label="Repris par" md-sort-by="affaire_destination_id"><a v-bind:href="item.affaire_destination_href">{{item.affaire_destination_id }}</a></md-table-cell>
+                                                <md-table-cell md-label="Mat diff" class="actionsColumn">
+                                                    <!-- Si le numéro est différé -->
+                                                    <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif && item.active">
+                                                        <md-button v-if="item.numero_type_id===types_numeros.bf"  @click="confirmCreateDiffererNumero(item, 'sortie')" 
+                                                            class="md-accent md-raised md-icon-button md-dense">
+                                                            <md-icon>access_time</md-icon>
+                                                        </md-button>
+                                                    </div>
+                                                    <!-- Si le numéro n'est pas encore différé -->
+                                                    <div v-if="item.numero_diff_entree === null && item.numero_diff_sortie === null && !affaireReadonly && item.affaire_numero_actif && item.active">
+                                                        <md-button v-if="item.numero_type_id===types_numeros.bf"
+                                                            class="md-primary md-icon-button md-dense" @click="confirmCreateDiffererNumero(item, 'entree')">
+                                                            <md-icon>access_time</md-icon>
+                                                        </md-button>
+                                                    </div>
+                                                </md-table-cell>
+                                            </md-table-row>
+                                        </md-table>
+                                    </div>
+                                    <div v-else>
+                                        <em>Aucun numéro</em>
+                                    </div>
+                                    
                                 </md-card-content>
                             </md-card>
-
+        
+            
+                        </div>
+                        
+                        <div class="md-layout-item md-size-60" v-if="[typesAffaires_conf.mutation, 
+                            typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.autre, 
+                            typesAffaires_conf.modification].includes(affaire.type_id)">
                             
-                        </md-card-content>
-                    </div>
+                            <!-- Numéros de la MO -->
+                            <ReservationNumerosMO :affaire="affaire" :types_numeros="types_numeros"></ReservationNumerosMO>
+                            
+                        </div>
+                        
+                        
+                        <div class="md-layout-item md-size-60" v-if="showBalance && affaire.type_id==typesAffaires_conf.mutation">
+                            <!-- Balance des biens-fonds -->
+                            <Balance :affaire_numeros_all="affaire_numeros_all" :affaire="affaire" />
+                        </div>    
+                    </div>    
                     
-                    <div class="md-layout-item md-size-60">
-                        <!-- Numéros de la MO -->
-                        <md-card-content>
-                            <ReservationNumerosMO :affaire="affaire"
-                                                  :typesAffaires_conf="typesAffaires_conf"
-                                                  :types_numeros="types_numeros"></ReservationNumerosMO>
-                        </md-card-content>
-                    </div>
-
-                    <div class="md-layout-item md-size-100" v-if="showBalance && affaire.type_id==typesAffaires_conf.mutation">
-                        <!-- Balance des biens-fonds -->
-                        <md-card-content>
-                            <Balance :affaire_numeros_all="affaire_numeros_all"
-                                     :affaire="affaire" />
-                        </md-card-content>
-                    </div>
-                    
-                </div>    
-                
+                    </md-card-content>
             </md-card-expand-content>
         </md-card-expand>
     </md-card>

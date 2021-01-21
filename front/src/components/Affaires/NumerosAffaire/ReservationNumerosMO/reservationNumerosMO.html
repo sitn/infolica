@@ -1,5 +1,5 @@
 <div class="reservationNumerosMO">
-    <md-card v-if="affaire.type_id===typesAffaires_conf.mutation">
+    <md-card>
         <md-card-header class="justifyTitleBtn">
                 <div class="md-title">Numéros de la MO</div>
                 <md-button class="md-primary" @click="showReservationNumerosMODialog = true">Réserver</md-button>
@@ -11,10 +11,10 @@
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
                         <md-table-cell md-label="Type" md-sort-by="type">{{ item.type_numero }}</md-table-cell>
-                        <md-table-cell md-label="Plan" md-sort-by="plan_id">{{ item.plan_no }}</md-table-cell>
-                        <md-table-cell md-label="De" md-sort-by="numero_de">{{ item.numero_de }}</md-table-cell>
-                        <md-table-cell md-label="À" md-sort-by="numero_a">{{ item.numero_a }}</md-table-cell>
-                        <md-table-cell md-label="Nombre" md-sort-by="nombre">{{ item.nombre }}</md-table-cell>
+                        <md-table-cell md-label="Plan" md-sort-by="plan_id" md-numeric>{{ item.plan_no }}</md-table-cell>
+                        <md-table-cell md-label="De" md-sort-by="numero_de" md-numeric>{{ item.numero_de }}</md-table-cell>
+                        <md-table-cell md-label="À" md-sort-by="numero_a" md-numeric>{{ item.numero_a }}</md-table-cell>
+                        <md-table-cell md-label="Nombre" md-sort-by="nombre" md-numeric>{{ item.nombre }}</md-table-cell>
                         <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}</md-table-cell>
                     </md-table-row>
                 </md-table>
