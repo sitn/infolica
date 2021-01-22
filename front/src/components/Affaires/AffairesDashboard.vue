@@ -472,16 +472,16 @@ export default {
         "DESCRIPTION": this.affaire.nom,
         "SPECIFICITES": this.affaire.information, 
         "DATE": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
-        "DATE_ENVOI_SCAT": this.affaire.preavis_scat_date_demande !== null? moment(this.affaire.preavis_scat_date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
-        "DATE_RETOUR_SCAT": this.affaire.preavis_scat_date_reponse !== null? moment(this.affaire.preavis_scat_date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
-        "DATE_ENVOI_SAGR": this.affaire.preavis_sagr_date_demande !== null? moment(this.affaire.preavis_sagr_date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
-        "DATE_RETOUR_SAGR": this.affaire.preavis_sagr_date_reponse !== null? moment(this.affaire.preavis_sagr_date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
-        "DATE_ENVOI_SENE": this.affaire.preavis_sene_date_demande !== null? moment(this.affaire.preavis_sene_date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
-        "DATE_RETOUR_SENE": this.affaire.preavis_sene_date_reponse !== null? moment(this.affaire.preavis_sene_date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
-        "DATE_ENVOI_RF": this.affaire.preavis_rf_date_demande !== null? moment(this.affaire.preavis_rf_date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
-        "DATE_RETOUR_RF": this.affaire.preavis_rf_date_reponse !== null? moment(this.affaire.preavis_rf_date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
-        "DATE_ENVOI": this.affaire.date_envoi !== null? moment(this.affaire.date_envoi, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
-        "DATE_CLOTURE": this.affaire.date_cloture !== null? moment(this.affaire.date_cloture, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null
+        "DATE_ENVOI_SCAT": this.affaire.preavis_scat_date_demande !== null? this.affaire.preavis_scat_date_demande: null,
+        "DATE_RETOUR_SCAT": this.affaire.preavis_scat_date_reponse !== null? this.affaire.preavis_scat_date_reponse: null,
+        "DATE_ENVOI_SAGR": this.affaire.preavis_sagr_date_demande !== null? this.affaire.preavis_sagr_date_demande: null,
+        "DATE_RETOUR_SAGR": this.affaire.preavis_sagr_date_reponse !== null? this.affaire.preavis_sagr_date_reponse: null,
+        "DATE_ENVOI_SENE": this.affaire.preavis_sene_date_demande !== null? this.affaire.preavis_sene_date_demande: null,
+        "DATE_RETOUR_SENE": this.affaire.preavis_sene_date_reponse !== null? this.affaire.preavis_sene_date_reponse: null,
+        "DATE_ENVOI_RF": this.affaire.preavis_rf_date_demande !== null? this.affaire.preavis_rf_date_demande: null,
+        "DATE_RETOUR_RF": this.affaire.preavis_rf_date_reponse !== null? this.affaire.preavis_rf_date_reponse: null,
+        "DATE_ENVOI": this.affaire.date_envoi !== null? this.affaire.date_envoi: null,
+        "DATE_CLOTURE": this.affaire.date_cloture !== null? this.affaire.date_cloture: null
       }));
 
       return formData;
