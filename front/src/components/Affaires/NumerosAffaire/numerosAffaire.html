@@ -20,6 +20,7 @@
                     <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
                         <div class="md-layout-item md-size-60" v-if="affaire.type_id === typesAffaires_conf.cadastration ||
                                                                     affaire.type_id === typesAffaires_conf.autre ||
+                                                                    affaire.type_id === typesAffaires_conf.revision_abornement ||
                                                                     (affaire.type_id === typesAffaires_conf.modification && affaire.modification_type_id === typesAffaires_conf.modification_type.abandon_partiel)">
                     
                             <md-card>
@@ -129,8 +130,8 @@
                         </div>
                         
                         <div class="md-layout-item md-size-60" v-if="[typesAffaires_conf.mutation, 
-                            typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.autre, 
-                            typesAffaires_conf.modification].includes(affaire.type_id)">
+                            typesAffaires_conf.pcop, typesAffaires_conf.autre, 
+                            typesAffaires_conf.revision_abornement, typesAffaires_conf.modification].includes(affaire.type_id)">
                             
                             <!-- Numéros de la MO -->
                             <ReservationNumerosMO :affaire="affaire" :types_numeros="types_numeros"></ReservationNumerosMO>
