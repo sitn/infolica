@@ -3,3 +3,4 @@ affaire_technique/
 /apache/app.wsgi
 /apache/wsgi.conf
 taches_lancement_windows/
+scripts/*
