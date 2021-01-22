@@ -15,6 +15,7 @@ export default {
   data: () => {
     return {
       // numeros_liste = [],
+      balanceContainsDP: false,
       cadastres_liste: [],
       checkBFBalance: {
         show: false,
@@ -434,7 +435,7 @@ export default {
             relation.push([x.relation_old, x.relation_new]);
           });
 
-          this.tableau_balance = this.constructTableauBalance(relation)
+          this.tableau_balance = this.constructTableauBalance(relation);
         }
       }).catch(err => handleException(err, this));
     },
@@ -489,9 +490,12 @@ export default {
     /**
      * Save balance
      */
-    saveBalance() {
+    async saveBalance() {
       let relations = this.getRelations();
-      let checkBF = this.checkExistingBF(relations);
+      let checkBF = await this.checkExistingBF(relations);
+      console.log(checkBF);
+
+      // Raise error if more newBF than reserved numbers
       if (checkBF.newBF_not_in_numeros_reserves.length > 0) {
         this.checkBFBalance = {
           show: true,
@@ -500,8 +504,9 @@ export default {
                     <p>La balance n'est pas enregistrée.\n</p>"
         }
         return;
-      }
-      // postBalance();
+      } 
+      
+      this.postBalance();
 
     },
 
@@ -525,10 +530,9 @@ export default {
     /**
      * Check existing BF from relations
      */
-    checkExistingBF(relations) {
+    async checkExistingBF(relations) {
       // get old and new BF lists
-      // eslint-disable-next-line no-unused-vars
-      let oldBF = []; // currently unused variable, update comment above
+      let oldBF = [];
       let newBF = [];
       [oldBF, newBF] = this.transpose(relations);
 
@@ -542,7 +546,6 @@ export default {
 
       let newBF_not_in_numeros_reserves = [];
       let numeros_reserves_not_in_newBF = [];
-      // let old_not_existing_in_db = [];
 
       //Check if new BF are reserved in this affaire
       newBF.forEach(x => {
@@ -560,12 +563,53 @@ export default {
         }
       });
 
-      //Check if oldBF already exist in DB
-      // let promises = [];
-      
+      //Check if oldBF already exist in DB otherwise create it
+      // Get unique set of oldBF
+      oldBF = [...new Set(oldBF)];
+      await this.checkExistingOldBF(oldBF)
+      .then(response => {
+        if (response && response.data) {
+          oldBF = response.data;
+        }
+      }).catch(err => handleException(err, this));
+
+
       return {newBF_not_in_numeros_reserves: newBF_not_in_numeros_reserves,
-              numeros_reserves_not_in_newBF: numeros_reserves_not_in_newBF};
+              ddp: numeros_reserves_not_in_newBF,
+              oldBF: oldBF};
     },
+
+    /**
+     * Check existing old BF
+     */
+    async checkExistingOldBF(oldBF) {
+      let formData = new FormData();
+      formData.append("oldBF", JSON.stringify(oldBF));
+      
+      return new Promise((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_CHECK_EXISTING_OLDBF_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
+    /**
+     * Post Balance
+     */
+    async postBalance() {
+      alert("Balance IO")
+
+      let relation = [];
+      relation.push(1)
+
+
+    }
 
 
   },

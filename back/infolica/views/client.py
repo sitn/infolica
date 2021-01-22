@@ -29,7 +29,7 @@ def clients_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(Client).all()
+    query = request.dbsession.query(Client).filter(Client.sortie == None).all()
     return Utils.serialize_many(query)
 
 
@@ -68,8 +68,8 @@ def clients_search_view(request):
 
     conditions.append(Client.sortie == None)
 
-    query = request.dbsession.query(Client).order_by(Client.nom, Client.prenom).filter(
-        *conditions).limit(search_limit).all()
+    query = request.dbsession.query(Client).order_by(Client.nom, Client.prenom).filter(*conditions)
+    query = query.filter(Client.sortie == None).limit(search_limit).all()
     return Utils.serialize_many(query)
 
 
