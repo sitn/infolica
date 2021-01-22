@@ -161,10 +161,10 @@ numero_relation_ppe_id = 3
 numero_relation_pcop_id = 4
 
 # ID cadastres-binômes pour la réservation de numéros
-cadastres_ChauxDeFonds_Eplatures_id = 60, 70
-cadastres_BrotPlamboz_Plamboz_id = 59, 69
-cadastres_Neuchatel_Coudre_id = 1, 63
-cadastres_Sauge_StAubin_id = 22, 67
+cadastres_ChauxDeFonds_Eplatures_id = 60,70
+cadastres_BrotPlamboz_Plamboz_id = 59,69
+cadastres_Neuchatel_Coudre_id = 1,63
+cadastres_Sauge_StAubin_id = 22,67
 
 # ID cadastre cantonal
 cadastre_cantonal_id = 0
@@ -176,21 +176,29 @@ affaire_show_timedelta = 30
 affaire_etape_priorite_1_id = 1
 
 ######################################################################################
-# Accès aux dossiers
+# Accès dossiers
 ######################################################################################
-affaires_directory = /path/to/affaires_directory
-affaires_directory_fullpath = /fullpath/to/affaires_directory
-affaireTemplateDir = /path/to/affaire_template_directory
-access_control_allow_origin = http://127.0.0.1:8080
-mails_templates_directory = /path/to/mail_templates_dorectory
-temporary_directory = /path/to/temporary_directory
+affaires_directory = C:/infolica_project/affaire_technique/travail
+affaires_directory_fullpath = C:/infolica_project/affaire_technique/travail
+affaireTemplateDir = C:/infolica_project/affaire_technique/__template
+mails_templates_directory = C:/infolica_project/affaire_technique/mail_template
+temporary_directory = C:/infolica_project/back/tmp
 
-fichier_balance_prefix = Des_
-
-authtkt_secret=secret_string_which_should_be_unbreakable
+######################################################################################
+# Security
+######################################################################################
+authtkt_secret= ff88fd60949349d7bf278bfde18cca07
 authtkt_cookie_name=infolica_cookie
-authtk_samesite=None
+authtk_samesite=Lax
 authtk_secure=True
+
+
+######################################################################################
+# Access-Control-Allow-Origin
+######################################################################################
+access_control_allow_origin = http://127.0.0.1:8080
+
+
 
 retry.attempts = 3
 
@@ -248,17 +256,17 @@ args = (sys.stderr,)
 level = NOTSET
 formatter = generic
 
-; [handler_filelog]
-; class = FileHandler
-; args = (r'%(here)s/logs/logs.log','a')
-; level = INFO
-; formatter = generic
+# [handler_filelog]
+# class = FileHandler
+# args = (r'%(here)s/logs/logs.log','a')
+# level = INFO
+# formatter = generic
 
-; [handler_accesslog]
-; class = FileHandler
-; args = (r'%(here)s/logs/access.log','a')
-; level = INFO
-; formatter = accesslog
+# [handler_accesslog]
+# class = FileHandler
+# args = (r'%(here)s/logs/access.log','a')
+# level = INFO
+# formatter = accesslog
 
 [formatter_generic]
 format = %(asctime)s %(levelname)-5.5s [%(name)s:%(lineno)s][%(threadName)s] %(message)s

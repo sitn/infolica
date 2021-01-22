@@ -177,7 +177,6 @@ affaires_directory_fullpath = /*TO COMPLETE*/
 affaireTemplateDir = /*TO COMPLETE*/
 mails_templates_directory = /*TO COMPLETE*/
 temporary_directory = /*TO COMPLETE*/
-fichier_balance_prefix = Des_
 
 ######################################################################################
 # Access-Control-Allow-Origin

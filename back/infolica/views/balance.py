@@ -85,7 +85,7 @@ def balance_check_existing_oldBF_new_view(request):
         if not query:
             numero = Numero(
                 cadastre_id = bf_cadastre_id,
-                type_id = request.registry.settings['numero_type_bf_id'],
+                type_id = request.registry.settings['numero_bf_id'],
                 numero = bf_numero,
                 etat_id = request.registry.settings['numero_vigueur_id']
             )
