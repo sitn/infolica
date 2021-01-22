@@ -436,7 +436,7 @@ export default {
       }
       
       let formData = new FormData();
-      formData.append("template", "Demande");
+      formData.append("template", "Commande");
       formData.append("values", JSON.stringify({
         "AFFAIRE_ID": this.affaire.id,
         "OPERATEUR": [this.affaire.technicien_prenom, this.affaire.technicien_nom].filter(Boolean).join (" "),
@@ -466,11 +466,11 @@ export default {
         "AFFAIRE_TYPE": this.affaire.type_affaire,
         "MODIFICATION_TYPE": this.affaire.modification_type,
         "AFFAIRE_DE_BASE": this.affaire.modification_affaire_id_mere,
-        "NUMEROS_BASES": this.$refs.numeros.affaire_numeros_anciens.map(x => x.numero).join(", "),
-        "NUMEROS_RESERVES": this.$refs.numeros.affaire_numeros_nouveaux.map(x => x.numero).join(", "),
+        "NUMEROS_BASES": this.$refs.numeros.affaire_numeros_anciens.map(x => x.numero).sort((a, b) => a-b).join(", "),
+        "NUMEROS_RESERVES": this.$refs.numeros.affaire_numeros_nouveaux.map(x => x.numero).sort((a, b) => a-b).join(", "),
         "CADASTRE": this.affaire.cadastre,
         "DESCRIPTION": this.affaire.nom,
-        // "REMARQUES": 
+        "SPECIFICITES": this.affaire.information, 
         "DATE": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
         "DATE_ENVOI_SCAT": this.affaire.preavis_scat_date_demande !== null? moment(this.affaire.preavis_scat_date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
         "DATE_RETOUR_SCAT": this.affaire.preavis_scat_date_reponse !== null? moment(this.affaire.preavis_scat_date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null,
