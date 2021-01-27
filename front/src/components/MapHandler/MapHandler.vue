@@ -168,9 +168,14 @@ export default {
     setCanvasTransform: function() {
       let canvasList = document.getElementById("mapDiv").querySelectorAll("canvas");
       if (canvasList && canvasList.length > 1) {
-         canvasList.forEach(canvas => {
-          canvas.style.transform = "inherit";
-         });
+        canvasList.forEach(canvas => {
+          if (Math.round(window.devicePixelRatio * 100) < 100) {
+            const ctx = canvas.getContext('2d');
+            ctx.resetTransform();
+          } else {
+            canvas.style.transform = "inherit";
+          }
+        });
       }
     },
 
