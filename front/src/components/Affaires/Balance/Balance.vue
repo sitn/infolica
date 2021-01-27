@@ -186,28 +186,6 @@ export default {
       });
     },
 
-    /**
-     * Post numero_relation
-     */
-    async postNumerosRelations(numero_id_base, numero_id_associe) {
-      return new Promise((resolve, reject) => {
-        let formData = new FormData();
-        formData.append("numero_id_base", numero_id_base);
-        formData.append("numero_id_associe", numero_id_associe);
-        formData.append("relation_type_id", Number(process.env.VUE_APP_RELATION_TYPE_MUTATION_ID));
-        formData.append("affaire_id", this.affaire.id);
-
-        this.$http.post(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_RELATIONS_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: {Accept : "application/json"}
-          }
-        ).then(response => resolve(response))
-        .catch(err => reject(err));
-      });
-    },
 
 
 
@@ -493,7 +471,6 @@ export default {
     async saveBalance() {
       let relations = this.getRelations();
       let checkBF = await this.checkExistingBF(relations);
-      console.log(checkBF);
 
       // Raise error if more newBF than reserved numbers
       if (checkBF.newBF_not_in_numeros_reserves.length > 0) {
@@ -506,7 +483,7 @@ export default {
         return;
       } 
       
-      this.postBalance();
+      this.postBalance(checkBF);
 
     },
 
@@ -538,9 +515,21 @@ export default {
 
       // get simplified list of reserved BF (cadastreId_BF)
       let reservedBF = [];
+      let newBF_obj = [];
       this.affaire_numeros_all.forEach(x => {
         if (x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID)) {
           reservedBF.push([x.numero_cadastre_id, x.numero].join("_"));
+          
+          // Save newBF as number objects
+          newBF_obj.push({
+            id: x.numero_id,
+            cadastre_id: x.numero_cadastre_id,
+            type_id: x.numero_type_id,
+            numero: x.numero,
+            suffixe: x.numero_suffixe,
+            etat_id: x.numero_etat_id,
+            no_access: [x.numero_cadastre_id, x.numero].join("_")
+          });
         }
       });
 
@@ -560,6 +549,9 @@ export default {
       reservedBF.forEach(x => {
         if (!newBF.includes(x)) {
           numeros_reserves_not_in_newBF.push(x);
+
+          // remove newBF corresponding to this number
+          newBF_obj.filter(y => y.no_access === x).pop();
         }
       });
 
@@ -573,9 +565,9 @@ export default {
         }
       }).catch(err => handleException(err, this));
 
-
       return {newBF_not_in_numeros_reserves: newBF_not_in_numeros_reserves,
               ddp: numeros_reserves_not_in_newBF,
+              newBF: newBF_obj,
               oldBF: oldBF};
     },
 
@@ -602,15 +594,55 @@ export default {
     /**
      * Post Balance
      */
-    async postBalance() {
-      alert("Balance IO")
+    async postBalance(checkBF) {
+      let promises = [];
+      let numero_id_base;
+      let numero_id_associe;
 
-      let relation = [];
-      relation.push(1)
+      // Go through old BF
+      this.tableau_balance.forEach(oldBF_i => {
 
+        // Go through new BF
+        for (let newBF_i in oldBF_i.newBF) {
+          
+          // append relation
+          if (oldBF_i.newBF[newBF_i]) {
+            numero_id_base = checkBF.oldBF.filter(x => x.no_access === oldBF_i.oldBF)[0].id;
+            numero_id_associe = checkBF.newBF.filter(x => x.no_access === newBF_i)[0].id;
 
-    }
+            promises.push( this.postNumerosRelation(numero_id_base, numero_id_associe) );
+          }
+        }
+      });
+      
+      Promise.all(promises)
+      .then(() => this.$root.$emit("ShowMessage", "La balance a bien été enregistrée"))
+      .catch(err => handleException(err, this));
 
+    },
+
+    /**
+     * Post numero_relation
+     */
+    async postNumerosRelation(numero_id_base, numero_id_associe, relation_type_id=null) {
+      return new Promise((resolve, reject) => {
+        let formData = new FormData();
+        formData.append("numero_id_base", numero_id_base);
+        formData.append("numero_id_associe", numero_id_associe);
+        formData.append("relation_type_id", relation_type_id? relation_type_id: Number(process.env.VUE_APP_RELATION_TYPE_MUTATION_ID));
+        formData.append("affaire_id", this.affaire.id);
+
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_RELATIONS_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept : "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
 
   },
   mounted: function() {

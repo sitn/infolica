@@ -92,7 +92,7 @@ def numeros_relations_new_view(request, params=None):
 @view_config(route_name='numeros_relations_s', request_method='PUT', renderer='json')
 def numeros_relations_update_view(request):
     """
-    Update new numeros_relations
+    Update numeros_relations
     """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
