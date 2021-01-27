@@ -179,8 +179,6 @@ export default {
           if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)){
             _this.parentAffaireReadOnly = false;
           }
-  
-          _this.showMap();
           _this.searchAffaireEtapes();
       });
     },
@@ -491,7 +489,7 @@ export default {
   },
 
   mounted: function() {
-    this.setAffaire()
+    this.setAffaire();
     this.getChefsEquipe();
     this.$root.$on('mapHandlerReady', () =>{
       this.showMap();

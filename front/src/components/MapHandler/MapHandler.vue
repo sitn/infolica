@@ -45,6 +45,14 @@ export default {
      */
     initMap: function(center, zoom) {
 
+      this._crs = process.env.VUE_APP_MAP_PROJECTION;
+      proj4.defs(this._crs,
+       '+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333'
+       + ' +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel '
+       + '+towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs');
+      const _extent = [2420000, 1030000, 2900000, 1360000];
+      proj_register(proj4);
+
       //Init marker style
       this.initMarkerStyle();
       // WMTS
@@ -65,19 +73,8 @@ export default {
       const layers = [this.wmtsLayer, this.vectorLayer, this.graphicsLayer];
 
 
-      //View
-
-      const _crs = process.env.VUE_APP_MAP_PROJECTION;
-      proj4.defs(_crs,
-       '+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333'
-       + ' +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel '
-       + '+towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs');
-      const _extent = [2420000, 1030000, 2900000, 1360000];
-    
-      proj_register(proj4);
-
       const _projection = new Projection({
-        code: _crs,
+        code: this._crs,
         extent: _extent,
       });
 
@@ -96,7 +93,7 @@ export default {
           altShiftDragRotate: false,
           pinchRotate: false
         });
-
+    
         this.map = new Map({
           layers: layers,
           target: document.getElementById("mapDiv"),
@@ -124,8 +121,6 @@ export default {
         this.snap = new Snap({
           source: this.vectorSource
         });
-        //Workaround to draw markers in the good position
-        this.makeWorkaroundCanvasTransform();
 
       } else {
         this.map
@@ -136,6 +131,10 @@ export default {
               : process.env.VUE_APP_MAP_DEFAULT_CENTER
           );
       }    
+      // Workaround to draw markers in the good position when zooming
+      // inside the browser. VueJS applies transforms to canvas elements
+      this.makeWorkaroundCanvasTransform();
+
     },
 
     /**
@@ -143,7 +142,6 @@ export default {
      */
     makeWorkaroundCanvasTransform: function() {
       let _this = this;
-
       this.vectorSource.once("addfeature", function() {
         _this.setCanvasTransform();
         _this.map.addInteraction(_this.modify);
@@ -160,22 +158,24 @@ export default {
       this.view.on("change:resolution", function() {
         _this.setCanvasTransform();
       });
-
       this.map.on("moveend", function() {
         _this.setCanvasTransform();
       });
     },
-
     /**
      * Handle map click event
      */
     setCanvasTransform: function() {
       let canvasList = document.getElementById("mapDiv").querySelectorAll("canvas");
-
       if (canvasList && canvasList.length > 1) {
-         canvasList.forEach(canvas => {
-          canvas.style.transform = "inherit";
-         });
+        canvasList.forEach(canvas => {
+          if (Math.round(window.devicePixelRatio * 100) < 100) {
+            const ctx = canvas.getContext('2d');
+            ctx.resetTransform();
+          } else {
+            canvas.style.transform = "inherit";
+          }
+        });
       }
     },
 
@@ -270,7 +270,7 @@ export default {
      * Add marker
      */
     addMarker: function(x, y, zoom) {
-      this.vectorSource.clear()
+      this.vectorSource.clear();
       const marker = new Feature({
         geometry: new Point([x, y])
       });
@@ -281,7 +281,6 @@ export default {
         this.view.setCenter([x, y]);
         this.view.setZoom(process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM);
       }
-
     },
 
     /**
