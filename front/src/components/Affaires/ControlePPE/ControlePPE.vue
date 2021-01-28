@@ -63,7 +63,7 @@ export default {
               this.controlePPE_all = tmp; // keep in memory all controles PPE
               this.controlePPE_dates_liste = stringifyAutocomplete(tmp, "nom_");
   
-              this.controlePPE = this.controlePPE_all[this.controlePPE_all.length - 1] // only show the last one
+              this.controlePPE = this.controlePPE_all[this.controlePPE_all.length - 1]; // only show the last one
               this.currentControle = this.controlePPE.id;
             }
           }
