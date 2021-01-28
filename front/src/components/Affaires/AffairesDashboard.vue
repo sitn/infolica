@@ -329,21 +329,21 @@ export default {
       });
     },
     
-    /**
-     * Duplicate affaire
-     */
-    duplicateAffaire(){
-      this.$refs.duplicationAffaireForm.openDuplicationAffaireDialog();
-    },
+    // /**
+    //  * Duplicate affaire
+    //  */
+    // duplicateAffaire(){
+    //   this.$refs.duplicationAffaireForm.openDuplicationAffaireDialog();
+    // },
 
     /**
      * Open Theme SITN
      */
-    openSitnTheme(choix) {
+    openSitnTheme(theme) {
       var route;
-      if (choix === "environnement") {
+      if (theme === "environnement") {
         route = process.env.VUE_APP_SITN_ENVIRONNEMENT_URL;
-      } else if (choix === "amenagement_territoire") {
+      } else if (theme === "amenagement_territoire") {
           route = process.env.VUE_APP_SITN_AMENAGEMENT_TERRITOIRE_URL;
       } else {
         return null;

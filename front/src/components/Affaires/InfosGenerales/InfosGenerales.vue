@@ -29,6 +29,12 @@ export default {
       typesAffairesListe: [],
       affaires_source: [],
       affaires_destination: [],
+      clientsFacture: { 
+        selectList: [],
+        adressList: [],
+        selected_id: 0,
+        selected_adress: ''
+      },
       clientsListe: [],
       searchClientsListe: [],
       showDateAlert: false,
@@ -78,7 +84,12 @@ export default {
      * Ouvre la page de consultation/édition de client
      */
     openClientEditor(field_name) {
-      let routedata = this.$router.resolve({name: 'ClientsEdit', params: {id: this.affaire[field_name]}});
+      let routedata = null;
+      if (field_name.toLowerCase().includes('facture')) {
+        routedata = this.$router.resolve({name: 'ClientsEdit', params: {id: this.clientsFacture.selected_id}});        
+      }else {
+        routedata = this.$router.resolve({name: 'ClientsEdit', params: {id: this.affaire[field_name]}});
+      }
       window.open(routedata.href, "_blank");
     },
     /*
@@ -331,6 +342,102 @@ export default {
       getDocument(formData).then(response => {
         this.$root.$emit("ShowMessage", "Le document '"+ response +"' se trouve dans le dossier Téléchargement")
       }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Search Clients facture
+     */
+    async searchClientsFacture() {
+      this.clientsFacture = { 
+        selectList: [],
+        adressList: [],
+        selected_id: 0,
+        selected_adress: ''
+      };
+
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_FACTURES_ENDPOINT + this.affaire.id,
+        {
+          withCredentials: true,
+          headers: {Accept: "appication/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          let tmp = response.data;
+
+          tmp.forEach(x => {
+            // construct select list
+            this.clientsFacture.selectList.push({
+              id: x.client_id,
+              nom: [
+                x.client_entreprise,
+                [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" ")
+              ].filter(Boolean).join(", ")
+            });
+
+
+            // construct adresses list
+            let adress = "";
+            if (x.client_premiere_ligne !== null) {
+              // Cas hoirie, PPE ou personne représentée (par)
+              adress = [
+                x.client_premiere_ligne,
+                x.client_entreprise !== null?
+                  ["Par " + x.client_entreprise, x.client_complement !== null? x.complement:
+                    [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" ")].filter(Boolean).join(", "):
+                  "Par " + [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
+                x.client_co,
+                x.client_adresse,
+                x.client_case_postale,
+                [x.client_npa, x.client_localite].filter(Boolean).join(" ")
+              ].filter(Boolean).join("\n");
+            } else if (x.client_co_id !== null) {
+              // Cas envoi adresse différente de celle du débiteur
+              adress = [
+                [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
+                ["c/o", x.client_co_titre, x.client_co_nom, x.client_co_prenom].filter(Boolean).join(" "),
+                x.client_co_co,
+                x.client_co_adresse,
+                x.client_co_case_postale,
+                [x.client_co_npa, x.client_co_localite].filter(Boolean).join(" ")
+              ].filter(Boolean).join("\n");
+            } else {
+              // Cas adresse facturation = adresse débiteur
+              adress = [
+                x.client_entreprise,
+                x.client_complement? x.client_complement: [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
+                x.client_co,
+                x.client_adresse,
+                x.client_case_postale,
+                [x.client_npa, x.client_localite].filter(Boolean).join(" ")
+              ].filter(Boolean).join("\n");
+            }
+            
+            this.clientsFacture.adressList.push({
+              id: x.client_id,
+              adress: adress
+            });
+
+          });
+
+          // stringify lists
+          this.clientsFacture.adressList = stringifyAutocomplete(this.clientsFacture.adressList, 'adress');
+          this.clientsFacture.selectList = stringifyAutocomplete(this.clientsFacture.selectList, 'nom');
+
+          //set default adress
+          if (this.clientsFacture.selectList.length > 0) {
+            this.clientsFacture.selected_adress = this.clientsFacture.adressList[this.clientsFacture.selected_id].nom;
+            this.clientsFacture.selected_id = this.clientsFacture.adressList[this.clientsFacture.selected_id].id;
+          }
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Update client facture adress when selection changed
+     */
+    updateClientFactureAdresse() {
+      this.clientsFacture.selected_adress = this.clientsFacture.adressList.filter(x => x.id === this.clientsFacture.selected_id)[0].nom;
     }
 
   },
@@ -342,6 +449,7 @@ export default {
     this.searchAffaireSource();
     this.searchAffaireDestination();
     this.initClientsListe();
+    this.searchClientsFacture();
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };

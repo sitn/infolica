@@ -9,7 +9,7 @@ from infolica.models.models import Affaire, AffaireType, ModificationAffaireType
 from infolica.models.models import ModificationAffaire, VAffaire, Facture
 from infolica.scripts.utils import Utils
 
-from sqlalchemy import or_
+from sqlalchemy import and_, or_
 
 import os
 import json
@@ -90,8 +90,8 @@ def affaires_search_view(request):
     # Chercher les affaires par les conditions (sauf client_facture)
     conditions = Utils.get_search_conditions(VAffaire, params_affaires)
     query = request.dbsession.query(VAffaire)
-    if len(affaires_id_by_clients_facture) > 0:
-        query = query.filter(or_(
+    if client_in_params:
+        query = query.filter(and_(
             *conditions,
             VAffaire.id.in_(affaires_id_by_clients_facture)
         ))
