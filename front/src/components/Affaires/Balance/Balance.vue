@@ -414,6 +414,7 @@ export default {
      */
     async checkExistingOldBF(oldBF) {
       let formData = new FormData();
+      formData.append("affaire_id", this.affaire.id);
       formData.append("oldBF", JSON.stringify(oldBF));
       
       return new Promise((resolve, reject) => {

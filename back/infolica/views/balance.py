@@ -4,13 +4,14 @@ import pyramid.httpexceptions as exc
 from sqlalchemy import and_
 
 from infolica.exceptions.custom_error import CustomError
-from infolica.models.models import Affaire, GeosBalance, Numero
+from infolica.models.models import Affaire, GeosBalance, Numero, NumeroEtatHisto, AffaireNumero
 from infolica.scripts.utils import Utils
 from infolica.scripts.mailer import send_mail
 
 import os
 import json
 from docx.api import Document
+from datetime import datetime
 
 
 @view_config(route_name='balance_generate_table', request_method='GET', renderer='json')
@@ -70,19 +71,20 @@ def balance_check_existing_oldBF_new_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
     
+    affaire_id = request.params['affaire_id']
     oldBF = json.loads(request.params['oldBF'])
 
     # Control existance of each oldBF
     numero_obj = []
     for bf in oldBF:
         bf_cadastre_id, bf_numero = bf.split("_")
-        query = request.dbsession.query(Numero).filter(and_(
+        numero = request.dbsession.query(Numero).filter(and_(
             Numero.cadastre_id == bf_cadastre_id,
             Numero.numero == bf_numero
         )).first()
 
         # Create number if it doesn't exist
-        if not query:
+        if not numero:
             numero = Numero(
                 cadastre_id = bf_cadastre_id,
                 type_id = request.registry.settings['numero_bf_id'],
@@ -91,10 +93,26 @@ def balance_check_existing_oldBF_new_view(request):
             )
             
             request.dbsession.flush()
-            numero_obj.append(numero)
 
-        else:
-            numero_obj.append(query)
+        # Add numero to array of Numeros created
+        numero_obj.append(numero)
+        
+        # Add numero_affaire link
+        affNum = AffaireNumero()
+        affNum(
+            affaire_id = affaire_id,
+            numero_id = numero.id,
+            type_id = request.registry.settings['numero_bf_id'],
+            actif = True,
+        )
+
+        # Add numero_etat_histo link
+        numEtatHisto = NumeroEtatHisto()
+        numEtatHisto(
+            numero_id = numero.id,
+            numero_etat_id = request.registry.settings['numero_vigueur_id'],
+            date = datetime.now().date()
+        )
 
     return Utils.serialize_many(numero_obj)
 
