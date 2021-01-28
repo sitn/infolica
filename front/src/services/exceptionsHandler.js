@@ -23,7 +23,8 @@ export const handleException = function (error, component) {
     //All other error codes
     else
     {
-       component.$root.$emit("ShowError", "Une erreur est survenue");   
+       component.$root.$emit("ShowError", error);   
+    //    component.$root.$emit("ShowError", "Une erreur est survenue");   
     }                  
 };
 
