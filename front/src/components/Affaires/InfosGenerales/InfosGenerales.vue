@@ -425,8 +425,10 @@ export default {
           this.clientsFacture.selectList = stringifyAutocomplete(this.clientsFacture.selectList, 'nom');
 
           //set default adress
-          this.clientsFacture.selected_adress = this.clientsFacture.adressList[this.clientsFacture.selected_id].nom;
-          this.clientsFacture.selected_id = this.clientsFacture.adressList[this.clientsFacture.selected_id].id;
+          if (this.clientsFacture.selectList.length > 0) {
+            this.clientsFacture.selected_adress = this.clientsFacture.adressList[this.clientsFacture.selected_id].nom;
+            this.clientsFacture.selected_id = this.clientsFacture.adressList[this.clientsFacture.selected_id].id;
+          }
         }
       }).catch(err => handleException(err, this));
     },
