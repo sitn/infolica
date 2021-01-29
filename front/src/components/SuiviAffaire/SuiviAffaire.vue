@@ -251,6 +251,9 @@ export default {
         ).then(response => {
             if (response && response.data) {
                 this.$root.$emit("ShowMessage", "L'étape a bien été enregistrée.");
+
+                // empty formular
+                this.initFormEtape();
             }
         }).catch(err => handleException(err, this));
     },
