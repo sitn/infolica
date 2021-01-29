@@ -48,17 +48,18 @@ Move to front.
 cd ../front
 ```
 
-Duplicate the `.env` file to `env.development.local` for development or `env.production.local` for production and adapt urls and config. Files ending with `*.local` are ignored by git.
-
 Install dependencies.
 ```
 npm install
 ```
 
-Then build with:
+Duplicate the `.env` file to `env.development.local` for development, `env.production.local` for production or whatever mode you like (`.env.[my_mode].local`) and adapt urls and config. Files ending with `*.local` are ignored by git.
+
+Then build with `npm run build -- --mode my_mode`. For production mode, use:
 ```
 npm run build [-- --mode production]
 ```
+Further readings about this [here](https://cli.vuejs.org/guide/mode-and-env.html#environment-variables).
 
 ### Development
 
