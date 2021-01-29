@@ -28,10 +28,6 @@
                             <md-card-content>
                                 <div class="md-title">Avant l'affaire</div>
 
-                                <md-checkbox class="md-primary" v-model="suiviMandat.av_21">
-                                    Création de l'affaire dans CATS
-                                </md-checkbox>
-
                                 <md-checkbox class="md-primary" v-model="suiviMandat.av_31">
                                     Vérification par le chef de projet de la MO
                                 </md-checkbox>
@@ -83,10 +79,6 @@
                                     <md-textarea v-model="suiviMandat.pdt_22"></md-textarea>
                                 </md-field>
 
-                                <!-- <md-checkbox class="md-primary" v-model="suiviMandat.pdt_31">
-                                    Matérialisation différée (copie du plan de mutation)
-                                </md-checkbox> -->
-
                                 <md-checkbox class="md-primary" v-model="suiviMandat.pdt_41">
                                     Contrôle de l'enregistrement de tous les documents (courriel, courrier, préavis, plan, etc.)
                                 </md-checkbox>
@@ -122,23 +114,6 @@
                                     <md-textarea v-model="suiviMandat.ap_22"></md-textarea>
                                 </md-field>
                                 
-                                <md-checkbox class="md-primary" v-model="suiviMandat.ap_31">
-                                    Génération de l'état descriptif pour Terris
-                                </md-checkbox>
-
-                                <div class="md-layout md-gutter" v-if="suiviMandat.ap_31">
-                                    <div class="md-layout-item md-size-50">
-                                        <md-autocomplete v-model="suiviMandat.ap_32" :md-options="chefsProjetMO_liste" md-dense>
-                                            <label>Chef de projet</label>
-                                        </md-autocomplete>
-                                    </div>
-                                    <div class="md-layout-item md-size-50">
-                                        <md-datepicker v-model="suiviMandat.ap_33" md-immediately>
-                                            <label>Date de la vérification</label>
-                                        </md-datepicker>
-                                    </div>
-                                </div>
-
                                 <md-checkbox class="md-primary" v-model="suiviMandat.ap_41">
                                     Contrôle de la base de données
                                 </md-checkbox>
