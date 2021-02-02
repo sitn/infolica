@@ -7,6 +7,10 @@
 
             <nav class="menu" v-if="$route.name !== 'Login'">
               <md-menu md-align-trigger>
+                  <md-button md-menu-trigger v-on:click="goTo('Cockpit')">Cockpit</md-button>
+              </md-menu>
+
+              <md-menu md-align-trigger>
                   <md-button md-menu-trigger v-on:click="goTo('Affaires')">Affaires</md-button>
               </md-menu>
             

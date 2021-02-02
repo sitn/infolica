@@ -13,7 +13,7 @@ from sqlalchemy import and_, or_
 
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from docxtpl import DocxTemplate, RichText
 
 ###########################################################
@@ -48,6 +48,42 @@ def affaire_by_id_view(request):
     query = request.dbsession.query(VAffaire)
     one = query.filter(VAffaire.id == id).first()
     return Utils.serialize_one(one)
+
+
+@view_config(route_name='affaires_cockpit', request_method='GET', renderer='json')
+def affaire_cockpit_view(request):
+    """
+    Return active affaires (id, no_access, id_current_step)
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    affaire_show_timedelta = int(request.registry.settings['affaire_show_timedelta'])
+    since = datetime.date(datetime.now()) - timedelta(days=affaire_show_timedelta)
+    
+    query = request.dbsession.query(VAffaire)\
+        .filter(VAffaire.etape_id != None)\
+        .filter(and_(
+            or_(
+                VAffaire.date_envoi >= since,
+                VAffaire.date_envoi == None
+            ),
+            VAffaire.date_cloture == None
+        )).all()
+
+    affaires = []
+    for affaire in query:
+        affaires.append({
+            'id': affaire.id,
+            'affaire_type': affaire.type_affaire,
+            'no_access': affaire.no_access,
+            'etape_id': affaire.etape_id,
+            'etape_ordre': affaire.etape_ordre,
+            'operateur_id': affaire.technicien_id
+        })
+      
+    return json.dumps(affaires)
 
 
 @view_config(route_name='recherche_affaires', request_method='POST', renderer='json')

@@ -879,6 +879,7 @@ class VAffaire(Base):
     etape_operateur_nom = Column(Text)
     etape_operateur_prenom = Column(Text)
     etape_priorite = Column(Integer)
+    etape_ordre = Column(BigInteger)
     abandon = Column(Boolean)
 
 

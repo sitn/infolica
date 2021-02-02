@@ -51,14 +51,8 @@ export default {
               if (this.suiviMandat.av_33 !== null) {
                 this.suiviMandat.av_33 = moment(this.suiviMandat.av_33, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
               }
-              if (this.suiviMandat.ap_33 !== null) {
-                this.suiviMandat.ap_33 = moment(this.suiviMandat.ap_33, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
-              }
               if (this.suiviMandat.av_32 !== null) {
                 this.suiviMandat.av_32 = this.chefsProjetMO_liste.filter(x => x.id === this.suiviMandat.av_32).pop();
-              }
-              if (this.suiviMandat.ap_32 !== null) {
-                this.suiviMandat.ap_32 = this.chefsProjetMO_liste.filter(x => x.id === this.suiviMandat.ap_32).pop();
               }
               if (this.suiviMandat.visa !== null) {
                 this.suiviMandat.visa = this.chefsProjetMO_liste.filter(x => x.id === this.suiviMandat.visa).pop();
@@ -144,7 +138,6 @@ export default {
       var formData = new FormData();
       formData.append("id", this.suiviMandat.id);
       formData.append("affaire_id", this.suiviMandat.affaire_id);
-      formData.append("av_21", this.suiviMandat.av_21);
       formData.append("av_31", this.suiviMandat.av_31);
       if (this.suiviMandat.av_32 && this.suiviMandat.av_32.id) { formData.append("av_32", this.suiviMandat.av_32.id) }
       if (this.suiviMandat.av_33) { formData.append("av_33", moment(this.suiviMandat.av_33, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)) }
@@ -160,9 +153,6 @@ export default {
       if (this.suiviMandat.ap_12) { formData.append("ap_12", this.suiviMandat.ap_12) }
       formData.append("ap_21", this.suiviMandat.ap_21);
       if (this.suiviMandat.ap_22) { formData.append("ap_22", this.suiviMandat.ap_22) }
-      formData.append("ap_31", this.suiviMandat.ap_31);
-      if (this.suiviMandat.ap_32 && this.suiviMandat.ap_32.id) { formData.append("ap_32", this.suiviMandat.ap_32.id) }
-      if (this.suiviMandat.ap_33) { formData.append("ap_33", moment(this.suiviMandat.ap_33, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)) }
       formData.append("ap_41", this.suiviMandat.ap_41);
       if (this.suiviMandat.ap_42) { formData.append("ap_42", this.suiviMandat.ap_42) }
       formData.append("visa", JSON.parse(localStorage.getItem("infolica_user")).id);
