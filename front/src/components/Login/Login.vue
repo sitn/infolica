@@ -36,7 +36,7 @@ export default {
             .then(response =>{
               if(response && response.data){
                 this.processLogin(response.data);
-                this.$router.push({ name: "Affaires"});
+                this.$router.push({ name: "Cockpit"});
               }
             })
             //Error 
