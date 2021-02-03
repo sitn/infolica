@@ -19,7 +19,6 @@ export default {
         searchAffaire: null,
         selectedOperateur: {},
         showFinProcessus: false,
-        suiviAffaires: [],
     }
   },
 
@@ -31,24 +30,6 @@ export default {
         this.newAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
     },
 
-
-    /**
-     * get Suivi Affaire
-     */
-    async getSuiviAffaire() {
-        this.$http.get(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_SUIVI_AFFAIRE_TELE_ENDPOINT,
-            {
-                withCredentials: true,
-                headers: {Accept: "application/json"}
-            }
-        ).then(response => {
-            if (response && response.data) {
-                this.suiviAffaires = response.data;
-            }
-        }).catch(err => handleException(err, this));
-    },
-    
     /**
      * get Affaires
      */
@@ -147,7 +128,6 @@ export default {
   mounted: function() {
     this.getPermissions();
     this.getAffaire();
-    this.getSuiviAffaire();
     this.getOperateursList();
 
     setInterval(() => this.getAffaire().then(() => this.updateTable()), 60000); // Recharge le tableau toutes les minutes

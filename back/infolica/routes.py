@@ -166,8 +166,4 @@ def includeme(config):
     config.add_route('reservation_numeros_mo', '/infolica/api/reservation_numeros_mo')
     #Plans MO
     config.add_route('plans_mo', '/infolica/api/plans_mo')
-    #TELETRAVAIL
-    config.add_route('affaire_tele', '/infolica/api/affaire_tele')
-    config.add_route('affaire_type_tele', '/infolica/api/affaire_type_tele')
-    config.add_route('affaire_etape_tele', '/infolica/api/affaire_etape_tele')
-    config.add_route('suivi_affaire_tele', '/infolica/api/suivi_affaire_tele')
+
