@@ -58,9 +58,10 @@ export default {
       cloreAffaireEnabled: false,
       duplicationAffaireForm: null,
       editAffaireAllowed: true,
+      editNumerosAllowed: true,
       mapLoaded: false,
       chefs_equipe_list: [],
-      parentparentAffaireReadOnly: false,
+      parentAffaireReadOnly: false,
       showConfirmAbandonAffaireDialog: false,
       suiviAffaireTheorique: [],
       typesAffaires: [],
@@ -173,9 +174,10 @@ export default {
           _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
           _this.abandonAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined);
           _this.cloreAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
-          _this.parentAffaireReadOnly = (_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
-  
-          //If admin, allow edit
+          _this.parentAffaireReadOnly = ((_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined) || (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined));
+          _this.editNumerosAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) && !_this.parentAffaireReadOnly;
+          
+          // If admin, allow edit
           if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)){
             _this.parentAffaireReadOnly = false;
           }
@@ -437,7 +439,7 @@ export default {
       formData.append("template", "Commande");
       formData.append("values", JSON.stringify({
         "AFFAIRE_ID": this.affaire.id,
-        "OPERATEUR": [this.affaire.technicien_prenom, this.affaire.technicien_nom].filter(Boolean).join (" "),
+        "OPERATEUR": this.affaire.technicien_initiales,
         "CLIENT_COMMANDE_ADRESSE": this.affaire.client_commande_nom_,
         "CLIENT_COMMANDE_TEL": this.affaire.client_commande_tel_fixe,
         "CLIENT_COMMANDE_TEL_PORT": this.affaire.client_commande_tel_portable,

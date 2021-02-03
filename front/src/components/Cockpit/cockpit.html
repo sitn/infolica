@@ -1,6 +1,6 @@
 <div id="Cockpit">
     <md-toolbar class="justifyTitleBtn">
-        <h1>Affaires</h1>
+        <h1>Cockpit</h1>
         <md-button class="md-raised md-accent" v-if="newAffaireAllowed" @click="$router.push({name: 'NewAffaire'})">Nouvelle affaire</md-button>
     </md-toolbar>
 
@@ -16,7 +16,8 @@
                 <md-field style="margin-left: 50px; width: 250px !important;">
                     <label for="operateur">Opérateur</label>
                     <md-select v-model="selectedOperateur" name="operateur" id="operateur" @md-selected="updateTable" md-dense>
-                      <md-option v-for="item in operateurs" :key="item.id" :value="item.id">{{ item.nom }}</md-option>
+                      <md-option :value="-1">Tous</md-option>
+                      <md-option v-for="item in operateurs" :value="item.id">{{ item.nom }}</md-option>
                     </md-select>
                   </md-field>
 
@@ -24,7 +25,8 @@
 
                 <p style="margin-top: 25px;">({{ affaires.length }} affaires)</p>
             </div>
-
+            
+            <md-progress-bar md-mode="indeterminate" v-if="loadingAffaires"></md-progress-bar>
             <md-table v-model="affaires" md-sort="id" md-sort-order="desc" md-card>
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell style="width: 5%;" md-sort-by="item.affaire_type" md-label="Type d'affaire">{{ item.affaire_type }}</md-table-cell>
