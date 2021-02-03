@@ -4,7 +4,7 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
-import { getCurrentDate, checkPermission, getDocument } from "@/services/helper";
+import { getCurrentDate, getDocument } from "@/services/helper";
 import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/Affaires/NumerosAffaire/ReservationNumeros/ReservationNumeros.vue";
 import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue";
@@ -19,6 +19,7 @@ export default {
   props: {
     affaire: Object,
     typesAffaires_conf: Object,
+    editNumerosAllowed: Boolean
   },
   components: {
     ReferenceNumeros,
@@ -35,7 +36,6 @@ export default {
       affaire_numeros_mo: [],
       affaire_numeros_nouveaux: [],
       affaire_numeros_nouveaux_mo: [],
-      affaireReadonly: true,
       confirmDialog: {
         show: false,
         title: '',
@@ -436,11 +436,8 @@ export default {
     
     this.showBalance_();
 
-    this.$root.$on('UpdateNumerosAffaires', () =>{
-      this.searchAffaireNumeros();
-    });
+    this.$root.$on('UpdateNumerosAffaires', () => this.searchAffaireNumeros());
 
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

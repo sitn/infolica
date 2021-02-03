@@ -58,9 +58,10 @@ export default {
       cloreAffaireEnabled: false,
       duplicationAffaireForm: null,
       editAffaireAllowed: true,
+      editNumerosAllowed: true,
       mapLoaded: false,
       chefs_equipe_list: [],
-      parentparentAffaireReadOnly: false,
+      parentAffaireReadOnly: false,
       showConfirmAbandonAffaireDialog: false,
       suiviAffaireTheorique: [],
       typesAffaires: [],
@@ -173,9 +174,10 @@ export default {
           _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
           _this.abandonAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined);
           _this.cloreAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
-          _this.parentAffaireReadOnly = (_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
-  
-          //If admin, allow edit
+          _this.parentAffaireReadOnly = ((_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined) || (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined));
+          _this.editNumerosAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) && !_this.parentAffaireReadOnly;
+          
+          // If admin, allow edit
           if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)){
             _this.parentAffaireReadOnly = false;
           }

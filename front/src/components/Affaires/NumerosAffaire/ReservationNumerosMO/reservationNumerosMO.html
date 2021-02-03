@@ -2,7 +2,7 @@
     <md-card>
         <md-card-header class="justifyTitleBtn">
                 <div class="md-title">Numéros de la MO</div>
-                <md-button class="md-primary" @click="showReservationNumerosMODialog = true">Réserver</md-button>
+                <md-button class="md-primary" v-if="editNumerosAllowed" @click="showReservationNumerosMODialog = true">Réserver</md-button>
         </md-card-header>
 
         <md-card-content>

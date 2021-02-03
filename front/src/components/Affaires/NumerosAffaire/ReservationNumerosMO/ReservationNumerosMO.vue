@@ -4,7 +4,7 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
-import { checkPermission, getCadastres, stringifyAutocomplete, logAffaireEtape } from "@/services/helper";
+import { getCadastres, stringifyAutocomplete, logAffaireEtape } from "@/services/helper";
 import { validationMixin } from "vuelidate";
 import { required, minValue, requiredIf } from "vuelidate/lib/validators";
 
@@ -14,7 +14,8 @@ export default {
   name: "ReservationNumerosMO",
   props: {
     affaire: Object,
-    types_numeros: Object
+    types_numeros: Object,
+    editNumerosAllowed: Boolean
   },
   components: {},
   mixins: [validationMixin],
@@ -288,9 +289,7 @@ export default {
   mounted: function() {
     this.getCadastresListe()
     this.searchReservationNumerosMO();
-    this.resetReservation();
-    
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) || this.$parent.parentAffaireReadOnly;
+    this.resetReservation(); 
   }
 };
 </script>
