@@ -14,7 +14,7 @@
                 </md-field>
 
                 <md-field style="margin-left: 50px; width: 250px !important;">
-                    <label for="operateur">Collaborateur</label>
+                    <label for="operateur">Opérateur</label>
                     <md-select v-model="selectedOperateur" name="operateur" id="operateur" @md-selected="updateTable" md-dense>
                       <md-option :value="-1">Tous</md-option>
                       <md-option v-for="item in operateurs" :value="item.id">{{ item.nom }}</md-option>

@@ -27,6 +27,7 @@ class Operateur(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     prenom = Column(Text, nullable=False)
+    initiales = Column(Text)
     login = Column(Text)  # , nullable=False)
     responsable = Column(Boolean, default=False, nullable=False)
     chef_equipe = Column(Boolean, default=False, nullable=False)
@@ -604,6 +605,7 @@ class NumeroDiffere(Base):
         Date, default=datetime.datetime.utcnow, nullable=False)
     date_sortie = Column(Date)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
+    req_radiation = Column(Boolean)
 
 
 class NumeroRelationType(Base):
@@ -845,6 +847,7 @@ class VAffaire(Base):
     technicien_id = Column(BigInteger)
     technicien_nom = Column(Text)
     technicien_prenom = Column(Text)
+    technicien_initiales = Column(Text)
     type_affaire = Column(Text)
     cadastre = Column(Text)
     information = Column(Text)
@@ -1112,81 +1115,3 @@ class VPlan(Base):
     idborplan = Column(Text)
     idrepplan = Column(Text)
     base = Column(Text)
-
-
-# ========================================================
-#               TELETRAVAIL COVID-19
-# ========================================================
-
-class Etape_tele(Base):
-    __tablename__ = "etape"
-    __table_args__ = {'schema': 'teletravail',
-                      'info': dict(is_view=True)}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-    ordre = Column(BigInteger)
-
-class AffaireType_tele(Base):
-    __tablename__ = "affaire_type"
-    __table_args__ = {'schema': 'teletravail',
-                      'info': dict(is_view=True)}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-    ordre = Column(BigInteger, nullable=False)
-    logique_etapes = Column(ARRAY(BigInteger))
-
-class Affaire_tele(Base):
-    __tablename__ = "affaire"
-    __table_args__ = {'schema': 'teletravail',
-                      'info': dict(is_view=True)}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    type_id = Column(BigInteger, ForeignKey(AffaireType_tele.id), nullable=False)
-    nom = Column(Text, nullable=False)
-    actuelle_etape_id = Column(BigInteger, ForeignKey(Etape_tele.id), nullable=False)
-    datetime_ouverture = Column(DateTime, nullable=False)
-    datetime_cloture = Column(DateTime)
-    remarque = Column(Text)
-
-class SuiviAffaire_tele(Base):
-    __tablename__ = "suivi_affaire"
-    __table_args__ = {'schema': 'teletravail',
-                      'info': dict(is_view=True)}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
-    affaire_id = Column(BigInteger, ForeignKey(Affaire_tele.id), nullable=False)
-    datetime = Column(DateTime, nullable=False)
-    etape_id = Column(BigInteger, ForeignKey(Etape_tele.id), nullable=False)
-    remarque = Column(Text)
-
-class VSuiviAffaire_tele(Base):
-    __tablename__ = "v_suivi_affaires"
-    __table_args__ = {'schema': 'teletravail',
-                      'info': dict(is_view=True)}
-    suivi_affaire_id = Column(BigInteger, primary_key=True)
-    operateur_id = Column(BigInteger)
-    operateur_nom = Column(Text)
-    operateur_prenom = Column(Text)
-    affaire_id = Column(BigInteger)
-    affaire_nom = Column(Text)
-    affaire_type_id = Column(BigInteger)
-    affaire_type = Column(Text)
-    affaire_type_logique_etapes = Column(ARRAY(BigInteger))
-    datetime = Column(DateTime)
-    etape_id = Column(BigInteger)
-    etape = Column(Text)
-    remarque = Column(Text)
-
-class VAffaire_tele(Base):
-    __tablename__ = "v_affaires"
-    __table_args__ = {'schema': 'teletravail',
-                      'info': dict(is_view=True)}
-    affaire_id = Column(BigInteger, primary_key=True)
-    affaire_nom = Column(Text)
-    affaire_type_id = Column(BigInteger)
-    affaire_type = Column(Text)
-    affaire_type_logique_etapes = Column(ARRAY(BigInteger))
-    etape_id = Column(BigInteger)
-    etape = Column(Text)
-    affaire_remarque = Column(Text)
-    datetime_ouverture = Column(DateTime)
-    datetime_cloture = Column(DateTime)
