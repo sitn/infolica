@@ -14,10 +14,11 @@ export default {
         affaires: [],
         affaires_bk: [],
         affaireEtapes: [],
+        loadingAffaires: true,
         newAffaireAllowed: false,
         operateurs: [],
         searchAffaire: null,
-        selectedOperateur: {},
+        selectedOperateur: -1,
         showFinProcessus: false,
     }
   },
@@ -52,9 +53,11 @@ export default {
                     }
                 });
                 this.affaires_bk = tmp;
-                if (!this.affaires[0]) {
+                if (!this.affaires.length > 0) {
                     this.affaires = tmp;
                 }
+
+                this.updateTable();
             }
         }).catch(err => handleException(err, this));
     },
@@ -88,6 +91,8 @@ export default {
      * Update table and content to show or not FinProcessus step
      */
     updateTable() {
+        this.loadingAffaires = true;
+
         // filter affaires by showing or not Fin Processus
         if (this.showFinProcessus) {
             this.affaires = this.affaires_bk;
@@ -100,9 +105,12 @@ export default {
             this.affaires = this.affaires.filter(x => x.no_access.toLowerCase().includes(this.searchAffaire.toLowerCase()) || x.id.toString().includes(this.searchAffaire));
         }
 
-        if (this.selectedOperateur) {
+        // filter affaire by operateur if specified
+        if (this.selectedOperateur && this.selectedOperateur > 0) {
             this.affaires = this.affaires.filter(x => x.operateur_id === this.selectedOperateur);
         }
+        
+        this.loadingAffaires = false;
     },
 
     /**
@@ -130,7 +138,7 @@ export default {
     this.getAffaire();
     this.getOperateursList();
 
-    setInterval(() => this.getAffaire().then(() => this.updateTable()), 60000); // Recharge le tableau toutes les minutes
+    setInterval(() => this.getAffaire(), 60000); // Recharge le tableau toutes les minutes
 
 
   }
