@@ -84,6 +84,7 @@ export default {
       etapes_affaire_conf: {
         travaux_chef_equipe: Number(process.env.VUE_APP_ETAPE_TRAVAUX_CHEF_EQUIPE_ID)
       },
+      showMovePointComment: false,
       // numeros_base_associes = []
     };
   },
@@ -357,12 +358,14 @@ export default {
       if (value === false) {
         this.$refs.mapHandler.modify.setActive(true);
         this.$refs.mapHandler.snap.setActive(true);
+        this.showMovePointComment = true;
       } else {
         this.$refs.mapHandler.modify.setActive(false);
         this.$refs.mapHandler.snap.setActive(false);
         this.$refs.mapHandler.addMarker(this.affaire.localisation_e, this.affaire.localisation_n);
         this.center.x = this.affaire.localisation_e;
         this.center.y = this.affaire.localisation_n;
+        this.showMovePointComment = false;
       }
     },
 
