@@ -438,6 +438,14 @@ export default {
      */
     updateClientFactureAdresse() {
       this.clientsFacture.selected_adress = this.clientsFacture.adressList.filter(x => x.id === this.clientsFacture.selected_id)[0].nom;
+    },
+
+    /**
+     * Open affaire "repris par" or "provient de"
+     */
+    openAffaire(affaire_id) {
+      this.$router.replace({ name: "AffairesDashboard", params: {id: affaire_id}});
+      this.$router.go(0);
     }
 
   },

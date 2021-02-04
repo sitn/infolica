@@ -67,6 +67,9 @@
                         <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('environnement')">Environnement</md-button>
                         <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('amenagement_territoire')">Aménagement du territoire</md-button>
                     </div>
+                    <div class="md-layout-item md-size-100" v-if="showMovePointComment">
+                        <p style="color: blue; margin-top: 0px;">Pour modifier les coordonnées, déplacer la pastille sur la carte.</p>
+                    </div>
                     <div id="mapContainer">
                         <MapHandler ref="mapHandler" />
                     </div>

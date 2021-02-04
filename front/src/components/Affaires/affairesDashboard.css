@@ -22,7 +22,6 @@
 .affairesDashboard .rightColumn {
     float: right;
     width: 49.7%;
-    height: 100%;
 }
 
 #mapContainer {
@@ -32,7 +31,7 @@
   }
 
 .affairesDashboard .mapHeight {
-    height: 620px;
+    height: inherit !important;;
 }
 
 .affairesDashboard p {

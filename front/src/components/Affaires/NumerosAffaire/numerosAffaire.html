@@ -102,14 +102,14 @@
                                                 <md-table-cell md-label="Repris par" md-sort-by="affaire_destination_id"><a v-bind:href="item.affaire_destination_href">{{item.affaire_destination_id }}</a></md-table-cell>
                                                 <md-table-cell md-label="Mat diff" class="actionsColumn">
                                                     <!-- Si le numéro est différé -->
-                                                    <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && editNumerosAllowed && item.affaire_numero_actif && item.active">
+                                                    <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && hasPermissionEditNumeros && item.affaire_numero_actif">
                                                         <md-button v-if="item.numero_type_id===types_numeros.bf"  @click="confirmCreateDiffererNumero(item, 'sortie')" 
                                                             class="md-accent md-raised md-icon-button md-dense">
                                                             <md-icon>access_time</md-icon>
                                                         </md-button>
                                                     </div>
                                                     <!-- Si le numéro n'est pas encore différé -->
-                                                    <div v-if="item.numero_diff_entree === null && item.numero_diff_sortie === null && editNumerosAllowed && item.affaire_numero_actif && item.active">
+                                                    <div v-if="item.numero_diff_entree === null && item.numero_diff_sortie === null && hasPermissionEditNumeros && item.affaire_numero_actif && item.active">
                                                         <md-button v-if="item.numero_type_id===types_numeros.bf"
                                                             class="md-primary md-icon-button md-dense" @click="confirmCreateDiffererNumero(item, 'entree')">
                                                             <md-icon>access_time</md-icon>

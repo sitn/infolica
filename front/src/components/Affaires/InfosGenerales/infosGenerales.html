@@ -32,16 +32,14 @@
                 </div>
 
                 <div class="md-layout-item md-size-25 md-small-size-100" v-if="affaires_source[0]">
-                    <md-field>
+                    <md-chips @md-click="openAffaire" v-model="affaires_source" md-static>
                         <label>Provient de l'affaire</label>
-                        <md-input v-model="affaires_source" readonly></md-input>
-                    </md-field>
+                    </md-chips>
                 </div>
                 <div class="md-layout-item md-size-25 md-small-size-100" v-if="affaires_destination[0]">
-                    <md-field>
+                    <md-chips @md-click="openAffaire" v-model="affaires_destination" md-static>
                         <label>Repris par l'affaire</label>
-                        <md-input v-model="affaires_destination" readonly />
-                    </md-field>
+                    </md-chips>
                 </div>
             </div>
             
