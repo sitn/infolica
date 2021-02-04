@@ -4,7 +4,7 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
-import { getCurrentDate, getDocument } from "@/services/helper";
+import { getCurrentDate, getDocument, checkPermission } from "@/services/helper";
 import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/Affaires/NumerosAffaire/ReservationNumeros/ReservationNumeros.vue";
 import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue";
@@ -42,8 +42,9 @@ export default {
         content: '',
         onConfirm: () => {}
       },
-      showNumerosMO: true,
+      hasPermissionEditNumeros: false,
       numerosMoLoading: true,
+      showNumerosMO: true,
       showBalance: false,
       showAlertMatDiffDialog: false,
       showBtnReqRadMatDiff: false,
@@ -242,7 +243,7 @@ export default {
       if (etat === "entree") {
         this.confirmDialog = {
           title: "Matérialisation différée",
-          content: "Le numéro " + numero.numero + " va entrer en matérialisation différée.",
+          content: "Le numéro " + numero.numero + " aura la mention 'mat diff'.",
           show: true,
           onConfirm: () => this.doCreateDiffererNumero(numero)
         };
@@ -250,7 +251,7 @@ export default {
         if (this.affaire.date_envoi !== null) {
           this.confirmDialog = {
             title: "Matérialisation différée",
-            content: "Le numéro " + numero.numero + " va quitter la matérialisation différée.",
+            content: "Le numéro " + numero.numero + " a été matérialisé et la mention 'mat diff' va être supprimée.",
             show: true,
             onConfirm: () => this.doUpdateDiffererNumero(numero)
           };
@@ -435,6 +436,7 @@ export default {
     });
     
     this.showBalance_();
+    this.hasPermissionEditNumeros = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION);
 
     this.$root.$on('UpdateNumerosAffaires', () => this.searchAffaireNumeros());
 
