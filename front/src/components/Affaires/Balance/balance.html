@@ -1,4 +1,4 @@
-<div class="balance">
+<div class="balance" v-if="affaire.etape_id === etapePreparationDossierFinal || tableau_balance.length>0">
     <md-card>
         
         <md-card-header>
@@ -23,7 +23,7 @@
                 </div>
             </div>
 
-            <md-card v-if="tableau_balance[0]" style="width: auto;">
+            <md-card v-if="tableau_balance.length>0" style="width: auto;">
                 <md-card-content>
                     <div style="display: flex;">
                         <span class="verticalSpan">Ancien état</span>
