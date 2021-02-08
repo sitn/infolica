@@ -4,6 +4,10 @@
         <md-button class="md-raised md-accent" v-if="newAffaireAllowed" @click="$router.push({name: 'NewAffaire'})">Nouvelle affaire</md-button>
     </md-toolbar>
 
+    <div v-if="showMatdiff">
+        <Matdiff />
+    </div>
+
     <md-card>
         <md-card-content>
 
