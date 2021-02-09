@@ -55,7 +55,14 @@
 
     <md-dialog :md-active.sync="showPreavisDialog" md-confirm-text="Enregistrer" md-cancel-text="Annuler"
         md-title="Édition de préavis">
-        <md-dialog-title>Édition de préavis</md-dialog-title>
+        <md-dialog-title>
+            <div class="md-layout md-gutter md-alignment-center-space-between">
+                <div class="md-layout-item">
+                    Édition de préavis
+                </div>
+                <md-button class="md-accent md-raised" @click="deletePreavis(new_preavis.id)" v-if="new_preavis.id && !affaireReadonly">Supprimer</md-button>
+            </div>
+        </md-dialog-title>
         <md-dialog-content>
             
             <div class="md-layout md-gutter">

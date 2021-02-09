@@ -85,25 +85,3 @@ def services_update_view(request):
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Service.__tablename__))
 
-
-# """ DELETE preavis affaire"""
-# @view_config(route_name='preavis_by_id', request_method='DELETE', renderer='json')
-# def preavis_delete_view(request):
-    # Check authorization
-    # if not Utils.has_permission(request, request.registry.settings['fonction_admin']):
-    #     raise HTTPForbidden()
-
-#     service_id = request.matchdict['id']
-
-#     record = request.dbsession.query(models.Service).filter(
-#         models.Service.id == service_id).first()
-
-#     if not record:
-#         raise CustomError(
-#             CustomError.RECORD_WITH_ID_NOT_FOUND.format(models.Service.__tablename__, service_id))
-#
-#      request.dbsession.delete(record)
-#      return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(models.Service.__tablename__))
-
-#     except Exception as e:
-#         raise e

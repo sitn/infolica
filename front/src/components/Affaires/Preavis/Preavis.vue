@@ -400,8 +400,24 @@ export default {
       }
 
       this.showPreavisDialog = true;
-    }
+    },
 
+    /**
+     * Delete preavis
+     */
+    async deletePreavis(preavis_id) {
+      this.$http.delete(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_ENDPOINT + "?preavis_id=" + preavis_id,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      ).then(() => {
+        this.showPreavisDialog = false;
+        this.searchAffairePreavis();
+        this.$root.$emit("showMessage", "Le prévais a bien été supprimé");
+      }).catch(err => handleException(err, this));
+    }
   },
 
   mounted: function() {
