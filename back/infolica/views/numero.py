@@ -390,6 +390,23 @@ def numeros_affaire_view(request):
 # NUMERO DIFFERE
 ###########################################################
 
+@view_config(route_name='numeros_differes', request_method='GET', renderer='json')
+def numero_differe_view(request):
+    """
+    get numero_differe
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    numeros = request.dbsession.query(VNumeros).filter(and_(
+        VNumeros.diff_req_radiation != True,
+        VNumeros.diff_sortie is not None
+    ))
+
+    return Utils.serialize_many(numeros)
+
+
 @view_config(route_name='numeros_differes', request_method='POST', renderer='json')
 @view_config(route_name='numeros_differes_s', request_method='POST', renderer='json')
 def numero_differe_new_view(request):

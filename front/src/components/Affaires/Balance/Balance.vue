@@ -23,6 +23,7 @@ export default {
         content: ""
       },
       editionBalance: false,
+      etapePreparationDossierFinal: Number(process.env.VUE_APP_PREPARATION_DOSSIER_FINAL_ID),
       mutation_names: [],
       numeros_anciens: [],
       numeros_nouveaux: [],
@@ -36,7 +37,8 @@ export default {
         numeros: []
       },
       showConfirmationCreateNumber: false,
-      tableau_balance: []
+      tableau_balance: [],
+
     };
   },
   methods: {

@@ -31,7 +31,7 @@
                                     <md-button class="md-icon-button md-primary md-dense"
                                         v-on:click="onModifyPreavis(item)"  
                                         title="Mettre à jour le préavis"
-                                        v-if="item.date_reponse === null">
+                                        v-if="!affaireReadonly">
                                         <md-icon class="md-edit">edit</md-icon>
                                     </md-button>
                                     <!-- <md-button class="md-icon-button md-primary md-dense" 

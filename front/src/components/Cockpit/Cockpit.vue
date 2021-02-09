@@ -3,12 +3,16 @@
 
 
 <script>
+import Matdiff from "@/components/Cockpit/Matdiff/Matdiff.vue";
+
 import { handleException } from '@/services/exceptionsHandler'
 import { checkPermission, getOperateurs, stringifyAutocomplete } from '@/services/helper'
 
-
 export default {
   name: "Cockpit",
+  components: {
+      Matdiff
+  },
   data: () => {
     return {
         affaires: [],
@@ -20,6 +24,7 @@ export default {
         searchAffaire: null,
         selectedOperateur: -1,
         showFinProcessus: false,
+        showMatdiff: false,
     }
   },
 
@@ -29,6 +34,7 @@ export default {
      */
     getPermissions() {
         this.newAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
+        this.showMatdiff = checkPermission(process.env.VUE_APP_SECRETAIRE_ROLE_ID) || checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
     },
 
     /**

@@ -97,7 +97,7 @@ class LDAPQuery(object):
 
                 for group in groups:
                     if group[cn_attribute].startswith(request.registry.settings['infolica_groups_prefix']) \
-                            and group_to_avoid not in group[cn_attribute]:
+                            and group_to_avoid != group[cn_attribute]:
                         return group[cn_attribute]
         return None
 
