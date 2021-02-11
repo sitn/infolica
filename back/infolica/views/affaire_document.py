@@ -6,6 +6,7 @@ import pyramid.httpexceptions as exc
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.scripts.utils import Utils
+from infolica.models.models import Affaire
 
 import os
 import shutil
@@ -25,9 +26,15 @@ def affaire_dossier_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    affaire_dossier = request.registry.settings["affaires_directory_fullpath"]
+    affaire_dossier = request.registry.settings["affaires_directory"]
     affaire_id = request.matchdict['id']
-    return os.path.normpath(os.path.join(affaire_dossier, affaire_id))
+    affaire_chemin = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
+
+    chemin = "Unknown path"
+    if affaire_chemin:
+        chemin = os.path.normpath(os.path.join(affaire_dossier, affaire_chemin))
+
+    return chemin
 
 
 @view_config(route_name='affaire_documents_by_affaire_id', request_method='GET', renderer='json')
@@ -40,9 +47,14 @@ def affaire_documents_view(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.matchdict['id']
+    affaire_chemin = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
 
-    affaire_path = os.path.join(request.registry.settings['affaires_directory'], affaire_id).replace('\\', '/')
     documents = []
+    if not affaire_chemin:
+        return documents
+
+
+    affaire_path = os.path.join(request.registry.settings['affaires_directory'], affaire_chemin).replace('\\', '/')
     for root, dirs, files in os.walk(affaire_path, topdown=False):
         for name in files:
             if name.startswith(".") or name.startswith("~"):
@@ -71,8 +83,9 @@ def download_affaire_document_view(request):
     affaire_id = request.params['affaire_id']
     relpath = request.params['relpath']
     filename = request.params['filename']
+    affaire_chemin = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
 
-    file_path = os.path.normpath(os.path.join(affaires_directory, affaire_id, relpath, filename))
+    file_path = os.path.normpath(os.path.join(affaires_directory, affaire_chemin, relpath, filename))
     folder_path = os.path.exists(os.path.dirname(file_path))
 
     if not folder_path:
