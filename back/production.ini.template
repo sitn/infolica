@@ -173,6 +173,7 @@ affaire_etape_priorite_1_id = 1
 # Accès aux dossiers
 ######################################################################################
 affaires_directory = /*TO COMPLETE*/
+affaires_directory_dev = /*TO COMPLETE*/
 affaireTemplateDir = /*TO COMPLETE*/
 mails_templates_directory = /*TO COMPLETE*/
 temporary_directory = /*TO COMPLETE*/
