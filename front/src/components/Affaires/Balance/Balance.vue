@@ -23,7 +23,7 @@ export default {
         content: ""
       },
       editionBalance: false,
-      etapePreparationDossierFinal: Number(process.env.VUE_APP_PREPARATION_DOSSIER_FINAL_ID),
+      etapeSetBalance: Number(process.env.VUE_APP_ETAPE_SET_BALANCE_ID),
       mutation_names: [],
       numeros_anciens: [],
       numeros_nouveaux: [],

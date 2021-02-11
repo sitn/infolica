@@ -10,7 +10,7 @@
                 Contrôle (Géomètre cantonal)
             </div>
 
-            <md-button class="md-primary" v-if="!controleGeometre.id && showNewControleGeometreBtn" @click="createControleGeometre">Créer le formulaire</md-button>
+            <md-button class="md-primary" v-if="!controleGeometre.id && showNewControleGeometreBtn && !affaireReadonly" @click="createControleGeometre">Créer le formulaire</md-button>
         </md-card-header>
 
         <md-card-expand>
