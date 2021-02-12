@@ -233,9 +233,11 @@ export default {
             // Only suggest affaire types to which user has rights
             if (checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION)) {
               type_filter.push(this.typesAffaires_conf.ppe);
-            } else if (checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION)) {
+            }
+            if (checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION)) {
               type_filter.push(this.typesAffaires_conf.revision_abornement);
-            } else if (checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION)) {
+            }
+            if (checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION)) {
               type_filter.push(this.typesAffaires_conf.cadastration);
             }
             if (type_filter.length>0) {
