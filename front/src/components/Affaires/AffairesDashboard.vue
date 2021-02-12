@@ -61,6 +61,11 @@ export default {
       editNumerosAllowed: true,
       mapLoaded: false,
       chefs_equipe_list: [],
+      affaire_permission: {
+        ppe_edition: false,
+        revision_abornement: false,
+        cadastration_edition: false,
+      },
       parentAffaireReadOnly: false,
       showConfirmAbandonAffaireDialog: false,
       suiviAffaireTheorique: [],
@@ -178,9 +183,12 @@ export default {
         this.searchAffaire().then(function(obj){
           _this.affaire = obj;
           _this.affaireLoaded = true;
-          _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
           _this.abandonAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined);
           _this.cloreAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
+          _this.affaire_permission.ppe_edition = checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION) && _this.affaire.type_id === this.typesAffaires_conf.ppe;
+          _this.affaire_permission.revision_abornement_edition = checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION) && _this.affaire.type_id === this.typesAffaires_conf.revision_abornement;
+          _this.affaire_permission.cadastration_edition = checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION) && _this.affaire.type_id === this.typesAffaires_conf.cadastration;
+          _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || _this.affaire_permission.ppe_edition || _this.affaire_permission.revision_abornement_edition || _this.affaire_permission.cadastration_edition;
           _this.parentAffaireReadOnly = ((_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined) || (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined));
           _this.editNumerosAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) && !_this.parentAffaireReadOnly;
           

@@ -142,7 +142,6 @@ export default {
           if (response && response.data) {
             this.affaires = response.data;
           }
-          this.newAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
         }).catch(err => {
           handleException(err, this);
         });
@@ -153,7 +152,15 @@ export default {
      */
     doOpenAffaire(id) {
       this.$router.push({ name: "AffairesDashboard", params: {id}});
+    },
+
+    /**
+     * Set permissions
+     */
+    setPermissions() {
+      this.newAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION);
     }
+
   },
 
   mounted: function() {
@@ -161,6 +168,7 @@ export default {
     this.initTypesAffairesList();
     this.searchAffaires();
     this.initClientsListe();
+    this.setPermissions();
   }
 };
 </script>

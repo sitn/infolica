@@ -33,7 +33,7 @@ export default {
      * Get permissions
      */
     getPermissions() {
-        this.newAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
+        this.newAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION);
         this.showMatdiff = checkPermission(process.env.VUE_APP_SECRETAIRE_ROLE_ID) || checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
     },
 

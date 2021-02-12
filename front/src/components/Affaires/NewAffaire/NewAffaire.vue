@@ -11,7 +11,8 @@ import { getCurrentDate,
          getClients,
          filterList,
          stringifyAutocomplete,
-         logAffaireEtape } from "@/services/helper";
+         logAffaireEtape,
+         checkPermission } from "@/services/helper";
 import Autocomplete from "vuejs-auto-complete";
 const moment = require("moment");
 
@@ -227,8 +228,21 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
-            this.types_affaires_list_bk = response.data;
-            this.types_affaires_list = stringifyAutocomplete(response.data);
+            let tmp = response.data;
+            let type_filter = [];
+            // Only suggest affaire types to which user has rights
+            if (checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION)) {
+              type_filter.push(this.typesAffaires_conf.ppe);
+            } else if (checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION)) {
+              type_filter.push(this.typesAffaires_conf.revision_abornement);
+            } else if (checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION)) {
+              type_filter.push(this.typesAffaires_conf.cadastration);
+            }
+            if (type_filter.length>0) {
+              tmp = tmp.filter(x => type_filter.includes(x.id));
+            }
+            this.types_affaires_list_bk = tmp;
+            this.types_affaires_list = stringifyAutocomplete(tmp);
           }
         })
         //Error
