@@ -131,10 +131,11 @@
                         
                         <div class="md-layout-item md-size-60" v-if="[typesAffaires_conf.mutation, 
                             typesAffaires_conf.pcop, typesAffaires_conf.autre, typesAffaires_conf.cadastration,
-                            typesAffaires_conf.revision_abornement, typesAffaires_conf.modification].includes(affaire.type_id)">
+                            typesAffaires_conf.revision_abornement, typesAffaires_conf.modification,
+                            typesAffaires_conf.retablissement_pfp3].includes(affaire.type_id)">
                             
                             <!-- Numéros de la MO -->
-                            <ReservationNumerosMO :affaire="affaire" :types_numeros="types_numeros" :editNumerosAllowed="editNumerosAllowed"></ReservationNumerosMO>
+                            <ReservationNumerosMO :affaire="affaire" :types_numeros="types_numeros" :editNumerosMOAllowed="editNumerosMOAllowed"></ReservationNumerosMO>
                             
                         </div>
                         

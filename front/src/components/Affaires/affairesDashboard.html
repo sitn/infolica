@@ -90,7 +90,7 @@
 
     <!-- NUMEROS -->
     <div class="affairesDashboard">
-        <numerosAffaire :affaire="affaire" :typesAffaires_conf="typesAffaires_conf" :editNumerosAllowed="editNumerosAllowed" ref="numeros" />
+        <numerosAffaire :affaire="affaire" :typesAffaires_conf="typesAffaires_conf" :editNumerosAllowed="editNumerosAllowed" :editNumerosMOAllowed="editNumerosMOAllowed" ref="numeros" />
     </div>
 
     <!-- FACTURATION -->
@@ -115,7 +115,7 @@
     
     <!-- CONTROLE DU GEOMETRE CANTONAL -->
     <div class="affairesDashboard">
-        <ControleGeometre :typesAffaires_conf="typesAffaires_conf" :affaire="affaire" />
+        <ControleGeometre :typesAffaires_conf="typesAffaires_conf" :affaire="affaire" :editControleAffaire="editControleAffaire" />
     </div>        
     <!-- DOCUMENTS -->
     <div class="affairesDashboard">

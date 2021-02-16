@@ -19,7 +19,8 @@ export default {
   props: {
     affaire: Object,
     typesAffaires_conf: Object,
-    editNumerosAllowed: Boolean
+    editNumerosAllowed: Boolean,
+    editNumerosMOAllowed: Boolean
   },
   components: {
     ReferenceNumeros,
@@ -437,6 +438,7 @@ export default {
     
     this.showBalance_();
     this.hasPermissionEditNumeros = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION);
+    this.hasPermissionEditNumerosMO = checkPermission(process.env.VUE_APP_NUMERO_MO_EDITION);
 
     this.$root.$on('UpdateNumerosAffaires', () => this.searchAffaireNumeros());
 

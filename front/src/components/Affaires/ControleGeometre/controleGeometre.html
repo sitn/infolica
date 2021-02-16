@@ -10,13 +10,13 @@
                 Contrôle (Géomètre cantonal)
             </div>
 
-            <md-button class="md-primary" v-if="!controleGeometre.id && showNewControleGeometreBtn && !affaireReadonly" @click="createControleGeometre">Créer le formulaire</md-button>
+            <md-button class="md-primary" v-if="!controleGeometre.id && showNewControleGeometreBtn && editControleAffaire" @click="createControleGeometre">Créer le formulaire</md-button>
         </md-card-header>
 
         <md-card-expand>
             <md-card-expand-content>
 
-                <md-card-content v-bind:class="{ disabledElement: affaireReadonly }">
+                <md-card-content v-bind:class="{ disabledElement: !editControleAffaire }">
 
                     <p v-if="controleGeometre.date" style="margin-top: 0px;">Dernier contrôle effectué le {{controleGeometre.date}} par {{operateur.nom}}</p>
                     
@@ -167,16 +167,8 @@
                                 </md-field>
                             </div>
                             
-                            <div class="md-layout-item md-size-25 md-small-size-100">
+                            <div class="md-layout-item md-size-25 md-small-size-100" v-if="editControleAffaire">
                                 <div style="float: right;">
-                                    <!-- <md-field style="width: 200px">
-                                        <label>Date</label>
-                                        <md-input v-model="controleGeometre.date" readonly></md-input>
-                                    </md-field>
-                                    <md-field style="width: 200px">
-                                        <label>Opérateur</label>
-                                        <md-input v-model="operateur.nom" readonly></md-input>
-                                    </md-field> -->
                                     <md-button class="md-raised md-accent" @click="searchControleGeometre()">Annuler</md-button>
                                     <md-button class="md-raised md-primary" @click="updateControleGeometre()">Enregistrer</md-button>
                                 </div>

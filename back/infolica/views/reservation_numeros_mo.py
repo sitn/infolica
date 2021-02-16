@@ -37,7 +37,7 @@ def reservation_numeros_mo_new_view(request):
     """
 
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+    if not Utils.has_permission(request, request.registry.settings['numero_mo_edition']):
         raise exc.HTTPForbidden()
 
     # get cadastres jumeaux
