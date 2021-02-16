@@ -317,5 +317,5 @@ class Utils(object):
         record = cls.set_model_record(record, params)
         request.dbsession.add(record)
         request.dbsession.flush()
-        return record.id
+        return record
 

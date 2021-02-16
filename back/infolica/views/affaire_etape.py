@@ -62,7 +62,7 @@ def etapes_new_view(request):
     chef_equipe_id = request.params['chef_equipe_id'] if 'chef_equipe_id' in request.params else None
     
     # Add new step
-    Utils.addNewRecord(request, AffaireEtape)
+    model = Utils.addNewRecord(request, AffaireEtape)
 
     # send mail
     affaire_etape_index = request.dbsession.query(AffaireEtapeIndex).filter(AffaireEtapeIndex.id == model.etape_id).first()
