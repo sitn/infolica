@@ -110,6 +110,7 @@ affaire_edition = affaire_edition
 affaire_ppe_edition = affaire_ppe_edition
 affaire_revision_abornement_edition = affaire_revision_abornement_edition
 affaire_cadastration_edition = affaire_cadastration_edition
+affaire_retablissement_pfp3_edition = affaire_retablissement_pfp3_edition
 affaire_envois_edition = affaire_envois_edition
 affaire_controle_edition = affaire_controle_edition
 affaire_suivi_edition = affaire_suivi_edition
@@ -130,6 +131,9 @@ client_edition = client_edition
 affaire_type_cadastration_id = 2
 affaire_type_ppe_id = 3
 affaire_type_revision_abornement_id = 4
+affaire_type_retablissement_pfp3_id = 12
+affaire_type_autre_id = 7
+affaire_type_part_copropriete_id = 10
 
 # ID Numéros-types biens-fonds
 numero_bf_id = 1
@@ -172,8 +176,12 @@ cadastre_cantonal_id = 0
 # Time delta to show last affaire in suivi_affaire in days
 affaire_show_timedelta = 30
 
-# Affaire etape priorites
+# Affaire etape
 affaire_etape_priorite_1_id = 1
+affaire_premiere_etape_defaut_id = 13
+
+# Facture type
+facture_type_facture_id = 1
 
 ######################################################################################
 # Accès dossiers

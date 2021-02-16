@@ -39,10 +39,7 @@ def controle_geometre_new_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
         raise exc.HTTPForbidden()
 
-    record = ControleGeometre()
-    record = Utils.set_model_record(record, request.params)
-
-    request.dbsession.add(record)
+    Utils.addNewRecord(request, ControleGeometre)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControleGeometre.__tablename__))
 

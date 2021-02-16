@@ -65,13 +65,10 @@ def controles_ppe_new_view(request):
     Add new controles_ppe
     """
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
+    if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
         raise exc.HTTPForbidden()
 
-    record = ControlePPE()
-    record = Utils.set_model_record(record, request.params)
-
-    request.dbsession.add(record)
+    Utils.addNewRecord(request, ControlePPE)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControlePPE.__tablename__))
 
@@ -83,7 +80,7 @@ def controles_ppe_update_view(request):
     Update controles_ppe
     """
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
+    if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id
@@ -109,7 +106,7 @@ def controles_ppe_delete_view(request):
     Delete controles_ppe
     """
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
+    if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id

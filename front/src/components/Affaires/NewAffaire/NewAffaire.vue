@@ -11,7 +11,6 @@ import { getCurrentDate,
          getClients,
          filterList,
          stringifyAutocomplete,
-         logAffaireEtape,
          checkPermission } from "@/services/helper";
 import Autocomplete from "vuejs-auto-complete";
 const moment = require("moment");
@@ -240,6 +239,9 @@ export default {
             if (checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION)) {
               type_filter.push(this.typesAffaires_conf.cadastration);
             }
+            if (checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION)) {
+              type_filter.push(this.typesAffaires_conf.retablissement_pfp3);
+            }
             if (type_filter.length>0) {
               tmp = tmp.filter(x => type_filter.includes(x.id));
             }
@@ -350,29 +352,7 @@ export default {
           const id_new_affaire = response.data;
           if (response && response.data) {
             let promises = [];
-            // Enregistrer une facture vide
-            if (this.showClientsForm){
-              promises.push(this.postFacture(id_new_affaire));
-            } 
-            // Crée la première étape de l'affaire
-            promises.push(this.postAffaireEtape(id_new_affaire));
-
-            // Créer le contrôle du géomètre
-            promises.push(this.postControleGeometre(id_new_affaire));
-
-            // Créer le formulaire de suivi du mandat
-            promises.push(this.postSuiviMandat(id_new_affaire));
-
-           // Si affaire type mutation: créer le controle Mutation du chef d'équipe
-            if ([this.typesAffaires_conf.mutation, this.typesAffaires_conf.cadastration, this.typesAffaires_conf.modification, this.typesAffaires_conf.revision_abornement].includes(this.form.type.id)) {
-              promises.push(this.postControleMutation(id_new_affaire));
-            }
-
-           // Si affaire type ppe: créer le controle ppe
-            if (this.form.type.id === this.typesAffaires_conf.ppe) {
-              promises.push(this.postControlePPE(id_new_affaire));
-            }
-
+            
             // Si l'affaire est de type modification ...
             if (this.type_modification_bool) {
               promises.push(this.postAffaireRelation(id_new_affaire));
@@ -410,36 +390,6 @@ export default {
         });
     },
 
-    /**
-     * Enregistre une facture vide avec l'adresse
-     */
-    async postFacture(affaire_id) {
-      return new Promise((resolve, reject) => {
-        var formData = new FormData();
-        formData.append("affaire_id", affaire_id);
-        formData.append("client_id", this.client_facture.id);
-        formData.append("type_id", Number(process.env.VUE_APP_FACTURE_TYPE_FACTURE_ID));
-        if (this.client_facture_complement !== null) {
-          formData.append("client_complement", "À l'att. de " + this.client_facture_complement);
-        }
-        if (this.client_facture_premiere_ligne !== null) {
-          formData.append("client_premiere_ligne", this.client_facture_premiere_ligne);
-        }
-        if (this.show_co && this.client_facture_co !== null && this.client_facture_co.id !== null) {
-          formData.append("client_co_id", this.client_facture_co.id);
-        }
-        this.$http
-          .post(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_ENDPOINT,
-            formData,
-            {
-              withCredentials: true,
-              headers: { Accept: "applicatoin/json" }
-            }
-          ).then(response => resolve(response))
-          .catch(err => reject(err));
-      });
-    },
 
     /**
      * Post affaires relation si affaire de type modification
@@ -469,6 +419,7 @@ export default {
     initPostData() {
       var formData = new FormData();
       formData.append("type_id", this.form.type.id);
+      formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
       if (this.form.nom) {
         formData.append("nom", this.form.nom);
       }
@@ -517,6 +468,19 @@ export default {
           moment(this.form.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)
         );
       }
+
+      // FACTURE
+      formData.append("facture_client_id", this.client_facture.id);
+      if (this.client_facture_complement !== null) {
+        formData.append("facture_client_complement", "À l'att. de " + this.client_facture_complement);
+      }
+      if (this.client_facture_premiere_ligne !== null) {
+        formData.append("facture_client_premiere_ligne", this.client_facture_premiere_ligne);
+      }
+      if (this.show_co && this.client_facture_co !== null && this.client_facture_co.id !== null) {
+        formData.append("facture_client_co_id", this.client_facture_co.id);
+      }
+
       return formData;
     },
 
@@ -1088,104 +1052,6 @@ export default {
       if (this.client_facture !== null && this.client_facture.id !== null) {
         this.initClientMoralPersonnes(this.client_facture.id, 'facture');
       }
-    },
-
-    /**
-     * Créer la première étape de l'affaire dans le suivi
-     */
-    async postAffaireEtape(affaire_id) {
-      return new Promise((resolve, reject) => {
-        // get first step of affaire by selected type
-        let etape_id = Number(process.env.VUE_APP_PREMIERE_ETAPE_DEFAUT_ID);
-        let tmp = this.types_affaires_list_bk.filter(x => x.id === this.form.type.id)[0];
-        if (tmp.logique_processus) {
-          etape_id = tmp.logique_processus[0];
-        }
-        
-        logAffaireEtape(affaire_id, etape_id)
-        .then(response => resolve(response))
-        .catch(err => reject(err));
-      })
-    },
-    
-    /**
-     * Créer le contrôle du géomètre à l'ouverture de l'affaire
-     */
-    async postControleGeometre(id_new_affaire) {
-      let formData = new FormData();
-      formData.append("affaire_id", id_new_affaire);
-      
-      return new Promise((resolve, reject) => {
-        this.$http.post(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_CONTROLE_GEOMETRE_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: {Accept: "application/json"}
-          }
-        ).then(response => resolve(response))
-        .catch(err => reject(err));
-      });
-    },
-
-    /**
-     * Créer le contrôleMutation du chef d'équipe à l'ouverture de l'affaire
-     */
-    async postControleMutation(id_new_affaire) {
-      let formData = new FormData();
-      formData.append("affaire_id", id_new_affaire);
-      
-      return new Promise((resolve, reject) => {
-        this.$http.post(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_CONTROLE_MUTATION_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: {Accept: "application/json"}
-          }
-        ).then(response => resolve(response))
-        .catch(err => reject(err));
-      });
-    },
-
-    /**
-     * Créer le contrôleMutation du chef d'équipe à l'ouverture de l'affaire
-     */
-    async postControlePPE(id_new_affaire) {
-      let formData = new FormData();
-      formData.append("affaire_id", id_new_affaire);
-      
-      return new Promise((resolve, reject) => {
-        this.$http.post(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_CONTROLE_PPE_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: {Accept: "application/json"}
-          }
-        ).then(response => resolve(response))
-        .catch(err => reject(err));
-      });
-    },
-    
-    /**
-     * Créer le formulaire de suivi du mandat à l'ouverture de l'affaire
-     */
-    async postSuiviMandat(id_new_affaire) {
-      let formData = new FormData();
-      formData.append("affaire_id", id_new_affaire);
-      
-      return new Promise((resolve, reject) => {
-        this.$http.post(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_SUIVI_MANDAT_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: {Accept: "application/json"}
-          }
-        ).then(response => resolve(response))
-        .catch(err => reject(err));
-      });
     },
 
   },

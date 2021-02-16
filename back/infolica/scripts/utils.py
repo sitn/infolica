@@ -2,6 +2,8 @@
 from datetime import date, datetime
 from sqlalchemy import func, and_, desc
 from infolica.models.models import Numero, AffaireNumero, Fonction, Role, FonctionRole, ReservationNumerosMO
+from infolica.models.models import SuiviMandat, ControleGeometre, ControleMutation, ControlePPE
+from infolica.models.models import AffaireEtape
 from infolica.scripts.ldap_query import LDAPQuery
 from shutil import copytree, ignore_patterns
 import json
@@ -300,5 +302,20 @@ class Utils(object):
     def create_affaire_folder(cls, request, affaire_folder):
         if not os.path.isdir(affaire_folder):
             copytree(request.registry.settings['affaireTemplateDir'], affaire_folder, ignore=ignore_patterns('Thumbs.db'))
-
+    
+    @classmethod
+    def addNewRecord(cls, request, Model, params=None):
+        """
+        Create a new record in table Model. This is a general case, with no supplementary condition.
+        Returns id of the new record.
+        Uses params if set, request.params otherwise.
+        """
+        if params is None:
+            params = request.params
+        
+        record = Model()
+        record = cls.set_model_record(record, params)
+        request.dbsession.add(record)
+        request.dbsession.flush()
+        return record.id
 
