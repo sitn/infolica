@@ -19,8 +19,7 @@ export default {
   props: {
     affaire: Object,
     typesAffaires_conf: Object,
-    editNumerosAllowed: Boolean,
-    editNumerosMOAllowed: Boolean
+    permission: Object
   },
   components: {
     ReferenceNumeros,

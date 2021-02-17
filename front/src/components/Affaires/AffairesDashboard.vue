@@ -46,7 +46,6 @@ export default {
   },
   data() {
     return {
-      abandonAffaireEnabled: true,
       affaire: {},
       affaireEtapes: [],
       etapeAffaire: {
@@ -55,20 +54,21 @@ export default {
         showDialog: false,
       },
       affaireLoaded: false,
-      cloreAffaireEnabled: false,
       duplicationAffaireForm: null,
-      editAffaireAllowed: true,
-      editNumerosAllowed: true,
-      editNumerosMOAllowed: true,
-      editControleAffaire: true,
       mapLoaded: false,
       chefs_equipe_list: [],
-      affaire_permission: {
-        ppe_edition: false,
-        revision_abornement: false,
-        cadastration_edition: false,
-      },
       parentAffaireReadOnly: false,
+      permission: {
+        abandonAffaireEnabled: false,
+        editCadastrationAllowed: false,//
+        cloreAffaireEnabled: false,
+        editAffaireAllowed: false,
+        editNumerosAllowed: false,
+        editNumerosMOAllowed: false,
+        editControleGeometreAllowed: false,
+        editPPEAllowed: false,
+        editRevisionAbornementAllowed: false,
+      },
       showConfirmAbandonAffaireDialog: false,
       suiviAffaireTheorique: [],
       typesAffaires: [],
@@ -185,17 +185,18 @@ export default {
         this.searchAffaire().then(function(obj){
           _this.affaire = obj;
           _this.affaireLoaded = true;
-          _this.abandonAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined);
-          _this.cloreAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
-          _this.affaire_permission.ppe_edition = checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION) && _this.affaire.type_id === _this.typesAffaires_conf.ppe;
-          _this.affaire_permission.revision_abornement_edition = checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION) && _this.affaire.type_id === _this.typesAffaires_conf.revision_abornement;
-          _this.affaire_permission.cadastration_edition = checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION) && _this.affaire.type_id === _this.typesAffaires_conf.cadastration;
-          _this.affaire_permission.retablissement_pfp3_edition = checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION) && _this.affaire.type_id === _this.typesAffaires_conf.retablissement_pfp3;
-          _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || _this.affaire_permission.ppe_edition || _this.affaire_permission.revision_abornement_edition || _this.affaire_permission.cadastration_edition || _this.affaire_permission.retablissement_pfp3_edition;
+          
           _this.parentAffaireReadOnly = ((_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined) || (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined));
-          _this.editNumerosAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) && !_this.parentAffaireReadOnly;
-          _this.editNumerosMOAllowed = checkPermission(process.env.VUE_APP_NUMERO_MO_EDITION) && !_this.parentAffaireReadOnly;
-          _this.editControleAffaire = checkPermission(process.env.VUE_APP_AFFAIRE_CONTROLE_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.abandonAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined);
+          _this.permission.cloreAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
+          _this.permission.editPPEAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION) && _this.affaire.type_id === _this.typesAffaires_conf.ppe;
+          _this.permission.editRevisionAbornementAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION) && _this.affaire.type_id === _this.typesAffaires_conf.revision_abornement;
+          _this.permission.editCadastrationAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION) && _this.affaire.type_id === _this.typesAffaires_conf.cadastration;
+          _this.permission.retablissement_pfp3_edition = checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION) && _this.affaire.type_id === _this.typesAffaires_conf.retablissement_pfp3;
+          _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || _this.permission.editPPEAllowed || _this.permission.editRevisionAbornementAllowed || _this.permission.editCadastrationAllowed || _this.permission.retablissement_pfp3_edition;
+          _this.permission.editNumerosAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.editNumerosMOAllowed = checkPermission(process.env.VUE_APP_NUMERO_MO_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.editControleGeometreAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_CONTROLE_EDITION) && !_this.parentAffaireReadOnly;
           
           // If admin, allow edit
           if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)){

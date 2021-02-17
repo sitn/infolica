@@ -13,7 +13,7 @@ export default {
   props: {
     affaire: Object,
     typesAffaires_conf: Object,
-    editControleAffaire: Boolean
+    permission: Object
   },
   data: () => ({
     operateurs_liste: [],

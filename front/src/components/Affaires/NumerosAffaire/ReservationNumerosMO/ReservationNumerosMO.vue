@@ -15,7 +15,7 @@ export default {
   props: {
     affaire: Object,
     types_numeros: Object,
-    editNumerosMOAllowed: Boolean
+    permission: Object
   },
   components: {},
   mixins: [validationMixin],

@@ -27,7 +27,7 @@
                                 <md-card-header>
                                     <div class="justifyTitleBtn">
                                         <div class="md-title">Immeubles mutés / biens-fonds de base</div>
-                                        <md-button class="md-primary" v-on:click="callOpenReferenceDialog" v-if="editNumerosAllowed">Référencer un bien-fond</md-button>
+                                        <md-button class="md-primary" v-on:click="callOpenReferenceDialog" v-if="permission.editNumerosAllowed">Référencer un bien-fond</md-button>
                                     </div>
                                 </md-card-header>
 
@@ -77,8 +77,8 @@
                                         <div>
                                             <md-button class="md-primary" @click="getReqRadMatDiff" v-if="showBtnReqRadMatDiff" title="Générer la réquisition des BF sortis de la mat. diff. dans les 7 derniers jours">Req radiation MatDiff</md-button>
                                             <md-button class="md-primary" @click="doQuittanceNumerosReserves" v-if="affaire_numeros_nouveaux.length > 0">Quittance</md-button>
-                                            <md-button class="md-primary" @click="callOpenQuittancePCOPDialog" v-if="editNumerosAllowed && affaire.type_id === typesAffaires_conf.pcop">Quittance PCOP</md-button>
-                                            <md-button class="md-primary" @click="callOpenReservationDialog" v-if="editNumerosAllowed">Réservation</md-button>
+                                            <md-button class="md-primary" @click="callOpenQuittancePCOPDialog" v-if="permission.editNumerosAllowed && affaire.type_id === typesAffaires_conf.pcop">Quittance PCOP</md-button>
+                                            <md-button class="md-primary" @click="callOpenReservationDialog" v-if="permission.editNumerosAllowed">Réservation</md-button>
                                         </div>
                                     </div>
                                 </md-card-header>
@@ -94,7 +94,7 @@
                                                 <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}<span v-if="item.numero_suffixe"> / {{ item.numero_suffixe }}</span></md-table-cell>
                                                 <md-table-cell md-label="Immeuble de base" md-sort-by="numero_base">{{ item.numero_base }}<span v-if="item.numero_base_suffixe"> / {{ item.numero_base_suffixe }}</span></md-table-cell>
                                                 <md-table-cell md-label="Etat" class="actionsColumn" v-if="affaire.type_id === typesAffaires_conf.ppe">
-                                                    <md-switch v-model="item.active" v-if="editNumerosAllowed && item.affaire_numero_actif && !affaire.date_cloture"
+                                                    <md-switch v-model="item.active" v-if="permission.editNumerosAllowed && item.affaire_numero_actif && !affaire.date_cloture"
                                                         @change="onDeleteReserveNumero(item.numero_id)"
                                                         class="md-primary md-dense">
                                                     </md-switch> ({{ item.numero_etat }})
@@ -135,7 +135,7 @@
                             typesAffaires_conf.retablissement_pfp3].includes(affaire.type_id)">
                             
                             <!-- Numéros de la MO -->
-                            <ReservationNumerosMO :affaire="affaire" :types_numeros="types_numeros" :editNumerosMOAllowed="editNumerosMOAllowed"></ReservationNumerosMO>
+                            <ReservationNumerosMO :affaire="affaire" :types_numeros="types_numeros" :permission="permission"></ReservationNumerosMO>
                             
                         </div>
                         
