@@ -36,7 +36,7 @@ def controle_geometre_new_view(request):
     Add new controle_geometre
     """
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
+    if not Utils.has_permission(request, request.registry.settings['affaire_controle_geometre_edition']):
         raise exc.HTTPForbidden()
 
     Utils.addNewRecord(request, ControleGeometre)
@@ -51,7 +51,7 @@ def controle_geometre_update_view(request):
     Update controle_geometre
     """
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
+    if not Utils.has_permission(request, request.registry.settings['affaire_controle_geometre_edition']):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id

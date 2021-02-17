@@ -110,7 +110,7 @@
 
     <!-- CONTROLE TECHNIQUE PPE (Technicien)-->
     <div class="affairesDashboard">
-        <ControlePPE v-if="affaire.type_id===typesAffaires_conf.ppe" :affaire="affaire" />
+        <ControlePPE v-if="affaire.type_id===typesAffaires_conf.ppe" :affaire="affaire" :permission="permission" />
     </div>    
     
     <!-- CONTROLE DU GEOMETRE CANTONAL -->

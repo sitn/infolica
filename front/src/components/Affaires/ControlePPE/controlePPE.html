@@ -12,13 +12,13 @@
             </div>
 
             <md-button class="md-primary" v-on:click="newControlePPE()"
-                v-if="showNewControlePPEBtn && !affaireReadonly">Nouveau contrôle</md-button>
+                v-if="showNewControlePPEBtn && permission.editAffaireAllowed">Nouveau contrôle</md-button>
         </md-card-header>
 
         <md-card-expand>
             <md-card-expand-content>
 
-                <md-card-content v-bind:class="{ disabledElement: affaireReadonly }">
+                <md-card-content v-bind:class="{ disabledElement: !permission.editAffaireAllowed }">
                     <div v-if="controlePPE.id">
                         <div class="md-title">Checklist de contrôle des dossiers PPE</div>
                         <p>
@@ -222,12 +222,12 @@
 
 
                         <div class="md-layout md-alignment-bottom-right" v-if="showCancelSaveBtn">
-                            <md-button class="md-accent md-raised" v-on:click="onCancelEditControlePPE" v-if="!affaireReadonly">
+                            <md-button class="md-accent md-raised" v-on:click="onCancelEditControlePPE" v-if="permission.editAffaireAllowed">
                                 Annuler
                             </md-button>
 
                             <md-button class="md-primary md-raised md-top-right"
-                                v-on:click="onConfirmEditControlePPE" v-if="!affaireReadonly">
+                                v-on:click="onConfirmEditControlePPE" v-if="permission.editAffaireAllowed">
                                 Enregistrer
                             </md-button>
                         </div>

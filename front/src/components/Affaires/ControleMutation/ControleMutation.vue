@@ -4,17 +4,17 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission, setDateFormatClient, logAffaireEtape} from '@/services/helper';
+import {setDateFormatClient, logAffaireEtape} from '@/services/helper';
 
 const moment = require('moment')
 
 export default {
   name: "ControleMutation",
   props: {
-    affaire: Object
+    affaire: Object,
+    permission: Object
   },
   data: () => ({
-    affaireReadonly: true,
     showNewControleMutationBtn: false,
     needToCreateControleMutation: false,
     chefsProjetMO_liste: [],
@@ -217,8 +217,6 @@ export default {
   mounted: function() {
     this.searchControleMutation();
     this.searchOperateurs();
-
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_CONTROLE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

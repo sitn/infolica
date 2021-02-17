@@ -27,7 +27,7 @@
                                 <md-card-header>
                                     <div class="justifyTitleBtn">
                                         <div class="md-title">Immeubles mutés / biens-fonds de base</div>
-                                        <md-button class="md-primary" v-on:click="callOpenReferenceDialog" v-if="permission.editNumerosAllowed">Référencer un bien-fond</md-button>
+                                        <md-button class="md-primary" v-on:click="callOpenReferenceDialog" v-if="permission.editNumerosAllowed && permission.editAffaireAllowed">Référencer un bien-fond</md-button>
                                     </div>
                                 </md-card-header>
 
@@ -78,7 +78,7 @@
                                             <md-button class="md-primary" @click="getReqRadMatDiff" v-if="showBtnReqRadMatDiff" title="Générer la réquisition des BF sortis de la mat. diff. dans les 7 derniers jours">Req radiation MatDiff</md-button>
                                             <md-button class="md-primary" @click="doQuittanceNumerosReserves" v-if="affaire_numeros_nouveaux.length > 0">Quittance</md-button>
                                             <md-button class="md-primary" @click="callOpenQuittancePCOPDialog" v-if="permission.editNumerosAllowed && affaire.type_id === typesAffaires_conf.pcop">Quittance PCOP</md-button>
-                                            <md-button class="md-primary" @click="callOpenReservationDialog" v-if="permission.editNumerosAllowed">Réservation</md-button>
+                                            <md-button class="md-primary" @click="callOpenReservationDialog" v-if="permission.editNumerosAllowed && permission.editAffaireAllowed">Réservation</md-button>
                                         </div>
                                     </div>
                                 </md-card-header>

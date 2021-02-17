@@ -4,8 +4,7 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission,
-        stringifyAutocomplete,
+import {stringifyAutocomplete,
         logAffaireEtape} from '@/services/helper';
 
 const moment = require('moment')
@@ -13,10 +12,10 @@ const moment = require('moment')
 export default {
   name: "ControlePPE",
   props: {
-    affaire: Object
+    affaire: Object,
+    permission: Object
   },
   data: () => ({
-    affaireReadonly: true,
     check_all: false,
     controlePPE: {},
     controlePPE_all: [],
@@ -523,8 +522,6 @@ export default {
     this.initForm();
     this.searchControlePPE();
     this.searchOperateurs();
-
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_CONTROLE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>
