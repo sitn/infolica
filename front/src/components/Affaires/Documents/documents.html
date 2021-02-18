@@ -10,7 +10,7 @@
                     </md-button>
                 </md-card-expand-trigger>
                 Documents
-                <md-button class="md-primary uploadDocBtn" v-on:click="showUploadDocsDialog = true" v-if="showUploadDocBtn && !affaireReadonly && false">
+                <md-button class="md-primary uploadDocBtn" v-on:click="showUploadDocsDialog = true" v-if="showUploadDocBtn && false">
                     Charger des documents
                 </md-button>
             </div>
@@ -39,7 +39,7 @@
                                 <md-table-cell md-label="Dossier" md-sort-by="relpath">{{ item.relpath }}</md-table-cell>
                                 <md-table-cell md-label="Fichier" md-sort-by="filename">{{ item.filename }}</md-table-cell>
                                 <md-table-cell md-label="Création" md-sort-by="creation">{{ item.creation }}</md-table-cell>
-                                <md-table-cell md-label="Actions" class="actionsCol" v-if="!affaireReadonly">
+                                <md-table-cell md-label="Actions" class="actionsCol">
                                     <md-button class="md-icon-button md-dense md-primary" @click="downloadFile(item)">
                                         <md-icon>save_alt</md-icon>
                                     </md-button>

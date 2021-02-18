@@ -20,7 +20,7 @@ import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.
 import ActivationAffaire from "@/components/Affaires/ActivationAffaire/ActivationAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { getTypesAffaires, getOperateurs, checkPermission, getDocument, stringifyAutocomplete, logAffaireEtape } from '@/services/helper'
+import { getTypesAffaires, getOperateurs, checkPermission, getDocument, stringifyAutocomplete, logAffaireEtape, getCurrentUserRoleId } from '@/services/helper'
 
 import moment from "moment";
 
@@ -63,8 +63,10 @@ export default {
         cloreAffaireEnabled: false,
         editAffaireAllowed: false,
         editControleGeometreAllowed: false,
+        editFactureAllowed: false,
         editNumerosAllowed: false,
         editNumerosMOAllowed: false,
+        editSuiviMandatAllowed: false,
       },
       showConfirmAbandonAffaireDialog: false,
       suiviAffaireTheorique: [],
@@ -189,6 +191,9 @@ export default {
           _this.permission.editNumerosAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editNumerosMOAllowed = checkPermission(process.env.VUE_APP_NUMERO_MO_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editControleGeometreAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_CONTROLE_GEOMETRE_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.editSuiviMandatAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_SUIVI_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.editFactureAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) && !_this.parentAffaireReadOnly;
+
 
           if (_this.affaire.type_id === _this.typesAffaires_conf.ppe) {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION) && !_this.parentAffaireReadOnly;
@@ -198,6 +203,17 @@ export default {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION) && !_this.parentAffaireReadOnly;
           } else if (_this.affaire.type_id === _this.typesAffaires_conf.retablissement_pfp3) {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION) && !_this.parentAffaireReadOnly;
+          }
+
+          //Check if role secretaire
+          if(_this.parentAffaireReadOnly){
+            let role_id = getCurrentUserRoleId();
+            
+            if(role_id && !isNaN(role_id) && 
+              Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID) &&
+              checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION)){
+                _this.permission.editFactureAllowed = true;
+            }
           }
 
           // If admin, allow edit

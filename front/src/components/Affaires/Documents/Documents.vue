@@ -5,7 +5,6 @@
 <script>
 import {handleException} from '@/services/exceptionsHandler'
 import axios from "axios";
-import {checkPermission} from '@/services/helper';
 
 export default {
   name: "Documents",
@@ -23,7 +22,6 @@ export default {
     documentFiles: null,
     documentFileName: null,
     documents: [],
-    affaireReadonly: true,
     dossier_affaire: null,
   }),
 
@@ -151,7 +149,6 @@ export default {
   mounted: function() {
     this.searchAffaireDocuments();
     this.searchAffaireDossier();
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_ENVOIS_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

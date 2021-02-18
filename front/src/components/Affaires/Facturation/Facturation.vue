@@ -5,8 +5,6 @@
 <script>
 var numeral = require("numeral");
 import { getCurrentDate,
-         checkPermission,
-         getCurrentUserRoleId,
          getClients,
          filterList,
          stringifyAutocomplete,
@@ -23,14 +21,14 @@ export default {
   mixins: [validationMixin],
   props: {
     affaire: Object,
-    typesAffaires_conf: Object
+    typesAffaires_conf: Object,
+    permission: Object
     },
   data: () => {
     return {
       affaire_devis: [],
       affaire_factures: [],
       numeros_references:[],
-      affaireReadonly: true,
       clients_liste: [],
       clients_liste_type: [],
       clients_liste_select: [],
@@ -609,19 +607,6 @@ export default {
     this.searchAffaireNumeros().then(() => {
       this.searchAffaireFactures();
     });
-
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) || this.$parent.parentAffaireReadOnly;
-
-    //Check if role secretaire
-    if(this.affaireReadonly){
-      var role_id = getCurrentUserRoleId();
-
-      if(role_id && !isNaN(role_id) && 
-        Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID) &&
-        checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION)){
-          this.affaireReadonly = false;
-      }
-    }
   }
 };
 </script>

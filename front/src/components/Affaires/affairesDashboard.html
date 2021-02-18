@@ -95,17 +95,17 @@
 
     <!-- FACTURATION -->
     <div class="affairesDashboard">
-        <Facturation ref="facturation" :typesAffaires_conf="typesAffaires_conf" :affaire="affaire" />
+        <Facturation ref="facturation" :typesAffaires_conf="typesAffaires_conf" :affaire="affaire" :permission="permission" />
     </div>
 
     <!-- CONTROLE TECHNIQUE MUTATION -->
     <div class="affairesDashboard">
-        <ControleMutation v-if="affaire.type_id===typesAffaires_conf.mutation" :affaire="affaire" />
+        <ControleMutation v-if="![typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.autre].includes(affaire.type_id)" :affaire="affaire" :permission="permission" />
     </div>
 
     <!-- SUIVI DU MANDAT -->
-    <div class="affairesDashboard" v-if="affaire.type_id===typesAffaires_conf.mutation" >
-        <SuiviMandat :affaire="affaire" />
+    <div class="affairesDashboard" v-if="![typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.autre].includes(affaire.type_id)" >
+        <SuiviMandat :affaire="affaire" :permission="permission" />
     </div>
 
     <!-- CONTROLE TECHNIQUE PPE (Technicien)-->

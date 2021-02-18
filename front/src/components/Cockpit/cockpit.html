@@ -33,7 +33,7 @@
             <md-progress-bar md-mode="indeterminate" v-if="loadingAffaires"></md-progress-bar>
             <md-table v-model="affaires" md-sort="id" md-sort-order="desc" md-card>
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
-                    <md-table-cell style="width: 5%;" md-sort-by="item.affaire_type" md-label="Type d'affaire">{{ item.affaire_type }}</md-table-cell>
+                    <md-table-cell style="width: 5%;" md-sort-by="affaire_type" md-label="Type d'affaire">{{ item.affaire_type }}</md-table-cell>
                     <md-table-cell style="width: 5%;" md-sort-by="dashboard_0" md-label="Coordination (DGY)"><md-button class="md-raised" @click="openAffaire(item)" v-if="item.dashboard_0">{{ item.dashboard_0 }}</md-button></md-table-cell>
                     <md-table-cell style="width: 5%;" md-sort-by="dashboard_1" md-label="Travaux (c. éq.)"><md-button class="md-raised" @click="openAffaire(item)" v-if="item.dashboard_1">{{ item.dashboard_1 }}</md-button></md-table-cell>
                     <md-table-cell style="width: 5%;" md-sort-by="dashboard_2" md-label="Ctrl tech (DGY)"><md-button class="md-raised" @click="openAffaire(item)" v-if="item.dashboard_2">{{ item.dashboard_2 }}</md-button></md-table-cell>

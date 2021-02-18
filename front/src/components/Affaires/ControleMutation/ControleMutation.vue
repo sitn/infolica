@@ -74,9 +74,6 @@ export default {
           .then(response => {
             if (response.data) {
               this.chefsProjetMO_liste = response.data
-                .filter(x => {
-                  return x.responsable;
-                })
                 .map(x => ({
                   id: x.id,
                   nom: [x.nom, x.prenom].join(" "),
