@@ -232,6 +232,7 @@ export default {
             // Only suggest affaire types to which user has rights
             if (checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION)) {
               type_filter.push(this.typesAffaires_conf.ppe);
+              type_filter.push(this.typesAffaires_conf.modification);
             }
             if (checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION)) {
               type_filter.push(this.typesAffaires_conf.revision_abornement);
@@ -839,7 +840,7 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-          this.typesModficiationAffaire_list = stringifyAutocomplete(response.data)
+          this.typesModficiationAffaire_list = stringifyAutocomplete(response.data);
         }
       }).catch(err => handleException(err, this));
     },

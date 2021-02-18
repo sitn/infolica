@@ -6,7 +6,7 @@
 import Matdiff from "@/components/Cockpit/Matdiff/Matdiff.vue";
 
 import { handleException } from '@/services/exceptionsHandler'
-import { checkPermission, getOperateurs, stringifyAutocomplete } from '@/services/helper'
+import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId } from '@/services/helper'
 
 export default {
   name: "Cockpit",
@@ -33,10 +33,20 @@ export default {
      * Get permissions
      */
     getPermissions() {
-        this.newAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION) ||
-                                 checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION) ||
-                                 checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION);
-        this.showMatdiff = checkPermission(process.env.VUE_APP_SECRETAIRE_ROLE_ID) || checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
+        // set time out of 0.5 seconds. If not, local storage has not time to memorize user allowed functions
+        setTimeout(() => {
+            
+            this.newAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION) ||
+                                     checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION) ||
+                                     checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION);
+            
+            //Check if role secretaire
+            let role_id = getCurrentUserRoleId();
+            if ( role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
+                this.showMatdiff = true;
+            }
+
+        }, 500);
     },
 
     /**
@@ -142,9 +152,9 @@ export default {
   },
 
   mounted: function() {
-    this.getPermissions();
     this.getAffaire();
     this.getOperateursList();
+    this.getPermissions();
 
     setInterval(() => this.getAffaire(), 60000); // Recharge le tableau toutes les minutes
 
