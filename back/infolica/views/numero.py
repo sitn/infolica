@@ -2,7 +2,8 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
-from sqlalchemy import and_
+from sqlalchemy import and_, Integer, func
+from sqlalchemy.dialects.postgresql import ARRAY
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
@@ -399,12 +400,21 @@ def numero_differe_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    numeros = request.dbsession.query(VNumeros).filter(and_(
-        VNumeros.diff_req_radiation != True,
-        VNumeros.diff_sortie is not None
-    ))
+    num_agg = func.array_agg(VNumeros.numero, type_=ARRAY(Integer)).label('numero')
+    result = request.dbsession.query(VNumeros.diff_affaire_id.label('diff_affaire_id'), VNumeros.cadastre.label('cadastre'), num_agg).filter(and_(
+        VNumeros.diff_req_radiation.isnot(True),
+        VNumeros.diff_sortie.isnot(None)
+    )).group_by(VNumeros.diff_affaire_id, VNumeros.cadastre).having(func.array_length(num_agg, 1) > 0).all()
 
-    return Utils.serialize_many(numeros)
+    numeros = []
+    for num in result:
+        numeros.append({
+            'diff_affaire_id': num[0],
+            'cadastre': num[1],
+            'numero': num[2]
+        })
+
+    return json.dumps(numeros)
 
 
 @view_config(route_name='numeros_differes', request_method='POST', renderer='json')

@@ -28,7 +28,9 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-          this.numerosDifferes = response.data;
+          let tmp = JSON.parse(response.data);
+          tmp.forEach(x => x.numero = x.numero.join(', '));
+          this.numerosDifferes = tmp;
         }
       }).catch(err => handleException(err, this));
     },
