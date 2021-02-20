@@ -117,6 +117,7 @@ numero_consultation = numero_consultation
 operateur_consultation = operateur_consultation
 client_consultation = client_consultation
 client_edition = client_edition
+numero_mo_edition = numero_mo_edition
 
 ######################################################################################
 # Variables tirées de la base de données

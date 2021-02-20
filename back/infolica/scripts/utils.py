@@ -136,7 +136,7 @@ class Utils(object):
                 conditions.append(~getattr(model, param).in_(json.loads(params["_"+param])))
                 condition_not_in = False
             else:
-                if params[param].isdigit() and not param == 'npa':
+                if params[param].isdigit() and not param == 'npa' and not param == 'no_access':
                     tmp = int(params[param])
                     conditions.append(getattr(model, param) == tmp)
                 else:
