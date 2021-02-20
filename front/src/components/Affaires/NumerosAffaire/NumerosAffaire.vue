@@ -47,7 +47,6 @@ export default {
       showNumerosMO: true,
       showBalance: false,
       showAlertMatDiffDialog: false,
-      showBtnReqRadMatDiff: false,
       showQuittancePCOPDialog: false,
       types_numeros: {
         bf: Number(process.env.VUE_APP_NUMERO_TYPE_BF),
@@ -314,7 +313,6 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.searchAffaireNumeros();
-            this.showBtnReqRadMatDiff = true;
             this.$root.$emit("ShowMessage", "La mention 'différé' du numéro " + numero.numero + " a été correctement supprimée");
           }
         })
@@ -399,41 +397,9 @@ export default {
       return [cadastres, numeros, numeros_bases];
     },
 
-    /**
-     * Get REQ Radiation mention DIFFERE
-     */
-    async getReqRadMatDiff() {
-      // récupérer les numéros de BF concernés par la radiation de MatDiff
-      let now = new Date();
-      let numerosDifferes = [];
-      this.affaire_numeros_nouveaux.forEach(x => {
-        if (x.numero_diff_entree !== null && x.numero_diff_sortie !== null &&
-            now - moment(x.numero_diff_sortie) < 604800000) { // 604800000 ms = 1 semaine
-          numerosDifferes.push(x.numero);
-        }
-      });
-
-      let formData = new FormData();
-      formData.append("template", "ReqMatDiff");
-      formData.append("values", JSON.stringify({
-        "ANNEE": new Date().getFullYear(),
-        "CADASTRE": this.affaire.cadastre,
-        "BIENS_FONDS": numerosDifferes.filter(Boolean).join(", "),
-        "DATE": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT)
-      }));
-
-      getDocument(formData).then(response => {
-        this.$root.$emit("ShowMessage", "Le fichier '" + response + "' se trouve dans le dossier 'Téléchargement'");
-      }).catch(err => handleException(err, this));
-    },
-
   },
   mounted: function() {
-    this.searchAffaireNumeros().then(() => {
-      // Show or not button req radiation mat diff
-      this.showBtnReqRadMatDiff = this.affaire.date_envoi !== null && this.affaire.type_id === this.typesAffaires_conf.mutation && 
-                                  this.affaire_numeros_nouveaux.some(x => x.numero_diff_entree !== null && x.numero_diff_sortie === null);
-    });
+    this.searchAffaireNumeros();
     
     this.showBalance_();
     this.hasPermissionEditNumeros = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION);

@@ -401,7 +401,8 @@ def numero_differe_view(request):
         raise exc.HTTPForbidden()
 
     num_agg = func.array_agg(VNumeros.numero, type_=ARRAY(Integer)).label('numero')
-    result = request.dbsession.query(VNumeros.diff_affaire_id.label('diff_affaire_id'), VNumeros.cadastre.label('cadastre'), num_agg).filter(and_(
+    diff_id_agg = func.array_agg(VNumeros.diff_id, type_=ARRAY(Integer)).label('numero_id')
+    result = request.dbsession.query(VNumeros.diff_affaire_id.label('diff_affaire_id'), VNumeros.cadastre.label('cadastre'), num_agg, diff_id_agg).filter(and_(
         VNumeros.diff_req_radiation.isnot(True),
         VNumeros.diff_sortie.isnot(None)
     )).group_by(VNumeros.diff_affaire_id, VNumeros.cadastre).having(func.array_length(num_agg, 1) > 0).all()
@@ -411,7 +412,8 @@ def numero_differe_view(request):
         numeros.append({
             'diff_affaire_id': num[0],
             'cadastre': num[1],
-            'numero': num[2]
+            'numero': num[2],
+            'diff_id': num[3]
         })
 
     return json.dumps(numeros)
