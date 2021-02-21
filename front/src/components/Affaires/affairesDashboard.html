@@ -84,7 +84,7 @@
     </div>
 
     <!-- PREAVIS -->
-    <div class="affairesDashboard" v-if="affaire.type_id==typesAffaires_conf.mutation">
+    <div class="affairesDashboard" v-if="affaire.type_id===typesAffaires_conf.mutation">
         <preavis :affaire="affaire" />
     </div>
 
@@ -99,8 +99,8 @@
     </div>
 
     <!-- CONTROLE TECHNIQUE MUTATION -->
-    <div class="affairesDashboard">
-        <ControleMutation v-if="![typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.autre].includes(affaire.type_id)" :affaire="affaire" :permission="permission" />
+    <div class="affairesDashboard" v-if="![typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.autre].includes(affaire.type_id)">
+        <ControleMutation :affaire="affaire" :permission="permission" />
     </div>
 
     <!-- SUIVI DU MANDAT -->
@@ -109,8 +109,8 @@
     </div>
 
     <!-- CONTROLE TECHNIQUE PPE (Technicien)-->
-    <div class="affairesDashboard">
-        <ControlePPE v-if="affaire.type_id===typesAffaires_conf.ppe" :affaire="affaire" :permission="permission" />
+    <div class="affairesDashboard" v-if="affaire.type_id===typesAffaires_conf.ppe" >
+        <ControlePPE :affaire="affaire" :permission="permission" />
     </div>    
     
     <!-- CONTROLE DU GEOMETRE CANTONAL -->

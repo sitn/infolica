@@ -24,7 +24,7 @@ export default {
         operateurs: [],
         searchAffaire: null,
         selectedOperateur: -1,
-        selectedAffaireType: [1,3,6,10],
+        selectedAffaireType: [1,3,6,10,11],
         showFinProcessus: false,
         showMatdiff: false,
     }
@@ -58,7 +58,6 @@ export default {
         await this.getAffaireEtapes();
         await this.getAffaireTypes();
         this.$http.get(
-            // process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_TELE_ENDPOINT,
             process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_COCKPIT_ENDPOINT,
             {
                 withCredentials: true,
@@ -111,7 +110,9 @@ export default {
             }
         ).then(response => {
             if (response && response.data) {
-                this.affaireTypes = stringifyAutocomplete(response.data);
+                let tmp = response.data;
+                tmp.push({'id': 15, 'nom': 'Mat diff', 'ordre': 11, 'priorite': 1});
+                this.affaireTypes = stringifyAutocomplete(tmp);
             }
         }).catch(err => handleException(err, this));
     },

@@ -8,7 +8,7 @@
                         <md-icon>keyboard_arrow_down</md-icon>
                     </md-button>
                 </md-card-expand-trigger>
-                Immeubles, numéros et balance
+                Immeubles, numéros MO et balance
             </div>
         </md-card-header>
 
@@ -21,12 +21,13 @@
                         <div class="md-layout-item md-size-45" v-if="affaire.type_id === typesAffaires_conf.cadastration ||
                                                                     affaire.type_id === typesAffaires_conf.autre ||
                                                                     affaire.type_id === typesAffaires_conf.revision_abornement ||
+                                                                    affaire.type_id === typesAffaires_conf.mat_diff ||
                                                                     (affaire.type_id === typesAffaires_conf.modification && affaire.modification_type_id === typesAffaires_conf.modification_type.abandon_partiel)">
                     
                             <md-card>
                                 <md-card-header>
                                     <div class="justifyTitleBtn">
-                                        <div class="md-title">Immeubles mutés / biens-fonds de base</div>
+                                        <div class="md-title">Immeubles / biens-fonds </div>
                                         <md-button class="md-primary" v-on:click="callOpenReferenceDialog" v-if="permission.editNumerosAllowed && permission.editAffaireAllowed">Référencer un bien-fond</md-button>
                                     </div>
                                 </md-card-header>

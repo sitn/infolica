@@ -64,14 +64,19 @@ def affaire_cockpit_view(request):
     affaire_show_timedelta = int(request.registry.settings['affaire_show_timedelta'])
     since = datetime.date(datetime.now()) - timedelta(days=affaire_show_timedelta)
     
+    etape_mat_diff_id = int(request.registry.settings['affaire_etape_mat_diff_id'])
+
     query = request.dbsession.query(VAffaire)\
         .filter(VAffaire.etape_id != None)\
-        .filter(and_(
-            or_(
-                VAffaire.date_envoi >= since,
-                VAffaire.date_envoi == None
-            ),
-            VAffaire.date_cloture == None
+        .filter(or_(
+            VAffaire.etape_id == etape_mat_diff_id,
+            and_(
+                or_(
+                    VAffaire.date_envoi >= since,
+                    VAffaire.date_envoi == None
+                ),
+                VAffaire.date_cloture == None
+            )
         )).all()
 
     affaires = []
@@ -85,7 +90,7 @@ def affaire_cockpit_view(request):
             'etape_ordre': affaire.etape_ordre,
             'operateur_id': affaire.technicien_id
         })
-      
+    
     return json.dumps(affaires)
 
 

@@ -77,6 +77,7 @@ export default {
         ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_PPE),
         pcop: Number(process.env.VUE_APP_TYPE_AFFAIRE_PCOP),
         maj_periodique: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAJ_PERIODIQUE),
+        mat_diff: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAT_DIFF),
         modification: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION),
         revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
         remaniement_parcellaire: Number(process.env.VUE_APP_TYPE_AFFAIRE_REMANIEMENT_PARCELLAIRE),
