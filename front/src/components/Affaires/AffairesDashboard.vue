@@ -222,8 +222,8 @@ export default {
 
           // If admin, allow edit
           if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {
-            for (const property in _this.ppermission) {
-              _this.ppermission[property] = true;
+            for (const property in _this.permission) {
+              _this.permission[property] = true;
             }
             _this.parentAffaireReadOnly = false;
           }

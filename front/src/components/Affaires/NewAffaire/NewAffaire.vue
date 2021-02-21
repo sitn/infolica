@@ -61,7 +61,7 @@ export default {
         localisation_N: null,
         nom: null,
         information: null,
-        technicien_id: null,
+        technicien_id: JSON.parse(localStorage.getItem("infolica_user")).id,
         type: null,
         vref: null
       },
