@@ -18,7 +18,7 @@
                     
                     <div class="md-layout md-gutter">
                     <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
-                        <div class="md-layout-item md-size-60" v-if="affaire.type_id === typesAffaires_conf.cadastration ||
+                        <div class="md-layout-item md-size-45" v-if="affaire.type_id === typesAffaires_conf.cadastration ||
                                                                     affaire.type_id === typesAffaires_conf.autre ||
                                                                     affaire.type_id === typesAffaires_conf.revision_abornement ||
                                                                     (affaire.type_id === typesAffaires_conf.modification && affaire.modification_type_id === typesAffaires_conf.modification_type.abandon_partiel)">
@@ -27,7 +27,7 @@
                                 <md-card-header>
                                     <div class="justifyTitleBtn">
                                         <div class="md-title">Immeubles mutés / biens-fonds de base</div>
-                                        <md-button class="md-primary" v-on:click="callOpenReferenceDialog" v-if="editNumerosAllowed">Référencer un bien-fond</md-button>
+                                        <md-button class="md-primary" v-on:click="callOpenReferenceDialog" v-if="permission.editNumerosAllowed && permission.editAffaireAllowed">Référencer un bien-fond</md-button>
                                     </div>
                                 </md-card-header>
 
@@ -42,14 +42,8 @@
                                                 <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">
                                                     {{ item.numero_cadastre }}
                                                 </md-table-cell>
-                                                <!-- <md-table-cell md-label="Type" md-sort-by="numero_type">
-                                                    {{ item.numero_type }}
-                                                </md-table-cell> -->
-                                                <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}<span v-if="item.numero_suffixe"> / {{ item.numero_suffixe }}</span>
+                                                <md-table-cell md-label="Numéro" md-sort-by="numero" md-numeric>{{ item.numero }}<span v-if="item.numero_suffixe"> / {{ item.numero_suffixe }}</span>
                                                 </md-table-cell>
-                                                <!-- <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">
-                                                    {{ item.numero_suffixe }}
-                                                </md-table-cell> -->
                                                 <md-table-cell md-label="Etat" md-sort-by="numero_etat">
                                                     {{ item.numero_etat }}
                                                 </md-table-cell>
@@ -68,17 +62,16 @@
                         </div>
                         
                         <!-- NUMEROS RESERVES (nouveaux numéros) -->
-                        <div class="md-layout-item md-size-60" v-if="[typesAffaires_conf.mutation, typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.modification].includes(affaire.type_id)">   
+                        <div class="md-layout-item md-size-45" v-if="[typesAffaires_conf.mutation, typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.modification].includes(affaire.type_id)">   
                             <md-card>
                                 <md-card-header>
                                     <div class="justifyTitleBtn">
                                         <div class="md-title">Immeubles réservés</div>
                                         
                                         <div>
-                                            <md-button class="md-primary" @click="getReqRadMatDiff" v-if="showBtnReqRadMatDiff" title="Générer la réquisition des BF sortis de la mat. diff. dans les 7 derniers jours">Req radiation MatDiff</md-button>
                                             <md-button class="md-primary" @click="doQuittanceNumerosReserves" v-if="affaire_numeros_nouveaux.length > 0">Quittance</md-button>
-                                            <md-button class="md-primary" @click="callOpenQuittancePCOPDialog" v-if="editNumerosAllowed && affaire.type_id === typesAffaires_conf.pcop">Quittance PCOP</md-button>
-                                            <md-button class="md-primary" @click="callOpenReservationDialog" v-if="editNumerosAllowed">Réservation</md-button>
+                                            <md-button class="md-primary" @click="callOpenQuittancePCOPDialog" v-if="permission.editNumerosAllowed && affaire.type_id === typesAffaires_conf.pcop">Quittance PCOP</md-button>
+                                            <md-button class="md-primary" @click="callOpenReservationDialog" v-if="permission.editNumerosAllowed && permission.editAffaireAllowed">Réservation</md-button>
                                         </div>
                                     </div>
                                 </md-card-header>
@@ -86,21 +79,21 @@
                                 <md-card-content>
                                     <!-- Tableau des numéros réservés dans l'affaire -->
                                     <div v-if="affaire_numeros_nouveaux[0]">
-                                        <md-table v-model="affaire_numeros_nouveaux" md-sort="numero_etat"
-                                            md-sort-order="desc" md-fixed-header md-dense>
+                                        <md-table v-model="affaire_numeros_nouveaux" md-sort="numero"
+                                            md-sort-order="asc" md-fixed-header md-dense>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif || !item.active }">
                                                 <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">{{ item.numero_id }}</md-table-cell>
                                                 <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
-                                                <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}<span v-if="item.numero_suffixe"> / {{ item.numero_suffixe }}</span></md-table-cell>
-                                                <md-table-cell md-label="Immeuble de base" md-sort-by="numero_base">{{ item.numero_base }}<span v-if="item.numero_base_suffixe"> / {{ item.numero_base_suffixe }}</span></md-table-cell>
-                                                <md-table-cell md-label="Etat" class="actionsColumn" v-if="affaire.type_id === typesAffaires_conf.ppe">
-                                                    <md-switch v-model="item.active" v-if="editNumerosAllowed && item.affaire_numero_actif && !affaire.date_cloture"
+                                                <md-table-cell md-label="Numéro" md-sort-by="numero" md-numeric>{{ item.numero }}<span v-if="item.numero_suffixe"> / {{ item.numero_suffixe }}</span></md-table-cell>
+                                                <md-table-cell md-label="Immeuble de base" md-sort-by="numero_base" v-if="[typesAffaires_conf.pcop, typesAffaires_conf.ppe, typesAffaires_conf.modification].includes(affaire.type_id)" md-numeric>{{ item.numero_base }}<span v-if="item.numero_base_suffixe"> / {{ item.numero_base_suffixe }}</span></md-table-cell>
+                                                <md-table-cell md-label="Etat" class="actionsColumn">
+                                                    <md-switch v-model="item.active" v-if="permission.editNumerosAllowed && item.affaire_numero_actif && !affaire.date_cloture && affaire.type_id === typesAffaires_conf.ppe"
                                                         @change="onDeleteReserveNumero(item.numero_id)"
                                                         class="md-primary md-dense">
-                                                    </md-switch> ({{ item.numero_etat }})
+                                                    </md-switch><span v-if="affaire.type_id === typesAffaires_conf.ppe"> (</span>{{ item.numero_etat }}<span v-if="affaire.type_id === typesAffaires_conf.ppe">)</span>
                                                 </md-table-cell>
                                                 <md-table-cell md-label="Repris par" md-sort-by="affaire_destination_id"><a v-bind:href="item.affaire_destination_href">{{item.affaire_destination_id }}</a></md-table-cell>
-                                                <md-table-cell md-label="Mat diff" class="actionsColumn">
+                                                <md-table-cell md-label="Mat diff" class="actionsColumn" v-if="typesAffaires_conf.mutation === affaire.type_id || ((typesAffaires_conf.modification === affaire.type_id) && (affaire.modification_type_id === typesAffaires_conf.modification_type.mutation))">
                                                     <!-- Si le numéro est différé -->
                                                     <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && hasPermissionEditNumeros && item.affaire_numero_actif">
                                                         <md-button v-if="item.numero_type_id===types_numeros.bf"  @click="confirmCreateDiffererNumero(item, 'sortie')" 
@@ -128,13 +121,17 @@
         
             
                         </div>
-                        
+                    </div>
+                    
+                    
+                    <div class="md-layout md-gutter">    
                         <div class="md-layout-item md-size-60" v-if="[typesAffaires_conf.mutation, 
                             typesAffaires_conf.pcop, typesAffaires_conf.autre, typesAffaires_conf.cadastration,
-                            typesAffaires_conf.revision_abornement, typesAffaires_conf.modification].includes(affaire.type_id)">
+                            typesAffaires_conf.revision_abornement, typesAffaires_conf.modification,
+                            typesAffaires_conf.retablissement_pfp3].includes(affaire.type_id)">
                             
                             <!-- Numéros de la MO -->
-                            <ReservationNumerosMO :affaire="affaire" :types_numeros="types_numeros" :editNumerosAllowed="editNumerosAllowed"></ReservationNumerosMO>
+                            <ReservationNumerosMO :affaire="affaire" :types_numeros="types_numeros" :permission="permission"></ReservationNumerosMO>
                             
                         </div>
                         

@@ -56,15 +56,13 @@ def etapes_new_view(request):
     POST etapes affaire
     """
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_etape_edition']):
+    if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
     chef_equipe_id = request.params['chef_equipe_id'] if 'chef_equipe_id' in request.params else None
     
-    model = AffaireEtape()
-    model = Utils.set_model_record(model, request.params)
-
-    request.dbsession.add(model)
+    # Add new step
+    model = Utils.addNewRecord(request, AffaireEtape)
 
     # send mail
     affaire_etape_index = request.dbsession.query(AffaireEtapeIndex).filter(AffaireEtapeIndex.id == model.etape_id).first()

@@ -62,10 +62,7 @@ def factures_new_view(request):
         else: 
             params[key] = request.params[key]
 
-    model = Facture()
-    model = Utils.set_model_record(model, params)
-
-    request.dbsession.add(model)
+    Utils.addNewRecord(request, Facture, params)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Facture.__tablename__))
 

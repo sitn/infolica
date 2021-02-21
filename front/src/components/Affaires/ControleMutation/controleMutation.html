@@ -12,12 +12,12 @@
             </div>
             
             <md-button class="md-primary" v-on:click="newControleMutation()"
-                v-if="needToCreateControleMutation && showNewControleMutationBtn && !affaireReadonly">Créer le contrôle</md-button>
+                v-if="needToCreateControleMutation && showNewControleMutationBtn && permission.editAffaireAllowed">Créer le contrôle</md-button>
         </md-card-header>
 
         <md-card-expand>
             <md-card-expand-content>
-                <md-card-content v-bind:class="{ disabledElement: affaireReadonly }">
+                <md-card-content v-bind:class="{ disabledElement: !permission.editAffaireAllowed }">
                     
                     <p v-if="controleMutation.date" style="margin-top: 0px;">Dernier contrôle effectué le {{controleMutation.date}} par {{controleMutation.visa.nom}}</p>
                     
@@ -237,28 +237,14 @@
                         </div>
                         <br>
 
-                        <!-- Visa et date -->
                         <div class="md-layout md-gutter">
-                            <!-- <div class="md-layout-item md-size-25">
-                                <md-autocomplete v-model="controleMutation.visa" :md-options="chefsProjetMO_liste" md-dense>
-                                    <label>Visa</label>
-                                    <template slot="md-autocomplete-item" slot-scope="{ item }">
-                                        {{item.nom}}
-                                    </template>
-                                </md-autocomplete>
-                            </div>
-                            <div class="md-layout-item md-size-25">
-                                <md-datepicker v-model="controleMutation.date" md-immediately style="margin: auto; bottom: auto;">
-                                    <label>Date</label>
-                                </md-datepicker>
-                            </div> -->
                             <div class="md-layout md-alignment-bottom-right">
-                                <md-button class="md-accent md-raised" v-on:click="onCancelEditControleMutation" v-if="!affaireReadonly">
+                                <md-button class="md-accent md-raised" v-on:click="onCancelEditControleMutation" v-if="permission.editAffaireAllowed">
                                     Annuler
                                 </md-button>
 
                                 <md-button class="md-primary md-raised md-top-right"
-                                    v-on:click="onConfirmEditControleMutation" v-if="!affaireReadonly">
+                                    v-on:click="onConfirmEditControleMutation" v-if="permission.editAffaireAllowed">
                                     Enregistrer
                                 </md-button>
                             </div>

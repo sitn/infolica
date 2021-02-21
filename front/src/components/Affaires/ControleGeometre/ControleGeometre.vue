@@ -4,7 +4,7 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission, logAffaireEtape} from '@/services/helper';
+import {logAffaireEtape} from '@/services/helper';
 
 const moment = require('moment')
 
@@ -12,10 +12,10 @@ export default {
   name: "controleGeometre",
   props: {
     affaire: Object,
-    typesAffaires_conf: Object
+    typesAffaires_conf: Object,
+    permission: Object
   },
   data: () => ({
-    affaireReadonly: true,
     operateurs_liste: [],
     controleGeometre: {},
     operateur: {
@@ -204,7 +204,6 @@ export default {
     this.searchControleGeometre();
     this.searchOperateurs();
 
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_CONTROLE_EDITION) || this.$parent.parentAffaireReadOnly;
   }
 };
 </script>

@@ -6,7 +6,7 @@
 import Matdiff from "@/components/Cockpit/Matdiff/Matdiff.vue";
 
 import { handleException } from '@/services/exceptionsHandler'
-import { checkPermission, getOperateurs, stringifyAutocomplete } from '@/services/helper'
+import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId } from '@/services/helper'
 
 export default {
   name: "Cockpit",
@@ -18,11 +18,13 @@ export default {
         affaires: [],
         affaires_bk: [],
         affaireEtapes: [],
+        affaireTypes: [],
         loadingAffaires: true,
         newAffaireAllowed: false,
         operateurs: [],
         searchAffaire: null,
         selectedOperateur: -1,
+        selectedAffaireType: [1,3,6,10],
         showFinProcessus: false,
         showMatdiff: false,
     }
@@ -33,8 +35,20 @@ export default {
      * Get permissions
      */
     getPermissions() {
-        this.newAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
-        this.showMatdiff = checkPermission(process.env.VUE_APP_SECRETAIRE_ROLE_ID) || checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
+        // set time out of 0.5 seconds. If not, local storage has not time to memorize user allowed functions
+        setTimeout(() => {
+            
+            this.newAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION) ||
+                                     checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION) ||
+                                     checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION);
+            
+            //Check if role secretaire
+            let role_id = getCurrentUserRoleId();
+            if ( role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
+                this.showMatdiff = true;
+            }
+
+        }, 500);
     },
 
     /**
@@ -42,6 +56,7 @@ export default {
      */
     async getAffaire() {
         await this.getAffaireEtapes();
+        await this.getAffaireTypes();
         this.$http.get(
             // process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_TELE_ENDPOINT,
             process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_COCKPIT_ENDPOINT,
@@ -52,7 +67,6 @@ export default {
         ).then(response => {
             if (response && response.data) {
                 let tmp = JSON.parse(response.data);
-                // tmp = tmp.slice(0,30); // to remove !!!
                 tmp.forEach(x => {
                     for (let i=0; i<this.affaireEtapes.length; i++) {
                         x["dashboard_" + i.toString()] = i === x.etape_ordre-1? (x.no_access? x.no_access: x.id): null;
@@ -81,6 +95,23 @@ export default {
         ).then(response => {
             if (response && response.data) {
                 this.affaireEtapes = response.data;
+            }
+        }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Get affaire types
+     */
+    async getAffaireTypes() {
+        this.$http.get(
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_AFFAIRES_ENDPOINT,
+            {
+                withCredentials: true,
+                headers: {Accept: "application/json"}
+            }
+        ).then(response => {
+            if (response && response.data) {
+                this.affaireTypes = stringifyAutocomplete(response.data);
             }
         }).catch(err => handleException(err, this));
     },
@@ -116,6 +147,9 @@ export default {
             this.affaires = this.affaires.filter(x => x.operateur_id === this.selectedOperateur);
         }
         
+        // filter affaire type
+        this.affaires = this.affaires.filter(x => this.selectedAffaireType.includes(x.affaire_type_id));
+        
         this.loadingAffaires = false;
     },
 
@@ -130,6 +164,12 @@ export default {
                 tmp = tmp.filter(x => x.chef_equipe);
                 tmp.forEach(x => x['nom_'] = [x.prenom, x.nom].filter(Boolean).join(' '));
 
+                // set operateur by default if he is chef_equipe
+                let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
+                if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe)) {
+                    this.selectedOperateur = Number(currentUserID);
+                }
+
                 tmp = stringifyAutocomplete(tmp, "nom_");
                 tmp.sort((a,b) => (a.nom > b.nom) ? 1 : ((b.nom > a.nom) ? -1 : 0));
 
@@ -140,9 +180,9 @@ export default {
   },
 
   mounted: function() {
-    this.getPermissions();
     this.getAffaire();
     this.getOperateursList();
+    this.getPermissions();
 
     setInterval(() => this.getAffaire(), 60000); // Recharge le tableau toutes les minutes
 

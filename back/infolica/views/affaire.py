@@ -7,6 +7,8 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Affaire, AffaireType, ModificationAffaireType
 from infolica.models.models import ModificationAffaire, VAffaire, Facture
+from infolica.models.models import ControleGeometre, ControleMutation, ControlePPE, SuiviMandat
+from infolica.models.models import AffaireEtape
 from infolica.scripts.utils import Utils
 
 from sqlalchemy import and_, or_
@@ -77,6 +79,7 @@ def affaire_cockpit_view(request):
         affaires.append({
             'id': affaire.id,
             'affaire_type': affaire.type_affaire,
+            'affaire_type_id': affaire.type_id,
             'no_access': affaire.no_access,
             'etape_id': affaire.etape_id,
             'etape_ordre': affaire.etape_ordre,
@@ -188,6 +191,9 @@ def affaires_new_view(request):
     # Affaire de révision d'abornement
     elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
         permission = request.registry.settings['affaire_revision_abornement_edition']
+    # Affaire de rétablissement de PFP3
+    elif affaire_type == request.registry.settings['affaire_type_retablissement_pfp3_id']:
+        permission = request.registry.settings['affaire_retablissement_pfp3_edition']
 
     # Check authorization
     if not Utils.has_permission(request, permission):
@@ -205,6 +211,50 @@ def affaires_new_view(request):
 
     # Copier le dossier __template pour une nouvelle affaire
     Utils.create_affaire_folder(request, model.chemin)
+
+
+    # Créer les formulaires de contrôle
+    params = {'affaire_id': model.id}
+    if not model.type_id in [int(request.registry.settings['affaire_type_part_copropriete_id']), int(request.registry.settings['affaire_type_autre_id'])]:
+        if model.type_id == int(request.registry.settings['affaire_type_ppe_id']):
+            # Create controle PPE
+            Utils.addNewRecord(request, ControlePPE, params)
+        else:
+            # Create controle Mutation
+            Utils.addNewRecord(request, ControleMutation, params)
+        
+        Utils.addNewRecord(request, SuiviMandat, params)
+        Utils.addNewRecord(request, ControleGeometre, params)
+
+
+    # Créer l'étape de création d'affaire
+    params['etape_id'] = request.registry.settings['affaire_premiere_etape_defaut_id']
+    tmp = request.dbsession.query(AffaireType).filter(AffaireType.id == model.type_id).first()
+    if tmp and tmp.logique_processus:
+        if len(tmp.logique_processus) > 0:
+            params['etape_id'] = tmp.logique_processus[0]
+    
+    params['operateur_id'] = request.params['operateur_id'] if 'operateur_id' in request.params else None
+    params['datetime'] = datetime.now()
+    Utils.addNewRecord(request, AffaireEtape, params)
+
+
+    # Add facture
+    if 'facture_client_id' in request.params:
+        params = {
+            'type_id': request.registry.settings['facture_type_facture_id'],
+            'affaire_id': model.id,
+            'client_id': request.params['facture_client_id'],
+            'client_co_id': request.params['facture_client_co_id'] if 'facture_client_co_id' in request.params else None,
+            'client_complement': request.params['facture_client_complement'] if 'facture_client_complement' in request.params else None,
+            'client_premiere_ligne': request.params['facture_client_premiere_ligne'] if 'facture_client_premiere_ligne' in request.params else None,
+            'montant_mo': 0,
+            'montant_rf': 0,
+            'montant_mat_diff': 0,
+            'montant_tva': 0,
+            'montant_total': 0
+        }
+        Utils.addNewRecord(request, Facture, params)
 
     return model.id
 
@@ -241,6 +291,9 @@ def affaires_update_view(request):
     # Affaire de révision d'abornement
     elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
         permission = request.registry.settings['affaire_revision_abornement_edition']
+    # Affaire de rétablissement de PFP3
+    elif affaire_type == request.registry.settings['affaire_type_retablissement_pfp3_id']:
+        permission = request.registry.settings['affaire_retablissement_pfp3_edition']
 
     # Check authorization
     if not Utils.has_permission(request, permission):

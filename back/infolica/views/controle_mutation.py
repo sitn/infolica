@@ -65,13 +65,10 @@ def controles_mutations_new_view(request):
     Add new controle_mutation
     """
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
+    if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
         raise exc.HTTPForbidden()
 
-    record = ControleMutation()
-    record = Utils.set_model_record(record, request.params)
-
-    request.dbsession.add(record)
+    Utils.addNewRecord(request, ControleMutation)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControleMutation.__tablename__))
 
@@ -83,7 +80,7 @@ def controles_mutations_update_view(request):
     Update controle_mutation
     """
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
+    if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id
@@ -109,7 +106,7 @@ def controles_mutations_delete_view(request):
     Delete controle_mutation
     """
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_controle_edition']):
+    if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id

@@ -20,7 +20,7 @@ import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.
 import ActivationAffaire from "@/components/Affaires/ActivationAffaire/ActivationAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { getTypesAffaires, getOperateurs, checkPermission, getDocument, stringifyAutocomplete, logAffaireEtape } from '@/services/helper'
+import { getTypesAffaires, getOperateurs, checkPermission, getDocument, stringifyAutocomplete, logAffaireEtape, getCurrentUserRoleId } from '@/services/helper'
 
 import moment from "moment";
 
@@ -46,7 +46,6 @@ export default {
   },
   data() {
     return {
-      abandonAffaireEnabled: true,
       affaire: {},
       affaireEtapes: [],
       etapeAffaire: {
@@ -55,13 +54,20 @@ export default {
         showDialog: false,
       },
       affaireLoaded: false,
-      cloreAffaireEnabled: false,
       duplicationAffaireForm: null,
-      editAffaireAllowed: true,
-      editNumerosAllowed: true,
       mapLoaded: false,
       chefs_equipe_list: [],
       parentAffaireReadOnly: false,
+      permission: {
+        abandonAffaireEnabled: false,
+        cloreAffaireEnabled: false,
+        editAffaireAllowed: false,
+        editControleGeometreAllowed: false,
+        editFactureAllowed: false,
+        editNumerosAllowed: false,
+        editNumerosMOAllowed: false,
+        editSuiviMandatAllowed: false,
+      },
       showConfirmAbandonAffaireDialog: false,
       suiviAffaireTheorique: [],
       typesAffaires: [],
@@ -78,7 +84,11 @@ export default {
         retablissement_pfp3: Number(process.env.VUE_APP_TYPE_AFFAIRE_RETABLISSEMENT_PFP3),
         autre: Number(process.env.VUE_APP_TYPE_AFFAIRE_AUTRE),
         modification_type: {
-          abandon_partiel: Number(process.env.VUE_APP_TYPE_MODIFICATION_ABANDON_PARTIEL_ID)
+          abandon_partiel: Number(process.env.VUE_APP_TYPE_MODIFICATION_ABANDON_PARTIEL_ID),
+          visa: Number(process.env.VUE_APP_TYPE_MODIFICATION_VISA_ID),
+          duplicata: Number(process.env.VUE_APP_TYPE_MODIFICATION_DUPLICATA_ID),
+          mutation: Number(process.env.VUE_APP_TYPE_MODIFICATION_MUTATION_ID),
+          ppe: Number(process.env.VUE_APP_TYPE_MODIFICATION_PPE_ID)
         }
       },
       etapes_affaire_conf: {
@@ -178,16 +188,46 @@ export default {
         this.searchAffaire().then(function(obj){
           _this.affaire = obj;
           _this.affaireLoaded = true;
-          _this.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
-          _this.abandonAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined);
-          _this.cloreAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
+
           _this.parentAffaireReadOnly = ((_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined) || (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined));
-          _this.editNumerosAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) && !_this.parentAffaireReadOnly;
-          
+          _this.permission.abandonAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined);
+          _this.permission.cloreAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
+          _this.permission.editNumerosAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.editNumerosMOAllowed = checkPermission(process.env.VUE_APP_NUMERO_MO_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.editControleGeometreAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_CONTROLE_GEOMETRE_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.editSuiviMandatAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_SUIVI_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.editFactureAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) && !_this.parentAffaireReadOnly;
+
+
+          if (_this.affaire.type_id === _this.typesAffaires_conf.ppe) {
+            _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION) && !_this.parentAffaireReadOnly;
+          } else if (_this.affaire.type_id === _this.typesAffaires_conf.revision_abornement) {
+            _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION) && !_this.parentAffaireReadOnly;
+          } else if (_this.affaire.type_id === _this.typesAffaires_conf.cadastration) {
+            _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION) && !_this.parentAffaireReadOnly;
+          } else if (_this.affaire.type_id === _this.typesAffaires_conf.retablissement_pfp3) {
+            _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION) && !_this.parentAffaireReadOnly;
+          }
+
+          //Check if role secretaire
+          if(_this.parentAffaireReadOnly){
+            let role_id = getCurrentUserRoleId();
+            
+            if(role_id && !isNaN(role_id) && 
+              Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID) &&
+              checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION)){
+                _this.permission.editFactureAllowed = true;
+            }
+          }
+
           // If admin, allow edit
-          if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)){
+          if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {
+            for (const property in _this.ppermission) {
+              _this.ppermission[property] = true;
+            }
             _this.parentAffaireReadOnly = false;
           }
+
           _this.searchAffaireEtapes();
       });
     },

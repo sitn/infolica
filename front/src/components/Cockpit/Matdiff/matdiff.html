@@ -1,4 +1,4 @@
-<div id="Matdiff">
+<div id="matdiff">
     <md-card>
         <!-- Results Header -->
         <md-card-header>
@@ -15,31 +15,44 @@
         <md-card-expand>
             <md-card-expand-content>
                 <md-card-content>
-                    
-                    <md-table v-model="numerosDifferes" md-sort="date_sortie" md-sort-order="desc" md-card style="width: 1100px;">
-                        <md-table-toolbar>
-                            <h1 class="md-title">Biens-fonds matérialisés</h1>
-                          </md-table-toolbar>
-                    
-                          <md-table-row slot="md-table-row" slot-scope="{ item }">
-                            <md-table-cell md-label="ID" md-sort-by="id" md-numeric v-if="false">{{ item.id }}</md-table-cell>
-                            <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
-                            <md-table-cell md-label="Bien-fonds" md-sort-by="numero" md-numeric>{{ item.numero }}</md-table-cell>
-                            <md-table-cell md-label="Affaire" md-sort-by="affaire" md-numeric>{{ item.diff_affaire_id }}</md-table-cell>
-                            <md-table-cell md-label="Création mat diff" md-sort-by="diff_entree" md-numeric>{{ item.diff_entree }}</md-table-cell>
-                            <md-table-cell md-label="Réalisation mat diff" md-sort-by="diff_sortie" md-numeric>{{ item.diff_sortie }}</md-table-cell>
-                            <md-table-cell md-label="Générer la req de radiation">
-                                <md-button class="md-primary" @click="generateReq">
-                                    <md-icon>save_alt</md-icon>
-                                </md-button>
-                            </md-table-cell>
-                          </md-table-row>
-                    </md-table>
+                    <div style="width: 900px;">
+                        <md-table v-model="numerosDifferes" md-sort="diff_affaire_id" md-sort-order="desc" md-card md-fixed-header>
+                            <md-table-toolbar>
+                                <h1 class="md-title">Biens-fonds matérialisés</h1>
+                            </md-table-toolbar>
+                              
+                            <md-table-empty-state
+                            md-label="Aucune mat diff"
+                            md-description="Aucune Matérialisation différée n'a été réalisée.">
+                            </md-table-empty-state>
+    
+                            <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                <md-table-cell md-label="Affaire" md-sort-by="diff_affaire_id" md-numeric>{{ item.diff_affaire_id }}</md-table-cell>
+                                <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
+                                <md-table-cell md-label="Bien-fonds" md-numeric>{{ item.numero }}</md-table-cell>
+                                <md-table-cell md-label="Générer la req de radiation">
+                                    <md-button class="md-primary" @click="generateReq(item)" title="Générer la réquisition de radiation de Mat Diff pour le registre foncier">
+                                        <md-icon>save_alt</md-icon>
+                                    </md-button>
+                                </md-table-cell>
+                            </md-table-row>
+                        </md-table>
+                    </div>
 
                 </md-card-content>
             </md-card-expand-content>
         </md-card-expand>
 
     </md-card>
+
+    <md-dialog-confirm
+      :md-active.sync="showConfirmationDialog"
+      md-title="Radiation de mention matérialisation différée"
+      md-content="En appuyant sur OK, la réquisition de radiation de matérialisation différée sera produite. Les numéros vont être supprimés de la liste."
+      md-confirm-text="OK"
+      md-cancel-text="Annuler"
+      @md-cancel="onCancelGenerateReq"
+      @md-confirm="onConfirmGenerateReq" />
+
 </div>
 
