@@ -4,7 +4,7 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
-import { getCurrentDate, getDocument, checkPermission } from "@/services/helper";
+import { getCurrentDate, getDocument, getCurrentUserRoleId } from "@/services/helper";
 import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/Affaires/NumerosAffaire/ReservationNumeros/ReservationNumeros.vue";
 import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue";
@@ -42,7 +42,7 @@ export default {
         content: '',
         onConfirm: () => {}
       },
-      hasPermissionEditNumeros: false,
+      editMatDiffAllowed: false,
       numerosMoLoading: true,
       showNumerosMO: true,
       showBalance: false,
@@ -397,13 +397,24 @@ export default {
       return [cadastres, numeros, numeros_bases];
     },
 
+    /**
+     * set permission to edit mat diff
+     */
+    setMatDiffEdition() {
+      //Check if role secretaire
+      this.editMatDiffAllowed = this.permission.editNumerosAllowed;
+      let role_id = getCurrentUserRoleId();
+      if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_MO_ROLE_ID)) {
+        this.editMatDiffAllowed = true;
+      }
+    }
+
   },
   mounted: function() {
     this.searchAffaireNumeros();
     
     this.showBalance_();
-    this.hasPermissionEditNumeros = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION);
-    this.hasPermissionEditNumerosMO = checkPermission(process.env.VUE_APP_NUMERO_MO_EDITION);
+    this.setMatDiffEdition();
 
     this.$root.$on('UpdateNumerosAffaires', () => this.searchAffaireNumeros());
 
