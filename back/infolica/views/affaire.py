@@ -79,6 +79,7 @@ def affaire_cockpit_view(request):
         affaires.append({
             'id': affaire.id,
             'affaire_type': affaire.type_affaire,
+            'affaire_type_id': affaire.type_id,
             'no_access': affaire.no_access,
             'etape_id': affaire.etape_id,
             'etape_ordre': affaire.etape_ordre,

@@ -23,7 +23,14 @@
                       <md-option :value="-1">Tous</md-option>
                       <md-option v-for="item in operateurs" :value="item.id">{{ item.nom }}</md-option>
                     </md-select>
-                  </md-field>
+                </md-field>
+
+                <md-field style="margin-left: 50px; width: 250px !important;">
+                    <label>Type(s) d'affaire</label>
+                    <md-select v-model="selectedAffaireType" @md-closed="updateTable" multiple md-dense>
+                        <md-option v-for="item in affaireTypes" :value="item.id">{{ item.nom }}</md-option>
+                    </md-select>
+                </md-field>
 
                 <md-checkbox v-model="showFinProcessus" @change="updateTable" style="margin-left: 50px; margin-top:25px;">Afficher l'étape fin de processus</md-checkbox>
 
@@ -44,6 +51,7 @@
                     <md-table-cell md-sort-by="dashboard_7" md-label="Finalisation (PDE/SE)"><md-button class="affBtn md-raised" @click="openAffaire(item)" v-if="item.dashboard_7">{{ item.dashboard_7 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_9" md-label="Signatures-Art.35 (LF/FS)"><md-button class="affBtn md-raised" @click="openAffaire(item)" v-if="item.dashboard_9">{{ item.dashboard_9 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_8" md-label="Valid tech (DGY)"><md-button class="affBtn md-raised" @click="openAffaire(item)" v-if="item.dashboard_8">{{ item.dashboard_8 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_11" md-label="Mat Diff"><md-button class="affBtn md-raised" @click="openAffaire(item)" v-if="item.dashboard_11">{{ item.dashboard_11 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_10" md-label="Fin de processus  (<30 j>)" v-if="showFinProcessus"><md-button class="affBtn md-raised" @click="openAffaire(item)" v-if="item.dashboard_10">{{ item.dashboard_10 }}</md-button></md-table-cell>
                 </md-table-row>
             </md-table>

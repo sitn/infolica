@@ -18,11 +18,13 @@ export default {
         affaires: [],
         affaires_bk: [],
         affaireEtapes: [],
+        affaireTypes: [],
         loadingAffaires: true,
         newAffaireAllowed: false,
         operateurs: [],
         searchAffaire: null,
         selectedOperateur: -1,
+        selectedAffaireType: [1,3,6,10],
         showFinProcessus: false,
         showMatdiff: false,
     }
@@ -54,6 +56,7 @@ export default {
      */
     async getAffaire() {
         await this.getAffaireEtapes();
+        await this.getAffaireTypes();
         this.$http.get(
             // process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_TELE_ENDPOINT,
             process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_COCKPIT_ENDPOINT,
@@ -64,7 +67,6 @@ export default {
         ).then(response => {
             if (response && response.data) {
                 let tmp = JSON.parse(response.data);
-                // tmp = tmp.slice(0,30); // to remove !!!
                 tmp.forEach(x => {
                     for (let i=0; i<this.affaireEtapes.length; i++) {
                         x["dashboard_" + i.toString()] = i === x.etape_ordre-1? (x.no_access? x.no_access: x.id): null;
@@ -93,6 +95,23 @@ export default {
         ).then(response => {
             if (response && response.data) {
                 this.affaireEtapes = response.data;
+            }
+        }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Get affaire types
+     */
+    async getAffaireTypes() {
+        this.$http.get(
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_AFFAIRES_ENDPOINT,
+            {
+                withCredentials: true,
+                headers: {Accept: "application/json"}
+            }
+        ).then(response => {
+            if (response && response.data) {
+                this.affaireTypes = stringifyAutocomplete(response.data);
             }
         }).catch(err => handleException(err, this));
     },
@@ -128,6 +147,9 @@ export default {
             this.affaires = this.affaires.filter(x => x.operateur_id === this.selectedOperateur);
         }
         
+        // filter affaire type
+        this.affaires = this.affaires.filter(x => this.selectedAffaireType.includes(x.affaire_type_id));
+        
         this.loadingAffaires = false;
     },
 
@@ -141,6 +163,12 @@ export default {
                 let tmp = response.data;
                 tmp = tmp.filter(x => x.chef_equipe);
                 tmp.forEach(x => x['nom_'] = [x.prenom, x.nom].filter(Boolean).join(' '));
+
+                // set operateur by default if he is chef_equipe
+                let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
+                if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe)) {
+                    this.selectedOperateur = Number(currentUserID);
+                }
 
                 tmp = stringifyAutocomplete(tmp, "nom_");
                 tmp.sort((a,b) => (a.nom > b.nom) ? 1 : ((b.nom > a.nom) ? -1 : 0));
