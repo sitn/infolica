@@ -24,7 +24,7 @@ export default {
         operateurs: [],
         searchAffaire: null,
         selectedOperateur: -1,
-        selectedAffaireType: [1,3,6,10,11],
+        selectedAffaireType: [1,3,6,10,15],
         showFinProcessus: false,
         showMatdiff: false,
     }
