@@ -14,9 +14,9 @@
             <div class="md-layout-item" style="text-align: right;">
                 <md-button class="md-primary md-raised" v-if="permission.editAffaireAllowed" v-on:click="generateBordereauAffaire" title="Générer la page de demande de l'affaire"><md-icon md-dense>text_snippet</md-icon> Bordereau de l'affaire</md-button>
                 <md-button class="md-primary md-raised" v-if="permission.editAffaireAllowed && false" v-on:click="duplicateAffaire">Modification / Visa</md-button>
-                <md-button class="md-accent md-raised" v-if="permission.fonctionAdmin && affaire.date_cloture !== null" @click="callActivationAffaire">Réactiver l'affaire</md-button>
+                <md-button class="md-accent md-raised" v-if="permission.affaireReactivation && affaire.date_cloture !== null" @click="callActivationAffaire">Réactiver l'affaire</md-button>
 
-                <md-speed-dial style="align-items: flex-end;" v-if="permission.fonctionAdmin && affaire.date_cloture === null"
+                <md-speed-dial style="align-items: flex-end;" v-if="permission.affaireCloture && affaire.date_cloture === null"
                     md-direction="bottom" class="md-fixed">
                     <md-button class="md-accent md-raised">
                         <md-icon>block</md-icon>
