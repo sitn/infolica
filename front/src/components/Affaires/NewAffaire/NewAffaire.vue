@@ -471,15 +471,17 @@ export default {
       }
 
       // FACTURE
-      formData.append("facture_client_id", this.client_facture.id);
-      if (this.client_facture_complement !== null) {
-        formData.append("facture_client_complement", "À l'att. de " + this.client_facture_complement);
-      }
-      if (this.client_facture_premiere_ligne !== null) {
-        formData.append("facture_client_premiere_ligne", this.client_facture_premiere_ligne);
-      }
-      if (this.show_co && this.client_facture_co !== null && this.client_facture_co.id !== null) {
-        formData.append("facture_client_co_id", this.client_facture_co.id);
+      if (this.client_facture && this.client_facture.id){
+        formData.append("facture_client_id", this.client_facture.id);
+        if (this.client_facture_complement !== null) {
+          formData.append("facture_client_complement", "À l'att. de " + this.client_facture_complement);
+        }
+        if (this.client_facture_premiere_ligne !== null) {
+          formData.append("facture_client_premiere_ligne", this.client_facture_premiere_ligne);
+        }
+        if (this.show_co && this.client_facture_co !== null && this.client_facture_co.id !== null) {
+          formData.append("facture_client_co_id", this.client_facture_co.id);
+        }
       }
 
       return formData;
