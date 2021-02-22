@@ -1,5 +1,5 @@
-<style src="./matdiff.css" scoped></style>
-<template src="./matdiff.html"></template>
+<style src="./matdiff_secr.css" scoped></style>
+<template src="./matdiff_secr.html"></template>
 
 
 <script>
@@ -24,7 +24,7 @@ export default {
      */
     async getNumerosDifferes() {
       this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_DIFFERES_ENDPOINT,
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_DIFFERES_ENDPOINT + "?role=secr",
         {
           withCredentials: true,
           headers: {Accept: "application/json"}
