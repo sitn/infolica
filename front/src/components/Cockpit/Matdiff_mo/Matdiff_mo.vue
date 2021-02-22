@@ -4,6 +4,7 @@
 
 <script>
 import { handleException } from '@/services/exceptionsHandler'
+import { checkPermission } from '@/services/helper'
 
 const moment = require('moment')
 
@@ -22,8 +23,14 @@ export default {
      */
     async getNumerosDifferes() {
       let user_id = JSON.parse(localStorage.getItem("infolica_user")).id;
+      
+      let params =  "?role=mo&user_id=" + user_id
+      if (checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {
+        params =  "?role=mo"
+      }
+
       this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_DIFFERES_ENDPOINT + "?role=mo&user_id=" + user_id,
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_DIFFERES_ENDPOINT + params,
         {
           withCredentials: true,
           headers: {Accept: "application/json"}

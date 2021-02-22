@@ -410,11 +410,13 @@ def numero_differe_view(request):
     if role == "mo":
         user_id = request.params['user_id'] if 'user_id' in request.params else None
         
-        affaires = request.dbsession.query(Affaire, VNumeros)\
-            .filter(and_(
-                Affaire.id == VNumeros.diff_affaire_id,
-                Affaire.technicien_id == user_id
-            )).all()
+        affaires = request.dbsession.query(Affaire, VNumeros)
+
+        if user_id is not None:
+            affaires = affaires.filter(Affaire.technicien_id == user_id)
+
+        affaires = affaires.filter(Affaire.id == VNumeros.diff_affaire_id).all()
+
         affaires_id = [aff.Affaire.id for aff in affaires]
         
         query = query.filter(and_(
