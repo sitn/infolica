@@ -3,7 +3,8 @@
 
 
 <script>
-import Matdiff from "@/components/Cockpit/Matdiff/Matdiff.vue";
+import Matdiff_secr from "@/components/Cockpit/Matdiff_secr/Matdiff_secr.vue";
+import Matdiff_mo from "@/components/Cockpit/Matdiff_mo/Matdiff_mo.vue";
 
 import { handleException } from '@/services/exceptionsHandler'
 import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId } from '@/services/helper'
@@ -11,7 +12,8 @@ import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRo
 export default {
   name: "Cockpit",
   components: {
-      Matdiff
+      Matdiff_secr,
+      Matdiff_mo
   },
   data: () => {
     return {
@@ -24,9 +26,10 @@ export default {
         operateurs: [],
         searchAffaire: null,
         selectedOperateur: -1,
-        selectedAffaireType: [1,3,6,10,15],
+        selectedAffaireType: [1,3,6,10],
         showFinProcessus: false,
-        showMatdiff: false,
+        showMatdiff_secr: false,
+        showMatdiff_mo: false,
     }
   },
 
@@ -45,7 +48,9 @@ export default {
             //Check if role secretaire
             let role_id = getCurrentUserRoleId();
             if ( role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
-                this.showMatdiff = true;
+                this.showMatdiff_secr = true;
+            } else if ( role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_MO_ROLE_ID)  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
+                this.showMatdiff_mo = true;
             }
 
         }, 500);

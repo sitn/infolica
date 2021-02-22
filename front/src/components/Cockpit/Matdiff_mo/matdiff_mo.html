@@ -1,0 +1,49 @@
+<div id="matdiff">
+    <md-card>
+        <!-- Results Header -->
+        <md-card-header>
+            <div class="md-title">
+                <md-card-expand-trigger>
+                    <md-button class="md-icon-button expandCollapseBtn">
+                        <md-icon>keyboard_arrow_down</md-icon>
+                    </md-button>
+                </md-card-expand-trigger>
+                Matérialisation différée à réaliser
+            </div>
+        </md-card-header>
+
+        <md-card-expand>
+            <md-card-expand-content>
+                <md-card-content>
+                    <div style="width: 900px;">
+                        <md-table v-model="numerosDifferes" md-sort="diff_affaire_id" md-sort-order="desc" md-card md-fixed-header>
+                            <md-table-toolbar>
+                                <h1 class="md-title">Biens-fonds mat diff</h1>
+                            </md-table-toolbar>
+                              
+                            <md-table-empty-state
+                                md-label="Aucune mat diff"
+                                md-description="Aucune mat diff trouvée.">
+                            </md-table-empty-state>
+    
+                            <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
+                                <md-table-cell md-label="Affaire" md-sort-by="diff_affaire_id" md-numeric>{{ item.diff_affaire_id }}</md-table-cell>
+                                <md-table-cell md-label="Bien-fonds" md-numeric>{{ item.numero }}</md-table-cell>
+                                <md-table-cell md-label="Date" md-sort-by="diff_entree">{{ new Date(item.diff_entree) | formatDate }} </md-table-cell>
+                                <md-table-cell md-label="Consultation">
+                                    <md-button class="md-primary" @click="openAffaire(item.diff_affaire_id)" title="Consulter/modifier l'affaire">
+                                        <md-icon>open_in_new</md-icon>
+                                    </md-button>
+                                </md-table-cell>
+                            </md-table-row>
+                        </md-table>
+                    </div>
+
+                </md-card-content>
+            </md-card-expand-content>
+        </md-card-expand>
+
+    </md-card>
+</div>
+

@@ -4,8 +4,14 @@
         <md-button class="md-raised md-accent" v-if="newAffaireAllowed" @click="$router.push({name: 'NewAffaire'})">Nouvelle affaire</md-button>
     </md-toolbar>
 
-    <div v-if="showMatdiff">
-        <Matdiff />
+    <!-- Panneau de gestion des mat diff pour la réquisition de radiation de mention au RF (secrétariat) -->
+    <div v-if="showMatdiff_secr">
+        <Matdiff_secr />
+    </div>
+    
+    <!-- Panneau de suivi des immeuble en mat diff de l'opérateur MO -->
+    <div v-if="showMatdiff_mo">
+        <Matdiff_mo />
     </div>
 
     <md-card>

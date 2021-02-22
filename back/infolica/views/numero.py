@@ -9,9 +9,10 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import AffaireNumero, Numero, NumeroDiffere, NumeroEtat
 from infolica.models.models import NumeroEtatHisto, NumeroType, VNumeros
-from infolica.models.models import VNumerosAffaires
+from infolica.models.models import VNumerosAffaires, Affaire
 from infolica.scripts.utils import Utils
 
+from datetime import datetime
 import json
 
 
@@ -400,12 +401,35 @@ def numero_differe_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
+    role = request.params['role'] if 'role' in request.params else None
+
     num_agg = func.array_agg(VNumeros.numero, type_=ARRAY(Integer)).label('numero')
     diff_id_agg = func.array_agg(VNumeros.diff_id, type_=ARRAY(Integer)).label('numero_id')
-    result = request.dbsession.query(VNumeros.diff_affaire_id.label('diff_affaire_id'), VNumeros.cadastre.label('cadastre'), num_agg, diff_id_agg).filter(and_(
-        VNumeros.diff_req_radiation.isnot(True),
-        VNumeros.diff_sortie.isnot(None)
-    )).group_by(VNumeros.diff_affaire_id, VNumeros.cadastre).having(func.array_length(num_agg, 1) > 0).all()
+    query = request.dbsession.query(VNumeros.diff_affaire_id.label('diff_affaire_id'), VNumeros.cadastre.label('cadastre'), num_agg, diff_id_agg, func.min(VNumeros.diff_entree).label('diff_entree_min'))
+    
+    if role == "mo":
+        user_id = request.params['user_id'] if 'user_id' in request.params else None
+        
+        affaires = request.dbsession.query(Affaire, VNumeros)\
+            .filter(and_(
+                Affaire.id == VNumeros.diff_affaire_id,
+                Affaire.technicien_id == user_id
+            )).all()
+        affaires_id = [aff.Affaire.id for aff in affaires]
+        
+        query = query.filter(and_(
+            VNumeros.diff_entree.isnot(None),
+            VNumeros.diff_sortie == None,
+            VNumeros.diff_affaire_id.in_(affaires_id)
+        ))
+    
+    elif role == "secr":
+        query = query.filter(and_(
+            VNumeros.diff_req_radiation.isnot(True),
+            VNumeros.diff_sortie.isnot(None)
+        ))
+        
+    result = query.group_by(VNumeros.diff_affaire_id, VNumeros.cadastre).having(func.array_length(num_agg, 1) > 0).all()
 
     numeros = []
     for num in result:
@@ -413,7 +437,8 @@ def numero_differe_view(request):
             'diff_affaire_id': num[0],
             'cadastre': num[1],
             'numero': num[2],
-            'diff_id': num[3]
+            'diff_id': num[3],
+            'diff_entree': datetime.strftime(num[4], '%Y-%m-%d')
         })
 
     return json.dumps(numeros)
