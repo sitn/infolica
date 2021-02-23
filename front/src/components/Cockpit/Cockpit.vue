@@ -17,13 +17,14 @@ export default {
   },
   data: () => {
     return {
-        affaires: [],
+        affaires: [{}],
         affaires_bk: [],
         affaireEtapes: [],
         affaireTypes: [],
         loadingAffaires: true,
         newAffaireAllowed: false,
         operateurs: [],
+        refreshAffaire: null,
         searchAffaire: null,
         selectedOperateur: -1,
         selectedAffaireType: [1,3,6,10],
@@ -63,8 +64,13 @@ export default {
      * get Affaires
      */
     async getAffaire() {
-        await this.getAffaireEtapes();
-        await this.getAffaireTypes();
+        if (this.affaireEtapes.length === 0) {
+            await this.getAffaireEtapes();
+        }
+        if (this.affaireTypes.length === 0) {
+            await this.getAffaireTypes();
+        }
+
         this.$http.get(
             process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_COCKPIT_ENDPOINT,
             {
@@ -148,7 +154,11 @@ export default {
         
         // filter affaires by name if specified
         if (this.searchAffaire) {
-            this.affaires = this.affaires.filter(x => x.no_access.toLowerCase().includes(this.searchAffaire.toLowerCase()) || x.id.toString().includes(this.searchAffaire));
+            this.affaires = this.affaires.filter(x => {
+                let text = [x.no_access + x.id].filter(Boolean).join(' - ');
+                console.log(text)
+                return text.toLowerCase().includes(this.searchAffaire.toLowerCase());
+            });
         }
 
         // filter affaire by operateur if specified
@@ -193,9 +203,16 @@ export default {
     this.getOperateursList();
     this.getPermissions();
 
-    setInterval(() => this.getAffaire(), 60000); // Recharge le tableau toutes les minutes
 
 
+  },
+  
+  created() {
+    this.refreshAffaire = setInterval(this.getAffaire, 60000); // Recharge le tableau toutes les minutes  
+  },
+
+  beforeDestroy() {
+    clearInterval(this.refreshAffaire);
   }
 };
 </script>

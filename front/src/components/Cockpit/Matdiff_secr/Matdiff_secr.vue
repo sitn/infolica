@@ -12,7 +12,7 @@ export default {
   name: "Matdiff",
   data: () => {
     return {
-      numerosDifferes: [],
+      numerosDifferes: [{}],
       selectedItem: [],
       showConfirmationDialog: false,
     }
