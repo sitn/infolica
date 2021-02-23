@@ -98,13 +98,13 @@
                                                     <!-- Si le numéro est différé -->
                                                     <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && editMatDiffAllowed && item.affaire_numero_actif">
                                                         <md-button v-if="item.numero_type_id===types_numeros.bf"  @click="confirmCreateDiffererNumero(item, 'sortie')" 
-                                                            class="md-accent md-raised md-icon-button md-dense">
+                                                            class="md-accent md-raised md-icon-button md-dense" title="Retirer la mention Mat Diff du BF (le BF est matérialisé)">
                                                             <md-icon>access_time</md-icon>
                                                         </md-button>
                                                     </div>
                                                     <!-- Si le numéro n'est pas encore différé -->
                                                     <div v-if="item.numero_diff_entree === null && item.numero_diff_sortie === null && editMatDiffAllowed && item.affaire_numero_actif && item.active">
-                                                        <md-button v-if="item.numero_type_id===types_numeros.bf"
+                                                        <md-button v-if="item.numero_type_id===types_numeros.bf"  title="Différer la matérialisation du BF"
                                                             class="md-primary md-icon-button md-dense" @click="confirmCreateDiffererNumero(item, 'entree')">
                                                             <md-icon>access_time</md-icon>
                                                         </md-button>
