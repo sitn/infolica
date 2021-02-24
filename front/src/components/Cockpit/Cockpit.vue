@@ -5,6 +5,7 @@
 <script>
 import Matdiff_secr from "@/components/Cockpit/Matdiff_secr/Matdiff_secr.vue";
 import Matdiff_mo from "@/components/Cockpit/Matdiff_mo/Matdiff_mo.vue";
+import PPE from "@/components/Cockpit/PPE/PPE.vue";
 
 import { handleException } from '@/services/exceptionsHandler'
 import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId } from '@/services/helper'
@@ -13,7 +14,8 @@ export default {
   name: "Cockpit",
   components: {
       Matdiff_secr,
-      Matdiff_mo
+      Matdiff_mo,
+      PPE
   },
   data: () => {
     return {
@@ -31,6 +33,7 @@ export default {
         showFinProcessus: false,
         showMatdiff_secr: false,
         showMatdiff_mo: false,
+        showPPE: false,
     }
   },
 
@@ -56,6 +59,11 @@ export default {
             if ( role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_MO_ROLE_ID)  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
                 this.showMatdiff_mo = true;
             }
+            
+            //Check if role PPE
+            if ( role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_PPE_ROLE_ID)  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
+                this.showPPE = true;
+            }
 
         }, 500);
     },
@@ -80,6 +88,9 @@ export default {
         ).then(response => {
             if (response && response.data) {
                 let tmp = JSON.parse(response.data);
+
+                tmp = tmp.filter(x => x.etape_id !== Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID));
+
                 tmp.forEach(x => {
                     for (let i=0; i<this.affaireEtapes.length; i++) {
                         x["dashboard_" + i.toString()] = i === x.etape_ordre-1? (x.no_access? x.no_access: x.id): null;
@@ -156,7 +167,6 @@ export default {
         if (this.searchAffaire) {
             this.affaires = this.affaires.filter(x => {
                 let text = [x.no_access + x.id].filter(Boolean).join(' - ');
-                console.log(text)
                 return text.toLowerCase().includes(this.searchAffaire.toLowerCase());
             });
         }

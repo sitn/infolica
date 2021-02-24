@@ -9,7 +9,7 @@ import { getDocument } from '@/services/helper'
 const moment = require("moment");
 
 export default {
-  name: "Matdiff",
+  name: "Matdiff_secr",
   data: () => {
     return {
       numerosDifferes: [{}],

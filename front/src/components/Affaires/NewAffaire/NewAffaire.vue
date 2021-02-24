@@ -294,10 +294,11 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
-            var tmp = response.data.filter(x => x.chef_equipe).map(x => ({
+            let tmp = response.data.filter(x => x.chef_equipe).map(x => ({
               id: x.id,
               nom: [x.prenom, x.nom].filter(Boolean).join(" "),
             }));
+            tmp.sort((a,b) => (a.nom > b.nom) ? 1 : ((b.nom > a.nom) ? -1 : 0));
             this.operateurs_list = tmp;
           }
         })
