@@ -357,7 +357,8 @@ export const logAffaireEtape = async function(affaire_id, etape_id, remarque=nul
 export const adjustColumnWidths = function() {
     // since md-table fixed-header is not correctly updating table > thead > th widths after searching or filtrating the table,
     // we have to adjust the table widths programmatically. They are now set 1000 ms after table-re-render, based on tbody > tr > td widths.
-    setTimeout(() => {
+    let c = 0
+    const interval = setInterval(() => {
         const tables = document.getElementsByClassName('md-table');
         tables.forEach(table => {
             const rows = table.getElementsByClassName('md-table-row');
@@ -376,7 +377,11 @@ export const adjustColumnWidths = function() {
                 }
             }
         })
-
-    }, 3000);
+    
+        c += 1;
+        if (c >= 10) {
+            clearInterval(interval);
+        }
+    }, 1000)
 }
 
