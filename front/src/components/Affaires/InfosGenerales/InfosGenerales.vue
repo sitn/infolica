@@ -10,8 +10,6 @@ import {checkPermission,
         filterList,
         getDocument} from '@/services/helper';
 
-const moment = require("moment");
-
 export default {
   name: "InfosGénérales",
   props: {
@@ -37,8 +35,6 @@ export default {
       },
       clientsListe: [],
       searchClientsListe: [],
-      showDateAlert: false,
-      controle_dateItem: null,
       form: {
         technicien: null,
         responsable: null,
@@ -129,26 +125,6 @@ export default {
 
       if (this.form.client_envoi && this.form.client_envoi.id) {
         formData.append("client_envoi_id", this.form.client_envoi.id || null);
-      }
-
-      if (this.affaire.date_validation) {
-        formData.append("date_validation", this.affaire.date_validation?
-          moment(this.affaire.date_validation, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
-      } else {
-        formData.append("date_validation", null);
-      }
-      if (this.affaire.date_envoi) {
-        formData.append("date_envoi", this.affaire.date_envoi?
-          moment(this.affaire.date_envoi, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
-      } else {
-        formData.append("date_envoi", null);
-      }
-
-      if (this.affaire.date_cloture) {
-        formData.append("date_cloture", this.affaire.date_cloture?
-          moment(this.affaire.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
-      } else {
-        formData.append("date_cloture", null);
       }
 
       formData.append("client_commande_complement", this.form.client_commande_complement || null);
@@ -301,36 +277,6 @@ export default {
       }).catch(err => handleException(err, this));
     },
 
-    /**
-     * Contrôle que la date de validation soit supérieure à la date d'ouverture
-     */
-    async onSelectDate() {
-      await new Promise(r => setTimeout(r, 200));
-      let date_ouverture = moment(this.affaire.date_ouverture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS);
-      let date_validation = moment(this.affaire.date_validation, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS);
-      let date_envoi = moment(this.affaire.date_envoi, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS);
-      let date_cloture = moment(this.affaire.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS);
-      if (date_validation < date_ouverture) {
-        this.controle_dateItem = "date_validation";
-        this.showDateAlert = true;
-      }
-      if (date_envoi < date_validation) {
-        this.controle_dateItem = "date_envoi";
-        this.showDateAlert = true;
-      }
-      if (date_cloture < date_envoi) {
-        this.controle_dateItem = "date_cloture";
-        this.showDateAlert = true;
-      }
-    },
-
-    /**
-     * Effacer la date inférieure
-     */
-    onAcceptDateAlert() {
-      this.affaire[this.controle_dateItem] = null;
-      this.showDateAlert = false;
-    },
 
     genererBordereau() {
       let formData = new FormData()

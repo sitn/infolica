@@ -192,39 +192,24 @@
                         <md-input v-model="affaire.date_ouverture" readonly></md-input>
                     </md-field>
                 </div>
-                <!-- <span>{{ affaire.date_ouverture | formatDate }}</span> -->
+
                 <div class="md-layout-item md-size-25 md-small-size-100">
-                    <!-- Affiche la date de validation en mode infoGenReadonly -->
-                    <md-field v-if="infoGenReadonly">
+                    <md-field>
                         <label>Date de validation</label>
                         <md-input v-model="affaire.date_validation" readonly></md-input>
                     </md-field>
-                    <!-- Affiche la date de validation en mode édition -->
-                    <md-datepicker v-model="affaire.date_validation" md-immediately v-else @md-closed="onSelectDate">
-                        <label><strong style="color: blue">Date de validation</strong></label>
-                    </md-datepicker>
                 </div>
                 <div class="md-layout-item md-size-25 md-small-size-100">
-                    <!-- Affiche la date de envoi en mode infoGenReadonly -->
-                    <md-field v-if="infoGenReadonly || affaire.date_validation === null">
+                    <md-field>
                         <label>Date d'envoi</label>
                         <md-input v-model="affaire.date_envoi" readonly></md-input>
                     </md-field>
-                    <!-- Affiche la date de clôture en mode édition -->
-                    <md-datepicker v-model="affaire.date_envoi" md-immediately v-else @md-closed="onSelectDate">
-                        <label><strong style="color: blue">Date d'envoi</strong></label>
-                    </md-datepicker>
                 </div>
                 <div class="md-layout-item md-size-25 md-small-size-100">
-                    <!-- Affiche la date de clôture en mode infoGenReadonly -->
-                    <md-field v-if="infoGenReadonly || affaire.date_envoi === null">
+                    <md-field>
                         <label>Date de clôture</label>
                         <md-input v-model="affaire.date_cloture" readonly></md-input>
                     </md-field>
-                    <!-- Affiche la date de clôture en mode édition -->
-                    <md-datepicker v-model="affaire.date_cloture" md-immediately v-else @md-closed="onSelectDate">
-                        <label><strong style="color: blue">Date de clôture</strong></label>
-                    </md-datepicker>
                 </div>
             </div>
 
@@ -246,15 +231,4 @@
         </md-card-content>
     </md-card>
 
-
-    <!-- Date alert -->
-    <md-dialog :md-active.sync="showDateAlert">
-        <md-dialog-title>Date incohérente</md-dialog-title>
-        <md-dialog-content>
-            La {{ controle_dateItem }} entrée précède la date d'ouverture.
-        </md-dialog-content>
-        <md-dialog-actions>
-            <md-button @click="onAcceptDateAlert">Ok</md-button>
-        </md-dialog-actions>
-    </md-dialog>
 </div>
