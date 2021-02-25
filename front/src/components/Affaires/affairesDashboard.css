@@ -33,8 +33,3 @@
 .affairesDashboard .mapHeight {
     height: inherit !important;;
 }
-
-.affairesDashboard p {
-    font-size: 18px;
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-}

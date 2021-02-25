@@ -1,0 +1,9 @@
+.etape {
+    width: 100%;
+    float: left;
+}
+
+.etape p {
+    font-size: 18px;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
