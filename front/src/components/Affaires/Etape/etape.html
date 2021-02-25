@@ -8,7 +8,8 @@
                 <md-button @click="openNewStateDialog"
                             class="md-elevation-3 md-dense" 
                             style="min-width: 40px; margin-bottom: -5px;" 
-                            title="Mettre à jour">
+                            title="Mettre à jour"
+                            v-if="affaire.etape_id !== etapes_affaire_conf.fin_processus">
                     <md-icon>double_arrow</md-icon>
                 </md-button>
             </p>

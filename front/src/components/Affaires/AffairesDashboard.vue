@@ -90,7 +90,8 @@ export default {
       etapes_affaire_conf: {
         travaux_chef_equipe: Number(process.env.VUE_APP_ETAPE_TRAVAUX_CHEF_EQUIPE_ID),
         validation: Number(process.env.VUE_APP_ETAPE_VALIDATION_ID),
-        envoi: Number(process.env.VUE_APP_ETAPE_ENVOI_ID)
+        envoi: Number(process.env.VUE_APP_ETAPE_ENVOI_ID),
+        fin_processus: Number(process.env.VUE_APP_FIN_PROCESSUS_ID)
       },
       showMovePointComment: false,
       // numeros_base_associes = []
