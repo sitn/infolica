@@ -360,7 +360,6 @@ export const adjustColumnWidths = function() {
     setTimeout(() => {
         const tables = document.getElementsByClassName('md-table');
         tables.forEach(table => {
-            table.style.height = 'auto'
             const rows = table.getElementsByClassName('md-table-row');
             if (rows.length > 0) {
                 const firstRow = rows[0];
