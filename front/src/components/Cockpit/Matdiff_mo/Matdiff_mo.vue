@@ -9,11 +9,10 @@ import { checkPermission } from '@/services/helper'
 const moment = require('moment')
 
 export default {
-  name: "Matdiff",
+  name: "Matdiff_mo",
   data: () => {
     return {
       numerosDifferes: [{}],
-      showConfirmationDialog: false,
     }
   },
 

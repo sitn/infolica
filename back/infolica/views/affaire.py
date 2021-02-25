@@ -61,14 +61,25 @@ def affaire_cockpit_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
+    type_id = request.params['type_id'] if 'type_id' in request.params else None
+    etape_id = request.params['etape_id'] if 'etape_id' in request.params else None
+
     affaire_show_timedelta = int(request.registry.settings['affaire_show_timedelta'])
     since = datetime.date(datetime.now()) - timedelta(days=affaire_show_timedelta)
     
     etape_mat_diff_id = int(request.registry.settings['affaire_etape_mat_diff_id'])
 
-    query = request.dbsession.query(VAffaire)\
-        .filter(VAffaire.etape_id != None)\
-        .filter(or_(
+    query = request.dbsession.query(VAffaire)
+    
+    if type_id is not None:
+        query = query.filter(VAffaire.type_id == type_id)
+    else:
+        query = query.filter(VAffaire.etape_id != None)
+    
+    if etape_id is not None:
+        query = query.filter(VAffaire.etape_id == etape_id)
+    else:
+        query = query.filter(or_(
             VAffaire.etape_id == etape_mat_diff_id,
             and_(
                 or_(
@@ -77,7 +88,9 @@ def affaire_cockpit_view(request):
                 ),
                 VAffaire.date_cloture == None
             )
-        )).all()
+        ))
+    
+    query = query.all()
 
     affaires = []
     for affaire in query:
@@ -88,7 +101,11 @@ def affaire_cockpit_view(request):
             'no_access': affaire.no_access,
             'etape_id': affaire.etape_id,
             'etape_ordre': affaire.etape_ordre,
-            'operateur_id': affaire.technicien_id
+            'etape_datetime': datetime.strftime(affaire.etape_datetime, '%Y-%m-%d %H:%M:%S'),
+            'operateur_id': affaire.technicien_id,
+            'operateur_initiales': affaire.technicien_initiales,
+            'cadastre': affaire.cadastre,
+            'description': affaire.nom
         })
     
     return json.dumps(affaires)
