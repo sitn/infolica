@@ -24,7 +24,7 @@
                                 <div class="md-toolbar-section-end">
                                     <md-field style="margin-left: 50px; width: 250px">
                                         <label for="operateur">Opérateur</label>
-                                        <md-select v-model="currentUser_id" name="operateur" id="operateur" @md-selected="filterAffairesClient" md-dense>
+                                        <md-select v-model="selectedOperateur_id" name="operateur" id="operateur" @md-selected="filterAffairesClient" md-dense>
                                             <md-option :value="-1">Tous</md-option>
                                             <md-option v-for="item in operateurs" :value="item.id">{{ item.nom }}</md-option>
                                         </md-select>

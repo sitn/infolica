@@ -6,7 +6,8 @@
 import {
   getCadastres,
   getTypesNumeros,
-  getEtatsNumeros
+  getEtatsNumeros,
+  adjustColumnWidths
 } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 
@@ -161,6 +162,7 @@ export default {
     this.initTypesNumerosList();
     this.initEtatsNumerosList();
     this.searchNumeros();
+    adjustColumnWidths();
   }
 };
 </script>

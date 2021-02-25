@@ -85,16 +85,13 @@ export default {
           .then(response => {
             if (response.data) {
               this.operateurs_liste = response.data;
-              this.chefsProjetMO_liste = response.data
-                .filter(x => {
-                  return x.responsable;
-                })
-                .map(x => ({
-                  id: x.id,
-                  nom: [x.prenom, x.nom].join(" "),
-                  toLowerCase: () => [x.nom, x.prenom].join(" ").toLowerCase(),
-                  toString: () => [x.nom, x.prenom].join(" ")
-                }));
+              this.chefsProjetMO_liste = response.data.map(x => ({
+                id: x.id,
+                nom: [x.prenom, x.nom].join(" "),
+                toLowerCase: () => [x.nom, x.prenom].join(" ").toLowerCase(),
+                toString: () => [x.nom, x.prenom].join(" ")
+              }));
+              
               resolve(response);
             }
           })

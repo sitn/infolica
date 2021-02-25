@@ -8,7 +8,7 @@ import Matdiff_mo from "@/components/Cockpit/Matdiff_mo/Matdiff_mo.vue";
 import PPE from "@/components/Cockpit/PPE/PPE.vue";
 
 import { handleException } from '@/services/exceptionsHandler'
-import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId } from '@/services/helper'
+import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper'
 
 export default {
   name: "Cockpit",
@@ -28,8 +28,8 @@ export default {
         operateurs: [],
         refreshAffaire: null,
         searchAffaire: null,
-        selectedOperateur: -1,
-        selectedAffaireType: [1,3,6,10],
+        selectedOperateur_id: -1,
+        selectedAffaireTypes_id: [],
         showFinProcessus: false,
         showMatdiff_secr: false,
         showMatdiff_mo: false,
@@ -137,6 +137,10 @@ export default {
             if (response && response.data) {
                 let tmp = response.data;
                 tmp.push({'id': 15, 'nom': 'Mat diff', 'ordre': 11, 'priorite': 1});
+                
+                this.selectedAffaireTypes_id = [];
+                tmp.forEach(x => this.selectedAffaireTypes_id.push(x.id));
+
                 this.affaireTypes = stringifyAutocomplete(tmp);
             }
         }).catch(err => handleException(err, this));
@@ -172,12 +176,12 @@ export default {
         }
 
         // filter affaire by operateur if specified
-        if (this.selectedOperateur && this.selectedOperateur > 0) {
-            this.affaires = this.affaires.filter(x => x.operateur_id === this.selectedOperateur);
+        if (this.selectedOperateur_id && this.selectedOperateur_id > 0) {
+            this.affaires = this.affaires.filter(x => x.operateur_id === this.selectedOperateur_id);
         }
         
         // filter affaire type
-        this.affaires = this.affaires.filter(x => this.selectedAffaireType.includes(x.affaire_type_id));
+        this.affaires = this.affaires.filter(x => this.selectedAffaireTypes_id.includes(x.affaire_type_id));
         
         this.loadingAffaires = false;
     },
@@ -196,7 +200,7 @@ export default {
                 // set operateur by default if he is chef_equipe
                 let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
                 if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe)) {
-                    this.selectedOperateur = Number(currentUserID);
+                    this.selectedOperateur_id = Number(currentUserID);
                 }
 
                 tmp = stringifyAutocomplete(tmp, "nom_");
@@ -212,9 +216,7 @@ export default {
     this.getAffaire();
     this.getOperateursList();
     this.getPermissions();
-
-
-
+    adjustColumnWidths();
   },
   
   created() {

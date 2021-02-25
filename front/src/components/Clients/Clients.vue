@@ -6,7 +6,8 @@
 import {handleException} from '@/services/exceptionsHandler';
 import {checkPermission,
         getClients,
-        filterList } from '@/services/helper';
+        filterList,
+        adjustColumnWidths } from '@/services/helper';
 
 export default {
   name: 'Clients',
@@ -189,6 +190,7 @@ export default {
     this.editClientClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION);
     this.initClientsSearchList();
     this.searchClients();
+    adjustColumnWidths();
   }
 }
 </script>

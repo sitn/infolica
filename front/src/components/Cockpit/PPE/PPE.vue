@@ -4,7 +4,6 @@
 
 <script>
 import { handleException } from '@/services/exceptionsHandler'
-// import { checkPermission } from '@/services/helper'
 
 const moment = require('moment')
 
@@ -18,9 +17,8 @@ export default {
       affairesClient: [{}],
       affairesClient_bk: [{}],
       affaireTypePPE_conf: Number(process.env.VUE_APP_TYPE_AFFAIRE_PPE),
-      etapeChezClient_conf: Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID),
-      currentUser_id: JSON.parse(localStorage.getItem("infolica_user")).id,
-      
+      selectedOperateur_id: JSON.parse(localStorage.getItem("infolica_user")).id,
+      etapeChezClient_conf: Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID),      
     }
   },
 
@@ -57,10 +55,9 @@ export default {
       //filter affaire type PPE and step client
       this.affairesClient = this.affairesClient_bk;
 
-      if (this.currentUser_id > 0) {
-        this.affairesClient = this.affairesClient.filter(x => x.operateur_id === this.currentUser_id);
+      if (this.selectedOperateur_id > 0) {
+        this.affairesClient = this.affairesClient.filter(x => x.operateur_id === this.selectedOperateur_id);
       }
-
     },
 
     /**
