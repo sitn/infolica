@@ -111,7 +111,7 @@
 
            <!-- Results Content -->
            <md-card-content>
-               <md-table v-model="clients" md-sort="name" md-sort-order="asc" md-fixed-header>
+               <md-table md-height="100%" v-model="clients" md-sort="name" md-sort-order="asc" md-fixed-header>
                    <md-table-row slot="md-table-row" slot-scope="{ item }">
                        <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                        <md-table-cell md-label="Entreprise" md-sort-by="entreprise">{{ item.entreprise }}</md-table-cell>

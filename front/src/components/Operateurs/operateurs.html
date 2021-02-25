@@ -69,7 +69,7 @@
 
             <!-- Results Content -->
             <md-card-content>
-                <md-table v-model="operateurs" md-sort="name" md-sort-order="asc" md-fixed-header>
+                <md-table md-height="100%" v-model="operateurs" md-sort="name" md-sort-order="asc" md-fixed-header>
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                         <md-table-cell md-label="Prénom" md-sort-by="prenom">{{ item.prenom }}</md-table-cell>
