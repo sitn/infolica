@@ -7,7 +7,7 @@
 
         <md-card-content>
             <div v-if="reservationNumerosMO[0]">
-                <md-table v-model="reservationNumerosMO" md-sort="cadastre_id" md-sort-order="desc" md-fixed-header md-dense md-fixed-header>
+                <md-table md-height="100%" v-model="reservationNumerosMO" md-sort="cadastre_id" md-sort-order="desc" md-dense md-fixed-header>
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
                         <md-table-cell md-label="Type" md-sort-by="type">{{ item.type_numero }}</md-table-cell>

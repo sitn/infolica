@@ -3,6 +3,7 @@
 
 
 <script>
+import Etape from "@/components/Affaires/Etape/Etape.vue";
 import InfosGenerales from "@/components/Affaires/InfosGenerales/InfosGenerales.vue";
 import MapHandler from "@/components/MapHandler/MapHandler.vue";
 import NumerosAffaire from "@/components/Affaires/NumerosAffaire/NumerosAffaire.vue";
@@ -20,7 +21,7 @@ import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.
 import ActivationAffaire from "@/components/Affaires/ActivationAffaire/ActivationAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { getTypesAffaires, getOperateurs, checkPermission, getDocument, stringifyAutocomplete, logAffaireEtape, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper'
+import { getOperateurs, checkPermission, getDocument, logAffaireEtape, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper'
 
 import moment from "moment";
 
@@ -28,6 +29,7 @@ export default {
   name: "AffairesDashboard",
   props: {},
   components: {
+    Etape,
     InfosGenerales,
     MapHandler,
     NumerosAffaire,
@@ -47,12 +49,6 @@ export default {
   data() {
     return {
       affaire: {},
-      affaireEtapes: [],
-      etapeAffaire: {
-        prochaine: null,
-        remarque: null,
-        showDialog: false,
-      },
       affaireLoaded: false,
       duplicationAffaireForm: null,
       mapLoaded: false,
@@ -69,7 +65,6 @@ export default {
         editSuiviMandatAllowed: false,
       },
       showConfirmAbandonAffaireDialog: false,
-      suiviAffaireTheorique: [],
       typesAffaires: [],
       typesAffaires_conf: {
         mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION),
@@ -93,7 +88,10 @@ export default {
         }
       },
       etapes_affaire_conf: {
-        travaux_chef_equipe: Number(process.env.VUE_APP_ETAPE_TRAVAUX_CHEF_EQUIPE_ID)
+        travaux_chef_equipe: Number(process.env.VUE_APP_ETAPE_TRAVAUX_CHEF_EQUIPE_ID),
+        validation: Number(process.env.VUE_APP_ETAPE_VALIDATION_ID),
+        envoi: Number(process.env.VUE_APP_ETAPE_ENVOI_ID),
+        fin_processus: Number(process.env.VUE_APP_FIN_PROCESSUS_ID)
       },
       showMovePointComment: false,
       // numeros_base_associes = []
@@ -155,33 +153,6 @@ export default {
     },
 
     /**
-     * Search affaire etapes
-     */
-    async searchAffaireEtapes() {
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_ETAPES_INDEX_ENDPOINT,
-        {
-          withCredentials: true,
-          headers: { Accept: "application/json" }
-        }
-      ).then(response => {
-        this.affaireEtapes = stringifyAutocomplete(response.data.filter(x => x.ordre !== null));
-        // get suivi d'affaire théorique
-        this.typesAffaires = getTypesAffaires().then(response => {
-          if (response && response.data) {
-            try {
-              this.suiviAffaireTheorique = response.data.filter(x => x.id === this.affaire.type_id)[0].logique_processus;
-            }
-            catch {
-              this.suiviAffaireTheorique = [];
-            }
-
-          }
-        })
-      }).catch(err => handleException(err, this));
-    },
-
-    /**
      * Set affaire
      */
     async setAffaire() {
@@ -231,8 +202,6 @@ export default {
             }
             _this.parentAffaireReadOnly = false;
           }
-
-          _this.searchAffaireEtapes();
       });
     },
 
@@ -419,36 +388,6 @@ export default {
       }
     },
 
-    /**
-     * open New state dialog
-     */
-    openNewStateDialog(){
-      // set next step prediction
-      this.etapeAffaire.prochaine = null;
-      this.etapeAffaire.chef_equipe_id = this.affaire.technicien_id || null;
-      this.etapeAffaire.remarque = null;
-      
-      if (this.suiviAffaireTheorique.includes(this.affaire.etape_id)) {
-        this.etapeAffaire.prochaine = this.affaireEtapes.filter(x => x.id === this.suiviAffaireTheorique[this.suiviAffaireTheorique.indexOf(this.affaire.etape_id)+1])[0];
-      }
-
-      this.etapeAffaire.showDialog = true;
-    },
-
-    /**
-     * Enregistrer la nouvelle étape
-     */
-    async updateAffaireEtape() {
-      // fix value of this.etapeAffaire.chef_equipe_id to null if another step is selected
-      this.etapeAffaire.chef_equipe_id = this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.travaux_chef_equipe? this.etapeAffaire.chef_equipe_id: null;
-
-      logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine.id, this.etapeAffaire.remarque, this.etapeAffaire.chef_equipe_id)
-      .then(() => {
-        this.$root.$emit("ShowMessage", "L'étape a bien été mise à jour");
-        this.etapeAffaire.showDialog = false;
-        this.setAffaire();
-      })
-    },
 
     /**
      * Génère le bordereau de l'affaire (document DEMANDE)

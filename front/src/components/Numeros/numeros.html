@@ -95,7 +95,7 @@
 
             <!-- Results Content -->
             <md-card-content>
-                <md-table v-model="numeros" md-sort="numero" md-sort-order="desc" md-fixed-header>
+                <md-table md-height="100%" v-model="numeros" md-sort="numero" md-sort-order="desc" md-fixed-header>
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                         <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
