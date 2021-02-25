@@ -4,7 +4,7 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler'
-import {checkPermission} from '@/services/helper'
+import {checkPermission, adjustColumnWidths} from '@/services/helper'
 
 export default {
   name: 'Operateurs',
@@ -156,6 +156,7 @@ export default {
   mounted: function(){
     this.searchOperateurs();
     this.editionOperateursAllowed = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
+    adjustColumnWidths();
   }
 }
 </script>

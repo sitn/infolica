@@ -9,7 +9,8 @@ import {
   getClients,
   filterList,
   stringifyAutocomplete,
-  checkPermission
+  checkPermission,
+  adjustColumnWidths
 } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler';
 
@@ -171,6 +172,7 @@ export default {
     this.searchAffaires();
     this.initClientsListe();
     this.setPermissions();
+    adjustColumnWidths();
   }
 };
 </script>

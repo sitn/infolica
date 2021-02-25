@@ -20,7 +20,7 @@ import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.
 import ActivationAffaire from "@/components/Affaires/ActivationAffaire/ActivationAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { getTypesAffaires, getOperateurs, checkPermission, getDocument, stringifyAutocomplete, logAffaireEtape, getCurrentUserRoleId } from '@/services/helper'
+import { getTypesAffaires, getOperateurs, checkPermission, getDocument, stringifyAutocomplete, logAffaireEtape, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper'
 
 import moment from "moment";
 
@@ -549,6 +549,7 @@ export default {
     this.$root.$on('mapHandlerReady', () =>{
       this.showMap();
     });
+    adjustColumnWidths();
   }
 };
 </script>
