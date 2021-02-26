@@ -13,8 +13,6 @@ import moment from "moment";
 export default {
   name: "suivi",
   mixins: [validationMixin],
-  props: {},
-  components: {},
   data: () => {
     return {
       affaire_suivi: [],
@@ -191,6 +189,9 @@ export default {
     this.searchAffaireSuivi();
     this.searchEtapes();
     this.initForm();
+
+    // Event listener
+    this.$root.$on('getAffaireSuivi', () => this.searchAffaireSuivi());
 
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_SUIVI_EDITION) || this.$parent.parentAffaireReadOnly;
   }

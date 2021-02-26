@@ -3,13 +3,16 @@
 
 
 <script>
+import { checkPermission } from '@/services/helper'
+
+
 export default {
   name: 'Header',
-  props: {},
 
   data: function () {
       return {
-          loggedUserName: String
+          loggedUserName: String,
+          isAdmin: false,
       }
   },
 
@@ -45,6 +48,10 @@ export default {
     goTo(route){
       if(this.$router && this.$router.currentRoute && this.$router.currentRoute.name != route)
         this.$router.push({ name: route});
+    },
+
+    checkIsAdmin() {
+      this.isAmin = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
     }
   },
 
@@ -61,6 +68,8 @@ export default {
 
       var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
       this.setUserName(session_user);
+
+      this.checkIsAdmin();
   }
 }
 </script>
