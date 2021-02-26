@@ -51,7 +51,7 @@ export default {
     },
 
     checkIsAdmin() {
-      this.isAmin = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
+      this.isAdmin = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
     }
   },
 
