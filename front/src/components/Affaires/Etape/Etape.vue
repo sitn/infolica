@@ -115,7 +115,10 @@ export default {
       .then(() => {
         this.$root.$emit("ShowMessage", "L'étape a bien été mise à jour");
         this.etapeAffaire.showDialog = false;
+
+        // event emitter
         this.$emit('setAffaire');
+        this.$root.$emit('getAffaireSuivi');
       });
 
       this.updateAffaireDate = {
