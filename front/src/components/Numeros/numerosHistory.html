@@ -176,7 +176,7 @@
         </md-card-header>
 
         <md-card-content>
-            <md-table md-height="100%" v-model="numero_affaires" md-sort="affaire_date" md-sort-order="desc" md-fixed-header>
+            <md-table md-height="40vh" v-model="numero_affaires" md-sort="affaire_date" md-sort-order="desc" md-fixed-header>
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell md-label="Affaire" md-sort-by="affaire_id" style="width: 10%;">{{ item.affaire_id }}</md-table-cell>
                     <md-table-cell md-label="Description" md-sort-by="affaire_nom" style="width: 15%;">{{ item.affaire_nom }}</md-table-cell>
