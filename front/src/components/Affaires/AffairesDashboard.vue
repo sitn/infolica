@@ -88,6 +88,7 @@ export default {
         }
       },
       etapes_affaire_conf: {
+        chez_client: Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID),
         travaux_chef_equipe: Number(process.env.VUE_APP_ETAPE_TRAVAUX_CHEF_EQUIPE_ID),
         validation: Number(process.env.VUE_APP_ETAPE_VALIDATION_ID),
         envoi: Number(process.env.VUE_APP_ETAPE_ENVOI_ID),

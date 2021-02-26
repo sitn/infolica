@@ -73,16 +73,22 @@ export default {
         this.etapeAffaire.prochaine = this.affaireEtapes.filter(x => x.id === this.suiviAffaireTheorique[this.suiviAffaireTheorique.indexOf(this.affaire.etape_id)+1])[0];
       }
 
+      // if step "chez le client" next step is "operateur_travail"
+      if (this.affaire.etape_id === this.etapes_affaire_conf.chez_client) {
+        this.etapeAffaire.prochaine = this.affaireEtapes.filter(x => x.id === this.etapes_affaire_conf.travaux_chef_equipe)[0];
+      }
+
+      // Update affaire dates
       if (this.affaire.etape_id === this.etapes_affaire_conf.envoi) {
         this.updateAffaireDate = {
           text: "Mettre à jour la date d'envoi de l'affaire",
           value: true
-        }
+        };
       } else if (this.affaire.etape_id === this.etapes_affaire_conf.validation) {
         this.updateAffaireDate = {
           text: "Mettre à jour la date de validation de l'affaire",
           value: true
-        }
+        };
       }
 
       this.etapeAffaire.showDialog = true;
