@@ -3,7 +3,7 @@
 
 
 <script>
-import { getCadastres, stringifyAutocomplete } from "@/services/helper";
+import { getCadastres, stringifyAutocomplete, getTypesNumeros } from "@/services/helper";
 import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
 import { required, minValue } from "vuelidate/lib/validators";
@@ -30,6 +30,13 @@ export default {
         text: ''
       },
       cadastre_liste: [],
+      newNumeroBase: {
+        showDialog: false,
+        cadastre: {nom: null},
+        numero: null,
+        type_id: 1,
+        suffixe: null
+      },
       form: {
         cadastre: null,
         nombre: null,
@@ -39,6 +46,7 @@ export default {
       },
       numerosBaseListe: [],
       numerosBaseListeFiltered: [],
+      numeroTypesList: [],
       showReservationDialog: false
     };
   },
@@ -189,21 +197,24 @@ export default {
      * Retourne les numéros en vigueur et en projet dans le cadastre sélectionné
      */
     async getNumerosBase() {
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ENDPOINT +
-        "?cadastre_id=" + this.form.cadastre.id +
-        "&type_id=" + process.env.VUE_APP_NUMERO_TYPE_BF + "," + process.env.VUE_APP_NUMERO_TYPE_DDP +
-        "&etat_id=" + process.env.VUE_APP_NUMERO_PROJET_ID + "," +  process.env.VUE_APP_NUMERO_VIGUEUR_ID,
-        {
-          withCredentials: true,
-          headers: {"Accept": "application/json"}
-        }
-      ).then(response => {
-        if (response && response.data) {
-          this.numerosBaseListe = stringifyAutocomplete(response.data, "numero");
-          this.numerosBaseListeFiltered = this.numerosBaseListe.slice(0,20);
-        }
-      }).catch(err => handleException(err, this));
+      return new Promise ((resolve) => {
+        this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ENDPOINT +
+          "?cadastre_id=" + this.form.cadastre.id +
+          "&type_id=" + process.env.VUE_APP_NUMERO_TYPE_BF + "," + process.env.VUE_APP_NUMERO_TYPE_DDP +
+          "&etat_id=" + process.env.VUE_APP_NUMERO_PROJET_ID + "," +  process.env.VUE_APP_NUMERO_VIGUEUR_ID,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+        ).then(response => {
+          if (response && response.data) {
+            this.numerosBaseListe = stringifyAutocomplete(response.data, "numero");
+            this.numerosBaseListeFiltered = this.numerosBaseListe.slice(0,20);
+            resolve(response);
+          }
+        }).catch(err => handleException(err, this));
+      })
     },
 
 
@@ -213,11 +224,87 @@ export default {
     filterNumeroBase() {
       this.numerosBaseListeFiltered = this.numerosBaseListe;
       this.numerosBaseListeFiltered.filter(x => x.nom.includes(String(this.form.numeroBase))).slice(0,20);
+    },
+
+    /**
+     * createNumeroBase()
+     */
+    createNumeroBase() {
+      this.newNumeroBase = {
+        cadastre: this.form.cadastre,
+        numero: this.form.numeroBase,
+        type_id: 1,
+        suffixe: null
+      };
+
+      this.showReservationDialog = false;
+      this.newNumeroBase.showDialog = true;
+    },
+
+    /**
+     * confirm create Numero base
+     */
+    async onConfirmCreateNumeroBase() {
+      var formData = new FormData();
+      formData.append("cadastre_id", this.newNumeroBase.cadastre.id);
+      formData.append("numero", this.newNumeroBase.numero);
+      formData.append("type_id", this.newNumeroBase.type_id);
+      formData.append("etat_id", Number(process.env.VUE_APP_NUMERO_VIGUEUR_ID));
+      if (this.newNumeroBase.suffixe) {
+        formData.append("suffixe", this.newNumeroBase.suffixe);
+      }
+
+      // Enregistrer le numéro
+      this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        ).then(response => {
+          if (response.data) {
+            this.$root.$emit('ShowMessage', "Le numéro " +  this.newNumeroBase.numero + " a été créé sur le cadastre de " + this.newNumeroBase.cadastre.nom + " avec succès");
+            this.getNumerosBase().then(() => this.form.numeroBase = this.numerosBaseListe.filter(x => x.nom === this.newNumeroBase.numero)[0]);
+          }
+        }).catch(err => handleException(err, this));
+
+      this.showReservationDialog = true;
+      this.newNumeroBase.showDialog = false;
+    },
+
+    /**
+     * cancel create Numero base
+     */
+    onCancelCreateNumeroBase() {
+      this.newNumeroBase = {
+        cadastre: {nom: null},
+        numero: null,
+        type_id: 1,
+        suffixe: null
+      };
+
+      this.showReservationDialog = true;
+      this.newNumeroBase.showDialog = false;
+    },
+
+    /**
+     * init type numeros list
+     */
+    async initTypeNumerosList() {
+      getTypesNumeros()
+      .then(response => {
+        if (response && response.data) {
+          this.numeroTypesList = stringifyAutocomplete(response.data);
+        }
+      }).catch(err => handleException(err, this));
     }
+
   },
 
   mounted: function() {
     this.initCadastresList();
+    this.initTypeNumerosList();
   }
 };
 </script>
