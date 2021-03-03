@@ -167,6 +167,7 @@ class ModificationAffaireType(Base):
     ordre = Column(BigInteger)
     reservation_numeros_types_id = Column(ARRAY(BigInteger))
     affaire_source_type_id = Column(ARRAY(BigInteger))
+    affaire_destination_type_id = Column(BigInteger, ForeignKey(AffaireType.id))
 
 
 class ModificationAffaire(Base):
@@ -803,6 +804,7 @@ class VNumerosAffaires(Base):
     numero_base = Column(BigInteger)
     numero_base_suffixe = Column(Text)
     numero_base_etat = Column(Text)
+    numero_base_etat_id = Column(Text)
     affaire_numero_type = Column(Text)
 
 
