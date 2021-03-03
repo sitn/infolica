@@ -169,10 +169,15 @@ def affaires_search_view(request):
 @view_config(route_name='types_affaires_s', request_method='GET', renderer='json')
 def types_affaires_view(request):
     """
-    Return all types affaires
+    Return all types affaires not modif
     """
+    affaire_type_modif_threshold = int(request.registry.settings['affaire_type_modification_ordre_separation'])
+
     types_affaires = request.dbsession.query(AffaireType).filter(
-        AffaireType.ordre != None
+        and_(
+            AffaireType.ordre != None,
+            AffaireType.ordre < affaire_type_modif_threshold
+        )
     ).order_by(AffaireType.ordre.asc()).all()
 
     types_affaires = Utils.serialize_many(types_affaires)

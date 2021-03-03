@@ -53,19 +53,18 @@ export default {
 
   // Validations
   validations() {
-    var form = {
+    let form = {
       cadastre: { required },
       nombre: { 
         required,
         minValue: minValue(1)
       }
     };
-
-    if (this.affaire.type_id === this.typesAffaires_conf.ppe || this.affaire.type_id === this.typesAffaires_conf.pcop) {
+    if ([this.typesAffaires_conf.ppe, this.typesAffaires_conf.pcop, this.typesAffaires_conf.modification_ppe].includes(this.affaire.type_id)) {
       form.numeroBase = { required };
     }
 
-    if (this.affaire.type_id === this.typesAffaires_conf.ppe) {
+    if ([this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe].includes(this.affaire.type_id)) {
       form.ppe_suffixe_start = { required };
     }
 

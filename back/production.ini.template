@@ -129,6 +129,7 @@ affaire_type_revision_abornement_id = 4
 affaire_type_retablissement_pfp3_id = 12
 affaire_type_autre_id = 7
 affaire_type_part_copropriete_id = 10
+affaire_type_modification_ordre_separation = 100
 
 # ID Numéros-types biens-fonds
 numero_bf_id = 1

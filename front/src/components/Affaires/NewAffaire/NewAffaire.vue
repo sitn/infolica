@@ -11,7 +11,8 @@ import { getCurrentDate,
          getClients,
          filterList,
          stringifyAutocomplete,
-         checkPermission } from "@/services/helper";
+         checkPermission,
+         getCurrentUserRoleId } from "@/services/helper";
 import Autocomplete from "vuejs-auto-complete";
 const moment = require("moment");
 
@@ -79,6 +80,7 @@ export default {
       types_affaires_list: [],
       type_modification_bool: false,
       typesModficiationAffaire_list: [],
+      typesModficiationAffaire_list_bk: [],
 
       typesAffaires_conf: {
         mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION),
@@ -95,6 +97,10 @@ export default {
         modification_type: {
           abandon_partiel: Number(process.env.VUE_APP_TYPE_MODIFICATION_ABANDON_PARTIEL_ID)
         }
+      },
+      role_conf: {
+        ppe_user_id: Number(process.env.VUE_APP_PPE_ROLE_ID),
+        mo_user_id: Number(process.env.VUE_APP_MO_ROLE_ID)
       }
     };
   },
@@ -232,21 +238,24 @@ export default {
             let tmp = response.data;
             let type_filter = [];
             // Only suggest affaire types to which user has rights
-            if (checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION)) {
-              type_filter.push(this.typesAffaires_conf.ppe);
-              type_filter.push(this.typesAffaires_conf.modification);
-            }
-            if (checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION)) {
-              type_filter.push(this.typesAffaires_conf.revision_abornement);
-            }
-            if (checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION)) {
-              type_filter.push(this.typesAffaires_conf.cadastration);
-            }
-            if (checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION)) {
-              type_filter.push(this.typesAffaires_conf.retablissement_pfp3);
-            }
-            if (type_filter.length>0) {
-              tmp = tmp.filter(x => type_filter.includes(x.id));
+            let userRoleID = getCurrentUserRoleId()
+            if (userRoleID && [this.role_conf.ppe_user_id, this.role_conf.mo_user_id].includes(userRoleID)) {
+              if (checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION)) {
+                type_filter.push(this.typesAffaires_conf.ppe);
+                type_filter.push(this.typesAffaires_conf.modification);
+              }
+              if (checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION)) {
+                type_filter.push(this.typesAffaires_conf.revision_abornement);
+              }
+              if (checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION)) {
+                type_filter.push(this.typesAffaires_conf.cadastration);
+              }
+              if (checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION)) {
+                type_filter.push(this.typesAffaires_conf.retablissement_pfp3);
+              }
+              if (type_filter.length>0) {
+                tmp = tmp.filter(x => type_filter.includes(x.id));
+              }
             }
             this.types_affaires_list_bk = tmp;
             this.types_affaires_list = stringifyAutocomplete(tmp);
@@ -421,9 +430,16 @@ export default {
      * Handle save data success
      */
     initPostData() {
-      var formData = new FormData();
-      formData.append("type_id", this.form.type.id);
+      let formData = new FormData();
       formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
+
+      if (this.form.type.id === this.typesAffaires_conf.modification) {
+        let type_id = this.typesModficiationAffaire_list_bk.filter(x => x.id === this.form.affaire_modif_type.id)[0].affaire_destination_type_id;
+        formData.append("type_id", type_id);
+      } else {
+        formData.append("type_id", this.form.type.id);
+      }
+      
       if (this.form.nom) {
         formData.append("nom", this.form.nom);
       }
@@ -845,6 +861,7 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
+          this.typesModficiationAffaire_list_bk = response.data;
           this.typesModficiationAffaire_list = stringifyAutocomplete(response.data);
         }
       }).catch(err => handleException(err, this));

@@ -167,6 +167,7 @@ class ModificationAffaireType(Base):
     ordre = Column(BigInteger)
     reservation_numeros_types_id = Column(ARRAY(BigInteger))
     affaire_source_type_id = Column(ARRAY(BigInteger))
+    affaire_destination_type_id = Column(BigInteger, ForeignKey(AffaireType.id))
 
 
 class ModificationAffaire(Base):
