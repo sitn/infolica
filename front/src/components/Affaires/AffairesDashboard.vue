@@ -84,13 +84,6 @@ export default {
         modification_abandon_partiel: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_ABANDON_PARTIEL),
         modification_mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_MUTATION),
         modification_ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_PPE),
-        modification_type: {
-          abandon_partiel: Number(process.env.VUE_APP_TYPE_MODIFICATION_ABANDON_PARTIEL_ID),
-          visa: Number(process.env.VUE_APP_TYPE_MODIFICATION_VISA_ID),
-          duplicata: Number(process.env.VUE_APP_TYPE_MODIFICATION_DUPLICATA_ID),
-          mutation: Number(process.env.VUE_APP_TYPE_MODIFICATION_MUTATION_ID),
-          ppe: Number(process.env.VUE_APP_TYPE_MODIFICATION_PPE_ID)
-        }
       },
       etapes_affaire_conf: {
         chez_client: Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID),

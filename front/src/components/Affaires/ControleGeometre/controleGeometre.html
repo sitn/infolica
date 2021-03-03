@@ -94,11 +94,11 @@
                                             <md-checkbox class="md-primary" v-model="controleGeometre.check_37">Chaque bâtiment a un numéro</md-checkbox>
                                             <md-checkbox class="md-primary" v-model="controleGeometre.check_38">Pertinence de la désignation de bâtiment</md-checkbox>
                                         </div>
-                                        <div v-if="affaire.type_id === typesAffaires_conf.modification">
+                                        <div v-if="affaire.type_id === typesAffaires_conf.modification_duplicata">
                                             <!-- Ajouter condition seulement pour les duplicatas -->
                                             <md-checkbox class="md-primary" v-model="controleGeometre.check_40">Phrase « DUPLICATA du plan du … »</md-checkbox>    
                                         </div>
-                                        <div v-if="affaire.type_id === typesAffaires_conf.modification">
+                                        <div v-if="affaire.type_id === typesAffaires_conf.modification_visa">
                                             <!-- Ajouter condition afficher que dans le cas de modification et visa -->
                                             <md-checkbox class="md-primary" v-model="controleGeometre.check_42">Contrôle de l’indication « Visa » ou « Modification »</md-checkbox>
                                         </div>
@@ -110,11 +110,11 @@
                                         <div v-if="affaire.type_id === typesAffaires_conf.cadastration">
                                             <md-checkbox class="md-primary" v-model="controleGeometre.check_33">Chaque bâtiment a un numéro</md-checkbox>
                                         </div>
-                                        <div v-if="affaire.type_id === typesAffaires_conf.modification">
+                                        <div v-if="affaire.type_id === typesAffaires_conf.modification_duplicata">
                                             <!-- Ajouter condition seulement pour les duplicatas -->
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_39" v-if="affaire.type_id === typesAffaires_conf.modification">Phrase « DUPLICATA du plan du … »</md-checkbox>
+                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_39">Phrase « DUPLICATA du plan du … »</md-checkbox>
                                         </div>
-                                        <div v-if="affaire.type_id === typesAffaires_conf.modification">
+                                        <div v-if="affaire.type_id === typesAffaires_conf.modification_visa">
                                             <!-- Ajouter condition afficher que dans le cas de modification et visa -->
                                             <md-checkbox class="md-primary" v-model="controleGeometre.check_41">Contrôle de l’indication « Visa » ou « Modification »</md-checkbox>
                                         </div>

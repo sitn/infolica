@@ -94,9 +94,11 @@ export default {
         servitude: Number(process.env.VUE_APP_TYPE_AFFAIRE_SERVITUDE),
         retablissement_pfp3: Number(process.env.VUE_APP_TYPE_AFFAIRE_RETABLISSEMENT_PFP3),
         autre: Number(process.env.VUE_APP_TYPE_AFFAIRE_AUTRE),
-        modification_type: {
-          abandon_partiel: Number(process.env.VUE_APP_TYPE_MODIFICATION_ABANDON_PARTIEL_ID)
-        }
+        modification_visa: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_VISA),
+        modification_duplicata: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_DUPLICATA),
+        modification_abandon_partiel: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_ABANDON_PARTIEL),
+        modification_mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_MUTATION),
+        modification_ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_PPE),
       },
       role_conf: {
         ppe_user_id: Number(process.env.VUE_APP_PPE_ROLE_ID),
@@ -377,7 +379,7 @@ export default {
                 // Si tous les numéros sont sélectionnés, clôre l'affaire de base !
                 promises.push(this.cloreAffaireBase());
               }
-              if (this.form.affaire_modif_type.id === Number(process.env.VUE_APP_TYPE_MODIFICATION_ABANDON_PARTIEL_ID)) {
+              if (this.form.affaire_modif_type.id === this.typesAffaires_conf.modification_abandon_partiel) {
                 // supprimer les bf référencés à l'affaire
                 promises.push(this.abandonPartiel(id_new_affaire));
               }
@@ -434,6 +436,7 @@ export default {
       formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
 
       if (this.form.type.id === this.typesAffaires_conf.modification) {
+        // enregistre le type d'affaire correspondant au type de modification
         let type_id = this.typesModficiationAffaire_list_bk.filter(x => x.id === this.form.affaire_modif_type.id)[0].affaire_destination_type_id;
         formData.append("type_id", type_id);
       } else {

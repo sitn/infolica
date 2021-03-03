@@ -44,8 +44,14 @@ export default {
       },
       editMatDiffAllowed: false,
       numerosMoLoading: true,
+      show: {
+        balance: false,
+        numeros_references_card: false,
+        numeros_reserves_card: false,
+        numeros_reserves_immeuble_base: false,
+        reservation_numeros_mo: false
+      },
       showNumerosMO: true,
-      showBalance: false,
       showAlertMatDiffDialog: false,
       showQuittancePCOPDialog: false,
       types_numeros: {
@@ -58,6 +64,9 @@ export default {
         bat: Number(process.env.VUE_APP_NUMERO_TYPE_BAT),
         pdet: Number(process.env.VUE_APP_NUMERO_TYPE_PDET),
         dp: Number(process.env.VUE_APP_NUMERO_TYPE_DP)
+      },
+      etatNumeros_conf: {
+        projet: Number(process.env.VUE_APP_NUMERO_PROJET_ID)
       }
       // numeros_base_relations: []
     };
@@ -347,13 +356,6 @@ export default {
     // },
 
     /**
-     * Afficher la balance si c'est une affaire de division
-     */
-    async showBalance_() {
-      this.showBalance = await this.affaire.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION);
-    },
-
-    /**
      * Génère une quittance des numéros réservés dans l'affaire
      */
     async doQuittanceNumerosReserves() {
@@ -407,13 +409,47 @@ export default {
       if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_MO_ROLE_ID)) {
         this.editMatDiffAllowed = true;
       }
+    },
+
+    /**
+     * Define if element is visible or not
+     */
+    showPermissions() {
+      let typeAffaire_modification_all = [this.typesAffaires_conf.modification, this.typesAffaires_conf.modification_visa, this.typesAffaires_conf.modification_duplicata, this.typesAffaires_conf.modification_abandon_partiel, this.typesAffaires_conf.modification_mutation, this.typesAffaires_conf.modification_ppe]
+      this.show = {
+        numeros_reserves_card: typeAffaire_modification_all.concat([this.typesAffaires_conf.mutation, 
+                                                                    this.typesAffaires_conf.ppe, 
+                                                                    this.typesAffaires_conf.pcop]).includes(this.affaire.type_id),
+        
+        numeros_references_card: [this.typesAffaires_conf.cadastration,
+                                  this.typesAffaires_conf.mat_diff,
+                                  this.typesAffaires_conf.revision_abornement,
+                                  this.typesAffaires_conf.autre,
+                                  this.typesAffaires_conf.modification_abandon_partiel].includes(this.affaire.type_id),
+
+        numeros_reserves_immeuble_base: [this.typesAffaires_conf.pcop,
+                                         this.typesAffaires_conf.modification_pcop,
+                                         this.typesAffaires_conf.modification_ppe,
+                                         this.typesAffaires_conf.ppe].includes(this.affaire.type_id),
+
+        reservation_numeros_mo: [this.typesAffaires_conf.mutation, 
+                                 this.typesAffaires_conf.pcop,
+                                 this.typesAffaires_conf.autre,
+                                 this.typesAffaires_conf.cadastration,
+                                 this.typesAffaires_conf.revision_abornement,
+                                 this.typesAffaires_conf.modification,
+                                 this.typesAffaires_conf.modification_mutation,
+                                 this.typesAffaires_conf.retablissement_pfp3].includes(this.affaire.type_id),
+
+        balance: [this.typesAffaires_conf.mutation, this.typesAffaires_conf.modification_mutation].includes(this.affaire.type_id),
+      }
     }
 
   },
   mounted: function() {
     this.searchAffaireNumeros();
     
-    this.showBalance_();
+    this.showPermissions();
     this.setMatDiffEdition();
 
     this.$root.$on('UpdateNumerosAffaires', () => this.searchAffaireNumeros());
