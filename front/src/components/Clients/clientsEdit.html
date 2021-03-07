@@ -12,7 +12,7 @@
         <div class="md-layout-item md-small-size-100 md-size-50">
           <md-field :class="getValidationClass('type_client')">
             <label for="type_client">Type client</label>
-            <md-select name="type_client" id="type_client" v-model="form.type_client" md-dense :disabled="sending" required>
+            <md-select name="type_client" id="type_client" v-model="form.type_client" md-dense :disabled="sending" required md-selected="openContactDialog">
               <md-option v-for="item in types_clients_list" :key="item.id" :value="item.id">{{ item.nom }}</md-option>
             </md-select>
             <span class="md-error" v-if="!$v.form.type_client.required">Le type client est obligatoire</span>
@@ -22,9 +22,9 @@
 
       <!-- Entreprise et Titre -->
       <div class="md-layout md-gutter">
-        <div class="md-layout-item md-small-size-100 md-size-50">
+        <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.type_client === clients_types_config.personne_morale">
           <md-field>
-            <label for="entreprise">Entreprise</label>
+            <label for="entreprise">Nom de l'entreprise</label>
             <md-input name="entreprise" id="entreprise" v-model="form.entreprise" :disabled="sending" />
           </md-field>
         </div>
@@ -148,13 +148,6 @@
       </div>
 
       <!-- Date d'entrée -->
-      <div class="md-layout md-gutter">
-        <div class="md-layout-item md-small-size-100 md-size-25">
-          <md-datepicker v-model="form.entree" md-immediately :class="getValidationClass('entree')">
-            <label>Date d'entrée *</label>
-          </md-datepicker>
-        </div>
-      </div>
 
     </md-card-content>
 
@@ -167,10 +160,10 @@
   </md-card>
 
   <!-- Personnes travaillant dans une entreprise -->
-  <md-card v-if="form.type_client === clients_types_config.personne_morale">
+  <md-card v-if="mode==='edit' && form.type_client === clients_types_config.personne_morale">
     <md-card-header>
       <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-50 md-title">Contacts</div>
+        <div class="md-layout-item md-size-50 md-title">Personnes de contact au sein de l'entreprise</div>
         <div class="md-layout-item md-size-50" style="text-align: right;">
             <md-button class="md-primary" @click="openContactDialog()">Nouveau contact</md-button>
         </div>

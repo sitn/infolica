@@ -40,7 +40,6 @@ import { validationMixin } from 'vuelidate'
         fax: null,
         tel_portable: null,
         mail: null,
-        entree: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
         no_sap: null,
         no_bdp_bdee: null,
         co: null
@@ -60,7 +59,6 @@ import { validationMixin } from 'vuelidate'
     validations: {
       form: {
         type_client: { required },
-        entree: { required },
         mail: { email }
       }
     },
@@ -99,7 +97,6 @@ import { validationMixin } from 'vuelidate'
         this.form.fax = null;
         this.form.tel_portable = null;
         this.form.mail = null;
-        this.form.entree = null;
         this.form.no_sap = null;
         this.form.no_bdp_bdee = null;
         this.form.co = null;
@@ -137,6 +134,8 @@ import { validationMixin } from 'vuelidate'
         var url = process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT;
 
         if(this.mode === 'new'){
+          formData.append("entree", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
+
           this.$http.post(
             url, 
             formData,
@@ -146,7 +145,8 @@ import { validationMixin } from 'vuelidate'
             }
           )
           .then(response =>{
-            this.$router.push({ "name": "Clients" });
+            let client_id = JSON.parse(response.data).client_id;
+            this.$router.push({ "name": "ClientsEdit", params: {id: client_id}});
             this.handleSaveDataSuccess(response);
           })
           //Error 
@@ -156,8 +156,8 @@ import { validationMixin } from 'vuelidate'
           });
         }
         else{
-          var id = this.$route.params.id;
-          formData.append("id", id);
+          let client_id = this.$route.params.id;
+          formData.append("id", client_id);
           
           this.$http.put(
             url, 
@@ -168,7 +168,6 @@ import { validationMixin } from 'vuelidate'
             }
           )
           .then(response =>{
-            this.$router.push({ "name": "Clients" });
             this.handleSaveDataSuccess(response);
           })
           //Error 
@@ -187,18 +186,19 @@ import { validationMixin } from 'vuelidate'
           this.form.co = "c/o " + this.form.co;
         }
 
-        var formData = new FormData();
+        let formData = new FormData();
         formData.append("type_client", this.form.type_client);
         if (this.form.type_client === this.clients_types_config.personne_morale) {
           formData.append("titre", null);
           formData.append("nom", null);
           formData.append("prenom", null);
+          formData.append("entreprise", this.form.entreprise);
         } else {
           formData.append("titre", this.form.titre);
           formData.append("nom", this.form.nom);
           formData.append("prenom", this.form.prenom);
+          formData.append("entreprise", null);
         }
-        formData.append("entreprise", this.form.entreprise);
         formData.append("co", this.form.co || null);
         formData.append("adresse", this.form.adresse || null);
         formData.append("npa", this.form.npa || null);
@@ -210,7 +210,6 @@ import { validationMixin } from 'vuelidate'
         formData.append("mail", this.form.mail || null);
         formData.append("no_sap", this.form.no_sap || null);
         formData.append("no_bdp_bdee", this.form.no_bdp_bdee || null);
-        formData.append("entree", moment(this.form.entree, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
 
         return formData;
       },
@@ -223,7 +222,7 @@ import { validationMixin } from 'vuelidate'
           this.dataSaved = true;
           this.sending = false;
           this.$root.$emit("ShowMessage", "Le client a été enregistré avec succès");
-          this.clearForm();
+          // this.clearForm();
         }
       },
 
@@ -274,7 +273,6 @@ import { validationMixin } from 'vuelidate'
             this.form.fax = response.data.fax;
             this.form.tel_portable = response.data.tel_portable;
             this.form.mail = response.data.mail;
-            this.form.entree = moment(response.data.entree, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
             this.form.no_sap = response.data.no_sap;
             this.form.no_bdp_bdee = response.data.no_bdp_bdee;
           }
@@ -325,7 +323,9 @@ import { validationMixin } from 'vuelidate'
           };
         }
 
-        this.showDialogAddNewContact = true;
+        if (this.mode !== 'new' && this.form.type_client === this.clients_types_config.personne_morale) {
+          this.showDialogAddNewContact = true;
+        }
       },
 
       /**
@@ -410,7 +410,7 @@ import { validationMixin } from 'vuelidate'
 
       //If mode = edit, get the client
       if(this.mode === 'edit'){
-        var id = this.$route.params.id;
+        let id = this.$route.params.id;
         this.initEditData(id);
         this.initClientMoralPersonnes(id);
       }

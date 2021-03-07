@@ -6,6 +6,7 @@ from infolica.models import Constant
 from infolica.models.models import Client, ClientType, ClientMoralPersonne
 from infolica.scripts.utils import Utils
 
+import json
 from datetime import datetime
 
 
@@ -87,8 +88,9 @@ def clients_new_view(request):
     model = Utils.set_model_record(Client(), request.params)
 
     request.dbsession.add(model)
+    request.dbsession.flush()
 
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Client.__tablename__))
+    return json.dumps({'client_id': model.id})
 
 
 @view_config(route_name='clients', request_method='PUT', renderer='json')

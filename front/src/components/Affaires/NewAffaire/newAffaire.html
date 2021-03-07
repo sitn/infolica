@@ -187,11 +187,11 @@
                 </div>
             </div>
             
-            <div style="text-align: right;">
-                <md-button class="md-primary md-dense md-elevation-3" @click="initClientsList">Recharger la liste des clients <md-icon>replay</md-icon></md-button>
-            </div>
             
             <div v-if="showClientsForm">
+                <div style="text-align: right;">
+                    <md-button class="md-primary md-dense md-elevation-3" @click="initClientsList">Recharger la liste des clients <md-icon>replay</md-icon></md-button>
+                </div>
 
                 <!-- Client DEMANDEUR et ligne complément -->
                 <div class="md-layout md-gutter md-alignment-center-left">
@@ -356,7 +356,7 @@
                 <div class="md-layout-item md-small-size-100">
                     <autocomplete
                     ref="autocomplete"
-                    placeholder="Rechercher un bien-fond"
+                    placeholder="Rechercher un bien-fonds"
                     :source="searchSITNEndpoint"
                     input-class="form-control"
                     results-property="features"
