@@ -433,7 +433,6 @@ export default {
                                          this.typesAffaires_conf.ppe].includes(this.affaire.type_id),
 
         reservation_numeros_mo: [this.typesAffaires_conf.mutation, 
-                                 this.typesAffaires_conf.pcop,
                                  this.typesAffaires_conf.autre,
                                  this.typesAffaires_conf.cadastration,
                                  this.typesAffaires_conf.revision_abornement,

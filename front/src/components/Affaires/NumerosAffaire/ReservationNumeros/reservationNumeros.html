@@ -40,7 +40,7 @@
                         <span class="md-error" v-if="!$v.form.numeroBase.required">Le numéro de base est obligatoire</span>
 
                         <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                            L'immeuble "{{ term }}" n'existe pas encore dans la BD. <md-button class="md-raised md-primary" @click="createNumeroBase()">Le créer</md-button>
+                            L'immeuble "{{ term }}" n'existe pas encore dans la BD. <br> <md-button class="md-raised md-primary" @click="createNumeroBase()">Le créer</md-button>
                         </template>
                     </md-autocomplete>
                 </div>
