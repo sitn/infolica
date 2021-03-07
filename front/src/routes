@@ -16,7 +16,7 @@ const routes = [
     { path: '/', component: Cockpit, redirect:'/cockpit', name: 'Home' },    
     { path: '/affaires', component: Affaires, name: 'Affaires' },
     { path: '/affaires/:id', component: AffairesDashboard, name: 'AffairesDashboard' },
-    { path: '/affaires_new', component: NewAffaire, name: 'NewAffaire' },
+    { path: '/affaires/new', component: NewAffaire, name: 'NewAffaire' },
     { path: '/clients', component: Clients, name: 'Clients' },
     { path: '/clients/new', component: ClientsEdit, name: 'ClientsNew' },
     { path: '/clients/edit/:id', component: ClientsEdit, name: 'ClientsEdit' },
