@@ -102,7 +102,8 @@ export default {
       },
       role_conf: {
         ppe_user_id: Number(process.env.VUE_APP_PPE_ROLE_ID),
-        mo_user_id: Number(process.env.VUE_APP_MO_ROLE_ID)
+        mo_user_id: Number(process.env.VUE_APP_MO_ROLE_ID),
+        secretariat_user_id: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)
       }
     };
   },
@@ -241,7 +242,7 @@ export default {
             let type_filter = [];
             // Only suggest affaire types to which user has rights
             let userRoleID = getCurrentUserRoleId()
-            if (userRoleID && [this.role_conf.ppe_user_id, this.role_conf.mo_user_id].includes(userRoleID)) {
+            if (userRoleID && [this.role_conf.secretariat_user_id, this.role_conf.mo_user_id, this.role_conf.ppe_user_id].includes(userRoleID)) {
               if (checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION)) {
                 type_filter.push(this.typesAffaires_conf.ppe);
                 type_filter.push(this.typesAffaires_conf.modification);
@@ -255,9 +256,16 @@ export default {
               if (checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION)) {
                 type_filter.push(this.typesAffaires_conf.retablissement_pfp3);
               }
+              if (checkPermission(process.env.VUE_APP_AFFAIRE_PCOP_EDITION)) {
+                type_filter.push(this.typesAffaires_conf.pcop);
+              }
+              if (checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION)) {
+                type_filter.push(this.typesAffaires_conf.autre);
+              }
               if (type_filter.length>0) {
                 tmp = tmp.filter(x => type_filter.includes(x.id));
               }
+              
             }
             this.types_affaires_list_bk = tmp;
             this.types_affaires_list = stringifyAutocomplete(tmp);

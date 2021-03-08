@@ -8,3 +8,4 @@ class CustomError(Exception):
     RECORD_WITH_ID_NOT_FOUND = '{} with id {} not found'
     UPDATE_NO_CHANGE_RECORDED = "No change recorded for id {} in table {}"
     NOT_FOUND_ERROR = "Route {} with method {} not found"
+    RESERVATION_NUMBER_WITHOUT_BASE_NUMBER = "Manque le numéro de base lors de la réservation de numéros de DDP, PPE ou PCOP"

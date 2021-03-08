@@ -34,7 +34,12 @@ export default {
         showMatdiff_secr: false,
         showMatdiff_mo: false,
         showPPE: false,
-    }
+        role: {
+            secretaire: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID),
+            mo: Number(process.env.VUE_APP_MO_ROLE_ID),
+            ppe: Number(process.env.VUE_APP_PPE_ROLE_ID)
+        },
+    };
   },
 
   methods: {
@@ -47,21 +52,22 @@ export default {
             
             this.newAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION) ||
                                      checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION) ||
-                                     checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION);
+                                     checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_PCOP_EDITION) ||
+                                     checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION);
             
             //Check if role secretaire
             let role_id = getCurrentUserRoleId();
-            if ( role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
+            if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.secretaire  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
                 this.showMatdiff_secr = true;
             } 
             
             //Check if role MO
-            if ( role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_MO_ROLE_ID)  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
+            if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.mo  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
                 this.showMatdiff_mo = true;
             }
             
             //Check if role PPE
-            if ( role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_PPE_ROLE_ID)  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
+            if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.ppe  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
                 this.showPPE = true;
             }
 
@@ -199,7 +205,7 @@ export default {
 
                 // set operateur by default if he is chef_equipe
                 let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
-                if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe)) {
+                if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe) && currentUserID !== this.role.secretaire) {
                     this.selectedOperateur_id = Number(currentUserID);
                 }
 

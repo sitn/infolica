@@ -221,6 +221,12 @@ def affaires_new_view(request):
     # Affaire de rétablissement de PFP3
     elif affaire_type == request.registry.settings['affaire_type_retablissement_pfp3_id']:
         permission = request.registry.settings['affaire_retablissement_pfp3_edition']
+    # Affaire pcop
+    elif affaire_type == request.registry.settings['affaire_type_part_copropriete_id']:
+        permission = request.registry.settings['affaire_pcop_edition']
+    # Affaire autre
+    elif affaire_type == request.registry.settings['affaire_type_autre_id']:
+        permission = request.registry.settings['affaire_autre_edition']
 
     # Check authorization
     if not Utils.has_permission(request, permission):

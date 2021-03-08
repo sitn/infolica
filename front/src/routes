@@ -15,7 +15,7 @@ import Cockpit from './components/Cockpit/Cockpit.vue'
 const routes = [
     { path: '/', component: Cockpit, redirect:'/cockpit', name: 'Home' },    
     { path: '/affaires', component: Affaires, name: 'Affaires' },
-    { path: '/affaires/:id', component: AffairesDashboard, name: 'AffairesDashboard' },
+    { path: '/affaires/edit/:id', component: AffairesDashboard, name: 'AffairesDashboard' },
     { path: '/affaires/new', component: NewAffaire, name: 'NewAffaire' },
     { path: '/clients', component: Clients, name: 'Clients' },
     { path: '/clients/new', component: ClientsEdit, name: 'ClientsNew' },
