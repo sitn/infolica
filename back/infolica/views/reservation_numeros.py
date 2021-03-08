@@ -47,6 +47,11 @@ def reservation_numeros_new_view(request):
     numero_relation_ddp_id = int(settings['numero_relation_ddp_id'])
     numero_relation_ppe_id = int(settings['numero_relation_ppe_id'])
     numero_relation_pcop_id = int(settings['numero_relation_pcop_id'])
+    
+
+    if type_id in [numero_ddp_id, numero_ppe_id, numero_pcop_id] and numero_base_id is None:
+        raise CustomError(CustomError.RESERVATION_NUMBER_WITHOUT_BASE_NUMBER)
+
 
     # Définit la relation entre le numéro de base et le numéro associé
     # + Récupère l'id du suffixe de l'unité PPE de départ

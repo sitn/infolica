@@ -105,8 +105,13 @@ export default {
       formData.append("nombre", this.form.nombre);
       formData.append("cadastre_id", this.form.cadastre.id);
       formData.append("etat_id", Number(process.env.VUE_APP_NUMERO_PROJET_ID));
-      if ((this.affaire.type_id === this.typesAffaires_conf.ppe || this.affaire.type_id === this.typesAffaires_conf.pcop) && this.form.numeroBase !== null && this.form.numeroBase.id) {
-        formData.append("numero_base_id", this.form.numeroBase.id);
+      if ((this.affaire.type_id === this.typesAffaires_conf.ppe || this.affaire.type_id === this.typesAffaires_conf.pcop)) {
+        if (this.form.numeroBase && this.form.numeroBase.id) {
+          formData.append("numero_base_id", this.form.numeroBase.id);
+        } else {
+          this.$root.$emit("ShowError", "Le numéro de base a été mal saisi. Il faut le sélectioner dans la liste (pas seulement l'écrire).");
+          return;
+        }
       }
       if (this.affaire.type_id === this.typesAffaires_conf.ppe && this.form.ppe_suffixe_start !== null) {
         formData.append("ppe_suffixe_start", this.form.ppe_suffixe_start);
@@ -137,7 +142,7 @@ export default {
         .catch(err => {
           handleException(err, this);
         });
-      // this.showReservationDialog = false;
+      this.showReservationDialog = false;
       this.initializeForm();
     },
 
@@ -180,8 +185,6 @@ export default {
       this.$v.$touch();
 
       if (!this.$v.$invalid) {
-        this.showReservationDialog = false;
-      
         this.form.nombre = Number(this.form.nombre);
         if (this.form.nombre >= 10) {
           this.alertReservation.text = "En cliquant sur 'confirmer', " + this.form.nombre + " numéros de bien-fonds vont être réservés."
