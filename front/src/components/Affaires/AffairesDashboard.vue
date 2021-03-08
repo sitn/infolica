@@ -181,6 +181,10 @@ export default {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION) && !_this.parentAffaireReadOnly;
           } else if (_this.affaire.type_id === _this.typesAffaires_conf.retablissement_pfp3) {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION) && !_this.parentAffaireReadOnly;
+          } else if (_this.affaire.type_id === _this.typesAffaires_conf.pcop) {
+            _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_PCOP_EDITION) && !_this.parentAffaireReadOnly;
+          } else if (_this.affaire.type_id === _this.typesAffaires_conf.autre) {
+            _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION) && !_this.parentAffaireReadOnly;
           }
 
           //Check if role secretaire
