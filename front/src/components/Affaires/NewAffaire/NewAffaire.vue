@@ -30,7 +30,6 @@ export default {
       affaire_numeros_nouveaux: [],
       cadastres_list: [],
       client_facture: null,
-      client_facture_co: null,
       client_facture_complement: null,
       client_facture_premiere_ligne: null,
       clients_list: [],
@@ -74,7 +73,6 @@ export default {
       selectedNouveauxNumeros: [],
       sending: false,
       showClientsForm: true,
-      show_co: false,
       sitn_search_categories: null,
       types_affaires_list_bk: [],
       types_affaires_list: [],
@@ -111,7 +109,6 @@ export default {
   validations() {
     let form = {};
     let client_facture = {};
-    let client_facture_co = {};
 
     if (this.showClientsForm) {
       form = {
@@ -128,12 +125,6 @@ export default {
       client_facture = {
         id: {required}
       };
-  
-      if (this.show_co) {
-        client_facture_co = {
-          id : { required }
-        }
-      }
 
     } else {
       form = {
@@ -150,7 +141,7 @@ export default {
       form.affaire_modif_type = {required}  
     }
 
-    return {form, client_facture, client_facture_co}
+    return {form, client_facture}
   },
 
   methods: {
@@ -461,7 +452,7 @@ export default {
         formData.append("client_commande_id", this.form.client_commande.id);
       }
       if (this.form.client_commande_complement && this.showClientComplement(this.form.client_commande)) {
-        formData.append("client_commande_complement", "À l'att. de " + this.form.client_commande_complement);
+        formData.append("client_commande_complement", this.form.client_commande_complement);
       }
       if (this.form.client_envoi && this.form.client_envoi.id) {
         formData.append("client_envoi_id", this.form.client_envoi.id);
@@ -504,13 +495,10 @@ export default {
       if (this.client_facture && this.client_facture.id){
         formData.append("facture_client_id", this.client_facture.id);
         if (this.client_facture_complement !== null) {
-          formData.append("facture_client_complement", "À l'att. de " + this.client_facture_complement);
+          formData.append("facture_client_complement", this.client_facture_complement);
         }
         if (this.client_facture_premiere_ligne !== null) {
           formData.append("facture_client_premiere_ligne", this.client_facture_premiere_ligne);
-        }
-        if (this.show_co && this.client_facture_co !== null && this.client_facture_co.id !== null) {
-          formData.append("facture_client_co_id", this.client_facture_co.id);
         }
       }
 
@@ -1056,7 +1044,7 @@ export default {
           ).then(response => {
             if (response && response.data) {
               let tmp = [];
-              response.data.forEach(x => tmp.push([x.titre, x.nom, x.prenom].filter(Boolean).join(" ")));
+              response.data.forEach(x => tmp.push([x.titre, x.prenom, x.nom].filter(Boolean).join(" ")));
               this.client_moral_personnes[client_type] = tmp;
               resolve(tmp);
             }

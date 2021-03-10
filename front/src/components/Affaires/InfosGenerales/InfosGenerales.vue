@@ -14,7 +14,9 @@ export default {
   name: "InfosGénérales",
   props: {
     typesAffaires_conf: {type: Object},
-    affaire: {type: Object}
+    affaire: {type: Object},
+    clientTypes_conf: {type: Object},
+    permission: {type: Object}
     },
   components: {},
   data() {
@@ -34,6 +36,7 @@ export default {
         selected_adress: ''
       },
       clientsListe: [],
+      clientsListe_bk: [],
       searchClientsListe: [],
       form: {
         technicien: null,
@@ -55,6 +58,7 @@ export default {
       getClients()
         .then(response => {
           if (response && response.data) {
+            this.clientsListe_bk = response.data;
             this.clientsListe = response.data.map(x => ({
               id: x.id,
               nom: x.adresse_,
@@ -324,40 +328,28 @@ export default {
 
             // construct adresses list
             let adress = "";
-            if (x.client_premiere_ligne !== null) {
-              // Cas hoirie, PPE ou personne représentée (par)
+            if (x.client_type_id === this.clientTypes_conf.moral) {
               adress = [
                 x.client_premiere_ligne,
-                x.client_entreprise !== null?
-                  ["Par " + x.client_entreprise, x.client_complement !== null? x.complement:
-                    [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" ")].filter(Boolean).join(", "):
-                  "Par " + [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
+                [(x.client_premiere_ligne? "Par" : null), x.client_entreprise].filter(Boolean).join(" "),
                 x.client_co,
                 x.client_adresse,
                 x.client_case_postale,
                 [x.client_npa, x.client_localite].filter(Boolean).join(" ")
               ].filter(Boolean).join("\n");
-            } else if (x.client_co_id !== null) {
-              // Cas envoi adresse différente de celle du débiteur
-              adress = [
-                [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
-                ["c/o", x.client_co_titre, x.client_co_nom, x.client_co_prenom].filter(Boolean).join(" "),
-                x.client_co_co,
-                x.client_co_adresse,
-                x.client_co_case_postale,
-                [x.client_co_npa, x.client_co_localite].filter(Boolean).join(" ")
-              ].filter(Boolean).join("\n");
             } else {
-              // Cas adresse facturation = adresse débiteur
               adress = [
-                x.client_entreprise,
-                x.client_complement? x.client_complement: [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
+                x.client_premiere_ligne,
+                [x.client_premiere_ligne? "Par" : null, x.client_titre, x.client_prenom, x.client_nom].filter(Boolean).join(" "),
                 x.client_co,
                 x.client_adresse,
                 x.client_case_postale,
                 [x.client_npa, x.client_localite].filter(Boolean).join(" ")
               ].filter(Boolean).join("\n");
             }
+
+
+
             
             this.clientsFacture.adressList.push({
               id: x.client_id,
@@ -392,7 +384,21 @@ export default {
     openAffaire(affaire_id) {
       this.$router.replace({ name: "AffairesDashboard", params: {id: affaire_id}});
       this.$router.go(0);
-    }
+    },
+
+
+    /**
+     * Affiche le complément client si le client est une entreprise
+     */
+    showClientComplement(client) {
+      if (client && client.id) {
+        let tmp = this.clientsListe_bk.filter(x => x.id === client.id)[0];
+        if (tmp.client_type === this.clientTypes_conf.morale) {
+          return true;
+        }
+      }
+      return false;
+    },
 
   },
 

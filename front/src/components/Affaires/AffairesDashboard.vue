@@ -92,6 +92,10 @@ export default {
         envoi: Number(process.env.VUE_APP_ETAPE_ENVOI_ID),
         fin_processus: Number(process.env.VUE_APP_FIN_PROCESSUS_ID)
       },
+      clientTypes_conf: {
+        physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID),
+        moral: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID),
+      },
       showMovePointComment: false,
       // numeros_base_associes = []
     };
@@ -115,25 +119,38 @@ export default {
           )
           .then(response => {
             if (response.data) {
-              var obj = response.data;
+              let obj = response.data;
 
               obj["client_commande_nom_"] = [
                 obj.client_commande_entreprise,
-                obj.client_commande_complement? obj.client_commande_complement: [obj.client_commande_titre, obj.client_commande_nom, obj.client_commande_prenom].filter(Boolean).join(" "),
+                obj.client_commande_complement? "(" + obj.client_commande_complement.replace("À l'att. de ", '') + ")": [obj.client_commande_titre, obj.client_commande_prenom, obj.client_commande_nom].filter(Boolean).join(" "),
                 obj.client_commande_co,
                 obj.client_commande_adresse,
                 obj.client_commande_case_postale,
                 [obj.client_commande_npa, obj.client_commande_localite].filter(Boolean).join(" ")]
                 .filter(Boolean).join("\n");
 
-              obj["client_envoi_nom_"] = [
-                obj.client_envoi_entreprise,
-                obj.client_envoi_complement !== null? obj.client_envoi_complement: [obj.client_envoi_titre, obj.client_envoi_nom, obj.client_envoi_prenom].filter(Boolean).join(" "),
-                obj.client_envoi_co,
-                obj.client_envoi_adresse,
-                obj.client_envoi_case_postale,
-                [obj.client_envoi_npa, obj.client_envoi_localite].filter(Boolean).join(" ")]
-                .filter(Boolean).join("\n");
+              // Client d'envoi
+              let adresse_ = ""
+              if (obj.client_envoi_type_id === this.clientTypes_conf.moral) {
+                adresse_ = [
+                  obj.client_envoi_entreprise,
+                  obj.client_envoi_co,
+                  obj.client_envoi_adresse,
+                  obj.client_envoi_case_postale,
+                  [obj.client_envoi_npa, obj.client_envoi_localite].filter(Boolean).join(" ")
+                ].filter(Boolean);
+              } else {
+                adresse_ = [
+                  [obj.client_envoi_titre, obj.client_envoi_prenom, obj.client_envoi_nom].filter(Boolean).join(" "),
+                  obj.client_envoi_co,
+                  obj.client_envoi_adresse,
+                  obj.client_envoi_case_postale,
+                  [obj.client_envoi_npa, obj.client_envoi_localite].filter(Boolean).join(" ")
+                ].filter(Boolean);
+              }
+
+              obj["client_envoi_nom_"] = adresse_.join("\n");
 
               obj["technicien"] = [obj.technicien_prenom, obj.technicien_nom]
                 .filter(Boolean).join(" ");
@@ -187,15 +204,18 @@ export default {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION) && !_this.parentAffaireReadOnly;
           }
 
-          //Check if role secretaire
-          if(_this.parentAffaireReadOnly){
-            let role_id = getCurrentUserRoleId();
-            
-            if(role_id && !isNaN(role_id) && 
-              Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID) &&
-              checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION)){
-                _this.permission.editFactureAllowed = true;
-            }
+          //Check if role secretaire or MO
+          let role_id = getCurrentUserRoleId();
+          
+          // Secrétariat peut modifier des factures à tout moment
+          if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)) {
+            _this.permission.editFactureAllowed = true;
+            _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
+          }
+
+          // Opérateur MO peut modifier les informations générales de l'affaire
+          if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_MO_ROLE_ID)) {
+            _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
 
           // If admin, allow edit

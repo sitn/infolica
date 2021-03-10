@@ -215,7 +215,7 @@
                         <md-autocomplete v-model="form.client_commande_complement"
                             :md-options="client_moral_personnes.commande"
                             md-dense>
-                            <label>À l'attention de...</label>
+                            <label>Personne de contact</label>
                             <template slot="md-autocomplete-empty" slot-scope="{ term }">
                                 Le contact "{{ term }}" n'existe pas dans la base. <a @click="openCreateContact(form.client_commande.id)">Le créer !</a>
                             </template>
@@ -224,7 +224,7 @@
                 </div>
                 
                 <!-- v-ref -->
-                <div class="md-layout md-gutter">
+                <!-- <div class="md-layout md-gutter">
                     <div class="md-layout-item md-small-size-100 md-size-50">
                         <md-field :class="getValidationClass($v.form.vref)">
                             <label for="vref">v/ref</label>
@@ -233,7 +233,7 @@
                     </div>
                 </div>
 
-                <br>
+                <br> -->
                 <md-divider style="background-color: blue;"></md-divider>
                 
                 <!-- Client ENVOI et ligne complément -->
@@ -305,23 +305,6 @@
                         </md-autocomplete>
                     </div>
                     
-                    <div class="md-layout-item md-size-100">
-                        <md-checkbox v-model="show_co">c/o (Envoyer à une adresse différente du débiteur)</md-checkbox>
-                    </div>
-                    <div class="md-layout-item md-small-size-100 md-size-100" v-if="show_co">
-                        <md-autocomplete v-model="client_facture_co"
-                            :md-options="search_clients_list" md-dense
-                            :class="getValidationClass($v.client_facture_co.id)"
-                            @md-changed="searchClients(client_facture_co)"
-                            required>
-                            <label>c/o</label>
-                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
-                            </template>
-                            <span class="md-error" v-if="!$v.client_facture.id.required">L'adresse c/o est
-                                obligatoire</span>
-                        </md-autocomplete>
-                    </div>
                 </div>
                 
                 
