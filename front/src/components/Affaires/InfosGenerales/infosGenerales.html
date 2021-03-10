@@ -63,8 +63,7 @@
             </div>
 
 
-            <!-- <div id="clients" v-if="affaire.type_id !== typesAffaires_conf.cadastration"> -->
-            <div id="clients">
+            <div id="clients" v-if="affaire.type_id !== typesAffaires_conf.cadastration">
                 <!-- Clients (read-only) -->
                 <div class="md-layout md-gutter" v-if="infoGenReadonly">
                     <div class="md-layout-item md-size-50 md-small-size-100">
@@ -97,7 +96,9 @@
                             </ul>
                         </md-field>
                     </div>
-
+                </div>
+                    
+                <div class="md-layout md-gutter" v-if="infoGenReadonly">
                     <div class="md-layout-item md-size-50 md-small-size-100">
                         <!-- select pour le client facture à afficher -->
                         <md-field>
@@ -106,12 +107,12 @@
                                 <md-option v-for="item in clientsFacture.selectList" :key="item.id" :value="item.id">{{ item.nom }}</md-option>
                             </md-select>
                         </md-field>
-
-                        <md-field>
+                        
+                        <!-- <md-field>
                             <label v-if="infoGenReadonly">v/ref</label>
                             <label v-else><strong style="color: blue">v/ref</strong></label>
                             <md-input v-model="affaire.vref" :readonly="infoGenReadonly"></md-input>
-                        </md-field>
+                        </md-field> -->
                     </div>
 
                     <div class="md-layout-item md-size-50 md-small-size-100">
@@ -141,9 +142,9 @@
                                     </template>
                                 </md-autocomplete>
                             </div>
-                            <div class="md-layout-item md-size-50 md-small-size-100">
+                            <div class="md-layout-item md-size-50 md-small-size-100"  v-if="showClientComplement(form.client_commande)">
                                 <md-field>
-                                    <label>À l'attention de...</label>
+                                    <label>Personne de contact</label>
                                     <md-input v-model="form.client_commande_complement"></md-input>
                                 </md-field>
                             </div>
@@ -163,7 +164,7 @@
                                     </template>
                                 </md-autocomplete>
                             </div>
-                            <div class="md-layout-item md-size-50 md-small-size-100">
+                            <div class="md-layout-item md-size-50 md-small-size-100" v-if="showClientComplement(form.client_envoi)">
                                 <md-field>
                                     <label>À l'attention de...</label>
                                     <md-input v-model="form.client_envoi_complement"></md-input>
@@ -193,7 +194,7 @@
                     </md-field>
                 </div>
 
-                <div class="md-layout-item md-size-25 md-small-size-100">
+                <div class="md-layout-item md-size-25 md-small-size-100" v-if="affaire.date_validation">
                     <md-field>
                         <label>Date de validation</label>
                         <md-input v-model="affaire.date_validation" readonly></md-input>
@@ -217,7 +218,7 @@
                 <div class="md-layout-item">
                     <div class="md-layout md-alignment-bottom-right">
                         <div v-if="infoGenReadonly">
-                            <md-button class="md-elevation-5 md-dense md-primary" v-if="!affaireReadonly" @click="openEditMode">Modifier
+                            <md-button class="md-elevation-5 md-dense md-primary" v-if="permission.editAffaireAllowed" @click="openEditMode">Modifier
                             </md-button>
                         </div>
                         <div v-else>

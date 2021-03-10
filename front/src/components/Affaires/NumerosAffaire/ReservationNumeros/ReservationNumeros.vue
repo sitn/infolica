@@ -53,6 +53,7 @@ export default {
 
   // Validations
   validations() {
+    // Réservation de numéros
     let form = {
       cadastre: { required },
       nombre: { 
@@ -178,7 +179,7 @@ export default {
     },
 
     /**
-     * Confirmer l'édition de la facture et l'enregistrer
+     * Confirmer l'édition de la réservation et l'enregistrer
      */
     onConfirmReservationNumeros() {
       
@@ -234,7 +235,7 @@ export default {
     createNumeroBase() {
       this.newNumeroBase = {
         cadastre: this.form.cadastre,
-        numero: this.form.numeroBase,
+        numero: null,
         type_id: 1,
         suffixe: null
       };
@@ -244,7 +245,7 @@ export default {
     },
 
     /**
-     * confirm create Numero base
+     * create Numero base
      */
     async onConfirmCreateNumeroBase() {
       var formData = new FormData();

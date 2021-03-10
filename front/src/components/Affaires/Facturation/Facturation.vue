@@ -22,7 +22,8 @@ export default {
   props: {
     affaire: Object,
     typesAffaires_conf: Object,
-    permission: Object
+    permission: Object,
+    clientTypes_conf: Object
     },
   data: () => {
     return {
@@ -62,7 +63,6 @@ export default {
         remarque: null,
         sap: null
       },
-      show_co: false,
       showNewFactureBtn: false,
       showFactureDialog: false
     }
@@ -70,30 +70,15 @@ export default {
 
   // Validations
   validations() {
-    let selectedFacture = {};
-
-    if (this.show_co) {
-      selectedFacture = {
-        date: { required },
-        client: { required },
-        montant_mo: { required },
-        montant_mat_diff: { required },
-        montant_rf: { required },
-        montant_tva: { required },
-        montant_total: { required },
-        client_co: {required}
-      };
-    } else {
-      selectedFacture = {
-        date: { required },
-        client: { required },
-        montant_mo: { required },
-        montant_mat_diff: { required },
-        montant_rf: { required },
-        montant_tva: { required },
-        montant_total: { required }
-      };
-    }
+    let selectedFacture = {
+      date: { required },
+      client: { required },
+      montant_mo: { required },
+      montant_mat_diff: { required },
+      montant_rf: { required },
+      montant_tva: { required },
+      montant_total: { required }
+    };
 
     return { selectedFacture };
   },
@@ -134,61 +119,29 @@ export default {
               }
 
               // Composer l'adresse de facturation
-              x.adresse_facturation_ = "";
-              if (x.client_premiere_ligne !== null) {
-                // Cas hoirie, PPE ou personne représentée (par)
-                x.adresse_facturation_ = [
+              let adresse_ = ""
+              if (x.client_type_id === this.clientTypes_conf.moral) {
+                adresse_ = [
                   x.client_premiere_ligne,
-                  x.client_entreprise !== null?
-                    ["Par " + x.client_entreprise, x.client_complement !== null? x.complement:
-                      [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" ")].filter(Boolean).join(", "):
-                    "Par " + [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
+                  [(x.client_premiere_ligne? "Par" : null), x.client_entreprise].filter(Boolean).join(" "),
                   x.client_co,
                   x.client_adresse,
                   x.client_case_postale,
                   [x.client_npa, x.client_localite].filter(Boolean).join(" ")
-                ].filter(Boolean).join(", ");
-              } else if (x.client_co_id !== null) {
-                // Cas envoi adresse différente de celle du débiteur
-                x.adresse_facturation_ = [
-                  [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
-                  ["c/o", x.client_co_titre, x.client_co_nom, x.client_co_prenom].filter(Boolean).join(" "),
-                  x.client_co_co,
-                  x.client_co_adresse,
-                  x.client_co_case_postale,
-                  [x.client_co_npa, x.client_co_localite].filter(Boolean).join(" ")
-                ].filter(Boolean).join(", ");
+                ].filter(Boolean);
               } else {
-                // Cas adresse facturation = adresse débiteur
-                x.adresse_facturation_ = [
-                  x.client_entreprise,
-                  x.client_complement? x.client_complement: [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
+                adresse_ = [
+                  x.client_premiere_ligne,
+                  [x.client_premiere_ligne? "Par" : null, x.client_titre, x.client_prenom, x.client_nom].filter(Boolean).join(" "),
                   x.client_co,
                   x.client_adresse,
                   x.client_case_postale,
                   [x.client_npa, x.client_localite].filter(Boolean).join(" ")
-                ].filter(Boolean).join(", ");
+                ].filter(Boolean);
               }
-
               
-              x.client_ = [
-                x.client_entreprise,
-                x.client_complement,
-                [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" "),
-                x.client_co,
-                x.client_adresse,
-                x.client_case_postale,
-                [x.client_npa, x.client_localite].filter(Boolean).join(" ")
-              ].filter(Boolean).join(", ");
+              x.adresse_facturation_ = adresse_.join(", ");
               
-              x.client_co_ = [
-                [x.client_co_titre, x.client_co_nom, x.client_co_prenom].filter(Boolean).join(" "),
-                x.client_co_entreprise,
-                x.client_co_co,
-                x.client_co_adresse,
-                x.client_co_case_postale,
-                [x.client_co_npa, x.client_co_localite].filter(Boolean).join(" ")
-              ].filter(Boolean).join(", ");
             });
 
             this.affaire_devis = tmp.filter(x => x.type_id === this.configFactureTypeID.devis);
@@ -263,14 +216,13 @@ export default {
      * Edit facture
      */
     openFactureEdition(data) {
-      let tmp = this.affaire_factures.filter(x => x.id === data.id).pop();
-      this.show_co = tmp.client_co_id !== null? true: false;
+      let tmp = this.affaire_factures.filter(x => x.id === data.id)[0];
       this.selectedFacture = {
         id: tmp.id,
         sap: tmp.sap,
         date: tmp.date !== null? tmp.date: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
         client: this.clients_liste.filter(x => x.id === data.client_id).pop(),
-        client_: tmp.client_,
+        adresse_facturation_: tmp.adresse_facturation_,
         client_co: data.client_co_id? this.clients_liste.filter(x => x.id === data.client_co_id).pop(): null,
         client_complement: tmp.client_complement,
         client_premiere_ligne: tmp.client_premiere_ligne,
@@ -281,6 +233,7 @@ export default {
         montant_total: numeral(tmp.montant_total).format('0.00'),
         numeros: tmp.numeros,
         remarque: tmp.remarque,
+        type_id: tmp.type_id,
       }
       this.showFactureDialog = true;
     },
@@ -362,12 +315,6 @@ export default {
         formData.append("client_id", this.selectedFacture.client.id);
       }
       
-      if (this.selectedFacture.client_co !== null && this.selectedFacture.client_co.id) {
-        formData.append("client_co_id", this.selectedFacture.client_co.id);
-      } else {
-        formData.append("client_co_id", null);
-      }
-
       if (this.selectedFacture.montant_mo) {
         formData.append("montant_mo", this.selectedFacture.montant_mo);
       }
@@ -517,7 +464,7 @@ export default {
      */
     showClientComplement(client) {
       if (client && client.id) {
-        let tmp = this.clients_liste_type.filter(x => x.id === client.id).pop();
+        let tmp = this.clients_liste_type.filter(x => x.id === client.id)[0];
         if (tmp.type_id === this.clients_types_config.personne_morale) {
           return true;
         }
@@ -529,8 +476,19 @@ export default {
      * Generate documents cadastration
      */
     generateDocuments(facture) {
+      
+      let numeros = [];
+      if (facture.numeros.length > 0) {
+        facture.numeros.forEach(facture_numero => numeros.push(facture_numero));
+        
+        if (numeros.length > 1) {
+          numeros = numeros.sort((a, b) => {a-b});
+        }
+      }
+      facture.numeros_ = numeros.join(", ");
+
       this.generateLettreProprietaire(facture);
-      this.generateReqRF();
+      this.generateReqRF(facture);
     },
 
     /**
@@ -552,10 +510,9 @@ export default {
       formData.append("values", JSON.stringify({
         "ADRESSE_PROPRIETAIRE": facture.adresse_facturation_.replace(/, /gi, "\n"),
         "NREF": this.affaire.id,
-        "VREF": "__A_MODIFIER__",
         "DATE_ENVOI": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
-        "TITRE": facture.client_titre,
-        "BIEN_FONDS": "__A_MODIFIER__",
+        "TITRE": "Madame, Monsieur,",
+        "BIEN_FONDS": facture.numeros_,
         "CADASTRE": this.affaire.cadastre,
         "NO_NOTE_FRAIS": facture.sap,
         "MONTANT": facture.montant_total
@@ -567,8 +524,8 @@ export default {
     /**
      * Générer réquisition pour le RF (Cadastration)
      */
-    async generateReqRF() {
-      let formData = this.fillDataReqRF();
+    async generateReqRF(facture) {
+      let formData = this.fillDataReqRF(facture);
       getDocument(formData).then(response => {
         this.$root.$emit("ShowMessage", "Le fichier '" + response + "' se trouve dans le dossier 'Téléchargement'")
       }).catch(err => handleException(err, this));
@@ -577,14 +534,14 @@ export default {
     /**
      * Remplir le formulaire pour la requisition au RF (cadastration)
      */
-    fillDataReqRF() {
+    fillDataReqRF(facture) {
       let formData = new FormData();
       formData.append("template", "ReqCad");
       formData.append("values", JSON.stringify({
         "ANNEE": new Date().getFullYear(),
         "DATE_PLAN_ORIGINE": "JJ.MM.AAAA",
         "DATE_PLAN_CADASTRATION": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
-        "BIEN_FONDS": "__A_MODIFIER__",
+        "BIEN_FONDS": facture.numeros_,
         "CADASTRE": this.affaire.cadastre,
         "DATE": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
       }));

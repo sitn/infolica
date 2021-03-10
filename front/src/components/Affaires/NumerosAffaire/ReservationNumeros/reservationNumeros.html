@@ -31,20 +31,16 @@
                                                              (affaire.reservation_numeros_types_id.includes(types_numeros.ppe) ||
                                                              affaire.reservation_numeros_types_id.includes(types_numeros.pcop)) ||
                                                              (affaire.type_id===typesAffaires_conf.modification_ppe)">
-                    <md-autocomplete :md-options="numerosBaseListeFiltered"
-                        v-model="form.numeroBase"
-                        @md-changed="filterNumeroBase"
-                        :class="getValidationClass('numeroBase')"
-                        md-dense>
+                    
+                    
+                    <md-field :class="getValidationClass('numeroBase')">
                         <label>Bien-fonds de base</label>
+                        <md-select v-model="form.numeroBase" md-dense>
+                            <md-option v-for="item in numerosBaseListeFiltered" :value="item">{{ item.nom }}</md-option>
+                        </md-select>
                         <span class="md-error" v-if="!$v.form.numeroBase.required">Le numéro de base est obligatoire</span>
-
-                        <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                            L'immeuble "{{ term }}" n'existe pas encore dans la BD. <br> <md-button class="md-raised md-primary" @click="createNumeroBase()">Le créer</md-button>
-                        </template>
-
-                        <span class="md-helper-text">IMPORTANT: sélectionner le numéro dans la liste, l'écrire ne suffit pas.</span>
-                    </md-autocomplete>
+                    </md-field>
+                    <span class="md-helper-text">Le BF de base n'apparaît pas dans la liste? <md-button class="md-primary md-raised md-dense" @click="createNumeroBase()">Le créer !</md-button></span>
                 </div>
                 
                 <div class="md-layout-item md-size-50" v-if="affaire.reservation_numeros_types_id !== null &&
@@ -94,7 +90,7 @@
                 <div class="md-layout-item md-size-50">
                     <md-field>
                         <label>Immeuble de base</label>
-                        <md-input v-model="newNumeroBase.numero" style="text-align: right;" readonly></md-input>
+                        <md-input v-model="newNumeroBase.numero" style="text-align: right;" required></md-input>
                     </md-field>
                 </div>
             </div>
@@ -112,8 +108,8 @@
                     <md-field>
                         <label>Unité (A, B, C...)</label>
                         <md-input v-model="newNumeroBase.suffixe"
-                                  onkeypress="return /[A-HJ-Z]/i.test(event.key)" 
-                                  maxlength="2" />
+                            onkeypress="return /[A-HJ-Z]/i.test(event.key)" 
+                            maxlength="2" />
                     </md-field>
                 </div>
             </div>

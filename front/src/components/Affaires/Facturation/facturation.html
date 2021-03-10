@@ -90,35 +90,13 @@
             </md-card-expand-content>
         </md-card-expand>
     </md-card>
-
-
-    <!-- Edition de factures -->
+    
+    
     <md-dialog :md-active.sync="showFactureDialog" md-title="Edition facture">
         <md-dialog-title>Edition facture</md-dialog-title>
-
+        
         <md-dialog-content>
-
-            <div style="text-align: right;">
-                <md-button class="md-primary md-dense md-elevation-3" @click="searchClients">Recharger la liste des clients <md-icon>replay</md-icon>
-                </md-button>
-            </div>
-            <br>
-
-            <div class="md-layout md-gutter">
-                <div class="md-layout-item md-size-50">
-                    <md-field>
-                        <label>SAP</label>
-                        <md-input v-model="selectedFacture.sap"></md-input>
-                    </md-field>
-                </div>
-
-                <div class="md-layout-item md-size-50">
-                    <md-datepicker v-model="selectedFacture.date" md-immediately>
-                        <label>Date</label>
-                    </md-datepicker>
-                </div>
-            </div>
-
+            
             <div class="md-layout md-gutter" v-if="affaire.type_id === typesAffaires_conf.cadastration">
                 <div class="md-layout-item md-size-100">
                     <md-divider></md-divider>
@@ -134,79 +112,108 @@
                     </md-table>
                 </div>
             </div>
-
-            <md-divider></md-divider>
-            <md-subheader>Adresse de la facture</md-subheader>
-            <md-divider></md-divider>
-
-            <md-field>
-                <label>Hoirie... / PPE... (optionnel)</label>
-                <md-input v-model="selectedFacture.client_premiere_ligne"></md-input>
-            </md-field>
-
-            <md-autocomplete v-model="selectedFacture.client" :md-options="clients_liste_select" @md-changed="getClientSearch(selectedFacture.client)" :class="getValidationClass('client')" required md-dense>
-                <label>Facturer à (débiteur)</label>
-                <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                    Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
-                </template>
-                <span class="md-error" v-if="!$v.selectedFacture.client.required">Le client est obligatoire</span>
-            </md-autocomplete>
-
-            <md-field v-if="showClientComplement(selectedFacture.client)">
-                <label>À l'attention de...</label>
-                <md-input v-model="selectedFacture.client_complement"></md-input>
-            </md-field>
-
-            <!-- <md-checkbox v-model="show_co">c/o (Envoyer à une adresse différente du débiteur)</md-checkbox>
-            <div v-if="show_co">
-                <md-autocomplete v-model="selectedFacture.client_co" :md-options="clients_liste_select" :class="getValidationClass('client_co')" @md-changed="getClientSearch(selectedFacture.client_co)" md-dense>
-                    <label>c/o</label>
-                    <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
-                    </template>
-                    <span class="md-error" v-if="!$v.selectedFacture.client_co.required">L'adresse c/o est obligatoire</span>
-                </md-autocomplete>
-            </div> -->
-
+            
             <br>
-            <md-divider />
             <br>
+            <md-divider></md-divider>
+            <br>
+            <br>
+            
+            <div class="md-layout md-gutter md-alignment-center-space-between">
+                
+                <!-- Client facture -->
+                <div class="md-layout-item md-size-60">
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-size-50">
+                            <md-field>
+                                <label>No SAP facture</label>
+                                <md-input v-model="selectedFacture.sap"></md-input>
+                            </md-field>
+                        </div>
+                        
+                        <div class="md-layout-item md-size-50">
+                            <div style="text-align: right;"></div>
+                            <md-datepicker v-model="selectedFacture.date" md-immediately>
+                                <label>Date</label>
+                            </md-datepicker>
+                        </div>
+                    </div>
+                    
+                    <br>
+                    
+                    <md-divider></md-divider>
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-size-50">
+                            <md-subheader>Adresse de la facture</md-subheader>
+                        </div>
+                        <div class="md-layout-item md-size-50">
+                            <div style="text-align: right;">
+                                <md-button class="md-primary md-dense md-elevation-3" @click="searchClients">Recharger la liste des clients <md-icon>replay</md-icon></md-button>
+                            </div>
+                        </div>
+                    </div>
+                    <md-divider></md-divider>
+        
+                    <md-field>
+                        <label>Hoirie... / PPE... (optionnel)</label>
+                        <md-input v-model="selectedFacture.client_premiere_ligne"></md-input>
+                    </md-field>
+        
+                    <md-autocomplete v-model="selectedFacture.client" :md-options="clients_liste_select" @md-changed="getClientSearch(selectedFacture.client)" :class="getValidationClass('client')" required md-dense>
+                        <label>Facturer à (débiteur)</label>
+                        <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                            Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                        </template>
+                        <span class="md-error" v-if="!$v.selectedFacture.client.required">Le client est obligatoire</span>
+                    </md-autocomplete>
+        
+                    <md-field v-if="showClientComplement(selectedFacture.client)">
+                        <label>Personne de contact</label>
+                        <md-input v-model="selectedFacture.client_complement"></md-input>
+                    </md-field>
+                </div>
 
-            <div style="float: right; width: 50%;">
-                <md-field :class="getValidationClass('montant_mo')">
-                    <label>Montant MO</label>
-                    <span class="md-prefix">CHF</span>
-                    <md-input class="currency" v-model="selectedFacture.montant_mo" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_mo')" required></md-input>
-                    <span class="md-error" v-if="!$v.selectedFacture.montant_mo.required">Le montant MO est obligatoire</span>
-                </md-field>
+                <!-- Montants de facturation -->
+                <div class="md-layout-item md-size-40">
+                    <div style="float: right;">
+                        <md-field :class="getValidationClass('montant_mo')">
+                            <label>Montant MO</label>
+                            <span class="md-prefix">CHF</span>
+                            <md-input class="currency" v-model="selectedFacture.montant_mo" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_mo')" required></md-input>
+                            <span class="md-error" v-if="!$v.selectedFacture.montant_mo.required">Le montant MO est obligatoire</span>
+                        </md-field>
+        
+                        <md-field :class="getValidationClass('montant_mat_diff')">
+                            <label>Montant mat diff</label>
+                            <span class="md-prefix">CHF</span>
+                            <md-input class="currency" v-model="selectedFacture.montant_mat_diff" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_mat_diff')" required></md-input>
+                            <span class="md-error" v-if="!$v.selectedFacture.montant_mat_diff.required">Le montant mat diff est obligatoire</span>
+                        </md-field>
+        
+                        <md-field :class="getValidationClass('montant_rf')">
+                            <label>Montant RF</label>
+                            <span class="md-prefix">CHF</span>
+                            <md-input class="currency" v-model="selectedFacture.montant_rf" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_rf')" required></md-input>
+                            <span class="md-error" v-if="!$v.selectedFacture.montant_rf.required">Le montant RF est obligatoire</span>
+                        </md-field>
+        
+                        <md-field :class="getValidationClass('montant_tva')">
+                            <label>TVA</label>
+                            <span class="md-prefix">CHF</span>
+                            <md-input class="currency" v-model="selectedFacture.montant_tva" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_tva')" required></md-input>
+                            <span class="md-error" v-if="!$v.selectedFacture.montant_tva.required">Le montant de TVA est obligatoire</span>
+                        </md-field>
+        
+                        <md-field>
+                            <label>Total</label>
+                            <span class="md-prefix">CHF</span>
+                            <md-input class="currency" v-model="selectedFacture.montant_total" readonly></md-input>
+                        </md-field>
+                    </div>
+                </div>
 
-                <md-field :class="getValidationClass('montant_mat_diff')">
-                    <label>Montant mat diff</label>
-                    <span class="md-prefix">CHF</span>
-                    <md-input class="currency" v-model="selectedFacture.montant_mat_diff" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_mat_diff')" required></md-input>
-                    <span class="md-error" v-if="!$v.selectedFacture.montant_mat_diff.required">Le montant mat diff est obligatoire</span>
-                </md-field>
-
-                <md-field :class="getValidationClass('montant_rf')">
-                    <label>Montant RF</label>
-                    <span class="md-prefix">CHF</span>
-                    <md-input class="currency" v-model="selectedFacture.montant_rf" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_rf')" required></md-input>
-                    <span class="md-error" v-if="!$v.selectedFacture.montant_rf.required">Le montant RF est obligatoire</span>
-                </md-field>
-
-                <md-field :class="getValidationClass('montant_tva')">
-                    <label>TVA</label>
-                    <span class="md-prefix">CHF</span>
-                    <md-input class="currency" v-model="selectedFacture.montant_tva" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_tva')" required></md-input>
-                    <span class="md-error" v-if="!$v.selectedFacture.montant_tva.required">Le montant de TVA est obligatoire</span>
-                </md-field>
-
-                <md-field>
-                    <label>Total</label>
-                    <span class="md-prefix">CHF</span>
-                    <md-input class="currency" v-model="selectedFacture.montant_total" readonly></md-input>
-                </md-field>
             </div>
+
 
             <md-field>
                 <label>Remarque</label>
