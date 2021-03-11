@@ -126,12 +126,12 @@
                        <md-table-cell md-label="Fax">{{ item.fax }}</md-table-cell>
                        <md-table-cell md-label="Tél.Portable">{{ item.tel_portable }}</md-table-cell>
                        <md-table-cell md-label="Email">{{ item.mail }}</md-table-cell> -->
-                       <md-table-cell md-label="Actions" class="actionsColumn" v-if="editClientClientAllowed">
+                       <md-table-cell md-label="Actions" class="actionsColumn">
                         <md-button class="md-icon-button md-primary" v-on:click="callEditClient(item.id)">
-                           <md-icon>edit</md-icon>
+                           <md-icon>open_in_new</md-icon>
                          </md-button>
                    
-                         <md-button class="md-icon-button md-accent" v-on:click="callDeleteClient(item.id, item.nom, item.prenom, item.entreprise)">
+                         <md-button class="md-icon-button md-accent" v-on:click="callDeleteClient(item.id, item.nom, item.prenom, item.entreprise)" v-if="editClientClientAllowed" >
                            <md-icon>delete</md-icon>
                          </md-button>
                        </md-table-cell>
