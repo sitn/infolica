@@ -60,6 +60,7 @@ export default {
         editAffaireAllowed: false,
         editControleGeometreAllowed: false,
         editFactureAllowed: false,
+        editNumerosReferencesAllowed: false,
         editNumerosAllowed: false,
         editNumerosMOAllowed: false,
         editSuiviMandatAllowed: false,
@@ -207,9 +208,10 @@ export default {
           //Check if role secretaire or MO
           let role_id = getCurrentUserRoleId();
           
-          // Secrétariat peut modifier des factures à tout moment
+          // Secrétariat peut modifier des factures à tout moment, éditer les informations des affaires et référencer des numéros à l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)) {
             _this.permission.editFactureAllowed = true;
+            _this.permission.editNumerosReferencesAllowed = true;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
 
@@ -427,7 +429,7 @@ export default {
      */
     fillFormDataBordereauAffaire() {
       let tmp = this.$refs.facturation.affaire_factures.map(x => ({
-        adresse: x.client_.replace(/, /gi, "\n"),
+        adresse: x.adresse_facturation_.replace(/, /gi, "\n"),
         tel: x.client_co_id === null? x.client_tel_fixe: x.client_co_tel_fixe,
         tel_port: x.client_co_id === null? x.client_tel_portable: x.client_co_tel_portable,
         mail: x.client_co_id === null? x.client_mail: x.client_co_mail,
