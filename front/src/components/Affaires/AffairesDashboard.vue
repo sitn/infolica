@@ -60,6 +60,7 @@ export default {
         editAffaireAllowed: false,
         editControleGeometreAllowed: false,
         editFactureAllowed: false,
+        editNumerosReferencesAllowed: false,
         editNumerosAllowed: false,
         editNumerosMOAllowed: false,
         editSuiviMandatAllowed: false,
@@ -207,9 +208,10 @@ export default {
           //Check if role secretaire or MO
           let role_id = getCurrentUserRoleId();
           
-          // Secrétariat peut modifier des factures à tout moment
+          // Secrétariat peut modifier des factures à tout moment, éditer les informations des affaires et référencer des numéros à l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)) {
             _this.permission.editFactureAllowed = true;
+            _this.permission.editNumerosReferencesAllowed = true;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
 
