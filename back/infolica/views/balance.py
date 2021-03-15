@@ -98,25 +98,81 @@ def balance_check_existing_oldBF_new_view(request):
         numero_obj.append(numero)
         
         # Add numero_affaire link
-        affNum = AffaireNumero()
-        affNum(
+
+        affNum = AffaireNumero(
             affaire_id = affaire_id,
             numero_id = numero.id,
             type_id = request.registry.settings['numero_bf_id'],
-            actif = True,
+            actif = True
         )
+        request.dbsession.add(affNum)
 
         # Add numero_etat_histo link
-        numEtatHisto = NumeroEtatHisto()
-        numEtatHisto(
+        numEtatHisto = NumeroEtatHisto(
             numero_id = numero.id,
             numero_etat_id = request.registry.settings['numero_vigueur_id'],
             date = datetime.now().date()
         )
+        request.dbsession.add(numEtatHisto)
 
     return Utils.serialize_many(numero_obj)
 
 
 
+@view_config(route_name='balance_from_file_by_affaire_id', request_method='GET', renderer='json')
+def balance_from_file_view(request):
+    """
+    Return balance
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    affaire_id = request.params["affaire_id"] if 'affaire_id' in request.params else None
+    affaires_directory = request.registry.settings['affaires_directory']
+    balance_file_rel_path = request.registry.settings['balance_file_rel_path'].encode("latin1").decode()
+    balance_filename_prefix = request.registry.settings['balance_filename_prefix']
+
+    # Get affaire path and search file
+    query = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
+    path = os.path.normpath(os.path.join(affaires_directory, query.chemin, balance_file_rel_path))
+
+    fileExists = False
+    for filename in os.listdir(path):
+        if filename.startswith(balance_filename_prefix) and (filename.endswith(".doc") or filename.endswith(".docx")):
+            fileExists = True
+            break
+    
+    if not fileExists:
+        raise CustomError(CustomError.FILE_NOT_FOUND.format('Des_XXX.docx'))
+    
+    input_file = os.path.join(path, filename)
+    print(input_file)
+    
+    # Open balance file and get table of balance
+    doc = Document(input_file)
+    table = None
+    for table in doc.tables:
+        if "ancien" in table.rows[0].cells[0].text:
+            break
+    
+    lastBF = []
+    balance = []
+    for i, row in enumerate(table.rows[1:]):
+
+        text = list(cell.text for cell in row.cells)
+        
+        if i == 0:
+            lastBF = text
+            continue
+        
+        for j, text_i in enumerate(text):
+            if j >= 2 and text_i.isnumeric() and not text[0] == "":
+                balance.append({
+                        "new": int(lastBF[j]) if lastBF[j].isnumeric() else lastBF[j],
+                        "old": int(text[0]) if text[0].isnumeric() else text[0]
+                    })
+    
+    return json.dumps(balance)
 
 
