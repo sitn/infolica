@@ -837,7 +837,7 @@ export default {
       // this.showClientsForm = this.form.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION)? false: true;
       if (this.form.type.id === Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION)) {
         this.showClientsForm = false;
-        let defaultClient = this.clients_list.filter(x => x.id === Number(process.env.VUE_APP_CLIENT_CADASTRATION_ID));
+        let defaultClient = this.clients_list.filter(x => x.id === Number(process.env.VUE_APP_CLIENT_CADASTRATION_ID))[0];
         this.form.client_commande = defaultClient;
         this.form.client_envoi = defaultClient;
         this.form.client_envoi_complement = null;
