@@ -240,7 +240,7 @@ def affaires_new_view(request):
     request.dbsession.flush()
 
     # Créer le chemin du dossier de l'affaire
-    model.chemin = os.path.join(request.registry.settings['affaires_directory_dev'], str(model.id))
+    model.chemin = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
 
     # Copier le dossier __template pour une nouvelle affaire
     Utils.create_affaire_folder(request, model.chemin)
