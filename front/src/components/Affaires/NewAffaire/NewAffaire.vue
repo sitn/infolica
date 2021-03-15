@@ -841,7 +841,7 @@ export default {
         this.form.client_commande = defaultClient;
         this.form.client_envoi = defaultClient;
         this.form.client_envoi_complement = null;
-        this.client_facture = defaultClient;
+        this.client_facture = null;
         this.client_facture_complement = null;
         this.client_facture_premiere_ligne = null;
         this.form.nom = "Cadastration sur "
