@@ -142,7 +142,7 @@
                                     </template>
                                 </md-autocomplete>
                             </div>
-                            <div class="md-layout-item md-size-50 md-small-size-100"  v-if="showClientComplement(form.client_commande)">
+                            <div class="md-layout-item md-size-50 md-small-size-100"  v-if="affaire.client_commande_type_id === clientTypes_conf.moral">
                                 <md-field>
                                     <label>Personne de contact</label>
                                     <md-input v-model="form.client_commande_complement"></md-input>
@@ -164,7 +164,7 @@
                                     </template>
                                 </md-autocomplete>
                             </div>
-                            <div class="md-layout-item md-size-50 md-small-size-100" v-if="showClientComplement(form.client_envoi)">
+                            <div class="md-layout-item md-size-50 md-small-size-100" v-if="affaire.client_envoi_type_id === clientTypes_conf.moral">
                                 <md-field>
                                     <label>À l'attention de...</label>
                                     <md-input v-model="form.client_envoi_complement"></md-input>

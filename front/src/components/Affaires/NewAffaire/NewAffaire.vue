@@ -458,7 +458,7 @@ export default {
         formData.append("client_envoi_id", this.form.client_envoi.id);
       }
       if (this.form.client_envoi_complement && this.showClientComplement(this.form.client_envoi)) {
-        formData.append("client_envoi_complement", "À l'att. de " + this.form.client_envoi_complement);
+        formData.append("client_envoi_complement", this.form.client_envoi_complement);
       }
       if (this.form.technicien_id) {
         formData.append("technicien_id", this.form.technicien_id);
@@ -837,14 +837,17 @@ export default {
       // this.showClientsForm = this.form.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION)? false: true;
       if (this.form.type.id === Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION)) {
         this.showClientsForm = false;
-        this.form.client_commande = null;
-        this.form.client_envoi = null;
+        let defaultClient = this.clients_list.filter(x => x.id === Number(process.env.VUE_APP_CLIENT_CADASTRATION_ID))[0];
+        this.form.client_commande = defaultClient;
+        this.form.client_envoi = defaultClient;
         this.form.client_envoi_complement = null;
         this.client_facture = null;
         this.client_facture_complement = null;
         this.client_facture_premiere_ligne = null;
+        this.form.nom = "Cadastration sur "
       } else {
         this.showClientsForm = true;
+        this.form.nom = "";
       }
     },
 

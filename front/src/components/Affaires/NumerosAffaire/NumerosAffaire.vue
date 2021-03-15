@@ -9,7 +9,8 @@ import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNume
 import ReservationNumeros from "@/components/Affaires/NumerosAffaire/ReservationNumeros/ReservationNumeros.vue";
 import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue";
 import ReservationNumerosMO from "@/components/Affaires/NumerosAffaire/ReservationNumerosMO/ReservationNumerosMO.vue";
-import Balance from "@/components/Affaires/Balance/Balance.vue";
+// import Balance from "@/components/Affaires/Balance/Balance.vue";
+import BalanceFromFile from "@/components/Affaires/BalanceFromFile/BalanceFromFile.vue";
 
 
 const moment = require("moment");
@@ -26,7 +27,8 @@ export default {
     ReservationNumeros,
     QuittancePCOP,
     ReservationNumerosMO,
-    Balance
+    // Balance,
+    BalanceFromFile
   },
   data: () => {
     return {

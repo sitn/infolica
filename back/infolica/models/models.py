@@ -568,7 +568,7 @@ class Numero(Base):
     etat_id = Column(BigInteger, ForeignKey(NumeroEtat.id), nullable=False)
     no_access = Column(Text)
 
-    UniqueConstraint(cadastre_id, type_id, numero, suffixe)
+    UniqueConstraint(cadastre_id, numero)
 
 
 class ReservationNumerosMO(Base):

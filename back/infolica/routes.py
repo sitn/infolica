@@ -160,6 +160,7 @@ def includeme(config):
     config.add_route('balance_mutation_names', '/infolica/api/balance_mutation_names')
     config.add_route('balance_by_affaire_id', '/infolica/api/balance')
     config.add_route('balance_check_existing_oldBF', '/infolica/api/balance_check_existing_oldbf')
+    config.add_route('balance_from_file_by_affaire_id', '/infolica/api/balance_from_file')
     #Reservation_numeros_mo
     config.add_route('reservation_numeros_mo_by_affaire_id', '/infolica/api/reservation_numeros_mo/{id}')
     config.add_route('reservation_numeros_mo', '/infolica/api/reservation_numeros_mo')

@@ -166,7 +166,7 @@ export default {
               type_id: x.type_client
             }));
           }
-        })
+        }).catch(err => handleException(err, this));
     },
 
     /**
@@ -258,6 +258,11 @@ export default {
         numeros: null,
         remarque: null
       };
+
+      // Set default client if affaire type is cadastration
+      if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
+        this.selectedFacture.client = this.clients_liste.filter(x => x.id === Number(process.env.VUE_APP_CLIENT_CADASTRATION_ID))[0];
+      }
       
       if (facture_type === 'devis') {
         this.selectedFacture.type_id = this.configFactureTypeID.devis;

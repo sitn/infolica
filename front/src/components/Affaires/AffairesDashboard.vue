@@ -136,6 +136,7 @@ export default {
               if (obj.client_envoi_type_id === this.clientTypes_conf.moral) {
                 adresse_ = [
                   obj.client_envoi_entreprise,
+                  obj.client_envoi_complement? "À l'att. de " + obj.client_envoi_complement.replace("À l'att. de ", ''): null,
                   obj.client_envoi_co,
                   obj.client_envoi_adresse,
                   obj.client_envoi_case_postale,
@@ -217,6 +218,7 @@ export default {
 
           // Opérateur MO peut modifier les informations générales de l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_MO_ROLE_ID)) {
+            _this.permission.editNumerosReferencesAllowed = true;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
 

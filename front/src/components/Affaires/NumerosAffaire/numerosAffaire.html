@@ -130,11 +130,13 @@
                             <ReservationNumerosMO :affaire="affaire" :types_numeros="types_numeros" :permission="permission"></ReservationNumerosMO>
                             
                         </div>
-                        
-                        
-                        <div class="md-layout-item md-size-60" v-if="show.balance">
+                    </div>
+                    
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item" v-if="show.balance">
                             <!-- Balance des biens-fonds -->
-                            <Balance :affaire_numeros_all="affaire_numeros_all" :affaire="affaire" />
+                            <!-- <Balance :affaire_numeros_all="affaire_numeros_all" :affaire="affaire" /> -->
+                            <BalanceFromFile :affaire_numeros_all="affaire_numeros_all" :affaire="affaire" />
                         </div>    
                     </div>    
                     

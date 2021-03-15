@@ -105,12 +105,13 @@ search_limit = 20
 # Les différentes permissions (fonctions)
 ######################################################################################
 fonction_admin = fonction_admin
-affaire_consultation = affaire_consultation
 affaire_edition = affaire_edition
 affaire_ppe_edition = affaire_ppe_edition
 affaire_revision_abornement_edition = affaire_revision_abornement_edition
 affaire_cadastration_edition = affaire_cadastration_edition
 affaire_retablissement_pfp3_edition = affaire_retablissement_pfp3_edition
+affaire_pcop_edition = affaire_pcop_edition
+affaire_autre_edition = affaire_autre_edition
 affaire_envois_edition = affaire_envois_edition
 affaire_controle_geometre_edition = affaire_controle_geometre_edition
 affaire_suivi_edition = affaire_suivi_edition
@@ -190,10 +191,11 @@ facture_type_facture_id = 1
 # Accès dossiers
 ######################################################################################
 affaires_directory = C:/infolica_project/affaire_technique/travail
-affaires_directory_dev = C:/infolica_project/affaire_technique/travail
 affaireTemplateDir = C:/infolica_project/affaire_technique/__template
 mails_templates_directory = C:/infolica_project/affaire_technique/mail_template
 temporary_directory = C:/infolica_project/back/tmp
+balance_file_rel_path = A_Administratif/Désignations
+balance_filename_prefix = Des_
 
 ######################################################################################
 # Security
