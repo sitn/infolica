@@ -458,7 +458,7 @@ export default {
         formData.append("client_envoi_id", this.form.client_envoi.id);
       }
       if (this.form.client_envoi_complement && this.showClientComplement(this.form.client_envoi)) {
-        formData.append("client_envoi_complement", "À l'att. de " + this.form.client_envoi_complement);
+        formData.append("client_envoi_complement", this.form.client_envoi_complement);
       }
       if (this.form.technicien_id) {
         formData.append("technicien_id", this.form.technicien_id);

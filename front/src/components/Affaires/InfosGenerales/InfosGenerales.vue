@@ -386,20 +386,6 @@ export default {
       this.$router.go(0);
     },
 
-
-    /**
-     * Affiche le complément client si le client est une entreprise
-     */
-    showClientComplement(client) {
-      if (client && client.id) {
-        let tmp = this.clientsListe_bk.filter(x => x.id === client.id)[0];
-        if (tmp.client_type === this.clientTypes_conf.morale) {
-          return true;
-        }
-      }
-      return false;
-    },
-
   },
 
   mounted: function() {
