@@ -149,6 +149,7 @@ export default {
         .then(response =>{
           let client_id = JSON.parse(response.data).client_id;
           this.$router.push({ "name": "ClientsEdit", params: {id: client_id}});
+          this.mode = 'edit';
           this.handleSaveDataSuccess(response);
         })
         //Error
