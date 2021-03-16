@@ -578,6 +578,7 @@ class ReservationNumerosMO(Base):
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
     plan_id = Column(Text)
+    plan = Column(Integer)
     type_id = Column(BigInteger, ForeignKey(NumeroType.id), nullable=False)
     numero_de = Column(BigInteger)
     numero_a = Column(BigInteger)

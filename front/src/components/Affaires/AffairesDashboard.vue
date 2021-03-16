@@ -218,6 +218,7 @@ export default {
 
           // Opérateur MO peut modifier les informations générales de l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_MO_ROLE_ID)) {
+            _this.permission.editFactureAllowed = _this.permission.editFactureAllowed && _this.affaire.type_id === _this.typesAffaires_conf.cadastration;
             _this.permission.editNumerosReferencesAllowed = true;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
