@@ -198,7 +198,7 @@ export default {
         promises.push(this.saveReservationPromise(this.types_numeros.bat, this.form.bat));
       }
       if (this.form.pdet !== null && this.form.pdet !== '' && Number(this.form.pdet)>0) {
-        promises.push(this.saveReservationPromise(this.types_numeros.pdet, this.form.pdet, this.form.plan.id));
+        promises.push(this.saveReservationPromise(this.types_numeros.pdet, this.form.pdet, this.form.plan.nom, this.form.plan.id));
       }
       if (this.form.dp !== null && this.form.dp !== '' && Number(this.form.dp)>0) {
         promises.push(this.saveReservationPromise(this.types_numeros.dp, this.form.dp));
@@ -214,7 +214,7 @@ export default {
                          Number(this.form.pfp3) > 0? this.form.pfp3 + " PFP3 ": null,
                          Number(this.form.paux) > 0? this.form.paux + " points auxiliaires ": null,
                          Number(this.form.bat) > 0? this.form.bat + " bâtiments ": null,
-                         Number(this.form.pdet) > 0? this.form.pdet + " points de détail sur plan " + this.form.plan: null,
+                         Number(this.form.pdet) > 0? this.form.pdet + " points de détail sur plan " + this.form.plan.nom: null,
                          Number(this.form.dp) > 0? this.form.dp + " domaines publics": null].join(", ");
           logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_RESERVATION_NUMEROS_MO_ID), comment);
           this.resetReservation();
@@ -225,13 +225,14 @@ export default {
     /**
      * save Reservation Promise
      */
-    async saveReservationPromise(type_points, nb_points, plan_id=null) {
+    async saveReservationPromise(type_points, nb_points, plan=0, plan_id=null) {
       let formData = new FormData();
       formData.append("affaire_id", this.affaire.id);
       formData.append("cadastre_id", this.form.cadastre.id);
       formData.append("type_id", type_points);
       formData.append("numero_de", 1);
       formData.append("numero_a", nb_points);
+      formData.append("plan", plan);
       if (plan_id !== null) {formData.append("plan_id", plan_id)}
       formData.append("date", moment(new Date).format(process.env.VUE_APP_DATEFORMAT_WS));
       if (this.form.remarque !== null && this.form.remarque !== '') {formData.append("remarque", this.form.remarque)}
