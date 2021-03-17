@@ -62,69 +62,68 @@
                 </div>
             </div>
 
-
+            
             <div id="clients" v-if="affaire.type_id !== typesAffaires_conf.cadastration">
-                <!-- Clients (read-only) -->
-                <div class="md-layout md-gutter" v-if="infoGenReadonly">
-                    <div class="md-layout-item md-size-50 md-small-size-100">
-                        <md-field>
-                            <label>Commandé par</label>
-                            <md-textarea v-model="affaire.client_commande_nom_" readonly></md-textarea>
-                            <md-button class="md-primary md-icon-button md-dense" v-if="affaire.client_commande_id !== null" title="Consulter/Modifier le client" @click="openClientEditor('client_commande_id')">
-                                <md-icon>open_in_new</md-icon>
-                            </md-button>
-                        </md-field>
+                <div  v-if="infoGenReadonly">
+                    <!-- Clients (read-only) -->
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-size-50 md-small-size-100">
+                            <md-field>
+                                <label>Commandé par</label>
+                                <md-textarea v-model="affaire.client_commande_nom_" readonly></md-textarea>
+                                <md-button class="md-primary md-icon-button md-dense" v-if="affaire.client_commande_id !== null" title="Consulter/Modifier le client" @click="openClientEditor('client_commande_id')">
+                                    <md-icon>open_in_new</md-icon>
+                                </md-button>
+                            </md-field>
+                        </div>
+    
+                        <div class="md-layout-item md-size-50 md-small-size-100">
+                            <md-field>
+                                <label>Envoyer à</label>
+                                <md-textarea v-model="affaire.client_envoi_nom_" readonly></md-textarea>
+    
+                                <ul style="list-style: none; margin: 0px; padding-left: 0px;">
+                                    <li style="text-align: center;">
+                                        <md-button class="md-primary md-icon-button md-dense" v-if="affaire.client_envoi_id !== null" @click="openClientEditor('client_envoi_id')" title="Consulter/Modifier le client" style="display: block">
+                                            <md-icon>open_in_new</md-icon>
+                                        </md-button>
+                                    </li>
+    
+                                    <li style="text-align: center;">
+                                        <md-button class="md-primary md-icon-button md-dense" @click="genererBordereau" title="Générer le bordereau" style="display: block;">
+                                            <md-icon>save_alt</md-icon>
+                                        </md-button>
+                                    </li>
+                                </ul>
+                            </md-field>
+                        </div>
                     </div>
-
-                    <div class="md-layout-item md-size-50 md-small-size-100">
-                        <md-field>
-                            <label>Envoyer à</label>
-                            <md-textarea v-model="affaire.client_envoi_nom_" readonly></md-textarea>
-
-                            <ul style="list-style: none; margin: 0px; padding-left: 0px;">
-                                <li style="text-align: center;">
-                                    <md-button class="md-primary md-icon-button md-dense" v-if="affaire.client_envoi_id !== null" @click="openClientEditor('client_envoi_id')" title="Consulter/Modifier le client" style="display: block">
+                        
+                    <div v-if="show.clientFacture">
+                        <div class="md-layout md-gutter">
+                            <div class="md-layout-item md-size-50 md-small-size-100">
+                                <!-- select pour le client facture à afficher -->
+                                <md-field>
+                                    <label>Client à afficher pour la facture ({{ clientsFacture.selectList.length }})</label>
+                                    <md-select v-model="clientsFacture.selected_id" md-dense @md-selected="updateClientFactureAdresse">
+                                        <md-option v-for="item in clientsFacture.selectList" :key="item.id" :value="item.id">{{ item.nom }}</md-option>
+                                    </md-select>
+                                </md-field>
+                            </div>
+        
+                            <div class="md-layout-item md-size-50 md-small-size-100">
+                                <!-- client facture à afficher -->
+                                <md-field>
+                                    <label>Facturer à</label>
+                                    <md-textarea v-model="clientsFacture.selected_adress" readonly></md-textarea>
+                                    <md-button class="md-primary md-icon-button md-dense" v-if="clientsFacture.selected_adress" title="Consulter/Modifier le client" @click="openClientEditor('clientsFacture')">
                                         <md-icon>open_in_new</md-icon>
                                     </md-button>
-                                </li>
-
-                                <li style="text-align: center;">
-                                    <md-button class="md-primary md-icon-button md-dense" @click="genererBordereau" title="Générer le bordereau" style="display: block;">
-                                        <md-icon>save_alt</md-icon>
-                                    </md-button>
-                                </li>
-                            </ul>
-                        </md-field>
-                    </div>
-                </div>
-                    
-                <div class="md-layout md-gutter" v-if="infoGenReadonly">
-                    <div class="md-layout-item md-size-50 md-small-size-100">
-                        <!-- select pour le client facture à afficher -->
-                        <md-field>
-                            <label>Client à afficher pour la facture ({{ clientsFacture.selectList.length }})</label>
-                            <md-select v-model="clientsFacture.selected_id" md-dense @md-selected="updateClientFactureAdresse">
-                                <md-option v-for="item in clientsFacture.selectList" :key="item.id" :value="item.id">{{ item.nom }}</md-option>
-                            </md-select>
-                        </md-field>
-                        
-                        <!-- <md-field>
-                            <label v-if="infoGenReadonly">v/ref</label>
-                            <label v-else><strong style="color: blue">v/ref</strong></label>
-                            <md-input v-model="affaire.vref" :readonly="infoGenReadonly"></md-input>
-                        </md-field> -->
+                                </md-field>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="md-layout-item md-size-50 md-small-size-100">
-                        <!-- client facture à afficher -->
-                        <md-field>
-                            <label>Facturer à</label>
-                            <md-textarea v-model="clientsFacture.selected_adress" readonly></md-textarea>
-                            <md-button class="md-primary md-icon-button md-dense" v-if="clientsFacture.selected_adress" title="Consulter/Modifier le client" @click="openClientEditor('clientsFacture')">
-                                <md-icon>open_in_new</md-icon>
-                            </md-button>
-                        </md-field>
-                    </div>
                 </div>
 
                 <!-- Clients (edition) -->
@@ -173,14 +172,16 @@
                         </md-card-content>
                     </md-card>
 
-                    <md-card style="margin: 15px;">
-                        <md-card-header>
-                            <div class="md-subhead">Facture</div>
-                        </md-card-header>
-                        <md-card-content>
-                            <md-icon class="md-accent">warning</md-icon> Les clients des factures doivent être édités dans la partie Devis et Factures.
-                        </md-card-content>
-                    </md-card>
+                    <div v-if="show.clientFacture">
+                        <md-card style="margin: 15px;">
+                            <md-card-header>
+                                <div class="md-subhead">Facture</div>
+                            </md-card-header>
+                            <md-card-content>
+                                <md-icon class="md-accent">warning</md-icon> Les clients des factures doivent être édités dans la partie Devis et Factures.
+                            </md-card-content>
+                        </md-card>
+                    </div>
 
                 </div>
             </div>

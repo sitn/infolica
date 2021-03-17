@@ -306,6 +306,8 @@ export const filterList = function(list, searchTerm, nLetters=0) {
                     return !x.nom.toLowerCase().includes(y.toLowerCase());
                 });
             });
+        } else {
+            return [null];
         }
     }
     return result.slice(0,20);

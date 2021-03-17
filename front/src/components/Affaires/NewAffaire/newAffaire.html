@@ -247,7 +247,7 @@
                             required>
                             
                             <label>Envoyer à</label>
-                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                            <template slot="md-autocomplete-empty" slot-scope="{ term }" v-if="term && term.length > 2">
                                 Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
                             </template>
                             <span class="md-error" v-if="!$v.form.client_envoi.required">Le client envoi est
@@ -267,50 +267,53 @@
                     </div>
                 </div>
                 
-                <br>
-                <md-divider style="background-color: blue;"></md-divider>
                 
                 <!-- Client FACTURE et ligne complément -->
-                <div class="md-layout md-gutter md-alignment-center-left">
-                    <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field>
-                            <label>Hoirie... / PPE... (optionnel)</label>
-                            <md-input v-model="client_facture_premiere_ligne" />
-                        </md-field>
-                    </div>
-
-                    <div class="md-layout-item md-small-size-100 md-size-100">
-                        <md-autocomplete id="client_facture_id" v-model="client_facture"
-                            :md-options="search_clients_list" md-dense
-                            @md-changed="searchClients(client_facture)"
-                            @md-selected="initClientMoralPersonnes(client_facture.id, 'facture')"
-                            :class="getValidationClass($v.client_facture.id)"
-                            required>
-                            <label>Facturer à (débiteur)</label>
-                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
-                            </template>
-                            <span class="md-error" v-if="!$v.client_facture.id.required">Le client facture est obligatoire</span>
-                        </md-autocomplete>
-                    </div>
-
-                    <div class="md-layout-item md-small-size-100 md-size-50" v-if="showClientComplement(client_facture)">
-                        <md-autocomplete v-model="client_facture_complement"
-                            :md-options="client_moral_personnes.facture"
-                            md-dense>
-                            <label>À l'attention de...</label>
-                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                Le contact "{{ term }}" n'existe pas dans la base. <a @click="openCreateContact(client_facture.id)">Le créer !</a>
-                            </template>
-                        </md-autocomplete>
+                <div v-if="form.type && form.type.id && form.type.id!==typesAffaires_conf.pcop">
+                    <br>
+                    <md-divider style="background-color: blue;"></md-divider>
+                    <div class="md-layout md-gutter md-alignment-center-left" v-if="form.type && form.type.id && form.type.id!==typesAffaires_conf.pcop">
+    
+                        <div class="md-layout-item md-small-size-100 md-size-50">
+                            <md-field>
+                                <label>Hoirie... / PPE... (optionnel)</label>
+                                <md-input v-model="client_facture_premiere_ligne" />
+                            </md-field>
+                        </div>
+    
+                        <div class="md-layout-item md-small-size-100 md-size-100">
+                            <md-autocomplete id="client_facture_id" v-model="client_facture"
+                                :md-options="search_clients_list" md-dense
+                                @md-changed="searchClients(client_facture)"
+                                @md-selected="initClientMoralPersonnes(client_facture.id, 'facture')"
+                                :class="getValidationClass($v.client_facture.id)"
+                                required>
+                                <label>Facturer à (débiteur)</label>
+                                <template slot="md-autocomplete-empty" slot-scope="{ term }" v-if="term && term.length > 2">
+                                    Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                                </template>
+                                <span class="md-error" v-if="!$v.client_facture.id.required">Le client facture est obligatoire</span>
+                            </md-autocomplete>
+                        </div>
+    
+                        <div class="md-layout-item md-small-size-100 md-size-50" v-if="showClientComplement(client_facture)">
+                            <md-autocomplete v-model="client_facture_complement"
+                                :md-options="client_moral_personnes.facture"
+                                md-dense>
+                                <label>À l'attention de...</label>
+                                <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                    Le contact "{{ term }}" n'existe pas dans la base. <a @click="openCreateContact(client_facture.id)">Le créer !</a>
+                                </template>
+                            </md-autocomplete>
+                        </div>
+                        
                     </div>
                     
+                    
+                    <md-divider style="background-color: blue;"></md-divider>
+                    <br />
                 </div>
-                
-                
-                <md-divider style="background-color: blue;"></md-divider>
-                <br />
-            </div>
+                </div>
             
             <!-- Dates -->
             <div class="md-layout md-gutter">

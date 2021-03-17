@@ -47,6 +47,9 @@ export default {
         client_envoi: null,
         client_envoi_complement: null
       },
+      show: {
+        clientFacture: true,
+      }
     };
   },
 
@@ -397,6 +400,7 @@ export default {
     this.initClientsListe();
     this.searchClientsFacture();
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
+    this.show.clientFacture = this.affaire.type_id !== this.typesAffaires_conf.pcop;
   }
 };
 </script>
