@@ -29,7 +29,9 @@ export default {
     return {
       affaire_devis: [],
       affaire_factures: [],
-      numeros_references:[],
+      numeros_references: [],
+      numeros_references_bk: [],
+      numeros_references_restant: [],
       clients_liste: [],
       clients_liste_type: [],
       clients_liste_select: [],
@@ -101,6 +103,8 @@ export default {
         .then(response => {
           if (response && response.data) {
             let tmp = response.data;
+            // copy numeros_references backup to get complete liste
+            this.numeros_references_restant = [...this.numeros_references_bk];
             tmp.forEach(x => {
               x.date = x.date !== null? moment(x.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null;
               x.montant_mo = numeral(x.montant_mo).format("0.00");
@@ -113,7 +117,12 @@ export default {
                 x.numeros = [];
               } else {
                 x.numeros_id = x.numeros;
+                // Met à jour les numéros restant pour la facturation
+                x.numeros_id.forEach(y => {
+                  this.numeros_references_restant = this.numeros_references_restant.filter(z => z.numero_id !== y);
+                });
                 let tmp2 = [];
+                // Récupère le numéro du BF par l'id
                 x.numeros.forEach(y => tmp2.push(this.numeros_references.filter(z => z.numero_id === y)[0].numero));
                 x.numeros = tmp2;
               }
@@ -191,6 +200,8 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.numeros_references = response.data.filter(x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID));
+            this.numeros_references_restant = [...this.numeros_references];
+            this.numeros_references_bk = [...this.numeros_references];
             resolve(this.numeros_references);
           }
         })
@@ -302,7 +313,7 @@ export default {
      * Save data
      */
     saveData() {
-      var formData = new FormData();
+      let formData = new FormData();
       formData.append("affaire_id", this.$route.params.id);
       formData.append("id", this.selectedFacture.id);
       formData.append("sap", this.selectedFacture.sap || null);
@@ -569,6 +580,8 @@ export default {
     this.searchAffaireNumeros().then(() => {
       this.searchAffaireFactures();
     });
+
+    this.$root.$on("updateNumerosFactureList", () => this.searchAffaireNumeros());
   }
 };
 </script>

@@ -181,7 +181,6 @@ export default {
       ).then(response => {
         if (response && response.data) {
           let tmp = JSON.parse(response.data);
-          console.log('response.data = ', JSON.parse(response.data))
           let relation = [];
 
           tmp.forEach(x => {
@@ -199,9 +198,7 @@ export default {
             relation.push([x.relation_old, x.relation_new]);
           });
 
-          console.log('relation = ', relation);
           this.tableau_balance = this.constructTableauBalance(relation);
-          console.log('this.tableau_balance = ', this.tableau_balance)
         }
       }).catch(err => handleException(err, this));
     },
