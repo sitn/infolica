@@ -122,9 +122,11 @@ export default {
         client_envoi: {required}
       };
 
-      client_facture = {
-        id: {required}
-      };
+      if (this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop) {
+        client_facture = {
+          id: {required}
+        };
+      }
 
     } else {
       form = {
@@ -492,7 +494,8 @@ export default {
       }
 
       // FACTURE
-      if (this.client_facture && this.client_facture.id){
+      if (this.client_facture && this.client_facture.id &&
+          this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop){
         formData.append("facture_client_id", this.client_facture.id);
         if (this.client_facture_complement !== null) {
           formData.append("facture_client_complement", this.client_facture_complement);
@@ -810,7 +813,8 @@ export default {
           this.form.client_envoi = client;
           this.client_moral_personnes.envoi = this.client_moral_personnes.commande;
         }
-        if (this.client_facture === null || this.client_facture === "") {
+        if ((this.client_facture === null || this.client_facture === "") && 
+             this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop) {
           this.client_facture = client;
           this.client_moral_personnes.facture = this.client_moral_personnes.commande;
         }
@@ -1074,7 +1078,8 @@ export default {
       if (this.form.client_envoi !== null && this.form.client_envoi.id !== null) {
         this.initClientMoralPersonnes(this.form.client_envoi.id, 'envoi');
       }
-      if (this.client_facture !== null && this.client_facture.id !== null) {
+      if (this.client_facture !== null && this.client_facture.id !== null &&
+          this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop) {
         this.initClientMoralPersonnes(this.client_facture.id, 'facture');
       }
     },
