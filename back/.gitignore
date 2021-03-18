@@ -133,6 +133,7 @@ venv.bak/
 # ini files
 /development.ini
 /production.ini
+/prepub.ini
 
 # alembic versions
 infolica/alembic/versions
