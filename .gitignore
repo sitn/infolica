@@ -4,4 +4,3 @@ affaire_technique/
 /apache/wsgi.conf
 taches_lancement_windows/
 scripts/*
-/dist_old
