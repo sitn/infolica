@@ -29,6 +29,7 @@ export default {
       prenom: null,
     },
     dataSaved: false,
+    editMode: false,
     form: {
       type_client: 1, //default selection
       entreprise: null,
@@ -151,6 +152,7 @@ export default {
           this.$router.push({ "name": "ClientsEdit", params: {id: client_id}});
           this.mode = 'edit';
           this.handleSaveDataSuccess(response);
+          this.editMode = false;
         })
         //Error
         .catch(err => {
@@ -172,6 +174,7 @@ export default {
         )
         .then(response =>{
           this.handleSaveDataSuccess(response);
+          this.editMode = false;
         })
         //Error
         .catch(err => {
@@ -244,7 +247,8 @@ export default {
      * Cancel edit
      */
     cancelEdit () {
-      this.$router.push({name: "Clients"});
+      this.editMode = false;
+      // this.$router.push({name: "Clients"});
     },
     
     /**
