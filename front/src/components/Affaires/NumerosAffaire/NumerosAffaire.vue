@@ -427,6 +427,7 @@ export default {
                                   this.typesAffaires_conf.mat_diff,
                                   this.typesAffaires_conf.revision_abornement,
                                   this.typesAffaires_conf.autre,
+                                  this.typesAffaires_conf.servitude,
                                   this.typesAffaires_conf.modification_abandon_partiel].includes(this.affaire.type_id),
 
         numeros_reserves_immeuble_base: [this.typesAffaires_conf.pcop,
