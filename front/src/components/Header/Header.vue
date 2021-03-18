@@ -13,6 +13,7 @@ export default {
       return {
           loggedUserName: String,
           isAdmin: false,
+          isProd: false,
       }
   },
 
@@ -70,6 +71,7 @@ export default {
       this.setUserName(session_user);
 
       this.checkIsAdmin();
+      this.isProd = process.env.VUE_APP_STATUS === 'production';
   }
 }
 </script>
