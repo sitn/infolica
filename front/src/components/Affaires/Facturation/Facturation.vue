@@ -392,6 +392,7 @@ export default {
             logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_ID), "Édition de " + facture_type);
 
             this.searchAffaireFactures();
+            this.$root.$emit('reloadClientFactureInfosGen');
             this.$root.$emit("ShowMessage", showMessage);
           }
         })

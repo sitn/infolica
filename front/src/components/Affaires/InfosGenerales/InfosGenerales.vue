@@ -399,6 +399,7 @@ export default {
     this.searchAffaireDestination();
     this.initClientsListe();
     this.searchClientsFacture();
+    this.$root.$on('reloadClientFactureInfosGen', () => this.searchClientsFacture());
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
     this.show.clientFacture = this.affaire.type_id !== this.typesAffaires_conf.pcop;
   }
