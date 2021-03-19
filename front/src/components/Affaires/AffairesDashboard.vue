@@ -222,6 +222,14 @@ export default {
             _this.permission.editNumerosReferencesAllowed = true;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
+          
+          // Opérateur responsable peut référencer des numéros
+          if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)) {
+            _this.permission.editNumerosReferencesAllowed = true;
+            _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
+          }
+
+
 
           // If admin, allow edit
           if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {
