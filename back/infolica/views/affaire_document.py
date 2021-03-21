@@ -26,7 +26,7 @@ def affaire_dossier_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    affaire_dossier = request.registry.settings["affaires_directory"]
+    affaire_dossier = request.registry.settings["affaires_directory_full_path"]
     affaire_id = request.matchdict['id']
     affaire_chemin = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
 
