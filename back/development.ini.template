@@ -191,6 +191,7 @@ facture_type_facture_id = 1
 # Accès dossiers
 ######################################################################################
 affaires_directory = C:/infolica_project/affaire_technique/travail
+affaires_directory_full_path = C:/infolica_project/affaire_technique/travail
 affaireTemplateDir = C:/infolica_project/affaire_technique/__template
 mails_templates_directory = C:/infolica_project/affaire_technique/mail_template
 temporary_directory = C:/infolica_project/back/tmp
