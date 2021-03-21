@@ -171,14 +171,8 @@ def types_affaires_view(request):
     """
     Return all types affaires not modif
     """
-    affaire_type_modif_threshold = int(request.registry.settings['affaire_type_modification_ordre_separation'])
 
-    types_affaires = request.dbsession.query(AffaireType).filter(
-        and_(
-            AffaireType.ordre != None,
-            AffaireType.ordre < affaire_type_modif_threshold
-        )
-    ).order_by(AffaireType.ordre.asc()).all()
+    types_affaires = request.dbsession.query(AffaireType).filter(AffaireType.ordre != None).order_by(AffaireType.ordre.asc()).all()
 
     types_affaires = Utils.serialize_many(types_affaires)
     return types_affaires
