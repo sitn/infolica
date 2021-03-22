@@ -135,7 +135,7 @@ def balance_from_file_view(request):
 
     # Get affaire path and search file
     query = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
-    path = os.path.normpath(os.path.join(affaires_directory, query.chemin, balance_file_rel_path))
+    path = os.path.normcase(os.path.join(affaires_directory, query.chemin, balance_file_rel_path))
 
     fileExists = False
     for filename in os.listdir(path):

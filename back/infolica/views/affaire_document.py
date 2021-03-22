@@ -32,7 +32,7 @@ def affaire_dossier_view(request):
 
     chemin = "Unknown path"
     if affaire_chemin:
-        chemin = os.path.normpath(os.path.join(affaire_dossier, affaire_chemin))
+        chemin = os.path.normcase(os.path.join(affaire_dossier, affaire_chemin))
 
     return chemin
 
@@ -85,7 +85,7 @@ def download_affaire_document_view(request):
     filename = request.params['filename']
     affaire_chemin = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
 
-    file_path = os.path.normpath(os.path.join(affaires_directory, affaire_chemin, relpath, filename))
+    file_path = os.path.normcase(os.path.join(affaires_directory, affaire_chemin, relpath, filename))
     folder_path = os.path.exists(os.path.dirname(file_path))
 
     if not folder_path:
