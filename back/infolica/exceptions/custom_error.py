@@ -10,3 +10,4 @@ class CustomError(Exception):
     NOT_FOUND_ERROR = "Route {} with method {} not found"
     RESERVATION_NUMBER_WITHOUT_BASE_NUMBER = "Manque le numéro de base lors de la réservation de numéros de DDP, PPE ou PCOP"
     FILE_NOT_FOUND = "Le fichier '{}' n'a pas été trouvé"
+    NUMBER_REGISTRATION_FAILED = "Le numéro {} du cadastre {} dépasse le max + 1 autorisé (dernier numéro: {})"

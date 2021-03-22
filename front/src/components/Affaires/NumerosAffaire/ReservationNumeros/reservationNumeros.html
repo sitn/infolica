@@ -36,7 +36,7 @@
                     <md-field :class="getValidationClass('numeroBase')">
                         <label>Bien-fonds de base</label>
                         <md-select v-model="form.numeroBase" md-dense>
-                            <md-option v-for="item in numerosBaseListeFiltered" :value="item">{{ item.nom }}</md-option>
+                            <md-option v-for="item in numerosBaseListe" :value="item">{{ item.nom }}</md-option>
                         </md-select>
                         <span class="md-error" v-if="!$v.form.numeroBase.required">Le numéro de base est obligatoire</span>
                     </md-field>

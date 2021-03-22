@@ -140,6 +140,11 @@ def numeros_new_view(request, params=None):
     if not params:
         params = request.params
 
+    # tester si le numéro à réserver est plus grand que le max +1 déjà existant dans la base. Si oui, répondre par une erreur
+    num_max = request.dbsession.query(func.max(Numero.numero)).filter(Numero.cadastre_id == params['cadastre_id']).scalar()
+    if int(params['numero']) > num_max + 1:
+        raise CustomError(CustomError.NUMBER_REGISTRATION_FAILED.format(params['numero'], params['cadastre_id'], num_max))
+
     # nouveau numero
     record = Numero()
     record = Utils.set_model_record(record, params)

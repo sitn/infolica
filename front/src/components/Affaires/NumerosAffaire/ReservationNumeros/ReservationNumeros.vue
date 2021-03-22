@@ -45,7 +45,6 @@ export default {
         ppe_suffixe_start: null
       },
       numerosBaseListe: [],
-      numerosBaseListeFiltered: [],
       numeroTypesList: [],
       showReservationDialog: false
     };
@@ -200,11 +199,16 @@ export default {
      * Retourne les numéros en vigueur et en projet dans le cadastre sélectionné
      */
     async getNumerosBase() {
+      let types = process.env.VUE_APP_NUMERO_TYPE_BF + "," + process.env.VUE_APP_NUMERO_TYPE_DDP;
       return new Promise ((resolve) => {
+        if (this.affaire.type_id === this.typesAffaires_conf.pcop) {
+          types += ',' + process.env.VUE_APP_NUMERO_TYPE_PPE;
+        }
+
         this.$http.get(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ENDPOINT +
           "?cadastre_id=" + this.form.cadastre.id +
-          "&type_id=" + process.env.VUE_APP_NUMERO_TYPE_BF + "," + process.env.VUE_APP_NUMERO_TYPE_DDP +
+          "&type_id=" + types +
           "&etat_id=" + process.env.VUE_APP_NUMERO_PROJET_ID + "," +  process.env.VUE_APP_NUMERO_VIGUEUR_ID,
           {
             withCredentials: true,
@@ -212,22 +216,14 @@ export default {
           }
         ).then(response => {
           if (response && response.data) {
-            this.numerosBaseListe = stringifyAutocomplete(response.data, "numero");
-            this.numerosBaseListeFiltered = this.numerosBaseListe.slice(0,20);
+            console.log(response.data)
+            this.numerosBaseListe = stringifyAutocomplete(response.data, "numero_sitn");
             resolve(response);
           }
         }).catch(err => handleException(err, this));
       })
     },
 
-
-    /**
-     * Filter numero base in numero_base_liste
-     */
-    filterNumeroBase() {
-      this.numerosBaseListeFiltered = this.numerosBaseListe;
-      this.numerosBaseListeFiltered.filter(x => x.nom.includes(String(this.form.numeroBase))).slice(0,20);
-    },
 
     /**
      * createNumeroBase()

@@ -13,6 +13,7 @@ def send_mail(request, mail_list, text, subject, html=None):
     msg = EmailMessage()
     msg['From'] = request.registry.settings["infolica_mail"]
     msg['To'] = ', '.join(mail_list)
+    msg['Bcc'] = request.registry.settings["admin_mail"]
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
     msg.set_content(text)

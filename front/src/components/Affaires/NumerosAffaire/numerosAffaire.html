@@ -39,8 +39,7 @@
                                                 <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">
                                                     {{ item.numero_cadastre }}
                                                 </md-table-cell>
-                                                <md-table-cell md-label="Numéro" md-sort-by="numero" md-numeric>{{ item.numero }}<span v-if="item.numero_suffixe"> / {{ item.numero_suffixe }}</span>
-                                                </md-table-cell>
+                                                <md-table-cell md-label="Numéro" md-sort-by="numero" md-numeric>{{ item.numero_sitn }}</md-table-cell>
                                                 <md-table-cell md-label="Etat" md-sort-by="numero_etat">
                                                     {{ item.numero_etat }}
                                                 </md-table-cell>
@@ -81,10 +80,8 @@
                                             <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif || !item.active }">
                                                 <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">{{ item.numero_id }}</md-table-cell>
                                                 <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
-                                                <md-table-cell md-label="Numéro" md-sort-by="numero" md-numeric>{{ item.numero }}<span v-if="item.numero_suffixe"> / {{ item.numero_suffixe }}</span></md-table-cell>
-                                                <md-table-cell md-label="Immeuble de base" md-sort-by="numero_base" v-if="show.numeros_reserves_immeuble_base" md-numeric>{{ item.numero_base }} 
-                                                    <span v-if="item.numero_base_etat_id === etatNumeros_conf.projet">*</span> 
-                                                    <span v-if="item.numero_base_suffixe"> / {{ item.numero_base_suffixe }}</span></md-table-cell>
+                                                <md-table-cell md-label="Numéro" md-sort-by="numero" md-numeric>{{ item.numero_sitn }}</md-table-cell>
+                                                <md-table-cell md-label="Immeuble de base" md-sort-by="numero_base" v-if="show.numeros_reserves_immeuble_base" md-numeric>{{ item.numero_base_sitn }}</md-table-cell>
                                                 <md-table-cell md-label="Etat" class="actionsColumn">
                                                     <md-switch v-model="item.active" v-if="permission.editNumerosAllowed && item.affaire_numero_actif && !affaire.date_cloture && [typesAffaires_conf.ppe, typesAffaires_conf.modification_ppe].includes(affaire.type_id)"
                                                         @change="onDeleteReserveNumero(item.numero_id)"

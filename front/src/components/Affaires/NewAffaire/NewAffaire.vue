@@ -231,7 +231,7 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
-            let tmp = response.data;
+            let tmp = response.data.filter(x => x.ordre < Number(process.env.VUE_APP_AFFAIRE_MODIF_THR));
             let type_filter = [];
             // Only suggest affaire types to which user has rights
             let userRoleID = getCurrentUserRoleId()
