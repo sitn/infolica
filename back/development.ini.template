@@ -8,6 +8,7 @@ use = egg:infolica
 
 infolica_url_base = http://127.0.0.1:8080/infolica
 infolica_mail = 
+admin_mail =
 infolica_smtp = 
 infolica_balance_mail = 
 
