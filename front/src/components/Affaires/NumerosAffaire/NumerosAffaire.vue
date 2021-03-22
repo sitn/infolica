@@ -424,6 +424,7 @@ export default {
                                                                     this.typesAffaires_conf.pcop]).includes(this.affaire.type_id),
         
         numeros_references_card: [this.typesAffaires_conf.cadastration,
+                                  this.typesAffaires_conf.ppe,
                                   this.typesAffaires_conf.mat_diff,
                                   this.typesAffaires_conf.revision_abornement,
                                   this.typesAffaires_conf.autre,

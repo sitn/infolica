@@ -93,6 +93,9 @@
                     <div v-if="numeros_liste.length>0">
                         <!-- Table des biens-fonds -->
                         <md-table md-height="40vh" v-model="numeros_liste" md-sort="numero" md-sort-order="desc" @md-selected="onSelect" md-fixed-header>
+                            <md-table-toolbar>
+                                <h1 class="md-title">Résultat de la recherche</h1>
+                            </md-table-toolbar>
                             <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple"
                                 class="md-primary md-raised" md-auto-select>
                                 <md-table-cell md-label="Cadastre" md-sort-by="cadastre">
