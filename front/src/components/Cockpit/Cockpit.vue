@@ -206,7 +206,7 @@ export default {
                 // set operateur by default if he is chef_equipe
                 let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
                 let currentUserRoleID = getCurrentUserRoleId();
-                if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe) && (currentUserRoleID && currentUserRoleID !== this.role.secretaire)) {
+                if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe) && (currentUserRoleID && [this.role.mo, this.role.ppe].includes(currentUserRoleID))) {
                     this.selectedOperateur_id = Number(currentUserID);
                 }
 
