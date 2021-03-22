@@ -38,7 +38,7 @@ def save_document_view(request):
 
     date_time = datetime.now().strftime("%Y%m%d")
     filename = output_file_name + "_" + date_time + '.docx'
-    file_path = os.path.normpath(os.path.join(affaires_directory, affaire_id, relPath, filename))
+    file_path = os.path.normcase(os.path.join(affaires_directory, affaire_id, relPath, filename))
     folder_path = os.path.dirname(file_path)
 
     if not os.path.exists(folder_path):
