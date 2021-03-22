@@ -763,6 +763,7 @@ class VNumeros(Base):
     cadastre = Column(Text)
     cadastre_id = Column(BigInteger)
     numero = Column(BigInteger)
+    numero_sitn = Column(Text)
     suffixe = Column(Text)
     etat = Column(Text)
     etat_id = Column(BigInteger)
@@ -807,6 +808,7 @@ class VNumerosAffaires(Base):
     numero_base_etat = Column(Text)
     numero_base_etat_id = Column(Text)
     affaire_numero_type = Column(Text)
+    numero_sitn = Column(Text)
 
 
 class VAffaire(Base):
