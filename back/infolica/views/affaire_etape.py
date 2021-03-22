@@ -101,8 +101,9 @@ def etapes_new_view(request):
                               <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
                               </tr>".format(i.datetime, i.operateur_prenom, i.operateur_nom, i.etape, i.remarque if i.remarque else "") for i in lastSteps])
         
-        affaire_nom = " (" + affaire.nom + ")" if affaire.nom is not None else ""
+        affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
         text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire.id)) + "'>" + str(affaire.id) + affaire_nom + "</a></b> est en attente pour l'étape <b>"+ affaire_etape_index.nom +"</b>."
+        text += "<br><br>Description: " + str(affaire.nom)
         text += ("<br><br><br><h4>Historique de l'affaire</h4><table style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'><tr><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Horodateur</th><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Opérateur</th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'><th>Etape</th><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Remarque</th></tr>" + lastSteps + "</table>") if lastSteps != "" else ""
         subject = "Infolica - affaire " + str(affaire.id)
         send_mail(request, mail_list, "", subject, html=text)
