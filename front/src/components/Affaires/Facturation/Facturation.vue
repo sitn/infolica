@@ -528,7 +528,7 @@ export default {
         "ADRESSE_PROPRIETAIRE": facture.adresse_facturation_.replace(/, /gi, "\n"),
         "NREF": this.affaire.id,
         "DATE_ENVOI": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
-        "TITRE": "Madame, Monsieur,",
+        "TITRE": "Madame, Monsieur",
         "BIEN_FONDS": facture.numeros_,
         "CADASTRE": this.affaire.cadastre,
         "NO_NOTE_FRAIS": facture.sap,
