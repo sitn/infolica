@@ -1109,3 +1109,14 @@ class VPlan(Base):
     idborplan = Column(Text)
     idrepplan = Column(Text)
     base = Column(Text)
+
+class VNextNumeroMOAvilable(Base):
+    __tablename__ = 'v_next_numero_mo_available'
+    __table_args__ = {'schema': 'infolica',
+                      'info': dict(is_view=True)}
+    cadastre_id = Column(BigInteger, primary_key=True)
+    cadastre = Column(Text)
+    plan = Column(Integer, primary_key=True)
+    numero_type_id = Column(BigInteger, primary_key=True)
+    numero_type = Column(Text)
+    prochain_numero = Column(BigInteger)

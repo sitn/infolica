@@ -40,9 +40,6 @@
                                     <md-button class="md-icon-button md-accent md-dense" v-on:click="callDeleteFacture(item)">
                                         <md-icon>delete</md-icon>
                                     </md-button>
-                                    <md-button class="md-primary md-icon-button md-dense" v-if="affaire.type_id === typesAffaires_conf.cadastration" v-on:click="generateDocuments(item)" title="Générer les documents pour le RF et le propriétaire">
-                                        <md-icon>save_alt</md-icon>
-                                    </md-button>
                                 </md-table-cell>
                             </md-table-row>
                         </md-table>
@@ -76,7 +73,14 @@
                                     <md-button class="md-icon-button md-accent md-dense" v-on:click="callDeleteFacture(item)">
                                         <md-icon>delete</md-icon>
                                     </md-button>
-                                    <md-button class="md-primary md-icon-button md-dense" v-if="affaire.type_id === typesAffaires_conf.cadastration" v-on:click="generateDocuments(item)" title="Générer les documents pour le RF et le propriétaire">
+                                </md-table-cell>
+                                <md-table-cell md-label="Lettre Propriétaire" class="actionsColumn" v-if="permission.editFactureAllowed && affaire.type_id === typesAffaires_conf.cadastration" style="width: 15%;">
+                                    <md-button class="md-primary md-icon-button md-dense" v-on:click="generateLettreProprietaire(item)" title="Générer les documents pour le RF et le propriétaire">
+                                        <md-icon>save_alt</md-icon>
+                                    </md-button>
+                                </md-table-cell>
+                                <md-table-cell md-label="Réquisition RF" class="actionsColumn" v-if="permission.editFactureAllowed && affaire.type_id === typesAffaires_conf.cadastration" style="width: 15%;">
+                                    <md-button class="md-primary md-icon-button md-dense" v-on:click="generateReqRF(item)" title="Générer les documents pour le RF et le propriétaire">
                                         <md-icon>save_alt</md-icon>
                                     </md-button>
                                 </md-table-cell>
@@ -103,14 +107,29 @@
                     <md-subheader>Bien(s)-fonds</md-subheader>
                     <md-divider></md-divider>
                     
-                    <md-table md-height="40vh" v-model="numeros_references_restant" md-fixed-header md-card @md-selected="onSelectNumeroReference" md-sort="numero" md-sort-order="asc">
-                        <md-table-empty-state md-label="Tous les biens-fonds sont rattachés à une facture"></md-table-empty-state>
-                        <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple">
-                            <md-table-cell v-if="false">{{ item.numero_id }}</md-table-cell>
-                            <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
-                            <md-table-cell md-label="Bien-fonds" md-sort-by="numero">{{ item.numero }}</md-table-cell>
-                        </md-table-row>
-                    </md-table>
+                    <!-- Création de facture -->
+                    <div v-if="showReferenceNumeroFacture">
+                        <md-table v-model="numeros_references_restant" md-fixed-header md-card @md-selected="onSelectNumeroReference" 
+                            md-sort="numero" md-sort-order="asc">
+                            <md-table-empty-state md-label="Tous les biens-fonds sont rattachés à une facture"></md-table-empty-state>
+                            <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple">
+                                <md-table-cell v-if="false">{{ item.numero_id }}</md-table-cell>
+                                <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
+                                <md-table-cell md-label="Bien-fonds" md-sort-by="numero">{{ item.numero }}</md-table-cell>
+                            </md-table-row>
+                        </md-table>
+                    </div>
+                    <!-- Modification de facture -->
+                    <div v-else>
+                        <md-table v-model="selectedFacture.numeros_obj" md-fixed-header md-card md-sort="numero" md-sort-order="asc">
+                            <md-table-empty-state md-label="Aucun bien-fonds"></md-table-empty-state>
+                            <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                <md-table-cell v-if="false">{{ item.numero_id }}</md-table-cell>
+                                <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
+                                <md-table-cell md-label="Bien-fonds" md-sort-by="numero">{{ item.numero }}</md-table-cell>
+                            </md-table-row>
+                        </md-table>
+                    </div>
                 </div>
             </div>
             

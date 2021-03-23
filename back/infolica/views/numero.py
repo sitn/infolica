@@ -53,7 +53,18 @@ def types_numeros_view(request):
     """
     Return all types_numeros
     """
-    query = request.dbsession.query(NumeroType).filter(NumeroType.ordre != None).order_by(NumeroType.ordre.asc()).all()
+    immeule_thr = request.registry.settings['numero_type_immeule_thr']
+    query = request.dbsession.query(NumeroType).filter(NumeroType.ordre < immeule_thr).order_by(NumeroType.ordre.asc()).all()
+    return Utils.serialize_many(query)
+
+
+@view_config(route_name='types_numeros_mo', request_method='GET', renderer='json')
+def types_numeros_mo_view(request):
+    """
+    Return all types_numeros
+    """
+    immeule_thr = request.registry.settings['numero_type_immeule_thr']
+    query = request.dbsession.query(NumeroType).filter(NumeroType.ordre >= immeule_thr).order_by(NumeroType.ordre.asc()).all()
     return Utils.serialize_many(query)
 
 

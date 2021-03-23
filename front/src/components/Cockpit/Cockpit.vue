@@ -142,11 +142,11 @@ export default {
         ).then(response => {
             if (response && response.data) {
                 let tmp = response.data;
-                tmp.push({'id': 15, 'nom': 'Mat diff', 'ordre': 11, 'priorite': 1});
                 
                 this.selectedAffaireTypes_id = [];
                 tmp.forEach(x => this.selectedAffaireTypes_id.push(x.id));
 
+                tmp.push({'id': 15, 'nom': 'Mat diff', 'ordre': 11, 'priorite': 1});
                 this.affaireTypes = stringifyAutocomplete(tmp);
             }
         }).catch(err => handleException(err, this));

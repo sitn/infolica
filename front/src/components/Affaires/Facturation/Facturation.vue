@@ -66,7 +66,8 @@ export default {
         sap: null
       },
       showNewFactureBtn: false,
-      showFactureDialog: false
+      showFactureDialog: false,
+      showReferenceNumeroFacture: false,
     }
   },
 
@@ -121,8 +122,8 @@ export default {
                 x.numeros_id.forEach(y => {
                   this.numeros_references_restant = this.numeros_references_restant.filter(z => z.numero_id !== y);
                 });
-                let tmp2 = [];
                 // Récupère le numéro du BF par l'id
+                let tmp2 = [];
                 x.numeros.forEach(y => tmp2.push(this.numeros_references.filter(z => z.numero_id === y)[0].numero));
                 x.numeros = tmp2;
               }
@@ -243,9 +244,18 @@ export default {
         montant_tva: numeral(tmp.montant_tva).format('0.00'),
         montant_total: numeral(tmp.montant_total).format('0.00'),
         numeros: tmp.numeros,
+        numeros_obj: [],
         remarque: tmp.remarque,
         type_id: tmp.type_id,
       }
+
+      if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
+        this.selectedFacture.numeros_id = [];
+        tmp.numeros_id.forEach(x => this.selectedFacture.numeros_obj.push(this.numeros_references.filter(y => y.numero_id === x)[0]));
+        this.selectedFacture.numeros_obj.forEach(x => this.selectedFacture.numeros_id.push(x.numero_id));
+      }
+
+      this.showReferenceNumeroFacture = false;
       this.showFactureDialog = true;
     },
 
@@ -281,6 +291,7 @@ export default {
         this.selectedFacture.type_id = this.configFactureTypeID.facture;
       }
       
+      this.showReferenceNumeroFacture = true;
       this.showFactureDialog = true;
       this.createFacture = true;
     },
@@ -490,10 +501,9 @@ export default {
     },
 
     /**
-     * Generate documents cadastration
+     * Générer lettre propriétaire (Cadastration)
      */
-    generateDocuments(facture) {
-      
+    async generateLettreProprietaire(facture) {
       let numeros = [];
       if (facture.numeros.length > 0) {
         facture.numeros.forEach(facture_numero => numeros.push(facture_numero));
@@ -504,14 +514,6 @@ export default {
       }
       facture.numeros_ = numeros.join(", ");
 
-      this.generateLettreProprietaire(facture);
-      this.generateReqRF(facture);
-    },
-
-    /**
-     * Générer lettre propriétaire (Cadastration)
-     */
-    async generateLettreProprietaire(facture) {
       let formData = this.fillDataLettreProprietaire(facture);
       getDocument(formData).then(response => {
         this.$root.$emit("ShowMessage", "Le fichier '" + response + "' se trouve dans le dossier 'Téléchargement'")
@@ -527,7 +529,7 @@ export default {
       formData.append("values", JSON.stringify({
         "ADRESSE_PROPRIETAIRE": facture.adresse_facturation_.replace(/, /gi, "\n"),
         "NREF": this.affaire.id,
-        "DATE_ENVOI": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        "DATE_ENVOI": facture.date,
         "TITRE": "Madame, Monsieur",
         "BIEN_FONDS": facture.numeros_,
         "CADASTRE": this.affaire.cadastre,
@@ -542,6 +544,16 @@ export default {
      * Générer réquisition pour le RF (Cadastration)
      */
     async generateReqRF(facture) {
+      let numeros = [];
+      if (facture.numeros.length > 0) {
+        facture.numeros.forEach(facture_numero => numeros.push(facture_numero));
+        
+        if (numeros.length > 1) {
+          numeros = numeros.sort((a, b) => {a-b});
+        }
+      }
+      facture.numeros_ = numeros.join(", ");
+
       let formData = this.fillDataReqRF(facture);
       getDocument(formData).then(response => {
         this.$root.$emit("ShowMessage", "Le fichier '" + response + "' se trouve dans le dossier 'Téléchargement'")
@@ -556,11 +568,10 @@ export default {
       formData.append("template", "ReqCad");
       formData.append("values", JSON.stringify({
         "ANNEE": new Date().getFullYear(),
-        "DATE_PLAN_ORIGINE": "JJ.MM.AAAA",
-        "DATE_PLAN_CADASTRATION": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        "DATE_PLAN_ORIGINE": facture.date,
         "BIEN_FONDS": facture.numeros_,
         "CADASTRE": this.affaire.cadastre,
-        "DATE": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        "DATE": facture.date,
       }));
 
       return formData;
