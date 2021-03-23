@@ -53,7 +53,7 @@ def types_numeros_view(request):
     """
     Return all types_numeros
     """
-    immeule_thr = request.registry.settings['numero_type_immeule_thr']
+    immeule_thr = request.registry.settings['numero_type_immeuble_thr']
     query = request.dbsession.query(NumeroType).filter(NumeroType.ordre < immeule_thr).order_by(NumeroType.ordre.asc()).all()
     return Utils.serialize_many(query)
 
@@ -63,7 +63,7 @@ def types_numeros_mo_view(request):
     """
     Return all types_numeros
     """
-    immeule_thr = request.registry.settings['numero_type_immeule_thr']
+    immeule_thr = request.registry.settings['numero_type_immeuble_thr']
     query = request.dbsession.query(NumeroType).filter(NumeroType.ordre >= immeule_thr).order_by(NumeroType.ordre.asc()).all()
     return Utils.serialize_many(query)
 
