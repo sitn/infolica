@@ -490,10 +490,9 @@ export default {
     },
 
     /**
-     * Generate documents cadastration
+     * Générer lettre propriétaire (Cadastration)
      */
-    generateDocuments(facture) {
-      
+    async generateLettreProprietaire(facture) {
       let numeros = [];
       if (facture.numeros.length > 0) {
         facture.numeros.forEach(facture_numero => numeros.push(facture_numero));
@@ -504,14 +503,6 @@ export default {
       }
       facture.numeros_ = numeros.join(", ");
 
-      this.generateLettreProprietaire(facture);
-      this.generateReqRF(facture);
-    },
-
-    /**
-     * Générer lettre propriétaire (Cadastration)
-     */
-    async generateLettreProprietaire(facture) {
       let formData = this.fillDataLettreProprietaire(facture);
       getDocument(formData).then(response => {
         this.$root.$emit("ShowMessage", "Le fichier '" + response + "' se trouve dans le dossier 'Téléchargement'")
@@ -527,7 +518,7 @@ export default {
       formData.append("values", JSON.stringify({
         "ADRESSE_PROPRIETAIRE": facture.adresse_facturation_.replace(/, /gi, "\n"),
         "NREF": this.affaire.id,
-        "DATE_ENVOI": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        "DATE_ENVOI": facture.date,
         "TITRE": "Madame, Monsieur",
         "BIEN_FONDS": facture.numeros_,
         "CADASTRE": this.affaire.cadastre,
@@ -542,6 +533,16 @@ export default {
      * Générer réquisition pour le RF (Cadastration)
      */
     async generateReqRF(facture) {
+      let numeros = [];
+      if (facture.numeros.length > 0) {
+        facture.numeros.forEach(facture_numero => numeros.push(facture_numero));
+        
+        if (numeros.length > 1) {
+          numeros = numeros.sort((a, b) => {a-b});
+        }
+      }
+      facture.numeros_ = numeros.join(", ");
+
       let formData = this.fillDataReqRF(facture);
       getDocument(formData).then(response => {
         this.$root.$emit("ShowMessage", "Le fichier '" + response + "' se trouve dans le dossier 'Téléchargement'")
@@ -556,11 +557,10 @@ export default {
       formData.append("template", "ReqCad");
       formData.append("values", JSON.stringify({
         "ANNEE": new Date().getFullYear(),
-        "DATE_PLAN_ORIGINE": "JJ.MM.AAAA",
-        "DATE_PLAN_CADASTRATION": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        "DATE_PLAN_ORIGINE": facture.date,
         "BIEN_FONDS": facture.numeros_,
         "CADASTRE": this.affaire.cadastre,
-        "DATE": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        "DATE": facture.date,
       }));
 
       return formData;

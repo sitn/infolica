@@ -40,9 +40,6 @@
                                     <md-button class="md-icon-button md-accent md-dense" v-on:click="callDeleteFacture(item)">
                                         <md-icon>delete</md-icon>
                                     </md-button>
-                                    <md-button class="md-primary md-icon-button md-dense" v-if="affaire.type_id === typesAffaires_conf.cadastration" v-on:click="generateDocuments(item)" title="Générer les documents pour le RF et le propriétaire">
-                                        <md-icon>save_alt</md-icon>
-                                    </md-button>
                                 </md-table-cell>
                             </md-table-row>
                         </md-table>
@@ -76,7 +73,14 @@
                                     <md-button class="md-icon-button md-accent md-dense" v-on:click="callDeleteFacture(item)">
                                         <md-icon>delete</md-icon>
                                     </md-button>
-                                    <md-button class="md-primary md-icon-button md-dense" v-if="affaire.type_id === typesAffaires_conf.cadastration" v-on:click="generateDocuments(item)" title="Générer les documents pour le RF et le propriétaire">
+                                </md-table-cell>
+                                <md-table-cell md-label="Lettre Propriétaire" class="actionsColumn" v-if="permission.editFactureAllowed && affaire.type_id === typesAffaires_conf.cadastration" style="width: 15%;">
+                                    <md-button class="md-primary md-icon-button md-dense" v-on:click="generateLettreProprietaire(item)" title="Générer les documents pour le RF et le propriétaire">
+                                        <md-icon>save_alt</md-icon>
+                                    </md-button>
+                                </md-table-cell>
+                                <md-table-cell md-label="Réquisition RF" class="actionsColumn" v-if="permission.editFactureAllowed && affaire.type_id === typesAffaires_conf.cadastration" style="width: 15%;">
+                                    <md-button class="md-primary md-icon-button md-dense" v-on:click="generateReqRF(item)" title="Générer les documents pour le RF et le propriétaire">
                                         <md-icon>save_alt</md-icon>
                                     </md-button>
                                 </md-table-cell>
