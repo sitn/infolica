@@ -384,6 +384,6 @@ export const adjustColumnWidths = function() {
         if (c >= 10) {
             clearInterval(interval);
         }
-    }, 1000)
+    }, 1000);
 }
 
