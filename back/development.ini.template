@@ -150,6 +150,8 @@ numero_pcs_id = 7
 numero_paux_id = 8
 numero_pdet_id = 9
 numero_dp_id = 10
+# threshold numero type immeubles
+numero_type_immeuble_thr = 100
 
 # ID états des numéros
 numero_projet_id = 1
