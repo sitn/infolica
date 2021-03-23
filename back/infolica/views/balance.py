@@ -147,7 +147,6 @@ def balance_from_file_view(request):
         raise CustomError(CustomError.FILE_NOT_FOUND.format('Des_XXX.docx'))
     
     input_file = os.path.join(path, filename)
-    print(input_file)
     
     # Open balance file and get table of balance
     doc = Document(input_file)

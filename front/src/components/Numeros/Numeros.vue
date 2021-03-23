@@ -7,7 +7,8 @@ import {
   getCadastres,
   getTypesNumeros,
   getEtatsNumeros,
-  adjustColumnWidths
+  adjustColumnWidths,
+  stringifyAutocomplete
 } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 
@@ -16,8 +17,10 @@ export default {
   props: {},
   data: () => ({
     numeros: [],
+    numerosMO: [],
     cadastre_liste: [],
     types_numeros: [],
+    types_numeros_mo: [],
     etats_numeros: [],
     search: {
       numero: null,
@@ -26,7 +29,12 @@ export default {
       type: "",
       etat: "",
       matDiff: false,
-    }
+    },
+    searchNumeroMO: {
+      cadastre: null,
+      type: null,
+      plan: null
+    },
   }),
 
   methods: {
@@ -146,7 +154,8 @@ export default {
       this.search.cadastre = "";
       this.search.type = "";
       this.search.etat = "";
-      this.matDiff = false;
+      this.search.matDiff = false;
+      this.numeros = [];
     },
 
     /*
@@ -154,14 +163,82 @@ export default {
      */
     doOpenNumero(id) {
       this.$router.push({ name: "NumerosHistory", params: {id}});
+    },
+
+    // ------------------ NUMEROS MO ------------------
+
+    /**
+     * get next numero mo by cadastre, type and plan
+     */
+    async getNextNumeroMO() {
+      let searchParams = [];
+      if (this.searchNumeroMO.cadastre && this.searchNumeroMO.cadastre.id) {
+        searchParams.push('cadastre_id=' + this.searchNumeroMO.cadastre.id);
+      }
+      if (this.searchNumeroMO.type && this.searchNumeroMO.type.id) {
+        searchParams.push('type_id=' + this.searchNumeroMO.type.id);
+      }
+      if (this.searchNumeroMO.plan) {
+        searchParams.push('plan=' + this.searchNumeroMO.plan);
+      }
+
+      if (searchParams.length === 0) {
+        alert("Il faut renseigner au moins un des trois champs: cadastre, type ou plan");
+        return;
+      }
+
+      searchParams = "?" + searchParams.join("&");
+
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_NEXT_NUMERO_MO_AVAILABLE_ENDPOINT + searchParams,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.numerosMO = response.data;
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * get numero mo types
+     */
+    getNumeroMoTypes() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_NUMEROS_MO_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.types_numeros_mo = stringifyAutocomplete(response.data);
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Effacer les champs de recherche des numéros de la MO ainsi que le résultat
+     */
+    clearNumerosMOForm() {
+      this.searchNumeroMO = {
+        cadastre: null,
+        type: null,
+        plan: null,
+      };
+
+      this.numerosMO = [];
     }
+
   },
 
   mounted: function() {
     this.initCadastresList();
     this.initTypesNumerosList();
     this.initEtatsNumerosList();
-    this.searchNumeros();
+    this.getNumeroMoTypes();
     adjustColumnWidths();
   }
 };

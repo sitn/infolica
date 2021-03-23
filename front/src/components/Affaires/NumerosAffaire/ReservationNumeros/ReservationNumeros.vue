@@ -216,7 +216,6 @@ export default {
           }
         ).then(response => {
           if (response && response.data) {
-            console.log(response.data)
             this.numerosBaseListe = stringifyAutocomplete(response.data, "numero_sitn");
             resolve(response);
           }
