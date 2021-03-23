@@ -66,7 +66,8 @@ export default {
         sap: null
       },
       showNewFactureBtn: false,
-      showFactureDialog: false
+      showFactureDialog: false,
+      showReferenceNumeroFacture: false,
     }
   },
 
@@ -121,8 +122,8 @@ export default {
                 x.numeros_id.forEach(y => {
                   this.numeros_references_restant = this.numeros_references_restant.filter(z => z.numero_id !== y);
                 });
-                let tmp2 = [];
                 // Récupère le numéro du BF par l'id
+                let tmp2 = [];
                 x.numeros.forEach(y => tmp2.push(this.numeros_references.filter(z => z.numero_id === y)[0].numero));
                 x.numeros = tmp2;
               }
@@ -243,9 +244,18 @@ export default {
         montant_tva: numeral(tmp.montant_tva).format('0.00'),
         montant_total: numeral(tmp.montant_total).format('0.00'),
         numeros: tmp.numeros,
+        numeros_obj: [],
         remarque: tmp.remarque,
         type_id: tmp.type_id,
       }
+
+      if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
+        this.selectedFacture.numeros_id = [];
+        tmp.numeros_id.forEach(x => this.selectedFacture.numeros_obj.push(this.numeros_references.filter(y => y.numero_id === x)[0]));
+        this.selectedFacture.numeros_obj.forEach(x => this.selectedFacture.numeros_id.push(x.numero_id));
+      }
+
+      this.showReferenceNumeroFacture = false;
       this.showFactureDialog = true;
     },
 
@@ -281,6 +291,7 @@ export default {
         this.selectedFacture.type_id = this.configFactureTypeID.facture;
       }
       
+      this.showReferenceNumeroFacture = true;
       this.showFactureDialog = true;
       this.createFacture = true;
     },
