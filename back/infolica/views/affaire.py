@@ -234,10 +234,11 @@ def affaires_new_view(request):
     request.dbsession.flush()
 
     # Créer le chemin du dossier de l'affaire
-    model.chemin = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
+    affaire_chemin_full_path = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
+    model.chemin = str(model.id) # chemin relatif
 
     # Copier le dossier __template pour une nouvelle affaire
-    Utils.create_affaire_folder(request, model.chemin)
+    Utils.create_affaire_folder(request, affaire_chemin_full_path)
 
 
     # Créer les formulaires de contrôle
