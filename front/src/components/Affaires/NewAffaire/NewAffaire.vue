@@ -67,6 +67,9 @@ export default {
       },
       lastRecord: null,
       operateurs_list: [],
+      permission: {
+        editFactureAllowed: false
+      },
       search_clients_list: [],
       selectedAnciensNumeros: [],
       selectedModificationAffaire: null,
@@ -1099,6 +1102,9 @@ export default {
     this.initOperateursList();
     this.initCadastresList();
     this.initTypesModficiationAffaire();
+
+    //permissions
+    this.permission.editFactureAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION);
   }
 };
 </script>

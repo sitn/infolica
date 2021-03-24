@@ -137,7 +137,7 @@
                                 <md-autocomplete v-model="form.client_commande" :md-options="searchClientsListe" @md-changed="searchClients(form.client_commande)" required md-dense>
                                     <label><strong style="color: blue">Commandé par</strong></label>
                                     <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editFactureAllowed">Créer le client !</a>
                                     </template>
                                 </md-autocomplete>
                             </div>
@@ -159,7 +159,7 @@
                                 <md-autocomplete v-model="form.client_envoi" :md-options="searchClientsListe" @md-changed="searchClients(form.client_envoi)" required md-dense>
                                     <label><strong style="color: blue">Envoyer à</strong></label>
                                     <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editFactureAllowed">Créer le client !</a>
                                     </template>
                                 </md-autocomplete>
                             </div>
