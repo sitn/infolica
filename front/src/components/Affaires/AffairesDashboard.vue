@@ -206,7 +206,7 @@ export default {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION) && !_this.parentAffaireReadOnly;
           }
 
-          //Check if role secretaire or MO
+          //Check role_id
           let role_id = getCurrentUserRoleId();
           
           // Secrétariat peut modifier des factures à tout moment, éditer les informations des affaires et référencer des numéros à l'affaire
@@ -214,6 +214,7 @@ export default {
             _this.permission.editFactureAllowed = true;
             _this.permission.editNumerosReferencesAllowed = true;
             _this.permission.editAffaireAllowed = true;
+            _this.permission.affaireCloture = _this.affaire.type_id === _this.typesAffaires_conf.pcop;
           }
 
           // Opérateur MO peut modifier les informations générales de l'affaire
