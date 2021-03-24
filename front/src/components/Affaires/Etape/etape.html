@@ -58,7 +58,7 @@
                     </md-field>
                 </div>
 
-                <div class="md-layout md-alignment-center-center" v-if="[etapes_affaire_conf.envoi, etapes_affaire_conf.validation].includes(affaire.etape_id)">
+                <div class="md-layout md-alignment-center-center" v-if="([etapes_affaire_conf.envoi, etapes_affaire_conf.validation].includes(affaire.etape_id) && affaire.type_id !== typesAffaires_conf.pcop) || (etapes_affaire_conf.envoi_pcop === affaire.etape_id && affaire.type_id === typesAffaires_conf.pcop)">
                     <md-checkbox v-model="updateAffaireDate.value">{{ updateAffaireDate.text }}</md-checkbox>
                 </div>
             </div>

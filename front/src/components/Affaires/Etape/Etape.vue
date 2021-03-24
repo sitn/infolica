@@ -14,7 +14,8 @@ export default {
   props: {
     affaire: Object,
     chefs_equipe_list: Array,
-    etapes_affaire_conf: Object
+    etapes_affaire_conf: Object,
+    typesAffaires_conf: Object
   },
   data() {
     return {
@@ -79,7 +80,7 @@ export default {
       }
 
       // Update affaire dates
-      if (this.affaire.etape_id === this.etapes_affaire_conf.envoi) {
+      if ((this.affaire.etape_id === this.etapes_affaire_conf.envoi && this.affaire.type_id !== this.typesAffaires_conf.pcop) || (this.affaire.etape_id === this.etapes_affaire_conf.envoi_pcop && this.affaire.type_id === this.typesAffaires_conf.pcop)) {
         this.updateAffaireDate = {
           text: "Mettre à jour la date d'envoi de l'affaire",
           value: true
@@ -100,7 +101,7 @@ export default {
     async updateAffaireEtape() {
       // if updateAffaireDate.value is true, update date affaire
       if (this.updateAffaireDate.value) {
-        if (this.affaire.etape_id === this.etapes_affaire_conf.envoi) {
+        if (this.affaire.etape_id === this.etapes_affaire_conf.envoi || this.affaire.etape_id === this.etapes_affaire_conf.envoi_pcop) {
           this.updateAffaire('date_envoi');
         } else if (this.affaire.etape_id === this.etapes_affaire_conf.validation) {
           this.updateAffaire('date_validation');
