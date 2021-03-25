@@ -11,12 +11,13 @@ import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNume
 export default {
   name: "balanceFromFile",
   components: {
-    ReferenceNumeros
+    ReferenceNumeros,
   },
   props: {
     affaire: { type: Object },
-    numeros_nouveaux: { type: Array },
-    numeros_anciens: { type: Array }
+    numeros_nouveaux_bk: { type: Array },
+    numeros_anciens_bk: { type: Array },
+    types_numeros: { type: Object },
   },
   data: () => {
     return {
@@ -32,6 +33,10 @@ export default {
       etapeSetBalance: Number(process.env.VUE_APP_ETAPE_SET_BALANCE_ID),
       mutation_names: [],
       numero_DP_id: Number(process.env.VUE_APP_NUMERO_DP_ID),
+      numeros_nouveaux: [],
+      numeros_anciens: [],
+      numeros_ddp_new: [],
+      numeros_ddp_old: [],
       numeros_relations: [],
       numeros_relations_bk: [],
       numeros_relations_matrice: [],
@@ -51,16 +56,18 @@ export default {
      * Séparer les anciens numéros et les numéros projetés
      */
     initBFArrays() {
-      this.numeros_anciens = this.numeros_anciens.filter(
+      this.numeros_anciens = this.numeros_anciens_bk.filter(
         x =>
-          x.numero_type_id === Number(process.env.VUE_APP_NUMERO_TYPE_BF)
+          x.numero_type_id === this.types_numeros.bf
       );
 
-      this.numeros_nouveaux = this.numeros_nouveaux.filter(
+      this.numeros_nouveaux = this.numeros_nouveaux_bk.filter(
         x =>
-          x.numero_type_id === Number(process.env.VUE_APP_NUMERO_TYPE_BF) &&
+          x.numero_type_id === this.types_numeros.bf &&
           x.numero_etat_id !== Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)
       );
+
+      this.numeros_ddp_old = this.numeros_anciens_bk.filter(x => x.numero_type_id === this.types_numeros.ddp);
     },
 
 
@@ -71,7 +78,7 @@ export default {
       getTypesNumeros().then(response => {
         if (response && response.data) {
           this.numeros_types_liste = stringifyAutocomplete(response.data).filter(x => {
-            return x.id === Number(process.env.VUE_APP_NUMERO_TYPE_BF) || x.id === Number(process.env.VUE_APP_NUMERO_TYPE_DDP)
+            return x.id === this.types_numeros.bf || x.id === this.types_numeros.ddp
           });
         }
       }).catch(err => handleException(err, this));
@@ -112,14 +119,14 @@ export default {
               if (x.numero_relation_type_id === Number(process.env.VUE_APP_RELATION_TYPE_MUTATION_ID)) {
                 
                 // Check DP in oldBF
-                if (x.numero_base_id === Number(process.env.VUE_APP_NUMERO_DP_ID)){
+                if (x.numero_base_id === this.numero_DP_id){
                   oldBF = "DP";
                 } else {
                   oldBF = [x.numero_base_cadastre_id, x.numero_base].join("_");
                 }
 
                 // Check DP in newBF
-                if (x.numero_associe_id === Number(process.env.VUE_APP_NUMERO_DP_ID)){
+                if (x.numero_associe_id === this.numero_DP_id){
                   newBF = "DP";
                 } else {
                   newBF = [x.numero_associe_cadastre_id, x.numero_associe].join("_");
@@ -405,7 +412,7 @@ export default {
       }
 
       if (dpIndex >= 0) {
-        oldBF.push(Number(process.env.VUE_APP_NUMERO_DP_ID));
+        oldBF.push(this.numero_DP_id);
       }
 
 
@@ -500,6 +507,23 @@ export default {
         ).then(response => resolve(response))
         .catch(err => reject(err));
       });
+    },
+
+    /**
+     * Create DDP
+     */
+    setDDP(){
+      alert("setDDP")
+    },
+
+    /**
+     * Reference DDP
+     */
+    referenceDDP(){
+      let searchTerms = {
+        type_id: this.types_numeros.ddp,
+      }
+      this.$refs.formReference.openReferenceDialog(searchTerms);
     },
 
   },

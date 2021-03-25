@@ -133,7 +133,7 @@
                         <div class="md-layout-item" v-if="show.balance">
                             <!-- Balance des biens-fonds -->
                             <!-- <Balance :affaire_numeros_all="affaire_numeros_all" :affaire="affaire" /> -->
-                            <BalanceFromFile :numeros_nouveaux="affaire_numeros_nouveaux" :numeros_anciens="affaire_numeros_anciens" :affaire="affaire" />
+                            <BalanceFromFile :numeros_nouveaux_bk="affaire_numeros_nouveaux" :numeros_anciens_bk="affaire_numeros_anciens" :affaire="affaire" :types_numeros="types_numeros" />
                         </div>    
                     </div>    
                     

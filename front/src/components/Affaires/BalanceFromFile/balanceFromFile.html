@@ -42,7 +42,8 @@
         </md-dialog-title>
         <md-dialog-content>
             <div class="md-layout md-gutter md-alignment-top-space-between">
-                <div class="md-card md-layout-item cardMenu">
+                <!-- Balance à partir de la désignation -->
+                <div class="md-card md-layout-item ">
                     <md-card-header>
                         <h3 class="md-title">Balance à partir de la désignation</h3>
                     </md-card-header>
@@ -51,18 +52,22 @@
                         <md-button class="md-primary md-elevation-2" @click="getBalanceFromDes">Désignation</md-button>
                     </md-card-content>
                 </div>
+            </div>
+            <div class="md-layout md-gutter md-alignment-top-space-between">
+                <!-- Immatriculation de BF -->
                 <div class="md-card md-layout-item cardMenu">
                     <md-card-header>
-                        <h3 class="md-title">Immatriculation de BF</h3>
+                        <h3 class="md-title">Immatriculation de DP</h3>
                     </md-card-header>
                     <md-card-content>
                         <p>Les numéros de biens-fonds réservés proviennent intégralement du DP.</p>
-                        <md-button class="md-primary md-elevation-2" @click="getBalanceImmatriculationBF">Immatriculation de BF</md-button>
+                        <md-button class="md-primary md-elevation-2" @click="getBalanceImmatriculationBF">Immatriculation de DP</md-button>
                     </md-card-content>
                 </div>
+                <!-- Exmatriculation de BF -->
                 <div class="md-card md-layout-item cardMenu" :disabled="numeros_nouveaux.length>0">
                     <md-card-header>
-                        <h3 class="md-title">Exmatriculation de BF</h3>
+                        <h3 class="md-title">Exmatriculation de bien-fonds</h3>
                     </md-card-header>
                     <md-card-content>
                         <p>Les biens-fonds partent dans le DP. Cette action nécessite de (1) référencer des biens-fonds avant de (2) créer l'exmatriculation.</p>
@@ -78,8 +83,40 @@
                             </md-table>
                         </div>
                         <br>
-                        <md-button class="md-primary md-elevation-2" @click="getBalanceExmatriculationBF" :disabled="!numeros_anciens.length > 0">(2) Exmatriculation de BF</md-button>
-
+                        <md-button class="md-primary md-elevation-2" @click="getBalanceExmatriculationBF" :disabled="!numeros_anciens.length > 0">(2) Exmatriculation des biens-fonds</md-button>
+                        
+                    </md-card-content>
+                </div>
+            </div>
+            <div class="md-layout md-gutter md-alignment-to-space-between">
+                <!-- Création de DDP -->
+                <div class="md-layout-item cardMenu md-card">
+                    <md-card-header>
+                        <h3 class="md-title">Constitution de DDP</h3>
+                    </md-card-header>
+                    <md-card-content>
+                        <p>Tous les numéros réservés dans l'affaire seront définis comme droits distincts et permanents sur les biens-fonds mentionnés.</p>
+                        <md-button class="md-primary md-elevation-2" @click="setDDP">Constitution de DDP</md-button>
+                    </md-card-content>
+                </div>
+                <!-- Suppression de DDP -->
+                <div class="md-layout-item cardMenu md-card">
+                    <md-card-header>
+                        <h3 class="md-title">Suppression de DDP</h3>
+                    </md-card-header>
+                    <md-card-content>
+                        <p>Référencer les DDP à supprimer lorsque l'affaire sera clôturée..</p>
+                        <md-button class="md-primary md-elevation-2" @click="referenceDDP">Référencer des DDP</md-button>
+                        
+                        <div v-if="numeros_ddp_old.length > 0">
+                            <md-table md-height="40vh" v-model="numeros_ddp_old" md-sort="numero"
+                                            md-sort-order="asc" md-fixed-header md-dense md-card>
+                                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                    <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
+                                    <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero_sitn }}</md-table-cell>
+                                </md-table-row>
+                            </md-table>
+                        </div>
                     </md-card-content>
                 </div>
             </div>
