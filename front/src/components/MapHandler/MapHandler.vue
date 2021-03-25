@@ -3,7 +3,7 @@
 
 <script>
 import "ol/ol.css";
-import {defaults as defaultInteractions, Snap, Modify} from 'ol/interaction';
+import {defaults as defaultInteractions, Snap, Modify, MouseWheelZoom} from 'ol/interaction';
 import Map from "ol/Map";
 import View from "ol/View";
 //import {defaults as defaultControls, ScaleLine} from 'ol/control';
@@ -20,6 +20,7 @@ import {register as proj_register} from "ol/proj/proj4";
 import {Projection} from "ol/proj";
 import { Style, Circle, Fill, Stroke, RegularShape } from "ol/style";
 import GeoJSON from 'ol/format/GeoJSON';
+import {platformModifierKeyOnly} from 'ol/events/condition';
 
 export default {
   name: "MapHandler",
@@ -91,7 +92,8 @@ export default {
 
         const interactions = new defaultInteractions({
           altShiftDragRotate: false,
-          pinchRotate: false
+          pinchRotate: false,
+          mouseWheelZoom:false
         });
     
         this.map = new Map({
@@ -112,6 +114,13 @@ export default {
               me.map.getTarget().style.cursor = hit ? 'pointer' : '';
             }
           }
+        });
+
+        let mouseWheelInt = new MouseWheelZoom();
+        this.map.addInteraction(mouseWheelInt);
+
+        this.map.on('wheel', function(evt) {
+          mouseWheelInt.setActive(platformModifierKeyOnly(evt));
         });
 
         this.modify = new Modify({
