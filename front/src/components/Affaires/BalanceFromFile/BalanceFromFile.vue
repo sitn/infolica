@@ -11,11 +11,13 @@ import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNume
 export default {
   name: "balanceFromFile",
   components: {
-    ReferenceNumeros
+    ReferenceNumeros,
   },
   props: {
     affaire: { type: Object },
-    affaire_numeros_all: { type: Array }
+    numeros_nouveaux_bk: { type: Array },
+    numeros_anciens_bk: { type: Array },
+    types_numeros: { type: Object },
   },
   data: () => {
     return {
@@ -30,9 +32,11 @@ export default {
       editionBalance: false,
       etapeSetBalance: Number(process.env.VUE_APP_ETAPE_SET_BALANCE_ID),
       mutation_names: [],
-      numeros_anciens: [],
       numero_DP_id: Number(process.env.VUE_APP_NUMERO_DP_ID),
       numeros_nouveaux: [],
+      numeros_anciens: [],
+      numeros_ddp_new: [],
+      numeros_ddp_old: [],
       numeros_relations: [],
       numeros_relations_bk: [],
       numeros_relations_matrice: [],
@@ -52,18 +56,18 @@ export default {
      * Séparer les anciens numéros et les numéros projetés
      */
     initBFArrays() {
-      this.numeros_anciens = this.affaire_numeros_all.filter(
+      this.numeros_anciens = this.numeros_anciens_bk.filter(
         x =>
-          x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID) &&
-          x.numero_type_id === Number(process.env.VUE_APP_NUMERO_TYPE_BF)
+          x.numero_type_id === this.types_numeros.bf
       );
 
-      this.numeros_nouveaux = this.affaire_numeros_all.filter(
+      this.numeros_nouveaux = this.numeros_nouveaux_bk.filter(
         x =>
-          x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID) &&
-          x.numero_type_id === Number(process.env.VUE_APP_NUMERO_TYPE_BF) &&
+          x.numero_type_id === this.types_numeros.bf &&
           x.numero_etat_id !== Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)
       );
+
+      this.numeros_ddp_old = this.numeros_anciens_bk.filter(x => x.numero_type_id === this.types_numeros.ddp);
     },
 
 
@@ -74,7 +78,7 @@ export default {
       getTypesNumeros().then(response => {
         if (response && response.data) {
           this.numeros_types_liste = stringifyAutocomplete(response.data).filter(x => {
-            return x.id === Number(process.env.VUE_APP_NUMERO_TYPE_BF) || x.id === Number(process.env.VUE_APP_NUMERO_TYPE_DDP)
+            return x.id === this.types_numeros.bf || x.id === this.types_numeros.ddp
           });
         }
       }).catch(err => handleException(err, this));
@@ -115,14 +119,14 @@ export default {
               if (x.numero_relation_type_id === Number(process.env.VUE_APP_RELATION_TYPE_MUTATION_ID)) {
                 
                 // Check DP in oldBF
-                if (x.numero_base_id === Number(process.env.VUE_APP_NUMERO_DP_ID)){
+                if (x.numero_base_id === this.numero_DP_id){
                   oldBF = "DP";
                 } else {
                   oldBF = [x.numero_base_cadastre_id, x.numero_base].join("_");
                 }
 
                 // Check DP in newBF
-                if (x.numero_associe_id === Number(process.env.VUE_APP_NUMERO_DP_ID)){
+                if (x.numero_associe_id === this.numero_DP_id){
                   newBF = "DP";
                 } else {
                   newBF = [x.numero_associe_cadastre_id, x.numero_associe].join("_");
@@ -350,21 +354,19 @@ export default {
       // get simplified list of reserved BF (cadastreId_BF)
       let reservedBF = [];
       let newBF_obj = [];
-      this.affaire_numeros_all.forEach(x => {
-        if (x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID)) {
-          reservedBF.push([x.numero_cadastre_id, x.numero].join("_"));
-          
-          // Save newBF as number objects
-          newBF_obj.push({
-            id: x.numero_id,
-            cadastre_id: x.numero_cadastre_id,
-            type_id: x.numero_type_id,
-            numero: x.numero,
-            suffixe: x.numero_suffixe,
-            etat_id: x.numero_etat_id,
-            no_access: [x.numero_cadastre_id, x.numero].join("_")
-          });
-        }
+      this.numeros_nouveaux.forEach(x => {
+        reservedBF.push([x.numero_cadastre_id, x.numero].join("_"));
+        
+        // Save newBF as number objects
+        newBF_obj.push({
+          id: x.numero_id,
+          cadastre_id: x.numero_cadastre_id,
+          type_id: x.numero_type_id,
+          numero: x.numero,
+          suffixe: x.numero_suffixe,
+          etat_id: x.numero_etat_id,
+          no_access: [x.numero_cadastre_id, x.numero].join("_")
+        });
       });
 
       let newBF_not_in_numeros_reserves = [];
@@ -392,12 +394,27 @@ export default {
       //Check if oldBF already exist in DB otherwise create it
       // Get unique set of oldBF
       oldBF = [...new Set(oldBF)];
-      await this.checkExistingOldBF(oldBF)
-      .then(response => {
-        if (response && response.data) {
-          oldBF = response.data;
-        }
-      }).catch(err => handleException(err, this));
+
+      // Exclude dp from list to check existence
+      let oldBF_lowercase = oldBF.map(x => x.toLowerCase());
+      let dpIndex = oldBF_lowercase.indexOf("dp");
+      if (dpIndex >= 0) {
+        oldBF.splice(dpIndex);
+      }
+
+      if (oldBF.length > 0) {
+        await this.checkExistingOldBF(oldBF)
+        .then(response => {
+          if (response && response.data) {
+            oldBF = response.data;
+          }
+        }).catch(err => handleException(err, this));
+      }
+
+      if (dpIndex >= 0) {
+        oldBF.push(this.numero_DP_id);
+      }
+
 
       return {newBF_not_in_numeros_reserves: newBF_not_in_numeros_reserves,
               ddp: numeros_reserves_not_in_newBF,
@@ -446,14 +463,14 @@ export default {
             if (oldBF_i.oldBF.toLowerCase().includes("dp")) {
               numero_id_base = process.env.VUE_APP_NUMERO_DP_ID;
             } else {
-              numero_id_base = checkBF.oldBF.filter(x => x.no_access === oldBF_i.oldBF)[0].id;
+              numero_id_base = checkBF.oldBF.filter(x => [x.cadastre_id, x.numero].join("_") === oldBF_i.oldBF)[0].id;
             }
             
             // New number + check DP
             if (newBF_i.toLowerCase().includes("dp")) {
               numero_id_associe = process.env.VUE_APP_NUMERO_DP_ID;
             } else {
-              numero_id_associe = checkBF.newBF.filter(x => x.no_access === newBF_i)[0].id;
+              numero_id_associe = checkBF.newBF.filter(x => [x.cadastre_id, x.numero].join("_") === newBF_i)[0].id;
             }
 
             promises.push( this.postNumerosRelation(numero_id_base, numero_id_associe) );
@@ -492,6 +509,23 @@ export default {
       });
     },
 
+    /**
+     * Create DDP
+     */
+    setDDP(){
+      alert("Ce bloc est en construction...")
+    },
+
+    /**
+     * Reference DDP
+     */
+    referenceDDP(){
+      let searchTerms = {
+        type_id: this.types_numeros.ddp,
+      }
+      this.$refs.formReference.openReferenceDialog(searchTerms);
+    },
+
   },
   mounted: function() {
     this.getNumerosRelations();
@@ -499,7 +533,7 @@ export default {
     this.initCadastres();
     this.getMutationNames();
     setTimeout(() => { this.initBFArrays(); }, 1000);
-    this.$root.$on("searchAffaireNumeros", () => { setTimeout(() => { this.initBFArrays(); }, 500); });
+    this.$root.$on("searchAffaireNumeros", () => { setTimeout(() => { this.initBFArrays(); }, 1000); });
   }
 };
 </script>

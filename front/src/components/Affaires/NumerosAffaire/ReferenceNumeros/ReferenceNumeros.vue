@@ -70,9 +70,9 @@ export default {
     /**
      * Open référence numéros dialog
      */
-    async openReferenceDialog() {
+    async openReferenceDialog(searchTerms=null) {
       await this.initializeForm().then(() => {
-        this.initNumerosList();
+        this.initNumerosList(searchTerms);
         this.showReferenceDialog = true;
       });
     },
@@ -100,12 +100,18 @@ export default {
     /*
      * Init Numeros list
      */
-    async initNumerosList() {
+    async initNumerosList(searchTerms=null) {
+      if (searchTerms) {
+        if (searchTerms && searchTerms.type_id){
+          this.search.type = this.numeros_types_liste.filter(x => x.id === searchTerms.type_id)[0];
+        }
+      }
+
       this.isModeCreate = false;
       this.isModeCreatePPE = false;
 
       // Récupère les id des numéros référencés dans l'affaire
-      let numerosReferencesId = this.affaire_numeros_anciens.map(x => x.numero_id );
+      let numerosReferencesId = this.affaire_numeros_anciens.map(x => x.numero_id);
 
       var formData = new FormData();
       if (this.search.cadastre) {

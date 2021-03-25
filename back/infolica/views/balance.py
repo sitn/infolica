@@ -98,22 +98,36 @@ def balance_check_existing_oldBF_new_view(request):
         numero_obj.append(numero)
         
         # Add numero_affaire link
+        affnum_exists = request.dbsession.query(AffaireNumero).filter(and_(
+            AffaireNumero.numero_id == numero.id,
+            AffaireNumero.affaire_id == affaire_id
+        )).first()
 
-        affNum = AffaireNumero(
-            affaire_id = affaire_id,
-            numero_id = numero.id,
-            type_id = request.registry.settings['numero_bf_id'],
-            actif = True
-        )
-        request.dbsession.add(affNum)
+        if (affnum_exists is None):
+            affNum = AffaireNumero(
+                affaire_id = affaire_id,
+                numero_id = numero.id,
+                type_id = request.registry.settings['numero_bf_id'],
+                actif = True
+            )
+            request.dbsession.add(affNum)
+        
+        
 
         # Add numero_etat_histo link
-        numEtatHisto = NumeroEtatHisto(
-            numero_id = numero.id,
-            numero_etat_id = request.registry.settings['numero_vigueur_id'],
-            date = datetime.now().date()
-        )
-        request.dbsession.add(numEtatHisto)
+        numEtatHisto_exists = request.dbsession.query(NumeroEtatHisto).filter(and_(
+            NumeroEtatHisto.numero_id == numero.id,
+            NumeroEtatHisto.numero_etat_id == request.registry.settings['numero_vigueur_id']
+        )).first()
+        
+        if (numEtatHisto_exists is None):
+            numEtatHisto = NumeroEtatHisto(
+                numero_id = numero.id,
+                numero_etat_id = request.registry.settings['numero_vigueur_id'],
+                date = datetime.now().date()
+            )
+            request.dbsession.add(numEtatHisto)
+        
 
     return Utils.serialize_many(numero_obj)
 

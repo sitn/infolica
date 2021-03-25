@@ -135,7 +135,7 @@ export default {
         )
         .then(response => {
           if (response.data) {
-            this.$parent.searchAffaireNumeros();
+            this.$root.$emit("searchAffaireNumeros");
             this.$root.$emit("ShowMessage", "Le(s) numéro(s) réservé(s) ont été correctement rattaché(s) à l'affaire")
           }
         })
