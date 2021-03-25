@@ -15,7 +15,8 @@ export default {
   },
   props: {
     affaire: { type: Object },
-    affaire_numeros_all: { type: Array }
+    numeros_nouveaux: { type: Array },
+    numeros_anciens: { type: Array }
   },
   data: () => {
     return {
@@ -30,9 +31,7 @@ export default {
       editionBalance: false,
       etapeSetBalance: Number(process.env.VUE_APP_ETAPE_SET_BALANCE_ID),
       mutation_names: [],
-      numeros_anciens: [],
       numero_DP_id: Number(process.env.VUE_APP_NUMERO_DP_ID),
-      numeros_nouveaux: [],
       numeros_relations: [],
       numeros_relations_bk: [],
       numeros_relations_matrice: [],
@@ -52,15 +51,13 @@ export default {
      * Séparer les anciens numéros et les numéros projetés
      */
     initBFArrays() {
-      this.numeros_anciens = this.affaire_numeros_all.filter(
+      this.numeros_anciens = this.numeros_anciens.filter(
         x =>
-          x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID) &&
           x.numero_type_id === Number(process.env.VUE_APP_NUMERO_TYPE_BF)
       );
 
-      this.numeros_nouveaux = this.affaire_numeros_all.filter(
+      this.numeros_nouveaux = this.numeros_nouveaux.filter(
         x =>
-          x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID) &&
           x.numero_type_id === Number(process.env.VUE_APP_NUMERO_TYPE_BF) &&
           x.numero_etat_id !== Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)
       );
@@ -350,21 +347,19 @@ export default {
       // get simplified list of reserved BF (cadastreId_BF)
       let reservedBF = [];
       let newBF_obj = [];
-      this.affaire_numeros_all.forEach(x => {
-        if (x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID)) {
-          reservedBF.push([x.numero_cadastre_id, x.numero].join("_"));
-          
-          // Save newBF as number objects
-          newBF_obj.push({
-            id: x.numero_id,
-            cadastre_id: x.numero_cadastre_id,
-            type_id: x.numero_type_id,
-            numero: x.numero,
-            suffixe: x.numero_suffixe,
-            etat_id: x.numero_etat_id,
-            no_access: [x.numero_cadastre_id, x.numero].join("_")
-          });
-        }
+      this.numeros_nouveaux.forEach(x => {
+        reservedBF.push([x.numero_cadastre_id, x.numero].join("_"));
+        
+        // Save newBF as number objects
+        newBF_obj.push({
+          id: x.numero_id,
+          cadastre_id: x.numero_cadastre_id,
+          type_id: x.numero_type_id,
+          numero: x.numero,
+          suffixe: x.numero_suffixe,
+          etat_id: x.numero_etat_id,
+          no_access: [x.numero_cadastre_id, x.numero].join("_")
+        });
       });
 
       let newBF_not_in_numeros_reserves = [];
@@ -392,12 +387,27 @@ export default {
       //Check if oldBF already exist in DB otherwise create it
       // Get unique set of oldBF
       oldBF = [...new Set(oldBF)];
-      await this.checkExistingOldBF(oldBF)
-      .then(response => {
-        if (response && response.data) {
-          oldBF = response.data;
-        }
-      }).catch(err => handleException(err, this));
+
+      // Exclude dp from list to check existence
+      let oldBF_lowercase = oldBF.map(x => x.toLowerCase());
+      let dpIndex = oldBF_lowercase.indexOf("dp");
+      if (dpIndex >= 0) {
+        oldBF.splice(dpIndex);
+      }
+
+      if (oldBF.length > 0) {
+        await this.checkExistingOldBF(oldBF)
+        .then(response => {
+          if (response && response.data) {
+            oldBF = response.data;
+          }
+        }).catch(err => handleException(err, this));
+      }
+
+      if (dpIndex >= 0) {
+        oldBF.push(Number(process.env.VUE_APP_NUMERO_DP_ID));
+      }
+
 
       return {newBF_not_in_numeros_reserves: newBF_not_in_numeros_reserves,
               ddp: numeros_reserves_not_in_newBF,
@@ -499,7 +509,7 @@ export default {
     this.initCadastres();
     this.getMutationNames();
     setTimeout(() => { this.initBFArrays(); }, 1000);
-    this.$root.$on("searchAffaireNumeros", () => { setTimeout(() => { this.initBFArrays(); }, 500); });
+    this.$root.$on("searchAffaireNumeros", () => { setTimeout(() => { this.initBFArrays(); }, 1000); });
   }
 };
 </script>

@@ -98,7 +98,11 @@ def balance_check_existing_oldBF_new_view(request):
         numero_obj.append(numero)
         
         # Add numero_affaire link
-
+        affnum_exists = request.dbsession.query(AffaireNumero).filter(and_(
+            AffaireNumero.numero_id == numero.id,
+            AffaireNumero.affaire_id == affaire_id
+        )).first()
+        toto
         affNum = AffaireNumero(
             affaire_id = affaire_id,
             numero_id = numero.id,
