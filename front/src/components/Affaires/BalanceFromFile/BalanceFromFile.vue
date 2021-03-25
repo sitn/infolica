@@ -456,14 +456,14 @@ export default {
             if (oldBF_i.oldBF.toLowerCase().includes("dp")) {
               numero_id_base = process.env.VUE_APP_NUMERO_DP_ID;
             } else {
-              numero_id_base = checkBF.oldBF.filter(x => x.no_access === oldBF_i.oldBF)[0].id;
+              numero_id_base = checkBF.oldBF.filter(x => [x.cadastre_id, x.numero].join("_") === oldBF_i.oldBF)[0].id;
             }
             
             // New number + check DP
             if (newBF_i.toLowerCase().includes("dp")) {
               numero_id_associe = process.env.VUE_APP_NUMERO_DP_ID;
             } else {
-              numero_id_associe = checkBF.newBF.filter(x => x.no_access === newBF_i)[0].id;
+              numero_id_associe = checkBF.newBF.filter(x => [x.cadastre_id, x.numero].join("_") === newBF_i)[0].id;
             }
 
             promises.push( this.postNumerosRelation(numero_id_base, numero_id_associe) );
