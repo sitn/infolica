@@ -245,7 +245,7 @@ export default {
       .then(response => {
         if (response) {
           _this.$root.$emit("ShowMessage", "L'affaire a été dupliquée avec succès");
-          _this.$root.$emit("UpdateNumerosAffaires");
+          _this.$root.$emit("searchAffaireNumeros");
           this.searchAffaireNumeros();
         }
       })

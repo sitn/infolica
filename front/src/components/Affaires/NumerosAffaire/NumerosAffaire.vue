@@ -455,7 +455,7 @@ export default {
     this.showPermissions();
     this.setMatDiffEdition();
 
-    this.$root.$on('UpdateNumerosAffaires', () => this.searchAffaireNumeros());
+    this.$root.$on('searchAffaireNumeros', () => this.searchAffaireNumeros());
 
   }
 };

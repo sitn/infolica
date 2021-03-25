@@ -4,10 +4,15 @@
 <script>
 import { handleException } from "@/services/exceptionsHandler";
 import { getTypesNumeros, getCadastres, stringifyAutocomplete } from "@/services/helper";
+import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
+
 // import moment from 'moment'
 
 export default {
   name: "balanceFromFile",
+  components: {
+    ReferenceNumeros
+  },
   props: {
     affaire: { type: Object },
     affaire_numeros_all: { type: Array }
@@ -26,19 +31,19 @@ export default {
       etapeSetBalance: Number(process.env.VUE_APP_ETAPE_SET_BALANCE_ID),
       mutation_names: [],
       numeros_anciens: [],
+      numero_DP_id: Number(process.env.VUE_APP_NUMERO_DP_ID),
       numeros_nouveaux: [],
       numeros_relations: [],
       numeros_relations_bk: [],
       numeros_relations_matrice: [],
       numeros_types_liste: [],
-      oldBF_toCreate: [],
       selectedMutation: {
         nom: null,
         numeros: []
       },
-      showConfirmationCreateNumber: false,
       tableau_balance: [],
-
+      showBalanceMenu: false,
+      showAskDDPCreation: false,
     };
   },
   methods: {
@@ -59,7 +64,6 @@ export default {
           x.numero_type_id === Number(process.env.VUE_APP_NUMERO_TYPE_BF) &&
           x.numero_etat_id !== Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)
       );
-
     },
 
 
@@ -171,7 +175,9 @@ export default {
     /**
      * Get balance from mutation name (DES)
      */
-    async getBalanceFichier() {
+    async getBalanceFromDes() {
+      this.showBalanceMenu = false;
+      
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_FROM_FILE_ENDPOINT + "?affaire_id=" + this.affaire.id,
         {
@@ -202,41 +208,51 @@ export default {
         }
       }).catch(err => handleException(err, this));
     },
-    
-    // /**
-    //  * Get balance from mutation name (GEOS)
-    //  */
-    // async getBalanceByMutationName() {
-    //   this.$http.get(
-    //     process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_ENDPOINT + "?mutation_name=" + this.selectedMutation.nom,
-    //     {
-    //       withCredentials: true,
-    //       headers: {Accept: "application/json"}
-    //     }
-    //   ).then(response => {
-    //     if (response && response.data) {
-    //       let tmp = response.data;
-    //       let relation = [];
 
-    //       tmp.forEach(x => {
-    //         // prepare relation array
-    //         x.relation_old = [x.cad_old, x.parcel_old].join("_");
-    //         if (x.parcel_old.toLowerCase().includes("dp")) {
-    //           x.relation_old = "DP";
-    //         }
-            
-    //         x.relation_new = [x.cad_new, x.parcel_new].join("_");
-    //         if (x.parcel_new.toLowerCase().includes("dp")) {
-    //           x.relation_new = "DP";
-    //         }
-    //         // keep relation
-    //         relation.push([x.relation_old, x.relation_new]);
-    //       });
+    /**
+     * Generate "balance" in case of immatriculation 
+     * Reservation de numéros must be done previously
+     */
+    getBalanceImmatriculationBF() {
+      this.showBalanceMenu = false;
 
-    //       this.tableau_balance = this.constructTableauBalance(relation);
-    //     }
-    //   }).catch(err => handleException(err, this));
-    // },
+      if (this.numeros_nouveaux.length === 0) {
+        this.$root.$emit("ShowError", "Aucun numéro de BF n'a été réservé dans l'affaire");
+        return;
+      }
+
+      let relation = [];
+      this.numeros_nouveaux.forEach(x => relation.push(["DP", [x.numero_cadastre_id, x.numero].join("_")]));
+      this.tableau_balance = this.constructTableauBalance(relation);
+    },
+   
+   /**
+     * Référencer des numéros pour l'exmatriculation
+     * This operation need to reference numbers
+     */
+    referencerNumeros() {
+      // Referencer des numéros
+      this.$refs.formReference.openReferenceDialog();
+    },
+
+   /**
+     * Generate "balance" in case of exmatriculation 
+     * This operation need to reference numbers first
+     */
+    getBalanceExmatriculationBF() {
+      this.showBalanceMenu = false;
+
+      // Pour chaque numéro référencé, le lier au DP
+      if (this.numeros_anciens.length === 0) {
+        this.$root.$emit("ShowError", "Aucun BF n'a été référencé à l'affaire!")
+        return;
+      }
+      
+      let relation = [];
+      this.numeros_anciens.forEach(x => relation.push([[x.numero_cadastre_id, x.numero].join("_"), "DP"]));
+      this.tableau_balance = this.constructTableauBalance(relation);
+
+    },
     
     /**
      * Construct tableau balance
@@ -255,22 +271,6 @@ export default {
       [oldBF, newBF] = this.transpose(relation);
       oldBF = [...new Set(oldBF)].sort();
       newBF = [...new Set(newBF)].sort();
-
-      // include DP
-      // if (!oldBF.includes("DP")) {
-      //   oldBF.push("DP");
-      // }
-      // if (!newBF.includes("DP")) {
-      //   newBF.push("DP");
-      // }
-      
-      // // include RP
-      // if (!oldBF.includes("RP")) {
-      //   oldBF.push("RP");
-      // }
-      // if (!newBF.includes("RP")) {
-      //   newBF.push("RP");
-      // }
 
       // Construct false balance object
       let tableau = [];
@@ -311,7 +311,13 @@ export default {
         return;
       } 
       
-      this.postBalance(checkBF);
+      await this.postBalance(checkBF);
+
+      // Ask what to do with supplementary reserved numbers
+      if (checkBF.ddp.length > 0){
+        this.showAskDDPCreation = true;
+      }
+
 
     },
 
@@ -456,8 +462,10 @@ export default {
       });
       
       Promise.all(promises)
-      .then(() => this.$root.$emit("ShowMessage", "La balance a bien été enregistrée"))
-      .catch(err => handleException(err, this));
+      .then(() => {
+        this.editionBalance = false;
+        this.$root.$emit("ShowMessage", "La balance a bien été enregistrée");
+      }).catch(err => handleException(err, this));
 
     },
 
@@ -490,6 +498,8 @@ export default {
     this.initNumeroTypes();
     this.initCadastres();
     this.getMutationNames();
+    setTimeout(() => { this.initBFArrays(); }, 1000);
+    this.$root.$on("searchAffaireNumeros", () => { setTimeout(() => { this.initBFArrays(); }, 500); });
   }
 };
 </script>

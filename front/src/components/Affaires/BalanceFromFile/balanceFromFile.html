@@ -4,14 +4,11 @@
             <div class="md-title">Balance</div>
             
             <div v-if="editionBalance">
-                <md-button @click="getBalanceFichier" class="md-raised" title="Récupère la balance depuis le fichier 'Des_xxx.docx'">Récupérer la balance</md-button>
+                <md-button @click="showBalanceMenu = true" class="md-raised" title="Récupère la balance depuis le fichier 'Des_xxx.docx' ou construit la relation d'immatriculation ou d'exmatriculation de DP">Créer la balance</md-button>
             </div>
         </md-card-header>
         
         <md-card-content>
-            
-            <md-button @click=getBalanceFichier></md-button>
-
             <md-card v-if="tableau_balance.length>0" style="width: auto;">
                 <md-card-content>
                     <div style="display: flex;">
@@ -38,45 +35,74 @@
 
     </md-card>
 
-
-    <!-- Dialog confirm creation of old numbers -->
-    <!-- <md-dialog :md-active="showConfirmationCreateNumber"
-        @md-clicked-outside="showConfirmationCreateNumber = false"
-        style="z-index: 6;">
-        <md-dialog-title>Confirmer la création des numéros</md-dialog-title>
+    <!-- Balance menu -->
+    <md-dialog :md-active="showBalanceMenu" @md-clicked-outside="showBalanceMenu = false">
+        <md-dialog-title>
+            <h1 class="md-title">Choix de récupération de la balance</h1>
+        </md-dialog-title>
         <md-dialog-content>
-            <p>Ces numéros n'existent pas encore dans la base de données d'Infolica.</p>
+            <div class="md-layout md-gutter md-alignment-top-space-between">
+                <div class="md-card md-layout-item cardMenu">
+                    <md-card-header>
+                        <h3 class="md-title">Balance à partir de la désignation</h3>
+                    </md-card-header>
+                    <md-card-content>
+                        <p>Récupère le fichier des dans le dossier de l'affaire pour construire la balance.</p>
+                        <md-button class="md-primary md-elevation-2" @click="getBalanceFromDes">Désignation</md-button>
+                    </md-card-content>
+                </div>
+                <div class="md-card md-layout-item cardMenu">
+                    <md-card-header>
+                        <h3 class="md-title">Immatriculation de BF</h3>
+                    </md-card-header>
+                    <md-card-content>
+                        <p>Les numéros de biens-fonds réservés proviennent intégralement du DP.</p>
+                        <md-button class="md-primary md-elevation-2" @click="getBalanceImmatriculationBF">Immatriculation de BF</md-button>
+                    </md-card-content>
+                </div>
+                <div class="md-card md-layout-item cardMenu" :disabled="numeros_nouveaux.length>0">
+                    <md-card-header>
+                        <h3 class="md-title">Exmatriculation de BF</h3>
+                    </md-card-header>
+                    <md-card-content>
+                        <p>Les biens-fonds partent dans le DP. Cette action nécessite de (1) référencer des biens-fonds avant de (2) créer l'exmatriculation.</p>
+                        <md-button class="md-primary md-elevation-2" @click="referencerNumeros">(1) Référencer des biens-fonds</md-button>
+                        
+                        <div v-if="numeros_anciens.length > 0">
+                            <md-table md-height="40vh" v-model="numeros_anciens" md-sort="numero"
+                                            md-sort-order="asc" md-fixed-header md-dense md-card>
+                                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                    <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
+                                    <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero_sitn }}</md-table-cell>
+                                </md-table-row>
+                            </md-table>
+                        </div>
+                        <br>
+                        <md-button class="md-primary md-elevation-2" @click="getBalanceExmatriculationBF" :disabled="!numeros_anciens.length > 0">(2) Exmatriculation de BF</md-button>
 
-            <md-table v-model="oldBF_toCreate" md-card md-fixed-header>
-                <md-table-row slot="md-table-row" slot-scope="{ item }">
-                    <md-table-cell md-label="Numero" md-sort-by="numero" md-numeric>{{ item.numero }}</md-table-cell>
-                    
-                    <md-table-cell md-label="Cadastre" md-sort-by="cadastre_id">
-                        <md-autocomplete v-model="item.cadastre" :md-options="cadastres_liste" md-dense>
-                            {{ item.nom }}
-                        </md-autocomplete>
-                    </md-table-cell>
-                    
-                    <md-table-cell md-label="Type" md-sort-by="type_id">
-                        <md-autocomplete v-model="item.type" :md-options="numeros_types_liste" md-dense>
-                            {{ item.nom }}
-                        </md-autocomplete>
-                    </md-table-cell>
-                </md-table-row>
-            </md-table>
-
+                    </md-card-content>
+                </div>
+            </div>
         </md-dialog-content>
+    </md-dialog>
 
-        <md-dialog-actions>
-            <md-button class="md-accent" @click="showConfirmationCreateNumber = false">Annuler</md-button>
-            <md-button class="md-primary" @click="onCreateOldBF">Enregistrer</md-button>
-        </md-dialog-actions>
-    </md-dialog> -->
+    <!-- Dialog to ask for DDP creation or continue saving balances -->
+    <md-dialog :md-active.sync="showAskDDPCreation"  @md-clicked-outside="showAskDDPCreation = false">
+        <md-dialog-title>
+            <h1 class="md-title">Il reste des biens-fonds réservés, que faut-il en faire?</h1>
+        </md-dialog-title>
+        <md-dialog-content>
+            <md-icon>warning_amber</md-icon> <p style="color: red;"><b>Cette partie est en construction !!! </b></p>
+        </md-dialog-content>
+    </md-dialog>
 
     <!-- Dialog balance incorrecte -->
-    <!-- <md-dialog-alert :md-active.sync="checkBFBalance.show"
+    <md-dialog-alert :md-active.sync="checkBFBalance.show"
                      :md-title="checkBFBalance.title"
                      :md-content="checkBFBalance.content"
-                     style="width: 700px; margin: auto;" /> -->
+                     style="width: 700px; margin: auto;" />
 
+
+    <!-- Référence de numéros -->
+    <ReferenceNumeros ref="formReference" :affaire_numeros_anciens="numeros_anciens"/>
 </div>

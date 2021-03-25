@@ -8,3 +8,11 @@
 .balanceFromFile .md-toolbar {
     min-height: 25px;
 }
+
+.cardMenu {
+    max-width: 400px !important;
+}
+
+.md-dialog {
+    z-index: 6 !important;
+}
