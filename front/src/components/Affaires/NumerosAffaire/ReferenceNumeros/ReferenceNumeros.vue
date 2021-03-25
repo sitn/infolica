@@ -11,7 +11,9 @@ import { required } from "vuelidate/lib/validators";
 
 export default {
   name: "ReferenceNumeros",
-  props: {},
+  props: {
+    affaire_numeros_anciens: Array
+  },
   mixins: [validationMixin],
   components: {},
   data() {
@@ -103,9 +105,7 @@ export default {
       this.isModeCreatePPE = false;
 
       // Récupère les id des numéros référencés dans l'affaire
-      var numerosReferencesId = this.$parent.affaire_numeros_anciens.map(x => {
-        return x.numero_id;
-      });
+      let numerosReferencesId = this.affaire_numeros_anciens.map(x => x.numero_id );
 
       var formData = new FormData();
       if (this.search.cadastre) {
@@ -257,7 +257,7 @@ export default {
         )
         .then(response => {
           if (response.data) {
-            this.$parent.searchAffaireNumeros();
+            this.$root.$emit("searchAffaireNumeros");
             this.$root.$emit("ShowMessage", "Le(s) numéro(s) sélectionné(s) ont été correctement ajouté(s) à l'affaire");
             this.$root.$emit("updateNumerosFactureList");
           }

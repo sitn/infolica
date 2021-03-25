@@ -11,7 +11,7 @@
             </div>
             <div>
                 <md-button class="md-primary" v-on:click="newFacture('devis')" v-if="showNewFactureBtn && permission.editFactureAllowed">Nouveau devis</md-button>
-                <md-button class="md-primary" v-on:click="newFacture('facture')" v-if="showNewFactureBtn && permission.editFactureAllowed">Nouvelle facture</md-button>
+                <md-button class="md-primary" v-on:click="newFacture('facture')" v-if="showNewFactureBtn">Nouvelle facture</md-button>
             </div>
         </md-card-header>
 
@@ -66,11 +66,11 @@
                                 <md-table-cell md-label="Total" md-sort-by="montant_total" style="width: 5%;">CHF {{ item.montant_total }}</md-table-cell>
                                 <md-table-cell md-label="SAP Facture" md-sort-by="sap" style="width: 5%;">{{ item.sap }}</md-table-cell>
                                 <md-table-cell md-label="Remarque" md-sort-by="remarque" style="width: 10%;">{{ item.remarque }}</md-table-cell>
-                                <md-table-cell md-label="Actions" class="actionsColumn" v-if="permission.editFactureAllowed" style="width: 15%;">
+                                <md-table-cell md-label="Actions" class="actionsColumn" style="width: 15%;">
                                     <md-button class="md-icon-button md-primary md-dense" @click="openFactureEdition(item)">
                                         <md-icon>edit</md-icon>
                                     </md-button>
-                                    <md-button class="md-icon-button md-accent md-dense" v-on:click="callDeleteFacture(item)">
+                                    <md-button class="md-icon-button md-accent md-dense" v-on:click="callDeleteFacture(item)" v-if="permission.editFactureAllowed">
                                         <md-icon>delete</md-icon>
                                     </md-button>
                                 </md-table-cell>
@@ -147,7 +147,7 @@
                         <div class="md-layout-item md-size-50">
                             <md-field>
                                 <label>No SAP facture</label>
-                                <md-input v-model="selectedFacture.sap"></md-input>
+                                <md-input v-model="selectedFacture.sap" :disabled="!permission.editFactureAllowed"></md-input>
                             </md-field>
                         </div>
                         
@@ -184,7 +184,7 @@
                     <md-autocomplete v-model="selectedFacture.client" :md-options="clients_liste_select" @md-changed="getClientSearch(selectedFacture.client)" :class="getValidationClass('client')" required md-dense>
                         <label>Facturer à (débiteur)</label>
                         <template slot="md-autocomplete-empty" slot-scope="{ term }" v-if="term && term.length > 2">
-                            Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient">Créer le client !</a>
+                            Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editFactureAllowed">Créer le client !</a>
                         </template>
                         <span class="md-error" v-if="!$v.selectedFacture.client.required">Le client est obligatoire</span>
                     </md-autocomplete>
@@ -201,28 +201,28 @@
                         <md-field :class="getValidationClass('montant_mo')">
                             <label>Montant MO</label>
                             <span class="md-prefix">CHF</span>
-                            <md-input class="currency" v-model="selectedFacture.montant_mo" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_mo')" required></md-input>
+                            <md-input class="currency" v-model="selectedFacture.montant_mo" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_mo')" required :disabled="!permission.editFactureAllowed"></md-input>
                             <span class="md-error" v-if="!$v.selectedFacture.montant_mo.required">Le montant MO est obligatoire</span>
                         </md-field>
         
                         <md-field :class="getValidationClass('montant_mat_diff')">
                             <label>Montant mat diff</label>
                             <span class="md-prefix">CHF</span>
-                            <md-input class="currency" v-model="selectedFacture.montant_mat_diff" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_mat_diff')" required></md-input>
+                            <md-input class="currency" v-model="selectedFacture.montant_mat_diff" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_mat_diff')" required :disabled="!permission.editFactureAllowed"></md-input>
                             <span class="md-error" v-if="!$v.selectedFacture.montant_mat_diff.required">Le montant mat diff est obligatoire</span>
                         </md-field>
         
                         <md-field :class="getValidationClass('montant_rf')">
                             <label>Montant RF</label>
                             <span class="md-prefix">CHF</span>
-                            <md-input class="currency" v-model="selectedFacture.montant_rf" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_rf')" required></md-input>
+                            <md-input class="currency" v-model="selectedFacture.montant_rf" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_rf')" required :disabled="!permission.editFactureAllowed"></md-input>
                             <span class="md-error" v-if="!$v.selectedFacture.montant_rf.required">Le montant RF est obligatoire</span>
                         </md-field>
         
                         <md-field :class="getValidationClass('montant_tva')">
                             <label>TVA</label>
                             <span class="md-prefix">CHF</span>
-                            <md-input class="currency" v-model="selectedFacture.montant_tva" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_tva')" required></md-input>
+                            <md-input class="currency" v-model="selectedFacture.montant_tva" v-on:keyup="computeTotal()" @focus="$event.target.select()" @change="setFinanceFormat('montant_tva')" required :disabled="!permission.editFactureAllowed"></md-input>
                             <span class="md-error" v-if="!$v.selectedFacture.montant_tva.required">Le montant de TVA est obligatoire</span>
                         </md-field>
         

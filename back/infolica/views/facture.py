@@ -51,8 +51,12 @@ def factures_new_view(request):
     """
     Add new facture
     """
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+    # # Check authorization
+    # if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+    #     raise exc.HTTPForbidden()
+
+    # Check connected
+    if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
     params = {}
@@ -73,8 +77,12 @@ def factures_update_view(request):
     """
     Update facture
     """
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+    # # Check authorization
+    # if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+    #     raise exc.HTTPForbidden()
+
+    # Check connected
+    if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
     # id_facture

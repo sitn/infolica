@@ -91,6 +91,7 @@ export default {
         travaux_chef_equipe: Number(process.env.VUE_APP_ETAPE_TRAVAUX_CHEF_EQUIPE_ID),
         validation: Number(process.env.VUE_APP_ETAPE_VALIDATION_ID),
         envoi: Number(process.env.VUE_APP_ETAPE_ENVOI_ID),
+        envoi_pcop: Number(process.env.VUE_APP_ETAPE_ENVOI_PCOP_ID),
         fin_processus: Number(process.env.VUE_APP_FIN_PROCESSUS_ID)
       },
       clientTypes_conf: {
@@ -206,7 +207,7 @@ export default {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION) && !_this.parentAffaireReadOnly;
           }
 
-          //Check if role secretaire or MO
+          //Check role_id
           let role_id = getCurrentUserRoleId();
           
           // Secrétariat peut modifier des factures à tout moment, éditer les informations des affaires et référencer des numéros à l'affaire
@@ -214,6 +215,7 @@ export default {
             _this.permission.editFactureAllowed = true;
             _this.permission.editNumerosReferencesAllowed = true;
             _this.permission.editAffaireAllowed = true;
+            _this.permission.affaireCloture = _this.affaire.type_id === _this.typesAffaires_conf.pcop;
           }
 
           // Opérateur MO peut modifier les informations générales de l'affaire

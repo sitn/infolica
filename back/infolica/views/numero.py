@@ -417,6 +417,9 @@ def numero_differe_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
+    numero_projet_id = int(request.registry.settings['numero_projet_id'])
+    numero_vigueur_id = int(request.registry.settings['numero_vigueur_id'])
+
     role = request.params['role'] if 'role' in request.params else None
 
     num_agg = func.array_agg(VNumeros.numero, type_=ARRAY(Integer)).label('numero')
@@ -444,7 +447,8 @@ def numero_differe_view(request):
     elif role == "secr":
         query = query.filter(and_(
             VNumeros.diff_req_radiation.isnot(True),
-            VNumeros.diff_sortie.isnot(None)
+            VNumeros.diff_sortie.isnot(None),
+            VNumeros.etat_id.in_((numero_projet_id, numero_vigueur_id)) 
         ))
         
     result = query.group_by(VNumeros.diff_affaire_id, VNumeros.cadastre).having(func.array_length(num_agg, 1) > 0).all()
