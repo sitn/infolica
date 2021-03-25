@@ -18,13 +18,13 @@
                     
                     <div class="md-layout md-gutter">
                     <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
-                        <div class="md-layout-item md-size-45" v-if="show.numeros_references_card">
+                        <div class="md-layout-item md-size-45" v-if="show.numeros_references_card || affaire_numeros_anciens.length > 0">
                     
                             <md-card>
                                 <md-card-header>
                                     <div class="justifyTitleBtn">
                                         <div class="md-title">Immeubles / biens-fonds </div>
-                                        <md-button class="md-primary" v-on:click="callOpenReferenceDialog" v-if="permission.editNumerosReferencesAllowed && permission.editAffaireAllowed">Référencer un bien-fonds</md-button>
+                                        <md-button class="md-primary" v-on:click="callOpenReferenceDialog" v-if="permission.editNumerosReferencesAllowed && permission.editAffaireAllowed && show.numeros_references_card">Référencer un bien-fonds</md-button>
                                     </div>
                                 </md-card-header>
 

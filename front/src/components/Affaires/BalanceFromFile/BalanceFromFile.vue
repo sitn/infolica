@@ -513,7 +513,7 @@ export default {
      * Create DDP
      */
     setDDP(){
-      alert("setDDP")
+      alert("Ce bloc est en construction...")
     },
 
     /**
