@@ -93,7 +93,7 @@ export default {
         const interactions = new defaultInteractions({
           altShiftDragRotate: false,
           pinchRotate: false,
-          mouseWheelZoom:false
+          mouseWheelZoom: false
         });
     
         this.map = new Map({
