@@ -38,7 +38,7 @@
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                 <md-table-cell md-label="Dossier" md-sort-by="relpath">{{ item.relpath }}</md-table-cell>
                                 <md-table-cell md-label="Fichier" md-sort-by="filename">{{ item.filename }}</md-table-cell>
-                                <md-table-cell md-label="Création" md-sort-by="creation">{{ item.creation }}</md-table-cell>
+                                <md-table-cell md-label="Modification" md-sort-by="modification_sort">{{ item.modification }}</md-table-cell>
                                 <md-table-cell md-label="Actions" class="actionsCol">
                                     <md-button class="md-icon-button md-dense md-primary" @click="downloadFile(item)">
                                         <md-icon>save_alt</md-icon>
