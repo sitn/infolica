@@ -62,7 +62,8 @@ def affaire_documents_view(request):
             file_i = {}
             file_i['relpath'] = os.path.relpath(root, affaire_path).replace('\\', '/')
             file_i['filename'] = name
-            file_i['creation'] = datetime.fromtimestamp(os.path.getctime(os.path.join(affaire_path, root))).strftime("%d.%m.%Y")
+            file_i['creation'] = datetime.fromtimestamp(os.path.getctime(os.path.join(root, name))).strftime("%d.%m.%Y")
+            file_i['modification'] = datetime.fromtimestamp(os.path.getmtime(os.path.join(root, name))).strftime("%d.%m.%Y")
             documents.append(file_i)
 
     return documents

@@ -61,7 +61,9 @@ export default {
         )
         .then(response => {
           if (response.data) {
-            this.documents = response.data;
+            let tmp = response.data;
+            tmp.forEach(x => x.modification_sort = new Date(x.modification).getTime());
+            this.documents = tmp;
           }
         })
         .catch(err => {

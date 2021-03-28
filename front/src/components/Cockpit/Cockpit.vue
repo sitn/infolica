@@ -99,7 +99,7 @@ export default {
 
                 tmp.forEach(x => {
                     for (let i=0; i<this.affaireEtapes.length; i++) {
-                        x["dashboard_" + i.toString()] = i === x.etape_ordre-1? (x.no_access? x.no_access: x.id): null;
+                        x["dashboard_" + i.toString()] = i === x.etape_ordre-1? (x.no_access? x.no_access: String(x.id)): null;
                     }
                 });
                 this.affaires_bk = tmp;
