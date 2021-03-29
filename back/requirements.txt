@@ -46,7 +46,7 @@ pyasn1==0.4.8
 pycodestyle==2.6.0
 pycparser==2.20
 pyflakes==2.2.0
-Pygments==2.5.2
+Pygments==2.7.4
 pymssql==2.1.4
 pyparsing==2.4.5
 Pyphen==0.9.5
