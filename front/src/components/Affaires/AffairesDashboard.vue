@@ -237,7 +237,12 @@ export default {
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
 
-
+          // Si l'opérateur de l'affaire est l'utilisateur connecté, il doit pouvoir réserver/référencer et modifier le contenu de l'affaire
+          if(_this.affaire.technicien_id === JSON.parse(localStorage.getItem("infolica_user")).id){
+            _this.permission.editNumerosAllowed = !_this.parentAffaireReadOnly;
+            _this.permission.editNumerosMOAllowed = !_this.parentAffaireReadOnly;
+            _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
+          }
 
           // If admin, allow edit
           if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {
