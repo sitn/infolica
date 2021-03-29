@@ -184,7 +184,7 @@
                     <md-autocomplete v-model="selectedFacture.client" :md-options="clients_liste_select" @md-changed="getClientSearch(selectedFacture.client)" :class="getValidationClass('client')" required md-dense>
                         <label>Facturer à (débiteur)</label>
                         <template slot="md-autocomplete-empty" slot-scope="{ term }" v-if="term && term.length > 2">
-                            Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editFactureAllowed">Créer le client !</a>
+                            Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editClientAllowed">Créer le client !</a>
                         </template>
                         <span class="md-error" v-if="!$v.selectedFacture.client.required">Le client est obligatoire</span>
                     </md-autocomplete>
