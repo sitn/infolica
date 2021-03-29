@@ -58,6 +58,7 @@ export default {
         abandonAffaireEnabled: false,
         cloreAffaireEnabled: false,
         editAffaireAllowed: false,
+        editClientAllowed: false,
         editControleGeometreAllowed: false,
         editFactureAllowed: false,
         editNumerosReferencesAllowed: false,
@@ -191,6 +192,7 @@ export default {
           _this.permission.affaireCloture = checkPermission(process.env.VUE_APP_AFFAIRE_CLOTURE);
           _this.permission.affaireReactivation = checkPermission(process.env.VUE_APP_AFFAIRE_REACTIVATION);
           _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.editClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION) && !_this.parentAffaireReadOnly;
 
 
           if (_this.affaire.type_id === _this.typesAffaires_conf.ppe) {
@@ -212,32 +214,38 @@ export default {
           
           // Secrétariat peut modifier des factures à tout moment, éditer les informations des affaires et référencer des numéros à l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)) {
-            _this.permission.editFactureAllowed = true;
-            _this.permission.editNumerosReferencesAllowed = true;
             _this.permission.editAffaireAllowed = true;
+            _this.permission.editFactureAllowed = true;
+            _this.permission.editClientAllowed = true;
+            _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.affaireCloture = _this.affaire.type_id === _this.typesAffaires_conf.pcop;
           }
 
           // Opérateur MO peut modifier les informations générales de l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_MO_ROLE_ID)) {
             _this.permission.editFactureAllowed = _this.permission.editFactureAllowed && _this.affaire.type_id === _this.typesAffaires_conf.cadastration;
-            _this.permission.editNumerosReferencesAllowed = true;
+            _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
           
-          // Opérateur MO peut modifier les informations générales de l'affaire
+          // Opérateur ppe peut modifier les informations générales de l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_PPE_ROLE_ID)) {
-            _this.permission.editNumerosReferencesAllowed = true;
+            _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
           
           // Opérateur responsable peut référencer des numéros
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)) {
-            _this.permission.editNumerosReferencesAllowed = true;
+            _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
 
-
+          // Si l'opérateur de l'affaire est l'utilisateur connecté, il doit pouvoir réserver/référencer et modifier le contenu de l'affaire
+          if(_this.affaire.technicien_id === JSON.parse(localStorage.getItem("infolica_user")).id){
+            _this.permission.editNumerosAllowed = !_this.parentAffaireReadOnly;
+            _this.permission.editNumerosMOAllowed = !_this.parentAffaireReadOnly;
+            _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
+          }
 
           // If admin, allow edit
           if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {

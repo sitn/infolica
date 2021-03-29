@@ -68,7 +68,7 @@ export default {
       lastRecord: null,
       operateurs_list: [],
       permission: {
-        editFactureAllowed: false
+        editClientAllowed: false
       },
       search_clients_list: [],
       selectedAnciensNumeros: [],
@@ -1104,7 +1104,7 @@ export default {
     this.initTypesModficiationAffaire();
 
     //permissions
-    this.permission.editFactureAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION);
+    this.permission.editClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION);
   }
 };
 </script>

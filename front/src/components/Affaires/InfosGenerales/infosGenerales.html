@@ -136,8 +136,8 @@
                             <div class="md-layout-item md-size-100 md-small-size-100">
                                 <md-autocomplete v-model="form.client_commande" :md-options="searchClientsListe" @md-changed="searchClients(form.client_commande)" required md-dense>
                                     <label><strong style="color: blue">Commandé par</strong></label>
-                                    <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editFactureAllowed">Créer le client !</a>
+                                    <template slot="md-autocomplete-empty" slot-scope="{ term }"  v-if="term && term.length > 2">
+                                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editClientAllowed">Créer le client !</a>
                                     </template>
                                 </md-autocomplete>
                             </div>
@@ -158,8 +158,8 @@
                             <div class="md-layout-item md-size-100 md-small-size-100">
                                 <md-autocomplete v-model="form.client_envoi" :md-options="searchClientsListe" @md-changed="searchClients(form.client_envoi)" required md-dense>
                                     <label><strong style="color: blue">Envoyer à</strong></label>
-                                    <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editFactureAllowed">Créer le client !</a>
+                                    <template slot="md-autocomplete-empty" slot-scope="{ term }"  v-if="term && term.length > 2">
+                                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editClientAllowed">Créer le client !</a>
                                     </template>
                                 </md-autocomplete>
                             </div>
@@ -201,7 +201,7 @@
                         <md-input v-model="affaire.date_envoi" readonly></md-input>
                     </md-field>
                 </div>
-                <div class="md-layout-item md-size-25 md-small-size-100" v-if="affaire.date_validation">
+                <div class="md-layout-item md-size-25 md-small-size-100">
                     <md-field>
                         <label>Date de validation</label>
                         <md-input v-model="affaire.date_validation" readonly></md-input>
