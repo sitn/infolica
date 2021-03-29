@@ -204,7 +204,7 @@
                             required>
                             
                             <label>Commandé par</label>
-                            <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                            <template slot="md-autocomplete-empty" slot-scope="{ term }" v-if="term && term.length > 2">
                                 Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editClientAllowed">Créer le client !</a>
                             </template>
                             <span class="md-error" v-if="!$v.form.client_commande.required">Le demandeur est obligatoire</span>
