@@ -1,5 +1,6 @@
 from pyramid.config import Configurator
 from pyramid.events import NewRequest
+from papyrus.renderers import GeoJSON
 
 #Authentification
 from pyramid_ldap3 import (
@@ -20,6 +21,10 @@ def main(global_config, **settings):
         config.include('pyramid_ldap3')
         config.scan()
         config.add_subscriber(add_cors_headers_response_callback, NewRequest)
+
+        # Add the "geojson" renderer
+        config.add_renderer("geojson", GeoJSON())
+
         config.set_authentication_policy(
             AuthTktAuthenticationPolicy(
                 settings["authtkt_secret"],

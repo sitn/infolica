@@ -15,6 +15,7 @@ requires = [
     'pyramid_debugtoolbar',
     'waitress',
     'alembic',
+    'papyrus',
     'pyramid_retry',
     'pyramid_tm',
     'SQLAlchemy',
