@@ -101,6 +101,9 @@ export default {
                     for (let i=0; i<this.affaireEtapes.length; i++) {
                         x["dashboard_" + i.toString()] = i === x.etape_ordre-1? (x.no_access? x.no_access: String(x.id)): null;
                     }
+
+                    // set title to show on cockpit
+                    x.title = (x.no_access? 'Affaire ' + x.id + ' - ': '') + x.cadastre + ' - ' + x.description 
                 });
                 this.affaires_bk = tmp;
                 if (!this.affaires.length > 0) {
