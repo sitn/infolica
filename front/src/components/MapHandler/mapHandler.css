@@ -4,3 +4,11 @@
     float: left;
 }
 
+.contentHide {
+    display: none;
+}
+.mapContentHide:hover + .contentHide {
+    display: block;
+    color: white;
+}
+
