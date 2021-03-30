@@ -462,3 +462,45 @@ def modification_affaire_by_affaire_fille_view(request):
     ).all()
 
     return Utils.serialize_many(records)
+
+
+@view_config(route_name="affaire_spatial", request_method="GET", renderer="geojson")
+def affaire_spatial(request):
+    """
+    Get modification affaire by affaire_fille
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    results = request.dbsession.query(VAffaire).filter(
+        VAffaire.date_cloture == None
+    ).filter(
+        VAffaire.date_envoi == None
+    ).filter(
+        VAffaire.abandon == False
+    ).filter(
+        VAffaire.localisation_e != 0
+    ).filter(
+        VAffaire.localisation_n != 0
+    ).all()
+
+    affaires = []
+    counter = 0
+
+    for result in results:
+
+        affaires.append({
+            'type': 'Feature',
+            'id': counter,
+            'geometry': {
+                'type': 'Point',
+                'coordinates': [result.localisation_e, result.localisation_n]
+            },
+            'properties': {
+                'number': str(result.id)
+            }
+        })
+        counter += 1
+
+    return affaires

@@ -182,6 +182,22 @@ export const getOperateurs = async function () {
     });
 };
 
+/*
+ * Get current affaires in GeoJson format
+ */
+export const getFeatures = async function () {
+    return new Promise((resolve, reject) => {
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_SPATIAL,
+            {
+              withCredentials: true,
+              headers: {"Accept": "application/json"}
+            }
+        )
+        .then(response => resolve(response))
+        .catch(err => reject(err));
+    });
+};
+
 /**
  * Get date of the day in good format for BD
  */

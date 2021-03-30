@@ -266,9 +266,6 @@ class Utils(object):
 
         user_dn = request.authenticated_userid
 
-        if not user_dn:
-            return False
-
         role_name = LDAPQuery.get_user_group_by_dn(request, user_dn)
 
         fonctions = cls.get_fonctions_roles_by_name(request, role_name)
@@ -277,9 +274,10 @@ class Utils(object):
 
     @classmethod
     def check_connected(cls, request):
-        auth_tkt = request.cookies.get(request.registry.settings['authtkt_cookie_name'], default=None)
 
-        if not auth_tkt:
+        user = request.authenticated_userid
+
+        if user is None:
             return False
 
         return True
