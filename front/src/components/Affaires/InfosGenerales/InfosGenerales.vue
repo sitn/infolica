@@ -65,6 +65,7 @@ export default {
             this.clientsListe = response.data.map(x => ({
               id: x.id,
               nom: x.adresse_,
+              type_id: x.type_client,
               toLowerCase: () => x.adresse_.toLowerCase(),
               toString: () => x.adresse_
             }));
@@ -80,7 +81,7 @@ export default {
      * Search Client after 3 letters
      */
     searchClients(value) {
-      this.searchClientsListe = filterList(this.clientsListe, value, 3)
+      this.searchClientsListe = filterList(this.clientsListe, value, 3);
     },
 
     /**
@@ -189,15 +190,35 @@ export default {
      * Open Edit mode
      */
     openEditMode() {
-      this.form.technicien = this.operateursListe
-      .filter(x => x.id === this.affaire.technicien_id)[0];
+      this.form.technicien = this.operateursListe.filter(x => x.id === this.affaire.technicien_id)[0];
+      this.form.typeAffaire = this.typesAffairesListe_all.filter(x => x.id === this.affaire.type_id)[0];
 
-      this.form.typeAffaire = this.typesAffairesListe_all
-      .filter(x => x.id === this.affaire.type_id)[0];
-
-      this.form.client_commande = this.clientsListe.filter(x => x.id === this.affaire.client_commande_id).pop();
+      let client_commande_tmp = this.clientsListe.filter(x => x.id === this.affaire.client_commande_id);
+      if (client_commande_tmp.length > 0) {
+        this.form.client_commande = client_commande_tmp[0];
+      } else {
+        this.form.client_commande = {
+          id: this.affaire.client_commande_id, 
+          nom: this.affaire.client_commande_nom_.replace("\n", ", "), 
+          type_id: this.affaire.client_commande_type_id,
+          toLowerCase: () => this.affaire.client_commande_nom_.toLowerCase(),
+          toString: () => this.affaire.client_commande_nom_.toString(),
+        };
+      }
       this.form.client_commande_complement = this.affaire.client_commande_complement;
-      this.form.client_envoi = this.clientsListe.filter(x => x.id === this.affaire.client_envoi_id);
+      
+      let client_envoi_tmp = this.clientsListe.filter(x => x.id === this.affaire.client_envoi_id);
+      if (client_envoi_tmp.length > 0) {
+        this.form.client_envoi = client_envoi_tmp[0];
+      } else {
+        this.form.client_envoi = {
+          id: this.affaire.client_envoi_id, 
+          nom: this.affaire.client_envoi_nom_.replace("\n", ", "), 
+          type_id: this.affaire.client_envoi_type_id,
+          toLowerCase: () => this.affaire.client_envoi_nom_.toLowerCase(),
+          toString: () => this.affaire.client_envoi_nom_.toString(),
+        };
+      }
       this.form.client_envoi_complement = this.affaire.client_envoi_complement;
 
       this.infoGenReadonly = false;
@@ -378,7 +399,11 @@ export default {
      * Update client facture adress when selection changed
      */
     updateClientFactureAdresse() {
-      this.clientsFacture.selected_adress = this.clientsFacture.adressList.filter(x => x.id === this.clientsFacture.selected_id)[0].nom;
+      let tmp = this.clientsFacture.adressList.filter(x => x.id === this.clientsFacture.selected_id);
+      this.clientsFacture.selected_adress = "";
+      if (tmp.length > 0) {
+        this.clientsFacture.selected_adress = tmp[0].nom;
+      }
     },
 
     /**
