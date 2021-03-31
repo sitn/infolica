@@ -773,15 +773,18 @@ export default {
      */
     searchSITNEndpoint(input) {
       let cadastre_ = null;
-      if (this.form.cadastre.id !== null) {
+      if (this.form.cadastre && this.form.cadastre.id !== null) {
         cadastre_ = this.cadastres_list.filter(
           x => x.id === this.form.cadastre.id
         )[0].nom;
+        
+        // only keep first part of cadastre name (problems with '-' and '/')
+        cadastre_ = cadastre_.split(/[-/ ]/)[0];
       }
 
       return (
         process.env.VUE_APP_SITN_SEARCH_SERVICE_URL +
-        [input, cadastre_, "egrid"].filter(Boolean).join(" ")
+        [cadastre_, input, "egrid"].filter(Boolean).join(" ")
       );
     },
 
