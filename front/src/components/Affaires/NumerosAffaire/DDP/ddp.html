@@ -1,0 +1,41 @@
+<div class="ddp">
+
+    <md-dialog :md-active.sync="showDDPDialog" md-confirm-text="Enregistrer" md-cancel-text="Annuler"
+        md-title="Création de DDP" :md-close-on-esc="true" :md-click-outside-to-close="true">
+        <md-dialog-title>Création de DDP</md-dialog-title>
+
+        <md-dialog-content>
+            <div class="md-layout md-gutter">
+                <!-- Cadastre -->
+                <div class="md-layout-item md-size-50">
+                    <md-field>
+                        <label>Cadastre</label>
+                        <md-input v-model="numero.numero_cadastre" readonly></md-input>
+                    </md-field>
+                </div>
+                <!-- Numéro du DDP -->
+                <div class="md-layout-item md-size-50">
+                    <md-field>
+                        <label>Numéro de DDP</label>
+                        <md-input v-model="numero.numero" readonly></md-input>
+                    </md-field>
+                </div>
+            
+                <!-- Numéro de base -->
+                <div class="md-layout-item md-size-50">
+                    <md-autocomplete v-model="form.numeroBase" :md-options="numeroBaseListe" md-dense>
+                        <label>Bien-fonds de base</label>
+                        <span class="md-helper-text">Cliquer sur le numéro pour le sélectionner !</span>
+                    </md-autocomplete>
+                </div>
+            </div>
+
+            <md-dialog-actions>
+                <md-button class="md-accent" @click="onCancelDDP">Annuler</md-button>
+                <md-button class="md-primary" @click="onConfirmDDP">Enregistrer</md-button>
+            </md-dialog-actions>
+
+        </md-dialog-content>
+    </md-dialog>
+    
+</div>

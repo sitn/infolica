@@ -2,6 +2,7 @@
 <template src="./balance.html"></template>
 
 <script>
+import DDP from "@/components/Affaires/NumerosAffaire/DDP/DDP.vue";
 import { handleException } from "@/services/exceptionsHandler";
 import { getTypesNumeros, getCadastres, stringifyAutocomplete } from "@/services/helper";
 // import moment from 'moment'
@@ -12,6 +13,10 @@ export default {
     affaire: { type: Object },
     affaire_numeros_all: { type: Array }
   },
+  components: {
+    DDP
+  },
+  
   data: () => {
     return {
       // numeros_liste = [],

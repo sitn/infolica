@@ -11,9 +11,10 @@ import { required, minValue } from "vuelidate/lib/validators";
 export default {
   name: "ReservationNumeros",
   props: {
-    affaire: {type: Object},
-    typesAffaires_conf: {type: Object},
-    types_numeros: {type: Object}
+    affaire: {type: Object, default: () => {}},
+    numerosBaseListe:{type: Array, default: () => []},
+    typesAffaires_conf: {type: Object, default: () => {}},
+    types_numeros: {type: Object, default: () => {}}
   },
   components: {},
   mixins: [validationMixin],
@@ -44,7 +45,7 @@ export default {
         numeroBase: null,
         ppe_suffixe_start: null
       },
-      numerosBaseListe: [],
+      // numerosBaseListe: [],
       numeroTypesList: [],
       showReservationDialog: false
     };
@@ -92,7 +93,7 @@ export default {
      */
     openReservationDialog() {
       this.initializeForm();
-      this.getNumerosBase();
+      // this.getNumerosBase();
       this.showReservationDialog = true;
     },
 
@@ -195,33 +196,33 @@ export default {
       }
     },
 
-    /**
-     * Retourne les numéros en vigueur et en projet dans le cadastre sélectionné
-     */
-    async getNumerosBase() {
-      let types = process.env.VUE_APP_NUMERO_TYPE_BF + "," + process.env.VUE_APP_NUMERO_TYPE_DDP;
-      return new Promise ((resolve) => {
-        if (this.affaire.type_id === this.typesAffaires_conf.pcop) {
-          types += ',' + process.env.VUE_APP_NUMERO_TYPE_PPE;
-        }
+    // /**
+    //  * Retourne les numéros en vigueur et en projet dans le cadastre sélectionné
+    //  */
+    // async getNumerosBase() {
+    //   let types = process.env.VUE_APP_NUMERO_TYPE_BF + "," + process.env.VUE_APP_NUMERO_TYPE_DDP;
+    //   return new Promise ((resolve) => {
+    //     if (this.affaire.type_id === this.typesAffaires_conf.pcop) {
+    //       types += ',' + process.env.VUE_APP_NUMERO_TYPE_PPE;
+    //     }
 
-        this.$http.get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ENDPOINT +
-          "?cadastre_id=" + this.form.cadastre.id +
-          "&type_id=" + types +
-          "&etat_id=" + process.env.VUE_APP_NUMERO_PROJET_ID + "," +  process.env.VUE_APP_NUMERO_VIGUEUR_ID,
-          {
-            withCredentials: true,
-            headers: {"Accept": "application/json"}
-          }
-        ).then(response => {
-          if (response && response.data) {
-            this.numerosBaseListe = stringifyAutocomplete(response.data, "numero_sitn");
-            resolve(response);
-          }
-        }).catch(err => handleException(err, this));
-      })
-    },
+    //     this.$http.get(
+    //       process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ENDPOINT +
+    //       "?cadastre_id=" + this.form.cadastre.id +
+    //       "&type_id=" + types +
+    //       "&etat_id=" + process.env.VUE_APP_NUMERO_PROJET_ID + "," +  process.env.VUE_APP_NUMERO_VIGUEUR_ID,
+    //       {
+    //         withCredentials: true,
+    //         headers: {"Accept": "application/json"}
+    //       }
+    //     ).then(response => {
+    //       if (response && response.data) {
+    //         this.numerosBaseListe = stringifyAutocomplete(response.data, "numero_sitn");
+    //         resolve(response);
+    //       }
+    //     }).catch(err => handleException(err, this));
+    //   })
+    // },
 
 
     /**
@@ -263,7 +264,8 @@ export default {
         ).then(response => {
           if (response.data) {
             this.$root.$emit('ShowMessage', "Le numéro " +  this.newNumeroBase.numero + " a été créé sur le cadastre de " + this.newNumeroBase.cadastre.nom + " avec succès");
-            this.getNumerosBase().then(() => this.form.numeroBase = this.numerosBaseListe.filter(x => x.nom === this.newNumeroBase.numero)[0]);
+            // this.getNumerosBase().then(() => this.form.numeroBase = this.numerosBaseListe.filter(x => x.nom === this.newNumeroBase.numero)[0]);
+            this.$root.$emit("getNumerosBase").then(() => this.form.numeroBase = this.numerosBaseListe.filter(x => x.nom === this.newNumeroBase.numero)[0]);
           }
         }).catch(err => handleException(err, this));
 

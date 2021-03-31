@@ -191,6 +191,7 @@ def numeros_update_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(Numero.__tablename__, id))
 
+    # update numero state in numero_history if changed
     last_record_etat_id = record.etat_id
     record = Utils.set_model_record(record, request.params)
 

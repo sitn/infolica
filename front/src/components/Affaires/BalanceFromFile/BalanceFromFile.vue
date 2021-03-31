@@ -5,18 +5,21 @@
 import { handleException } from "@/services/exceptionsHandler";
 import { getTypesNumeros, getCadastres, stringifyAutocomplete } from "@/services/helper";
 import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
+import DDP from "@/components/Affaires/NumerosAffaire/DDP/DDP.vue";
 
 // import moment from 'moment'
 
 export default {
   name: "balanceFromFile",
   components: {
+    DDP,
     ReferenceNumeros,
   },
   props: {
     affaire: { type: Object },
     numeros_nouveaux_bk: { type: Array },
     numeros_anciens_bk: { type: Array },
+    numerosBaseListe: { type: Array },
     types_numeros: { type: Object },
   },
   data: () => {
@@ -29,6 +32,7 @@ export default {
         title: "",
         content: ""
       },
+      currentNumeroDDP: {},
       editionBalance: false,
       etapeSetBalance: Number(process.env.VUE_APP_ETAPE_SET_BALANCE_ID),
       mutation_names: [],
@@ -513,7 +517,11 @@ export default {
      * Create DDP
      */
     setDDP(){
-      alert("Ce bloc est en construction...")
+      this.numeros_nouveaux.forEach(x => {
+        this.currentNumeroDDP = x;
+        // console.log(x)
+        this.$refs.DDPDialog.showDDPDialog = true;
+      });
     },
 
     /**

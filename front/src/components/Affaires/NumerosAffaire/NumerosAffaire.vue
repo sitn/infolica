@@ -4,7 +4,7 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
-import { getCurrentDate, getDocument, getCurrentUserRoleId } from "@/services/helper";
+import { getCurrentDate, getDocument, getCurrentUserRoleId, stringifyAutocomplete } from "@/services/helper";
 import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/Affaires/NumerosAffaire/ReservationNumeros/ReservationNumeros.vue";
 import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue";
@@ -45,6 +45,7 @@ export default {
         onConfirm: () => {}
       },
       editMatDiffAllowed: false,
+      numerosBaseListe: [],
       numerosMoLoading: true,
       show: {
         balance: false,
@@ -446,16 +447,46 @@ export default {
 
         balance: [this.typesAffaires_conf.mutation, this.typesAffaires_conf.modification_mutation].includes(this.affaire.type_id),
       }
-    }
+    },
+
+    /**
+     * Retourne les numéros en vigueur et en projet dans le cadastre sélectionné
+     */
+    async getNumerosBase() {
+      let types = process.env.VUE_APP_NUMERO_TYPE_BF + "," + process.env.VUE_APP_NUMERO_TYPE_DDP;
+      return new Promise ((resolve) => {
+        if (this.affaire.type_id === this.typesAffaires_conf.pcop) {
+          types += ',' + process.env.VUE_APP_NUMERO_TYPE_PPE;
+        }
+
+        this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ENDPOINT +
+          "?cadastre_id=" + this.affaire.cadastre_id +
+          "&type_id=" + types +
+          "&etat_id=" + process.env.VUE_APP_NUMERO_PROJET_ID + "," +  process.env.VUE_APP_NUMERO_VIGUEUR_ID,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+        ).then(response => {
+          if (response && response.data) {
+            this.numerosBaseListe = stringifyAutocomplete(response.data, "numero_sitn");
+            resolve(response);
+          }
+        }).catch(err => handleException(err, this));
+      })
+    },
 
   },
   mounted: function() {
     this.searchAffaireNumeros();
-    
+    this.getNumerosBase();
+
     this.showPermissions();
     this.setMatDiffEdition();
 
     this.$root.$on('searchAffaireNumeros', () => this.searchAffaireNumeros());
+    this.$root.$on("getNumerosBase", () => this.getNumerosBase());
 
   }
 };
