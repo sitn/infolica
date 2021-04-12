@@ -8,6 +8,7 @@ from infolica.scripts.ldap_query import LDAPQuery
 from shutil import copytree, ignore_patterns
 import json
 import os
+import time
 
 unite_ppe_list = [
     'A',
@@ -300,6 +301,8 @@ class Utils(object):
     def create_affaire_folder(cls, request, affaire_folder):
         if not os.path.isdir(affaire_folder):
             copytree(request.registry.settings['affaireTemplateDir'], affaire_folder, ignore=ignore_patterns('Thumbs.db'))
+            settime = time.time()
+            os.utime(affaire_folder, times=(settime, settime))
     
     @classmethod
     def addNewRecord(cls, request, Model, params=None):
