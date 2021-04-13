@@ -178,7 +178,6 @@ export default {
 
       if (!this.$v.$invalid) {
         this.saveNewPreavis();
-        this.clearForm();
       }
     },
 
@@ -216,7 +215,7 @@ export default {
       }
       req
         .then(response => {
-          if (response.data) {
+          if (response && response.data) {
             let remarqueEtape = this.lastRecord + " - " + remarqueEtapeStatut;
             
             // download courrier preavis
@@ -226,12 +225,13 @@ export default {
             }
 
             // handle success
-            this.$root.$emit("ShowMessage", "Le préavis au " + this.lastRecord + " a été enregistrée avec succès");
+            this.$root.$emit("ShowMessage", "Le préavis au " + this.lastRecord + " a été enregistré avec succès");
             
             // log etape
             logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_PREAVIS_ID), remarqueEtape);
             
             this.searchAffairePreavis();
+            this.clearForm();
           }
         })
         .catch(err => {
