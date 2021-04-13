@@ -248,6 +248,16 @@ def numeros_etat_histo_new_view(request, params=None):
     if not params:
         params = request.params
 
+    # check if etat already exists
+    numEtatHisto = request.dbsession.query(NumeroEtatHisto).filter(
+        NumeroEtatHisto.numero_id == params['numero_id']
+    ).filter(
+        NumeroEtatHisto.numero_etat_id == params['numero_etat_id']
+    ).first()
+
+    if not numEtatHisto is None:
+        return
+
     # nouveau numero
     record = NumeroEtatHisto()
     record = Utils.set_model_record(record, params)
@@ -269,7 +279,7 @@ def numeros_etat_histo_new_view(request, params=None):
 @view_config(route_name='affaire_numeros_by_affaire_id', request_method='GET', renderer='json')
 def affaire_numeros_view(request):
     """
-    Add new numero_etat_histo
+    numero_affaire
     """
     # Check connected
     if not Utils.check_connected(request):
@@ -371,6 +381,19 @@ def affaire_numero_new_view(request, params=None):
 
     if not params:
         params = request.params
+
+    # check if affaire_numero relation already exists
+    affaireNumero = request.dbsession.query(AffaireNumero).filter(
+        AffaireNumero.affaire_id == params['affaire_id']
+    ).filter(
+        AffaireNumero.numero_id == params['numero_id']
+    ).filter(
+        AffaireNumero.type_id == params['type_id']
+    ).first()
+
+    if not affaireNumero is None:
+        return
+
     # nouveau affaire_numero
     record = AffaireNumero()
     record = Utils.set_model_record(record, params)

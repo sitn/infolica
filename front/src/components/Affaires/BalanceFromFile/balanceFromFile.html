@@ -4,7 +4,7 @@
             <div class="md-title">Balance</div>
             
             <div v-if="editionBalance">
-                <md-button @click="showBalanceMenu = true" class="md-raised" title="Récupère la balance depuis le fichier 'Des_xxx.docx' ou construit la relation d'immatriculation ou d'exmatriculation de DP">Créer la balance</md-button>
+                <md-button @click="showBalanceMenu = true" class="md-raised" title="Créer la balance - immatriculation/exmatriculation de DP - constitution/suppression de DDP">Créer la balance</md-button>
             </div>
         </md-card-header>
         
@@ -148,5 +148,11 @@
 
     <!-- DDP -->
     <DDP :affaire="affaire" :numero="currentNumeroDDP" :numeroBaseListe="numerosBaseListe" ref="DDPDialog" :types_numeros="types_numeros"></DDP>
+
+    <!-- Custom Alert dialog -->
+    <md-dialog-alert
+      :md-active.sync="alertDialog.show"
+      :md-title="alertDialog.title"
+      :md-content="alertDialog.content" />
 
 </div>

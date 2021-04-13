@@ -20,14 +20,25 @@
                         <md-input v-model="numero.numero" readonly></md-input>
                     </md-field>
                 </div>
-            
-                <!-- Numéro de base -->
+                
+                <!-- Numéro de base (recherche) -->
                 <div class="md-layout-item md-size-50">
-                    <md-autocomplete v-model="form.numeroBase" :md-options="numeroBaseListe" md-dense>
-                        <label>Bien-fonds de base</label>
-                        <span class="md-helper-text">Cliquer sur le numéro pour le sélectionner !</span>
-                    </md-autocomplete>
+                    <md-field>
+                        <label>Recherche du bien-fonds de base</label>
+                        <md-input v-model="searchBFBase"></md-input>
+                        <md-button class="md-icon-button md-dense" title="Rechercher" @click="filterBF"><md-icon>search</md-icon></md-button>
+                        <span class="md-helper-text">Entrer le bien-fonds de base et cliquer sur rechercher</span>
+                    </md-field>
                 </div>
+                <!-- Numéro de base correspondant à la recherche -->
+                <div class="md-layout-item md-size-50" >
+                    <md-field md-clearable>
+                        <label>Bien-fonds de base sélectionné</label>
+                        <md-input style="font-style: italic" v-model="form.numeroBase" :disabled="!(form.numeroBase && form.numeroBase.nom)"></md-input>
+                    </md-field>
+                </div>
+
+
             </div>
 
             <md-dialog-actions>

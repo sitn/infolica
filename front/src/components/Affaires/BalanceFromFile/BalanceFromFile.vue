@@ -25,6 +25,11 @@ export default {
   data: () => {
     return {
       // numeros_liste = [],
+      alertDialog: {
+        show: false,
+        title: '',
+        content: '',
+      },
       balanceContainsDP: false,
       cadastres_liste: [],
       checkBFBalance: {
@@ -50,8 +55,8 @@ export default {
         numeros: []
       },
       tableau_balance: [],
-      showBalanceMenu: false,
       showAskDDPCreation: false,
+      showBalanceMenu: false,
     };
   },
   methods: {
@@ -517,9 +522,16 @@ export default {
      * Create DDP
      */
     setDDP(){
+      if (!this.numeros_nouveaux.length > 0) {
+        this.alertDialog = {
+          show: true,
+          title: 'Aucun numéro réservé',
+          content: "Il faut d'abord réserver des numéros dans l'affaire puis indiquer lesquels sont des droits distincts et permanents.",
+        };
+      }
+
       this.numeros_nouveaux.forEach(x => {
         this.currentNumeroDDP = x;
-        // console.log(x)
         this.$refs.DDPDialog.showDDPDialog = true;
       });
     },
