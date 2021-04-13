@@ -20,19 +20,15 @@
             <md-card-expand-content>
                 <md-card-content>
                     
-                    <div style="display: table-cell;">
-                            Dossier de l'affaire: 
-                            <input type="text" id="dossier-affaire" :value="dossier_affaire" style="width: 400px;" readonly>
-                            <md-button class="md-primary md-dense md-center-left" style="vertical-align: middle;" @click="copyToClipboard"><md-icon>content_copy</md-icon> copier</md-button>
-                    </div>
-
                     <div class="md-gutter md-layout">
                         <div class="md-layout-item">
                             <md-button class="md-primary" style="min-width: min-content;" title="Recharger la table" @click="searchAffaireDocuments">
                                 <md-icon>refresh</md-icon> Recharger la table
                             </md-button>
+                            <md-button class="md-primary md-dense md-center-left" style="min-width: min-content;"  @click="openFolder" :title="dossier_affaire" :disabled="disableOpenFolder"><md-icon>folder_open</md-icon> Ouvrir le dossier</md-button>
                         </div>
                     </div>
+
                     <div v-if="documents[0]">
                         <md-table md-height="40vh" v-model="documents" md-sort="relpath" md-sort-order="asc" md-fixed-header md-card>
                             <md-table-row slot="md-table-row" slot-scope="{ item }">

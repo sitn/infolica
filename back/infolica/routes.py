@@ -170,3 +170,6 @@ def includeme(config):
     #Numéro MO next available
     config.add_route('numero_mo_next', '/infolica/api/numero_mo_next')
     config.add_route('types_numeros_mo', '/infolica/api/types_numeros_mo')
+    #Open Folder
+    config.add_route('open_folder', '/infolica/api/open_folder')
+
