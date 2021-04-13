@@ -124,7 +124,7 @@
                         <div class="md-layout-item md-size-60" v-if="show.reservation_numeros_mo">
                             
                             <!-- Numéros de la MO -->
-                            <ReservationNumerosMO :affaire="affaire" :types_numeros="types_numeros" :permission="permission"></ReservationNumerosMO>
+                            <ReservationNumerosMO :numerosBaseListe="numerosBaseListe":affaire="affaire" :types_numeros="types_numeros" :permission="permission"></ReservationNumerosMO>
                             
                         </div>
                     </div>
@@ -133,7 +133,7 @@
                         <div class="md-layout-item" v-if="show.balance">
                             <!-- Balance des biens-fonds -->
                             <!-- <Balance :affaire_numeros_all="affaire_numeros_all" :affaire="affaire" /> -->
-                            <BalanceFromFile :numeros_nouveaux_bk="affaire_numeros_nouveaux" :numeros_anciens_bk="affaire_numeros_anciens" :affaire="affaire" :types_numeros="types_numeros" />
+                            <BalanceFromFile :numeros_nouveaux_bk="affaire_numeros_nouveaux" :numeros_anciens_bk="affaire_numeros_anciens" :affaire="affaire" :types_numeros="types_numeros" :numerosBaseListe="numerosBaseListe" />
                         </div>    
                     </div>    
                     

@@ -8,7 +8,9 @@ import axios from "axios";
 
 export default {
   name: "Documents",
-  props: {},
+  props: {
+    affaire: {type: Object}
+  },
   components: {},
   data: () => ({
     showUploadDocBtn: false,
@@ -19,6 +21,7 @@ export default {
     types_documents_list: null,
     showUploadDocsDialog: false,
     type_document: null,
+    disableOpenFolder: false,
     documentFiles: null,
     documentFileName: null,
     documents: [],
@@ -145,7 +148,23 @@ export default {
       } else {
         this.$root.$emit("ErrorMessage", "Erreur, n'a pas pu copier le contenu")
       }
+    },
+
+    /**
+     * Open folder
+     */
+    async openFolder(){
+      this.disableOpenFolder = true;
+      setTimeout(() => {  this.disableOpenFolder=false; }, 2000);
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_OPEN_FOLDER_ENDPOINT + '?affaire_id=' + this.affaire.id,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      )
     }
+
   },
 
   mounted: function() {

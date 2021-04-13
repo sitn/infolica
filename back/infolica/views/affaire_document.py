@@ -10,6 +10,7 @@ from infolica.models.models import Affaire
 
 import os
 import shutil
+import subprocess
 from datetime import datetime
 
 
@@ -69,7 +70,6 @@ def affaire_documents_view(request):
     return documents
 
 
-
 @view_config(route_name='download_affaire_document', request_method='GET')
 @view_config(route_name='download_affaire_document_s', request_method='GET')
 def download_affaire_document_view(request):
@@ -99,3 +99,21 @@ def download_affaire_document_view(request):
     headers['Accept-Ranges'] = 'bite'
     headers['Content-Disposition'] = 'attachment;filename=' + urllib.parse.quote(filename)
     return response
+
+
+@view_config(route_name='open_folder', request_method='GET', renderer='json')
+def save_document_view(request):
+    """
+    open folder (affaire)
+    """
+    basepath = request.registry.settings['affaires_directory_full_path']
+
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    relpath = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
+    
+    path = os.path.join(basepath, relpath)
+
+    if os.path.exists(path):
+        subprocess.Popen('explorer ' + path)
+    
+    return
