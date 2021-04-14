@@ -11,10 +11,10 @@ import { required, minValue } from "vuelidate/lib/validators";
 export default {
   name: "ReservationNumeros",
   props: {
-    affaire: {type: Object, default: () => {}},
-    numerosBaseListe:{type: Array, default: () => []},
-    typesAffaires_conf: {type: Object, default: () => {}},
-    types_numeros: {type: Object, default: () => {}}
+    affaire: {type: Object},
+    numerosBaseListe: {type: Array},
+    typesAffaires_conf: {type: Object},
+    types_numeros: {type: Object}
   },
   components: {},
   mixins: [validationMixin],
