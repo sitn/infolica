@@ -67,8 +67,6 @@ def affaire_cockpit_view(request):
     affaire_show_timedelta = int(request.registry.settings['affaire_show_timedelta'])
     since = datetime.date(datetime.now()) - timedelta(days=affaire_show_timedelta)
     
-    etape_mat_diff_id = int(request.registry.settings['affaire_etape_mat_diff_id'])
-
     query = request.dbsession.query(VAffaire)
     
     if type_id is not None:
@@ -79,8 +77,7 @@ def affaire_cockpit_view(request):
     if etape_id is not None:
         query = query.filter(VAffaire.etape_id == etape_id)
     else:
-        query = query.filter(or_(
-            VAffaire.etape_id == etape_mat_diff_id,
+        query = query.filter(
             and_(
                 or_(
                     VAffaire.date_envoi >= since,
@@ -88,7 +85,7 @@ def affaire_cockpit_view(request):
                 ),
                 VAffaire.date_cloture == None
             )
-        ))
+        )
     
     query = query.all()
 

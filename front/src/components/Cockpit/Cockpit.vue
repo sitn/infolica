@@ -37,7 +37,8 @@ export default {
         role: {
             secretaire: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID),
             mo: Number(process.env.VUE_APP_MO_ROLE_ID),
-            ppe: Number(process.env.VUE_APP_PPE_ROLE_ID)
+            ppe: Number(process.env.VUE_APP_PPE_ROLE_ID),
+            responsable: Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)
         },
     };
   },
@@ -65,6 +66,12 @@ export default {
             if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.mo  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
                 this.showMatdiff_mo = true;
             }
+
+            //Check if role responsable
+            if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.responsable  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
+                this.showMatdiff_secr = true;
+                this.showMatdiff_mo = true;
+            } 
             
             //Check if role PPE
             if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.ppe  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
@@ -149,7 +156,6 @@ export default {
                 this.selectedAffaireTypes_id = [];
                 tmp.forEach(x => this.selectedAffaireTypes_id.push(x.id));
 
-                tmp.push({'id': 15, 'nom': 'Mat diff', 'ordre': 11, 'priorite': 1});
                 this.affaireTypes = stringifyAutocomplete(tmp);
             }
         }).catch(err => handleException(err, this));

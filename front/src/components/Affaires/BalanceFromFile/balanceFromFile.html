@@ -94,7 +94,6 @@
                     </md-card-header>
                     <md-card-content>
                         <p>Sélectionner dans la liste les numéros qui doivent être définis comme DDP.</p>
-                        <md-button class="md-primary md-elevation-2" @click="createDDP">Constitution de DDP</md-button>
                         <div v-if="numeros_nouveaux.length > 0">
                             <md-table md-height="40vh" v-model="numeros_nouveaux" md-sort="numero"
                                 md-sort-order="asc" md-fixed-header md-dense md-card>
