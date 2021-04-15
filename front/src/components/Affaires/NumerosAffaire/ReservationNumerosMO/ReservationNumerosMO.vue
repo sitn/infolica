@@ -122,7 +122,11 @@ export default {
       .then(response => {
         if (response && response.data) {
           this.reservationNumerosMO = response.data;
-          this.reservationNumerosMO.forEach(x => x.nombre = x.numero_a - x.numero_de + 1);
+          this.reservationNumerosMO.forEach(x => {
+            x.nombre = x.numero_a - x.numero_de + 1;
+            x.date = moment(x.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            x.date_sort = Date.parse(x.date);
+          });
         }
       })
       .catch(err => {
