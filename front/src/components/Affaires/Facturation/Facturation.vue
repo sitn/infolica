@@ -71,7 +71,7 @@ export default {
     // const objectValidation = (client) => client && client.id && client.nom;
 
     let selectedFacture = {
-      date: { required },
+      // date: { required },
       // client: { objectValidation },
       montant_mo: { required },
       montant_mat_diff: { required },
@@ -279,10 +279,16 @@ export default {
      * Créer une nouvelle facture
      */
     newFacture(facture_type) {
+      // set automatically date facture only if affaire etape is in edition facture 
+      let dateFacture = null;
+      if (this.affaire.etape_id === Number(process.env.VUE_APP_ETAPE_FACTURE_ID)) {
+        dateFacture = getCurrentDate();
+      }
+
       this.selectedFacture = {
         id: null,
         sap: null,
-        date: getCurrentDate(),
+        date: dateFacture,
         client: null,
         client_complement: null,
         client_premiere_ligne: null,

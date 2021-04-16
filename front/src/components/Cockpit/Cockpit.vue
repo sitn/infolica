@@ -3,9 +3,9 @@
 
 
 <script>
+import AffairesChezClient from "@/components/Cockpit/AffairesChezClient/AffairesChezClient.vue";
 import Matdiff_secr from "@/components/Cockpit/Matdiff_secr/Matdiff_secr.vue";
 import Matdiff_mo from "@/components/Cockpit/Matdiff_mo/Matdiff_mo.vue";
-import PPE from "@/components/Cockpit/PPE/PPE.vue";
 
 import { handleException } from '@/services/exceptionsHandler'
 import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper'
@@ -13,9 +13,9 @@ import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRo
 export default {
   name: "Cockpit",
   components: {
+      AffairesChezClient,
       Matdiff_secr,
       Matdiff_mo,
-      PPE
   },
   data: () => {
     return {
@@ -73,11 +73,6 @@ export default {
                 this.showMatdiff_mo = true;
             } 
             
-            //Check if role PPE
-            if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.ppe  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
-                this.showPPE = true;
-            }
-
         }, 500);
     },
 

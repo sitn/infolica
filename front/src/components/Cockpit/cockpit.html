@@ -14,9 +14,9 @@
         <Matdiff_mo />
     </div>
 
-    <!-- Panneau de suivi des affaires de PPE chez le client de l'opérateur PPE -->
-    <div v-if="showPPE">
-        <PPE :operateurs="operateurs" />
+    <!-- Panneau de suivi des affaires chez le client de l'opérateur PPE -->
+    <div>
+        <AffairesChezClient :operateurs="operateurs" :affaireTypes="affaireTypes" />
     </div>
 
     <md-card>
