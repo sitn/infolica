@@ -11,6 +11,7 @@
                 <div class="md-layout-item md-small-size-100 md-size-50">
                     <md-autocomplete v-model="form.cadastre"
                                         md-dense required
+                                        @md-selected="setPlanMoCadastre()"
                                         :md-options="cadastres_list"
                                         :class="getValidationClass($v.form.cadastre)">
                         <label>Cadastre</label>
@@ -90,8 +91,20 @@
             </div>
         </div>
         
+        <!-- No_access de l'affaire -->
+        <div class="md-gutter md-layout" v-if="form.type && (form.type.id === typesAffaires_conf.mpd)">
+            <div class="md-layout-item md-size-50">
+                <md-field>
+                    <label>Plan</label>
+                    <md-select v-model="form.plan" md-dense>
+                        <md-option v-for="item in plansMOListe_cadastre" :value="item.nom">{{ item.nom }}</md-option>
+                    </md-select>
+                </md-field>
+            </div>
+        </div>
+
         <!-- Description de l'affaire -->
-        <div class="md-gutter me-layout">
+        <div class="md-gutter md-layout">
             <div class="md-layout-item md-size-100">
                 <md-field :class="getValidationClass($v.form.nom)">
                     <label>Description</label>

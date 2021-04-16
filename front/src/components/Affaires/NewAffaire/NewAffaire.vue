@@ -60,6 +60,7 @@ export default {
         localisation_E: null,
         localisation_N: null,
         nom: null,
+        plan: null,
         information: null,
         technicien_id: JSON.parse(localStorage.getItem("infolica_user")).id,
         type: null,
@@ -70,6 +71,8 @@ export default {
       permission: {
         editClientAllowed: false
       },
+      plansMOListe: [],
+      plansMOListe_cadastre: [],
       search_clients_list: [],
       selectedAnciensNumeros: [],
       selectedModificationAffaire: null,
@@ -88,7 +91,7 @@ export default {
         cadastration: Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION),
         ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_PPE),
         pcop: Number(process.env.VUE_APP_TYPE_AFFAIRE_PCOP),
-        maj_periodique: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAJ_PERIODIQUE),
+        mpd: Number(process.env.VUE_APP_TYPE_AFFAIRE_MPD),
         modification: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION),
         revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
         remaniement_parcellaire: Number(process.env.VUE_APP_TYPE_AFFAIRE_REMANIEMENT_PARCELLAIRE),
@@ -125,7 +128,7 @@ export default {
         client_envoi: {required}
       };
 
-      if (this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop) {
+      if (this.form.type && this.form.type.id && this.typesAffaires_conf.pcop !== this.form.type.id) {
         client_facture = {
           id: {required}
         };
@@ -254,6 +257,9 @@ export default {
               }
               if (checkPermission(process.env.VUE_APP_AFFAIRE_PCOP_EDITION)) {
                 type_filter.push(this.typesAffaires_conf.pcop);
+              }
+              if (checkPermission(process.env.VUE_APP_AFFAIRE_MPD_EDITION)) {
+                type_filter.push(this.typesAffaires_conf.mpd);
               }
               if (checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION)) {
                 type_filter.push(this.typesAffaires_conf.autre);
@@ -433,7 +439,7 @@ export default {
     },
 
     /**
-     * Handle save data success
+     * Handle save data success for affaire
      */
     initPostData() {
       let formData = new FormData();
@@ -494,6 +500,9 @@ export default {
         formData.append("date_cloture",
           moment(this.form.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)
         );
+      }
+      if (this.form.plan && this.form.type && this.form.type.id && this.form.type.id === this.typesAffaires_conf.mpd) {
+        formData.append("no_access", "MPD_" + this.form.cadastre.id + "_" + this.form.plan + "_" + new Date().getFullYear());
       }
 
       // FACTURE
@@ -845,7 +854,7 @@ export default {
         this.type_modification_bool = false;
       }
       // this.showClientsForm = this.form.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION)? false: true;
-      if (this.form.type.id === Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION)) {
+      if (this.form.type.id === this.typesAffaires_conf.cadastration) {
         this.showClientsForm = false;
         let defaultClient = this.clients_list.filter(x => x.id === Number(process.env.VUE_APP_CLIENT_CADASTRATION_ID))[0];
         this.form.client_commande = defaultClient;
@@ -855,9 +864,25 @@ export default {
         this.client_facture_complement = null;
         this.client_facture_premiere_ligne = null;
         this.form.nom = "Cadastration sur "
+      } else if (this.form.type.id === this.typesAffaires_conf.mpd) {
+        let defaultClient = this.clients_list.filter(x => x.id === Number(process.env.VUE_APP_CLIENT_CADASTRATION_ID))[0];
+        this.form.client_commande = defaultClient;
+        this.form.client_envoi = defaultClient;
+        this.form.client_envoi_complement = null;
+        this.client_facture_premiere_ligne = null;
+        this.client_facture = defaultClient;
+        this.client_facture_complement = null;
+        this.client_facture_premiere_ligne = null;
+        this.form.nom = "Mise à jour périodique"
       } else {
         this.showClientsForm = true;
         this.form.nom = "";
+        this.form.client_commande = null;
+        this.form.client_envoi = null;
+        this.form.client_envoi_complement = null;
+        this.client_facture = null;
+        this.client_facture_complement = null;
+        this.client_facture_premiere_ligne = null;
       }
     },
 
@@ -1090,6 +1115,33 @@ export default {
       }
     },
 
+    /**
+     * Get plans MO
+     */
+    async getPlansMO() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + 
+        process.env.VUE_APP_PLANS_MO_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.plansMOListe = response.data;
+        }
+      })
+    },
+
+    /**
+     * set plans_MO of selected cadastre
+     */
+    setPlanMoCadastre(){
+      if (this.form.cadastre && this.form.cadastre.id) {
+        this.plansMOListe_cadastre = stringifyAutocomplete(this.plansMOListe.filter(x => x.cadastre_id === this.form.cadastre.id), "planno", "idobj");
+      }
+    }
+
   },
 
   mounted: function() {
@@ -1105,6 +1157,7 @@ export default {
     this.initOperateursList();
     this.initCadastresList();
     this.initTypesModficiationAffaire();
+    this.getPlansMO();
 
     //permissions
     this.permission.editClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION);

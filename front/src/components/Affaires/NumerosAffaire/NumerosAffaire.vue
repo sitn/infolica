@@ -430,6 +430,7 @@ export default {
                                   this.typesAffaires_conf.revision_abornement,
                                   this.typesAffaires_conf.autre,
                                   this.typesAffaires_conf.servitude,
+                                  this.typesAffaires_conf.mpd,
                                   this.typesAffaires_conf.modification_abandon_partiel].includes(this.affaire.type_id),
 
         numeros_reserves_immeuble_base: [this.typesAffaires_conf.pcop,
@@ -443,6 +444,7 @@ export default {
                                  this.typesAffaires_conf.revision_abornement,
                                  this.typesAffaires_conf.modification,
                                  this.typesAffaires_conf.modification_mutation,
+                                 this.typesAffaires_conf.mpd,
                                  this.typesAffaires_conf.retablissement_pfp3].includes(this.affaire.type_id),
 
         balance: [this.typesAffaires_conf.mutation, this.typesAffaires_conf.modification_mutation].includes(this.affaire.type_id),

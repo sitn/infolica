@@ -73,7 +73,7 @@ export default {
         cadastration: Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION),
         ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_PPE),
         pcop: Number(process.env.VUE_APP_TYPE_AFFAIRE_PCOP),
-        maj_periodique: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAJ_PERIODIQUE),
+        mpd: Number(process.env.VUE_APP_TYPE_AFFAIRE_MPD),
         mat_diff: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAT_DIFF),
         modification: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION),
         revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
@@ -205,6 +205,8 @@ export default {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION) && !_this.parentAffaireReadOnly;
           } else if (_this.affaire.type_id === _this.typesAffaires_conf.pcop) {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_PCOP_EDITION) && !_this.parentAffaireReadOnly;
+          } else if (_this.affaire.type_id === _this.typesAffaires_conf.mpd) {
+            _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_MPD_EDITION) && !_this.parentAffaireReadOnly;
           } else if (_this.affaire.type_id === _this.typesAffaires_conf.autre) {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION) && !_this.parentAffaireReadOnly;
           }

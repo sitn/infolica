@@ -215,6 +215,9 @@ def affaires_new_view(request):
     # Affaire pcop
     elif affaire_type == request.registry.settings['affaire_type_part_copropriete_id']:
         permission = request.registry.settings['affaire_pcop_edition']
+    # Affaire mpd
+    elif affaire_type == request.registry.settings['affaire_type_mpd_id']:
+        permission = request.registry.settings['affaire_mpd_edition']
     # Affaire autre
     elif affaire_type == request.registry.settings['affaire_type_autre_id']:
         permission = request.registry.settings['affaire_autre_edition']
@@ -231,11 +234,15 @@ def affaires_new_view(request):
     request.dbsession.flush()
 
     # Créer le chemin du dossier de l'affaire
-    affaire_chemin_full_path = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
-    model.chemin = str(model.id) # chemin relatif
+    if model.type_id != request.registry.settings['affaire_type_mpd_id']:
+        affaire_chemin_full_path = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
+        model.chemin = str(model.id) # chemin relatif
+    else:
+        affaire_chemin_full_path = None
 
     # Copier le dossier __template pour une nouvelle affaire
-    Utils.create_affaire_folder(request, affaire_chemin_full_path)
+    if not affaire_chemin_full_path is None:
+        Utils.create_affaire_folder(request, affaire_chemin_full_path)
 
 
     # Créer les formulaires de contrôle
