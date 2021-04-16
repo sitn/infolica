@@ -150,6 +150,7 @@ def numeros_new_view(request, params=None):
 
     if not params:
         params = request.params
+        params['no_access'] = "_".join(str(params['cadastre_id']), str(params['numero']))
 
     # tester si le numéro à réserver est plus grand que le max +1 déjà existant dans la base. Si oui, répondre par une erreur
     num_max = request.dbsession.query(func.max(Numero.numero)).filter(Numero.cadastre_id == params['cadastre_id']).scalar()
