@@ -114,6 +114,7 @@ def save_document_view(request):
     path = os.path.join(basepath, relpath)
 
     if os.path.exists(path):
-        subprocess.Popen('explorer ' + path)
+    #     subprocess.Popen('explorer ' + path)
+        return {'affaire_path': path.replace('\\', '/')}
     
-    return
+    return {'affaire_path': basepath.replace('\\', '/')}
