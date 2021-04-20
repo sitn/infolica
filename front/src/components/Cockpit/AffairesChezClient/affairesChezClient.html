@@ -50,6 +50,7 @@
                                 <md-table-cell md-label="Affaire" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
                                 <md-table-cell md-label="Type d'affaire" md-sort-by="affaire_type" md-numeric>{{ item.affaire_type }}</md-table-cell>
                                 <md-table-cell md-label="Description">{{ item.description }}</md-table-cell>
+                                <md-table-cell md-label="Etape" md-sort-by="etape">{{ item.etape }} </md-table-cell>
                                 <md-table-cell md-label="Chez le client depuis" md-sort-by="etape_datetime">{{ new Date(item.etape_datetime) | formatDate }} </md-table-cell>
                                 <md-table-cell md-label="Consultation">
                                     <md-button class="md-primary md-icon-button" @click="openAffaire(item.id)" title="Consulter/modifier l'affaire">

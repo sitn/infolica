@@ -62,7 +62,7 @@ def affaire_cockpit_view(request):
         raise exc.HTTPForbidden()
 
     type_id = request.params['type_id'] if 'type_id' in request.params else None
-    etape_id = request.params['etape_id'] if 'etape_id' in request.params else None
+    etape_id = request.params['etape_id'].split(',') if 'etape_id' in request.params else None
 
     affaire_show_timedelta = int(request.registry.settings['affaire_show_timedelta'])
     since = datetime.date(datetime.now()) - timedelta(days=affaire_show_timedelta)
@@ -75,7 +75,7 @@ def affaire_cockpit_view(request):
         query = query.filter(VAffaire.etape_id != None)
     
     if etape_id is not None:
-        query = query.filter(VAffaire.etape_id == etape_id)
+        query = query.filter(VAffaire.etape_id.in_(etape_id))
     else:
         query = query.filter(
             and_(
@@ -96,6 +96,7 @@ def affaire_cockpit_view(request):
             'affaire_type': affaire.type_affaire,
             'affaire_type_id': affaire.type_id,
             'no_access': affaire.no_access,
+            'etape': affaire.etape,
             'etape_id': affaire.etape_id,
             'etape_ordre': affaire.etape_ordre,
             'etape_datetime': datetime.strftime(affaire.etape_datetime, '%Y-%m-%d %H:%M:%S'),
@@ -105,7 +106,7 @@ def affaire_cockpit_view(request):
             'description': affaire.nom
         })
     
-    return json.dumps(affaires)
+    return affaires
 
 
 @view_config(route_name='recherche_affaires', request_method='POST', renderer='json')
@@ -297,8 +298,11 @@ def affaires_update_view(request):
     """
     Update affaire
     """
+
+    params = dict(request.params)
+
     # id_affaire
-    id_affaire = request.params['id_affaire'] if 'id_affaire' in request.params else None
+    id_affaire = params['id_affaire'] if 'id_affaire' in params else None
 
     # Get the affaire
     record = request.dbsession.query(Affaire).filter(
@@ -309,7 +313,7 @@ def affaires_update_view(request):
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(Affaire.__tablename__, id_affaire))
 
     # Get role depending on affaire type
-    affaire_type = request.params['type_id'] if 'type_id' in request.params else record.type_id
+    affaire_type = params['type_id'] if 'type_id' in params else record.type_id
 
     # Permission (fonction) par défaut
     permission = request.registry.settings['affaire_edition']
@@ -331,7 +335,23 @@ def affaires_update_view(request):
     if not Utils.has_permission(request, permission):
         raise exc.HTTPForbidden()
 
-    record = Utils.set_model_record(record, request.params)
+    # check if path exists or not
+    if "chemin" in params:
+        affaires_directory_baseName = request.registry.settings["affaires_directory_full_path"]
+        chemin_affaire = params["chemin"]
+        
+        if not chemin_affaire.lower().startswith(affaires_directory_baseName.lower()):
+            raise CustomError(CustomError.DIRECTORY_WRONG_BASE.format(chemin_affaire, affaires_directory_baseName))
+        else:
+            relpath =  os.path.relpath(chemin_affaire, affaires_directory_baseName)
+            
+            if os.path.exists(os.path.join(request.registry.settings['affaires_directory'], relpath)):
+                params["chemin"] = relpath
+            else:
+                raise CustomError(CustomError.DIRECTORY_NOT_FOUND.format(chemin_affaire))
+
+
+    record = Utils.set_model_record(record, params)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
 

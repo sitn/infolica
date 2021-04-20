@@ -21,6 +21,7 @@ export default {
       selectedTypeAffaire_id: -1,
       selectedOperateur_id: JSON.parse(localStorage.getItem("infolica_user")).id,
       etapeChezClient_conf: Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID),      
+      etapeDevis_conf: Number(process.env.VUE_APP_ETAPE_DEVIS_ID),      
     }
   },
 
@@ -29,7 +30,7 @@ export default {
      * get Affaires
      */
     async getAffaire() {
-      let params = "?etape_id=" + this.etapeChezClient_conf;
+      let params = "?etape_id=" + this.etapeChezClient_conf + "," + this.etapeDevis_conf;
 
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_COCKPIT_ENDPOINT + params,
@@ -39,7 +40,7 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-          let tmp = JSON.parse(response.data);
+          let tmp = response.data;
 
           tmp.forEach(x => x.etape_datetime = Number(moment(x.etape_datetime, process.env.VUE_APP_DATETIMEFORMAT_WS)));
           this.affaires_bk = tmp;
