@@ -4,8 +4,7 @@
         <md-card-header>
             <div class="md-title">
                 <md-card-expand-trigger>
-                    <md-button class="md-icon-button expandCollapseBtn"
-                        @click.native="showUploadDocBtn = !showUploadDocBtn">
+                    <md-button class="md-icon-button expandCollapseBtn" @click.native="showUploadDocBtn = !showUploadDocBtn">
                         <md-icon>keyboard_arrow_down</md-icon>
                     </md-button>
                 </md-card-expand-trigger>
@@ -20,10 +19,23 @@
             <md-card-expand-content>
                 <md-card-content>
 
-                    <div style="display: table-cell;">
-                        Dossier de l'affaire: 
-                        <input type="text" id="dossier-affaire" :value="dossier_affaire" style="width: 400px;" readonly>
-                        <md-button class="md-primary md-dense md-center-left" style="vertical-align: middle;" @click="copyToClipboard"><md-icon>content_copy</md-icon> copier</md-button>
+                    <div style="display: flex;">
+                        <p style="margin-right: 20px; height: 20px; margin: 23px 20px 0px 0px;">Dossier de l'affaire: </p>
+                        <md-field style="width: 500px; margin: 0px;">
+                            <md-input type="text" id="dossier-affaire" v-model="dossier_affaire" :disabled="!editAffairePath" style="font-size: 14px;" ></md-input>
+                            <md-button class="md-dense md-icon md-accent" style="padding: 0px; margin: 0px;" title="Modifier le chemin" v-if="showEditAffairePathBtn && !editAffairePath" @click="editAffairePath = true">
+                                <md-icon>edit</md-icon>
+                            </md-button>
+                            <md-button class="md-dense md-icon md-accent" style="padding: 0px; margin: 0px;" title="Enregistrer le chemin" v-if="showEditAffairePathBtn && editAffairePath" @click="saveAffairePath()">
+                                <md-icon>save</md-icon>
+                            </md-button>
+                            <md-button class="md-dense md-icon md-accent" style="padding: 0px; margin: 0px;" title="Annuler l'édition" v-if="showEditAffairePathBtn && editAffairePath" @click="cancelEditAffairePath()">
+                                <md-icon>cancel</md-icon>
+                            </md-button>
+                        </md-field>
+                        <md-button class="md-primary md-dense md-center-left" style="margin-top: 15px; margin-bottom: 0;" @click="copyToClipboard()">
+                            <md-icon>content_copy</md-icon> copier
+                        </md-button>
                     </div>
 
 
@@ -32,7 +44,7 @@
                             <md-button class="md-primary" style="min-width: min-content;" title="Recharger la table" @click="searchAffaireDocuments">
                                 <md-icon>refresh</md-icon> Recharger la table
                             </md-button>
-                            <!-- <md-button class="md-primary md-dense md-center-left" style="min-width: min-content;"  @click="openFolder" :title="dossier_affaire" :disabled="disableOpenFolder"><md-icon>folder_open</md-icon> Ouvrir le dossier</md-button> -->
+                            <!-- <md-button class="md-primary md-dense md-center-left" style="min-width: min-content;"  @click="openFolder" :title="dossier_affaire" ><md-icon>folder_open</md-icon> Ouvrir le dossier</md-button> -->
                         </div>
                     </div>
 

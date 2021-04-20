@@ -25,6 +25,6 @@ export const handleException = function (error, component) {
     {
        component.$root.$emit("ShowError", error);   
     //    component.$root.$emit("ShowError", "Une erreur est survenue");   
-    }                  
+    }
 };
 

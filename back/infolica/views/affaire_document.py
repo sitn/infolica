@@ -27,14 +27,17 @@ def affaire_dossier_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    affaire_dossier = request.registry.settings["affaires_directory_full_path"]
+    affaire_dossier = request.registry.settings["affaires_directory"]
+    affaire_dossier_full_path = request.registry.settings["affaires_directory_full_path"]
     affaire_id = request.matchdict['id']
     affaire_chemin = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
 
-    chemin = "Unknown path"
-    if affaire_chemin:
-        chemin = os.path.normcase(os.path.join(affaire_dossier, affaire_chemin))
+    affaire_path_exists = os.path.exists(os.path.join(affaire_dossier, affaire_chemin))
 
+    chemin = "Chemin non identifié"
+    if affaire_chemin and affaire_path_exists:
+        chemin = os.path.normcase(os.path.join(affaire_dossier_full_path, affaire_chemin))
+    
     return chemin
 
 
@@ -114,6 +117,7 @@ def save_document_view(request):
     path = os.path.join(basepath, relpath)
 
     if os.path.exists(path):
-        subprocess.Popen('explorer ' + path)
+    #     subprocess.Popen('explorer ' + path)
+        return {'affaire_path': path.replace('\\', '/')}
     
-    return
+    return {'affaire_path': basepath.replace('\\', '/')}

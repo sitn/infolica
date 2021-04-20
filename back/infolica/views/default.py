@@ -80,9 +80,10 @@ def general_error(exc, request):
     """
     Common Exception return message
     """
-    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    err = str(exc.orig) if hasattr(exc, 'orig') else str(exc)
+    log.error(err)
     request.response.status = 500
-    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+    return {'error': 'true', 'code': 500, 'message': err}
 
 
 @view_config(context=exc.IntegrityError, renderer='json')
@@ -90,9 +91,10 @@ def integrity_error(exc, request):
     """
     Common IntegrityError return message
     """
-    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    err = str(exc.orig) if hasattr(exc, 'orig') else str(exc)
+    log.error(err)
     request.response.status = 500
-    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+    return {'error': 'true', 'code': 500, 'message': err}
 
 
 @view_config(context=exc.StatementError, renderer='json')
@@ -100,9 +102,10 @@ def statement_error(exc, request):
     """
     Common StatementError return message
     """
-    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    err = str(exc.orig) if hasattr(exc, 'orig') else str(exc)
+    log.error(err)
     request.response.status = 500
-    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+    return {'error': 'true', 'code': 500, 'message': err}
 
 
 @view_config(context=exc.ResourceClosedError, renderer='json')
@@ -110,9 +113,10 @@ def resource_closed_error(exc, request):
     """
     Common ResourceClosedError return message
     """
-    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    err = str(exc.orig) if hasattr(exc, 'orig') else str(exc)
+    log.error(err)
     request.response.status = 500
-    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+    return {'error': 'true', 'code': 500, 'message': err}
 
 
 @view_config(context=exc.InternalError, renderer='json')
@@ -120,9 +124,10 @@ def internal_error(exc, request):
     """
     Common InternalError return message
     """
-    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    err = str(exc.orig) if hasattr(exc, 'orig') else str(exc)
+    log.error(err)
     request.response.status = 500
-    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+    return {'error': 'true', 'code': 500, 'message': err}
 
 
 @view_config(context=exc.NoReferenceError, renderer='json')
@@ -130,9 +135,10 @@ def noreference_error(exc, request):
     """
     Common NoReferenceError return message
     """
-    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    err = str(exc.orig) if hasattr(exc, 'orig') else str(exc)
+    log.error(err)
     request.response.status = 500
-    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+    return {'error': 'true', 'code': 500, 'message': err}
 
 
 @view_config(context=exc.InvalidRequestError, renderer='json')
@@ -140,9 +146,10 @@ def invalidrequest_error(exc, request):
     """
     Common InvalidRequestError, return message
     """
-    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    err = str(exc.orig) if hasattr(exc, 'orig') else str(exc)
+    log.error(err)
     request.response.status = 500
-    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+    return {'error': 'true', 'code': 500, 'message': err}
 
 
 @view_config(context=exc.DBAPIError, renderer='json')
@@ -150,9 +157,10 @@ def dbaapi_error(exc, request):
     """
     Common DBAPIError return message
     """
-    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    err = str(exc.orig) if hasattr(exc, 'orig') else str(exc)
+    log.error(err)
     request.response.status = 500
-    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+    return {'error': 'true', 'code': 500, 'message': err}
 
 
 @view_config(context=exc.SQLAlchemyError, renderer='json')
@@ -160,9 +168,10 @@ def sqlalchemy_error(exc, request):
     """
     Common SQLAlchemyError return message
     """
-    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    err = str(exc.orig) if hasattr(exc, 'orig') else str(exc)
+    log.error(err)
     request.response.status = 500
-    return {'error': 'true', 'code': 500, 'message': CustomError.GENERAL_EXCEPTION}
+    return {'error': 'true', 'code': 500, 'message': err}
 
 
 @view_config(context=HTTPForbidden, renderer='json')
@@ -170,9 +179,10 @@ def http_forbidden_error(exc, request):
     """
     Common HTTPForbidden return message
     """
-    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    err = str(exc.orig) if hasattr(exc, 'orig') else str(exc)
+    log.error(err)
     request.response.status = 403
-    return {'error': 'true', 'code': 403, 'message': CustomError.NOT_AUTHORIZED_EXCEPTION}
+    return {'error': 'true', 'code': 403, 'message': err}
 
 
 @view_config(context=HTTPNoContent, renderer='json')
@@ -180,8 +190,10 @@ def http_no_content_error(exc, request):
     """
     Common HTTPNoContent return message
     """
-    log.error(str(exc.orig) if hasattr(exc, 'orig') else str(exc))
+    err = str(exc.orig) if hasattr(exc, 'orig') else str(exc)
+    log.error(err)
     request.response.status = 204
+    return {'error': 'true', 'code': 204, 'message': err}
 
 
 @notfound_view_config(renderer="json")
@@ -192,4 +204,4 @@ def notfound(request):
     msg = CustomError.NOT_FOUND_ERROR.format(request.url, request.method)
     log.error(msg)
     request.response.status = 404
-    return {'error': 'true', 'code': 403, 'message': msg}
+    return {'error': 'true', 'code': 404, 'message': msg}

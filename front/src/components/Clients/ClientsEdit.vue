@@ -417,10 +417,12 @@ export default {
     this.initPermissions();
 
     //Mode (new or edit)
-    if(this.$router && this.$router.currentRoute && this.$router.currentRoute.name === 'ClientsNew')
+    if(this.$router && this.$router.currentRoute && this.$router.currentRoute.name === 'ClientsNew') {
       this.mode = 'new';
-    else
+      this.editMode = true;
+    } else {
       this.mode = 'edit';
+    }
 
 
     //If mode = edit, get the client

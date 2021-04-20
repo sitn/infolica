@@ -95,9 +95,10 @@ export default {
             }
         ).then(response => {
             if (response && response.data) {
-                let tmp = JSON.parse(response.data);
+                let tmp = response.data;
 
-                tmp = tmp.filter(x => x.etape_id !== Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID));
+                // Filtrer les affaires qui ne sont pas chez le client
+                tmp = tmp.filter(x => x.etape_id !== Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID) && x.etape_id !== Number(process.env.VUE_APP_ETAPE_DEVIS_ID));
 
                 tmp.forEach(x => {
                     for (let i=0; i<this.affaireEtapes.length; i++) {

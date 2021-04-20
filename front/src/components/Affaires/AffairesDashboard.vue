@@ -539,9 +539,9 @@ export default {
   mounted: function() {
     this.setAffaire();
     this.getChefsEquipe();
-    this.$root.$on('mapHandlerReady', () =>{
-      this.showMap();
-    });
+    this.$root.$on('mapHandlerReady', () => this.showMap() );
+    this.$root.$on('setAffaire', () => this.setAffaire() );
+
     adjustColumnWidths();
   }
 };
