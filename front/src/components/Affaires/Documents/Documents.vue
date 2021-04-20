@@ -3,28 +3,35 @@
 
 
 <script>
-import {handleException} from '@/services/exceptionsHandler'
+import { checkPermission } from '@/services/helper'
+import { handleException } from '@/services/exceptionsHandler'
 import axios from "axios";
+
 
 export default {
   name: "Documents",
   props: {
-    affaire: {type: Object}
+    affaire: {type: Object},
   },
   components: {},
   data: () => ({
-    showUploadDocBtn: false,
-    deleteDocActive: false,
-    deleteDocMessage: '',
     currentDeleteDocId: null,
     currentDeleteDocName: null,
-    types_documents_list: null,
-    showUploadDocsDialog: false,
-    type_document: null,
+    deleteDocActive: false,
+    deleteDocMessage: '',
     documentFiles: null,
     documentFileName: null,
     documents: [],
     dossier_affaire: null,
+    editAffairePath: false,
+    form: {
+      affairePath: null,
+    },
+    type_document: null,
+    types_documents_list: null,
+    showEditAffairePathBtn: false,
+    showUploadDocBtn: false,
+    showUploadDocsDialog: false,
   }),
 
   methods: {
@@ -130,7 +137,7 @@ export default {
     */
     downloadFile(item) {
       const affaire_id = this.$route.params.id;
-      window.open(process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_DOWNLOAD_DOCUMENT_ENDPOINT + '?affaire_id=' + affaire_id + '&relpath=' + item.relpath + '&filename=' + item.filename);
+      window.open(process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_DOWNLOAD_DOCUMENT_ENDPOINT + '?affaire_id=' + affaire_id + '&relpath=' + item.relpath + '&filename=' + item.filename + '&time=' + new Date().getTime());
     },
 
 
@@ -138,16 +145,47 @@ export default {
      * Copier dans le presse-papier
      */
     copyToClipboard () {
-      let copyText = document.querySelector("#dossier-affaire");
-      copyText.setAttribute('type', 'text');
-      copyText.select();
-      var success = document.execCommand("copy");
-      if (success) {
-        this.$root.$emit("ShowMessage", "Copié dans le presse-papier avec succès")
-      } else {
-        this.$root.$emit("ErrorMessage", "Erreur, n'a pas pu copier le contenu")
-      }
+      this.$clipboard(this.dossier_affaire);
+      this.$root.$emit("ShowMessage", "Copié dans le presse-papier avec succès")
     },
+
+    /**
+     * Save modified path of affaire
+     */
+    async saveAffairePath() {
+      let formData = new FormData();
+      formData.append('id_affaire', this.affaire.id);
+      formData.append('chemin', this.dossier_affaire);
+
+      this.$http.put(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.searchAffaireDocuments();
+          this.$root.$emit("setAffaire");
+          this.$root.$emit("ShowMessage", "Le dossier d'affaire a bien été modifié.");
+        }
+      }).catch(err => {
+        this.searchAffaireDossier();  
+        handleException(err, this);
+      });
+      
+      this.editAffairePath = false;
+    },
+
+    /**
+     * Cancel Edition of affaire path
+     */
+    cancelEditAffairePath() {
+      this.editAffairePath = false;
+      this.searchAffaireDossier();
+    },
+
 
     // /**
     //  * Open folder
@@ -172,6 +210,12 @@ export default {
   mounted: function() {
     this.searchAffaireDocuments();
     this.searchAffaireDossier();
+
+    // show edit affaire path
+    if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {
+      this.showEditAffairePathBtn = true;
+    }
+
   }
 };
 </script>
