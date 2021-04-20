@@ -17,6 +17,7 @@ import moment from 'moment-timezone';
 import proj4 from 'proj4';
 import {register} from 'ol/proj/proj4';
 import {checkLogged} from '@/services/helper'
+import Clipboard from 'v-clipboard'
 
 proj4.defs('EPSG:2056',
 '+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333'
@@ -29,6 +30,7 @@ Vue.config.productionTip = false;
 Vue.use(VueMaterial);
 Vue.use(VueRouter);
 Vue.use(VueAxios, axios);
+Vue.use(Clipboard);
 
 Vue.use(VueMoment, {
   moment,
