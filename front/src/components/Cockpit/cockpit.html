@@ -35,10 +35,11 @@
                       <md-option v-for="item in operateurs" :value="item.id">{{ item.nom }}</md-option>
                     </md-select>
                 </md-field>
-
+                
                 <md-field style="margin-left: 50px; width: 250px !important;">
                     <label>Type(s) d'affaire</label>
-                    <md-select v-model="selectedAffaireTypes_id" @md-closed="updateTable" multiple md-dense>
+                    <md-select v-model="selectedAffaireTypes_id" @md-selected="updateTable" md-dense>
+                        <md-option :value="-1">Tous</md-option>
                         <md-option v-for="item in affaireTypes" :value="item.id">{{ item.nom }}</md-option>
                     </md-select>
                 </md-field>
