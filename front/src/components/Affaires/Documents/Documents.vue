@@ -199,7 +199,6 @@ export default {
     //     }
     //   ).then(response => {
     //     if (response && response.data) {
-    //       console.log(response)
     //       window.open('file:///' + response.data.affaire_path, '_blank');
     //     }
     //   }).catch(err => handleException(err, this));
