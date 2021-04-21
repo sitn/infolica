@@ -44,8 +44,8 @@ export default {
         )
         .then(response => {
           if (response && response.data) {
-            var numeros_base_liste = this.getNumerosBaseList(response.data);
-            var affaire_numeros_tmp = this.filterNumerosActiveInAffaire(response.data);
+            let numeros_base_liste = this.getNumerosBaseList(response.data);
+            let affaire_numeros_tmp = this.filterNumerosActiveInAffaire(response.data);
             this.affaire_numeros = this.setPredictedFutureState(affaire_numeros_tmp, numeros_base_liste);
           }
         })
@@ -56,7 +56,7 @@ export default {
      * Récupérer les numéros de base pour les numéros DDP, PPE et PCOP
      */
     getNumerosBaseList(data) {
-      var tmp = new Set(data.map(x => x.numero_base_id));
+      let tmp = new Set(data.map(x => x.numero_base_id));
       tmp.delete(null);
       return Array.from(tmp);
     },
@@ -130,35 +130,51 @@ export default {
     /**
      * Confirmer la clôture d'affaire
      */
-    onConfirmCloture() {
+    onConfirmCloture(updateNumerosState=true) {
       this.showClotureDialog = false;
+
+      if (updateNumerosState) {
+
+        const _this = this;
+        let promises = [];
+  
+        _this.affaire_numeros.forEach(num => {
+          promises.push(_this.saveNewEtatNumero(num));
+          promises.push(_this.saveNewEtatHistoryNumero(num));
+        });
+  
+        Promise.all(promises)
+        .then(response => {
+          if (response) {
+            this.AjoutDateClotureAffaire()
+            .then(() => {
+              this.$router.go(0);
+              this.$parent.setAffaire();
+              this.$root.$emit("ShowMessage", "L'affaire " + this.$route.params.id + " a été clôturées avec succès");
+  
+              //Log cloture affaire
+              logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CLOTURE_ID));
+            })
+            .catch(err => handleException(err, this));
+          }
+        })
+        .catch(err => {
+          handleException(err, this);
+        });
+
+      } else {
+
+        this.AjoutDateClotureAffaire().then(() => {
+          this.$router.go(0);
+          this.$root.$emit("setAffaire");
+          this.$root.$emit("ShowMessage", "L'affaire " + this.$route.params.id + " a été clôturées avec succès");
+
+          //Log cloture affaire
+          logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CLOTURE_ID));
+        }).catch(err => handleException(err, this));
+
+      }
       
-      const _this = this;
-      var promises = [];
-
-      _this.affaire_numeros.forEach(num => {
-        promises.push(_this.saveNewEtatNumero(num));
-        promises.push(_this.saveNewEtatHistoryNumero(num));
-      });
-
-      Promise.all(promises)
-      .then(response => {
-        if (response) {
-          this.AjoutDateClotureAffaire()
-          .then(() => {
-            this.$router.go(0);
-            this.$parent.setAffaire();
-            this.$root.$emit("ShowMessage", "L'affaire " + this.$route.params.id + " a été clôturées avec succès");
-
-            //Log edition facture
-            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CLOTURE_ID));
-          })
-          .catch(err => handleException(err, this));
-        }
-      })
-      .catch(err => {
-        handleException(err, this);
-      });
     },
 
     /**
