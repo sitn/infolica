@@ -35,10 +35,11 @@
                       <md-option v-for="item in operateurs" :value="item.id">{{ item.nom }}</md-option>
                     </md-select>
                 </md-field>
-
+                
                 <md-field style="margin-left: 50px; width: 250px !important;">
                     <label>Type(s) d'affaire</label>
-                    <md-select v-model="selectedAffaireTypes_id" @md-closed="updateTable" multiple md-dense>
+                    <md-select v-model="selectedAffaireTypes_id" @md-selected="updateTable" md-dense>
+                        <md-option :value="-1">Tous</md-option>
                         <md-option v-for="item in affaireTypes" :value="item.id">{{ item.nom }}</md-option>
                     </md-select>
                 </md-field>
@@ -66,8 +67,8 @@
                     <md-table-cell md-sort-by="dashboard_6" md-label="Signature"><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_6">{{ item.dashboard_6 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_7" md-label="Expédition"><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_7">{{ item.dashboard_7 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_8" md-label="Validation BD"><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_8">{{ item.dashboard_8 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_9" md-label="Signature Art.35"><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_9">{{ item.dashboard_9 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_10" md-label="Fin de processus  (<30 j>)" v-if="showFinProcessus"><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_10">{{ item.dashboard_10 }}</md-button></md-table-cell>
-                        <md-table-cell md-sort-by="dashboard_9" md-label="Signature Art.35"><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_9">{{ item.dashboard_9 }}</md-button></md-table-cell>
                 </md-table-row>
             </md-table>
 

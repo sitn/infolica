@@ -29,7 +29,7 @@ export default {
         refreshAffaire: null,
         searchAffaire: null,
         selectedOperateur_id: -1,
-        selectedAffaireTypes_id: [],
+        selectedAffaireTypes_id: -1,
         showFinProcessus: false,
         showMatdiff_secr: false,
         showMatdiff_mo: false,
@@ -149,9 +149,6 @@ export default {
             if (response && response.data) {
                 let tmp = response.data;
                 
-                this.selectedAffaireTypes_id = [];
-                tmp.forEach(x => this.selectedAffaireTypes_id.push(x.id));
-
                 this.affaireTypes = stringifyAutocomplete(tmp);
             }
         }).catch(err => handleException(err, this));
@@ -192,7 +189,9 @@ export default {
         }
         
         // filter affaire type
-        this.affaires = this.affaires.filter(x => this.selectedAffaireTypes_id.includes(x.affaire_type_id));
+        if (this.selectedAffaireTypes_id && this.selectedAffaireTypes_id > 0) {
+            this.affaires = this.affaires.filter(x => x.affaire_type_id === this.selectedAffaireTypes_id);
+        }
         
         this.loadingAffaires = false;
     },

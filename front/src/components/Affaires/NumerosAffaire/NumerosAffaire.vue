@@ -122,7 +122,10 @@ export default {
               return item;
             });
 
-            resolve(this.affaire_numeros_all, this.affaire_numeros_anciens, this.affaire_numeros_nouveaux)
+            //Set nouveaux_numéros in component etape
+            this.$root.$emit("setEtapeNouveauxNumeros", this.affaire_numeros_nouveaux);
+
+            resolve(this.affaire_numeros_all, this.affaire_numeros_anciens, this.affaire_numeros_nouveaux);
           }
         })
         .catch(err => {

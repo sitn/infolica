@@ -32,11 +32,11 @@ def affaire_dossier_view(request):
     affaire_id = request.matchdict['id']
     affaire_chemin = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
 
-    affaire_path_exists = os.path.exists(os.path.join(affaire_dossier, affaire_chemin))
-
-    chemin = "Chemin non identifié"
-    if affaire_chemin and affaire_path_exists:
-        chemin = os.path.normcase(os.path.join(affaire_dossier_full_path, affaire_chemin))
+    chemin = "/!\   Le chemin n'est pas enregistré dans la base de données   /!\\"
+    if not affaire_chemin is None:
+        chemin = "/!\   Le chemin enregistré dans la base de données n'existe pas   /!\\"
+        if os.path.exists(os.path.join(affaire_dossier, affaire_chemin)):
+            chemin = os.path.normcase(os.path.join(affaire_dossier_full_path, affaire_chemin))
     
     return chemin
 
