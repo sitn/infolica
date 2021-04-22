@@ -47,7 +47,6 @@ export default {
       selectedFacture: {
         id: null,
         client: null,
-        client_complement: null,
         client_premiere_ligne: null,
         date: null,
         montant_mat_diff: null,
@@ -244,7 +243,6 @@ export default {
         id: tmp.id,
         sap: tmp.sap,
         date: tmp.date !== null? tmp.date: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
-        client_complement: tmp.client_complement,
         client_premiere_ligne: tmp.client_premiere_ligne,
         montant_mo: numeral(tmp.montant_mo).format('0.00'),
         montant_mat_diff: numeral(tmp.montant_mat_diff).format('0.00'),
@@ -298,7 +296,6 @@ export default {
         sap: null,
         date: dateFacture,
         client: null,
-        client_complement: null,
         client_premiere_ligne: null,
         montant_mo: numeral(0).format('0.00'),
         montant_mat_diff: numeral(0).format('0.00'),
@@ -358,7 +355,6 @@ export default {
       formData.append("id", this.selectedFacture.id);
       formData.append("sap", this.selectedFacture.sap || null);
       formData.append("remarque", this.selectedFacture.remarque || null);
-      formData.append("client_complement", this.selectedFacture.client_complement && this.selectedFacture.client.type_id === this.clientTypes_conf.moral || null);
       formData.append("client_premiere_ligne", this.selectedFacture.client_premiere_ligne || null);
       
       if (this.selectedFacture.type_id) {

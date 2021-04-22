@@ -191,10 +191,6 @@
                         <!-- <span class="md-error" v-if="!$v.selectedFacture.client.objectValidation">Le client est obligatoire</span> -->
                     </md-autocomplete>
         
-                    <md-field v-if="selectedFacture.client && selectedFacture.client.type_id === clientTypes_conf.moral">
-                        <label>Personne de contact</label>
-                        <md-input v-model="selectedFacture.client_complement"></md-input>
-                    </md-field>
                 </div>
 
                 <!-- Montants de facturation -->
