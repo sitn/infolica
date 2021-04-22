@@ -421,7 +421,7 @@ export default {
               facture_type = "devis";
               showMessage = "Le devis a été enregistré avec succès";
             }
-            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_ID), "Édition de " + facture_type);
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_SECONDAIRE_ID), "Édition de " + facture_type);
 
             this.searchAffaireFactures();
             this.$root.$emit('reloadClientFactureInfosGen');
@@ -475,7 +475,7 @@ export default {
           if (response.data) {
             
             //Log edition facture
-            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_ID), "Suppression");
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_SECONDAIRE_ID), "Suppression");
 
             this.searchAffaireFactures();
           }
