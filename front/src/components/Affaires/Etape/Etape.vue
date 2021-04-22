@@ -6,7 +6,7 @@
 import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { getTypesAffaires, stringifyAutocomplete, logAffaireEtape } from '@/services/helper'
+import { getTypesAffaires, stringifyAutocomplete, logAffaireEtape, checkPermission } from '@/services/helper'
 
 const moment = require('moment')
 
@@ -30,6 +30,7 @@ export default {
         remarque: null,
         showDialog: false,
       },
+      isAdmin: false,
       numerosReserves: [],
       suiviAffaireTheorique: [],
       updateAffaireDate: {
@@ -185,6 +186,9 @@ export default {
   mounted: function() {
     this.searchAffaireEtapes();
     this.$root.$on( "setEtapeNouveauxNumeros", (data) => this.setNumerosReserves(data) );
+
+    // operateur is admin?
+    this.isAdmin = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
   }
 };
 </script>
