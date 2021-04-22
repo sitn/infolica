@@ -230,8 +230,16 @@ export default {
     /**
      * Edit facture
      */
-    openFactureEdition(data) {
-      let tmp = this.affaire_factures.filter(x => x.id === data.id)[0];
+    openFactureEdition(data, type) {
+      let tmp = {};
+      if (type === 'devis') {
+        tmp = this.affaire_devis.filter(x => x.id === data.id)[0];
+      } else if (type === 'facture') {
+        tmp = this.affaire_factures.filter(x => x.id === data.id)[0];
+      } else {
+        this.$root.$emit('ShowError', 'Une erreur est survenue, contacter le développeur.')
+      }
+
       this.selectedFacture = {
         id: tmp.id,
         sap: tmp.sap,

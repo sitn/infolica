@@ -34,7 +34,7 @@
                                 <md-table-cell md-label="Total" md-sort-by="montant_total" style="width: 5%;">CHF {{ item.montant_total }}</md-table-cell>
                                 <md-table-cell md-label="Remarque" md-sort-by="remarque" style="width: 10%;">{{ item.remarque }}</md-table-cell>
                                 <md-table-cell md-label="Actions" class="actionsColumn" v-if="permission.editFactureAllowed" style="width: 15%;">
-                                    <md-button class="md-icon-button md-primary md-dense" @click="openFactureEdition(item)">
+                                    <md-button class="md-icon-button md-primary md-dense" @click="openFactureEdition(item, 'devis')">
                                         <md-icon>edit</md-icon>
                                     </md-button>
                                     <md-button class="md-icon-button md-accent md-dense" v-on:click="callDeleteFacture(item)">
@@ -67,7 +67,7 @@
                                 <md-table-cell md-label="SAP Facture" md-sort-by="sap" style="width: 5%;">{{ item.sap }}</md-table-cell>
                                 <md-table-cell md-label="Remarque" md-sort-by="remarque" style="width: 10%;">{{ item.remarque }}</md-table-cell>
                                 <md-table-cell md-label="Actions" class="actionsColumn" style="width: 15%;">
-                                    <md-button class="md-icon-button md-primary md-dense" @click="openFactureEdition(item)">
+                                    <md-button class="md-icon-button md-primary md-dense" @click="openFactureEdition(item, 'facture')">
                                         <md-icon>edit</md-icon>
                                     </md-button>
                                     <md-button class="md-icon-button md-accent md-dense" v-on:click="callDeleteFacture(item)" v-if="permission.editFactureAllowed">
