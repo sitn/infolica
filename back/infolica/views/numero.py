@@ -422,10 +422,6 @@ def numeros_affaire_view(request):
     query = request.dbsession.query(VNumerosAffaires).filter(
         VNumerosAffaires.numero_id == numero_id).all()
 
-    if not query:
-        raise CustomError.RECORD_WITH_ID_NOT_FOUND.format(
-            VNumerosAffaires.__tablename__, numero_id)
-
     return Utils.serialize_many(query)
 
 
