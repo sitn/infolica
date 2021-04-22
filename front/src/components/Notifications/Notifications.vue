@@ -9,7 +9,8 @@ export default {
   data: () => ({
     msg: String,
     showSnackbar: false,
-    isError: false
+    isError: false,
+    duration: 5000 //ms
   }),
 
   mounted: function(){
@@ -17,14 +18,16 @@ export default {
     this.$root.$on('ShowMessage', (msg) =>{
       this.msg = msg;
       this.isError = false;
-      this.showSnackbar = true;      
+      this.showSnackbar = true;
+      this.duration = 5000;
     });
 
     //Show Error
     this.$root.$on('ShowError', (msg) =>{
       this.msg = msg;
       this.isError = true;
-      this.showSnackbar = true;      
+      this.showSnackbar = true;
+      this.duration = 10000;
     });
   }
 }
