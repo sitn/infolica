@@ -47,7 +47,6 @@ export default {
       selectedFacture: {
         id: null,
         client: null,
-        client_complement: null,
         client_premiere_ligne: null,
         date: null,
         montant_mat_diff: null,
@@ -230,13 +229,20 @@ export default {
     /**
      * Edit facture
      */
-    openFactureEdition(data) {
-      let tmp = this.affaire_factures.filter(x => x.id === data.id)[0];
+    openFactureEdition(data, type) {
+      let tmp = {};
+      if (type === 'devis') {
+        tmp = this.affaire_devis.filter(x => x.id === data.id)[0];
+      } else if (type === 'facture') {
+        tmp = this.affaire_factures.filter(x => x.id === data.id)[0];
+      } else {
+        this.$root.$emit('ShowError', 'Une erreur est survenue, contacter le développeur.')
+      }
+
       this.selectedFacture = {
         id: tmp.id,
         sap: tmp.sap,
         date: tmp.date !== null? tmp.date: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
-        client_complement: tmp.client_complement,
         client_premiere_ligne: tmp.client_premiere_ligne,
         montant_mo: numeral(tmp.montant_mo).format('0.00'),
         montant_mat_diff: numeral(tmp.montant_mat_diff).format('0.00'),
@@ -290,7 +296,6 @@ export default {
         sap: null,
         date: dateFacture,
         client: null,
-        client_complement: null,
         client_premiere_ligne: null,
         montant_mo: numeral(0).format('0.00'),
         montant_mat_diff: numeral(0).format('0.00'),
@@ -350,7 +355,6 @@ export default {
       formData.append("id", this.selectedFacture.id);
       formData.append("sap", this.selectedFacture.sap || null);
       formData.append("remarque", this.selectedFacture.remarque || null);
-      formData.append("client_complement", this.selectedFacture.client_complement && this.selectedFacture.client.type_id === this.clientTypes_conf.moral || null);
       formData.append("client_premiere_ligne", this.selectedFacture.client_premiere_ligne || null);
       
       if (this.selectedFacture.type_id) {
@@ -421,7 +425,7 @@ export default {
               facture_type = "devis";
               showMessage = "Le devis a été enregistré avec succès";
             }
-            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_ID), "Édition de " + facture_type);
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_SECONDAIRE_ID), "Édition de " + facture_type);
 
             this.searchAffaireFactures();
             this.$root.$emit('reloadClientFactureInfosGen');
@@ -475,7 +479,7 @@ export default {
           if (response.data) {
             
             //Log edition facture
-            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_ID), "Suppression");
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_SECONDAIRE_ID), "Suppression");
 
             this.searchAffaireFactures();
           }

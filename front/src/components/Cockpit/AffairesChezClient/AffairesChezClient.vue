@@ -12,6 +12,7 @@ export default {
   props: {
     affaireTypes: Array,
     operateurs: Array,
+    selectedOperateur_id_parent: {type: Number, default: () => -1}
   },
   data: () => {
     return {
@@ -78,6 +79,9 @@ export default {
 
   mounted: function() {
     this.getAffaire();
+
+    // init selectedOperateur_id from parent component
+    this.selectedTypeAffaire_id = this.selectedOperateur_id_parent;
   }
 };
 </script>

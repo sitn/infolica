@@ -337,7 +337,7 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-          let tmp = response.data;
+          let tmp = response.data.filter(x => x.type_id === Number(process.env.VUE_APP_FACTURE_TYPE_FACTURE_ID));
 
           tmp.forEach(x => {
             // construct select list
