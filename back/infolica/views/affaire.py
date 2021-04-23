@@ -78,13 +78,10 @@ def affaire_cockpit_view(request):
         query = query.filter(VAffaire.etape_id.in_(etape_id))
     else:
         query = query.filter(
-            and_(
-                or_(
-                    VAffaire.date_envoi >= since,
-                    VAffaire.date_envoi == None
-                ),
-                VAffaire.date_cloture == None
-            )
+            or_(
+                VAffaire.date_envoi >= since,
+                VAffaire.date_envoi == None
+            ),
         )
     
     query = query.all()
