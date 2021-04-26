@@ -30,6 +30,7 @@ export default {
         prenom: null
       },
       search_clients_list: [],
+      searchTerm: "",
   }),
   methods: {
         /**
@@ -183,7 +184,27 @@ export default {
 
     searchClientsForFormInput(value) {
       this.search_clients_list = filterList(this.clients_list, value, 3);
-    }
+    },
+
+
+    /**
+     * search Client by term
+     */
+    async searchClientsByTerm() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_ENDPOINT + "?searchterm=" + this.searchTerm,
+        {
+          withCredentials: true,
+          headers: {"accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.clients = this.response.data;
+        }
+      })
+    },
+
+
   },
 
   mounted: function(){    

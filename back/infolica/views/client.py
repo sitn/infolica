@@ -74,6 +74,36 @@ def clients_search_view(request):
     return Utils.serialize_many(query)
 
 
+@view_config(route_name='recherche_clients', request_method='GET', renderer='json')
+def clients_search_view(request):
+    """
+    Search clients
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    settings = request.registry.settings
+    search_limit = int(settings['search_limit'])
+    searchTerm = request.params["searchterm"] if "searchterm" in request.params else None
+
+    searchTerms = searchTerm.split(" ")
+
+
+    query = request.dbsession.query(Client)
+
+    cols = Client.__table__.columns.keys()
+    for term in searchTerms:
+        for col in cols:
+            query = quer
+            break
+
+
+    # query = request.dbsession.query(Client).filter()
+    # query = query.filter(Client.sortie == None).order_by(Client.nom, Client.prenom).limit(search_limit).all()
+    # return Utils.serialize_many(query)
+
+
 @view_config(route_name='clients', request_method='POST', renderer='json')
 @view_config(route_name='clients_s', request_method='POST', renderer='json')
 def clients_new_view(request):
@@ -187,7 +217,7 @@ def clients_moral_personne_update_view(request):
         raise exc.HTTPForbidden()
 
     client_moral_personne_id = request.params["id"] if "id" in request.params else None
-    
+
     model = request.dbsession.query(ClientMoralPersonne).filter(
         ClientMoralPersonne.id == client_moral_personne_id).first()
 
