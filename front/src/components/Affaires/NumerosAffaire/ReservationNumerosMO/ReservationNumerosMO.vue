@@ -28,6 +28,14 @@ export default {
       },
       cadastreListe: [],
       form: {},
+      filterTableParams: {
+        dateRange: {
+          startDate: moment(new Date((new Date()).getTime() - 7 * 24 * 60 * 60 * 1000)).format(process.env.VUE_APP_DATEFORMAT_CLIENT), 
+          endDate: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        },
+        selectedCadastre_id: -1,
+        showProgressBar: true,
+      },
       plansMOListe: [],
       plansMOListe_cadastre: [],
       reservationNumerosMO: [],
@@ -99,7 +107,9 @@ export default {
       ).then(response => {
         if (response && response.data) {
           this.plansMOListe = response.data;
-          this.plansMOListe_cadastre = stringifyAutocomplete(this.plansMOListe.filter(x => x.cadastre_id === this.form.cadastre.id), "planno", "idobj");
+          if (this.form.cadastre && this.form.cadastre.id && this.form.cadastre.id > 0) {
+            this.plansMOListe_cadastre = stringifyAutocomplete(this.plansMOListe.filter(x => x.cadastre_id === this.form.cadastre.id), "planno", "idobj");
+          }
         }
       })
     },
@@ -108,12 +118,21 @@ export default {
     /*
      * SEARCH reservation numeros MO by affaire_id
      */
-    async searchReservationNumerosMO() {
+    async searchReservationNumerosMO(params={}) {
+      //set search criteria
+      let searchParams = [];
+      for (let key in params) {
+        searchParams.push(key + "=" + params[key]);
+      }
+      if (searchParams.length > 0) {
+        searchParams = "?" + searchParams.join("&");
+      }
+
       this.$http
       .get(
         process.env.VUE_APP_API_URL +
           process.env.VUE_APP_RESERVATION_NUMEROS_MO_ENDPOINT + "/" +
-          this.$route.params.id,
+          this.$route.params.id + searchParams,
         {
           withCredentials: true,
           headers: { Accept: "application/json" }
@@ -121,17 +140,21 @@ export default {
       )
       .then(response => {
         if (response && response.data) {
-          this.reservationNumerosMO = response.data;
-          this.reservationNumerosMO.forEach(x => {
+          let tmp = response.data;
+          tmp.forEach(x => {
             x.nombre = x.numero_a - x.numero_de + 1;
             x.date = moment(x.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
             x.date_sort = Date.parse(x.date);
           });
+
+          this.reservationNumerosMO = tmp;
         }
       })
       .catch(err => {
         handleException(err, this);
       });
+
+      this.filterTableParams.showProgressBar = false;
     },
 
     /**
@@ -290,10 +313,57 @@ export default {
       }
     },
 
+    /**
+     * Filter table
+     */
+    filterTable() {
+      this.filterTableParams.showProgressBar = true;
+      setTimeout(() => {
+        this.reservationNumerosMO = [{}];
+        let params = {};
+        // filter by cadastre
+        if (this.filterTableParams.selectedCadastre_id > 0) {
+          params.cadastre_id = this.filterTableParams.selectedCadastre_id;
+        }
+  
+        if (this.filterTableParams.dateRange) {
+          if (this.filterTableParams.dateRange.startDate) {
+            params.startDate = moment(this.filterTableParams.dateRange.startDate, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS);
+          }
+          if (this.filterTableParams.dateRange.endDate) {
+            params.endDate = moment(this.filterTableParams.dateRange.endDate, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS);
+          }
+        }
+        
+        this.searchReservationNumerosMO(params);
+      }, 2000); //experimental value
+    },
+
+
+    disabledStartDates (date) {
+      if (this.filterTableParams.dateRange.endDate && moment(this.filterTableParams.dateRange.endDate, process.env.VUE_APP_DATEFORMAT_CLIENT)) {
+        return date > moment(this.filterTableParams.dateRange.endDate, process.env.VUE_APP_DATEFORMAT_CLIENT) || date > new Date();
+      }
+      if (date > new Date()) {
+        return true;
+      }
+      return false;
+    },
+
+    disabledEndDates (date) {
+      if (this.filterTableParams.dateRange.startDate && moment(this.filterTableParams.dateRange.startDate, process.env.VUE_APP_DATEFORMAT_CLIENT)) {
+        return date < moment(this.filterTableParams.dateRange.startDate, process.env.VUE_APP_DATEFORMAT_CLIENT) || date > new Date();
+      }
+      if (date > new Date()) {
+        return true;
+      }
+      return false;
+    }
+
   },
   mounted: function() {
     this.getCadastresListe()
-    this.searchReservationNumerosMO();
+    this.filterTable();
     this.resetReservation(); 
   }
 };

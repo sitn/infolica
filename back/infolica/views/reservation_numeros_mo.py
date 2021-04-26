@@ -25,7 +25,22 @@ def reservation_numeros_mo_by_affaire_id_view(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.matchdict['id']
-    query = request.dbsession.query(VReservationNumerosMO).filter(VReservationNumerosMO.affaire_id == affaire_id).all()
+    query = request.dbsession.query(VReservationNumerosMO).filter(VReservationNumerosMO.affaire_id == affaire_id)
+
+    cadastre_id = request.params["cadastre_id"] if "cadastre_id" in request.params else None
+    if not cadastre_id is None:
+        query = query.filter(VReservationNumerosMO.cadastre_id == cadastre_id)
+    
+    startDate = request.params["startDate"] if "startDate" in request.params else None
+    if not startDate is None:
+        query = query.filter(VReservationNumerosMO.date >= startDate)
+    
+    endDate = request.params["endDate"] if "endDate" in request.params else None
+    if not endDate is None:
+        query = query.filter(VReservationNumerosMO.date <= endDate)
+    
+    query = query.all()
+
     return Utils.serialize_many(query)
 
 
