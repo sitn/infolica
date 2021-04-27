@@ -180,6 +180,7 @@ affaire_show_timedelta = 30
 
 # Affaire etape
 affaire_etape_priorite_1_id = 1
+affaire_etape_fin_processus_id = 16
 affaire_premiere_etape_defaut_id = 13
 
 # Facture type
