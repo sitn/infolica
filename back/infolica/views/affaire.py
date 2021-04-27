@@ -63,6 +63,7 @@ def affaire_cockpit_view(request):
 
     type_id = request.params['type_id'] if 'type_id' in request.params else None
     etape_id = request.params['etape_id'].split(',') if 'etape_id' in request.params else None
+    etape_finProcessus_id = request.registry.settings["affaire_etape_fin_processus_id"]
 
     affaire_show_timedelta = int(request.registry.settings['affaire_show_timedelta'])
     since = datetime.now() - timedelta(days=affaire_show_timedelta)
@@ -77,7 +78,13 @@ def affaire_cockpit_view(request):
     if etape_id is not None:
         query = query.filter(VAffaire.etape_id.in_(etape_id))
     else:
-        query = query.filter(VAffaire.etape_datetime >= since)
+        query = query.filter(or_(
+            VAffaire.etape_id != etape_finProcessus_id,
+            and_(
+                VAffaire.etape_id == etape_finProcessus_id,
+                VAffaire.etape_datetime >= since
+            )
+        ))
     
     query = query.all()
 
