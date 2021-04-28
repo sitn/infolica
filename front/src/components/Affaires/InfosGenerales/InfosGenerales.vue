@@ -4,8 +4,7 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission,
-        stringifyAutocomplete,
+import {stringifyAutocomplete,
         getClients,
         filterList,
         getDocument} from '@/services/helper';
@@ -425,7 +424,7 @@ export default {
     this.initClientsListe();
     this.searchClientsFacture();
     this.$root.$on('reloadClientFactureInfosGen', () => this.searchClientsFacture());
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
+    this.affaireReadonly = !this.permission.editAffaireAllowed;
     this.show.clientFacture = this.affaire.type_id !== this.typesAffaires_conf.pcop;
   }
 };
