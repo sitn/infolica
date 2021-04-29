@@ -12,6 +12,17 @@ export default {
   name: 'app',
   components: {
     Header, Main, Notifications
+  },
+  data: () => {
+    return {
+      instance: {
+        isProd: false,
+        name: process.env.VUE_APP_STATUS.toUpperCase(),
+      }
+    };
+  },
+  mounted: function(){
+    this.instance.isProd = this.instance.name === 'PRODUCTION';
   }
 }
 </script>

@@ -8,12 +8,13 @@ import { checkPermission } from '@/services/helper'
 
 export default {
   name: 'Header',
-
+  props: {
+    instance: {type: Object}
+  },
   data: function () {
       return {
           loggedUserName: String,
           isAdmin: false,
-          isProd: false,
       }
   },
 
@@ -71,7 +72,6 @@ export default {
       this.setUserName(session_user);
 
       this.checkIsAdmin();
-      this.isProd = process.env.VUE_APP_STATUS === 'production';
   }
 }
 </script>
