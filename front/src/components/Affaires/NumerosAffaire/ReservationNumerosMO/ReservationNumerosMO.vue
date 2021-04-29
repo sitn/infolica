@@ -132,7 +132,7 @@ export default {
       .get(
         process.env.VUE_APP_API_URL +
           process.env.VUE_APP_RESERVATION_NUMEROS_MO_ENDPOINT + "/" +
-          this.$route.params.id + searchParams,
+          this.affaire.id + searchParams,
         {
           withCredentials: true,
           headers: { Accept: "application/json" }
@@ -238,11 +238,11 @@ export default {
           this.$root.$emit("ShowMessage", "Les numéros ont bien été enregistrés");
           //Log edition facture
           let comment = ["Cadastre: " + this.form.cadastre.nom,
-                         Number(this.form.pfp3) > 0? this.form.pfp3 + " PFP3 ": null,
-                         Number(this.form.paux) > 0? this.form.paux + " points auxiliaires ": null,
-                         Number(this.form.bat) > 0? this.form.bat + " bâtiments ": null,
-                         Number(this.form.pdet) > 0? this.form.pdet + " points de détail sur plan " + this.form.plan.nom: null,
-                         Number(this.form.dp) > 0? this.form.dp + " domaines publics": null].join(", ");
+                         Number(this.form.pfp3) > 0? this.form.pfp3 + " PFP3": null,
+                         Number(this.form.paux) > 0? this.form.paux + " points auxiliaires": null,
+                         Number(this.form.bat) > 0? this.form.bat + " bâtiments": null,
+                         Number(this.form.pdet) > 0? this.form.pdet + " points de détail sur plan" + this.form.plan.nom: null,
+                         Number(this.form.dp) > 0? this.form.dp + " domaines publics": null].filter(Boolean).join(", ");
           logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_RESERVATION_NUMEROS_MO_ID), comment);
           this.resetReservation();
         }
