@@ -5,6 +5,7 @@ import pyramid.httpexceptions as exc
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import ReservationNumerosMO, VReservationNumerosMO, Plan, Affaire
+from infolica.models.models import VNextNumeroMOAvilable
 from infolica.scripts.utils import Utils
 
 from sqlalchemy import and_, or_, func
@@ -12,7 +13,6 @@ from sqlalchemy import and_, or_, func
 import os
 import json
 from datetime import datetime
-
 
 
 @view_config(route_name='reservation_numeros_mo_by_affaire_id', request_method='GET', renderer='json')
@@ -169,3 +169,30 @@ def savePointMO(request, affaire_id, cadastre_id, numero_type, n_numeros, etat_i
         params = Utils._params(
             affaire_id=affaire_id, numero_id=numero_id, actif=True, type_id=2)
         affaire_numero_new_view(request, params)
+
+
+
+@view_config(route_name='numero_mo_next', request_method='GET', renderer='json')
+def numero_mo_next_view(request):
+    """
+    Return all next available numero MO par cadastre, type et plan
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    cadastre_id = request.params['cadastre_id'] if 'cadastre_id' in request.params else None
+    type_id = request.params['type_id'] if 'type_id' in request.params else None
+    plan = request.params['plan'] if 'plan' in request.params else None
+
+    query = request.dbsession.query(VNextNumeroMOAvilable)
+    if cadastre_id:
+        query = query.filter(VNextNumeroMOAvilable.cadastre_id == cadastre_id)
+    if type_id:
+        query = query.filter(VNextNumeroMOAvilable.numero_type_id == type_id)
+    if plan:
+        query = query.filter(VNextNumeroMOAvilable.plan == plan)
+    
+    query = query.all()
+        
+    return Utils.serialize_many(query)
