@@ -15,20 +15,31 @@
         <md-card-expand>
             <md-card-expand-content>
                 <md-card-content>
-                    <div style="width: 900px;">
-                        <md-table md-height="40vh" v-model="numerosDifferes" md-sort="diff_affaire_id" md-sort-order="desc" md-card md-fixed-header>
+                    <div style="width: 1000px;">
+                        <md-table md-height="40vh" v-model="affaires" md-sort="diff_affaire_id" md-sort-order="desc" md-card md-fixed-header>
                             <md-table-toolbar>
-                                <h1 class="md-title">Biens-fonds mat diff</h1>
+                                <div class="md-toolbar-section-start">
+                                    <h1 class="md-title">Biens-fonds mat diff</h1>
+                                </div>
+
+                                <div class="md-toolbar-section-end">
+                                    <md-field style="margin-left: 50px; width: 250px">
+                                        <label for="operateur">Opérateur</label>
+                                        <md-select v-model="selectedOperateur_id" name="operateur" id="operateur" @md-selected="filterAffaires" md-dense>
+                                            <md-option :value="-1">Tous</md-option>
+                                            <md-option v-for="item in operateurs" :value="item.id">{{ item.nom }}</md-option>
+                                        </md-select>
+                                    </md-field>
+                                </div>
                             </md-table-toolbar>
-                              
-                            <md-table-empty-state
-                                md-label="Aucune mat diff"
-                                md-description="Aucune mat diff trouvée.">
+
+                            <md-table-empty-state md-label="Aucune mat diff" md-description="Aucune mat diff trouvée.">
                             </md-table-empty-state>
-    
+
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                 <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
                                 <md-table-cell md-label="Affaire" md-sort-by="diff_affaire_id" md-numeric>{{ item.diff_affaire_id }}</md-table-cell>
+                                <md-table-cell md-label="Opérateur" md-sort-by="diff_operateur_initiales" md-numeric>{{ item.diff_operateur_initiales }}</md-table-cell>
                                 <md-table-cell md-label="Bien-fonds" md-numeric>{{ item.numero }}</md-table-cell>
                                 <md-table-cell md-label="Date" md-sort-by="diff_entree">{{ new Date(item.diff_entree) | formatDate }} </md-table-cell>
                                 <md-table-cell md-label="Consultation">
@@ -46,4 +57,3 @@
 
     </md-card>
 </div>
-
