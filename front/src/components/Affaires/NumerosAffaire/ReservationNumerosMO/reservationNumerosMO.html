@@ -2,7 +2,7 @@
     <md-card>
         <md-card-header class="justifyTitleBtn">
             <div class="md-title">Numéros de la MO</div>
-            <md-button class="md-primary" v-if="permission.editNumerosMOAllowed && permission.editAffaireAllowed" @click="showReservationNumerosMODialog = true">Réserver</md-button>
+            <md-button class="md-primary" v-if="permission.editNumerosMOAllowed && permission.editAffaireAllowed" @click="openReservationDialog()">Réserver</md-button>
         </md-card-header>
         
         <md-card-content>
@@ -23,6 +23,7 @@
                 </md-field>
             </div>
             <md-progress-bar md-mode="indeterminate" v-if="filterTableParams.showProgressBar"></md-progress-bar>
+            <span style="color: red; float: right;"><em>{{ warningMessage }}</em></span>
             <div v-if="reservationNumerosMO[0]">
                 <md-table md-height="40vh" v-model="reservationNumerosMO" md-sort="date_sort" md-sort-order="desc" md-dense md-fixed-header>
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
@@ -91,10 +92,10 @@
                             <!-- Points de détail -->
                             <md-field :class="getValidationClass('plan')">
                                 <label>Plan</label>
-                                <md-select v-model="form.plan" style="text-align: right;" md-dense>
-                                    <md-option v-for="item in plansMOListe_cadastre" :value="item">{{ item.nom }}</md-option>
+                                <md-select v-model="form.plan_id" style="text-align: right;" md-dense>
+                                    <md-option v-for="item in plansMOListe_cadastre" :value="item.id">{{ item.nom }}</md-option>
                                 </md-select>
-                                <span class="md-error" v-if="!$v.form.plan.required">Sélectionner le plan</span>
+                                <span class="md-error" v-if="!$v.form.plan_id.required">Sélectionner le plan</span>
                             </md-field>
                         </div>
                         <div class="md-layout-item md-size-50">

@@ -3,7 +3,7 @@
         <md-card-content>          
             <img class="logo" alt="ne.ch" src="@/assets/logo.png">
             <h2>Infolica</h2>
-            <h2 style="color: rgb(255, 51, 0);" v-if="!isProd"><md-icon class="md-accent">warning</md-icon> INSTANCE DE TEST <md-icon class="md-accent">warning</md-icon></h2>
+            <h2 style="color: rgb(255, 51, 0);" v-if="!instance.isProd"><md-icon class="md-accent">warning</md-icon> {{ instance.name }} <md-icon class="md-accent">warning</md-icon></h2>
 
             <nav class="menu" v-if="$route.name !== 'Login'">
               <md-menu md-align-trigger>
