@@ -13,7 +13,6 @@ from infolica.models.models import VNumerosAffaires, Affaire
 from infolica.scripts.utils import Utils
 
 from datetime import datetime
-import json
 
 
 @view_config(route_name='numeros', request_method='GET', renderer='json')
