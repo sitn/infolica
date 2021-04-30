@@ -31,7 +31,7 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-          let tmp = JSON.parse(response.data);
+          let tmp = response.data;
           tmp.forEach(x => x.numero = x.numero.join(', '));
           this.numerosDifferes = tmp;
         }

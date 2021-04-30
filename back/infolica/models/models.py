@@ -774,6 +774,10 @@ class VNumeros(Base):
     diff_sortie = Column(Date)
     diff_affaire_id = Column(BigInteger)
     diff_req_radiation = Column(Boolean)
+    diff_operateur_id = Column(BigInteger)
+    diff_operateur_nom = Column(Text)
+    diff_operateur_prenom = Column(Text)
+    diff_operateur_initiales = Column(Text)
 
 
 class VNumerosAffaires(Base):

@@ -81,7 +81,7 @@ export default {
     this.getAffaire();
 
     // init selectedOperateur_id from parent component
-    this.selectedTypeAffaire_id = this.selectedOperateur_id_parent;
+    this.selectedOperateur_id = this.selectedOperateur_id_parent;
   }
 };
 </script>
