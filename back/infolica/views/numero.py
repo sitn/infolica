@@ -13,7 +13,6 @@ from infolica.models.models import VNumerosAffaires, Affaire
 from infolica.scripts.utils import Utils
 
 from datetime import datetime
-import json
 
 
 @view_config(route_name='numeros', request_method='GET', renderer='json')
@@ -445,7 +444,7 @@ def numero_differe_view(request):
 
     num_agg = func.array_agg(VNumeros.numero, type_=ARRAY(Integer)).label('numero')
     diff_id_agg = func.array_agg(VNumeros.diff_id, type_=ARRAY(Integer)).label('numero_id')
-    query = request.dbsession.query(VNumeros.diff_affaire_id.label('diff_affaire_id'), VNumeros.cadastre.label('cadastre'), num_agg, diff_id_agg, func.min(VNumeros.diff_entree).label('diff_entree_min'))
+    query = request.dbsession.query(VNumeros.diff_affaire_id, VNumeros.cadastre, num_agg, diff_id_agg, func.min(VNumeros.diff_entree), VNumeros.diff_operateur_id, VNumeros.diff_operateur_nom, VNumeros.diff_operateur_prenom, VNumeros.diff_operateur_initiales)
     
     if role == "mo":
         user_id = request.params['user_id'] if 'user_id' in request.params else None
@@ -472,7 +471,14 @@ def numero_differe_view(request):
             VNumeros.etat_id.in_((numero_projet_id, numero_vigueur_id)) 
         ))
         
-    result = query.group_by(VNumeros.diff_affaire_id, VNumeros.cadastre).having(func.array_length(num_agg, 1) > 0).all()
+    result = query.group_by(
+        VNumeros.diff_affaire_id,
+        VNumeros.cadastre,
+        VNumeros.diff_operateur_id,
+        VNumeros.diff_operateur_nom,
+        VNumeros.diff_operateur_prenom,
+        VNumeros.diff_operateur_initiales
+    ).having(func.array_length(num_agg, 1) > 0).all()
 
     numeros = []
     for num in result:
@@ -481,10 +487,14 @@ def numero_differe_view(request):
             'cadastre': num[1],
             'numero': num[2],
             'diff_id': num[3],
-            'diff_entree': datetime.strftime(num[4], '%Y-%m-%d')
+            'diff_entree': datetime.strftime(num[4], '%Y-%m-%d'),
+            'diff_operateur_id': num[5],
+            'diff_operateur_nom': num[6],
+            'diff_operateur_prenom': num[7],
+            'diff_operateur_initiales': num[8]
         })
 
-    return json.dumps(numeros)
+    return numeros
 
 
 @view_config(route_name='numeros_differes', request_method='POST', renderer='json')

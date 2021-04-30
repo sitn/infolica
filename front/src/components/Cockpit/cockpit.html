@@ -11,7 +11,7 @@
     
     <!-- Panneau de suivi des immeuble en mat diff de l'opérateur MO -->
     <div v-if="showMatdiff_mo">
-        <Matdiff_mo />
+        <Matdiff_mo :operateurs="operateurs" :selectedOperateur_id_parent="selectedOperateur_id" />
     </div>
 
     <!-- Panneau de suivi des affaires chez le client de l'opérateur PPE -->
