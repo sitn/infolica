@@ -142,10 +142,9 @@
                                 </md-autocomplete>
                             </div>
                             <div class="md-layout-item md-size-50 md-small-size-100"  v-if="form.client_commande.type_id === clientTypes_conf.moral">
-                                <md-field>
+                                <md-autocomplete v-model="form.client_commande_complement" :md-options="clientContactsListe" @md-opened="getClientContact(form.client_commande)" md-dense>
                                     <label>Personne de contact</label>
-                                    <md-input v-model="form.client_commande_complement"></md-input>
-                                </md-field>
+                                </md-autocomplete>
                             </div>
                         </md-card-content>
                     </md-card>
@@ -164,10 +163,9 @@
                                 </md-autocomplete>
                             </div>
                             <div class="md-layout-item md-size-50 md-small-size-100" v-if="form.client_envoi.type_id === clientTypes_conf.moral">
-                                <md-field>
+                                <md-autocomplete v-model="form.client_envoi_complement" :md-options="clientContactsListe" @md-opened="getClientContact(form.client_envoi)" md-dense>
                                     <label>À l'attention de...</label>
-                                    <md-input v-model="form.client_envoi_complement"></md-input>
-                                </md-field>
+                                </md-autocomplete>
                             </div>
                         </md-card-content>
                     </md-card>
