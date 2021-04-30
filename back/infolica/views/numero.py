@@ -471,8 +471,14 @@ def numero_differe_view(request):
             VNumeros.etat_id.in_((numero_projet_id, numero_vigueur_id)) 
         ))
         
-    result = query.group_by(VNumeros.diff_affaire_id, VNumeros.cadastre, VNumeros.diff_operateur_id, VNumeros.diff_operateur_nom, VNumeros.diff_operateur_prenom, \
-        VNumeros.diff_operateur_initiales).having(func.array_length(num_agg, 1) > 0).all()
+    result = query.group_by(
+        VNumeros.diff_affaire_id,
+        VNumeros.cadastre,
+        VNumeros.diff_operateur_id,
+        VNumeros.diff_operateur_nom,
+        VNumeros.diff_operateur_prenom,
+        VNumeros.diff_operateur_initiales
+    ).having(func.array_length(num_agg, 1) > 0).all()
 
     numeros = []
     for num in result:
