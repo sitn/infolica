@@ -34,6 +34,7 @@ export default {
         selected_id: 0,
         selected_adress: ''
       },
+      clientContactsListe: [],
       clientsListe: [],
       clientsListe_bk: [],
       searchClientsListe: [],
@@ -412,6 +413,29 @@ export default {
       this.$router.replace({ name: "AffairesDashboard", params: {id: affaire_id}});
       this.$router.go(0);
     },
+
+    /**
+     * Get client contact for client entreprise
+     */
+    async getClientContact(client) {
+      let type_client = this.clientsListe_bk.filter(x => x.id === client.id)[0].type_client;
+      if (type_client === this.clientTypes_conf.moral) {
+        // get client contacts
+        this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_MORAL_PERSONNES_ENDPOINT + "/" + client.id,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => {
+          if (response && response.data) {
+            let tmp = [];
+            response.data.forEach(x => tmp.push([x.titre, x.prenom, x.nom].filter(Boolean).join(" ")));
+            this.clientContactsListe = tmp;
+          }
+        }).catch(err => handleException(err, this));
+      }
+    }
 
   },
 
