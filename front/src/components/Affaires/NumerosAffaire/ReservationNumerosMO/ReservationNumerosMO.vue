@@ -282,7 +282,7 @@ export default {
       formData.append("numero_de", 1);
       formData.append("numero_a", nb_points);
       formData.append("plan", plan);
-      if (this.form.plan_id !== null) {formData.append("plan_id", plan_id)}
+      if (plan_id !== null) { formData.append("plan_id", plan_id) }
       formData.append("date", moment(new Date).format(process.env.VUE_APP_DATEFORMAT_WS));
       if (this.form.remarque !== null && this.form.remarque !== '') {formData.append("remarque", this.form.remarque)}
       formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
