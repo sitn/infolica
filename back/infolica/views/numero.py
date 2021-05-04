@@ -442,26 +442,31 @@ def numero_differe_view(request):
 
     role = request.params['role'] if 'role' in request.params else None
 
-    num_agg = func.array_agg(VNumeros.numero, type_=ARRAY(Integer)).label('numero')
-    diff_id_agg = func.array_agg(VNumeros.diff_id, type_=ARRAY(Integer)).label('numero_id')
-    query = request.dbsession.query(VNumeros.diff_affaire_id, VNumeros.cadastre, num_agg, diff_id_agg, func.min(VNumeros.diff_entree), VNumeros.diff_operateur_id, VNumeros.diff_operateur_nom, VNumeros.diff_operateur_prenom, VNumeros.diff_operateur_initiales)
+    num_agg = func.array_agg(VNumeros.numero, type_=ARRAY(Integer))
+    num_id_agg = func.array_agg(VNumeros.id, type_=ARRAY(Integer))
+    diff_id_agg = func.array_agg(VNumeros.diff_id, type_=ARRAY(Integer))
+    query = request.dbsession.query(
+        VNumeros.diff_affaire_id,
+        VNumeros.cadastre,
+        num_agg,
+        num_id_agg,
+        diff_id_agg,
+        func.min(VNumeros.diff_entree),
+        VNumeros.diff_operateur_id,
+        VNumeros.diff_operateur_nom,
+        VNumeros.diff_operateur_prenom,
+        VNumeros.diff_operateur_initiales
+    )
     
     if role == "mo":
         user_id = request.params['user_id'] if 'user_id' in request.params else None
         
-        affaires = request.dbsession.query(Affaire, VNumeros)
-
         if user_id is not None:
-            affaires = affaires.filter(Affaire.technicien_id == user_id)
+            query = query.filter(VNumeros.diff_operateur_id == user_id)
 
-        affaires = affaires.filter(Affaire.id == VNumeros.diff_affaire_id).all()
-
-        affaires_id = [aff.Affaire.id for aff in affaires]
-        
         query = query.filter(and_(
             VNumeros.diff_entree.isnot(None),
-            VNumeros.diff_sortie == None,
-            VNumeros.diff_affaire_id.in_(affaires_id)
+            VNumeros.diff_sortie == None
         ))
     
     elif role == "secr":
@@ -486,12 +491,13 @@ def numero_differe_view(request):
             'diff_affaire_id': num[0],
             'cadastre': num[1],
             'numero': num[2],
-            'diff_id': num[3],
-            'diff_entree': datetime.strftime(num[4], '%Y-%m-%d'),
-            'diff_operateur_id': num[5],
-            'diff_operateur_nom': num[6],
-            'diff_operateur_prenom': num[7],
-            'diff_operateur_initiales': num[8]
+            'numero_id': num[3],
+            'diff_id': num[4],
+            'diff_entree': datetime.strftime(num[5], '%Y-%m-%d'),
+            'diff_operateur_id': num[6],
+            'diff_operateur_nom': num[7],
+            'diff_operateur_prenom': num[8],
+            'diff_operateur_initiales': num[9]
         })
 
     return numeros

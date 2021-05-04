@@ -19,13 +19,13 @@
                         <md-table md-height="40vh" v-model="affaires" md-sort="diff_affaire_id" md-sort-order="desc" md-card md-fixed-header>
                             <md-table-toolbar>
                                 <div class="md-toolbar-section-start">
-                                    <h1 class="md-title">Biens-fonds mat diff</h1>
+                                    <div class="md-title">Biens-fonds mat diff <span style="font-size: 14px; margin-left: 20px;">({{ affaires.length }} affaires)</span></div>
                                 </div>
 
                                 <div class="md-toolbar-section-end">
                                     <md-field style="margin-left: 50px; width: 250px">
                                         <label for="operateur">Opérateur</label>
-                                        <md-select v-model="selectedOperateur_id" name="operateur" id="operateur" @md-selected="filterAffaires" md-dense>
+                                        <md-select v-model="selectedOperateur_id" name="operateur" id="operateur" @md-selected="filterAffaires()" md-dense>
                                             <md-option :value="-1">Tous</md-option>
                                             <md-option v-for="item in operateurs" :value="item.id">{{ item.nom }}</md-option>
                                         </md-select>

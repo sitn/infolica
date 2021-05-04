@@ -4,7 +4,7 @@
 
 <script>
 import { handleException } from '@/services/exceptionsHandler'
-import { checkPermission } from '@/services/helper'
+import { checkPermission, getCurrentUserRoleId } from '@/services/helper'
 
 const moment = require('moment')
 
@@ -28,7 +28,8 @@ export default {
      */
     async getNumerosDifferes() {
       let params =  "?role=mo&user_id=" + this.selectedOperateur_id;
-      if (checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {
+      if (checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ||
+          getCurrentUserRoleId() === Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)) {
         params =  "?role=mo"
       }
 
