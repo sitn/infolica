@@ -5,7 +5,7 @@ import pyramid.httpexceptions as exc
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import ReservationNumerosMO, VReservationNumerosMO, Plan, Affaire
-from infolica.models.models import VNextNumeroMOAvilable
+from infolica.models.models import VProchainNumeroDisponible
 from infolica.scripts.utils import Utils
 
 from sqlalchemy import and_, or_, func
@@ -130,13 +130,13 @@ def numero_mo_next_view(request):
     type_id = request.params['type_id'] if 'type_id' in request.params else None
     plan = request.params['plan'] if 'plan' in request.params else None
 
-    query = request.dbsession.query(VNextNumeroMOAvilable)
+    query = request.dbsession.query(VProchainNumeroDisponible)
     if cadastre_id:
-        query = query.filter(VNextNumeroMOAvilable.cadastre_id == cadastre_id)
+        query = query.filter(VProchainNumeroDisponible.cadastre_id == cadastre_id)
     if type_id:
-        query = query.filter(VNextNumeroMOAvilable.numero_type_id == type_id)
+        query = query.filter(VProchainNumeroDisponible.numero_type_id == type_id)
     if plan:
-        query = query.filter(VNextNumeroMOAvilable.plan == plan)
+        query = query.filter(VProchainNumeroDisponible.plan == plan)
     
     query = query.all()
         

@@ -74,7 +74,7 @@
                             <md-button class="md-raised" v-bind:disabled="!numeros.length>0 && !search.matDiff && !search.numero && !search.suffixe && !search.cadastre && !search.type && !search.etat" v-on:click="clearForm">Réinitialiser</md-button>
                             <md-button class="md-raised md-primary" v-on:click="searchNumeros">Rechercher</md-button>
                         </md-card-actions>
-                    
+
 
                         <!-- Results Content -->
                         <div v-if="numeros.length>0">
@@ -142,12 +142,16 @@
                             <md-button @click="clearNumerosMOForm" :disabled="!searchNumeroMO.cadastre && !searchNumeroMO.type && !searchNumeroMO.plan" class="md-raised">Réinitialiser</md-button>
                             <md-button @click="getNextNumeroMO" class="md-raised md-primary">Rechercher</md-button>
                         </md-card-actions>
-                        
-                        
+
+
                         <div v-if="numerosMO.length>0">
                             <md-table v-model="numerosMO" class="md-card">
                                 <md-table-toolbar>
                                     <h1 class="md-title">Résultat</h1>
+                                    <md-icon style="float: right; margin-right: 10px; color: red;">warning</md-icon>
+                                    <div style="width: 70%; float: right;">
+                                        <span style="float: right;"><em> Les numéros sont présentés ici à titre indicatif. Une réservation de numéros réalisée depuis le chargement de cette page passera inaperçue !</em></span>
+                                    </div>
                                 </md-table-toolbar>
                                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                                     <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>

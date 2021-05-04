@@ -1114,8 +1114,8 @@ class VPlan(Base):
     idrepplan = Column(Text)
     base = Column(Text)
 
-class VNextNumeroMOAvilable(Base):
-    __tablename__ = 'v_next_numero_mo_available'
+class VProchainNumeroDisponible(Base):
+    __tablename__ = 'v_prochain_numero_disponible'
     __table_args__ = {'schema': 'infolica',
                       'info': dict(is_view=True)}
     cadastre_id = Column(BigInteger, primary_key=True)
