@@ -448,6 +448,7 @@ export default {
                                  this.typesAffaires_conf.modification,
                                  this.typesAffaires_conf.modification_mutation,
                                  this.typesAffaires_conf.mpd,
+                                 this.typesAffaires_conf.art35,
                                  this.typesAffaires_conf.retablissement_pfp3].includes(this.affaire.type_id),
 
         balance: [this.typesAffaires_conf.mutation, this.typesAffaires_conf.modification_mutation].includes(this.affaire.type_id),

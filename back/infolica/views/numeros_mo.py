@@ -5,7 +5,7 @@ import pyramid.httpexceptions as exc
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import ReservationNumerosMO, VReservationNumerosMO, Plan, Affaire
-from infolica.models.models import VNextNumeroMOAvilable
+from infolica.models.models import VProchainNumeroDisponible
 from infolica.scripts.utils import Utils
 
 from sqlalchemy import and_, or_, func
@@ -117,66 +117,6 @@ def reservation_numeros_mo_new_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ReservationNumerosMO.__tablename__))
 
 
-def savePointMO(request, affaire_id, cadastre_id, numero_type, n_numeros, etat_id):
-    settings = request.registry.settings
-    cadastres_ChauxDeFonds_Eplatures_id = settings['cadastres_ChauxDeFonds_Eplatures_id'].split(",")
-    cadastres_ChauxDeFonds_Eplatures_id = [
-        int(cadastres_ChauxDeFonds_Eplatures_id[0]),
-        int(cadastres_ChauxDeFonds_Eplatures_id[1])
-    ]
-    cadastres_BrotPlamboz_Plamboz_id = settings['cadastres_BrotPlamboz_Plamboz_id'].split(",")
-    cadastres_BrotPlamboz_Plamboz_id = [
-        int(cadastres_BrotPlamboz_Plamboz_id[0]),
-        int(cadastres_BrotPlamboz_Plamboz_id[1])
-    ]
-    cadastres_Neuchatel_Coudre_id = settings['cadastres_Neuchatel_Coudre_id'].split(",")
-    cadastres_Neuchatel_Coudre_id = [
-        int(cadastres_Neuchatel_Coudre_id[0]),
-        int(cadastres_Neuchatel_Coudre_id[1])
-    ]
-    cadastres_Sauge_StAubin_id = settings['cadastres_Sauge_StAubin_id'].split(",")
-    cadastres_Sauge_StAubin_id = [int(cadastres_Sauge_StAubin_id[0]), int(cadastres_Sauge_StAubin_id[1])]
-
-    # Corriger la liste des cadastres où la réservation de numéros se fait sur deux cadastres
-    if cadastre_id == cadastres_ChauxDeFonds_Eplatures_id[0] or cadastre_id == cadastres_ChauxDeFonds_Eplatures_id[1]:
-        # Cadastre de la Chaux-de-Fonds et des Eplatures
-        ln = max(
-            Utils.last_number(request, cadastres_ChauxDeFonds_Eplatures_id[0], [numero_type]),
-            Utils.last_number(request, cadastres_ChauxDeFonds_Eplatures_id[1], [numero_type])
-        )
-    elif cadastre_id == cadastres_BrotPlamboz_Plamboz_id[0] or cadastre_id == cadastres_BrotPlamboz_Plamboz_id[1]:
-        # Cadastre de Brot-Plamboz et Plamboz
-        ln = max(
-            Utils.last_number(request, cadastres_BrotPlamboz_Plamboz_id[0], [numero_type]),
-            Utils.last_number(request, cadastres_BrotPlamboz_Plamboz_id[1], [numero_type])
-        )
-    elif cadastre_id == cadastres_Neuchatel_Coudre_id[0] or cadastre_id == cadastres_Neuchatel_Coudre_id[1]:
-        # Cadastre de Neuchâtel et de la Coudre
-        ln = max(
-            Utils.last_number(request, cadastres_Neuchatel_Coudre_id[0], [numero_type]),
-            Utils.last_number(request, cadastres_Neuchatel_Coudre_id[1], [numero_type])
-        )
-    elif cadastre_id == cadastres_Sauge_StAubin_id[0] or cadastre_id == cadastres_Sauge_StAubin_id[1]:
-        # Cadastre de Sauge et de Saint-Aubin
-        ln = max(
-            Utils.last_number(request, cadastres_Sauge_StAubin_id[0], [numero_type]),
-            Utils.last_number(request, cadastres_Sauge_StAubin_id[1], [numero_type])
-        )
-    else:
-        ln = Utils.last_number(request, cadastre_id, [numero_type])
-
-    for i in range(n_numeros):
-        # enregistrer un nouveau numéro
-        params = Utils._params(
-            cadastre_id=cadastre_id, type_id=numero_type, etat_id=etat_id, numero=ln + i+1)
-        numero_id = numeros_new_view(request, params)
-        # enregistrer le lien affaire-numéro
-        params = Utils._params(
-            affaire_id=affaire_id, numero_id=numero_id, actif=True, type_id=2)
-        affaire_numero_new_view(request, params)
-
-
-
 @view_config(route_name='numero_mo_next', request_method='GET', renderer='json')
 def numero_mo_next_view(request):
     """
@@ -190,13 +130,13 @@ def numero_mo_next_view(request):
     type_id = request.params['type_id'] if 'type_id' in request.params else None
     plan = request.params['plan'] if 'plan' in request.params else None
 
-    query = request.dbsession.query(VNextNumeroMOAvilable)
+    query = request.dbsession.query(VProchainNumeroDisponible)
     if cadastre_id:
-        query = query.filter(VNextNumeroMOAvilable.cadastre_id == cadastre_id)
+        query = query.filter(VProchainNumeroDisponible.cadastre_id == cadastre_id)
     if type_id:
-        query = query.filter(VNextNumeroMOAvilable.numero_type_id == type_id)
+        query = query.filter(VProchainNumeroDisponible.numero_type_id == type_id)
     if plan:
-        query = query.filter(VNextNumeroMOAvilable.plan == plan)
+        query = query.filter(VProchainNumeroDisponible.plan == plan)
     
     query = query.all()
         
