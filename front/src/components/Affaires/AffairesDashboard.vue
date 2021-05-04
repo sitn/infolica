@@ -422,6 +422,8 @@ export default {
         route = process.env.VUE_APP_SITN_ENVIRONNEMENT_URL;
       } else if (theme === "amenagement_territoire") {
           route = process.env.VUE_APP_SITN_AMENAGEMENT_TERRITOIRE_URL;
+      } else if (theme === "cadastre") {
+          route = process.env.VUE_APP_SITN_CADASTRE_URL;
       } else {
         return null;
       }
