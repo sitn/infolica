@@ -34,6 +34,12 @@
     height: inherit !important;;
 }
 
+.affairesDashboard .affaireDashboardTitle {
+    position: fixed;
+    margin-top: 0px;
+    width: calc(100% - 37px);
+}
+
 .affairesDashboard .affaireDashboardContent {
     position: relative;
     top: 120px;
