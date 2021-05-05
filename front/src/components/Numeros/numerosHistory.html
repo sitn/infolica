@@ -176,7 +176,7 @@
         </md-card-header>
 
         <md-card-content>
-            <md-table md-height="40vh" v-model="numero_affaires" md-sort="affaire_date" md-sort-order="desc" md-fixed-header>
+            <md-table md-height="40vh" v-model="numero_affaires" md-sort="affaire_date_ouverture" md-sort-order="desc" md-fixed-header>
                 <md-table-empty-state style="min-width: 1000px;"
                     md-label="Aucune affaire"
                     md-description="Aucune affaire n'a été trouvée en lien avec ce numéro.">
@@ -186,7 +186,7 @@
                     <md-table-cell md-label="Affaire" md-sort-by="affaire_id" style="width: 10%;">{{ item.affaire_id }}</md-table-cell>
                     <md-table-cell md-label="Description" md-sort-by="affaire_nom" style="width: 15%;">{{ item.affaire_nom }}</md-table-cell>
                     <md-table-cell md-label="Type" md-sort-by="affaire_type" style="width: 20%;">{{ item.affaire_type }}</md-table-cell>
-                    <md-table-cell md-label="Date" md-sort-by="affaire_date" style="width: 10%;">{{ item.affaire_date | formatDate }}</md-table-cell>
+                    <md-table-cell md-label="Date" md-sort-by="affaire_date_ouverture" style="width: 10%;">{{ item.affaire_date_ouverture | formatDate }}</md-table-cell>
                     <md-table-cell md-label="Consulter" class="actionsColumn" style="width: 15%;">
                         <md-button class="md-icon-button md-primary" v-on:click="doOpenAffaire(item.affaire_id)">
                             <md-icon>open_in_new</md-icon>
