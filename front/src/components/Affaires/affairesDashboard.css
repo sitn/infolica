@@ -33,3 +33,8 @@
 .affairesDashboard .mapHeight {
     height: inherit !important;;
 }
+
+.affairesDashboard .affaireDashboardContent {
+    position: relative;
+    top: 120px;
+}
