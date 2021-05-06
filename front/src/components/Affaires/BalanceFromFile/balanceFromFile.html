@@ -72,7 +72,7 @@
                         <md-button class="md-primary md-elevation-2" @click="referencerNumeros">(1) Référencer des biens-fonds</md-button>
                         
                         <div v-if="numeros_anciens.length > 0">
-                            <md-table md-height="40vh" v-model="numeros_anciens" md-sort="numero"
+                            <md-table v-model="numeros_anciens" md-sort="numero"
                                             md-sort-order="asc" md-fixed-header md-dense md-card>
                                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                                     <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
@@ -95,7 +95,7 @@
                     <md-card-content>
                         <p>Sélectionner dans la liste les numéros qui doivent être définis comme DDP.</p>
                         <div v-if="numeros_nouveaux.length > 0">
-                            <md-table md-height="40vh" v-model="numeros_nouveaux" md-sort="numero"
+                            <md-table v-model="numeros_nouveaux" md-sort="numero"
                                 md-sort-order="asc" md-fixed-header md-dense md-card>
                                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                                     <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
@@ -118,7 +118,7 @@
                         <md-button class="md-primary md-elevation-2" @click="referenceDDP">Référencer des DDP</md-button>
                         
                         <div v-if="numeros_ddp_old.length > 0">
-                            <md-table md-height="40vh" v-model="numeros_ddp_old" md-sort="numero"
+                            <md-table v-model="numeros_ddp_old" md-sort="numero"
                                 md-sort-order="asc" md-fixed-header md-dense md-card>
                                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                                     <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
@@ -141,7 +141,7 @@
             <h1 class="md-title">Il reste des biens-fonds réservés, que faut-il en faire?</h1>
         </md-dialog-title>
         <md-dialog-content>
-            <md-table md-height="40vh" v-model="numeros_nouveaux" md-sort="numero"
+            <md-table v-model="numeros_nouveaux" md-sort="numero"
                 md-sort-order="asc" md-fixed-header md-dense md-card>
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>

@@ -172,7 +172,7 @@
     </md-card-header>
     
     <md-card-content>
-      <md-table md-height="40vh" v-model="client_moral_personnes" md-sort="nom" md-sort-order="asc" md-fixed-header v-if="client_moral_personnes.length > 0">
+      <md-table v-model="client_moral_personnes" md-sort="nom" md-sort-order="asc" md-fixed-header v-if="client_moral_personnes.length > 0">
         <md-table-row slot="md-table-row" slot-scope="{ item }">
           <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
           <md-table-cell md-label="Titre" md-sort-by="titre">{{ item.titre }}</md-table-cell>
