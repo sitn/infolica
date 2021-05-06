@@ -31,7 +31,7 @@
                                 <!-- Tableau des numéros concernés par l'affaire -->
                                 <md-card-content>
                                     <div v-if="affaire_numeros_anciens[0]">
-                                        <md-table md-height="40vh" v-model="affaire_numeros_anciens" md-sort="id" md-sort-order="desc" md-fixed-header>
+                                        <md-table v-model="affaire_numeros_anciens" md-sort="id" md-sort-order="desc" md-fixed-header>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif }">
                                                 <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
                                                     {{ item.numero_id }}
@@ -75,7 +75,7 @@
                                 <md-card-content>
                                     <!-- Tableau des numéros réservés dans l'affaire -->
                                     <div v-if="affaire_numeros_nouveaux[0]">
-                                        <md-table md-height="40vh" v-model="affaire_numeros_nouveaux" md-sort="numero"
+                                        <md-table v-model="affaire_numeros_nouveaux" md-sort="numero"
                                             md-sort-order="asc" md-fixed-header md-dense>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif || !item.active }">
                                                 <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">{{ item.numero_id }}</md-table-cell>

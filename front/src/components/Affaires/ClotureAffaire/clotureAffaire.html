@@ -4,7 +4,7 @@
     
     <md-dialog-content>
       <p>Vérifier l'état des numéros</p>
-      <md-table md-height="40vh" v-model="affaire_numeros" md-sort="numero" md-sort-order="asc" md-card md-dense md-fixed-header>
+      <md-table v-model="affaire_numeros" md-sort="numero" md-sort-order="asc" md-card md-dense md-fixed-header>
         <md-table-row slot="md-table-row" slot-scope="{ item }">
           <md-table-cell md-label="id" md-sort-by="numero_id" v-if="false">{{ item.numero_id }}</md-table-cell>
           <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
