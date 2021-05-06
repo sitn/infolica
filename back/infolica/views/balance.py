@@ -133,8 +133,8 @@ def balance_check_existing_oldBF_new_view(request):
 
 
 
-@view_config(route_name='balance_from_file_by_affaire_id', request_method='GET', renderer='json')
-def balance_from_file_view(request):
+@view_config(route_name='balance_files_by_affaire_id', request_method='GET', renderer='json')
+def get_balance_files_view(request):
     """
     Return balance
     """
@@ -151,17 +151,26 @@ def balance_from_file_view(request):
     query = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
     path = os.path.normcase(os.path.join(affaires_directory, query.chemin, balance_file_rel_path))
 
-    fileExists = False
+    files = []
     for filename in os.listdir(path):
         if filename.startswith(balance_filename_prefix) and (filename.endswith(".doc") or filename.endswith(".docx")):
-            fileExists = True
-            break
+            files.append({'filename': filename, 'filepath': os.path.join(path, filename)})
     
-    if not fileExists:
-        raise CustomError(CustomError.FILE_NOT_FOUND.format('Des_XXX.docx'))
-    
-    input_file = os.path.join(path, filename)
-    
+    return files
+
+
+@view_config(route_name='balance_from_file', request_method='POST', renderer='json')
+def balance_from_file_view(request):
+    """
+    Return balance
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    input_file = request.params["filepath"] if 'filepath' in request.params else None
+
+   
     # Open balance file and get table of balance
     doc = Document(input_file)
     table = None
@@ -186,6 +195,6 @@ def balance_from_file_view(request):
                         "old": int(text[0]) if text[0].isnumeric() else text[0]
                     })
     
-    return json.dumps(balance)
+    return balance
 
 

@@ -3,7 +3,7 @@
         <md-card-header>
             <div class="md-title">Balance</div>
             
-            <md-button @click="showBalanceMenu = true" class="md-raised" title="Créer la balance - immatriculation/exmatriculation de DP - constitution/suppression de DDP">Éditer la balance</md-button>
+            <md-button @click="openBalanceMenu" class="md-raised" title="Créer la balance - immatriculation/exmatriculation de DP - constitution/suppression de DDP">Éditer la balance</md-button>
         </md-card-header>
         
         <md-card-content>
@@ -47,7 +47,23 @@
                     </md-card-header>
                     <md-card-content>
                         <p>Récupère le fichier des dans le dossier de l'affaire pour construire la balance.</p>
-                        <md-button class="md-primary md-elevation-2" @click="getBalanceFromDes">Désignation</md-button>
+
+                        <div v-if="balanceFiles.length>0">
+                            <md-table v-model="balanceFiles" md-card>
+                                <md-table-toolbar>
+                                    <div class="md-title">Désignations</div>
+                                </md-table-toolbar>
+                                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                    <md-table-cell md-label="Fichier">{{ item.filename }}</md-table-cell>
+                                    <md-table-cell md-label="Charger la balance">
+                                        <md-button  @click="uploadBalance(item)" class="md-dense md-icon-button"><md-icon>file_upload</md-icon></md-button>
+                                    </md-table-cell>
+                                </md-table-row>
+                            </md-table>
+                        </div>
+                        <div v-else>
+                            <p style="color: red;"><em>Aucune désignation n'a été trouvée dans le dossier de l'affaire</em></p>
+                        </div>
                     </md-card-content>
                 </div>
             </div>
