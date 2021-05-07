@@ -122,24 +122,18 @@ def affaires_search_view(request):
     search_limit = int(settings['search_limit'])
     
     params_affaires = {}
-    client = None
-    client_in_params = False
+    client_id = None
     for key in request.params.keys():
         if "client" in key:
-            client = request.params[key]
+            client_id = request.params[key]
             client_in_params = True
-            params_affaires["client_commande_id"] = request.params[key]
-            params_affaires["client_envoi_id"] = request.params[key]
         else:
             params_affaires[key] = request.params[key]
     
     # Chercher les affaires par les clients de facture
     affaires_id_by_clients_facture = []
-    if client_in_params:
-        query_facture = request.dbsession.query(Facture).filter(or_(
-            Facture.client_id == client,
-            Facture.client_co_id == client,
-        )).all()
+    if client_id is not None:
+        query_facture = request.dbsession.query(Facture).filter(Facture.client_id == client_id).all()
 
         # Récupérer la liste des id des affaires retenues
         for facture in query_facture:
@@ -148,15 +142,16 @@ def affaires_search_view(request):
     # Chercher les affaires par les conditions (sauf client_facture)
     conditions = Utils.get_search_conditions(VAffaire, params_affaires)
     query = request.dbsession.query(VAffaire)
-    if client_in_params:
-        query = query.filter(and_(
+    if client_id is not None:
+        query = query.filter(or_(
             *conditions,
+            VAffaire.client_commande_id == client_id,
+            VAffaire.client_envoi_id == client_id,
             VAffaire.id.in_(affaires_id_by_clients_facture)
         ))
+        print("toto")
     else:
         query = query.filter(*conditions)
-
-
 
     query = query.limit(search_limit).all()
     return Utils.serialize_many(query)
