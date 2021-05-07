@@ -48,7 +48,6 @@ export default {
       numeros_ddp_new: [],
       numeros_ddp_old: [],
       numeros_relations: [],
-      numeros_relations_bk: [],
       numeros_relations_matrice: [],
       numeros_types_liste: [],
       selectedMutation: {
@@ -208,23 +207,49 @@ export default {
     /**
      * updload Balance
      */
-    async uploadBalance(file) {
-      let formData = new FormData();
-      formData.append("filepath", file.filepath);
+    async uploadBalance(file=null) {
+      let promises = [];
 
-      this.$http.post(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_FROM_FILE_ENDPOINT,
-        formData,
-        {
-          withCredentials: true,
-          headers: {Accept: "application/json"}
-        }
-      ).then(response => {
-        if (response && response.data) {
-          let relation = this.initRelationArray(response.data);
+      if (file && file.filepath) {
+        promises.push(this.uploadIndividualBalance(file));
+      } else {
+        this.balanceFiles.forEach(file => {
+          promises.push(this.uploadIndividualBalance(file));
+        });
+      }
+
+      Promise.all(promises)
+      .then(response => {
+        if (response) {
+          let response_data = [];
+          response.forEach(response_i => {
+            response_data.push(...response_i.data)
+          })
+
+          let relation = this.initRelationArray(response_data);
           this.tableau_balance = this.constructTableauBalance(relation);
         }
       }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * upload individual balance
+     */
+    async uploadIndividualBalance(file) {
+      return new Promise((resolve, reject) => {
+        let formData = new FormData();
+        formData.append("filepath", file.filepath);
+  
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_FROM_FILE_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
     },
 
     /**

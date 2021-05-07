@@ -46,20 +46,15 @@
                         <h3 class="md-title">Balance à partir de la désignation</h3>
                     </md-card-header>
                     <md-card-content>
-                        <p>Récupère le fichier des dans le dossier de l'affaire pour construire la balance.</p>
+                        <p>Récupère les fichiers des désignations dans le dossier de l'affaire pour construire la balance.</p>
 
                         <div v-if="balanceFiles.length>0">
-                            <md-table v-model="balanceFiles" md-card>
-                                <md-table-toolbar>
-                                    <div class="md-title">Désignations</div>
-                                </md-table-toolbar>
-                                <md-table-row slot="md-table-row" slot-scope="{ item }">
-                                    <md-table-cell md-label="Fichier">{{ item.filename }}</md-table-cell>
-                                    <md-table-cell md-label="Charger la balance">
-                                        <md-button  @click="uploadBalance(item)" class="md-dense md-icon-button"><md-icon>file_upload</md-icon></md-button>
-                                    </md-table-cell>
-                                </md-table-row>
-                            </md-table>
+                            <h3>Désignations trouvées</h3>
+                            <ul>
+                                <li v-for="item in balanceFiles">{{ item.filename }}</li>
+                            </ul>
+
+                            <md-button @click="uploadBalance" class="md-dense md-primary md-elevation-2"><md-icon>file_upload</md-icon> Charger les balances</md-button>
                         </div>
                         <div v-else>
                             <p style="color: red;"><em>Aucune désignation n'a été trouvée dans le dossier de l'affaire</em></p>
