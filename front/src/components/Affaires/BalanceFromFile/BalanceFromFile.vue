@@ -31,6 +31,7 @@ export default {
         content: '',
       },
       balanceContainsDP: false,
+      balanceFiles: [],
       cadastres_liste: [],
       checkBFBalance: {
         show: false,
@@ -47,7 +48,6 @@ export default {
       numeros_ddp_new: [],
       numeros_ddp_old: [],
       numeros_relations: [],
-      numeros_relations_bk: [],
       numeros_relations_matrice: [],
       numeros_types_liste: [],
       selectedMutation: {
@@ -186,40 +186,92 @@ export default {
     },
 
     /**
-     * Get balance from mutation name (DES)
+     * Get balance files
      */
-    async getBalanceFromDes() {
-      this.showBalanceMenu = false;
-      
+    async getBalanceFiles() {
       this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_FROM_FILE_ENDPOINT + "?affaire_id=" + this.affaire.id,
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_FILES_ENDPOINT + "?affaire_id=" + this.affaire.id,
         {
           withCredentials: true,
           headers: {Accept: "application/json"}
         }
       ).then(response => {
         if (response && response.data) {
-          let tmp = JSON.parse(response.data);
-          let relation = [];
+          this.balanceFiles = response.data;
 
-          tmp.forEach(x => {
-            // prepare relation array
-            x.relation_old = [this.affaire.cadastre_id, x.old].join("_");
-            if (String(x.old).toLowerCase().includes("dp")) {
-              x.relation_old = "DP";
-            }
-            
-            x.relation_new = [this.affaire.cadastre_id, x.new].join("_");
-            if (String(x.new).toLowerCase().includes("dp")) {
-              x.relation_new = "DP";
-            }
-            // keep relation
-            relation.push([x.relation_old, x.relation_new]);
-          });
+        }
+      }).catch(err => handleException(err, this));
 
+    },
+
+    /**
+     * updload Balance
+     */
+    async uploadBalance(file=null) {
+      let promises = [];
+
+      if (file && file.filepath) {
+        promises.push(this.uploadIndividualBalance(file));
+      } else {
+        this.balanceFiles.forEach(file => {
+          promises.push(this.uploadIndividualBalance(file));
+        });
+      }
+
+      Promise.all(promises)
+      .then(response => {
+        if (response) {
+          let response_data = [];
+          response.forEach(response_i => {
+            response_data.push(...response_i.data)
+          })
+
+          let relation = this.initRelationArray(response_data);
           this.tableau_balance = this.constructTableauBalance(relation);
         }
       }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * upload individual balance
+     */
+    async uploadIndividualBalance(file) {
+      return new Promise((resolve, reject) => {
+        let formData = new FormData();
+        formData.append("filepath", file.filepath);
+  
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_FROM_FILE_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
+    /**
+     * init relation array
+     */
+    initRelationArray(data) {
+      let relation = [];
+      data.forEach(x => {
+        // prepare relation array
+        x.relation_old = [this.affaire.cadastre_id, x.old].join("_");
+        if (String(x.old).toLowerCase().includes("dp")) {
+          x.relation_old = "DP";
+        }
+        
+        x.relation_new = [this.affaire.cadastre_id, x.new].join("_");
+        if (String(x.new).toLowerCase().includes("dp")) {
+          x.relation_new = "DP";
+        }
+        // keep relation
+        relation.push([x.relation_old, x.relation_new]);
+      });
+      return relation;
     },
 
     /**
@@ -535,6 +587,14 @@ export default {
       }
       this.$refs.formReference.openReferenceDialog(searchTerms);
     },
+
+    /**
+     * open Balance Menu
+     */
+    openBalanceMenu() {
+      this.getBalanceFiles();
+      this.showBalanceMenu = true;
+    }
 
   },
   mounted: function() {
