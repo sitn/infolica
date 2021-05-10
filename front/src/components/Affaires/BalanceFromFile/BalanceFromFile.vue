@@ -613,16 +613,23 @@ export default {
           this.$root.$emit("searchAffaireNumeros");
           this.initBFArrays();
           
-          //remove current entry from array
-          let index = this.DDPpotential.indexOf(numero);
-          if (index > -1) {
-            this.DDPpotential.splice(index, 1);
-          }
+          this.removeCurrentDDPpotential(numero);
 
-          this.$root.$emit("ShowMessage", "Le numéro " + numero.numero + " du cadastre de " + numero.cadastre + " a bien été abandonné.");
+          this.$root.$emit("ShowMessage", "Le numéro " + numero.numero + " du cadastre de " + numero.numero_cadastre + " a bien été abandonné.");
         }
       }).catch(err => handleException(err, this));
 
+    },
+
+    /**
+     * Remove current DDP potential number
+     */
+    removeCurrentDDPpotential(numero) {
+      //remove current entry from array
+      let index = this.DDPpotential.indexOf(numero);
+      if (index > -1) {
+        this.DDPpotential.splice(index, 1);
+      }
     },
 
     /**
@@ -653,6 +660,7 @@ export default {
     this.getMutationNames();
     setTimeout(() => { this.initBFArrays(); }, 1000);
     this.$root.$on("searchAffaireNumeros", () => { setTimeout(() => { this.initBFArrays(); }, 1000); });
+    this.$root.$on("removeCurrentDDPpotential", numero => { this.removeCurrentDDPpotential(numero) })
   }
 };
 </script>
