@@ -3,7 +3,7 @@
         <md-card-header>
             <div class="md-title">Balance</div>
             
-            <md-button @click="showBalanceMenu = true" class="md-raised" title="Créer la balance - immatriculation/exmatriculation de DP - constitution/suppression de DDP">Éditer la balance</md-button>
+            <md-button @click="openBalanceMenu" class="md-raised" title="Créer la balance - immatriculation/exmatriculation de DP - constitution/suppression de DDP">Éditer la balance</md-button>
         </md-card-header>
         
         <md-card-content>
@@ -46,8 +46,19 @@
                         <h3 class="md-title">Balance à partir de la désignation</h3>
                     </md-card-header>
                     <md-card-content>
-                        <p>Récupère le fichier des dans le dossier de l'affaire pour construire la balance.</p>
-                        <md-button class="md-primary md-elevation-2" @click="getBalanceFromDes">Désignation</md-button>
+                        <p>Récupère les fichiers des désignations dans le dossier de l'affaire pour construire la balance.</p>
+
+                        <div v-if="balanceFiles.length>0">
+                            <h3>Désignations trouvées</h3>
+                            <ul>
+                                <li v-for="item in balanceFiles">{{ item.filename }}</li>
+                            </ul>
+
+                            <md-button @click="uploadBalance" class="md-dense md-primary md-elevation-2"><md-icon>file_upload</md-icon> Charger les balances</md-button>
+                        </div>
+                        <div v-else>
+                            <p style="color: red;"><em>Aucune désignation n'a été trouvée dans le dossier de l'affaire</em></p>
+                        </div>
                     </md-card-content>
                 </div>
             </div>
