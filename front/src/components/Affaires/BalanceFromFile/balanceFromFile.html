@@ -136,18 +136,22 @@
     </md-dialog>
     
     <!-- Dialog to ask for DDP creation or continue saving balances -->
-    <md-dialog :md-active.sync="showAskDDPCreation"  @md-clicked-outside="showAskDDPCreation = false">
+    <md-dialog :md-active.sync="showAskDDPCreation && DDPpotential.length>0"  @md-clicked-outside="showAskDDPCreation = false">
         <md-dialog-title>
             <h1 class="md-title">Il reste des biens-fonds réservés, que faut-il en faire?</h1>
         </md-dialog-title>
         <md-dialog-content>
-            <md-table v-model="numeros_nouveaux" md-sort="numero"
+            <!-- <md-table v-model="numeros_nouveaux" md-sort="numero" -->
+            <md-table v-model="DDPpotential" md-sort="numero"
                 md-sort-order="asc" md-fixed-header md-dense md-card>
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
                     <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero_sitn }}</md-table-cell>
                     <md-table-cell md-label="Créer DDP ?">
                         <md-button class="md-primary md-icon" @click="createDDP(item)"><md-icon>flip</md-icon></md-button>
+                    </md-table-cell>
+                    <md-table-cell md-label="Abandonner ?">
+                        <md-button class="md-primary md-icon" @click="abandonNumber(item)"><md-icon>delete_outline</md-icon></md-button>
                     </md-table-cell>
                 </md-table-row>
             </md-table>

@@ -69,7 +69,8 @@ export default {
         dp: Number(process.env.VUE_APP_NUMERO_TYPE_DP)
       },
       etatNumeros_conf: {
-        projet: Number(process.env.VUE_APP_NUMERO_PROJET_ID)
+        projet: Number(process.env.VUE_APP_NUMERO_PROJET_ID),
+        abandonne: Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)
       }
       // numeros_base_relations: []
     };

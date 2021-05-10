@@ -17,6 +17,7 @@ export default {
   },
   props: {
     affaire: { type: Object },
+    etatNumeros_conf: { type: Object },
     numeros_nouveaux_bk: { type: Array },
     numeros_anciens_bk: { type: Array },
     numerosBaseListe: { type: Array },
@@ -38,6 +39,7 @@ export default {
         content: ""
       },
       currentNumeroDDP: {},
+      DDPpotential: [],
       editionBalance: false,
       etapeSetBalance: Number(process.env.VUE_APP_ETAPE_SET_BALANCE_ID),
       mutation_names: [],
@@ -329,6 +331,7 @@ export default {
       // Ask what to do with supplementary reserved numbers
       if (checkBF.ddp.length > 0){
         this.showAskDDPCreation = true;
+        this.DDPpotential = this.convertCadNumToNumObj(checkBF.ddp);
       }
 
 
@@ -535,6 +538,51 @@ export default {
       }
       this.$refs.formReference.openReferenceDialog(searchTerms);
     },
+
+    /**
+     * Abandonner un numéro
+     */
+    async abandonNumber(numero) {
+      let formData = new FormData();
+      formData.append('id', numero.numero_id);
+      formData.append('etat_id', this.etatNumeros_conf.abandonne);
+
+      this.$http.put(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.$root.$emit("searchAffaireNumeros");
+          this.initBFArrays();
+          
+          //remove current entry from array
+          let index = this.DDPpotential.indexOf(numero);
+          if (index > -1) {
+            this.DDPpotential.splice(index, 1);
+          }
+
+          this.$root.$emit("ShowMessage", "Le numéro " + numero.numero + " du cadastre de " + numero.cadastre + " a bien été abandonné.");
+        }
+      }).catch(err => handleException(err, this));
+
+    },
+
+    /**
+     * Convert <cadastre_id>_<numero> to number object
+     */
+    convertCadNumToNumObj(numbersCadNum) {
+      let numbersObj = [];
+      numbersCadNum.forEach(x => {
+        let [cadastre_id, numero] = x.split("_");
+        numbersObj.push(this.numeros_nouveaux.filter(y => y.numero_cadastre_id === Number(cadastre_id) && y.numero === Number(numero))[0]);
+      })
+      return numbersObj;
+    }
+
 
   },
   mounted: function() {
