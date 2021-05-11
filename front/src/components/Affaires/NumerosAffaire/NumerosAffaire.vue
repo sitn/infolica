@@ -4,7 +4,7 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
-import { getCurrentDate, getDocument, getCurrentUserRoleId, stringifyAutocomplete } from "@/services/helper";
+import { getCurrentDate, getDocument, getCurrentUserRoleId, stringifyAutocomplete, stringifyAutocomplete2 } from "@/services/helper";
 import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/Affaires/NumerosAffaire/ReservationNumeros/ReservationNumeros.vue";
 import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue";
@@ -97,11 +97,12 @@ export default {
           const routeAffaireData = this.$router.resolve({ name: "Affaires" });
 
           if (response && response.data) {
-            this.affaire_numeros_all = response.data;
-            this.affaire_numeros_nouveaux = response.data.filter(
+            this.affaire_numeros_all = stringifyAutocomplete2(response.data, ["numero_sitn"]);
+
+            this.affaire_numeros_nouveaux = this.affaire_numeros_all.filter(
               x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID)
             );
-            this.affaire_numeros_anciens = response.data.filter(
+            this.affaire_numeros_anciens = this.affaire_numeros_all.filter(
               x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID)
             );
             this.affaire_numeros_nouveaux.forEach(function(element) {
@@ -438,9 +439,12 @@ export default {
                                   this.typesAffaires_conf.modification_abandon_partiel].includes(this.affaire.type_id),
 
         numeros_reserves_immeuble_base: [this.typesAffaires_conf.pcop,
-                                         this.typesAffaires_conf.modification_pcop,
+                                         this.typesAffaires_conf.ppe,
                                          this.typesAffaires_conf.modification_ppe,
-                                         this.typesAffaires_conf.ppe].includes(this.affaire.type_id),
+                                         this.typesAffaires_conf.modification_abandon_partiel,
+                                         this.typesAffaires_conf.cadastration,
+                                         this.typesAffaires_conf.art35,
+                                         this.typesAffaires_conf.servitude].includes(this.affaire.type_id),
 
         reservation_numeros_mo: [this.typesAffaires_conf.mutation, 
                                  this.typesAffaires_conf.autre,

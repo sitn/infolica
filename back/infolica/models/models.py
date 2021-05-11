@@ -814,6 +814,7 @@ class VNumerosAffaires(Base):
     numero_base_suffixe = Column(Text)
     numero_base_etat = Column(Text)
     numero_base_etat_id = Column(Text)
+    numero_base_sitn = Column(Text)
     affaire_numero_type = Column(Text)
     numero_sitn = Column(Text)
 

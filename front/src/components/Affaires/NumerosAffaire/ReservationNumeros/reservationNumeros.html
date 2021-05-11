@@ -36,11 +36,10 @@
                     <md-field :class="getValidationClass('numeroBase')">
                         <label>Bien-fonds de base</label>
                         <md-select v-model="form.numeroBase" md-dense>
-                            <md-option v-for="item in numerosBaseListe" :value="item">{{ item.nom }}</md-option>
+                            <md-option v-for="item in numerosBaseListe" :value="item">{{ item.nom_ }}</md-option>
                         </md-select>
                         <span class="md-error" v-if="!$v.form.numeroBase.required">Le numéro de base est obligatoire</span>
                     </md-field>
-                    <span class="md-helper-text">Le BF de base n'apparaît pas dans la liste? <md-button class="md-primary md-raised md-dense" @click="createNumeroBase()">Le créer !</md-button></span>
                 </div>
                 
                 <div class="md-layout-item md-size-50" v-if="affaire.reservation_numeros_types_id !== null &&
@@ -66,60 +65,12 @@
     
     <!-- Confirmation réservation grand nombre de numéros -->
     <md-dialog-confirm :md-active.sync="alertReservation.show"
-    md-title="Confirmation de réservation"
-    :md-content="alertReservation.text"
-    md-confirm-text="Confirmer"
-    md-cancel-text="Annuler"
-    @md-cancel="alertReservation.show = false;"
-    @md-confirm="alertReservation.show = false; saveReservationNumeros()"
-    />
-    
-    <!-- Confirmation de création de numéro de base -->
-    <md-dialog :md-active.sync="newNumeroBase.showDialog" :md-close-on-esc="true" :md-click-outside-to-close="true">
-        <md-dialog-title>Création de l'immeuble de base</md-dialog-title>
-        <md-dialog-content>
-            <div class="md-layout md-gutter">
-                <!-- Cadastre -->
-                <div class="md-layout-item md-size-50">
-                    <md-field>
-                        <label>Cadastre</label>
-                        <md-input v-model="newNumeroBase.cadastre.nom" readonly></md-input>
-                    </md-field>
-                </div>
-                <!-- Immeuble de base -->
-                <div class="md-layout-item md-size-50">
-                    <md-field>
-                        <label>Immeuble de base</label>
-                        <md-input v-model="newNumeroBase.numero" style="text-align: right;" required></md-input>
-                    </md-field>
-                </div>
-            </div>
-
-            <div class="md-layout md-gutter">
-                <div class="md-layout-item md-size-50">
-                    <md-field>
-                        <md-select v-model="newNumeroBase.type_id" md-dense>
-                            <md-option v-for="item in numeroTypesList" :value="item.id">{{ item.nom }}</md-option>
-                        </md-select>
-                    </md-field>
-                </div>
-
-                <div class="md-layout-item md-size-50" v-if="newNumeroBase.type_id === types_numeros.ppe">
-                    <md-field>
-                        <label>Unité (A, B, C...)</label>
-                        <md-input v-model="newNumeroBase.suffixe"
-                            onkeypress="return /[A-HJ-Z]/i.test(event.key)" 
-                            maxlength="2" />
-                    </md-field>
-                </div>
-            </div>
-                
-            <md-dialog-actions>
-                <md-button class="md-accent" @click="onCancelCreateNumeroBase">Annuler</md-button>
-                <md-button class="md-primary" @click="onConfirmCreateNumeroBase">Enregistrer</md-button>
-            </md-dialog-actions>
-
-        </md-dialog-content>
-    </md-dialog>
+        md-title="Confirmation de réservation"
+        :md-content="alertReservation.text"
+        md-confirm-text="Confirmer"
+        md-cancel-text="Annuler"
+        @md-cancel="alertReservation.show = false;"
+        @md-confirm="alertReservation.show = false; saveReservationNumeros()"
+        />
     
 </div>
