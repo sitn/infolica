@@ -142,7 +142,10 @@
     </md-card>
 
     <!-- Référence de numéros -->
-    <ReferenceNumeros ref="formReference" :affaire_numeros_anciens="affaire_numeros_anciens"/>
+    <ReferenceNumeros ref="formReference" 
+                      :affaire_numeros_anciens="affaire_numeros_anciens"
+                      :cadastre_id="affaire.cadastre_id"
+                      :saveNumerosReferences="saveReferenceNumeros"/>
     <!-- Réservation de numéros -->
     <ReservationNumeros ref="formReservation"
                         :affaire="affaire" 

@@ -484,6 +484,37 @@ export default {
       })
     },
 
+
+    /**
+     * Fonction appelée lorsque des numéros sont référencés à l'affaire 
+     */
+    async saveReferenceNumeros(numeros) {
+      let numeros_ = numeros.map(x => ({
+        numero_id: x.id,
+        etat_id: x.etat_id
+      }));
+
+      let formData = new FormData();
+      formData.append("affaire_id", this.affaire.id);
+      formData.append("numeros_liste", JSON.stringify(numeros_));
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          )
+          .then(response => {
+            this.$root.$emit("searchAffaireNumeros");
+            this.$root.$emit("ShowMessage", "Le(s) numéro(s) sélectionné(s) ont été correctement ajouté(s) à l'affaire");
+            this.$root.$emit("updateNumerosFactureList");
+            resolve(response);
+          }).catch(err => reject(err));
+      });
+    },
+
   },
   mounted: function() {
     this.searchAffaireNumeros();

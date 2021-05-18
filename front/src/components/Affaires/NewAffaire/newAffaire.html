@@ -236,17 +236,7 @@
                     </div>
                 </div>
                 
-                <!-- v-ref -->
-                <!-- <div class="md-layout md-gutter">
-                    <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field :class="getValidationClass($v.form.vref)">
-                            <label for="vref">v/ref</label>
-                            <md-input name="vref" id="vref" v-model="form.vref" :disabled="sending" />
-                        </md-field>
-                    </div>
-                </div>
-
-                <br> -->
+                <br>
                 <md-divider style="background-color: blue;"></md-divider>
                 
                 <!-- Client ENVOI et ligne complément -->
@@ -340,28 +330,48 @@
 
             <br />
 
+            <!-- Numéros concernés par l'affaire -->
+            <div v-if="true">
+                <md-button class="md-raised md-primary" v-on:click="callOpenReferenceDialog">Lier des numéros à l'affaire</md-button>
+    
+                <md-table v-model="numerosReferences" v-if="numerosReferences.length>0" md-card>
+                    <md-table-toolbar>
+                        <div class="md-toolbar-section-start"><div class="md-title">Numéros liés à l'affaire</div></div>
+                    </md-table-toolbar>
+    
+                    <md-table-row slot="md-table-row" slot-scope=" { item }">
+                        <md-table-cell md-label="Cadastre">{{ item.cadastre }}</md-table-cell>
+                        <md-table-cell md-label="Numéro">{{ item.numero_sitn }}</md-table-cell>
+                        <md-table-cell md-label="Supprimer">
+                            <md-button class="md-icon-button md-dense md-accent" @click="deleteNumeroReference(item)">
+                                <md-icon>delete</md-icon>
+                            </md-button>
+                        </md-table-cell>
+                    </md-table-row>
+                </md-table>
+            </div>
+
             <!-- Coordonnées -->
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-small-size-100">
                     <md-field :class="getValidationClass($v.form.localisation)">
                         <label for="localisation">Coordonnées</label>
                         <md-input v-model=form.localisation readonly></md-input>
-                        <span class="md-error" v-if="!$v.form.localisation.required">La localisation de l'affaire est
-                            obligatoire</span>
+                        <span class="md-error" v-if="!$v.form.localisation.required">La localisation de l'affaire est obligatoire</span>
                     </md-field>
 
                 </div>
 
                 <div class="md-layout-item md-small-size-100">
                     <autocomplete
-                    ref="autocomplete"
-                    placeholder="Rechercher un bien-fonds"
-                    :source="searchSITNEndpoint"
-                    input-class="form-control"
-                    results-property="features"
-                    :results-display="formattedDisplay"
-                    @selected="handleSelectSITNItem"
-                    >
+                        ref="autocomplete"
+                        placeholder="Rechercher un bien-fonds"
+                        :source="searchSITNEndpoint"
+                        input-class="form-control"
+                        results-property="features"
+                        :results-display="formattedDisplay"
+                        @selected="handleSelectSITNItem"
+                        >
                     </autocomplete>
                 </div>
             </div>
@@ -378,4 +388,10 @@
     </md-card>
 
     <md-snackbar :md-active.sync="dataSaved">L'affaire {{ lastRecord }} a été enregistrée avec succès</md-snackbar>
+    
+    <!-- Référence de numéros -->
+    <ReferenceNumeros ref="formReference" 
+                      :affaire_numeros_anciens="numerosReferences"
+                      :cadastre_id="form.cadastre.id"
+                      :saveNumerosReferences="referenceNumeros"/>
 </div>
