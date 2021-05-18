@@ -35,11 +35,16 @@
                     
                     <md-field :class="getValidationClass('numeroBase')">
                         <label>Bien-fonds de base</label>
-                        <md-select v-model="form.numeroBase" md-dense>
+                        <md-select v-model="form.numeroBase" md-dense :disabled="!numerosBaseListe.length>0">
                             <md-option v-for="item in numerosBaseListe" :value="item">{{ item.nom_ }}</md-option>
                         </md-select>
                         <span class="md-error" v-if="!$v.form.numeroBase.required">Le numéro de base est obligatoire</span>
                     </md-field>
+
+                    <div v-if="!(numerosBaseListe.length>0)">
+                        <md-icon style="float: inline-start;" class="md-accent">warning</md-icon>
+                        <span style="color: red; font-size: 13px; float: inline-end;"><em>Aucun numéro de base n'est référencé. Il est nécessaire de référencer le numéro de base avant de réserver de nouveaux numéros de DDP / PPE / PCOP.</em></span>
+                    </div>
                 </div>
                 
                 <div class="md-layout-item md-size-50" v-if="affaire.reservation_numeros_types_id !== null &&

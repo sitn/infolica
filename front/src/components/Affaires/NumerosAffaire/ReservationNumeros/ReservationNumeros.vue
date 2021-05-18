@@ -205,7 +205,6 @@ export default {
   mounted: function() {
     this.initCadastresList();
     this.initTypeNumerosList();
-    console.log(this.numerosBaseListe);
   }
 };
 </script>
