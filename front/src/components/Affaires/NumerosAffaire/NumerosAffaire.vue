@@ -422,7 +422,15 @@ export default {
      * Define if element is visible or not
      */
     showPermissions() {
-      let typeAffaire_modification_all = [this.typesAffaires_conf.modification, this.typesAffaires_conf.modification_visa, this.typesAffaires_conf.modification_duplicata, this.typesAffaires_conf.modification_abandon_partiel, this.typesAffaires_conf.modification_mutation, this.typesAffaires_conf.modification_ppe]
+      let typeAffaire_modification_all = [
+        this.typesAffaires_conf.modification,
+        this.typesAffaires_conf.modification_visa,
+        this.typesAffaires_conf.modification_duplicata,
+        this.typesAffaires_conf.modification_abandon_partiel,
+        this.typesAffaires_conf.modification_mutation,
+        this.typesAffaires_conf.modification_ppe
+      ];
+      
       this.show = {
         numeros_reserves_card: typeAffaire_modification_all.concat([this.typesAffaires_conf.mutation, 
                                                                     this.typesAffaires_conf.ppe, 

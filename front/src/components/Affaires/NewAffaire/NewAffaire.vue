@@ -88,6 +88,7 @@ export default {
       selectedNouveauxNumeros: [],
       sending: false,
       showClientsForm: true,
+      showReferenceNumeros: false,
       sitn_search_categories: null,
       types_affaires_list_bk: [],
       types_affaires_list: [],
@@ -101,6 +102,8 @@ export default {
         ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_PPE),
         pcop: Number(process.env.VUE_APP_TYPE_AFFAIRE_PCOP),
         mpd: Number(process.env.VUE_APP_TYPE_AFFAIRE_MPD),
+        art35: Number(process.env.VUE_APP_TYPE_AFFAIRE_ART35),
+        mat_diff: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAT_DIFF),
         modification: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION),
         revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
         remaniement_parcellaire: Number(process.env.VUE_APP_TYPE_AFFAIRE_REMANIEMENT_PARCELLAIRE),
@@ -162,6 +165,30 @@ export default {
   },
 
   methods: {
+    /**
+     * Init mask (what is shown or not)
+     */
+    initMask() {
+      // empty numerosReferences array
+      this.numerosReferences = [];
+
+      if (this.form.type && this.form.type.id) {
+        this.showReferenceNumeros = [
+          this.typesAffaires_conf.cadastration,
+          this.typesAffaires_conf.ppe,
+          this.typesAffaires_conf.pcop,
+          this.typesAffaires_conf.mat_diff,
+          this.typesAffaires_conf.revision_abornement,
+          this.typesAffaires_conf.autre,
+          this.typesAffaires_conf.servitude,
+          this.typesAffaires_conf.mpd,
+          this.typesAffaires_conf.modification_abandon_partiel
+        ].includes(this.form.type.id)
+      } else {
+        this.showReferenceNumeros = false;
+      }
+    },
+
     /**
      * Get validation class par fieldname pour objet form
      */
@@ -897,6 +924,8 @@ export default {
         this.client_facture_complement = null;
         this.client_facture_premiere_ligne = null;
       }
+
+      this.initMask();
     },
 
     /**
@@ -1222,6 +1251,7 @@ export default {
     this.initCadastresList();
     this.initTypesModficiationAffaire();
     this.getPlansMO();
+    this.initMask();
 
     //permissions
     this.permission.editClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION);

@@ -42,6 +42,7 @@
                     <md-autocomplete v-model="form.type"
                         md-dense required
                         @md-selected="onSelectType"
+                        @md-changed="initMask"
                         :md-options="types_affaires_list"
                         :class="getValidationClass($v.form.type)">
                         <label>Type d'affaire</label>
@@ -331,7 +332,7 @@
             <br />
 
             <!-- Numéros concernés par l'affaire -->
-            <div v-if="true">
+            <div v-if="showReferenceNumeros">
                 <md-button class="md-raised md-primary" v-on:click="callOpenReferenceDialog">Lier des numéros à l'affaire</md-button>
     
                 <md-table v-model="numerosReferences" v-if="numerosReferences.length>0" md-card>
