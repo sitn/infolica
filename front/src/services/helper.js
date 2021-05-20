@@ -221,6 +221,21 @@ export const stringifyAutocomplete = function(liste, nom="nom", id="id") {
 };
 
 /**
+ * Prépare la liste pour le md-complete v2
+ */
+export const stringifyAutocomplete2 = function(liste, keys=["nom"], sep=", ") {
+    liste.forEach(x => {
+        let nom_ = [];
+        keys.forEach(key => nom_.push(x[key]));
+
+        x.nom_ = nom_.filter(Boolean).join(sep);
+        x.toLowerCase = () => String(x.nom_).toLowerCase();
+        x.toString = () => String(x.nom_);
+    });
+    return liste;
+};
+
+/**
  * Générer les documents à partir des modèles
  */
 export const saveDocument = async function(formData) {

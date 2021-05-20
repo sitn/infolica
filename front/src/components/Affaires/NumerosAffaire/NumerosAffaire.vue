@@ -4,7 +4,7 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
-import { getCurrentDate, getDocument, getCurrentUserRoleId, stringifyAutocomplete } from "@/services/helper";
+import { getCurrentDate, getDocument, getCurrentUserRoleId, stringifyAutocomplete, stringifyAutocomplete2 } from "@/services/helper";
 import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/Affaires/NumerosAffaire/ReservationNumeros/ReservationNumeros.vue";
 import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue";
@@ -98,11 +98,12 @@ export default {
           const routeAffaireData = this.$router.resolve({ name: "Affaires" });
 
           if (response && response.data) {
-            this.affaire_numeros_all = response.data;
-            this.affaire_numeros_nouveaux = response.data.filter(
+            this.affaire_numeros_all = stringifyAutocomplete2(response.data, ["numero_sitn"]);
+
+            this.affaire_numeros_nouveaux = this.affaire_numeros_all.filter(
               x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID)
             );
-            this.affaire_numeros_anciens = response.data.filter(
+            this.affaire_numeros_anciens = this.affaire_numeros_all.filter(
               x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID)
             );
             this.affaire_numeros_nouveaux.forEach(function(element) {
@@ -461,15 +462,15 @@ export default {
 
         reservation_numeros_mo: [
           this.typesAffaires_conf.mutation, 
-            this.typesAffaires_conf.autre,
-            this.typesAffaires_conf.cadastration,
-            this.typesAffaires_conf.revision_abornement,
-            this.typesAffaires_conf.modification,
-            this.typesAffaires_conf.modification_mutation,
-            this.typesAffaires_conf.mpd,
-            this.typesAffaires_conf.art35,
-            this.typesAffaires_conf.retablissement_pfp3
-          ].includes(this.affaire.type_id),
+          this.typesAffaires_conf.autre,
+          this.typesAffaires_conf.cadastration,
+          this.typesAffaires_conf.revision_abornement,
+          this.typesAffaires_conf.modification,
+          this.typesAffaires_conf.modification_mutation,
+          this.typesAffaires_conf.mpd,
+          this.typesAffaires_conf.art35,
+          this.typesAffaires_conf.retablissement_pfp3
+        ].includes(this.affaire.type_id),
 
         balance: [
           this.typesAffaires_conf.mutation,
