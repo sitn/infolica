@@ -358,13 +358,11 @@ def affaire_numero_delete_view(request):
     else:
         raise CustomError(CustomError.INCOMPLETE_REQUEST)
 
-    request.dbsession.delete(record)
-
     if not record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(AffaireNumero.__tablename__, affnum_id))
 
-    record = Utils.set_model_record(record, request.params)
+    request.dbsession.delete(record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(AffaireNumero.__tablename__))
 

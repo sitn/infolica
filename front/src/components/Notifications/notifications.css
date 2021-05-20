@@ -10,3 +10,8 @@
 .md-snackbar.isSuccessDiv{
     background-color: green !important;
 }
+
+.alert, .confirmation {
+    width: 600px;
+    margin: auto;
+}

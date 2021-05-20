@@ -33,18 +33,17 @@
                                     <div v-if="affaire_numeros_anciens[0]">
                                         <md-table v-model="affaire_numeros_anciens" md-sort="id" md-sort-order="desc" md-fixed-header>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif }">
-                                                <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
-                                                    {{ item.numero_id }}
-                                                </md-table-cell>
-                                                <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">
-                                                    {{ item.numero_cadastre }}
-                                                </md-table-cell>
+                                                <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">{{ item.numero_id }}</md-table-cell>
+                                                <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
                                                 <md-table-cell md-label="Numéro" md-sort-by="numero" md-numeric>{{ item.numero_sitn }}</md-table-cell>
-                                                <md-table-cell md-label="Etat" md-sort-by="numero_etat">
-                                                    {{ item.numero_etat }}
-                                                </md-table-cell>
-                                                <md-table-cell md-label="Repris par" md-sort-by="affaire_destination_id">    
+                                                <md-table-cell md-label="Etat" md-sort-by="numero_etat">{{ item.numero_etat }}</md-table-cell>
+                                                <md-table-cell md-label="Repris par" md-sort-by="affaire_destination_id">
                                                     <a v-bind:href="item.affaire_destination_href">{{item.affaire_destination_id }}</a>
+                                                </md-table-cell>
+                                                <md-table-cell md-label="Délier de l'affaire" v-if="show.deleteReferencedNumberColumn">
+                                                    <md-button class="md-icon-button md-accent md-dense" @click="onRemoveNumeroReference(item)">
+                                                        <md-icon>delete</md-icon>
+                                                    </md-button>
                                                 </md-table-cell>
                                             </md-table-row>
                                         </md-table>
@@ -142,13 +141,18 @@
     </md-card>
 
     <!-- Référence de numéros -->
-    <ReferenceNumeros ref="formReference" :affaire_numeros_anciens="affaire_numeros_anciens"/>
+    <ReferenceNumeros ref="formReference" 
+                      :affaire_numeros_anciens="affaire_numeros_anciens"
+                      :cadastre_id="affaire.cadastre_id"
+                      :saveNumerosReferences="saveReferenceNumeros"/>
+    
     <!-- Réservation de numéros -->
     <ReservationNumeros ref="formReservation"
                         :affaire="affaire" 
                         :numerosBaseListe="affaire_numeros_anciens" 
                         :typesAffaires_conf="typesAffaires_conf"
                         :types_numeros="types_numeros" />
+
     <!-- Quittance pour les numéros de parts de copropriété réservés -->
     <QuittancePCOP :affaire="affaire" 
                    :affaire_numeros_anciens="affaire_numeros_anciens" 
