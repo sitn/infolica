@@ -82,7 +82,7 @@ export default {
       this.initializeForm();
 
       // set default selection for base number
-      if (this.numerosBaseListe.length>0) {
+      if (this.numerosBaseListe.length > 0) {
         this.form.numeroBase = this.numerosBaseListe[0];
       }
 
@@ -208,4 +208,3 @@ export default {
   }
 };
 </script>
-
