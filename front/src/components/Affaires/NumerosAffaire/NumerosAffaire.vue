@@ -545,6 +545,7 @@ export default {
             this.$root.$emit("searchAffaireNumeros");
             this.$root.$emit("ShowMessage", "Le(s) numéro(s) sélectionné(s) ont été correctement ajouté(s) à l'affaire");
             this.$root.$emit("updateNumerosFactureList");
+            this.$root.$emit("searchAffaireFactures");
             resolve(response);
           }).catch(err => reject(err));
       });

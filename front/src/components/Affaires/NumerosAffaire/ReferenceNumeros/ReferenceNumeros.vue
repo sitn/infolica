@@ -5,7 +5,6 @@
 <script>
 import { getCadastres } from "@/services/helper";
 import { handleException } from '@/services/exceptionsHandler'
-
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 
@@ -14,7 +13,7 @@ export default {
   props: {
     affaire_numeros_anciens: {type: Array, default: () => []},
     cadastre_id: {type: Number, default: null},
-    saveNumerosReferences: {type: Function, default: () => {alert("Echec de l'enregistrement")}}
+    saveNumerosReferences: {type: Function, default: () => {alert("Echec de l'enregistrement")}},
   },
   mixins: [validationMixin],
   components: {},
