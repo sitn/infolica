@@ -49,6 +49,7 @@ export default {
       numerosMoLoading: true,
       show: {
         balance: false,
+        deleteReferencedNumberColumn: false,
         numeros_references_card: false,
         numeros_reserves_card: false,
         numeros_reserves_immeuble_base: false,
@@ -422,37 +423,70 @@ export default {
      * Define if element is visible or not
      */
     showPermissions() {
-      let typeAffaire_modification_all = [this.typesAffaires_conf.modification, this.typesAffaires_conf.modification_visa, this.typesAffaires_conf.modification_duplicata, this.typesAffaires_conf.modification_abandon_partiel, this.typesAffaires_conf.modification_mutation, this.typesAffaires_conf.modification_ppe]
+      let role_id = getCurrentUserRoleId();
+
+      let typeAffaire_modification_all = [
+        this.typesAffaires_conf.modification,
+        this.typesAffaires_conf.modification_visa,
+        this.typesAffaires_conf.modification_duplicata,
+        this.typesAffaires_conf.modification_abandon_partiel,
+        this.typesAffaires_conf.modification_mutation,
+        this.typesAffaires_conf.modification_ppe
+      ];
+      
       this.show = {
-        numeros_reserves_card: typeAffaire_modification_all.concat([this.typesAffaires_conf.mutation, 
-                                                                    this.typesAffaires_conf.ppe, 
-                                                                    this.typesAffaires_conf.pcop]).includes(this.affaire.type_id),
+        numeros_reserves_card: typeAffaire_modification_all.concat([
+          this.typesAffaires_conf.mutation, 
+          this.typesAffaires_conf.ppe, 
+          this.typesAffaires_conf.pcop
+        ]).includes(this.affaire.type_id),
         
-        numeros_references_card: [this.typesAffaires_conf.cadastration,
-                                  this.typesAffaires_conf.ppe,
-                                  this.typesAffaires_conf.mat_diff,
-                                  this.typesAffaires_conf.revision_abornement,
-                                  this.typesAffaires_conf.autre,
-                                  this.typesAffaires_conf.servitude,
-                                  this.typesAffaires_conf.mpd,
-                                  this.typesAffaires_conf.modification_abandon_partiel].includes(this.affaire.type_id),
+        numeros_references_card: [
+          this.typesAffaires_conf.cadastration,
+          this.typesAffaires_conf.ppe,
+          this.typesAffaires_conf.mat_diff,
+          this.typesAffaires_conf.revision_abornement,
+          this.typesAffaires_conf.autre,
+          this.typesAffaires_conf.servitude,
+          this.typesAffaires_conf.mpd,
+          this.typesAffaires_conf.modification_abandon_partiel
+        ].includes(this.affaire.type_id),
 
-        numeros_reserves_immeuble_base: [this.typesAffaires_conf.pcop,
-                                         this.typesAffaires_conf.modification_pcop,
-                                         this.typesAffaires_conf.modification_ppe,
-                                         this.typesAffaires_conf.ppe].includes(this.affaire.type_id),
+        numeros_reserves_immeuble_base: [
+          this.typesAffaires_conf.pcop,
+          this.typesAffaires_conf.modification_pcop,
+          this.typesAffaires_conf.modification_ppe,
+          this.typesAffaires_conf.ppe
+        ].includes(this.affaire.type_id),
 
-        reservation_numeros_mo: [this.typesAffaires_conf.mutation, 
-                                 this.typesAffaires_conf.autre,
-                                 this.typesAffaires_conf.cadastration,
-                                 this.typesAffaires_conf.revision_abornement,
-                                 this.typesAffaires_conf.modification,
-                                 this.typesAffaires_conf.modification_mutation,
-                                 this.typesAffaires_conf.mpd,
-                                 this.typesAffaires_conf.art35,
-                                 this.typesAffaires_conf.retablissement_pfp3].includes(this.affaire.type_id),
+        reservation_numeros_mo: [
+          this.typesAffaires_conf.mutation, 
+            this.typesAffaires_conf.autre,
+            this.typesAffaires_conf.cadastration,
+            this.typesAffaires_conf.revision_abornement,
+            this.typesAffaires_conf.modification,
+            this.typesAffaires_conf.modification_mutation,
+            this.typesAffaires_conf.mpd,
+            this.typesAffaires_conf.art35,
+            this.typesAffaires_conf.retablissement_pfp3
+          ].includes(this.affaire.type_id),
 
-        balance: [this.typesAffaires_conf.mutation, this.typesAffaires_conf.modification_mutation].includes(this.affaire.type_id),
+        balance: [
+          this.typesAffaires_conf.mutation,
+          this.typesAffaires_conf.modification_mutation
+        ].includes(this.affaire.type_id),
+
+        deleteReferencedNumberColumn: [
+          this.typesAffaires_conf.cadastration,
+          this.typesAffaires_conf.ppe,
+          this.typesAffaires_conf.mat_diff,
+          this.typesAffaires_conf.revision_abornement,
+          this.typesAffaires_conf.autre,
+          this.typesAffaires_conf.servitude,
+          this.typesAffaires_conf.mpd,
+          this.typesAffaires_conf.modification_abandon_partiel
+        ].includes(this.affaire.type_id)
+          && role_id && !isNaN(role_id) && Number(process.env.VUE_APP_ADMIN_ROLE_ID) === Number(role_id),
       }
     },
 
@@ -483,6 +517,80 @@ export default {
         }).catch(err => handleException(err, this));
       })
     },
+
+
+    /**
+     * Fonction appelée lorsque des numéros sont référencés à l'affaire 
+     */
+    async saveReferenceNumeros(numeros) {
+      let numeros_ = numeros.map(x => ({
+        numero_id: x.id,
+        etat_id: x.etat_id
+      }));
+
+      let formData = new FormData();
+      formData.append("affaire_id", this.affaire.id);
+      formData.append("numeros_liste", JSON.stringify(numeros_));
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          )
+          .then(response => {
+            this.$root.$emit("searchAffaireNumeros");
+            this.$root.$emit("ShowMessage", "Le(s) numéro(s) sélectionné(s) ont été correctement ajouté(s) à l'affaire");
+            this.$root.$emit("updateNumerosFactureList");
+            resolve(response);
+          }).catch(err => reject(err));
+      });
+    },
+
+  /**
+   * Remove link referenced Number
+   */
+  onRemoveNumeroReference(item) {
+    // Control if numeros relations are based on current item
+    let testBaseNumber = this.affaire_numeros_nouveaux.some(x => x.numero_base_id === item.numero_id);
+
+    if (testBaseNumber) {
+      this.$root.$emit("ShowAlert", {
+        title: "Action impossible",
+        content: "Le numéro " + item.numero + " du cadastre de " + item.numero_cadastre + " est utilisé comme bien-fonds de base pour des numéros dans cette affaire."
+      });
+    } else {
+      this.$root.$emit("ShowConfirmation", {
+        title: "Demande de confirmation",
+        content:"Confirmer la suppression du lien entre le numéro "  + item.numero + " du cadastre de " + item.numero_cadastre + " et l'affaire " + this.affaire.id + ".",
+        onConfirm: () => { this.deleteNumeroAffaire(item) }
+      })
+
+    }
+  },
+
+
+  /**
+   * Supprimer lien numéro_affaire
+   */
+  async deleteNumeroAffaire(item) {
+    this.$http.delete(
+      process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT
+        + "?affaire_id=" + item.affaire_id + "&numero_id=" + item.numero_id,
+      {
+        withCredentials: true,
+        headers: { Accept: "application/json" }
+      }
+    ).then(response => {
+      if (response && response.data) {
+        this.searchAffaireNumeros();
+        this.$root.$emit("ShowMessage", "Le numéro " + item.numero + " du cadastre de " + item.numero_cadastre + " a bien été délié de l'affaire")
+      }
+    }).catch(err => handleException(err, this));
+  }
+
 
   },
   mounted: function() {
