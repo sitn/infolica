@@ -14,6 +14,8 @@ import { getCurrentDate,
          checkPermission,
          getCurrentUserRoleId } from "@/services/helper";
 import Autocomplete from "vuejs-auto-complete";
+import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
+
 const moment = require("moment");
 
 export default {
@@ -21,8 +23,9 @@ export default {
   mixins: [validationMixin],
   props: {},
   components: {
+    Autocomplete,
     MapHandler,
-    Autocomplete
+    ReferenceNumeros
   },
   data: () => {
     return {
@@ -48,7 +51,12 @@ export default {
         affaire_base: null,
         affaire_base_id: null,
         affaire_modif_type: null,
-        cadastre: null,
+        cadastre: {
+            id: null,
+            nom: "",
+            toString: () => "",
+            toLowerCase: () => ""
+          },
         client_commande: null,
         client_commande_complement: null,
         client_envoi: null,
@@ -67,6 +75,7 @@ export default {
         vref: null
       },
       lastRecord: null,
+      numerosReferences: [],
       operateurs_list: [],
       permission: {
         editClientAllowed: false
@@ -79,6 +88,7 @@ export default {
       selectedNouveauxNumeros: [],
       sending: false,
       showClientsForm: true,
+      showReferenceNumeros: false,
       sitn_search_categories: null,
       types_affaires_list_bk: [],
       types_affaires_list: [],
@@ -92,6 +102,8 @@ export default {
         ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_PPE),
         pcop: Number(process.env.VUE_APP_TYPE_AFFAIRE_PCOP),
         mpd: Number(process.env.VUE_APP_TYPE_AFFAIRE_MPD),
+        art35: Number(process.env.VUE_APP_TYPE_AFFAIRE_ART35),
+        mat_diff: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAT_DIFF),
         modification: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION),
         revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
         remaniement_parcellaire: Number(process.env.VUE_APP_TYPE_AFFAIRE_REMANIEMENT_PARCELLAIRE),
@@ -153,6 +165,30 @@ export default {
   },
 
   methods: {
+    /**
+     * Init mask (what is shown or not)
+     */
+    initMask() {
+      // empty numerosReferences array
+      this.numerosReferences = [];
+
+      if (this.form.type && this.form.type.id) {
+        this.showReferenceNumeros = [
+          this.typesAffaires_conf.cadastration,
+          this.typesAffaires_conf.ppe,
+          this.typesAffaires_conf.pcop,
+          this.typesAffaires_conf.mat_diff,
+          this.typesAffaires_conf.revision_abornement,
+          this.typesAffaires_conf.autre,
+          this.typesAffaires_conf.servitude,
+          this.typesAffaires_conf.mpd,
+          this.typesAffaires_conf.modification_abandon_partiel
+        ].includes(this.form.type.id)
+      } else {
+        this.showReferenceNumeros = false;
+      }
+    },
+
     /**
      * Get validation class par fieldname pour objet form
      */
@@ -394,6 +430,12 @@ export default {
                 promises.push(this.abandonPartiel(id_new_affaire));
               }
             }
+
+            // Si des numéros sont référencés à l'affaire
+            if (this.numerosReferences.length>0) {
+              promises.push(this.saveReferenceNumeros(id_new_affaire));
+            }
+
             Promise.all(promises)
             .then(() => {
               this.handleSaveDataSuccess(_response);
@@ -783,9 +825,7 @@ export default {
     searchSITNEndpoint(input) {
       let cadastre_ = null;
       if (this.form.cadastre && this.form.cadastre.id !== null) {
-        cadastre_ = this.cadastres_list.filter(
-          x => x.id === this.form.cadastre.id
-        )[0].nom;
+        cadastre_ = this.form.cadastre.nom;
         
         // only keep first part of cadastre name (problems with '-' and '/')
         cadastre_ = cadastre_.split(/[-/ ]/)[0];
@@ -884,6 +924,8 @@ export default {
         this.client_facture_complement = null;
         this.client_facture_premiere_ligne = null;
       }
+
+      this.initMask();
     },
 
     /**
@@ -1140,7 +1182,58 @@ export default {
       if (this.form.cadastre && this.form.cadastre.id) {
         this.plansMOListe_cadastre = stringifyAutocomplete(this.plansMOListe.filter(x => x.cadastre_id === this.form.cadastre.id), "planno", "idobj");
       }
-    }
+    },
+
+    /**
+     * Ouvrir la boîte de dialogue de référence de numéros
+     */
+    callOpenReferenceDialog() {
+      this.$refs.formReference.openReferenceDialog();
+    },
+
+    /**
+     * Numéros référencés (pour les affaires qui le nécessitent)
+     */
+    referenceNumeros(items) {
+      this.numerosReferences = items;
+      return new Promise((resolve, reject) => {
+        resolve(null);
+        reject(null);
+      })
+    },
+
+    /**
+     * Remove entree from referenced numbers
+     */
+    deleteNumeroReference(item){
+      this.numerosReferences = this.numerosReferences.filter(x => x !== item);
+    },
+
+    /**
+     * Enregistrer les numéros référencés à l'affaire 
+     */
+    async saveReferenceNumeros(affaire_id) {
+      let numeros_ = this.numerosReferences.map(x => ({
+        numero_id: x.id,
+        etat_id: x.etat_id
+      }));
+
+      let formData = new FormData();
+      formData.append("affaire_id", affaire_id);
+      formData.append("numeros_liste", JSON.stringify(numeros_));
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          )
+          .then(response => resolve(response))
+          .catch(err => reject(err));
+      });
+    },
 
   },
 
@@ -1158,6 +1251,7 @@ export default {
     this.initCadastresList();
     this.initTypesModficiationAffaire();
     this.getPlansMO();
+    this.initMask();
 
     //permissions
     this.permission.editClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION);
