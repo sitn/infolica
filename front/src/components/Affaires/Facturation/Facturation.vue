@@ -3,7 +3,6 @@
 
 
 <script>
-var numeral = require("numeral");
 import { getCurrentDate,
          getClients,
          filterList,
@@ -14,6 +13,7 @@ import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 
+const numeral = require("numeral");
 const moment = require('moment')
 
 export default {
@@ -616,6 +616,9 @@ export default {
     });
 
     this.$root.$on("updateNumerosFactureList", () => this.searchAffaireNumeros());
+    this.$root.$on("searchAffaireFactures", () => {
+      setTimeout(() => {  this.searchAffaireFactures() }, 500);
+    });
   }
 };
 </script>
