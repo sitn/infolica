@@ -73,7 +73,9 @@ def reference_numeros_delete_view(request):
 
     # supprimer le lien affaire-numéro
     affNum = request.dbsession.query(AffaireNumero).filter(and_(
-        AffaireNumero.affaire_id == affaire_id, AffaireNumero.numero_id == numero_id)).first()
+        AffaireNumero.affaire_id == affaire_id,
+        AffaireNumero.numero_id == numero_id
+    )).first()
 
     request.dbsession.delete(affNum)
 
