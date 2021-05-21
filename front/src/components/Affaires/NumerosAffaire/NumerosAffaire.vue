@@ -116,12 +116,12 @@ export default {
 
             //Affaires links
             this.affaire_numeros_anciens.map( function(item) {
-              item.affaire_destination_href = routeAffaireData.href + '/' + item.affaire_destination_id;
+              item.affaire_destination_href = routeAffaireData.href + '/edit/' + item.affaire_destination_id;
               return item;
             });
 
             this.affaire_numeros_nouveaux.map( function(item) {
-              item.affaire_destination_href = routeAffaireData.href + '/' + item.affaire_destination_id;
+              item.affaire_destination_href = routeAffaireData.href + '/edit/' + item.affaire_destination_id;
               return item;
             });
 

@@ -50,9 +50,10 @@ export default {
     return {
       affaire: {},
       affaireLoaded: false,
+      chefs_equipe_list: [],
       duplicationAffaireForm: null,
       mapLoaded: false,
-      chefs_equipe_list: [],
+      numerosReserves: [],
       parentAffaireReadOnly: false,
       permission: {
         abandonAffaireEnabled: false,
@@ -328,7 +329,7 @@ export default {
     /**
      * Abandon affaire
      */
-    async callAbandonAffaire() {
+    async callAbandonAffaireAndNumeros() {
       let formData = new FormData();
       formData.append("id_affaire", this.affaire.id);
       formData.append("abandon", true);
@@ -536,6 +537,33 @@ export default {
       return formData;
     
     },
+
+    /**
+     * open Abandon menu
+     */
+    openAbandonMenu() {
+      this.numerosReserves = this.$refs.numeros.affaire_numeros_nouveaux;
+      this.showConfirmAbandonAffaireDialog = true;
+    },
+
+    /**
+     * abandon affaire and reactivate parent-affaire
+     */
+    async callAbandonAffaireAndReactivateParentAffaire() {
+      let formData = new FormData();
+      formData.append('affaire_id', this.affaire.id);
+      formData.append('operateur_id', JSON.parse(localStorage.getItem("infolica_user")).id);
+
+      this.$http.post(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_ABANDON_AFFAIRE_REOUVERTURE_AFFAIRE_PARENT_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(() => this.$router.go(0))
+      .catch(err => handleException(err));
+    }
 
   },
 
