@@ -42,15 +42,15 @@ def reference_numeros_new_view(request):
         # Si l'affaire est une cadastration, générer une facture par numéro
         if affaire_type_id == affaire_type_cadastration_id:
             params = Utils._params(
-              type_id = facture_type_facture_id,
-              affaire_id = affaire_id,
-              client_id = client_cadastration_id,
-              montant_mat_diff = 0,
-              montant_mo = 0,
-              montant_rf = 0,
-              montant_total = 0,
-              montant_tva = 0,
-              numeros = [numero_i['numero_id']]
+              type_id=facture_type_facture_id,
+              affaire_id=affaire_id,
+              client_id=client_cadastration_id,
+              montant_mat_diff=0,
+              montant_mo=0,
+              montant_rf=0,
+              montant_total=0,
+              montant_tva=0,
+              numeros=[numero_i['numero_id']]
             )
             Utils.addNewRecord(request, Facture, params=params)
 
