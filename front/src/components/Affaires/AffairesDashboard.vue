@@ -68,6 +68,7 @@ export default {
         editSuiviMandatAllowed: false,
       },
       showConfirmAbandonAffaireDialog: false,
+      showConfirmAbandonErrorAffaireDialog: false,
       typesAffaires: [],
       typesAffaires_conf: {
         mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION),
@@ -543,6 +544,14 @@ export default {
      */
     openAbandonMenu() {
       this.numerosReserves = this.$refs.numeros.affaire_numeros_nouveaux;
+
+      this.showConfirmAbandonErrorAffaireDialog = [
+        this.typesAffaires_conf.modification_visa,
+        this.typesAffaires_conf.modification_duplicata,
+        this.typesAffaires_conf.modification_mutation,
+        this.typesAffaires_conf.modification_ppe
+      ].includes(this.affaire.type_id);
+
       this.showConfirmAbandonAffaireDialog = true;
     },
 

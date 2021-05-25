@@ -144,7 +144,7 @@
             <md-dialog-title>Abandon de l'affaire</md-dialog-title>
 
             <md-dialog-content>
-                <div v-if="true">
+                <div>
                     <div class="md-subheader">Abandon de l'affaire</div>
                     <div style="margin-left: 17px;">
                         <p>L'affaire sera clôturée avec la mention "abandon" <span v-if="numerosReserves.length > 0"> et tous les numéros réservés seront abandonnés</span>.</p>
@@ -154,7 +154,7 @@
                     </div>
                 </div>
                 
-                <div v-if="true">
+                <div v-if="showConfirmAbandonErrorAffaireDialog">
                     <br>
                     <md-divider></md-divider>
                     
