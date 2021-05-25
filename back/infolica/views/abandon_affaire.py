@@ -4,7 +4,7 @@ from pyramid.view import view_config
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Affaire, AffaireNumero, ModificationAffaire
-from infolica.models.models import AffaireEtape 
+from infolica.models.models import AffaireEtape, NumeroRelation
 from infolica.scripts.utils import Utils
 
 from datetime import datetime
@@ -28,7 +28,7 @@ def abandonAffaire_reopenParentAffaire_view(request):
     operateur_id = request.params['operateur_id']
 
     # get child_affaire
-    child_affaire = request.dbsession.query(ModificationAffaire).filter(Affaire.id == child_affaire_id).first()
+    child_affaire = request.dbsession.query(Affaire).filter(Affaire.id == child_affaire_id).first()
 
 
     # get parent_affaire
@@ -54,7 +54,11 @@ def abandonAffaire_reopenParentAffaire_view(request):
             numaff_child.affaire_destination_id = parent_affaire_id
 
             # reactivate affaire-numero in parent_affaire
-            numaff_parent = request.dbsession.query(AffaireNumero).filter(AffaireNumero.affaire_id == parent_affaire_id).first()
+            numaff_parent = request.dbsession.query(AffaireNumero).filter(
+                AffaireNumero.affaire_id == parent_affaire_id
+            ).filter(
+                AffaireNumero.numero_id == numaff_child.numero_id
+            ).first()
             if numaff_parent is not None:
                 numaff_parent.actif = True
                 numaff_parent.affaire_destination_id = None
@@ -69,6 +73,13 @@ def abandonAffaire_reopenParentAffaire_view(request):
 
     else:
         raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(Affaire.__tablename__, parent_affaire_id))
+
+
+    # get numeros_relations and update affaire
+    numeros_relations = request.dbsession.query(NumeroRelation).filter(NumeroRelation.affaire_id == child_affaire_id).all()
+    for numrel in numeros_relations:
+        numrel.affaire_id = parent_affaire_id
+
 
     # Update etapes
     child_affaire_etape = AffaireEtape()
