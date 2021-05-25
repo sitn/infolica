@@ -545,6 +545,7 @@ export default {
             this.$root.$emit("searchAffaireNumeros");
             this.$root.$emit("ShowMessage", "Le(s) numéro(s) sélectionné(s) ont été correctement ajouté(s) à l'affaire");
             this.$root.$emit("updateNumerosFactureList");
+            this.$root.$emit("searchAffaireFactures");
             resolve(response);
           }).catch(err => reject(err));
       });
@@ -563,9 +564,15 @@ export default {
         content: "Le numéro " + item.numero + " du cadastre de " + item.numero_cadastre + " est utilisé comme bien-fonds de base pour des numéros dans cette affaire."
       });
     } else {
+      
+      let content = "Confirmer la suppression du lien entre le numéro "  + item.numero + " du cadastre de " + item.numero_cadastre + " et l'affaire " + this.affaire.id + "."
+      if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
+        content += " Les factures liées à ce numéro seront également supprimée automatiquement."
+      }
+      
       this.$root.$emit("ShowConfirmation", {
         title: "Demande de confirmation",
-        content:"Confirmer la suppression du lien entre le numéro "  + item.numero + " du cadastre de " + item.numero_cadastre + " et l'affaire " + this.affaire.id + ".",
+        content: content,
         onConfirm: () => { this.deleteNumeroAffaire(item) }
       })
 
@@ -587,7 +594,8 @@ export default {
     ).then(response => {
       if (response && response.data) {
         this.searchAffaireNumeros();
-        this.$root.$emit("ShowMessage", "Le numéro " + item.numero + " du cadastre de " + item.numero_cadastre + " a bien été délié de l'affaire")
+        this.$root.$emit("ShowMessage", "Le numéro " + item.numero + " du cadastre de " + item.numero_cadastre + " a bien été délié de l'affaire");
+        this.$root.$emit("searchAffaireFactures");
       }
     }).catch(err => handleException(err, this));
   }

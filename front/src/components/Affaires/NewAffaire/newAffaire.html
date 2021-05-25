@@ -289,7 +289,6 @@
                             <md-autocomplete id="client_facture_id" v-model="client_facture"
                                 :md-options="search_clients_list" md-dense
                                 @md-changed="searchClients(client_facture)"
-                                @md-selected="initClientMoralPersonnes(client_facture.id, 'facture')"
                                 :class="getValidationClass($v.client_facture.id)"
                                 required>
                                 <label>Facturer à (débiteur)</label>
@@ -299,18 +298,6 @@
                                 <span class="md-error" v-if="!$v.client_facture.id.required">Le client facture est obligatoire</span>
                             </md-autocomplete>
                         </div>
-    
-                        <div class="md-layout-item md-small-size-100 md-size-50" v-if="showClientComplement(client_facture)">
-                            <md-autocomplete v-model="client_facture_complement"
-                                :md-options="client_moral_personnes.facture"
-                                md-dense>
-                                <label>À l'attention de...</label>
-                                <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                    Le contact "{{ term }}" n'existe pas dans la base. <a @click="openCreateContact(client_facture.id)">Le créer !</a>
-                                </template>
-                            </md-autocomplete>
-                        </div>
-                        
                     </div>
                     
                     
@@ -394,5 +381,5 @@
     <ReferenceNumeros ref="formReference" 
                       :affaire_numeros_anciens="numerosReferences"
                       :cadastre_id="form.cadastre.id"
-                      :saveNumerosReferences="referenceNumeros"/>
+                      :saveNumerosReferences="referenceNumeros" />
 </div>

@@ -33,7 +33,6 @@ export default {
       affaire_numeros_nouveaux: [],
       cadastres_list: [],
       client_facture: null,
-      client_facture_complement: null,
       client_facture_premiere_ligne: null,
       clients_list: [],
       clients_liste_type: [],
@@ -551,9 +550,6 @@ export default {
       if (this.client_facture && this.client_facture.id &&
           this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop){
         formData.append("facture_client_id", this.client_facture.id);
-        if (this.client_facture_complement !== null) {
-          formData.append("facture_client_complement", this.client_facture_complement);
-        }
         if (this.client_facture_premiere_ligne !== null) {
           formData.append("facture_client_premiere_ligne", this.client_facture_premiere_ligne);
         }
@@ -871,7 +867,6 @@ export default {
         if ((this.client_facture === null || this.client_facture === "") && 
              this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop) {
           this.client_facture = client;
-          this.client_moral_personnes.facture = this.client_moral_personnes.commande;
         }
       });
     },
@@ -901,7 +896,6 @@ export default {
         this.form.client_envoi = defaultClient;
         this.form.client_envoi_complement = null;
         this.client_facture = null;
-        this.client_facture_complement = null;
         this.client_facture_premiere_ligne = null;
         this.form.nom = "Cadastration sur "
       } else if (this.form.type.id === this.typesAffaires_conf.mpd) {
@@ -911,7 +905,6 @@ export default {
         this.form.client_envoi_complement = null;
         this.client_facture_premiere_ligne = null;
         this.client_facture = defaultClient;
-        this.client_facture_complement = null;
         this.client_facture_premiere_ligne = null;
         this.form.nom = "Mise à jour périodique"
       } else {
@@ -921,7 +914,6 @@ export default {
         this.form.client_envoi = null;
         this.form.client_envoi_complement = null;
         this.client_facture = null;
-        this.client_facture_complement = null;
         this.client_facture_premiere_ligne = null;
       }
 

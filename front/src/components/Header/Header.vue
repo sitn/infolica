@@ -54,7 +54,16 @@ export default {
 
     checkIsAdmin() {
       this.isAdmin = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
+    },
+
+    /**
+     * Open link in new tab
+     */
+    openInNewTab(data) {
+      let routedata = this.$router.resolve({ name: data });
+      window.open(routedata.href, "_blank");
     }
+
   },
 
   mounted: function(){
