@@ -30,7 +30,6 @@ def abandonAffaire_reopenParentAffaire_view(request):
     # get child_affaire
     child_affaire = request.dbsession.query(Affaire).filter(Affaire.id == child_affaire_id).first()
 
-
     # get parent_affaire
     parent_affaire_id = request.dbsession.query(ModificationAffaire).filter(
         ModificationAffaire.affaire_id_fille == child_affaire_id).first().affaire_id_mere
