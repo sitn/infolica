@@ -99,6 +99,13 @@ export default {
 
           if (response && response.data) {
             this.affaire_numeros_all = stringifyAutocomplete2(response.data, ["numero_sitn"]);
+            this.affaire_numeros_all.forEach(x => {
+              if (x.numero_id === Number(process.env.VUE_APP_NUMERO_DP_ID)) {
+                x.numero_sitn = "DP"
+              } else if (x.numero_id === Number(process.env.VUE_APP_NUMERO_RP_ID)) {
+                x.numero_sitn = "RP"
+              }
+            })
 
             this.affaire_numeros_nouveaux = this.affaire_numeros_all.filter(
               x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID)
