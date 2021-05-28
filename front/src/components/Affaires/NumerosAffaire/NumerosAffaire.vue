@@ -101,9 +101,13 @@ export default {
             this.affaire_numeros_all = stringifyAutocomplete2(response.data, ["numero_sitn"]);
             this.affaire_numeros_all.forEach(x => {
               if (x.numero_id === Number(process.env.VUE_APP_NUMERO_DP_ID)) {
-                x.numero_sitn = "DP"
+                x.numero_sitn = "DP";
+                x.numero_cadastre = "-";
+                x.numero_etat = "-";
               } else if (x.numero_id === Number(process.env.VUE_APP_NUMERO_RP_ID)) {
-                x.numero_sitn = "RP"
+                x.numero_sitn = "RP";
+                x.numero_cadastre = "-";
+                x.numero_etat = "-";
               }
             })
 
