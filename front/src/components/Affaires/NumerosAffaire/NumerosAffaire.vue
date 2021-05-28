@@ -485,7 +485,9 @@ export default {
 
         balance: [
           this.typesAffaires_conf.mutation,
-          this.typesAffaires_conf.modification_mutation
+          this.typesAffaires_conf.modification_mutation,
+          this.typesAffaires_conf.modification_visa,
+          this.typesAffaires_conf.modification_duplicata
         ].includes(this.affaire.type_id),
 
         deleteReferencedNumberColumn: [
