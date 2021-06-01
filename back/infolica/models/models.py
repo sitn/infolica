@@ -935,8 +935,13 @@ class VEtapesAffaires(Base):
     operateur_id = Column(BigInteger)
     operateur_nom = Column(Text)
     operateur_prenom = Column(Text)
+    operateur_initiales = Column(Text)
     etape_ordre = Column(BigInteger)
     etape_priorite = Column(Integer)
+    next_operateur_id = Column(Integer)
+    next_operateur_nom = Column(Text)
+    next_operateur_prenom = Column(Text)
+    next_operateur_initiales = Column(Text)
 
 
 class VAffairesPreavis(Base):
