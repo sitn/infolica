@@ -24,7 +24,7 @@
 
                                 <div class="md-toolbar-section-end">
                                     <md-field style="margin-left: 50px; width: 250px">
-                                        <label for="operateur">Opérateur</label>
+                                        <label for="operateur">Opérateur·rice</label>
                                         <md-select v-model="selectedOperateur_id" name="operateur" id="operateur" @md-selected="filterAffaires()" md-dense>
                                             <md-option :value="-1">Tous</md-option>
                                             <md-option v-for="item in operateurs" :value="item.id">{{ item.nom }}</md-option>
@@ -39,7 +39,7 @@
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                 <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
                                 <md-table-cell md-label="Affaire" md-sort-by="diff_affaire_id" md-numeric>{{ item.diff_affaire_id }}</md-table-cell>
-                                <md-table-cell md-label="Opérateur" md-sort-by="diff_operateur_initiales" md-numeric>{{ item.diff_operateur_initiales }}</md-table-cell>
+                                <md-table-cell md-label="Opérateur·rice" md-sort-by="diff_operateur_initiales" md-numeric>{{ item.diff_operateur_initiales }}</md-table-cell>
                                 <md-table-cell md-label="Bien-fonds" md-numeric>{{ item.numero }}</md-table-cell>
                                 <md-table-cell md-label="Date" md-sort-by="diff_entree">{{ new Date(item.diff_entree) | formatDate }} </md-table-cell>
                                 <md-table-cell md-label="Consultation">

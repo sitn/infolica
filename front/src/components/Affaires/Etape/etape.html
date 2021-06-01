@@ -44,7 +44,7 @@
                 <div class="md-layout-item md-size-45" v-if="etapeAffaire.prochaine && etapeAffaire.prochaine.id && etapeAffaire.prochaine.id === etapes_affaire_conf.travaux_chef_equipe">
                     <!-- Sélection de l'opérateur -->
                     <md-field>
-                        <label>Opérateur</label>
+                        <label>Opérateur·rice</label>
                         <md-select md-dense required v-model="etapeAffaire.chef_equipe_id">
                             <md-option v-for="item in chefs_equipe_list" v-bind:key="item.id" v-bind:value="item.id" >{{ item.nom }}</md-option>
                         </md-select>

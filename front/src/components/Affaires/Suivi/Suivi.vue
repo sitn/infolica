@@ -59,6 +59,7 @@ export default {
             
             tmp.forEach(x => {
               x.datetime = moment(new Date(x.datetime)).format(process.env.VUE_APP_DATETIMEFORMAT_CLIENT);
+              x.datetime_sort = new Date(x.datetime).getTime();
             });
 
             this.affaire_suivi_bk = tmp;

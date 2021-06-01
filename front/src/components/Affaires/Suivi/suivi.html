@@ -37,10 +37,13 @@
                             <md-table  md-height="100%" v-model="affaire_suivi" md-sort="id" md-sort-order="desc" md-card>
                                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                                     <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
-                                    <md-table-cell md-label="Horodateur" md-sort-by="datetime" style="min-width: 170px;">{{ item.datetime }}</md-table-cell>
-                                    <md-table-cell md-label="Déclanché par" style="min-width: 200px;">{{ item.operateur_prenom }} {{ item.operateur_nom }}</md-table-cell>
+                                    <md-table-cell md-label="Déclanchée le" md-sort-by="datetime_sort" style="min-width: 170px;">{{ item.datetime }}</md-table-cell>
                                     <md-table-cell md-label="Étape" style="min-width: 400px;">{{ item.etape }}</md-table-cell>
-                                    <md-table-cell md-label="Remarque" style="min-width: 800px;">{{ item.remarque }}</md-table-cell>
+                                    <md-table-cell md-label="Réalisée par" style="min-width: 200px;">{{ item.next_operateur_prenom }} {{ item.next_operateur_nom }}</md-table-cell>
+                                    <md-table-cell md-label="Remarque" style="min-width: 800px;">
+                                        <span v-if="item.remarque && item.etape_priorite === 1"><em>{{ item.operateur_initiales }}</em> : </span>
+                                        {{ item.remarque }}
+                                    </md-table-cell>
                                 </md-table-row>
                             </md-table>
                         </div>
