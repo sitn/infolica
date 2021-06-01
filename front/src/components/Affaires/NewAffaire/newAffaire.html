@@ -25,12 +25,12 @@
                     
                     <div class="md-layout-item md-small-size-100 md-size-50">
                         <md-field :class="getValidationClass($v.form.technicien_id)">
-                            <label for="technicien_id">Opérateur</label>
+                            <label for="technicien_id">Opérateur·rice</label>
                             <md-select name="technicien_id" id="technicien_id" v-model="form.technicien_id"
                                 :disabled="sending" md-dense>
                             <md-option v-for="item in operateurs_list" :key="item.id" :value="item.id">{{item.nom}}</md-option>
                         </md-select>
-                        <span class="md-error" v-if="!$v.form.technicien_id.required">L'opérateur est obligatoire</span>
+                        <span class="md-error" v-if="!$v.form.technicien_id.required">L'opérateur·rice est obligatoire</span>
                     </md-field>
                 </div>
             </div>
