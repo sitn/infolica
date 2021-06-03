@@ -4,7 +4,7 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
-import { getCurrentDate, getDocument, getCurrentUserRoleId, stringifyAutocomplete, stringifyAutocomplete2 } from "@/services/helper";
+import { getCurrentDate, saveDocument, getCurrentUserRoleId, stringifyAutocomplete, stringifyAutocomplete2 } from "@/services/helper";
 import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/Affaires/NumerosAffaire/ReservationNumeros/ReservationNumeros.vue";
 import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue";
@@ -375,6 +375,30 @@ export default {
     //   });
     // },
 
+    // /**
+    //  * Génère une quittance des numéros réservés dans l'affaire
+    //  */
+    // async doQuittanceNumerosReserves() {
+    //   let tmp = this.getCadastresNumerosNumerosBases(this.affaire_numeros_nouveaux);
+    //   let cadastres = tmp[0];
+    //   let numeros = tmp[1];
+    //   let numeros_bases = tmp[2];
+
+    //   let formData = new FormData();
+    //   formData.append("template", "NumerosReserves");
+    //   formData.append("values", JSON.stringify({
+    //     "affaire_id": this.affaire.id,
+    //     "date": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+    //     "cadastre": cadastres,
+    //     "numero": numeros,
+    //     "numero_base": numeros_bases
+    //   }));
+
+    //   getDocument(formData).then(response => {
+    //     this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'");
+    //   }).catch(err => handleException(err, this));
+    // },
+
     /**
      * Génère une quittance des numéros réservés dans l'affaire
      */
@@ -385,7 +409,10 @@ export default {
       let numeros_bases = tmp[2];
 
       let formData = new FormData();
+      formData.append("affaire_id", this.affaire.id);
       formData.append("template", "NumerosReserves");
+      formData.append("relpath", process.env.VUE_APP_RELPATH_DESIGNATIONS_ENDPOINT);
+      formData.append("filename", this.affaire.id + "_Res_biens-fonds");
       formData.append("values", JSON.stringify({
         "affaire_id": this.affaire.id,
         "date": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
@@ -394,8 +421,9 @@ export default {
         "numero_base": numeros_bases
       }));
 
-      getDocument(formData).then(response => {
-        this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'");
+      saveDocument(formData).then(response => {
+        this.$root.$emit("ShowMessage", "Le fichier '" + response.data.filename + "' se trouve dans le dossier '"+ response.data.folderpath +"' de l'affaire");
+        this.$root.$emit("searchAffaireDocuments");
       }).catch(err => handleException(err, this));
     },
 
