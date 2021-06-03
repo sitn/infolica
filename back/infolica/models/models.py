@@ -942,6 +942,8 @@ class VEtapesAffaires(Base):
     next_operateur_nom = Column(Text)
     next_operateur_prenom = Column(Text)
     next_operateur_initiales = Column(Text)
+    next_remarque = Column(Text)
+    next_datetime = Column(Text)
 
 
 class VAffairesPreavis(Base):

@@ -57,10 +57,23 @@ export default {
           if (response.data) {
             let tmp = response.data;
             
+            // set date format and sort by date
+            let max_next_datetime_sort = 0;
             tmp.forEach(x => {
-              x.datetime = moment(new Date(x.datetime)).format(process.env.VUE_APP_DATETIMEFORMAT_CLIENT);
-              x.datetime_sort = new Date(x.datetime).getTime();
+              x.next_datetime_sort = new Date(x.next_datetime).getTime();
+              if (max_next_datetime_sort < x.next_datetime_sort) {
+                max_next_datetime_sort = x.next_datetime_sort;
+              }
+              x.next_datetime = x.next_datetime? moment(new Date(x.next_datetime)).format(process.env.VUE_APP_DATETIMEFORMAT_CLIENT): null;
             });
+
+            // set sort by date value where it is null
+            tmp.forEach(x => {
+              if (x.next_datetime_sort === 0) {
+                x.next_datetime_sort = max_next_datetime_sort + 1;
+              }
+            });
+
 
             this.affaire_suivi_bk = tmp;
             this.updateAffaireSuiviShowList();
