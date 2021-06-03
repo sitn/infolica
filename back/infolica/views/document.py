@@ -23,21 +23,21 @@ def save_document_view(request):
     affaires_directory = settings['affaires_directory']
 
     # Get request params
-    affaire_id = request.params['affaire_id']
+    affaire_id = str(request.params['affaire_id'])
     template = request.params['template']
     values = request.params['values']
     service_id = request.params['service_id'] if 'service_id' in request.params else None
+    relPath = request.params['relpath'].strip('/').strip('\\') if 'relpath' in request.params else ""
+    filename = request.params['filename'] if 'filename' in request.params else None
 
     # Set output file name
-    output_file_name=template
-    relPath = ""
+    output_file_name = filename if filename is not None else template
     if service_id:
         service = request.dbsession.query(Service).filter(Service.id == service_id).first()
-        output_file_name = service.abreviation
-        relPath = service.relpath
+        output_file_name += "_" + service.abreviation
+        relPath = service.relpath.strip('/').strip('\\')
 
-    date_time = datetime.now().strftime("%Y%m%d")
-    filename = output_file_name + "_" + date_time + '.docx'
+    filename = output_file_name + '.docx'
     file_path = os.path.normcase(os.path.join(affaires_directory, affaire_id, relPath, filename))
     folder_path = os.path.dirname(file_path)
 
@@ -56,5 +56,5 @@ def save_document_view(request):
     doc.render(context)
     doc.save(file_path)
 
-    return {'filename': filename}
+    return {'filename': filename, "folderpath": relPath}
 
