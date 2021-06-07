@@ -53,7 +53,7 @@
                                 <md-input v-model="[affaire.localisation_e | 0, affaire.localisation_n | 0].join(' / ')" readonly></md-input>
                             </md-field>
                         </div>
-                        <div style="text-align: right;" class="md-layout-item" v-if="affaire.type_id===typesAffaires_conf.mutation">
+                        <div style="text-align: right;" class="md-layout-item">
                             <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('cadastre')">Cadastre</md-button>
                             <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('environnement')">Environnement</md-button>
                             <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('amenagement_territoire')">Aménagement du territoire</md-button>
