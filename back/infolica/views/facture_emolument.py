@@ -4,12 +4,25 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import EmolumentFacture, VEmolumentsFactures
+from infolica.models.models import EmolumentFacture, VEmolumentsFactures, TableauEmoluments
 from infolica.scripts.utils import Utils
 
 ###########################################################
 # EMOLUMENTS
 ###########################################################
+
+
+@view_config(route_name='emoluments', request_method='GET', renderer='json')
+def emoluments_view(request):
+    """
+    Return all emoluments available
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    query = request.dbsession.query(TableauEmoluments).all()
+    return Utils.serialize_many(query)
 
 
 @view_config(route_name='facture_emoluments_by_facture_id', request_method='GET', renderer='json')
