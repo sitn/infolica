@@ -1,0 +1,63 @@
+.md-dialog {
+  width: 1200px;
+  margin: auto;
+}
+
+.formField {
+  width: 250px;
+}
+
+.md-input {
+  text-align: right;
+}
+
+.nbField {
+  margin: 0px;
+  margin-bottom: 16px;
+}
+
+.nbInput {
+  width: 50px;
+  text-align: center;
+}
+
+.md-select {
+  text-align: right;
+}
+
+.tg {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.tg td {
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  overflow: hidden;
+  padding: 0px 5px;
+  word-break: normal;
+}
+
+.tg th {
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  overflow: hidden;
+  padding: 0px 5px;
+  word-break: normal;
+}
+
+.tg .tg-0lax {
+  text-align: left;
+  vertical-align: center
+}
+
+.subtitle {
+  background-color: lightgray;
+}

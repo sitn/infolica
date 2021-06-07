@@ -12,6 +12,7 @@ import { getCurrentDate,
 import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
+import Emoluments from "@/components/Affaires/Facturation/Emoluments/Emoluments.vue";
 
 const numeral = require("numeral");
 const moment = require('moment')
@@ -25,6 +26,9 @@ export default {
     permission: Object,
     clientTypes_conf: Object
     },
+  components: {
+    Emoluments
+  },
   data: () => {
     return {
       affaire_devis: [],
@@ -61,6 +65,7 @@ export default {
       selectedClient: null, // workaround to get client object in md-select
       showNewFactureBtn: false,
       showFactureDialog: false,
+      showEmolumentsDialog: true, //false,
       showReferenceNumeroFacture: false,
     }
   },
