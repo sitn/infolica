@@ -50,9 +50,11 @@
 
                         <div v-if="balanceFiles.length>0">
                             <h3>Désignations trouvées</h3>
-                            <ul>
-                                <li v-for="item in balanceFiles">{{ item.filename }}</li>
-                            </ul>
+                            <md-table v-model="balanceFiles" md-card @md-selected="onSelectBalanceFile">
+                                <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" md-auto-select>
+                                    <md-table-cell md-label="Fichier">{{ item.filename }}</md-table-cell>
+                                </md-table-row>
+                            </md-table>
 
                             <md-button @click="uploadBalance" class="md-dense md-primary md-elevation-2"><md-icon>file_upload</md-icon> Charger les balances</md-button>
                         </div>
@@ -83,8 +85,7 @@
                         <md-button class="md-primary md-elevation-2" @click="referencerNumeros">(1) Référencer des biens-fonds</md-button>
                         
                         <div v-if="numeros_anciens.length > 0">
-                            <md-table v-model="numeros_anciens" md-sort="numero"
-                                            md-sort-order="asc" md-fixed-header md-dense md-card>
+                            <md-table v-model="numeros_anciens" md-sort="numero" md-sort-order="asc" md-fixed-header md-dense md-card>
                                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                                     <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
                                     <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero_sitn }}</md-table-cell>

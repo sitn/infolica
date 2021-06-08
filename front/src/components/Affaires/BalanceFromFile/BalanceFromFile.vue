@@ -57,6 +57,7 @@ export default {
         numeros: []
       },
       tableau_balance: [],
+      selectedBalanceFiles: [],
       showAskDDPCreation: false,
       showBalanceMenu: false,
     };
@@ -215,7 +216,7 @@ export default {
       if (file && file.filepath) {
         promises.push(this.uploadIndividualBalance(file));
       } else {
-        this.balanceFiles.forEach(file => {
+        this.selectedBalanceFiles.forEach(file => {
           promises.push(this.uploadIndividualBalance(file));
         });
       }
@@ -680,6 +681,13 @@ export default {
           }).catch(err => reject(err));
       });
     },
+
+    /**
+     * Update balance files selection
+     */
+    onSelectBalanceFile(files) {
+      this.selectedBalanceFiles = files;
+    }
 
   },
   mounted: function() {
