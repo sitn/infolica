@@ -181,10 +181,17 @@
 
 
     <!-- Référence de numéros -->
-    <ReferenceNumeros ref="formReference" :affaire_numeros_anciens="numeros_anciens"/>
+    <ReferenceNumeros ref="formReference" 
+        :affaire_numeros_anciens="numeros_anciens" 
+        :cadastre_id="affaire.cadastre_id" 
+        :saveNumerosReferences="saveReferenceNumeros" />
 
     <!-- DDP -->
-    <DDP :affaire="affaire" :numero="currentNumeroDDP" :numeroBaseListe="numerosBaseListe" ref="DDPDialog" :types_numeros="types_numeros"></DDP>
+    <DDP ref="DDPDialog"
+        :affaire="affaire" 
+        :numero="currentNumeroDDP" 
+        :numeroBaseListe="numerosBaseListe" 
+        :types_numeros="types_numeros" />
 
     <!-- Custom Alert dialog -->
     <md-dialog-alert
