@@ -9,11 +9,14 @@
 
 .md-input {
   text-align: right;
+  height: 20px !important
 }
 
 .nbField {
   margin: 0px;
-  margin-bottom: 16px;
+  margin-bottom: 2px;
+  min-height: 23px !important;
+  padding: 3px 0px 0px 0px !important;
 }
 
 .nbInput {
@@ -60,4 +63,12 @@
 
 .subtitle {
   background-color: lightgray;
+}
+
+.alignRight {
+  text-align: right !important;
+}
+
+.alignCenter {
+  text-align: center !important;
 }

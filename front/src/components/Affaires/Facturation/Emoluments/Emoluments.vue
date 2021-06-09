@@ -113,7 +113,47 @@ export default {
         montant_travauxTerrain23: numeral(0).format("0.00"),
         montant_travauxTerrain24: numeral(0).format("0.00"),
         montant_travauxTerrain25: numeral(0).format("0.00"),
-
+        montant_travauxTerrain_total: numeral(0).format("0.00"),
+        // Travaux matérialisation
+        nb_travauxMaterialisation1: 0,
+        nb_travauxMaterialisation2: 0,
+        nb_travauxMaterialisation3: 0,
+        nb_travauxMaterialisation4: 0,
+        nb_travauxMaterialisation5: 0,
+        nb_travauxMaterialisation6: 0,
+        nb_travauxMaterialisation7: 0,
+        nb_travauxMaterialisation8: 0,
+        nb_travauxMaterialisation9: 0,
+        nb_travauxMaterialisation10: 0,
+        nb_travauxMaterialisation11: 0,
+        nb_travauxMaterialisation12: 0,
+        nb_travauxMaterialisation13: 0,
+        nb_travauxMaterialisation14: 0,
+        nb_travauxMaterialisation15: 0,
+        nb_travauxMaterialisation16: 0,
+        nb_travauxMaterialisation17: 0,
+        nb_travauxMaterialisation18: 0,
+        nb_travauxMaterialisation19: 0,
+        montant_travauxMaterialisation1: numeral(0).format("0.00"),
+        montant_travauxMaterialisation2: numeral(0).format("0.00"),
+        montant_travauxMaterialisation3: numeral(0).format("0.00"),
+        montant_travauxMaterialisation4: numeral(0).format("0.00"),
+        montant_travauxMaterialisation5: numeral(0).format("0.00"),
+        montant_travauxMaterialisation6: numeral(0).format("0.00"),
+        montant_travauxMaterialisation7: numeral(0).format("0.00"),
+        montant_travauxMaterialisation8: numeral(0).format("0.00"),
+        montant_travauxMaterialisation9: numeral(0).format("0.00"),
+        montant_travauxMaterialisation10: numeral(0).format("0.00"),
+        montant_travauxMaterialisation11: numeral(0).format("0.00"),
+        montant_travauxMaterialisation12: numeral(0).format("0.00"),
+        montant_travauxMaterialisation13: numeral(0).format("0.00"),
+        montant_travauxMaterialisation14: numeral(0).format("0.00"),
+        montant_travauxMaterialisation15: numeral(0).format("0.00"),
+        montant_travauxMaterialisation16: numeral(0).format("0.00"),
+        montant_travauxMaterialisation17: numeral(0).format("0.00"),
+        montant_travauxMaterialisation18: numeral(0).format("0.00"),
+        montant_travauxMaterialisation19: numeral(0).format("0.00"),
+        montant_travauxMaterialisation_total: numeral(0).format("0.00"),
       }
     },
 
@@ -205,7 +245,59 @@ export default {
         Number(this.form.montant_travauxTerrain24) +
         Number(this.form.montant_travauxTerrain25)
       ).format("0.00");
-    }
+    },
+
+
+    /**
+     * Update montants travaux matérialisation
+     */
+    updateMontantTravauxMaterialisation() {
+      this.form.montant_travauxMaterialisation1 = numeral(Number(this.form.nb_travauxMaterialisation1) * Number(this.emolumentsUnits[31].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation2 = numeral(Number(this.form.nb_travauxMaterialisation2) * Number(this.emolumentsUnits[32].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation3 = numeral(Number(this.form.nb_travauxMaterialisation3) * Number(this.emolumentsUnits[33].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation4 = numeral(Number(this.form.nb_travauxMaterialisation4) * Number(this.emolumentsUnits[34].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation5 = numeral(Number(this.form.nb_travauxMaterialisation5) * Number(this.emolumentsUnits[35].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation6 = numeral(Number(this.form.nb_travauxMaterialisation6) * Number(this.emolumentsUnits[36].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation7 = numeral(Number(this.form.nb_travauxMaterialisation7) * Number(this.emolumentsUnits[37].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation8 = numeral(Number(this.form.nb_travauxMaterialisation8) * Number(this.emolumentsUnits[38].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation9 = numeral(Number(this.form.nb_travauxMaterialisation9) * Number(this.emolumentsUnits[39].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation10 = numeral(Number(this.form.nb_travauxMaterialisation10) * Number(this.emolumentsUnits[40].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation11 = numeral(Number(this.form.nb_travauxMaterialisation11) * Number(this.emolumentsUnits[41].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation12 = numeral(Number(this.form.nb_travauxMaterialisation12) * Number(this.emolumentsUnits[42].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation13 = numeral(Number(this.form.nb_travauxMaterialisation13) * Number(this.emolumentsUnits[43].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation14 = numeral(Number(this.form.nb_travauxMaterialisation14) * Number(this.emolumentsUnits[44].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation15 = numeral(Number(this.form.nb_travauxMaterialisation15) * Number(this.emolumentsUnits[45].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation16 = numeral(Number(this.form.nb_travauxMaterialisation16) * Number(this.emolumentsUnits[46].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation17 = numeral(Number(this.form.nb_travauxMaterialisation17) * Number(this.emolumentsUnits[47].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation18 = numeral(Number(this.form.nb_travauxMaterialisation18) * Number(this.emolumentsUnits[48].montant)).format("0.00");
+      this.form.montant_travauxMaterialisation_total = numeral(
+        Number(this.form.montant_travauxMaterialisation1) +
+        Number(this.form.montant_travauxMaterialisation2) +
+        Number(this.form.montant_travauxMaterialisation3) +
+        Number(this.form.montant_travauxMaterialisation4) +
+        Number(this.form.montant_travauxMaterialisation5) +
+        Number(this.form.montant_travauxMaterialisation6) +
+        Number(this.form.montant_travauxMaterialisation7) +
+        Number(this.form.montant_travauxMaterialisation8) +
+        Number(this.form.montant_travauxMaterialisation9) +
+        Number(this.form.montant_travauxMaterialisation10) +
+        Number(this.form.montant_travauxMaterialisation11) +
+        Number(this.form.montant_travauxMaterialisation12) +
+        Number(this.form.montant_travauxMaterialisation13) +
+        Number(this.form.montant_travauxMaterialisation14) +
+        Number(this.form.montant_travauxMaterialisation15) +
+        Number(this.form.montant_travauxMaterialisation16) +
+        Number(this.form.montant_travauxMaterialisation17) +
+        Number(this.form.montant_travauxMaterialisation18)
+      ).format("0.00");
+    },
+
+
+
+
+
+
+
 
 
   },
