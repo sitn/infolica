@@ -48,6 +48,8 @@ export default {
         visibilite: 0,
         trafic: 0,
         zi: numeral(1).format("0.00"),
+        nb_batiments: 0,
+        indice_application: 1.22,
         //mandats
         nb_mandat1: 0,
         montant_mandat1: numeral(0).format("0.00"),
@@ -255,9 +257,19 @@ export default {
         // Servitudes
         nb_servitudes1: 0,
         nb_servitudes2: 0,
+        nb_servitudes3: 0,
         montant_servitudes1: numeral(0).format("0.00"),
         montant_servitudes2: numeral(0).format("0.00"),
+        montant_servitudes3: numeral(0).format("0.00"),
         montant_servitudes_total: numeral(0).format("0.00"),
+        // Récapitulatif
+        montant_recapitulatif_somme1: numeral(0).format("0.00"),
+        montant_recapitulatif_somme2: numeral(0).format("0.00"),
+        montant_recapitulatif_somme3: numeral(0).format("0.00"),
+        montant_recapitulatif_somme4: numeral(0).format("0.00"),
+        montant_recapitulatif_somme5: numeral(0).format("0.00"),
+        montant_recapitulatif_somme6: numeral(0).format("0.00"),
+        montant_recapitulatif_indice_application: numeral(0).format("0.00"),
       }
     },
 
@@ -291,6 +303,7 @@ export default {
         Number(this.form.montant_mandat3) +
         Number(this.form.montant_mandat6)
       ).format("0.00");
+      this.updateRecapitulatif();
     },
 
     /**
@@ -349,6 +362,7 @@ export default {
         Number(this.form.montant_travauxTerrain24) +
         Number(this.form.montant_travauxTerrain25)
       ).format("0.00");
+      this.updateRecapitulatif();
     },
 
 
@@ -394,6 +408,7 @@ export default {
         Number(this.form.montant_travauxMaterialisation17) +
         Number(this.form.montant_travauxMaterialisation18)
       ).format("0.00");
+      this.updateRecapitulatif();
     },
 
 
@@ -495,6 +510,7 @@ export default {
         Number(this.form.montant_travauxBureau45) +
         Number(this.form.montant_travauxBureau46)
       ).format("0.00");
+      this.updateRecapitulatif();
     },
 
 
@@ -504,12 +520,39 @@ export default {
     updateMontantServitudes() {
       this.form.montant_servitudes1 = numeral(Number(this.form.nb_servitudes1 * Number(this.emolumentsUnits[95].montant))).format("0.00");
       this.form.montant_servitudes2 = numeral(Number(this.form.nb_servitudes2 * Number(this.emolumentsUnits[96].montant))).format("0.00");
+      this.form.montant_servitudes3 = numeral(Number(this.form.nb_servitudes3 * Number(this.emolumentsUnits[97].montant))).format("0.00");
       this.form.montant_servitudes_total = numeral(
         Number(this.form.montant_servitudes1) +
-        Number(this.form.montant_servitudes2)
+        Number(this.form.montant_servitudes2) +
+        Number(this.form.montant_servitudes3)
       ).format("0.00");
+      this.updateRecapitulatif();
     },
 
+    updateRecapitulatif() {
+      this.form.montant_recapitulatif_somme1 = numeral(Number(this.form.montant_mandat_total)).format("0.00");
+      this.form.montant_recapitulatif_somme2 = numeral(
+        Number(this.form.montant_recapitulatif_somme1) +
+        Number(this.form.montant_travauxTerrain_total)
+      ).format("0.00");
+      this.form.montant_recapitulatif_somme3 = numeral(
+        Number(this.form.montant_recapitulatif_somme2) +
+        Number(this.form.montant_travauxBureau_total)
+      ).format("0.00");
+      this.form.montant_recapitulatif_indice_application = numeral(
+        Math.round( 10 * (
+          Number(this.form.montant_recapitulatif_somme3) *
+          (Number(this.form.indice_application)-1)
+        )) / 10
+      ).format("0.00");
+      this.form.montant_recapitulatif_somme4 = numeral(
+        Number(this.form.montant_recapitulatif_somme2) +
+        Number(this.form.montant_recapitulatif_indice_application)
+      ).format("0.00");
+
+      this.form.montant_recapitulatif_somme5 = numeral(0).format("0.00");
+      this.form.montant_recapitulatif_somme6 = numeral(0).format("0.00");
+    }
 
   },
 

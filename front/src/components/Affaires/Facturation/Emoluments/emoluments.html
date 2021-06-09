@@ -28,6 +28,13 @@
                     <label>Echelle</label>
                     <md-input v-model="form.echelle"></md-input>
                   </md-field>
+
+                  <md-field>
+                    <label>Nombre de bâtiments</label>
+                    <md-select v-model="form.nb_batiments" md-dense>
+                      <md-option v-for="item in [0, 1, 2, 3]" :value="item">{{ item }}</md-option>
+                    </md-select>
+                  </md-field>
                 </div>
                 
                 <div class="md-layout-item">
@@ -85,10 +92,6 @@
           </md-card>
         </md-tab>
 
-        <md-tab md-label="Bâtiments">
-          ...
-        </md-tab>
-
         <md-tab md-label="Mandat">
           <md-card>
             <md-card-header>
@@ -100,7 +103,7 @@
                 <thead>
                   <tr>
                     <th class="tg-0lax">Code</th>
-                    <th class="tg-0lax">Type</th>
+                    <th class="tg-0lax">Position</th>
                     <th class="tg-0lax">Unité</th>
                     <th class="tg-0lax">Prix unitaire</th>
                     <th class="tg-0lax">Nombre</th>
@@ -177,7 +180,7 @@
                 <thead>
                   <tr>
                     <th class="tg-0lax">Code</th>
-                    <th class="tg-0lax">Type</th>
+                    <th class="tg-0lax">Position</th>
                     <th class="tg-0lax">Unité</th>
                     <th class="tg-0lax">Prix unitaire</th>
                     <th class="tg-0lax">Nombre</th>
@@ -419,7 +422,7 @@
                 <thead>
                   <tr>
                     <th class="tg-0lax">Code</th>
-                    <th class="tg-0lax">Type</th>
+                    <th class="tg-0lax">Position</th>
                     <th class="tg-0lax">Unité</th>
                     <th class="tg-0lax">Prix unitaire</th>
                     <th class="tg-0lax">Nombre</th>
@@ -604,7 +607,7 @@
                 <thead>
                   <tr>
                     <th class="tg-0lax">Code</th>
-                    <th class="tg-0lax">Type</th>
+                    <th class="tg-0lax">Position</th>
                     <th class="tg-0lax">Unité</th>
                     <th class="tg-0lax">Prix unitaire</th>
                     <th class="tg-0lax">Nombre</th>
@@ -1002,54 +1005,161 @@
           </md-card>
         </md-tab>
         
+        <md-tab md-label="Divers">
+          <md-card>
+            <md-card-header>
+              <div class="md-title">Travaux divers</div>
+            </md-card-header>
+            <md-card-content>
+              
+              <table class="tg">
+                <thead>
+                  <tr>
+                    <th class="tg-0lax">Code</th>
+                    <th class="tg-0lax">Position</th>
+                    <th class="tg-0lax">Unité</th>
+                    <th class="tg-0lax">Prix unitaire</th>
+                    <th class="tg-0lax">Nombre</th>
+                    <th class="tg-0lax">Montant</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- <tr> 
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax alignCenter"></td>
+                    <td class="tg-0lax alignRight"></td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="" class="nbInput" @keyup="" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight"></td>
+                  </tr> -->
+                  <tr>
+                    <td class="tg-0pky" colspan="5">Total intermédiaire</td>
+                    <td class="tg-0pky"> CHF</td>
+                  </tr>
+                </tbody>
+              </table>
+            </md-card-content>
+          </md-card>
+        </md-tab>
+
+
         <md-tab md-label="Servitudes">
-          <md-card-header>
-            <div class="md-title">4. Travaux de bureau</div>
-          </md-card-header>
-          <md-card-content>
-            
-            <table class="tg">
-              <thead>
-                <tr>
-                  <th class="tg-0lax">Code</th>
-                  <th class="tg-0lax">Type</th>
-                  <th class="tg-0lax">Unité</th>
-                  <th class="tg-0lax">Prix unitaire</th>
-                  <th class="tg-0lax">Nombre</th>
-                  <th class="tg-0lax">Montant</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr> 
-                  <td class="tg-0lax">.</td>
-                  <td class="tg-0lax">{{ emolumentsUnits[95].nom }}</td>
-                  <td class="tg-0lax alignCenter">{{ emolumentsUnits[95].unite }}</td>
-                  <td class="tg-0lax alignRight">{{ emolumentsUnits[95].montant }} CHF</td>
-                  <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_servitudes1" class="nbInput" @keyup="updateMontantServitudes()" @focus="$event.target.select()"></md-input></md-field></td>
-                  <td class="tg-0lax alignRight">{{ form.montant_servitudes1 }} CHF</td>
-                </tr>
-                <tr> 
-                  <td class="tg-0lax">.</td>
-                  <td class="tg-0lax">{{ emolumentsUnits[96].nom }}</td>
-                  <td class="tg-0lax alignCenter">{{ emolumentsUnits[96].unite }}</td>
-                  <td class="tg-0lax alignRight">{{ emolumentsUnits[96].montant }} CHF</td>
-                  <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_servitudes2" class="nbInput" @keyup="updateMontantServitudes()" @focus="$event.target.select()"></md-input></md-field></td>
-                  <td class="tg-0lax alignRight">{{ form.montant_servitudes2 }} CHF</td>
-                </tr>
-                <tr>
-                  <td class="tg-0pky" colspan="5">Total intermédiaire</td>
-                  <td class="tg-0pky">{{ form.montant_servitudes_total }} CHF</td>
-                </tr>
-              </tbody>
-            </table>
-          </md-card-content>
-        </md-card>
-        
-      </md-tab>
+          <md-card>
+            <md-card-header>
+              <div class="md-title">Servitudes</div>
+            </md-card-header>
+            <md-card-content>
+              
+              <table class="tg">
+                <thead>
+                  <tr>
+                    <th class="tg-0lax">Code</th>
+                    <th class="tg-0lax">Position</th>
+                    <th class="tg-0lax">Unité</th>
+                    <th class="tg-0lax">Prix unitaire</th>
+                    <th class="tg-0lax">Nombre</th>
+                    <th class="tg-0lax">Montant</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr> 
+                    <td class="tg-0lax">.1</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[95].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[95].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[95].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_servitudes1" class="nbInput" @keyup="updateMontantServitudes()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_servitudes1 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.2</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[96].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[96].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[96].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_servitudes2" class="nbInput" @keyup="updateMontantServitudes()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_servitudes2 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.3</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[97].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[97].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[97].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_servitudes3" class="nbInput" @keyup="updateMontantServitudes()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_servitudes3 }} CHF</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0pky" colspan="5">Total intermédiaire</td>
+                    <td class="tg-0pky">{{ form.montant_servitudes_total }} CHF</td>
+                  </tr>
+                </tbody>
+              </table>
+            </md-card-content>
+          </md-card>
+        </md-tab>
       
         <md-tab md-label="Récapitulatif">
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+          <md-card>
+            <md-card-header>
+              <div class="md-title">Récapitulatif</div>
+            </md-card-header>
+            <md-card-content>
+              
+              <table class="tg">
+                <thead>
+                  <tr>
+                    <th class="tg-0lax">Domaine</th>
+                    <th class="tg-0lax">Indice</th>
+                    <th class="tg-0lax">Montant</th>
+                    <th class="tg-0lax">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr> 
+                    <td class="tg-0lax" colspan="2">Mandat</td>
+                    <td class="tg-0lax alignRight">{{ form.montant_mandat_total }} CHF</td>
+                    <td class="tg-0lax alignRight">{{ form.montant_recapitulatif_somme1 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax" colspan="2">Travaux de terrain. matérialisation, déplacements et débours</td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain_total }} CHF</td>
+                    <td class="tg-0lax alignRight">{{ form.montant_recapitulatif_somme2 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax" colspan="2">Travaux de bureau</td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau_total }} CHF</td>
+                    <td class="tg-0lax alignRight">{{ form.montant_recapitulatif_somme3 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">Indice d'application</td>
+                    <td class="tg-0lax alignRight"><md-field class="nbField"><md-input class="nbInput" v-model="form.indice_application" @keyup="updateRecapitulatif()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_recapitulatif_indice_application }} CHF</td>
+                    <td class="tg-0lax alignRight">{{ form.montant_recapitulatif_somme4 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax alignRight"></td>
+                    <td class="tg-0lax alignRight"></td>
+                    <td class="tg-0lax alignRight"></td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax alignRight"></td>
+                    <td class="tg-0lax alignRight"></td>
+                    <td class="tg-0lax alignRight"></td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax alignRight"></td>
+                    <td class="tg-0lax alignRight"></td>
+                    <td class="tg-0lax alignRight"></td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0pky" colspan="3">Total intermédiaire</td>
+                    <td class="tg-0pky"> CHF</td>
+                  </tr>
+                </tbody>
+              </table>
+            </md-card-content>
+          </md-card>
         </md-tab>
       </md-tabs>
 
