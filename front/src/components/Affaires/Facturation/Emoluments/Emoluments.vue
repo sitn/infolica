@@ -154,6 +154,110 @@ export default {
         montant_travauxMaterialisation18: numeral(0).format("0.00"),
         montant_travauxMaterialisation19: numeral(0).format("0.00"),
         montant_travauxMaterialisation_total: numeral(0).format("0.00"),
+        // Travaux bureau
+        nb_travauxBureau1: 0,
+        nb_travauxBureau2: 0,
+        nb_travauxBureau3: 0,
+        nb_travauxBureau4: 0,
+        nb_travauxBureau5: 0,
+        nb_travauxBureau6: 0,
+        nb_travauxBureau7: 0,
+        nb_travauxBureau8: 0,
+        nb_travauxBureau9: 0,
+        nb_travauxBureau10: 0,
+        nb_travauxBureau11: 0,
+        nb_travauxBureau12: 0,
+        nb_travauxBureau13: 0,
+        nb_travauxBureau14: 0,
+        nb_travauxBureau15: 0,
+        nb_travauxBureau16: 0,
+        nb_travauxBureau17: 0,
+        nb_travauxBureau18: 0,
+        nb_travauxBureau19: 0,
+        nb_travauxBureau20: 0,
+        nb_travauxBureau21: 0,
+        nb_travauxBureau22: 0,
+        nb_travauxBureau23: 0,
+        nb_travauxBureau24: 0,
+        nb_travauxBureau25: 0,
+        nb_travauxBureau26: 0,
+        nb_travauxBureau27: 0,
+        nb_travauxBureau28: 0,
+        nb_travauxBureau29: 0,
+        nb_travauxBureau30: 0,
+        nb_travauxBureau31: 0,
+        nb_travauxBureau32: 0,
+        nb_travauxBureau33: 0,
+        nb_travauxBureau34: 0,
+        nb_travauxBureau35: 0,
+        nb_travauxBureau36: 0,
+        nb_travauxBureau37: 0,
+        nb_travauxBureau38: 0,
+        nb_travauxBureau39: 0,
+        nb_travauxBureau40: 0,
+        nb_travauxBureau41: 0,
+        nb_travauxBureau42: 0,
+        nb_travauxBureau43: 0,
+        nb_travauxBureau44: 0,
+        nb_travauxBureau45: 0,
+        nb_travauxBureau46: 0,
+        nb_travauxBureau47: 0,
+        nb_travauxBureau48: 0,
+        montant_travauxBureau1: numeral(0).format("0.00"),
+        montant_travauxBureau2: numeral(0).format("0.00"),
+        montant_travauxBureau3: numeral(0).format("0.00"),
+        montant_travauxBureau4: numeral(0).format("0.00"),
+        montant_travauxBureau5: numeral(0).format("0.00"),
+        montant_travauxBureau6: numeral(0).format("0.00"),
+        montant_travauxBureau7: numeral(0).format("0.00"),
+        montant_travauxBureau8: numeral(0).format("0.00"),
+        montant_travauxBureau9: numeral(0).format("0.00"),
+        montant_travauxBureau10: numeral(0).format("0.00"),
+        montant_travauxBureau11: numeral(0).format("0.00"),
+        montant_travauxBureau12: numeral(0).format("0.00"),
+        montant_travauxBureau13: numeral(0).format("0.00"),
+        montant_travauxBureau14: numeral(0).format("0.00"),
+        montant_travauxBureau15: numeral(0).format("0.00"),
+        montant_travauxBureau16: numeral(0).format("0.00"),
+        montant_travauxBureau17: numeral(0).format("0.00"),
+        montant_travauxBureau18: numeral(0).format("0.00"),
+        montant_travauxBureau19: numeral(0).format("0.00"),
+        montant_travauxBureau20: numeral(0).format("0.00"),
+        montant_travauxBureau21: numeral(0).format("0.00"),
+        montant_travauxBureau22: numeral(0).format("0.00"),
+        montant_travauxBureau23: numeral(0).format("0.00"),
+        montant_travauxBureau24: numeral(0).format("0.00"),
+        montant_travauxBureau25: numeral(0).format("0.00"),
+        montant_travauxBureau26: numeral(0).format("0.00"),
+        montant_travauxBureau27: numeral(0).format("0.00"),
+        montant_travauxBureau28: numeral(0).format("0.00"),
+        montant_travauxBureau29: numeral(0).format("0.00"),
+        montant_travauxBureau30: numeral(0).format("0.00"),
+        montant_travauxBureau31: numeral(0).format("0.00"),
+        montant_travauxBureau32: numeral(0).format("0.00"),
+        montant_travauxBureau33: numeral(0).format("0.00"),
+        montant_travauxBureau34: numeral(0).format("0.00"),
+        montant_travauxBureau35: numeral(0).format("0.00"),
+        montant_travauxBureau36: numeral(0).format("0.00"),
+        montant_travauxBureau37: numeral(0).format("0.00"),
+        montant_travauxBureau38: numeral(0).format("0.00"),
+        montant_travauxBureau39: numeral(0).format("0.00"),
+        montant_travauxBureau40: numeral(0).format("0.00"),
+        montant_travauxBureau41: numeral(0).format("0.00"),
+        montant_travauxBureau42: numeral(0).format("0.00"),
+        montant_travauxBureau43: numeral(0).format("0.00"),
+        montant_travauxBureau44: numeral(0).format("0.00"),
+        montant_travauxBureau45: numeral(0).format("0.00"),
+        montant_travauxBureau46: numeral(0).format("0.00"),
+        montant_travauxBureau47: numeral(0).format("0.00"),
+        montant_travauxBureau48: numeral(0).format("0.00"),
+        montant_travauxBureau_total: numeral(0).format("0.00"),
+        // Servitudes
+        nb_servitudes1: 0,
+        nb_servitudes2: 0,
+        montant_servitudes1: numeral(0).format("0.00"),
+        montant_servitudes2: numeral(0).format("0.00"),
+        montant_servitudes_total: numeral(0).format("0.00"),
       }
     },
 
@@ -293,11 +397,118 @@ export default {
     },
 
 
+    /**
+     * Update montants travaux matérialisation
+     */
+    updateMontantTravauxBureau() {
+      this.form.montant_travauxBureau1 = numeral(Number(this.form.nb_travauxBureau1 * Number(this.emolumentsUnits[49].montant))).format("0.00");
+      this.form.montant_travauxBureau2 = numeral(Number(this.form.nb_travauxBureau2 * Number(this.emolumentsUnits[50].montant))).format("0.00");
+      this.form.montant_travauxBureau3 = numeral(Number(this.form.nb_travauxBureau3 * Number(this.emolumentsUnits[51].montant))).format("0.00");
+      this.form.montant_travauxBureau4 = numeral(Number(this.form.nb_travauxBureau4 * Number(this.emolumentsUnits[52].montant))).format("0.00");
+      this.form.montant_travauxBureau5 = numeral(Number(this.form.nb_travauxBureau5 * Number(this.emolumentsUnits[53].montant))).format("0.00");
+      this.form.montant_travauxBureau6 = numeral(Number(this.form.nb_travauxBureau6 * Number(this.emolumentsUnits[54].montant))).format("0.00");
+      this.form.montant_travauxBureau7 = numeral(Number(this.form.nb_travauxBureau7 * Number(this.emolumentsUnits[55].montant))).format("0.00");
+      this.form.montant_travauxBureau8 = numeral(Number(this.form.nb_travauxBureau8 * Number(this.emolumentsUnits[56].montant))).format("0.00");
+      this.form.montant_travauxBureau9 = numeral(Number(this.form.nb_travauxBureau9 * Number(this.emolumentsUnits[57].montant))).format("0.00");
+      this.form.montant_travauxBureau10 = numeral(Number(this.form.nb_travauxBureau10 * Number(this.emolumentsUnits[58].montant))).format("0.00");
+      this.form.montant_travauxBureau11 = numeral(Number(this.form.nb_travauxBureau11 * Number(this.emolumentsUnits[59].montant))).format("0.00");
+      this.form.montant_travauxBureau12 = numeral(Number(this.form.nb_travauxBureau12 * Number(this.emolumentsUnits[60].montant))).format("0.00");
+      this.form.montant_travauxBureau13 = numeral(Number(this.form.nb_travauxBureau13 * Number(this.emolumentsUnits[61].montant))).format("0.00");
+      this.form.montant_travauxBureau14 = numeral(Number(this.form.nb_travauxBureau14 * Number(this.emolumentsUnits[62].montant))).format("0.00");
+      this.form.montant_travauxBureau15 = numeral(Number(this.form.nb_travauxBureau15 * Number(this.emolumentsUnits[63].montant))).format("0.00");
+      this.form.montant_travauxBureau16 = numeral(Number(this.form.nb_travauxBureau16 * Number(this.emolumentsUnits[64].montant))).format("0.00");
+      this.form.montant_travauxBureau17 = numeral(Number(this.form.nb_travauxBureau17 * Number(this.emolumentsUnits[65].montant))).format("0.00");
+      this.form.montant_travauxBureau18 = numeral(Number(this.form.nb_travauxBureau18 * Number(this.emolumentsUnits[66].montant))).format("0.00");
+      this.form.montant_travauxBureau19 = numeral(Number(this.form.nb_travauxBureau19 * Number(this.emolumentsUnits[67].montant))).format("0.00");
+      this.form.montant_travauxBureau20 = numeral(Number(this.form.nb_travauxBureau20 * Number(this.emolumentsUnits[68].montant))).format("0.00");
+      this.form.montant_travauxBureau21 = numeral(Number(this.form.nb_travauxBureau21 * Number(this.emolumentsUnits[69].montant))).format("0.00");
+      this.form.montant_travauxBureau22 = numeral(Number(this.form.nb_travauxBureau22 * Number(this.emolumentsUnits[70].montant))).format("0.00");
+      this.form.montant_travauxBureau23 = numeral(Number(this.form.nb_travauxBureau23 * Number(this.emolumentsUnits[71].montant))).format("0.00");
+      this.form.montant_travauxBureau24 = numeral(Number(this.form.nb_travauxBureau24 * Number(this.emolumentsUnits[72].montant))).format("0.00");
+      this.form.montant_travauxBureau25 = numeral(Number(this.form.nb_travauxBureau25 * Number(this.emolumentsUnits[73].montant))).format("0.00");
+      this.form.montant_travauxBureau26 = numeral(Number(this.form.nb_travauxBureau26 * Number(this.emolumentsUnits[74].montant))).format("0.00");
+      this.form.montant_travauxBureau27 = numeral(Number(this.form.nb_travauxBureau27 * Number(this.emolumentsUnits[75].montant))).format("0.00");
+      this.form.montant_travauxBureau28 = numeral(Number(this.form.nb_travauxBureau28 * Number(this.emolumentsUnits[76].montant))).format("0.00");
+      this.form.montant_travauxBureau29 = numeral(Number(this.form.nb_travauxBureau29 * Number(this.emolumentsUnits[77].montant))).format("0.00");
+      this.form.montant_travauxBureau30 = numeral(Number(this.form.nb_travauxBureau30 * Number(this.emolumentsUnits[78].montant))).format("0.00");
+      this.form.montant_travauxBureau31 = numeral(Number(this.form.nb_travauxBureau31 * Number(this.emolumentsUnits[79].montant))).format("0.00");
+      this.form.montant_travauxBureau32 = numeral(Number(this.form.nb_travauxBureau32 * Number(this.emolumentsUnits[80].montant))).format("0.00");
+      this.form.montant_travauxBureau33 = numeral(Number(this.form.nb_travauxBureau33 * Number(this.emolumentsUnits[81].montant))).format("0.00");
+      this.form.montant_travauxBureau34 = numeral(Number(this.form.nb_travauxBureau34 * Number(this.emolumentsUnits[82].montant))).format("0.00");
+      this.form.montant_travauxBureau35 = numeral(Number(this.form.nb_travauxBureau35 * Number(this.emolumentsUnits[83].montant))).format("0.00");
+      this.form.montant_travauxBureau36 = numeral(Number(this.form.nb_travauxBureau36 * Number(this.emolumentsUnits[84].montant))).format("0.00");
+      this.form.montant_travauxBureau37 = numeral(Number(this.form.nb_travauxBureau37 * Number(this.emolumentsUnits[85].montant))).format("0.00");
+      this.form.montant_travauxBureau38 = numeral(Number(this.form.nb_travauxBureau38 * Number(this.emolumentsUnits[86].montant))).format("0.00");
+      this.form.montant_travauxBureau39 = numeral(Number(this.form.nb_travauxBureau39 * Number(this.emolumentsUnits[87].montant))).format("0.00");
+      this.form.montant_travauxBureau40 = numeral(Number(this.form.nb_travauxBureau40 * Number(this.emolumentsUnits[88].montant))).format("0.00");
+      this.form.montant_travauxBureau41 = numeral(Number(this.form.nb_travauxBureau41 * Number(this.emolumentsUnits[89].montant))).format("0.00");
+      this.form.montant_travauxBureau42 = numeral(Number(this.form.nb_travauxBureau42 * Number(this.emolumentsUnits[90].montant))).format("0.00");
+      this.form.montant_travauxBureau43 = numeral(Number(this.form.nb_travauxBureau43 * Number(this.emolumentsUnits[91].montant))).format("0.00");
+      this.form.montant_travauxBureau44 = numeral(Number(this.form.nb_travauxBureau44 * Number(this.emolumentsUnits[92].montant))).format("0.00");
+      this.form.montant_travauxBureau45 = numeral(Number(this.form.nb_travauxBureau45 * Number(this.emolumentsUnits[93].montant))).format("0.00");
+      this.form.montant_travauxBureau46 = numeral(Number(this.form.nb_travauxBureau46 * Number(this.emolumentsUnits[94].montant))).format("0.00");
+      this.form.montant_travauxBureau_total = numeral(
+        Number(this.form.montant_travauxBureau1) +
+        Number(this.form.montant_travauxBureau2) +
+        Number(this.form.montant_travauxBureau3) +
+        Number(this.form.montant_travauxBureau4) +
+        Number(this.form.montant_travauxBureau5) +
+        Number(this.form.montant_travauxBureau6) +
+        Number(this.form.montant_travauxBureau7) +
+        Number(this.form.montant_travauxBureau8) +
+        Number(this.form.montant_travauxBureau9) +
+        Number(this.form.montant_travauxBureau10) +
+        Number(this.form.montant_travauxBureau11) +
+        Number(this.form.montant_travauxBureau12) +
+        Number(this.form.montant_travauxBureau13) +
+        Number(this.form.montant_travauxBureau14) +
+        Number(this.form.montant_travauxBureau15) +
+        Number(this.form.montant_travauxBureau16) +
+        Number(this.form.montant_travauxBureau17) +
+        Number(this.form.montant_travauxBureau18) +
+        Number(this.form.montant_travauxBureau19) +
+        Number(this.form.montant_travauxBureau20) +
+        Number(this.form.montant_travauxBureau21) +
+        Number(this.form.montant_travauxBureau22) +
+        Number(this.form.montant_travauxBureau23) +
+        Number(this.form.montant_travauxBureau24) +
+        Number(this.form.montant_travauxBureau25) +
+        Number(this.form.montant_travauxBureau26) +
+        Number(this.form.montant_travauxBureau27) +
+        Number(this.form.montant_travauxBureau28) +
+        Number(this.form.montant_travauxBureau29) +
+        Number(this.form.montant_travauxBureau30) +
+        Number(this.form.montant_travauxBureau31) +
+        Number(this.form.montant_travauxBureau32) +
+        Number(this.form.montant_travauxBureau33) +
+        Number(this.form.montant_travauxBureau34) +
+        Number(this.form.montant_travauxBureau35) +
+        Number(this.form.montant_travauxBureau36) +
+        Number(this.form.montant_travauxBureau37) +
+        Number(this.form.montant_travauxBureau38) +
+        Number(this.form.montant_travauxBureau39) +
+        Number(this.form.montant_travauxBureau40) +
+        Number(this.form.montant_travauxBureau41) +
+        Number(this.form.montant_travauxBureau42) +
+        Number(this.form.montant_travauxBureau43) +
+        Number(this.form.montant_travauxBureau44) +
+        Number(this.form.montant_travauxBureau45) +
+        Number(this.form.montant_travauxBureau46)
+      ).format("0.00");
+    },
 
 
-
-
-
+    /**
+     * Update montants travaux matérialisation
+     */
+    updateMontantServitudes() {
+      this.form.montant_servitudes1 = numeral(Number(this.form.nb_servitudes1 * Number(this.emolumentsUnits[95].montant))).format("0.00");
+      this.form.montant_servitudes2 = numeral(Number(this.form.nb_servitudes2 * Number(this.emolumentsUnits[96].montant))).format("0.00");
+      this.form.montant_servitudes_total = numeral(
+        Number(this.form.montant_servitudes1) +
+        Number(this.form.montant_servitudes2)
+      ).format("0.00");
+    },
 
 
   },

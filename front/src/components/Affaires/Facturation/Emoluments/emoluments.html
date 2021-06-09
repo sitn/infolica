@@ -593,11 +593,460 @@
           </md-card>
         </md-tab>
 
-        <md-tab md-label="Travaux de bureau">
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
+        <md-tab md-label="Bureau">
+          <md-card>
+            <md-card-header>
+              <div class="md-title">4. Travaux de bureau</div>
+            </md-card-header>
+            <md-card-content>
+
+              <table class="tg">
+                <thead>
+                  <tr>
+                    <th class="tg-0lax">Code</th>
+                    <th class="tg-0lax">Type</th>
+                    <th class="tg-0lax">Unité</th>
+                    <th class="tg-0lax">Prix unitaire</th>
+                    <th class="tg-0lax">Nombre</th>
+                    <th class="tg-0lax">Montant</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="tg-0lax subtitle" colspan="6">4.1 Points fixes planimétriques</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.11</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[49].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[49].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[49].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau1" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau1 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.12</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[50].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[50].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[50].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau2" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau2 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.13</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[51].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[51].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[51].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau3" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau3 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax">{{ emolumentsUnits[52].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[52].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[52].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau4" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau4 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.14</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[53].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[53].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[53].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau5" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau5 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.15</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[54].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[54].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[54].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau6" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau6 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.16</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[55].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[55].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[55].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau7" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau7 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.17</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[56].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[56].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[56].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau8" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau8 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax">{{ emolumentsUnits[57].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[57].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[57].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau9" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau9 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.18</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[58].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[58].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[58].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau10" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau10 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.19</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[59].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[59].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[59].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau11" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau11 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax">{{ emolumentsUnits[60].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[60].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[60].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau12" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau12 }} CHF</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax subtitle" colspan="6">4.3 Situation</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.31</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[61].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[61].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[61].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau13" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau13 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.32</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[62].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[62].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[62].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau14" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau14 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.33</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[63].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[63].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[63].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau15" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau15 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.34</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[64].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[64].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[64].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau16" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau16 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.35</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[65].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[65].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[65].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau17" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau17 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.36</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[66].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[66].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[66].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau18" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau18 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax">{{ emolumentsUnits[67].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[67].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[67].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau19" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau19 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.37</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[68].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[68].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[68].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau20" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau20 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.38</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[69].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[69].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[69].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau21" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau21 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax">{{ emolumentsUnits[70].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[70].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[70].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau22" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau22 }} CHF</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax subtitle" colspan="6">4.4 Surfaces</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.41</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[71].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[71].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[71].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau23" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau23 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.42</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[72].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[72].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[72].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau24" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau24 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.43</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[73].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[73].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[73].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau25" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau25 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.44</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[74].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[74].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[74].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau26" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau26 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.45</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[75].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[75].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[75].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau27" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau27 }} CHF</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax subtitle" colspan="6">4.2 Points limites</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.21</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[76].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[76].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[76].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau28" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau28 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.22</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[77].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[77].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[77].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau29" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau29 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax">{{ emolumentsUnits[78].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[78].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[78].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau30" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau30 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.23</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[79].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[79].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[79].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau31" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau31 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.24</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[80].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[80].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[80].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau32" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau32 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.25</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[81].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[81].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[81].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau33" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau33 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.26</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[82].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[82].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[82].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau34" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau34 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.27</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[83].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[83].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[83].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau35" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau35 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.28</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[84].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[84].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[84].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau36" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau36 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.29</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[85].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[85].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[85].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau37" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau37 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.210</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[86].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[86].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[86].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau38" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau38 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.211</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[87].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[87].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[87].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau39" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau39 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.212</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[88].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[88].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[88].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau40" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau40 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.213</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[89].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[89].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[89].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau41" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau41 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax">{{ emolumentsUnits[90].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[90].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[90].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau42" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau42 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.214</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[91].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[91].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[91].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau43" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau43 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.215</td>
+                    <td class="tg-0lax">{{ emolumentsUnits[92].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[92].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[92].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau44" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau44 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax">{{ emolumentsUnits[93].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[93].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[93].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau45" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau45 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax">{{ emolumentsUnits[94].nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ emolumentsUnits[94].unite }}</td>
+                    <td class="tg-0lax alignRight">{{ emolumentsUnits[94].montant }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau46" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form.montant_travauxBureau46 }} CHF</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0pky" colspan="5">Total intermédiaire</td>
+                    <td class="tg-0pky">{{ form.montant_travauxBureau_total }} CHF</td>
+                  </tr>
+                </tbody>
+              </table>
+            </md-card-content>
+          </md-card>
         </md-tab>
         
+        <md-tab md-label="Servitudes">
+          <md-card-header>
+            <div class="md-title">4. Travaux de bureau</div>
+          </md-card-header>
+          <md-card-content>
+            
+            <table class="tg">
+              <thead>
+                <tr>
+                  <th class="tg-0lax">Code</th>
+                  <th class="tg-0lax">Type</th>
+                  <th class="tg-0lax">Unité</th>
+                  <th class="tg-0lax">Prix unitaire</th>
+                  <th class="tg-0lax">Nombre</th>
+                  <th class="tg-0lax">Montant</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr> 
+                  <td class="tg-0lax">.</td>
+                  <td class="tg-0lax">{{ emolumentsUnits[95].nom }}</td>
+                  <td class="tg-0lax alignCenter">{{ emolumentsUnits[95].unite }}</td>
+                  <td class="tg-0lax alignRight">{{ emolumentsUnits[95].montant }} CHF</td>
+                  <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_servitudes1" class="nbInput" @keyup="updateMontantServitudes()" @focus="$event.target.select()"></md-input></md-field></td>
+                  <td class="tg-0lax alignRight">{{ form.montant_servitudes1 }} CHF</td>
+                </tr>
+                <tr> 
+                  <td class="tg-0lax">.</td>
+                  <td class="tg-0lax">{{ emolumentsUnits[96].nom }}</td>
+                  <td class="tg-0lax alignCenter">{{ emolumentsUnits[96].unite }}</td>
+                  <td class="tg-0lax alignRight">{{ emolumentsUnits[96].montant }} CHF</td>
+                  <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_servitudes2" class="nbInput" @keyup="updateMontantServitudes()" @focus="$event.target.select()"></md-input></md-field></td>
+                  <td class="tg-0lax alignRight">{{ form.montant_servitudes2 }} CHF</td>
+                </tr>
+                <tr>
+                  <td class="tg-0pky" colspan="5">Total intermédiaire</td>
+                  <td class="tg-0pky">{{ form.montant_servitudes_total }} CHF</td>
+                </tr>
+              </tbody>
+            </table>
+          </md-card-content>
+        </md-card>
+        
+      </md-tab>
+      
         <md-tab md-label="Récapitulatif">
           <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
           <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ullam mollitia dolorum dolores quae commodi impedit possimus qui, atque at voluptates cupiditate. Neque quae culpa suscipit praesentium inventore ducimus ipsa aut.</p>
