@@ -928,7 +928,7 @@ class VEtapesAffaires(Base):
                       'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger)
-    etape_id = Column(BigInteger)
+    etape_id = Column(BigInteger, primary_key=True)
     etape = Column(Text)
     remarque = Column(Text)
     datetime = Column(DateTime)
@@ -938,12 +938,12 @@ class VEtapesAffaires(Base):
     operateur_initiales = Column(Text)
     etape_ordre = Column(BigInteger)
     etape_priorite = Column(Integer)
-    next_operateur_id = Column(Integer)
+    next_operateur_id = Column(BigInteger)
     next_operateur_nom = Column(Text)
     next_operateur_prenom = Column(Text)
     next_operateur_initiales = Column(Text)
     next_remarque = Column(Text)
-    next_datetime = Column(Text)
+    next_datetime = Column(DateTime)
 
 
 class VAffairesPreavis(Base):
