@@ -44,6 +44,8 @@ def affaires_etapes_view(request):
 
     records = request.dbsession.query(VEtapesAffaires).filter(
         VEtapesAffaires.affaire_id == affaire_id
+    ).order_by(
+        VEtapesAffaires.next_datetime.desc()
     ).all()
 
     return Utils.serialize_many(records)
