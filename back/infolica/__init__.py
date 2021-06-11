@@ -1,10 +1,7 @@
 from pyramid.config import Configurator
 from pyramid.events import NewRequest
-<<<<<<< Updated upstream
-=======
 from pyramid.security import remember
 from papyrus.renderers import GeoJSON
->>>>>>> Stashed changes
 
 #Authentification
 from pyramid_ldap3 import (
