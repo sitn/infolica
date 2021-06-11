@@ -1,14 +1,55 @@
 from pyramid.config import Configurator
 from pyramid.events import NewRequest
+<<<<<<< Updated upstream
+=======
+from pyramid.security import remember
+from papyrus.renderers import GeoJSON
+>>>>>>> Stashed changes
 
 #Authentification
 from pyramid_ldap3 import (
     get_ldap_connector,
     groupfinder,
 )
-
+from pyramid_multiauth import MultiAuthenticationPolicy
 from pyramid.authentication import AuthTktAuthenticationPolicy
+from infolica.scripts.authentication import RemoteUserAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
+
+def _create_get_user_from_request(settings):
+    def get_user_from_request(request):
+        """ Return the User object for the request.
+        Return ``None`` if:
+        * user is anonymous
+        * it does not exist in the database
+        * the referer is invalid
+        
+        """
+        from infolica.scripts.ldap_query import LDAPQuery
+
+        if not hasattr(request, "_user"):
+            request._user = None
+            username = request.authenticated_userid
+
+            if username is not None:
+                username = username.lower()
+                # We know we will need the role object of the
+                # user so we use joined loading
+                dn = LDAPQuery.ldap_get_user(request, username)
+                #user = DBSession.query(User) \
+#                    .filter_by(username=username) \
+#                    .first()
+
+                if dn is not None:
+                    headers = remember(request, dn)
+                    print('headers')
+                    print(headers)
+                    request.response.headerlist.extend(headers)
+                    request._dn = dn
+
+        return request._dn
+    return get_user_from_request
+
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
@@ -20,17 +61,35 @@ def main(global_config, **settings):
         config.include('pyramid_ldap3')
         config.scan()
         config.add_subscriber(add_cors_headers_response_callback, NewRequest)
-        config.set_authentication_policy(
-            AuthTktAuthenticationPolicy(
-                settings["authtkt_secret"],
-                cookie_name=settings["authtkt_cookie_name"],
-                callback=groupfinder,
-                samesite=settings["authtk_samesite"],
-                secure=settings["authtk_secure"]
-            )
+
+        # Add the "geojson" renderer
+        config.add_renderer("geojson", GeoJSON())
+
+        authtkt_authentication_policy = AuthTktAuthenticationPolicy(
+            settings['authtkt_secret'],
+            cookie_name=settings['authtkt_cookie_name'],
+            hashalg='sha512'
         )
+
+        remote_auth_policy = RemoteUserAuthenticationPolicy(
+                environ_key='Remote-User'
+        )
+        
+        authentication_policy = MultiAuthenticationPolicy([
+           remote_auth_policy,
+           authtkt_authentication_policy
+        ])
+
+        config.set_authentication_policy(authentication_policy)
+
         config.set_authorization_policy(
             ACLAuthorizationPolicy()
+        )
+
+        config.add_request_method(
+            _create_get_user_from_request(settings),
+            name="dn",
+            property=True
         )
 
         config.ldap_setup(
@@ -67,11 +126,3 @@ def add_cors_headers_response_callback(event):
         'Access-Control-Max-Age': '1728000',
         })
     event.request.add_response_callback(cors_headers)
-
-
-def groupfinder(dn, request):
-    connector = get_ldap_connector(request)
-    group_list = connector.user_groups(dn)
-    if group_list is None:
-        return None
-    return [dn for dn, attrs in group_list]

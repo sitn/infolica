@@ -2,8 +2,7 @@
 from datetime import date, datetime
 from sqlalchemy import func, and_, desc
 from infolica.models.models import Numero, AffaireNumero, Fonction, Role, FonctionRole, ReservationNumerosMO
-from infolica.models.models import SuiviMandat, ControleGeometre, ControleMutation, ControlePPE
-from infolica.models.models import AffaireEtape
+from infolica.models.models import Operateur
 from infolica.scripts.ldap_query import LDAPQuery
 from shutil import copytree, ignore_patterns
 import json
@@ -264,7 +263,7 @@ class Utils(object):
         if not cls.check_connected(request):
             return False
 
-        user_dn = request.authenticated_userid
+        user_dn = request.dn
 
         if not user_dn:
             return False
@@ -277,9 +276,9 @@ class Utils(object):
 
     @classmethod
     def check_connected(cls, request):
-        auth_tkt = request.cookies.get(request.registry.settings['authtkt_cookie_name'], default=None)
-
-        if not auth_tkt:
+        query = request.dbsession.query(Operateur)
+        operateur = query.filter(func.lower(Operateur.login) == func.lower(request.authenticated_userid)).first()
+        if not operateur:
             return False
 
         return True

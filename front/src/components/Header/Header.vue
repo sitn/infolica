@@ -30,19 +30,6 @@ export default {
         this.loggedUserName = null;
     },
 
-    /**
-     * call logout
-     */
-    callLogout(){
-      if(this.$router && this.$router.currentRoute && this.$router.currentRoute.name != 'Login'){
-        let vm = this;
-        this.$router.push({name: "Login"}, function(){
-          vm.$root.$emit("infolica_user_logout");
-        });        
-      }
-      
-    },
-
      /**
      * Go to route
      */

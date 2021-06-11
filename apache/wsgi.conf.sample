@@ -22,11 +22,24 @@ Alias "/infolica" "path/to/dist"
 
 <location /infolica_api>
     Require all granted
+        Options None
+    AuthType SSPI
+    AuthName "A Protected Place"
+    SSPIAuth On
+    SSPIAuthoritative On
+    SSPIOfferBasic On
+    # Should you need to force the login prompt, uncomment the next line
+    SSPIBasicPreferred On
+    SSPIOfferSSPI On
+    SSPIDomain wssgrf013.ne.ch/infolica/
+    require valid-sspi-user
+    require user "NT AUTHORITY\ANONYMOUS LOGON" denied
+    RequestHeader set REMOTE_USER %{REMOTE_USER}s
 </location>
 
 <location /infolica>
     Require all granted
-    
+
     <IfModule mod_rewrite.c>
       RewriteEngine On
       RewriteBase "/infolica/"

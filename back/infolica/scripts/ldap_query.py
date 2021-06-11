@@ -45,9 +45,10 @@ class LDAPQuery(object):
         # response.headerlist.extend(headers)
         return response
 
+    """
     @classmethod
     def get_connected_user(cls, request):
-        user_id = request.authenticated_userid
+        user_id = request.dn
 
         connector = get_ldap_connector(request)
 
@@ -77,6 +78,7 @@ class LDAPQuery(object):
                 result = json.loads(json.dumps(dict(result)))
 
         return cls.format_json_attributes(result) if result else {}
+    """
 
     @classmethod
     def get_user_group_by_dn(cls, request, dn):
@@ -134,3 +136,19 @@ class LDAPQuery(object):
                     users.append(user_json)
 
         return users if users else {}
+
+    @classmethod
+    def ldap_get_user(cls, request, username):
+        connector = get_ldap_connector(request)
+
+        with connector.manager.connection() as conn:
+            ret = conn.search(
+                search_scope=request.registry.settings['ldap_login_query_scope'],
+                attributes=request.registry.settings['ldap_login_query_attributes'].replace(', ', ',').replace(
+                    ' , ', ',').replace(' ,', ',').split(','),
+                search_base=request.registry.settings['ldap_login_query_base_dn'],
+                search_filter="(samaccountname="+username+")"
+            )
+            result, ret = conn.get_response(ret)
+
+        return result[0]['dn']

@@ -16,7 +16,7 @@ import VueMoment from 'vue-moment';
 import moment from 'moment-timezone';
 import proj4 from 'proj4';
 import {register} from 'ol/proj/proj4';
-import {checkLogged} from '@/services/helper'
+
 
 proj4.defs('EPSG:2056',
 '+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333'
@@ -45,16 +45,6 @@ const router = new VueRouter({
   mode: 'history',
   routes: routes
 });
-
-router.beforeEach((to, from, next) => {
-  if (to.name !== 'Login' && !checkLogged()) {
-    next({name: 'Login'});
-  } 
-  else{
-    next();
-  }      
-});
-
 
 new Vue({
   router,
