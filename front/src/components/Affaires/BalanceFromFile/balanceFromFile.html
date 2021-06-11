@@ -3,9 +3,7 @@
         <md-card-header>
             <div class="md-title">Balance</div>
             
-            <div v-if="editionBalance">
-                <md-button @click="showBalanceMenu = true" class="md-raised" title="Récupère la balance depuis le fichier 'Des_xxx.docx' ou construit la relation d'immatriculation ou d'exmatriculation de DP">Créer la balance</md-button>
-            </div>
+            <md-button @click="openBalanceMenu" class="md-raised" title="Créer la balance - immatriculation/exmatriculation de DP - constitution/suppression de DDP">Éditer la balance</md-button>
         </md-card-header>
         
         <md-card-content>
@@ -42,35 +40,52 @@
         </md-dialog-title>
         <md-dialog-content>
             <div class="md-layout md-gutter md-alignment-top-space-between">
-                <div class="md-card md-layout-item cardMenu">
+                <!-- Balance à partir de la désignation -->
+                <div class="md-card md-layout-item ">
                     <md-card-header>
                         <h3 class="md-title">Balance à partir de la désignation</h3>
                     </md-card-header>
                     <md-card-content>
-                        <p>Récupère le fichier des dans le dossier de l'affaire pour construire la balance.</p>
-                        <md-button class="md-primary md-elevation-2" @click="getBalanceFromDes">Désignation</md-button>
+                        <p>Récupère les fichiers des désignations (nom des fichiers: "Des_xxx.docx", où xxx est un champ libre) dans le dossier de l'affaire pour construire la balance.</p>
+
+                        <div v-if="balanceFiles.length>0">
+                            <h3>Désignations trouvées</h3>
+                            <md-table v-model="balanceFiles" md-card @md-selected="onSelectBalanceFile">
+                                <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" md-auto-select>
+                                    <md-table-cell md-label="Fichier">{{ item.filename }}</md-table-cell>
+                                </md-table-row>
+                            </md-table>
+
+                            <md-button @click="uploadBalance" class="md-dense md-primary md-elevation-2"><md-icon>file_upload</md-icon> Charger les balances</md-button>
+                        </div>
+                        <div v-else>
+                            <p style="color: red;"><em>Aucune désignation n'a été trouvée dans le dossier de l'affaire</em></p>
+                        </div>
                     </md-card-content>
                 </div>
+            </div>
+            <div class="md-layout md-gutter md-alignment-top-space-between">
+                <!-- Immatriculation de BF -->
                 <div class="md-card md-layout-item cardMenu">
                     <md-card-header>
-                        <h3 class="md-title">Immatriculation de BF</h3>
+                        <h3 class="md-title">Immatriculation de DP</h3>
                     </md-card-header>
                     <md-card-content>
                         <p>Les numéros de biens-fonds réservés proviennent intégralement du DP.</p>
-                        <md-button class="md-primary md-elevation-2" @click="getBalanceImmatriculationBF">Immatriculation de BF</md-button>
+                        <md-button class="md-primary md-elevation-2" @click="getBalanceImmatriculationBF">Immatriculation de DP</md-button>
                     </md-card-content>
                 </div>
+                <!-- Exmatriculation de BF -->
                 <div class="md-card md-layout-item cardMenu" :disabled="numeros_nouveaux.length>0">
                     <md-card-header>
-                        <h3 class="md-title">Exmatriculation de BF</h3>
+                        <h3 class="md-title">Exmatriculation de bien-fonds</h3>
                     </md-card-header>
                     <md-card-content>
                         <p>Les biens-fonds partent dans le DP. Cette action nécessite de (1) référencer des biens-fonds avant de (2) créer l'exmatriculation.</p>
                         <md-button class="md-primary md-elevation-2" @click="referencerNumeros">(1) Référencer des biens-fonds</md-button>
                         
                         <div v-if="numeros_anciens.length > 0">
-                            <md-table md-height="40vh" v-model="numeros_anciens" md-sort="numero"
-                                            md-sort-order="asc" md-fixed-header md-dense md-card>
+                            <md-table v-model="numeros_anciens" md-sort="numero" md-sort-order="asc" md-fixed-header md-dense md-card>
                                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                                     <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
                                     <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero_sitn }}</md-table-cell>
@@ -78,31 +93,111 @@
                             </md-table>
                         </div>
                         <br>
-                        <md-button class="md-primary md-elevation-2" @click="getBalanceExmatriculationBF" :disabled="!numeros_anciens.length > 0">(2) Exmatriculation de BF</md-button>
-
+                        <md-button class="md-primary md-elevation-2" @click="getBalanceExmatriculationBF" :disabled="!numeros_anciens.length > 0">(2) Exmatriculation des biens-fonds</md-button>
+                        
+                    </md-card-content>
+                </div>
+            </div>
+            <div class="md-layout md-gutter md-alignment-top-space-between">
+                <!-- Création de DDP -->
+                <div class="md-layout-item cardMenu md-card">
+                    <md-card-header>
+                        <h3 class="md-title">Constitution de DDP</h3>
+                    </md-card-header>
+                    <md-card-content>
+                        <p>Sélectionner dans la liste les numéros qui doivent être définis comme DDP.</p>
+                        <div v-if="numeros_nouveaux.length > 0">
+                            <md-table v-model="numeros_nouveaux" md-sort="numero"
+                                md-sort-order="asc" md-fixed-header md-dense md-card>
+                                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                    <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
+                                    <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero_sitn }}</md-table-cell>
+                                    <md-table-cell md-label="Créer DDP">
+                                        <md-button class="md-primary md-icon" @click="createDDP(item)"><md-icon>flip</md-icon></md-button>
+                                    </md-table-cell>
+                                </md-table-row>
+                            </md-table>
+                        </div>
+                    </md-card-content>
+                </div>
+                <!-- Suppression de DDP -->
+                <div class="md-layout-item cardMenu md-card">
+                    <md-card-header>
+                        <h3 class="md-title">Suppression de DDP</h3>
+                    </md-card-header>
+                    <md-card-content>
+                        <p>Référencer les DDP à supprimer lorsque l'affaire sera clôturée..</p>
+                        <md-button class="md-primary md-elevation-2" @click="referenceDDP">Référencer des DDP</md-button>
+                        
+                        <div v-if="numeros_ddp_old.length > 0">
+                            <md-table v-model="numeros_ddp_old" md-sort="numero"
+                                md-sort-order="asc" md-fixed-header md-dense md-card>
+                                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                    <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
+                                    <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero_sitn }}</md-table-cell>
+                                </md-table-row>
+                            </md-table>
+                        </div>
                     </md-card-content>
                 </div>
             </div>
         </md-dialog-content>
+        <md-dialog-actions>
+            <md-button class="md-accent" @click="showBalanceMenu = false">Fermer</md-button>
+        </md-dialog-actions>
     </md-dialog>
-
+    
     <!-- Dialog to ask for DDP creation or continue saving balances -->
-    <md-dialog :md-active.sync="showAskDDPCreation"  @md-clicked-outside="showAskDDPCreation = false">
+    <md-dialog :md-active.sync="showAskDDPCreation && DDPpotential.length>0"  @md-clicked-outside="showAskDDPCreation = false">
         <md-dialog-title>
             <h1 class="md-title">Il reste des biens-fonds réservés, que faut-il en faire?</h1>
         </md-dialog-title>
         <md-dialog-content>
-            <md-icon>warning_amber</md-icon> <p style="color: red;"><b>Cette partie est en construction !!! </b></p>
+            <!-- <md-table v-model="numeros_nouveaux" md-sort="numero" -->
+            <md-table v-model="DDPpotential" md-sort="numero"
+                md-sort-order="asc" md-fixed-header md-dense md-card>
+                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                    <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
+                    <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero_sitn }}</md-table-cell>
+                    <md-table-cell md-label="Créer DDP ?">
+                        <md-button class="md-primary md-icon" @click="createDDP(item)"><md-icon>flip</md-icon></md-button>
+                    </md-table-cell>
+                    <md-table-cell md-label="Abandonner ?">
+                        <md-button class="md-primary md-icon" @click="abandonNumber(item)"><md-icon>delete_outline</md-icon></md-button>
+                    </md-table-cell>
+                </md-table-row>
+            </md-table>
+            
         </md-dialog-content>
+        <md-dialog-actions>
+            <md-button class="md-accent" @click="showAskDDPCreation = false">Fermer</md-button>
+        </md-dialog-actions>
     </md-dialog>
 
     <!-- Dialog balance incorrecte -->
     <md-dialog-alert :md-active.sync="checkBFBalance.show"
-                     :md-title="checkBFBalance.title"
-                     :md-content="checkBFBalance.content"
-                     style="width: 700px; margin: auto;" />
+        :md-title="checkBFBalance.title"
+        :md-content="checkBFBalance.content"
+        style="width: 700px; margin: auto;" />
 
 
     <!-- Référence de numéros -->
-    <ReferenceNumeros ref="formReference" :affaire_numeros_anciens="numeros_anciens"/>
+    <ReferenceNumeros ref="formReference" 
+        :affaire_numeros_anciens="numeros_anciens" 
+        :cadastre_id="affaire.cadastre_id" 
+        :saveNumerosReferences="saveReferenceNumeros" />
+
+    <!-- DDP -->
+    <DDP ref="DDPDialog"
+        :affaire="affaire" 
+        :numero="currentNumeroDDP" 
+        :numeroBaseListe="numerosBaseListe" 
+        :types_numeros="types_numeros" />
+
+    <!-- Custom Alert dialog -->
+    <md-dialog-alert
+        :md-active.sync="alertDialog.show"
+        :md-title="alertDialog.title"
+        :md-content="alertDialog.content" />
+
 </div>

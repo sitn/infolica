@@ -1,6 +1,9 @@
 from pyramid.config import Configurator
 from pyramid.events import NewRequest
+<<<<<<< HEAD
 from pyramid.security import remember
+=======
+>>>>>>> upstream/master
 from papyrus.renderers import GeoJSON
 
 #Authentification
@@ -65,7 +68,9 @@ def main(global_config, **settings):
         authtkt_authentication_policy = AuthTktAuthenticationPolicy(
             settings['authtkt_secret'],
             cookie_name=settings['authtkt_cookie_name'],
-            hashalg='sha512'
+            hashalg='sha512',
+            samesite=settings["authtk_samesite"],
+            secure=settings["authtk_secure"]
         )
 
         remote_auth_policy = RemoteUserAuthenticationPolicy(

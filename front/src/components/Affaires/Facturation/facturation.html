@@ -20,12 +20,12 @@
                 <md-card-content>
                     <h3>Devis</h3>
                     <div v-if="affaire_devis[0]">
-                        <md-table md-height="40vh" v-model="affaire_devis" md-sort="date" md-sort-order="desc" md-fixed-header>
+                        <md-table v-model="affaire_devis" md-sort="date" md-sort-order="desc" md-fixed-header>
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                 <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                                 <md-table-cell md-label="SAP" md-sort-by="sap" style="width: 5%;">{{ item.sap }}</md-table-cell>
                                 <md-table-cell md-label="Date" md-sort-by="date" style="width: 5%;">{{ item.date }}</md-table-cell>
-                                <md-table-cell md-label="Biens-fonds" md-sort-by="numeros" style="width: 5%;" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
+                                <md-table-cell md-label="Biens-fonds" md-sort-by="numero" style="width: 5%;" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
                                 <md-table-cell md-label="Client" md-sort-by="adresse_facturation_" style="width: 15%;">{{ item.adresse_facturation_ }}</md-table-cell>
                                 <md-table-cell md-label="MO" md-sort-by="montant_mo" style="width: 5%;">CHF {{ item.montant_mo }}</md-table-cell>
                                 <md-table-cell md-label="Mat Diff" md-sort-by="montant_mat_diff" style="width: 5%;">CHF {{ item.montant_mat_diff }}</md-table-cell>
@@ -34,7 +34,7 @@
                                 <md-table-cell md-label="Total" md-sort-by="montant_total" style="width: 5%;">CHF {{ item.montant_total }}</md-table-cell>
                                 <md-table-cell md-label="Remarque" md-sort-by="remarque" style="width: 10%;">{{ item.remarque }}</md-table-cell>
                                 <md-table-cell md-label="Actions" class="actionsColumn" v-if="permission.editFactureAllowed" style="width: 15%;">
-                                    <md-button class="md-icon-button md-primary md-dense" @click="openFactureEdition(item)">
+                                    <md-button class="md-icon-button md-primary md-dense" @click="openFactureEdition(item, 'devis')">
                                         <md-icon>edit</md-icon>
                                     </md-button>
                                     <md-button class="md-icon-button md-accent md-dense" v-on:click="callDeleteFacture(item)">
@@ -52,11 +52,11 @@
                     <h3>Factures</h3>
 
                     <div v-if="affaire_factures[0]">
-                        <md-table md-height="40vh" v-model="affaire_factures" md-sort="date" md-sort-order="desc" md-fixed-header>
+                        <md-table v-model="affaire_factures" md-sort="date" md-sort-order="desc" md-fixed-header>
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                 <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                                 <md-table-cell md-label="Date" md-sort-by="date" style="width: 5%;">{{ item.date }}</md-table-cell>
-                                <md-table-cell md-label="Biens-fonds" md-sort-by="numeros" style="width: 5%;" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
+                                <md-table-cell md-label="Biens-fonds" md-sort-by="numero" style="width: 5%;" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
                                 <md-table-cell md-label="SAP Client" md-sort-by="client_no_sap" style="width: 5%;">{{ item.client_no_sap }}</md-table-cell>
                                 <md-table-cell md-label="Client" md-sort-by="adresse_facturation_" style="width: 15%;">{{ item.adresse_facturation_ }}</md-table-cell>
                                 <md-table-cell md-label="MO" md-sort-by="montant_mo" style="width: 5%;">CHF {{ item.montant_mo }}</md-table-cell>
@@ -67,7 +67,7 @@
                                 <md-table-cell md-label="SAP Facture" md-sort-by="sap" style="width: 5%;">{{ item.sap }}</md-table-cell>
                                 <md-table-cell md-label="Remarque" md-sort-by="remarque" style="width: 10%;">{{ item.remarque }}</md-table-cell>
                                 <md-table-cell md-label="Actions" class="actionsColumn" style="width: 15%;">
-                                    <md-button class="md-icon-button md-primary md-dense" @click="openFactureEdition(item)">
+                                    <md-button class="md-icon-button md-primary md-dense" @click="openFactureEdition(item, 'facture')">
                                         <md-icon>edit</md-icon>
                                     </md-button>
                                     <md-button class="md-icon-button md-accent md-dense" v-on:click="callDeleteFacture(item)" v-if="permission.editFactureAllowed">
@@ -181,18 +181,16 @@
                         <md-input v-model="selectedFacture.client_premiere_ligne"></md-input>
                     </md-field>
         
-                    <md-autocomplete v-model="selectedFacture.client" :md-options="clients_liste_select" @md-changed="getClientSearch(selectedFacture.client)" :class="getValidationClass('client')" required md-dense>
+                    <!-- <md-autocomplete v-model="selectedClient" :md-options="clients_liste_select" @md-selected="setSelectedClientObject(selectedClient)" :class="getValidationClass('client')" -->
+                    <md-autocomplete v-model="selectedClient" :md-options="clients_liste_select" @md-selected="setSelectedClientObject(selectedClient)"
+                        @md-changed="getClientSearch(selectedClient)" required md-dense>
                         <label>Facturer à (débiteur)</label>
                         <template slot="md-autocomplete-empty" slot-scope="{ term }" v-if="term && term.length > 2">
-                            Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editFactureAllowed">Créer le client !</a>
+                            Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editClientAllowed">Créer le client !</a>
                         </template>
-                        <span class="md-error" v-if="!$v.selectedFacture.client.required">Le client est obligatoire</span>
+                        <!-- <span class="md-error" v-if="!$v.selectedFacture.client.objectValidation">Le client est obligatoire</span> -->
                     </md-autocomplete>
         
-                    <md-field v-if="showClientComplement(selectedFacture.client)">
-                        <label>Personne de contact</label>
-                        <md-input v-model="selectedFacture.client_complement"></md-input>
-                    </md-field>
                 </div>
 
                 <!-- Montants de facturation -->

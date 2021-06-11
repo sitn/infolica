@@ -12,11 +12,12 @@
   "dependencies": {
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
-    "mdbvue": "^6.7.2",
+    "mdbvue": "^5.4.1",
     "moment-timezone": "^0.5.33",
     "numeral": "^2.0.6",
     "ol": "^6.5.0",
     "proj4": "^2.7.0",
+    "v-clipboard": "^2.2.3",
     "vue": "^2.6.10",
     "vue-axios": "^2.1.5",
     "vue-material": "^1.0.0-beta-15",
@@ -28,7 +29,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.11",
     "@vue/cli-plugin-eslint": "^4.5.11",
-    "@vue/cli-service": "^4.5.11",
+    "@vue/cli-service": "^4.5.12",
     "babel-eslint": "^10.1.0",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",

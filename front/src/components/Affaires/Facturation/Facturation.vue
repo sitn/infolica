@@ -3,17 +3,17 @@
 
 
 <script>
-var numeral = require("numeral");
 import { getCurrentDate,
          getClients,
          filterList,
-         stringifyAutocomplete,
+        //  stringifyAutocomplete,
          getDocument,
          logAffaireEtape } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 
+const numeral = require("numeral");
 const moment = require('moment')
 
 export default {
@@ -33,12 +33,7 @@ export default {
       numeros_references_bk: [],
       numeros_references_restant: [],
       clients_liste: [],
-      clients_liste_type: [],
       clients_liste_select: [],
-      clients_types_config: {
-        personne_physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID),
-        personne_morale: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID)
-      },
       createFacture: false,
       configFactureTypeID: {
         devis: Number(process.env.VUE_APP_FACTURE_TYPE_DEVIS_ID),
@@ -52,8 +47,6 @@ export default {
       selectedFacture: {
         id: null,
         client: null,
-        client_co: null,
-        client_complement: null,
         client_premiere_ligne: null,
         date: null,
         montant_mat_diff: null,
@@ -65,6 +58,7 @@ export default {
         remarque: null,
         sap: null
       },
+      selectedClient: null, // workaround to get client object in md-select
       showNewFactureBtn: false,
       showFactureDialog: false,
       showReferenceNumeroFacture: false,
@@ -73,9 +67,11 @@ export default {
 
   // Validations
   validations() {
+    // const objectValidation = (client) => client && client.id && client.nom;
+
     let selectedFacture = {
-      date: { required },
-      client: { required },
+      // date: { required },
+      // client: { objectValidation },
       montant_mo: { required },
       montant_mat_diff: { required },
       montant_rf: { required },
@@ -85,8 +81,12 @@ export default {
 
     return { selectedFacture };
   },
-
+  
   methods: {
+    /**
+     * Validation of objects
+     */
+
     /*
      * SEARCH AFFAIRE FACTURES
      */
@@ -170,10 +170,12 @@ export default {
       getClients()
         .then(response => {
           if (response && response.data) {
-            this.clients_liste = stringifyAutocomplete(response.data, "adresse_");
-            this.clients_liste_type = response.data.map(x => ({
+            this.clients_liste = response.data.map(x => ({
               id: x.id,
-              type_id: x.type_client
+              nom: x.adresse_,
+              type_id: x.type_client,
+              toLowerCase: () => x.adresse_.toLowerCase(),
+              toString: () => x.adresse_
             }));
           }
         }).catch(err => handleException(err, this));
@@ -183,7 +185,7 @@ export default {
      * Crée la liste de sélection du client lors de la création de facture
      */
     getClientSearch(term) {
-      this.clients_liste_select = filterList(this.clients_liste, term, 3)
+      this.clients_liste_select = filterList(this.clients_liste, term, 3);
     },
 
     /*
@@ -227,16 +229,20 @@ export default {
     /**
      * Edit facture
      */
-    openFactureEdition(data) {
-      let tmp = this.affaire_factures.filter(x => x.id === data.id)[0];
+    openFactureEdition(data, type) {
+      let tmp = {};
+      if (type === 'devis') {
+        tmp = this.affaire_devis.filter(x => x.id === data.id)[0];
+      } else if (type === 'facture') {
+        tmp = this.affaire_factures.filter(x => x.id === data.id)[0];
+      } else {
+        this.$root.$emit('ShowError', 'Une erreur est survenue, contacter le développeur.')
+      }
+
       this.selectedFacture = {
         id: tmp.id,
         sap: tmp.sap,
         date: tmp.date !== null? tmp.date: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
-        client: this.clients_liste.filter(x => x.id === data.client_id).pop(),
-        adresse_facturation_: tmp.adresse_facturation_,
-        client_co: data.client_co_id? this.clients_liste.filter(x => x.id === data.client_co_id).pop(): null,
-        client_complement: tmp.client_complement,
         client_premiere_ligne: tmp.client_premiere_ligne,
         montant_mo: numeral(tmp.montant_mo).format('0.00'),
         montant_mat_diff: numeral(tmp.montant_mat_diff).format('0.00'),
@@ -248,6 +254,22 @@ export default {
         remarque: tmp.remarque,
         type_id: tmp.type_id,
       }
+
+      // récupère le client de la facture
+      let client_facture_tmp = this.clients_liste.filter(x => x.id === data.client_id);
+      if (client_facture_tmp && client_facture_tmp.length > 0) {
+        this.selectedFacture.client = client_facture_tmp[0];
+      } else {
+        this.selectedFacture.client = {
+          id: data.client_id,
+          nom: data.adresse_facturation_,
+          type_id: data.client_type_id,
+          toString: () => data.adresse_facturation_,
+          toLowerCase: () => data.adresse_facturation_.toLowerCase()
+        };
+      }
+        this.selectedClient = this.selectedFacture.client;
+        this.selectedFacture.client = null;
 
       if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
         this.selectedFacture.numeros_id = [];
@@ -263,13 +285,17 @@ export default {
      * Créer une nouvelle facture
      */
     newFacture(facture_type) {
+      // set automatically date facture only if affaire etape is in edition facture 
+      let dateFacture = null;
+      if (this.affaire.etape_id === Number(process.env.VUE_APP_ETAPE_FACTURE_ID)) {
+        dateFacture = getCurrentDate();
+      }
+
       this.selectedFacture = {
         id: null,
         sap: null,
-        date: getCurrentDate(),
+        date: dateFacture,
         client: null,
-        client_co: null,
-        client_complement: null,
         client_premiere_ligne: null,
         montant_mo: numeral(0).format('0.00'),
         montant_mat_diff: numeral(0).format('0.00'),
@@ -329,7 +355,6 @@ export default {
       formData.append("id", this.selectedFacture.id);
       formData.append("sap", this.selectedFacture.sap || null);
       formData.append("remarque", this.selectedFacture.remarque || null);
-      formData.append("client_complement", this.selectedFacture.client_complement || null);
       formData.append("client_premiere_ligne", this.selectedFacture.client_premiere_ligne || null);
       
       if (this.selectedFacture.type_id) {
@@ -338,7 +363,7 @@ export default {
       if (this.selectedFacture.date) {
         formData.append("date", moment(this.selectedFacture.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       }
-      if (this.selectedFacture.client.id) {
+      if (this.selectedFacture.client && this.selectedFacture.client.id) {
         formData.append("client_id", this.selectedFacture.client.id);
       }
       
@@ -400,7 +425,7 @@ export default {
               facture_type = "devis";
               showMessage = "Le devis a été enregistré avec succès";
             }
-            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_ID), "Édition de " + facture_type);
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_SECONDAIRE_ID), "Édition de " + facture_type);
 
             this.searchAffaireFactures();
             this.$root.$emit('reloadClientFactureInfosGen');
@@ -454,7 +479,7 @@ export default {
           if (response.data) {
             
             //Log edition facture
-            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_ID), "Suppression");
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_SECONDAIRE_ID), "Suppression");
 
             this.searchAffaireFactures();
           }
@@ -487,18 +512,6 @@ export default {
       window.open(routedata.href, "_blank");
     },
 
-    /**
-     * Affiche le complément client si le client est une entreprise
-     */
-    showClientComplement(client) {
-      if (client && client.id) {
-        let tmp = this.clients_liste_type.filter(x => x.id === client.id)[0];
-        if (tmp.type_id === this.clients_types_config.personne_morale) {
-          return true;
-        }
-      }
-      return false;
-    },
 
     /**
      * Générer lettre propriétaire (Cadastration)
@@ -584,7 +597,16 @@ export default {
         this.selectedFacture.numeros_id.push(x.numero_id);
         this.selectedFacture.numeros.push(x.numero_id);
       });
+    },
+
+    /**
+     * set selected Client object if not the case
+     * workaround to get client object in md-select
+     */
+    setSelectedClientObject(client) {
+      this.selectedFacture.client = {...client};
     }
+
   },
 
   mounted: function() {
@@ -594,6 +616,9 @@ export default {
     });
 
     this.$root.$on("updateNumerosFactureList", () => this.searchAffaireNumeros());
+    this.$root.$on("searchAffaireFactures", () => {
+      setTimeout(() => {  this.searchAffaireFactures() }, 500);
+    });
   }
 };
 </script>

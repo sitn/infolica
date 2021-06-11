@@ -774,6 +774,10 @@ class VNumeros(Base):
     diff_sortie = Column(Date)
     diff_affaire_id = Column(BigInteger)
     diff_req_radiation = Column(Boolean)
+    diff_operateur_id = Column(BigInteger)
+    diff_operateur_nom = Column(Text)
+    diff_operateur_prenom = Column(Text)
+    diff_operateur_initiales = Column(Text)
 
 
 class VNumerosAffaires(Base):
@@ -788,7 +792,10 @@ class VNumerosAffaires(Base):
     affaire_destination_id = Column(BigInteger)
     affaire_nom = Column(Text)
     affaire_type = Column(Text)
-    affaire_date = Column(Date)
+    affaire_date_ouverture = Column(Date)
+    affaire_date_envoi = Column(Date)
+    affaire_date_validation = Column(Date)
+    affaire_date_cloture = Column(Date)
     affaire_information = Column(Text)
     numero_cadastre = Column(Text)
     numero_cadastre_id = Column(BigInteger)
@@ -807,6 +814,7 @@ class VNumerosAffaires(Base):
     numero_base_suffixe = Column(Text)
     numero_base_etat = Column(Text)
     numero_base_etat_id = Column(Text)
+    numero_base_sitn = Column(Text)
     affaire_numero_type = Column(Text)
     numero_sitn = Column(Text)
 
@@ -920,15 +928,22 @@ class VEtapesAffaires(Base):
                       'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger)
-    etape_id = Column(BigInteger)
+    etape_id = Column(BigInteger, primary_key=True)
     etape = Column(Text)
     remarque = Column(Text)
     datetime = Column(DateTime)
     operateur_id = Column(BigInteger)
     operateur_nom = Column(Text)
     operateur_prenom = Column(Text)
+    operateur_initiales = Column(Text)
     etape_ordre = Column(BigInteger)
     etape_priorite = Column(Integer)
+    next_operateur_id = Column(BigInteger)
+    next_operateur_nom = Column(Text)
+    next_operateur_prenom = Column(Text)
+    next_operateur_initiales = Column(Text)
+    next_remarque = Column(Text)
+    next_datetime = Column(DateTime)
 
 
 class VAffairesPreavis(Base):
@@ -1110,8 +1125,8 @@ class VPlan(Base):
     idrepplan = Column(Text)
     base = Column(Text)
 
-class VNextNumeroMOAvilable(Base):
-    __tablename__ = 'v_next_numero_mo_available'
+class VProchainNumeroDisponible(Base):
+    __tablename__ = 'v_prochain_numero_disponible'
     __table_args__ = {'schema': 'infolica',
                       'info': dict(is_view=True)}
     cadastre_id = Column(BigInteger, primary_key=True)

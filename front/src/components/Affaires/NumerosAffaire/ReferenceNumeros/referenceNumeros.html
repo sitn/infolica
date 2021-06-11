@@ -92,7 +92,7 @@
                     <!-- Afficher le tableau des immeubles si la liste est non nulle -->
                     <div v-if="numeros_liste.length>0">
                         <!-- Table des biens-fonds -->
-                        <md-table md-height="40vh" v-model="numeros_liste" md-sort="numero" md-sort-order="desc" @md-selected="onSelect" md-fixed-header>
+                        <md-table v-model="numeros_liste" md-sort="numero" md-sort-order="desc" @md-selected="onSelect" md-fixed-header>
                             <md-table-toolbar>
                                 <h1 class="md-title">Résultat de la recherche</h1>
                             </md-table-toolbar>
@@ -134,7 +134,7 @@
 
             <md-dialog-actions>
                 <md-button class="md-accent" @click="onCancelReferenceNumeros">Annuler</md-button>
-                <md-button class="md-primary" @click="onConfirmReferenceNumeros">Enregistrer</md-button>
+                <md-button class="md-primary" @click="onConfirmReferenceNumeros(selectedNumeros)">Enregistrer</md-button>
             </md-dialog-actions>
 
         </md-dialog-content>

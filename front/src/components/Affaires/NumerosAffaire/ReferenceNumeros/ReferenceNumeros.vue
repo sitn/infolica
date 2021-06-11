@@ -4,15 +4,16 @@
 
 <script>
 import { getCadastres } from "@/services/helper";
-import {handleException} from '@/services/exceptionsHandler'
-
+import { handleException } from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 
 export default {
   name: "ReferenceNumeros",
   props: {
-    affaire_numeros_anciens: Array
+    affaire_numeros_anciens: {type: Array, default: () => []},
+    cadastre_id: {type: Number, default: null},
+    saveNumerosReferences: {type: Function, default: () => {alert("Echec de l'enregistrement")}},
   },
   mixins: [validationMixin],
   components: {},
@@ -70,9 +71,9 @@ export default {
     /**
      * Open référence numéros dialog
      */
-    async openReferenceDialog() {
+    async openReferenceDialog(searchTerms=null) {
       await this.initializeForm().then(() => {
-        this.initNumerosList();
+        this.initNumerosList(searchTerms);
         this.showReferenceDialog = true;
       });
     },
@@ -100,12 +101,18 @@ export default {
     /*
      * Init Numeros list
      */
-    async initNumerosList() {
+    async initNumerosList(searchTerms=null) {
+      if (searchTerms) {
+        if (searchTerms && searchTerms.type_id){
+          this.search.type = this.numeros_types_liste.filter(x => x.id === searchTerms.type_id)[0];
+        }
+      }
+
       this.isModeCreate = false;
       this.isModeCreatePPE = false;
 
       // Récupère les id des numéros référencés dans l'affaire
-      let numerosReferencesId = this.affaire_numeros_anciens.map(x => x.numero_id );
+      let numerosReferencesId = this.affaire_numeros_anciens.map(x => x.numero_id);
 
       var formData = new FormData();
       if (this.search.cadastre) {
@@ -203,68 +210,15 @@ export default {
         });
     },
 
-    /*
-     * Init default cadastre
-     */
-    async initDefaultCadastre() {
-      return new Promise((resolve, reject) => {
-        var affaire_cadastre;
-
-        this.$http
-          .get(
-            process.env.VUE_APP_API_URL +
-              process.env.VUE_APP_AFFAIRES_ENDPOINT +
-              this.$route.params.id,
-            {
-              withCredentials: true,
-              headers: { Accept: "application/json" }
-            }
-          )
-          .then(response => {
-            if (response && response.data) {
-              affaire_cadastre = {
-                id: response.data.cadastre_id,
-                nom: response.data.cadastre,
-                toLowerCase: () => response.data.cadastre.toLowerCase(),
-                toString: () => response.data.cadastre
-              };
-            }
-            resolve(affaire_cadastre);
-          })
-          .catch(() => reject);
-      });
-    },
 
     /**
      * Référencer des numéros
      */
-    onConfirmReferenceNumeros() {
-      var formData = new FormData();
-      formData.append("affaire_id", this.$route.params.id);
-      if (this.selectedNumeros) {
-        formData.append("numeros_liste", JSON.stringify(this.selectedNumeros));
-      }
-
-      this.$http
-        .post(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/json" }
-          }
-        )
-        .then(response => {
-          if (response.data) {
-            this.$root.$emit("searchAffaireNumeros");
-            this.$root.$emit("ShowMessage", "Le(s) numéro(s) sélectionné(s) ont été correctement ajouté(s) à l'affaire");
-            this.$root.$emit("updateNumerosFactureList");
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
+    async onConfirmReferenceNumeros(items) {
+      this.saveNumerosReferences(items)
+      .then(() => {})
+      .catch(err => handleException(err, this));
+      
       this.showReferenceDialog = false;
       this.initializeForm();
     },
@@ -281,8 +235,8 @@ export default {
      * Initialise le formulaire de réservation de numéros
      */
     async initializeForm() {
-      // Attendre que le cadastre par défaut soit récupéré
-      const cadastre = await this.initDefaultCadastre();
+      // Récupérer le cadastre
+      const cadastre = this.cadastre_liste.filter(x => x.id === this.cadastre_id)[0];
 
       return new Promise(resolve => {
         this.search = {
@@ -310,10 +264,7 @@ export default {
      * Récupérer la sélection des biens-fonds à référencer
      */
     onSelect(items) {
-      this.selectedNumeros = items.map(x => ({
-        numero_id: x.id,
-        etat_id: x.etat_id
-      }));
+      this.selectedNumeros = items;
     },
 
     /**

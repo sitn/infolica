@@ -3,7 +3,7 @@
 
 <script>
 import "ol/ol.css";
-import {defaults as defaultInteractions, Snap, Modify} from 'ol/interaction';
+import {defaults as defaultInteractions, Snap, Modify, MouseWheelZoom} from 'ol/interaction';
 import Map from "ol/Map";
 import View from "ol/View";
 //import {defaults as defaultControls, ScaleLine} from 'ol/control';
@@ -18,8 +18,12 @@ import {optionsFromCapabilities} from "ol/source/WMTS";
 import proj4 from "proj4";
 import {register as proj_register} from "ol/proj/proj4";
 import {Projection} from "ol/proj";
-import { Style, Circle, Fill, Stroke, RegularShape } from "ol/style";
+import { Style, Circle, Fill, Stroke, RegularShape, Text } from "ol/style";
 import GeoJSON from 'ol/format/GeoJSON';
+import {platformModifierKeyOnly} from 'ol/events/condition';
+
+import { handleException } from "@/services/exceptionsHandler";
+import { getFeatures } from '@/services/helper'
 
 export default {
   name: "MapHandler",
@@ -55,6 +59,10 @@ export default {
 
       //Init marker style
       this.initMarkerStyle();
+
+      // Init GeoJSON reader
+      this.geojsonFormat = new GeoJSON();
+
       // WMTS
       this.wmtsLayer = new TileLayer();
 
@@ -64,13 +72,50 @@ export default {
         source: this.vectorSource
       });
 
+      // Second vector layer holding all current affaires
+      const featureStyle = new Style({
+        image: new Circle({
+          radius: 6,
+          fill: new Fill({
+            color: 'rgba(255, 0, 255, 0.7)'
+          }),
+          stroke: new Stroke({
+            color: [120, 120, 120],
+            width: 1
+          })
+        }),
+        text: new Text({
+          font: '12px Calibri,sans-serif',
+          overflow: true,
+          offsetY: 14,
+          fill: new Fill({
+            color: '#000',
+          }),
+          stroke: new Stroke({
+            color: '#fff',
+            width: 3,
+          })
+        }),
+      });
+
+      const featureStyleFunction = function (feature) {
+        featureStyle.getText().setText(feature.get("number"));
+        return featureStyle;
+      };
+
+      this.featureSource = new VectorSource();
+      const featureLayer = new VectorLayer({
+        source: this.featureSource,
+        style: featureStyleFunction
+      });
+
       this.initWmtsSource();
 
       // Graphics layer
       this.initGraphicsLayer();
 
       // Map layers
-      const layers = [this.wmtsLayer, this.vectorLayer, this.graphicsLayer];
+      const layers = [this.wmtsLayer, this.vectorLayer, this.graphicsLayer, featureLayer];
 
 
       const _projection = new Projection({
@@ -91,7 +136,8 @@ export default {
 
         const interactions = new defaultInteractions({
           altShiftDragRotate: false,
-          pinchRotate: false
+          pinchRotate: false,
+          mouseWheelZoom: false
         });
     
         this.map = new Map({
@@ -112,6 +158,13 @@ export default {
               me.map.getTarget().style.cursor = hit ? 'pointer' : '';
             }
           }
+        });
+
+        let mouseWheelInt = new MouseWheelZoom();
+        this.map.addInteraction(mouseWheelInt);
+
+        this.map.on('wheel', function(evt) {
+          mouseWheelInt.setActive(platformModifierKeyOnly(evt));
         });
 
         this.modify = new Modify({
@@ -242,13 +295,12 @@ export default {
      */
     addGraphic: function(feature){
       this.graphicsLayerSource.clear();
-      const geojsonFormat = new GeoJSON();
 
       const nGeom = feature.geometry.coordinates.length;
 
       // Geometry is not empty
       if (nGeom !== 0) {
-        this.graphicsLayerSource.addFeatures(geojsonFormat.readFeatures(feature));
+        this.graphicsLayerSource.addFeatures(this.geojsonFormat.readFeatures(feature));
 
       // Geometry is empty
       } else if (feature.bbox.length > 1) {
@@ -288,10 +340,19 @@ export default {
      */
     clearMarkers: function() {
       this.vectorSource.clear();
+    },
+
+    async addFeatures() {
+      getFeatures()
+      .then(response => {
+        const features = this.geojsonFormat.readFeatures(response.data);
+        this.featureSource.addFeatures(features);
+      }).catch(err => handleException(err, this))
     }
   },
 
   mounted: function() {
+    this.addFeatures();
     this.$root.$emit("mapHandlerReady");
   }
 };

@@ -3,31 +3,31 @@
         <md-card-content>          
             <img class="logo" alt="ne.ch" src="@/assets/logo.png">
             <h2>Infolica</h2>
-            <h2 style="color: rgb(255, 51, 0);" v-if="!isProd"><md-icon class="md-accent">warning</md-icon> INSTANCE DE TEST <md-icon class="md-accent">warning</md-icon></h2>
+            <h2 style="color: rgb(255, 51, 0);" v-if="!instance.isProd"><md-icon class="md-accent">warning</md-icon> {{ instance.name }} <md-icon class="md-accent">warning</md-icon></h2>
 
             <nav class="menu" v-if="$route.name !== 'Login'">
               <md-menu md-align-trigger>
-                  <md-button md-menu-trigger v-on:click="goTo('Cockpit')">Cockpit</md-button>
+                  <md-button md-menu-trigger v-on:click="goTo('Cockpit')" v-on:click.middle="openInNewTab('Cockpit')">Cockpit</md-button>
               </md-menu>
 
               <md-menu md-align-trigger>
-                  <md-button md-menu-trigger v-on:click="goTo('Affaires')">Affaires</md-button>
+                  <md-button md-menu-trigger v-on:click="goTo('Affaires')" v-on:click.middle="openInNewTab('Affaires')">Affaires</md-button>
               </md-menu>
             
               <md-menu md-align-trigger>
-                <md-button md-menu-trigger v-on:click="goTo('Numeros')">Numéros</md-button>
+                <md-button md-menu-trigger v-on:click="goTo('Numeros')" v-on:click.middle="openInNewTab('Numeros')">Numéros</md-button>
               </md-menu>
             
               <md-menu md-align-trigger>
-                <md-button md-menu-trigger v-on:click="goTo('Clients')">Clients</md-button>
+                <md-button md-menu-trigger v-on:click="goTo('Clients')" v-on:click.middle="openInNewTab('Clients')">Clients</md-button>
               </md-menu>
 
               <md-menu md-align-trigger v-if="isAdmin">
-                <md-button md-menu-trigger v-on:click="goTo('Operateurs')">Opérateurs</md-button>
+                <md-button md-menu-trigger v-on:click="goTo('Operateurs')" v-on:click.middle="openInNewTab('Operateurs')">Opérateurs</md-button>
               </md-menu>
             
               <md-menu md-align-trigger>
-                <md-button md-menu-trigger v-on:click="goTo('About')">à propos</md-button>
+                <md-button md-menu-trigger v-on:click="goTo('About')" v-on:click.middle="openInNewTab('About')">à propos</md-button>
               </md-menu>              
             </nav>           
 

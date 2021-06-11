@@ -8,12 +8,13 @@ import { checkPermission } from '@/services/helper'
 
 export default {
   name: 'Header',
-
+  props: {
+    instance: {type: Object}
+  },
   data: function () {
       return {
           loggedUserName: String,
           isAdmin: false,
-          isProd: false,
       }
   },
 
@@ -40,7 +41,16 @@ export default {
 
     checkIsAdmin() {
       this.isAdmin = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
+    },
+
+    /**
+     * Open link in new tab
+     */
+    openInNewTab(data) {
+      let routedata = this.$router.resolve({ name: data });
+      window.open(routedata.href, "_blank");
     }
+
   },
 
   mounted: function(){
@@ -58,7 +68,6 @@ export default {
       this.setUserName(session_user);
 
       this.checkIsAdmin();
-      this.isProd = process.env.VUE_APP_STATUS === 'production';
   }
 }
 </script>

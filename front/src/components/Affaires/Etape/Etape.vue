@@ -3,14 +3,18 @@
 
 
 <script>
+import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { getTypesAffaires, stringifyAutocomplete, logAffaireEtape } from '@/services/helper'
+import { getTypesAffaires, stringifyAutocomplete, logAffaireEtape, checkPermission } from '@/services/helper'
 
 const moment = require('moment')
 
 export default {
   name: "Etape",
+  components: {
+    ClotureAffaire
+  },
   props: {
     affaire: Object,
     chefs_equipe_list: Array,
@@ -20,16 +24,19 @@ export default {
   data() {
     return {
       affaireEtapes: [],
+      cloreAffaire: false,
       etapeAffaire: {
         prochaine: null,
         remarque: null,
         showDialog: false,
       },
+      isAdmin: false,
+      numerosReserves: [],
+      suiviAffaireTheorique: [],
       updateAffaireDate: {
         text: "",
         value: false,
       },
-      suiviAffaireTheorique: [],
     };
   },
 
@@ -90,6 +97,15 @@ export default {
           text: "Mettre à jour la date de validation de l'affaire",
           value: true
         };
+
+        // Si aucun numéro n'est réservé dans l'affaire, clôre l'affaire
+        if ((this.etapeAffaire.prochaine && this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.fin_processus) &&
+            (![this.typesAffaires_conf.mutation, this.typesAffaires_conf.modification, this.typesAffaires_conf.remaniement_parcellaire,
+               this.typesAffaires_conf.modification_visa, this.typesAffaires_conf.modification_mutation].includes(this.affaire.type_id)) &&
+            (this.numerosReserves.length === 0)) {
+          this.updateAffaireDate.text = "Mettre à jour les dates de validation et de clôture de l'affaire";
+          this.cloreAffaire = true;
+        }
       }
 
       this.etapeAffaire.showDialog = true;
@@ -103,8 +119,16 @@ export default {
       if (this.updateAffaireDate.value) {
         if (this.affaire.etape_id === this.etapes_affaire_conf.envoi || this.affaire.etape_id === this.etapes_affaire_conf.envoi_pcop) {
           this.updateAffaire('date_envoi');
+        
         } else if (this.affaire.etape_id === this.etapes_affaire_conf.validation) {
           this.updateAffaire('date_validation');
+          
+          if (this.cloreAffaire) {
+            //Clore affaire
+            this.$refs.clotureAffaire.onConfirmCloture(false);
+            this.cloreAffaire = false;
+          
+          }
         }
       }
       
@@ -147,12 +171,24 @@ export default {
         this.$emit('setAffaire');
       })
       .catch(err => handleException(err, this));
+    },
+
+    /**
+     * Set numéros réservés
+     */
+    setNumerosReserves(data) {
+      this.numerosReserves = data;
     }
+
 
   },
 
   mounted: function() {
     this.searchAffaireEtapes();
+    this.$root.$on( "setEtapeNouveauxNumeros", (data) => this.setNumerosReserves(data) );
+
+    // operateur is admin?
+    this.isAdmin = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
   }
 };
 </script>

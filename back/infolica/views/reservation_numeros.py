@@ -75,13 +75,13 @@ def reservation_numeros_new_view(request):
             # Update 
             suffixe = Utils.get_unite_from_index(unite_start_idx + i)
         
-        params = Utils._params(cadastre_id=cadastre_id, type_id=type_id, etat_id=etat_id, numero=ln+i+1, suffixe=suffixe)
+        params = Utils._params(cadastre_id=cadastre_id, type_id=type_id, etat_id=etat_id, numero=ln+i+1, suffixe=suffixe, no_access="_".join([str(cadastre_id), str(ln+i+1)]))
         numero_id = numeros_new_view(request, params)
         # enregistrer le lien affaire-numéro
-        params = Utils._params(affaire_id=affaire_id, numero_id=numero_id, actif=True, type_id=affaire_numero_type_nouveau_id)
+        params = Utils._params(affaire_id=affaire_id, numero_id=numero_id, actif=True, type_id=affaire_numero_type_nouveau_id, no_access="_".join([str(cadastre_id), str(ln+i+1)]))
         affaire_numero_new_view(request, params)
         # enregistrer l'historique de l'état
-        params = Utils._params(numero_id=numero_id, numero_etat_id=etat_id)
+        params = Utils._params(numero_id=numero_id, numero_etat_id=etat_id, no_access="_".join([str(cadastre_id), str(ln+i+1)]))
         numeros_etat_histo_new_view(request, params)
         # enregistrer le numéro sur un bien-fonds de base si nécessaire
         if numero_base_id:

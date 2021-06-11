@@ -50,14 +50,16 @@ export default {
     return {
       affaire: {},
       affaireLoaded: false,
+      chefs_equipe_list: [],
       duplicationAffaireForm: null,
       mapLoaded: false,
-      chefs_equipe_list: [],
+      numerosReserves: [],
       parentAffaireReadOnly: false,
       permission: {
         abandonAffaireEnabled: false,
         cloreAffaireEnabled: false,
         editAffaireAllowed: false,
+        editClientAllowed: false,
         editControleGeometreAllowed: false,
         editFactureAllowed: false,
         editNumerosReferencesAllowed: false,
@@ -66,13 +68,15 @@ export default {
         editSuiviMandatAllowed: false,
       },
       showConfirmAbandonAffaireDialog: false,
+      showConfirmAbandonErrorAffaireDialog: false,
       typesAffaires: [],
       typesAffaires_conf: {
         mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION),
         cadastration: Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION),
         ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_PPE),
         pcop: Number(process.env.VUE_APP_TYPE_AFFAIRE_PCOP),
-        maj_periodique: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAJ_PERIODIQUE),
+        mpd: Number(process.env.VUE_APP_TYPE_AFFAIRE_MPD),
+        art35: Number(process.env.VUE_APP_TYPE_AFFAIRE_ART35),
         mat_diff: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAT_DIFF),
         modification: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION),
         revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
@@ -191,6 +195,7 @@ export default {
           _this.permission.affaireCloture = checkPermission(process.env.VUE_APP_AFFAIRE_CLOTURE);
           _this.permission.affaireReactivation = checkPermission(process.env.VUE_APP_AFFAIRE_REACTIVATION);
           _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.editClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION) && !_this.parentAffaireReadOnly;
 
 
           if (_this.affaire.type_id === _this.typesAffaires_conf.ppe) {
@@ -203,6 +208,8 @@ export default {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION) && !_this.parentAffaireReadOnly;
           } else if (_this.affaire.type_id === _this.typesAffaires_conf.pcop) {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_PCOP_EDITION) && !_this.parentAffaireReadOnly;
+          } else if (_this.affaire.type_id === _this.typesAffaires_conf.mpd) {
+            _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_MPD_EDITION) && !_this.parentAffaireReadOnly;
           } else if (_this.affaire.type_id === _this.typesAffaires_conf.autre) {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION) && !_this.parentAffaireReadOnly;
           }
@@ -212,32 +219,38 @@ export default {
           
           // Secrétariat peut modifier des factures à tout moment, éditer les informations des affaires et référencer des numéros à l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)) {
-            _this.permission.editFactureAllowed = true;
-            _this.permission.editNumerosReferencesAllowed = true;
             _this.permission.editAffaireAllowed = true;
+            _this.permission.editFactureAllowed = true;
+            _this.permission.editClientAllowed = true;
+            _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.affaireCloture = _this.affaire.type_id === _this.typesAffaires_conf.pcop;
           }
 
           // Opérateur MO peut modifier les informations générales de l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_MO_ROLE_ID)) {
             _this.permission.editFactureAllowed = _this.permission.editFactureAllowed && _this.affaire.type_id === _this.typesAffaires_conf.cadastration;
-            _this.permission.editNumerosReferencesAllowed = true;
+            _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
           
-          // Opérateur MO peut modifier les informations générales de l'affaire
+          // Opérateur ppe peut modifier les informations générales de l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_PPE_ROLE_ID)) {
-            _this.permission.editNumerosReferencesAllowed = true;
+            _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
           
           // Opérateur responsable peut référencer des numéros
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)) {
-            _this.permission.editNumerosReferencesAllowed = true;
+            _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
 
-
+          // Si l'opérateur de l'affaire est l'utilisateur connecté, il doit pouvoir réserver/référencer et modifier le contenu de l'affaire
+          if(_this.affaire.technicien_id === JSON.parse(localStorage.getItem("infolica_user")).id){
+            _this.permission.editNumerosAllowed = !_this.parentAffaireReadOnly;
+            _this.permission.editNumerosMOAllowed = !_this.parentAffaireReadOnly;
+            _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
+          }
 
           // If admin, allow edit
           if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {
@@ -317,7 +330,7 @@ export default {
     /**
      * Abandon affaire
      */
-    async callAbandonAffaire() {
+    async callAbandonAffaireAndNumeros() {
       let formData = new FormData();
       formData.append("id_affaire", this.affaire.id);
       formData.append("abandon", true);
@@ -411,6 +424,8 @@ export default {
         route = process.env.VUE_APP_SITN_ENVIRONNEMENT_URL;
       } else if (theme === "amenagement_territoire") {
           route = process.env.VUE_APP_SITN_AMENAGEMENT_TERRITOIRE_URL;
+      } else if (theme === "cadastre") {
+          route = process.env.VUE_APP_SITN_CADASTRE_URL;
       } else {
         return null;
       }
@@ -524,14 +539,49 @@ export default {
     
     },
 
+    /**
+     * open Abandon menu
+     */
+    openAbandonMenu() {
+      this.numerosReserves = this.$refs.numeros.affaire_numeros_nouveaux;
+
+      this.showConfirmAbandonErrorAffaireDialog = [
+        this.typesAffaires_conf.modification_visa,
+        this.typesAffaires_conf.modification_duplicata,
+        this.typesAffaires_conf.modification_mutation,
+        this.typesAffaires_conf.modification_ppe
+      ].includes(this.affaire.type_id);
+
+      this.showConfirmAbandonAffaireDialog = true;
+    },
+
+    /**
+     * abandon affaire and reactivate parent-affaire
+     */
+    async callAbandonAffaireAndReactivateParentAffaire() {
+      let formData = new FormData();
+      formData.append('affaire_id', this.affaire.id);
+      formData.append('operateur_id', JSON.parse(localStorage.getItem("infolica_user")).id);
+
+      this.$http.post(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_ABANDON_AFFAIRE_REOUVERTURE_AFFAIRE_PARENT_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(() => this.$router.go(0))
+      .catch(err => handleException(err));
+    }
+
   },
 
   mounted: function() {
     this.setAffaire();
     this.getChefsEquipe();
-    this.$root.$on('mapHandlerReady', () =>{
-      this.showMap();
-    });
+    this.$root.$on('mapHandlerReady', () => this.showMap() );
+    this.$root.$on('setAffaire', () => this.setAffaire() );
+
     adjustColumnWidths();
   }
 };

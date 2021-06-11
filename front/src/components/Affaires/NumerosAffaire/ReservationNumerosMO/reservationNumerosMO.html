@@ -1,20 +1,39 @@
 <div class="reservationNumerosMO">
     <md-card>
         <md-card-header class="justifyTitleBtn">
-                <div class="md-title">Numéros de la MO</div>
-                <md-button class="md-primary" v-if="permission.editNumerosMOAllowed && permission.editAffaireAllowed" @click="showReservationNumerosMODialog = true">Réserver</md-button>
+            <div class="md-title">Numéros de la MO</div>
+            <md-button class="md-primary" v-if="permission.editNumerosMOAllowed && permission.editAffaireAllowed" @click="openReservationDialog()">Réserver</md-button>
         </md-card-header>
-
+        
         <md-card-content>
+            <div style="display: flex;">
+                <md-datepicker class="formFields" v-model="filterTableParams.dateRange.startDate" @md-closed="filterTable()" @md-clear="filterTable()" :md-disabled-dates="disabledStartDates" md-immediately>
+                    <label>Depuis</label>
+                </md-datepicker>
+
+                <md-datepicker class="formFields" v-model="filterTableParams.dateRange.endDate" @md-closed="filterTable()" @md-clear="filterTable()" :md-disabled-dates="disabledEndDates" md-immediately>
+                    <label>Jusqu'au</label>
+                </md-datepicker>
+
+                <md-field class="formFields">
+                    <md-select v-model="filterTableParams.selectedCadastre_id" md-dense @md-selected="filterTable()">
+                        <md-option value="-1">Tous les cadastres</md-option>
+                        <md-option v-for="item in cadastreListe" :value="item.id">{{ item.nom }}</md-option>
+                    </md-select>
+                </md-field>
+            </div>
+            <md-progress-bar md-mode="indeterminate" v-if="filterTableParams.showProgressBar"></md-progress-bar>
+            <span style="color: red; float: right;"><em>{{ warningMessage }}</em></span>
             <div v-if="reservationNumerosMO[0]">
-                <md-table md-height="40vh" v-model="reservationNumerosMO" md-sort="cadastre_id" md-sort-order="desc" md-dense md-fixed-header>
+                <md-table v-model="reservationNumerosMO" md-sort="date_sort" md-sort-order="desc" md-dense md-fixed-header>
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
-                        <md-table-cell md-label="Type" md-sort-by="type">{{ item.type_numero }}</md-table-cell>
-                        <md-table-cell md-label="Plan" md-sort-by="plan_id" md-numeric>{{ item.plan_no }}</md-table-cell>
+                        <md-table-cell md-label="Type" md-sort-by="type_numero">{{ item.type_numero }}</md-table-cell>
+                        <md-table-cell md-label="Plan" md-sort-by="plan_no" md-numeric>{{ item.plan_no }}</md-table-cell>
                         <md-table-cell md-label="De" md-sort-by="numero_de" md-numeric>{{ item.numero_de }}</md-table-cell>
                         <md-table-cell md-label="À" md-sort-by="numero_a" md-numeric>{{ item.numero_a }}</md-table-cell>
                         <md-table-cell md-label="Nombre" md-sort-by="nombre" md-numeric>{{ item.nombre }}</md-table-cell>
+                        <md-table-cell md-label="Date" md-sort-by="date_sort" md-numeric>{{ item.date }}</md-table-cell>
                         <md-table-cell md-label="Remarque" md-sort-by="remarque">{{ item.remarque }}</md-table-cell>
                     </md-table-row>
                 </md-table>
@@ -34,18 +53,14 @@
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-size-100">
                             <!-- Cadastre -->
-                            <md-autocomplete v-model="form.cadastre"
-                                             :md-options="cadastreListe"
-                                             @md-changed="changeCadastre"
-                                             md-dense
-                                             :class="getValidationClass('cadastre')">
+                            <md-autocomplete v-model="form.cadastre" :md-options="cadastreListe" @md-changed="changeCadastre" md-dense :class="getValidationClass('cadastre')">
                                 <label>Cadastre</label>
                                 <span class="md-error" v-if="!$v.form.cadastre.required">Sélectionner le cadastre</span>
                             </md-autocomplete>
                         </div>
-        
+
                         <md-divider></md-divider>
-        
+
                         <div class="md-layout-item md-size-100">
                             <!-- Points PFP3 -->
                             <md-field :class="getValidationClass('pfp3')">
@@ -77,10 +92,10 @@
                             <!-- Points de détail -->
                             <md-field :class="getValidationClass('plan')">
                                 <label>Plan</label>
-                                <md-select v-model="form.plan" style="text-align: right;" md-dense>
-                                    <md-option v-for="item in plansMOListe_cadastre" :value="item">{{ item.nom }}</md-option>
+                                <md-select v-model="form.plan_id" style="text-align: right;" md-dense>
+                                    <md-option v-for="item in plansMOListe_cadastre" :value="item.id">{{ item.nom }}</md-option>
                                 </md-select>
-                                <span class="md-error" v-if="!$v.form.plan.required">Sélectionner le plan</span>
+                                <span class="md-error" v-if="!$v.form.plan_id.required">Sélectionner le plan</span>
                             </md-field>
                         </div>
                         <div class="md-layout-item md-size-50">
@@ -105,8 +120,10 @@
                         <md-textarea v-model="form.remarque"></md-textarea>
                     </md-field>
 
-                    <p v-if="reservationNumerosMODialog_errorMsg" style="background-color: yellow"><md-icon class="md-accent" style="vertical-align: bottom;">warning</md-icon> {{ reservationNumerosMODialog_errorMsg }}</p>
-                    
+                    <p v-if="reservationNumerosMODialog_errorMsg" style="background-color: yellow">
+                        <md-icon class="md-accent" style="vertical-align: bottom;">warning</md-icon> {{ reservationNumerosMODialog_errorMsg }}
+                    </p>
+
                     <!-- Boutons annuler / enregistrer -->
                     <div style="  position: absolute; bottom: 8px; right: 16px;">
                         <md-button class="md-accent" @click="resetReservation">Annuler</md-button>
@@ -119,14 +136,8 @@
 
 
     <!-- Confirmation réservation grand nombre de numéros -->
-    <md-dialog-confirm :md-active.sync="alertReservation.show"
-        md-title="Confirmation de réservation"
-        :md-content="alertReservation.text"
-        md-confirm-text="Confirmer"
-        md-cancel-text="Annuler"
-        @md-cancel="alertReservation.show = false;"
-        @md-confirm="alertReservation.show = false; confirmSaveReservation()"
-    />
+    <md-dialog-confirm :md-active.sync="alertReservation.show" md-title="Confirmation de réservation" :md-content="alertReservation.text" md-confirm-text="Confirmer" md-cancel-text="Annuler" @md-cancel="alertReservation.show = false;"
+        @md-confirm="alertReservation.show = false; confirmSaveReservation()" />
 
 
 </div>

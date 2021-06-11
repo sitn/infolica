@@ -14,6 +14,8 @@ import { getCurrentDate,
          checkPermission,
          getCurrentUserRoleId } from "@/services/helper";
 import Autocomplete from "vuejs-auto-complete";
+import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
+
 const moment = require("moment");
 
 export default {
@@ -21,8 +23,9 @@ export default {
   mixins: [validationMixin],
   props: {},
   components: {
+    Autocomplete,
     MapHandler,
-    Autocomplete
+    ReferenceNumeros
   },
   data: () => {
     return {
@@ -30,7 +33,6 @@ export default {
       affaire_numeros_nouveaux: [],
       cadastres_list: [],
       client_facture: null,
-      client_facture_complement: null,
       client_facture_premiere_ligne: null,
       clients_list: [],
       clients_liste_type: [],
@@ -48,7 +50,12 @@ export default {
         affaire_base: null,
         affaire_base_id: null,
         affaire_modif_type: null,
-        cadastre: null,
+        cadastre: {
+            id: null,
+            nom: "",
+            toString: () => "",
+            toLowerCase: () => ""
+          },
         client_commande: null,
         client_commande_complement: null,
         client_envoi: null,
@@ -60,22 +67,27 @@ export default {
         localisation_E: null,
         localisation_N: null,
         nom: null,
+        plan: null,
         information: null,
         technicien_id: JSON.parse(localStorage.getItem("infolica_user")).id,
         type: null,
         vref: null
       },
       lastRecord: null,
+      numerosReferences: [],
       operateurs_list: [],
       permission: {
-        editFactureAllowed: false
+        editClientAllowed: false
       },
+      plansMOListe: [],
+      plansMOListe_cadastre: [],
       search_clients_list: [],
       selectedAnciensNumeros: [],
       selectedModificationAffaire: null,
       selectedNouveauxNumeros: [],
       sending: false,
       showClientsForm: true,
+      showReferenceNumeros: false,
       sitn_search_categories: null,
       types_affaires_list_bk: [],
       types_affaires_list: [],
@@ -88,7 +100,9 @@ export default {
         cadastration: Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION),
         ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_PPE),
         pcop: Number(process.env.VUE_APP_TYPE_AFFAIRE_PCOP),
-        maj_periodique: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAJ_PERIODIQUE),
+        mpd: Number(process.env.VUE_APP_TYPE_AFFAIRE_MPD),
+        art35: Number(process.env.VUE_APP_TYPE_AFFAIRE_ART35),
+        mat_diff: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAT_DIFF),
         modification: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION),
         revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
         remaniement_parcellaire: Number(process.env.VUE_APP_TYPE_AFFAIRE_REMANIEMENT_PARCELLAIRE),
@@ -125,7 +139,7 @@ export default {
         client_envoi: {required}
       };
 
-      if (this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop) {
+      if (this.form.type && this.form.type.id && this.typesAffaires_conf.pcop !== this.form.type.id) {
         client_facture = {
           id: {required}
         };
@@ -150,6 +164,30 @@ export default {
   },
 
   methods: {
+    /**
+     * Init mask (what is shown or not)
+     */
+    initMask() {
+      // empty numerosReferences array
+      this.numerosReferences = [];
+
+      if (this.form.type && this.form.type.id) {
+        this.showReferenceNumeros = [
+          this.typesAffaires_conf.cadastration,
+          this.typesAffaires_conf.ppe,
+          this.typesAffaires_conf.pcop,
+          this.typesAffaires_conf.mat_diff,
+          this.typesAffaires_conf.revision_abornement,
+          this.typesAffaires_conf.autre,
+          this.typesAffaires_conf.servitude,
+          this.typesAffaires_conf.mpd,
+          this.typesAffaires_conf.modification_abandon_partiel
+        ].includes(this.form.type.id)
+      } else {
+        this.showReferenceNumeros = false;
+      }
+    },
+
     /**
      * Get validation class par fieldname pour objet form
      */
@@ -254,6 +292,9 @@ export default {
               }
               if (checkPermission(process.env.VUE_APP_AFFAIRE_PCOP_EDITION)) {
                 type_filter.push(this.typesAffaires_conf.pcop);
+              }
+              if (checkPermission(process.env.VUE_APP_AFFAIRE_MPD_EDITION)) {
+                type_filter.push(this.typesAffaires_conf.mpd);
               }
               if (checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION)) {
                 type_filter.push(this.typesAffaires_conf.autre);
@@ -388,6 +429,12 @@ export default {
                 promises.push(this.abandonPartiel(id_new_affaire));
               }
             }
+
+            // Si des numéros sont référencés à l'affaire
+            if (this.numerosReferences.length>0) {
+              promises.push(this.saveReferenceNumeros(id_new_affaire));
+            }
+
             Promise.all(promises)
             .then(() => {
               this.handleSaveDataSuccess(_response);
@@ -433,7 +480,7 @@ export default {
     },
 
     /**
-     * Handle save data success
+     * Handle save data success for affaire
      */
     initPostData() {
       let formData = new FormData();
@@ -495,14 +542,14 @@ export default {
           moment(this.form.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)
         );
       }
+      if (this.form.plan && this.form.type && this.form.type.id && this.form.type.id === this.typesAffaires_conf.mpd) {
+        formData.append("no_access", "MPD_" + this.form.cadastre.id + "_" + this.form.plan + "_" + new Date().getFullYear());
+      }
 
       // FACTURE
       if (this.client_facture && this.client_facture.id &&
           this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop){
         formData.append("facture_client_id", this.client_facture.id);
-        if (this.client_facture_complement !== null) {
-          formData.append("facture_client_complement", this.client_facture_complement);
-        }
         if (this.client_facture_premiere_ligne !== null) {
           formData.append("facture_client_premiere_ligne", this.client_facture_premiere_ligne);
         }
@@ -773,15 +820,16 @@ export default {
      */
     searchSITNEndpoint(input) {
       let cadastre_ = null;
-      if (this.form.cadastre.id !== null) {
-        cadastre_ = this.cadastres_list.filter(
-          x => x.id === this.form.cadastre.id
-        )[0].nom;
+      if (this.form.cadastre && this.form.cadastre.id !== null) {
+        cadastre_ = this.form.cadastre.nom;
+        
+        // only keep first part of cadastre name (problems with '-' and '/')
+        cadastre_ = cadastre_.split(/[-/ ]/)[0];
       }
 
       return (
         process.env.VUE_APP_SITN_SEARCH_SERVICE_URL +
-        [input, cadastre_, "egrid"].filter(Boolean).join(" ")
+        [cadastre_, input, "egrid"].filter(Boolean).join(" ")
       );
     },
 
@@ -819,7 +867,6 @@ export default {
         if ((this.client_facture === null || this.client_facture === "") && 
              this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop) {
           this.client_facture = client;
-          this.client_moral_personnes.facture = this.client_moral_personnes.commande;
         }
       });
     },
@@ -842,20 +889,35 @@ export default {
         this.type_modification_bool = false;
       }
       // this.showClientsForm = this.form.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION)? false: true;
-      if (this.form.type.id === Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION)) {
+      if (this.form.type.id === this.typesAffaires_conf.cadastration) {
         this.showClientsForm = false;
         let defaultClient = this.clients_list.filter(x => x.id === Number(process.env.VUE_APP_CLIENT_CADASTRATION_ID))[0];
         this.form.client_commande = defaultClient;
         this.form.client_envoi = defaultClient;
         this.form.client_envoi_complement = null;
         this.client_facture = null;
-        this.client_facture_complement = null;
         this.client_facture_premiere_ligne = null;
         this.form.nom = "Cadastration sur "
+      } else if (this.form.type.id === this.typesAffaires_conf.mpd) {
+        let defaultClient = this.clients_list.filter(x => x.id === Number(process.env.VUE_APP_CLIENT_CADASTRATION_ID))[0];
+        this.form.client_commande = defaultClient;
+        this.form.client_envoi = defaultClient;
+        this.form.client_envoi_complement = null;
+        this.client_facture_premiere_ligne = null;
+        this.client_facture = defaultClient;
+        this.client_facture_premiere_ligne = null;
+        this.form.nom = "Mise à jour périodique"
       } else {
         this.showClientsForm = true;
         this.form.nom = "";
+        this.form.client_commande = null;
+        this.form.client_envoi = null;
+        this.form.client_envoi_complement = null;
+        this.client_facture = null;
+        this.client_facture_premiere_ligne = null;
       }
+
+      this.initMask();
     },
 
     /**
@@ -1087,6 +1149,84 @@ export default {
       }
     },
 
+    /**
+     * Get plans MO
+     */
+    async getPlansMO() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + 
+        process.env.VUE_APP_PLANS_MO_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.plansMOListe = response.data;
+        }
+      })
+    },
+
+    /**
+     * set plans_MO of selected cadastre
+     */
+    setPlanMoCadastre(){
+      if (this.form.cadastre && this.form.cadastre.id) {
+        this.plansMOListe_cadastre = stringifyAutocomplete(this.plansMOListe.filter(x => x.cadastre_id === this.form.cadastre.id), "planno", "idobj");
+      }
+    },
+
+    /**
+     * Ouvrir la boîte de dialogue de référence de numéros
+     */
+    callOpenReferenceDialog() {
+      this.$refs.formReference.openReferenceDialog();
+    },
+
+    /**
+     * Numéros référencés (pour les affaires qui le nécessitent)
+     */
+    referenceNumeros(items) {
+      this.numerosReferences = items;
+      return new Promise((resolve, reject) => {
+        resolve(null);
+        reject(null);
+      })
+    },
+
+    /**
+     * Remove entree from referenced numbers
+     */
+    deleteNumeroReference(item){
+      this.numerosReferences = this.numerosReferences.filter(x => x !== item);
+    },
+
+    /**
+     * Enregistrer les numéros référencés à l'affaire 
+     */
+    async saveReferenceNumeros(affaire_id) {
+      let numeros_ = this.numerosReferences.map(x => ({
+        numero_id: x.id,
+        etat_id: x.etat_id
+      }));
+
+      let formData = new FormData();
+      formData.append("affaire_id", affaire_id);
+      formData.append("numeros_liste", JSON.stringify(numeros_));
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          )
+          .then(response => resolve(response))
+          .catch(err => reject(err));
+      });
+    },
+
   },
 
   mounted: function() {
@@ -1102,9 +1242,11 @@ export default {
     this.initOperateursList();
     this.initCadastresList();
     this.initTypesModficiationAffaire();
+    this.getPlansMO();
+    this.initMask();
 
     //permissions
-    this.permission.editFactureAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION);
+    this.permission.editClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION);
   }
 };
 </script>

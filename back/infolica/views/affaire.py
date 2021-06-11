@@ -62,13 +62,12 @@ def affaire_cockpit_view(request):
         raise exc.HTTPForbidden()
 
     type_id = request.params['type_id'] if 'type_id' in request.params else None
-    etape_id = request.params['etape_id'] if 'etape_id' in request.params else None
+    etape_id = request.params['etape_id'].split(',') if 'etape_id' in request.params else None
+    etape_finProcessus_id = request.registry.settings["affaire_etape_fin_processus_id"]
 
     affaire_show_timedelta = int(request.registry.settings['affaire_show_timedelta'])
-    since = datetime.date(datetime.now()) - timedelta(days=affaire_show_timedelta)
+    since = datetime.now() - timedelta(days=affaire_show_timedelta)
     
-    etape_mat_diff_id = int(request.registry.settings['affaire_etape_mat_diff_id'])
-
     query = request.dbsession.query(VAffaire)
     
     if type_id is not None:
@@ -77,16 +76,13 @@ def affaire_cockpit_view(request):
         query = query.filter(VAffaire.etape_id != None)
     
     if etape_id is not None:
-        query = query.filter(VAffaire.etape_id == etape_id)
+        query = query.filter(VAffaire.etape_id.in_(etape_id))
     else:
         query = query.filter(or_(
-            VAffaire.etape_id == etape_mat_diff_id,
+            VAffaire.etape_id != etape_finProcessus_id,
             and_(
-                or_(
-                    VAffaire.date_envoi >= since,
-                    VAffaire.date_envoi == None
-                ),
-                VAffaire.date_cloture == None
+                VAffaire.etape_id == etape_finProcessus_id,
+                VAffaire.etape_datetime >= since
             )
         ))
     
@@ -99,6 +95,7 @@ def affaire_cockpit_view(request):
             'affaire_type': affaire.type_affaire,
             'affaire_type_id': affaire.type_id,
             'no_access': affaire.no_access,
+            'etape': affaire.etape,
             'etape_id': affaire.etape_id,
             'etape_ordre': affaire.etape_ordre,
             'etape_datetime': datetime.strftime(affaire.etape_datetime, '%Y-%m-%d %H:%M:%S'),
@@ -108,7 +105,7 @@ def affaire_cockpit_view(request):
             'description': affaire.nom
         })
     
-    return json.dumps(affaires)
+    return affaires
 
 
 @view_config(route_name='recherche_affaires', request_method='POST', renderer='json')
@@ -218,6 +215,9 @@ def affaires_new_view(request):
     # Affaire pcop
     elif affaire_type == request.registry.settings['affaire_type_part_copropriete_id']:
         permission = request.registry.settings['affaire_pcop_edition']
+    # Affaire mpd
+    elif affaire_type == request.registry.settings['affaire_type_mpd_id']:
+        permission = request.registry.settings['affaire_mpd_edition']
     # Affaire autre
     elif affaire_type == request.registry.settings['affaire_type_autre_id']:
         permission = request.registry.settings['affaire_autre_edition']
@@ -234,11 +234,15 @@ def affaires_new_view(request):
     request.dbsession.flush()
 
     # Créer le chemin du dossier de l'affaire
-    affaire_chemin_full_path = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
-    model.chemin = str(model.id) # chemin relatif
+    if model.type_id != request.registry.settings['affaire_type_mpd_id']:
+        affaire_chemin_full_path = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
+        model.chemin = str(model.id) # chemin relatif
+    else:
+        affaire_chemin_full_path = None
 
     # Copier le dossier __template pour une nouvelle affaire
-    Utils.create_affaire_folder(request, affaire_chemin_full_path)
+    if not affaire_chemin_full_path is None:
+        Utils.create_affaire_folder(request, affaire_chemin_full_path)
 
 
     # Créer les formulaires de contrôle
@@ -293,8 +297,11 @@ def affaires_update_view(request):
     """
     Update affaire
     """
+
+    params = dict(request.params)
+
     # id_affaire
-    id_affaire = request.params['id_affaire'] if 'id_affaire' in request.params else None
+    id_affaire = params['id_affaire'] if 'id_affaire' in params else None
 
     # Get the affaire
     record = request.dbsession.query(Affaire).filter(
@@ -305,29 +312,53 @@ def affaires_update_view(request):
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(Affaire.__tablename__, id_affaire))
 
     # Get role depending on affaire type
-    affaire_type = request.params['type_id'] if 'type_id' in request.params else record.type_id
+    affaire_type = params['type_id'] if 'type_id' in params else record.type_id
 
     # Permission (fonction) par défaut
     permission = request.registry.settings['affaire_edition']
-
-    # Affaire de cadastration
-    if affaire_type == request.registry.settings['affaire_type_cadastration_id']:
-        permission = request.registry.settings['affaire_cadastration_edition']
-    # Affaire de PPE
-    elif affaire_type == request.registry.settings['affaire_type_ppe_id']:
-        permission = request.registry.settings['affaire_ppe_edition']
-    # Affaire de révision d'abornement
-    elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
-        permission = request.registry.settings['affaire_revision_abornement_edition']
-    # Affaire de rétablissement de PFP3
-    elif affaire_type == request.registry.settings['affaire_type_retablissement_pfp3_id']:
-        permission = request.registry.settings['affaire_retablissement_pfp3_edition']
-
     # Check authorization
     if not Utils.has_permission(request, permission):
-        raise exc.HTTPForbidden()
+        # Affaire de cadastration
+        if affaire_type == request.registry.settings['affaire_type_cadastration_id']:
+            permission = request.registry.settings['affaire_cadastration_edition']
+        # Affaire de PPE
+        elif affaire_type == request.registry.settings['affaire_type_ppe_id']:
+            permission = request.registry.settings['affaire_ppe_edition']
+        # Affaire de révision d'abornement
+        elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
+            permission = request.registry.settings['affaire_revision_abornement_edition']
+        # Affaire de rétablissement de PFP3
+        elif affaire_type == request.registry.settings['affaire_type_retablissement_pfp3_id']:
+            permission = request.registry.settings['affaire_retablissement_pfp3_edition']
+        # Affaire pcop
+        elif affaire_type == request.registry.settings['affaire_type_part_copropriete_id']:
+            permission = request.registry.settings['affaire_pcop_edition']
+        # Affaire mpd
+        elif affaire_type == request.registry.settings['affaire_type_mpd_id']:
+            permission = request.registry.settings['affaire_mpd_edition']
+        # Affaire autre
+        elif affaire_type == request.registry.settings['affaire_type_autre_id']:
+            permission = request.registry.settings['affaire_autre_edition']
+        else:
+            raise exc.HTTPForbidden()
 
-    record = Utils.set_model_record(record, request.params)
+    # check if path exists or not
+    if "chemin" in params:
+        affaires_directory_baseName = request.registry.settings["affaires_directory_full_path"]
+        chemin_affaire = params["chemin"]
+        
+        if not chemin_affaire.lower().startswith(affaires_directory_baseName.lower()):
+            raise CustomError(CustomError.DIRECTORY_WRONG_BASE.format(chemin_affaire, affaires_directory_baseName))
+        else:
+            relpath =  os.path.relpath(chemin_affaire, affaires_directory_baseName)
+            
+            if os.path.exists(os.path.join(request.registry.settings['affaires_directory'], relpath)):
+                params["chemin"] = relpath
+            else:
+                raise CustomError(CustomError.DIRECTORY_NOT_FOUND.format(chemin_affaire))
+
+
+    record = Utils.set_model_record(record, params)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
 
@@ -462,3 +493,45 @@ def modification_affaire_by_affaire_fille_view(request):
     ).all()
 
     return Utils.serialize_many(records)
+
+
+@view_config(route_name="affaire_spatial", request_method="GET", renderer="geojson")
+def affaire_spatial(request):
+    """
+    Get modification affaire by affaire_fille
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    results = request.dbsession.query(VAffaire).filter(
+        VAffaire.date_cloture == None
+    ).filter(
+        VAffaire.date_envoi == None
+    ).filter(
+        VAffaire.abandon == False
+    ).filter(
+        VAffaire.localisation_e != 0
+    ).filter(
+        VAffaire.localisation_n != 0
+    ).all()
+
+    affaires = []
+    counter = 0
+
+    for result in results:
+
+        affaires.append({
+            'type': 'Feature',
+            'id': counter,
+            'geometry': {
+                'type': 'Point',
+                'coordinates': [result.localisation_e, result.localisation_n]
+            },
+            'properties': {
+                'number': str(result.id)
+            }
+        })
+        counter += 1
+
+    return affaires

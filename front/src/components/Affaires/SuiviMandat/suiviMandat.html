@@ -8,7 +8,7 @@
                         <md-icon>keyboard_arrow_down</md-icon>
                     </md-button>
                 </md-card-expand-trigger>
-                Suivi du mandat (Validation du responsable des données cadastrales)
+                Contrôle du·de la coordinateur·rice de projets ou remplaçant·e
             </div>
 
             <md-button class="md-primary" v-on:click="newSuiviMandat()"
@@ -32,7 +32,7 @@
                                     Vérification par le chef de projet de la MO
                                 </md-checkbox>
 
-                                <div class="md-layout md-gutter" v-if="suiviMandat.av_31">
+                                <div class="md-layout md-gutter">
                                     <div class="md-layout-item md-size-50">
                                         <md-autocomplete v-model="suiviMandat.av_32" :md-options="chefsProjetMO_liste" md-dense>
                                             <label>Chef de projet</label>
@@ -65,7 +65,7 @@
                                     Contrôle des désignations et de la balance
                                 </md-checkbox>
 
-                                <md-field v-if="suiviMandat.pdt_11">
+                                <md-field>
                                     <label>Remarques</label>
                                     <md-textarea v-model="suiviMandat.pdt_12"></md-textarea>
                                 </md-field>
@@ -74,7 +74,7 @@
                                     Contrôle du tableau des émoluments
                                 </md-checkbox>
 
-                                <md-field v-if="suiviMandat.pdt_21">
+                                <md-field>
                                     <label>Remarques</label>
                                     <md-textarea v-model="suiviMandat.pdt_22"></md-textarea>
                                 </md-field>
@@ -83,7 +83,7 @@
                                     Contrôle de l'enregistrement de tous les documents (courriel, courrier, préavis, plan, etc.)
                                 </md-checkbox>
                                 
-                                <md-field v-if="suiviMandat.pdt_41">
+                                <md-field>
                                     <label>Remarques</label>
                                     <md-textarea v-model="suiviMandat.pdf_42"></md-textarea>
                                 </md-field>
@@ -100,7 +100,7 @@
                                     Respect des directives du SCAT, SAGR ou service urbanisme
                                 </md-checkbox>
 
-                                <md-field v-if="suiviMandat.ap_11">
+                                <md-field>
                                     <label>Remarques</label>
                                     <md-textarea v-model="suiviMandat.ap_12"></md-textarea>
                                 </md-field>
@@ -109,7 +109,7 @@
                                     Structure des répertoires et contenu
                                 </md-checkbox>
 
-                                <md-field v-if="suiviMandat.ap_21">
+                                <md-field>
                                     <label>Remarques</label>
                                     <md-textarea v-model="suiviMandat.ap_22"></md-textarea>
                                 </md-field>
@@ -118,7 +118,7 @@
                                     Contrôle de la base de données
                                 </md-checkbox>
 
-                                <md-field v-if="suiviMandat.ap_41">
+                                <md-field>
                                     <label>Remarques</label>
                                     <md-textarea v-model="suiviMandat.ap_42"></md-textarea>
                                 </md-field>

@@ -106,6 +106,7 @@ affaire_revision_abornement_edition = affaire_revision_abornement_edition
 affaire_cadastration_edition = affaire_cadastration_edition
 affaire_retablissement_pfp3_edition = affaire_retablissement_pfp3_edition
 affaire_pcop_edition = affaire_pcop_edition
+affaire_mpd_edition = affaire_mpd_edition
 affaire_autre_edition = affaire_autre_edition
 affaire_envois_edition = affaire_envois_edition
 affaire_controle_geometre_edition = affaire_controle_geometre_edition
@@ -128,6 +129,7 @@ numero_mo_edition = numero_mo_edition
 affaire_type_cadastration_id = 2
 affaire_type_ppe_id = 3
 affaire_type_revision_abornement_id = 4
+affaire_type_mpd_id = 8
 affaire_type_retablissement_pfp3_id = 12
 affaire_type_autre_id = 7
 affaire_type_part_copropriete_id = 10
@@ -178,11 +180,16 @@ affaire_show_timedelta = 30
 
 # Affaire etape
 affaire_etape_priorite_1_id = 1
+affaire_etape_abandon_id = 12
+affaire_etape_fin_processus_id = 16
+affaire_etape_reactivation_id = 28
 affaire_premiere_etape_defaut_id = 13
-affaire_etape_mat_diff_id = 30
 
 # Facture type
 facture_type_facture_id = 1
+
+# Client cadastration
+client_cadastration_id = 2896
 
 ######################################################################################
 # Accès dossiers

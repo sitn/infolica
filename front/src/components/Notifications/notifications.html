@@ -1,3 +1,18 @@
 <div class="notifications">
-    <md-snackbar :md-active.sync="showSnackbar" v-bind:class="{ isErrorDiv: isError, isSuccessDiv: !isError }">{{ msg }}</md-snackbar>
+    <md-snackbar :md-active.sync="showSnackbar" :md-duration="duration" v-bind:class="{ isErrorDiv: isError, isSuccessDiv: !isError }">{{ msg }}</md-snackbar>
+
+    <md-dialog-alert class="alert md-accent"
+      :md-active.sync="alert.active"
+      :md-title="alert.title"
+      :md-content="alert.content" />
+
+    <md-dialog-confirm class="confirmation"
+      :md-active.sync="confirmation.active"
+      :md-title="confirmation.title"
+      :md-content="confirmation.content"
+      :md-confirm-text="confirmation.confirmText"
+      :md-cancel-text="confirmation.cancelText"
+      @md-cancel="confirmation.onCancel"
+      @md-confirm="confirmation.onConfirm" />
+
 </div>

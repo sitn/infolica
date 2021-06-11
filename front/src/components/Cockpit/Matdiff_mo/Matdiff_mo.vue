@@ -4,15 +4,21 @@
 
 <script>
 import { handleException } from '@/services/exceptionsHandler'
-import { checkPermission } from '@/services/helper'
+import { checkPermission, getCurrentUserRoleId } from '@/services/helper'
 
 const moment = require('moment')
 
 export default {
   name: "Matdiff_mo",
+  props: {
+    operateurs: {type: Array},
+    selectedOperateur_id_parent: {type: Number, default: () => -1}
+  },
   data: () => {
     return {
-      numerosDifferes: [{}],
+      affaires: [{}],
+      affaires_bk: [{}],
+      selectedOperateur_id: JSON.parse(localStorage.getItem("infolica_user")).id,
     }
   },
 
@@ -21,10 +27,9 @@ export default {
      * Get numeros differes for MO users
      */
     async getNumerosDifferes() {
-      let user_id = JSON.parse(localStorage.getItem("infolica_user")).id;
-      
-      let params =  "?role=mo&user_id=" + user_id
-      if (checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {
+      let params =  "?role=mo&user_id=" + this.selectedOperateur_id;
+      if (checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ||
+          getCurrentUserRoleId() === Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)) {
         params =  "?role=mo"
       }
 
@@ -36,15 +41,32 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-          let tmp = JSON.parse(response.data);
+          let tmp = response.data;
           tmp.forEach(x => {
             x.numero = x.numero.join(', '),
             x.diff_entree = Number(moment(x.diff_entree, process.env.VUE_APP_DATEFORMAT_WS))
           });
-          this.numerosDifferes = tmp;
+          this.affaires_bk = tmp;
+
+          this.filterAffaires();
         }
       }).catch(err => handleException(err, this));
     },
+
+
+    /**
+     * Filter Affaires
+     */
+    filterAffaires() {
+      //filter affaire type PPE and step client
+      this.affaires = this.affaires_bk;
+
+      if (this.selectedOperateur_id > 0) {
+        this.affaires = this.affaires.filter(x => x.diff_operateur_id === this.selectedOperateur_id);
+      }
+
+    },
+
 
     /**
      * openAffaire
@@ -57,6 +79,9 @@ export default {
 
   mounted: function() {
     this.getNumerosDifferes();
+
+    // init selectedOperateur_id from parent component
+    this.selectedOperateur_id = this.selectedOperateur_id_parent;
   }
 };
 </script>

@@ -4,7 +4,7 @@
  */
 export const handleException = function (error, component) {
     //Error code
-    var code = error && error.response && error.response.status || 500;
+    let code = error && error.response && error.response.status || 500;
     
     //No error but no content response
     if(error && error.status === 204){
@@ -20,11 +20,15 @@ export const handleException = function (error, component) {
     else if(error && error.msg){
         component.$root.$emit("ShowError", error.msg);   
     }
+    //Back-end errors: show entire message
+    else if (error && error.response && error.response.data && error.response.data.message)
+    {
+        component.$root.$emit("ShowError", error.response.data.message);   
+    }
     //All other error codes
     else
     {
-       component.$root.$emit("ShowError", error);   
-    //    component.$root.$emit("ShowError", "Une erreur est survenue");   
-    }                  
+       component.$root.$emit("ShowError", "Une erreur est survenue");   
+    }
 };
 

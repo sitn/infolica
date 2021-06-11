@@ -4,8 +4,7 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission,
-        stringifyAutocomplete,
+import {stringifyAutocomplete,
         getClients,
         filterList,
         getDocument} from '@/services/helper';
@@ -35,6 +34,7 @@ export default {
         selected_id: 0,
         selected_adress: ''
       },
+      clientContactsListe: [],
       clientsListe: [],
       clientsListe_bk: [],
       searchClientsListe: [],
@@ -65,6 +65,7 @@ export default {
             this.clientsListe = response.data.map(x => ({
               id: x.id,
               nom: x.adresse_,
+              type_id: x.type_client,
               toLowerCase: () => x.adresse_.toLowerCase(),
               toString: () => x.adresse_
             }));
@@ -80,7 +81,7 @@ export default {
      * Search Client after 3 letters
      */
     searchClients(value) {
-      this.searchClientsListe = filterList(this.clientsListe, value, 3)
+      this.searchClientsListe = filterList(this.clientsListe, value, 3);
     },
 
     /**
@@ -189,15 +190,35 @@ export default {
      * Open Edit mode
      */
     openEditMode() {
-      this.form.technicien = this.operateursListe
-      .filter(x => x.id === this.affaire.technicien_id)[0];
+      this.form.technicien = this.operateursListe.filter(x => x.id === this.affaire.technicien_id)[0];
+      this.form.typeAffaire = this.typesAffairesListe_all.filter(x => x.id === this.affaire.type_id)[0];
 
-      this.form.typeAffaire = this.typesAffairesListe_all
-      .filter(x => x.id === this.affaire.type_id)[0];
-
-      this.form.client_commande = this.clientsListe.filter(x => x.id === this.affaire.client_commande_id).pop();
+      let client_commande_tmp = this.clientsListe.filter(x => x.id === this.affaire.client_commande_id);
+      if (client_commande_tmp.length > 0) {
+        this.form.client_commande = client_commande_tmp[0];
+      } else {
+        this.form.client_commande = {
+          id: this.affaire.client_commande_id, 
+          nom: this.affaire.client_commande_nom_.replace("\n", ", "), 
+          type_id: this.affaire.client_commande_type_id,
+          toLowerCase: () => this.affaire.client_commande_nom_.toLowerCase(),
+          toString: () => this.affaire.client_commande_nom_.toString(),
+        };
+      }
       this.form.client_commande_complement = this.affaire.client_commande_complement;
-      this.form.client_envoi = this.clientsListe.filter(x => x.id === this.affaire.client_envoi_id);
+      
+      let client_envoi_tmp = this.clientsListe.filter(x => x.id === this.affaire.client_envoi_id);
+      if (client_envoi_tmp.length > 0) {
+        this.form.client_envoi = client_envoi_tmp[0];
+      } else {
+        this.form.client_envoi = {
+          id: this.affaire.client_envoi_id, 
+          nom: this.affaire.client_envoi_nom_.replace("\n", ", "), 
+          type_id: this.affaire.client_envoi_type_id,
+          toLowerCase: () => this.affaire.client_envoi_nom_.toLowerCase(),
+          toString: () => this.affaire.client_envoi_nom_.toString(),
+        };
+      }
       this.form.client_envoi_complement = this.affaire.client_envoi_complement;
 
       this.infoGenReadonly = false;
@@ -316,7 +337,7 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-          let tmp = response.data;
+          let tmp = response.data.filter(x => x.type_id === Number(process.env.VUE_APP_FACTURE_TYPE_FACTURE_ID));
 
           tmp.forEach(x => {
             // construct select list
@@ -378,7 +399,11 @@ export default {
      * Update client facture adress when selection changed
      */
     updateClientFactureAdresse() {
-      this.clientsFacture.selected_adress = this.clientsFacture.adressList.filter(x => x.id === this.clientsFacture.selected_id)[0].nom;
+      let tmp = this.clientsFacture.adressList.filter(x => x.id === this.clientsFacture.selected_id);
+      this.clientsFacture.selected_adress = "";
+      if (tmp.length > 0) {
+        this.clientsFacture.selected_adress = tmp[0].nom;
+      }
     },
 
     /**
@@ -388,6 +413,29 @@ export default {
       this.$router.replace({ name: "AffairesDashboard", params: {id: affaire_id}});
       this.$router.go(0);
     },
+
+    /**
+     * Get client contact for client entreprise
+     */
+    async getClientContact(client) {
+      let type_client = this.clientsListe_bk.filter(x => x.id === client.id)[0].type_client;
+      if (type_client === this.clientTypes_conf.moral) {
+        // get client contacts
+        this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_MORAL_PERSONNES_ENDPOINT + "/" + client.id,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => {
+          if (response && response.data) {
+            let tmp = [];
+            response.data.forEach(x => tmp.push([x.titre, x.prenom, x.nom].filter(Boolean).join(" ")));
+            this.clientContactsListe = tmp;
+          }
+        }).catch(err => handleException(err, this));
+      }
+    }
 
   },
 
@@ -400,7 +448,7 @@ export default {
     this.initClientsListe();
     this.searchClientsFacture();
     this.$root.$on('reloadClientFactureInfosGen', () => this.searchClientsFacture());
-    this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || this.$parent.parentAffaireReadOnly;
+    this.affaireReadonly = !this.permission.editAffaireAllowed;
     this.show.clientFacture = this.affaire.type_id !== this.typesAffaires_conf.pcop;
   }
 };

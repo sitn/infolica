@@ -182,6 +182,22 @@ export const getOperateurs = async function () {
     });
 };
 
+/*
+ * Get current affaires in GeoJson format
+ */
+export const getFeatures = async function () {
+    return new Promise((resolve, reject) => {
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_SPATIAL,
+            {
+              withCredentials: true,
+              headers: {"Accept": "application/json"}
+            }
+        )
+        .then(response => resolve(response))
+        .catch(err => reject(err));
+    });
+};
+
 /**
  * Get date of the day in good format for BD
  */
@@ -202,6 +218,21 @@ export const stringifyAutocomplete = function(liste, nom="nom", id="id") {
         toLowerCase: () => String(x[nom]).toLowerCase(),
         toString: () => String(x[nom])
     }));
+};
+
+/**
+ * Prépare la liste pour le md-complete v2
+ */
+export const stringifyAutocomplete2 = function(liste, keys=["nom"], sep=", ") {
+    liste.forEach(x => {
+        let nom_ = [];
+        keys.forEach(key => nom_.push(x[key]));
+
+        x.nom_ = nom_.filter(Boolean).join(sep);
+        x.toLowerCase = () => String(x.nom_).toLowerCase();
+        x.toString = () => String(x.nom_);
+    });
+    return liste;
 };
 
 /**

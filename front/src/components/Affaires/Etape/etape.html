@@ -9,7 +9,7 @@
                             class="md-elevation-3 md-dense" 
                             style="min-width: 40px; margin-bottom: -5px;" 
                             title="Mettre à jour"
-                            v-if="affaire.etape_id !== etapes_affaire_conf.fin_processus">
+                            v-if="affaire.etape_id !== etapes_affaire_conf.fin_processus || isAdmin">
                     <md-icon>double_arrow</md-icon>
                 </md-button>
             </p>
@@ -44,7 +44,7 @@
                 <div class="md-layout-item md-size-45" v-if="etapeAffaire.prochaine && etapeAffaire.prochaine.id && etapeAffaire.prochaine.id === etapes_affaire_conf.travaux_chef_equipe">
                     <!-- Sélection de l'opérateur -->
                     <md-field>
-                        <label>Opérateur</label>
+                        <label>Opérateur·rice</label>
                         <md-select md-dense required v-model="etapeAffaire.chef_equipe_id">
                             <md-option v-for="item in chefs_equipe_list" v-bind:key="item.id" v-bind:value="item.id" >{{ item.nom }}</md-option>
                         </md-select>
@@ -70,4 +70,7 @@
         </md-dialog-actions>
     </md-dialog>
 
+
+    <!-- Cloture affaire -->
+    <ClotureAffaire ref="clotureAffaire" :affaire="affaire" />
 </div>
