@@ -1,7 +1,7 @@
 <div class="emoluments">
 
     <md-dialog :md-active.sync="showEmolumentsDialog">
-      <md-dialog-title>Preferences</md-dialog-title>
+      <md-dialog-title>Émoluments</md-dialog-title>
       <md-dialog-content>
 
       <md-tabs md-dynamic-height>
@@ -31,7 +31,7 @@
 
                   <md-field>
                     <label>Nombre de bâtiments</label>
-                    <md-select v-model="form.nb_batiments" md-dense>
+                    <md-select v-model="form.nb_batiments" md-dense @md-selected="updateNbBatiments">
                       <md-option v-for="item in [0, 1, 2, 3]" :value="item">{{ item }}</md-option>
                     </md-select>
                   </md-field>
@@ -90,8 +90,52 @@
               
             </md-card-content>
           </md-card>
+          
+          <!-- Bâtiments -->
+          <md-card v-if="form.nb_batiments > 0">
+            <md-card-header>
+              <table class="tg">
+                <thead>
+                  <tr>
+                    <th class="tg-0lax alignCenter">Bâtiment</th>
+                    <th class="tg-0lax alignCenter">Facteur correctif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="i in form.nb_batiments">
+                    <td class="tg-0lax alignCenter">{{ i }}</td>
+                    <td class="tg-0lax">
+                      <md-field class="nbField">
+                        <md-select v-model="form.batiment_f[i-1]" md-dense>
+                          <md-option :value="0.5">0.5 (1-50m2)</md-option>
+                          <md-option :value="0.6">0.6 (51-100m2)</md-option>
+                          <md-option :value="0.7">0.7 (101-150m2)</md-option>
+                          <md-option :value="0.8">0.8 (151-200m2)</md-option>
+                          <md-option :value="0.9">0.9 (201-250m2)</md-option>
+                          <md-option :value="1.0">1.0 (251-300m2)</md-option>
+                          <md-option :value="1.1">1.1 (301-400m2)</md-option>
+                          <md-option :value="1.2">1.2 (401-500m2)</md-option>
+                          <md-option :value="1.3">1.3 (501-750m2)</md-option>
+                          <md-option :value="1.4">1.4 (751-1000m2)</md-option>
+                          <md-option :value="1.5">1.5 (>1000m2)</md-option>
+                        </md-select>
+                      </md-field>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </md-card-header>
+  
+            <md-card-content>
+              <div >
+  
+              </div>
+            <md-field class="nbField"><md-input class="nbInput"></md-input></md-field>
+            </md-card-content>
+          </md-card>
         </md-tab>
 
+        
         <md-tab md-label="Mandat">
           <md-card>
             <md-card-header>
@@ -102,12 +146,22 @@
               <table class="tg">
                 <thead>
                   <tr>
-                    <th class="tg-0lax">Code</th>
-                    <th class="tg-0lax">Position</th>
-                    <th class="tg-0lax">Unité</th>
-                    <th class="tg-0lax">Prix unitaire</th>
-                    <th class="tg-0lax">Nombre</th>
-                    <th class="tg-0lax">Montant</th>
+                    <th class="tg-0lax alignCenter" colspan="6"></th>
+                    <template v-for="i in form.nb_batiments">
+                      <th class="tg-0lax alignCenter alignCenter" colspan="2">Bâtiment {{i}}</th>
+                    </template>
+                  </tr>
+                  <tr>
+                    <th class="tg-0lax alignCenter">Code</th>
+                    <th class="tg-0lax alignCenter">Position</th>
+                    <th class="tg-0lax alignCenter">Unité</th>
+                    <th class="tg-0lax alignCenter">Prix unit.</th>
+                    <th class="tg-0lax alignCenter">Nombre</th>
+                    <th class="tg-0lax alignCenter montant">Montant</th>
+                    <template v-for="i in form.nb_batiments">
+                      <th class="tg-0lax alignCenter">Nombre</th>
+                      <th class="tg-0lax alignCenter montant">Montant</th>
+                    </template>
                   </tr>
                 </thead>
                 <tbody>
@@ -118,6 +172,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[0].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_mandat1" class="nbInput" @keyup="updateMontantMandat()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_mandat1 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.4</td>
@@ -126,6 +184,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[1].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_mandat4" class="nbInput" @keyup="updateMontantMandat()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_mandat2 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.5</td>
@@ -134,14 +196,22 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[2].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_mandat5" class="nbInput" @keyup="updateMontantMandat()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_mandat3 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.2</td>
                     <td class="tg-0lax">{{ emolumentsUnits[3].nom }}</td>
                     <td class="tg-0lax alignCenter">{{ emolumentsUnits[3].unite }}</td>
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[3].montant }} CHF</td>
-                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_mandat2" class="nbInput" @keyup="updateMontantMandat()" @focus="$event.target.select()"></md-input></md-field></td>
-                    <td class="tg-0lax alignRight">{{ form.montant_mandat4 }} CHF</td>
+                    <td class="tg-0lax notEditable"></td>
+                    <td class="tg-0lax alignRight notEditable"></td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_mandat2_batiment[i-1]" class="nbInput" @keyup="updateMontantMandat()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_mandat2_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.3</td>
@@ -150,6 +220,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[4].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_mandat3" class="nbInput" @keyup="updateMontantMandat()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_mandat5 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_mandat3_batiment[i-1]" class="nbInput" @keyup="updateMontantMandat()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_mandat3_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
@@ -158,10 +232,26 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[5].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_mandat6" class="nbInput" @keyup="updateMontantMandat()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_mandat6 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_mandat6_batiment[i-1]" class="nbInput" @keyup="updateMontantMandat()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_mandat6_batiment[i-1] }} CHF</td>
+                    </template>
+                  </tr>
+                  <tr>
+                    <td class="tg-0pky" colspan="5">Somme</td>
+                    <td class="tg-0pky alignRight">{{ form.montant_mandat_total }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax notEditable"></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_mandat_batiment_total[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0pky" colspan="5">Total intermédiaire</td>
                     <td class="tg-0pky alignRight">{{ form.montant_mandat_total }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax alignCenter">x f</td>
+                      <td class="tg-0lax alignRight">{{ form.montant_mandat_batiment_total_f[i-1] }} CHF</td>
+                    </template>
                   </tr>
                 </tbody>
               </table>
@@ -179,12 +269,12 @@
               <table class="tg">
                 <thead>
                   <tr>
-                    <th class="tg-0lax">Code</th>
-                    <th class="tg-0lax">Position</th>
-                    <th class="tg-0lax">Unité</th>
-                    <th class="tg-0lax">Prix unitaire</th>
-                    <th class="tg-0lax">Nombre</th>
-                    <th class="tg-0lax">Montant</th>
+                    <th class="tg-0lax alignCenter">Code</th>
+                    <th class="tg-0lax alignCenter">Position</th>
+                    <th class="tg-0lax alignCenter">Unité</th>
+                    <th class="tg-0lax alignCenter">Prix unit.</th>
+                    <th class="tg-0lax alignCenter">Nombre</th>
+                    <th class="tg-0lax alignCenter montant">Montant</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -421,12 +511,12 @@
               <table class="tg">
                 <thead>
                   <tr>
-                    <th class="tg-0lax">Code</th>
-                    <th class="tg-0lax">Position</th>
-                    <th class="tg-0lax">Unité</th>
-                    <th class="tg-0lax">Prix unitaire</th>
-                    <th class="tg-0lax">Nombre</th>
-                    <th class="tg-0lax">Montant</th>
+                    <th class="tg-0lax alignCenter">Code</th>
+                    <th class="tg-0lax alignCenter">Position</th>
+                    <th class="tg-0lax alignCenter">Unité</th>
+                    <th class="tg-0lax alignCenter">Prix unit.</th>
+                    <th class="tg-0lax alignCenter">Nombre</th>
+                    <th class="tg-0lax alignCenter montant">Montant</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -606,12 +696,12 @@
               <table class="tg">
                 <thead>
                   <tr>
-                    <th class="tg-0lax">Code</th>
-                    <th class="tg-0lax">Position</th>
-                    <th class="tg-0lax">Unité</th>
-                    <th class="tg-0lax">Prix unitaire</th>
-                    <th class="tg-0lax">Nombre</th>
-                    <th class="tg-0lax">Montant</th>
+                    <th class="tg-0lax alignCenter">Code</th>
+                    <th class="tg-0lax alignCenter">Position</th>
+                    <th class="tg-0lax alignCenter">Unité</th>
+                    <th class="tg-0lax alignCenter">Prix unit.</th>
+                    <th class="tg-0lax alignCenter">Nombre</th>
+                    <th class="tg-0lax alignCenter montant">Montant</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1015,12 +1105,12 @@
               <table class="tg">
                 <thead>
                   <tr>
-                    <th class="tg-0lax">Code</th>
-                    <th class="tg-0lax">Position</th>
-                    <th class="tg-0lax">Unité</th>
-                    <th class="tg-0lax">Prix unitaire</th>
-                    <th class="tg-0lax">Nombre</th>
-                    <th class="tg-0lax">Montant</th>
+                    <th class="tg-0lax alignCenter">Code</th>
+                    <th class="tg-0lax alignCenter">Position</th>
+                    <th class="tg-0lax alignCenter">Unité</th>
+                    <th class="tg-0lax alignCenter">Prix unit.</th>
+                    <th class="tg-0lax alignCenter">Nombre</th>
+                    <th class="tg-0lax alignCenter montant">Montant</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1053,12 +1143,12 @@
               <table class="tg">
                 <thead>
                   <tr>
-                    <th class="tg-0lax">Code</th>
-                    <th class="tg-0lax">Position</th>
-                    <th class="tg-0lax">Unité</th>
-                    <th class="tg-0lax">Prix unitaire</th>
-                    <th class="tg-0lax">Nombre</th>
-                    <th class="tg-0lax">Montant</th>
+                    <th class="tg-0lax alignCenter">Code</th>
+                    <th class="tg-0lax alignCenter">Position</th>
+                    <th class="tg-0lax alignCenter">Unité</th>
+                    <th class="tg-0lax alignCenter">Prix unit.</th>
+                    <th class="tg-0lax alignCenter">Nombre</th>
+                    <th class="tg-0lax alignCenter montant">Montant</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1106,10 +1196,10 @@
               <table class="tg">
                 <thead>
                   <tr>
-                    <th class="tg-0lax">Domaine</th>
-                    <th class="tg-0lax">Indice</th>
-                    <th class="tg-0lax">Montant</th>
-                    <th class="tg-0lax">Total</th>
+                    <th class="tg-0lax alignCenter">Domaine</th>
+                    <th class="tg-0lax alignCenter">Indice</th>
+                    <th class="tg-0lax alignCenter montant">Montant</th>
+                    <th class="tg-0lax alignCenter">Total</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -1,5 +1,5 @@
 .md-dialog {
-  width: 1200px;
+  width: 1500px;
   margin: auto;
 }
 
@@ -71,4 +71,12 @@
 
 .alignCenter {
   text-align: center !important;
+}
+
+.notEditable {
+  background-color: lightgray;
+}
+
+.montant {
+  width: 110px;
 }
