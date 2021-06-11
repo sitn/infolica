@@ -50,18 +50,19 @@ export default {
         zi: numeral(1).format("0.00"),
         nb_batiments: 0,
         indice_application: 1.22,
+        indice_tva: 7.7, // %
         //mandats
         nb_mandat1: 0,
-        montant_mandat1: numeral(0).format("0.00"),
-        nb_mandat4: 0,
-        montant_mandat4: numeral(0).format("0.00"),
-        nb_mandat5: 0,
-        montant_mandat5: numeral(0).format("0.00"),
         nb_mandat2: 0,
-        montant_mandat2: numeral(0).format("0.00"),
         nb_mandat3: 0,
-        montant_mandat3: numeral(0).format("0.00"),
+        nb_mandat4: 0,
+        nb_mandat5: 0,
         nb_mandat6: 0,
+        montant_mandat1: numeral(0).format("0.00"),
+        montant_mandat2: numeral(0).format("0.00"),
+        montant_mandat3: numeral(0).format("0.00"),
+        montant_mandat4: numeral(0).format("0.00"),
+        montant_mandat5: numeral(0).format("0.00"),
         montant_mandat6: numeral(0).format("0.00"),
         montant_mandat_total: numeral(0).format("0.00"),
         //travaux terrain
@@ -115,6 +116,9 @@ export default {
         montant_travauxTerrain23: numeral(0).format("0.00"),
         montant_travauxTerrain24: numeral(0).format("0.00"),
         montant_travauxTerrain25: numeral(0).format("0.00"),
+        montant_21pfp: numeral(0).format("0.00"),
+        montant_23sit: numeral(0).format("0.00"),
+        montant_22pl: numeral(0).format("0.00"),
         montant_travauxTerrain_total: numeral(0).format("0.00"),
         // Travaux matérialisation
         nb_travauxMaterialisation1: 0,
@@ -155,6 +159,10 @@ export default {
         montant_travauxMaterialisation17: numeral(0).format("0.00"),
         montant_travauxMaterialisation18: numeral(0).format("0.00"),
         montant_travauxMaterialisation19: numeral(0).format("0.00"),
+        montant_31_32_std_compl: numeral(0).format("0.00"),
+        montant_33_materiel: numeral(0).format("0.00"),
+        montant_34_matdiff: numeral(0).format("0.00"),
+        montant_5_depl_debours: numeral(0).format("0.00"),
         montant_travauxMaterialisation_total: numeral(0).format("0.00"),
         // Travaux bureau
         nb_travauxBureau1: 0,
@@ -262,14 +270,25 @@ export default {
         montant_servitudes2: numeral(0).format("0.00"),
         montant_servitudes3: numeral(0).format("0.00"),
         montant_servitudes_total: numeral(0).format("0.00"),
+        // Divers
+        montant_divers_total: numeral(0).format("0.00"),
         // Récapitulatif
+        montant_recapitulatif_mandat: numeral(0).format("0.00"),
+        montant_recapitulatif_terrain_materialisation_deplacements: numeral(0).format("0.00"),
+        montant_recapitulatif_bureau: numeral(0).format("0.00"),
+        montant_recapitulatif_indice_application: numeral(0).format("0.00"),
+        montant_recapitulatif_materiel_divers: numeral(0).format("0.00"),
+        montant_recapitulatif_matdiff: numeral(0).format("0.00"),
+        montant_recapitulatif_tva: numeral(0).format("0.00"),
+        montant_recapitulatif_registre_foncier: numeral(0).format("0.00"),
         montant_recapitulatif_somme1: numeral(0).format("0.00"),
         montant_recapitulatif_somme2: numeral(0).format("0.00"),
         montant_recapitulatif_somme3: numeral(0).format("0.00"),
         montant_recapitulatif_somme4: numeral(0).format("0.00"),
         montant_recapitulatif_somme5: numeral(0).format("0.00"),
         montant_recapitulatif_somme6: numeral(0).format("0.00"),
-        montant_recapitulatif_indice_application: numeral(0).format("0.00"),
+        montant_recapitulatif_somme7: numeral(0).format("0.00"),
+        montant_recapitulatif_total: numeral(0).format("0.00"),
       }
     },
 
@@ -335,7 +354,7 @@ export default {
       this.form.montant_travauxTerrain23 = numeral(Number(this.form.nb_travauxTerrain23) * Number(this.emolumentsUnits[28].montant)).format("0.00");
       this.form.montant_travauxTerrain24 = numeral(Number(this.form.nb_travauxTerrain24) * Number(this.emolumentsUnits[29].montant)).format("0.00");
       this.form.montant_travauxTerrain25 = numeral(Number(this.form.nb_travauxTerrain25) * Number(this.emolumentsUnits[30].montant)).format("0.00");
-      this.form.montant_travauxTerrain_total = numeral(
+      this.form.montant_21pfp = numeral(
         Number(this.form.montant_travauxTerrain1) +
         Number(this.form.montant_travauxTerrain2) +
         Number(this.form.montant_travauxTerrain3) +
@@ -349,9 +368,13 @@ export default {
         Number(this.form.montant_travauxTerrain11) +
         Number(this.form.montant_travauxTerrain12) +
         Number(this.form.montant_travauxTerrain13) +
-        Number(this.form.montant_travauxTerrain14) +
+        Number(this.form.montant_travauxTerrain14)
+      ).format("0.00");
+      this.form.montant_23sit = numeral(
         Number(this.form.montant_travauxTerrain15) +
-        Number(this.form.montant_travauxTerrain16) +
+        Number(this.form.montant_travauxTerrain16)
+      ).format("0.00");
+      this.form.montant_22pl = numeral(
         Number(this.form.montant_travauxTerrain17) +
         Number(this.form.montant_travauxTerrain18) +
         Number(this.form.montant_travauxTerrain19) +
@@ -361,6 +384,11 @@ export default {
         Number(this.form.montant_travauxTerrain23) +
         Number(this.form.montant_travauxTerrain24) +
         Number(this.form.montant_travauxTerrain25)
+      ).format("0.00");
+      this.form.montant_travauxTerrain_total = numeral(
+        Number(this.form.montant_21pfp) +
+        Number(this.form.montant_23sit) +
+        Number(this.form.montant_22pl)
       ).format("0.00");
       this.updateRecapitulatif();
     },
@@ -388,25 +416,37 @@ export default {
       this.form.montant_travauxMaterialisation16 = numeral(Number(this.form.nb_travauxMaterialisation16) * Number(this.emolumentsUnits[46].montant)).format("0.00");
       this.form.montant_travauxMaterialisation17 = numeral(Number(this.form.nb_travauxMaterialisation17) * Number(this.emolumentsUnits[47].montant)).format("0.00");
       this.form.montant_travauxMaterialisation18 = numeral(Number(this.form.nb_travauxMaterialisation18) * Number(this.emolumentsUnits[48].montant)).format("0.00");
-      this.form.montant_travauxMaterialisation_total = numeral(
+      this.form.montant_31_32_std_compl = numeral(
         Number(this.form.montant_travauxMaterialisation1) +
         Number(this.form.montant_travauxMaterialisation2) +
         Number(this.form.montant_travauxMaterialisation3) +
         Number(this.form.montant_travauxMaterialisation4) +
         Number(this.form.montant_travauxMaterialisation5) +
         Number(this.form.montant_travauxMaterialisation6) +
-        Number(this.form.montant_travauxMaterialisation7) +
+        Number(this.form.montant_travauxMaterialisation7)
+      ).format("0.00");
+      this.form.montant_33_materiel = numeral(
         Number(this.form.montant_travauxMaterialisation8) +
         Number(this.form.montant_travauxMaterialisation9) +
         Number(this.form.montant_travauxMaterialisation10) +
         Number(this.form.montant_travauxMaterialisation11) +
         Number(this.form.montant_travauxMaterialisation12) +
-        Number(this.form.montant_travauxMaterialisation13) +
+        Number(this.form.montant_travauxMaterialisation13)
+      ).format("0.00");
+      this.form.montant_34_matdiff = numeral(
         Number(this.form.montant_travauxMaterialisation14) +
         Number(this.form.montant_travauxMaterialisation15) +
         Number(this.form.montant_travauxMaterialisation16) +
-        Number(this.form.montant_travauxMaterialisation17) +
+        Number(this.form.montant_travauxMaterialisation17)
+      ).format("0.00");
+      this.form.montant_5_depl_debours = numeral(
         Number(this.form.montant_travauxMaterialisation18)
+      ).format("0.00");
+      this.form.montant_travauxMaterialisation_total = numeral(
+        Number(this.form.montant_31_32_std_compl) +
+        Number(this.form.montant_33_materiel) +
+        Number(this.form.montant_34_matdiff) +
+        Number(this.form.montant_5_depl_debours)
       ).format("0.00");
       this.updateRecapitulatif();
     },
@@ -462,7 +502,7 @@ export default {
       this.form.montant_travauxBureau44 = numeral(Number(this.form.nb_travauxBureau44 * Number(this.emolumentsUnits[92].montant))).format("0.00");
       this.form.montant_travauxBureau45 = numeral(Number(this.form.nb_travauxBureau45 * Number(this.emolumentsUnits[93].montant))).format("0.00");
       this.form.montant_travauxBureau46 = numeral(Number(this.form.nb_travauxBureau46 * Number(this.emolumentsUnits[94].montant))).format("0.00");
-      this.form.montant_travauxBureau_total = numeral(
+      this.form.montant_41pfp = numeral(
         Number(this.form.montant_travauxBureau1) +
         Number(this.form.montant_travauxBureau2) +
         Number(this.form.montant_travauxBureau3) +
@@ -474,7 +514,9 @@ export default {
         Number(this.form.montant_travauxBureau9) +
         Number(this.form.montant_travauxBureau10) +
         Number(this.form.montant_travauxBureau11) +
-        Number(this.form.montant_travauxBureau12) +
+        Number(this.form.montant_travauxBureau12)
+      ).format("0.00");
+      this.form.montant_43sit = numeral(
         Number(this.form.montant_travauxBureau13) +
         Number(this.form.montant_travauxBureau14) +
         Number(this.form.montant_travauxBureau15) +
@@ -484,12 +526,16 @@ export default {
         Number(this.form.montant_travauxBureau19) +
         Number(this.form.montant_travauxBureau20) +
         Number(this.form.montant_travauxBureau21) +
-        Number(this.form.montant_travauxBureau22) +
+        Number(this.form.montant_travauxBureau22)
+      ).format("0.00");
+      this.form.montant_44surf = numeral(
         Number(this.form.montant_travauxBureau23) +
         Number(this.form.montant_travauxBureau24) +
         Number(this.form.montant_travauxBureau25) +
         Number(this.form.montant_travauxBureau26) +
-        Number(this.form.montant_travauxBureau27) +
+        Number(this.form.montant_travauxBureau27)
+      ).format("0.00");
+      this.form.montant_42pl = numeral(
         Number(this.form.montant_travauxBureau28) +
         Number(this.form.montant_travauxBureau29) +
         Number(this.form.montant_travauxBureau30) +
@@ -510,6 +556,12 @@ export default {
         Number(this.form.montant_travauxBureau45) +
         Number(this.form.montant_travauxBureau46)
       ).format("0.00");
+      this.form.montant_travauxBureau_total = numeral(
+        Number(this.form.montant_41pfp) +
+        Number(this.form.montant_43sit) +
+        Number(this.form.montant_44surf) +
+        Number(this.form.montant_42pl)
+        ).format("0.00");
       this.updateRecapitulatif();
     },
 
@@ -530,15 +582,24 @@ export default {
     },
 
     updateRecapitulatif() {
-      this.form.montant_recapitulatif_somme1 = numeral(Number(this.form.montant_mandat_total)).format("0.00");
+      this.form.montant_recapitulatif_mandat = this.form.montant_mandat_total;
+      this.form.montant_recapitulatif_somme1 = this.form.montant_recapitulatif_mandat
+
+      this.form.montant_recapitulatif_terrain_materialisation_deplacements = numeral(
+        Number(this.form.montant_travauxTerrain_total) +
+        Number(this.form.montant_5_depl_debours)
+      ).format("0.00");
       this.form.montant_recapitulatif_somme2 = numeral(
         Number(this.form.montant_recapitulatif_somme1) +
-        Number(this.form.montant_travauxTerrain_total)
+        Number(this.form.montant_recapitulatif_terrain_materialisation_deplacements)
       ).format("0.00");
+
+      this.form.montant_recapitulatif_bureau = this.form.montant_travauxBureau_total;
       this.form.montant_recapitulatif_somme3 = numeral(
         Number(this.form.montant_recapitulatif_somme2) +
-        Number(this.form.montant_travauxBureau_total)
+        Number(this.form.montant_recapitulatif_bureau)
       ).format("0.00");
+
       this.form.montant_recapitulatif_indice_application = numeral(
         Math.round( 10 * (
           Number(this.form.montant_recapitulatif_somme3) *
@@ -546,12 +607,46 @@ export default {
         )) / 10
       ).format("0.00");
       this.form.montant_recapitulatif_somme4 = numeral(
-        Number(this.form.montant_recapitulatif_somme2) +
+        Number(this.form.montant_recapitulatif_somme3) +
         Number(this.form.montant_recapitulatif_indice_application)
       ).format("0.00");
 
-      this.form.montant_recapitulatif_somme5 = numeral(0).format("0.00");
-      this.form.montant_recapitulatif_somme6 = numeral(0).format("0.00");
+      this.form.montant_recapitulatif_materiel_divers = numeral(
+        Number(this.form.montant_33_materiel) +
+        Number(this.form.montant_divers_total)
+      ).format("0.00");
+      this.form.montant_recapitulatif_somme5 = numeral(
+        Number(this.form.montant_recapitulatif_somme4) +
+        Number(this.form.montant_recapitulatif_materiel_divers)
+      ).format("0.00");
+
+      this.form.montant_recapitulatif_matdiff = numeral(
+        Math.round( 10 * (
+          Number(this.form.montant_34_matdiff) * Number(this.form.indice_application)
+        )) / 10
+      ).format("0.00");
+      this.form.montant_recapitulatif_somme6 = numeral(
+        Number(this.form.montant_recapitulatif_somme5) +
+        Number(this.form.montant_recapitulatif_matdiff)
+      ).format("0.00");
+
+      this.form.montant_recapitulatif_tva = numeral(
+        Math.round( 10 * (
+          Number(this.form.montant_recapitulatif_somme6) * Number(this.form.indice_tva) / 100
+        )) / 10
+      ).format("0.00");
+      this.form.montant_recapitulatif_somme7 = numeral(
+        Number(this.form.montant_recapitulatif_somme6) +
+        Number(this.form.montant_recapitulatif_tva)
+      ).format("0.00");
+
+      this.form.montant_recapitulatif_registre_foncier = this.form.montant_servitudes_total;
+
+      this.form.montant_recapitulatif_total = numeral(
+        Number(this.form.montant_recapitulatif_somme7) +
+        Number(this.form.montant_recapitulatif_registre_foncier)
+      ).format("0.00");
+
     }
 
   },
@@ -560,6 +655,7 @@ export default {
     this.initForm();
     this.computeZi();
     this.getEmolumentsUnit();
+    this.updateRecapitulatif();
   }
 }
 </script>
