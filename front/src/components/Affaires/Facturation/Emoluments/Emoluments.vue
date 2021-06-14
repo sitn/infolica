@@ -175,6 +175,7 @@ export default {
         montant_33_materiel: 0,
         montant_34_matdiff: 0,
         montant_5_depl_debours: 0,
+        montant_31_32_std_compl_zi: 0,
         montant_travauxMaterialisation_total: 0,
         // Travaux bureau
         nb_travauxBureau1: 0,
@@ -322,8 +323,9 @@ export default {
         1 + 
         Number(this.form.pente) / 100 +
         Number(this.form.visibilite) + 
-        Number(this.form.trafic)
-      ;
+        Number(this.form.trafic);
+
+        this.computeAll();
     },
 
     /**
@@ -507,6 +509,9 @@ export default {
         Number(this.form.montant_travauxMaterialisation6) +
         Number(this.form.montant_travauxMaterialisation7);
       
+      this.form.montant_31_32_std_compl_zi = 
+        this.form.montant_31_32_std_compl * this.form.zi;
+
       this.form.montant_33_materiel = 
         Number(this.form.montant_travauxMaterialisation8) +
         Number(this.form.montant_travauxMaterialisation9) +
@@ -525,7 +530,7 @@ export default {
         Number(this.form.montant_travauxMaterialisation18);
       
       this.form.montant_travauxMaterialisation_total = 
-        Number(this.form.montant_31_32_std_compl) +
+        Number(this.form.montant_31_32_std_compl_zi) +
         Number(this.form.montant_33_materiel) +
         Number(this.form.montant_34_matdiff) +
         Number(this.form.montant_5_depl_debours);
@@ -744,6 +749,17 @@ export default {
       this.form.montant_travauxTerrain_batiment_total_f = new Array(Number(this.form.nb_batiments)).fill(0);
       this.form.montant_travauxTerrain_batiment_total_f_somme = 0;
       this.form.montant_travauxTerrain_batiment_total_f_somme_zi = 0;
+    },
+
+    /**
+     * Compute all
+     */
+    computeAll() {
+      this.updateMontantMandat();
+      this.updateMontantTravauxTerrain();
+      this.updateMontantTravauxMaterialisation();
+      this.updateMontantTravauxBureau();
+      this.updateMontantServitudes();
     },
 
     /** Set format for comptabilité: 0.00 CHF */

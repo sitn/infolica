@@ -84,3 +84,17 @@
 .montantTotal {
   font-weight: bold;
 }
+
+.tabulation {
+  padding-left: 15px !important;
+  font-style: italic;
+}
+
+.tabulation-2 {
+  padding-left: 30px !important;
+  font-style: italic;
+}
+
+.batiment-separator {
+  border-left: 3px solid black !important;
+}
