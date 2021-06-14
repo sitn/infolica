@@ -15,6 +15,10 @@ def plans_mo_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(VPlan).order_by(VPlan.planno.asc()).all()
+    plan_vigueur_check_text = request.registry.settings['plan_vigueur_check_text']
+
+    query = request.dbsession.query(VPlan).filter(
+        VPlan.statut.like(plan_vigueur_check_text)
+    ).order_by(VPlan.planno.asc()).all()
         
     return Utils.serialize_many(query)
