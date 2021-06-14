@@ -739,7 +739,7 @@ export default {
     },
 
     updateRecapitulatif() {
-      this.form.montant_recapitulatif_mandat = Number(this.form.montant_mandat_total) + this.form.montant_mandat_batiment_total_f.reduce((a, b) => Number(a) + Number(b));
+      this.form.montant_recapitulatif_mandat = Number(this.form.montant_mandat_total) + Number(this.form.montant_mandat_batiment_total_f.reduce((a, b) => Number(a) + Number(b)));
       this.form.montant_recapitulatif_somme1 = Number(this.form.montant_recapitulatif_mandat)
 
       this.form.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.form.montant_travauxTerrain_total_zi) + Number(this.form.montant_travauxTerrain_batiment_total_f_somme_zi) + Number(this.form.montant_5_depl_debours);
@@ -757,7 +757,7 @@ export default {
       this.form.montant_recapitulatif_matdiff = this.round( Number(this.form.montant_34_matdiff) * Number(this.form.indice_application));
       this.form.montant_recapitulatif_somme6 = Number(this.form.montant_recapitulatif_somme5) + Number(this.form.montant_recapitulatif_matdiff);
 
-      this.form.montant_recapitulatif_tva = this.round(Number(this.form.montant_recapitulatif_somme6) * Number(this.form.indice_tva) / 100);
+      this.form.montant_recapitulatif_tva = this.round(Number(this.form.montant_recapitulatif_somme6) * Number(this.form.indice_tva) / 100, 0.05);
       this.form.montant_recapitulatif_somme7 = this.form.montant_recapitulatif_somme6 + Number(this.form.montant_recapitulatif_tva);
 
       this.form.montant_recapitulatif_registre_foncier = Number(this.form.montant_servitudes_total);
@@ -894,12 +894,16 @@ export default {
     setComptabiliteFormat() {
       Object.keys(this.form).forEach(key => {
         if (key.startsWith("montant")){
+          let multiple = 0.1;
+          if (key === "montant_recapitulatif_tva" || key === "montant_recapitulatif_somme7" || key === "montant_recapitulatif_total") {
+            multiple = 0.05
+          }
           if (Array.isArray(this.form[key])) {
             for (var i = 0; i < this.form[key].length; i++) {
-              this.form[key][i] = numeral( this.round( this.form[key][i] ) ).format("0.00");
+              this.form[key][i] = numeral( this.round( this.form[key][i], multiple ) ).format("0.00");
             }
           } else {
-            this.form[key] = numeral( this.round( this.form[key] ) ).format("0.00");
+            this.form[key] = numeral( this.round( this.form[key], multiple ) ).format("0.00");
           }
         }
       });
@@ -908,9 +912,10 @@ export default {
     /**
      * Round numbers
      */
-    round(num, ndec=1) {
-      let a = Math.pow(10, ndec);
-      return Math.round(num * a) / a;
+    round(num, multiple=0.1) {
+      num = Number(num);
+      multiple = Number(multiple);
+      return Math.round(num / multiple) * multiple;
     }
 
   },

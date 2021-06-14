@@ -1481,26 +1481,30 @@
               <table class="tg">
                 <thead>
                   <tr>
-                    <th class="tg-0lax alignCenter">Code</th>
-                    <th class="tg-0lax alignCenter">Position</th>
-                    <th class="tg-0lax alignCenter">Unité</th>
-                    <th class="tg-0lax alignCenter">Prix unit.</th>
-                    <th class="tg-0lax alignCenter">Nombre</th>
+                    <th class="tg-0lax alignCenter">Travaux selon le temps consacré</th>
+                    <th class="tg-0lax alignCenter">Prix horaire</th>
+                    <th class="tg-0lax alignCenter">Nbr heure</th>
                     <th class="tg-0lax alignCenter montant">Montant</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- <tr> 
-                    <td class="tg-0lax"></td>
-                    <td class="tg-0lax"></td>
-                    <td class="tg-0lax alignCenter"></td>
-                    <td class="tg-0lax alignRight"></td>
-                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="" class="nbInput" @keyup="" @focus="$event.target.select()"></md-input></md-field></td>
-                    <td class="tg-0lax alignRight"></td>
-                  </tr> -->
+                  <template>
+                    <tr> 
+                      <td class="tg-0lax"><md-field class="nbField"><md-input class="inputText" @keyup="updateMontantDivers()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignCenter"><md-field class="nbField"><md-input class="inputMontant" @keyup="updateMontantDivers()" @focus="$event.target.select()"></md-input>CHF</md-field></td>
+                      <td class="tg-0lax alignRight"><md-field class="nbField"><md-input class="nbInput" @keyup="updateMontantDivers()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax"></td>
+                    </tr>
+                  </template>
+                  <tr> 
+                    <td class="tg-0lax">Relations avec d'autres services (de 50.00 à 200.00 CHF)</td>
+                    <td class="tg-0lax notEditable"></td>
+                    <td class="tg-0lax notEditable"></td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input class="inputMontant" @keyup="updateMontantDivers()" @focus="$event.target.select()"></md-input>CHF</md-field></td>
+                  </tr>
                   <tr>
-                    <td class="tg-0pky" colspan="5">Total intermédiaire</td>
-                    <td class="tg-0pky"> CHF</td>
+                    <td class="tg-0pky" colspan="3">Total intermédiaire</td>
+                    <td class="tg-0pky montantTotal alignRight"> CHF</td>
                   </tr>
                 </tbody>
               </table>

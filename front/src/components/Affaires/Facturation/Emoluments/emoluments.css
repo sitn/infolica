@@ -24,6 +24,17 @@
   text-align: center;
 }
 
+.inputMontant {
+  width: 110px;
+  text-align: Right;
+  margin-right: 5px;
+}
+
+.inputText {
+  width: 400px;
+  text-align: Left;
+}
+
 .md-select {
   text-align: right;
 }
