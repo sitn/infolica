@@ -614,7 +614,7 @@
                     </template>
                   </tr>
                   <tr>
-                    <td class="tg-0pky" colspan="5">Application du facteur de correction lié à la surface des bâtiments</td>
+                    <td class="tg-0pky" colspan="5">Application du facteur de correction lié à la surface du bâtiment</td>
                     <td class="tg-0pky notEditable"></td>
                     <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax batiment-separator alignCenter">x f</td>
@@ -634,7 +634,6 @@
                       <td class="tg-0pky batiment-separator" :colspan="(2* Number(form.nb_batiments))-1">x supplément terrain zi</td>
                       <td class="tg-0pky montantTotal alignRight">{{ form.montant_travauxTerrain_batiment_total_f_somme_zi }} CHF</td>
                     </tr>
-
                   </template>
                 </tbody>
               </table>
@@ -856,6 +855,14 @@
 
               <table class="tg">
                 <thead>
+                  <template v-if="form.nb_batiments > 0">
+                    <tr>
+                      <th class="tg-0lax alignCenter" colspan="6"></th>
+                      <template v-for="i in form.nb_batiments">
+                        <th class="tg-0lax batiment-separator alignCenter alignCenter" colspan="2">Bâtiment {{i}}</th>
+                      </template>
+                    </tr>
+                  </template>
                   <tr>
                     <th class="tg-0lax alignCenter">Code</th>
                     <th class="tg-0lax alignCenter">Position</th>
@@ -863,11 +870,15 @@
                     <th class="tg-0lax alignCenter">Prix unit.</th>
                     <th class="tg-0lax alignCenter">Nombre</th>
                     <th class="tg-0lax alignCenter montant">Montant</th>
+                    <template v-for="i in form.nb_batiments">
+                      <th class="tg-0lax batiment-separator alignCenter">Nombre</th>
+                      <th class="tg-0lax alignCenter montant">Montant</th>
+                    </template>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td class="tg-0lax subtitle" colspan="6">4.1 Points fixes planimétriques</td>
+                    <td class="tg-0lax subtitle" :colspan="6 + 2* Number(form.nb_batiments)">4.1 Points fixes planimétriques</td>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.11</td>
@@ -876,6 +887,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[49].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau1" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau1 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau1_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau1_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.12</td>
@@ -884,6 +899,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[50].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau2" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau2 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau2_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau2_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.13</td>
@@ -892,6 +911,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[51].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau3" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau3 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau3_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau3_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
@@ -900,6 +923,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[52].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau4" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau4 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau4_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau4_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.14</td>
@@ -908,6 +935,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[53].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau5" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau5 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau5_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau5_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.15</td>
@@ -916,6 +947,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[54].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau6" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau6 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau6_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau6_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.16</td>
@@ -924,6 +959,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[55].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau7" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau7 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau7_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau7_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.17</td>
@@ -932,6 +971,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[56].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau8" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau8 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau8_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau8_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
@@ -940,6 +983,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[57].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau9" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau9 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau9_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau9_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.18</td>
@@ -948,6 +995,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[58].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau10" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau10 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau10_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau10_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.19</td>
@@ -956,6 +1007,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[59].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau11" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau11 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau11_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau11_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
@@ -964,9 +1019,13 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[60].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau12" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau12 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau12_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau12_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
-                    <td class="tg-0lax subtitle" colspan="6">4.3 Situation</td>
+                    <td class="tg-0lax subtitle" :colspan="6 + 2* Number(form.nb_batiments)">4.3 Situation</td>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.31</td>
@@ -975,6 +1034,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[61].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau13" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau13 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau13_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau13_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.32</td>
@@ -983,6 +1046,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[62].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau14" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau14 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau14_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau14_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.33</td>
@@ -991,6 +1058,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[63].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau15" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau15 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau15_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau15_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.34</td>
@@ -999,6 +1070,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[64].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau16" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau16 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau16_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau16_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.35</td>
@@ -1007,6 +1082,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[65].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau17" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau17 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau17_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau17_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.36</td>
@@ -1015,6 +1094,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[66].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau18" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau18 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau18_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau18_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
@@ -1023,6 +1106,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[67].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau19" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau19 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau19_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau19_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.37</td>
@@ -1031,6 +1118,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[68].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau20" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau20 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau20_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau20_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.38</td>
@@ -1039,6 +1130,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[69].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau21" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau21 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau21_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau21_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
@@ -1047,9 +1142,13 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[70].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau22" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau22 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau22_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau22_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
-                    <td class="tg-0lax subtitle" colspan="6">4.4 Surfaces</td>
+                    <td class="tg-0lax subtitle" :colspan="6 + 2* Number(form.nb_batiments)">4.4 Surfaces</td>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.41</td>
@@ -1058,6 +1157,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[71].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau23" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau23 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau23_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau23_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.42</td>
@@ -1066,6 +1169,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[72].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau24" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau24 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau24_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau24_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.43</td>
@@ -1074,6 +1181,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[73].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau25" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau25 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau25_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau25_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.44</td>
@@ -1082,6 +1193,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[74].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau26" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau26 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau26_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau26_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.45</td>
@@ -1090,9 +1205,13 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[75].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau27" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau27 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau27_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau27_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
-                    <td class="tg-0lax subtitle" colspan="6">4.2 Points limites</td>
+                    <td class="tg-0lax subtitle" :colspan="6 + 2* Number(form.nb_batiments)">4.2 Points limites</td>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.21</td>
@@ -1101,6 +1220,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[76].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau28" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau28 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.22</td>
@@ -1109,6 +1232,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[77].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau29" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau29 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
@@ -1117,6 +1244,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[78].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau30" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau30 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.23</td>
@@ -1125,6 +1256,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[79].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau31" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau31 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.24</td>
@@ -1133,6 +1268,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[80].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau32" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau32 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.25</td>
@@ -1141,6 +1280,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[81].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau33" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau33 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.26</td>
@@ -1149,6 +1292,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[82].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau34" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau34 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.27</td>
@@ -1157,6 +1304,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[83].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau35" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau35 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.28</td>
@@ -1165,6 +1316,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[84].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau36" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau36 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.29</td>
@@ -1173,6 +1328,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[85].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau37" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau37 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.210</td>
@@ -1181,6 +1340,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[86].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau38" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau38 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.211</td>
@@ -1189,6 +1352,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[87].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau39" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau39 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.212</td>
@@ -1197,6 +1364,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[88].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau40" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau40 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.213</td>
@@ -1205,6 +1376,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[89].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau41" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau41 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
@@ -1213,6 +1388,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[90].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau42" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau42 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.214</td>
@@ -1221,6 +1400,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[91].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau43" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau43 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.215</td>
@@ -1229,6 +1412,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[92].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau44" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau44 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
@@ -1237,6 +1424,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[93].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau45" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau45 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
@@ -1245,11 +1436,35 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[94].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxBureau46" class="nbInput" @keyup="updateMontantTravauxBureau()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxBureau46 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr>
-                    <td class="tg-0pky" colspan="5">Total intermédiaire</td>
+                    <td class="tg-0pky" colspan="5">Somme</td>
                     <td class="tg-0pky alignRight">{{ form.montant_travauxBureau_total }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator notEditable"></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau_batiment_total[i-1] }} CHF</td>
+                    </template>
                   </tr>
+                  <tr>
+                    <td class="tg-0pky" colspan="5">Application du facteur de correction lié à la surface du bâtiment</td>
+                    <td class="tg-0pky notEditable"></td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator alignCenter">x f</td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxBureau_batiment_total_f[i-1] }} CHF</td>
+                    </template>
+                  </tr>
+                  <template v-if="Number(form.nb_batiments) > 0">
+                    <tr>
+                      <td class="tg-0pky" colspan="5">Total des travaux de terrain sans bâtiments</td>
+                      <td class="tg-0pky montantTotal alignRight">{{ form.montant_travauxBureau_total }} CHF</td>
+                      <td class="tg-0pky batiment-separator" :colspan="(2* Number(form.nb_batiments))-1">Total des travaux de terrain pour bâtiments</td>
+                      <td class="tg-0pky montantTotal alignRight">{{ form.montant_travauxBureau_batiment_total_f_somme }} CHF</td>
+                    </tr>
+                  </template>
                 </tbody>
               </table>
             </md-card-content>
@@ -1360,7 +1575,7 @@
                     <th class="tg-0lax alignCenter">Domaine</th>
                     <th class="tg-0lax alignCenter">Indice</th>
                     <th class="tg-0lax alignCenter montant">Montant</th>
-                    <th class="tg-0lax alignCenter">Total</th>
+                    <th class="tg-0lax alignCenter montant">Total</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1407,7 +1622,7 @@
                   </tr>
                   <tr>
                     <td class="tg-0pky" colspan="3">Montant total du mandat</td>
-                    <td class="tg-0pky alignRight">{{ form.montant_recapitulatif_total }} CHF</td>
+                    <td class="tg-0pky montantTotal alignRight">{{ form.montant_recapitulatif_total }} CHF</td>
                   </tr>
                 </tbody>
               </table>
