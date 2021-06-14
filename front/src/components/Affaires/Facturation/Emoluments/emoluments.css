@@ -80,3 +80,7 @@
 .montant {
   width: 110px;
 }
+
+.montantTotal {
+  font-weight: bold;
+}

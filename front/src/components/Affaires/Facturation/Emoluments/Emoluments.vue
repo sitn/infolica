@@ -21,6 +21,11 @@ export default {
   },
 
   methods:{
+    init2remove() {
+      this.form.nb_batiments = 2;
+      this.form.batiment_f = [0.8, 1.3];
+    },
+    
     getEmolumentsUnit() {
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENTS_ENDPOINT,
@@ -49,7 +54,7 @@ export default {
         visibilite: 0,
         trafic: 0,
         zi: 1,
-        nb_batiments: 2,
+        nb_batiments: 0,
         indice_application: 1.22,
         indice_tva: 7.7, // %
         //mandats
@@ -126,6 +131,7 @@ export default {
         montant_23sit: 0,
         montant_22pl: 0,
         montant_travauxTerrain_total: 0,
+        montant_travauxTerrain_total_zi: 0,
         // Travaux matérialisation
         nb_travauxMaterialisation1: 0,
         nb_travauxMaterialisation2: 0,
@@ -299,6 +305,10 @@ export default {
         // Bâtiments
         batiment_f: [],
       };
+
+      // **************************************************** 2 REMOVE - start **********************************************
+      this.init2remove();
+      // **************************************************** 2 REMOVE - end **********************************************
       
       this.updateNbBatiments();
       this.updateRecapitulatif();
@@ -411,7 +421,57 @@ export default {
         Number(this.form.montant_21pfp) +
         Number(this.form.montant_23sit) +
         Number(this.form.montant_22pl);
+
+      this.form.montant_travauxTerrain_total_zi =
+        this.form.montant_travauxTerrain_total * Number(this.form.zi)
       
+      // Bâtiments
+      this.form.montant_travauxTerrain_batiment_total_f_somme = 0;
+      for (let i=0; i<this.form.nb_batiments; i++) {
+        this.form.montant_travauxTerrain1_batiment[i] = Number(this.form.nb_travauxTerrain1_batiment[i]) * this.emolumentsUnits[6].montant;
+        this.form.montant_travauxTerrain2_batiment[i] = Number(this.form.nb_travauxTerrain2_batiment[i]) * this.emolumentsUnits[7].montant;
+        this.form.montant_travauxTerrain3_batiment[i] = Number(this.form.nb_travauxTerrain3_batiment[i]) * this.emolumentsUnits[8].montant;
+        this.form.montant_travauxTerrain4_batiment[i] = Number(this.form.nb_travauxTerrain4_batiment[i]) * this.emolumentsUnits[9].montant;
+        this.form.montant_travauxTerrain5_batiment[i] = Number(this.form.nb_travauxTerrain5_batiment[i]) * this.emolumentsUnits[10].montant;
+        this.form.montant_travauxTerrain6_batiment[i] = Number(this.form.nb_travauxTerrain6_batiment[i]) * this.emolumentsUnits[11].montant;
+        this.form.montant_travauxTerrain7_batiment[i] = Number(this.form.nb_travauxTerrain7_batiment[i]) * this.emolumentsUnits[12].montant;
+        this.form.montant_travauxTerrain8_batiment[i] = Number(this.form.nb_travauxTerrain8_batiment[i]) * this.emolumentsUnits[13].montant;
+        this.form.montant_travauxTerrain9_batiment[i] = Number(this.form.nb_travauxTerrain9_batiment[i]) * this.emolumentsUnits[14].montant;
+        this.form.montant_travauxTerrain10_batiment[i] = Number(this.form.nb_travauxTerrain10_batiment[i]) * this.emolumentsUnits[15].montant;
+        this.form.montant_travauxTerrain11_batiment[i] = Number(this.form.nb_travauxTerrain11_batiment[i]) * this.emolumentsUnits[16].montant;
+        this.form.montant_travauxTerrain12_batiment[i] = Number(this.form.nb_travauxTerrain12_batiment[i]) * this.emolumentsUnits[17].montant;
+        this.form.montant_travauxTerrain13_batiment[i] = Number(this.form.nb_travauxTerrain13_batiment[i]) * this.emolumentsUnits[18].montant;
+        this.form.montant_travauxTerrain14_batiment[i] = Number(this.form.nb_travauxTerrain14_batiment[i]) * this.emolumentsUnits[19].montant;
+        this.form.montant_travauxTerrain15_batiment[i] = Number(this.form.nb_travauxTerrain15_batiment[i]) * this.emolumentsUnits[20].montant;
+        this.form.montant_travauxTerrain16_batiment[i] = Number(this.form.nb_travauxTerrain16_batiment[i]) * this.emolumentsUnits[21].montant;
+
+        this.form.montant_travauxTerrain_batiment_total[i] = 
+          Number(this.form.montant_travauxTerrain1_batiment[i]) + 
+          Number(this.form.montant_travauxTerrain2_batiment[i]) + 
+          Number(this.form.montant_travauxTerrain3_batiment[i]) +
+          Number(this.form.montant_travauxTerrain4_batiment[i]) +
+          Number(this.form.montant_travauxTerrain5_batiment[i]) +
+          Number(this.form.montant_travauxTerrain6_batiment[i]) +
+          Number(this.form.montant_travauxTerrain7_batiment[i]) +
+          Number(this.form.montant_travauxTerrain8_batiment[i]) +
+          Number(this.form.montant_travauxTerrain9_batiment[i]) +
+          Number(this.form.montant_travauxTerrain10_batiment[i]) +
+          Number(this.form.montant_travauxTerrain11_batiment[i]) +
+          Number(this.form.montant_travauxTerrain12_batiment[i]) +
+          Number(this.form.montant_travauxTerrain13_batiment[i]) +
+          Number(this.form.montant_travauxTerrain14_batiment[i]) +
+          Number(this.form.montant_travauxTerrain15_batiment[i]) +
+          Number(this.form.montant_travauxTerrain16_batiment[i]);
+        
+        this.form.montant_travauxTerrain_batiment_total_f[i] = 
+          Number(this.form.montant_travauxTerrain_batiment_total[i]) * Number(this.form.batiment_f[i]);
+
+        // compute total sum of montant batiments
+        this.form.montant_travauxTerrain_batiment_total_f_somme += this.form.montant_travauxTerrain_batiment_total_f[i];
+      }
+
+      this.form.montant_travauxTerrain_batiment_total_f_somme_zi = this.form.montant_travauxTerrain_batiment_total_f_somme * Number(this.form.zi)
+
       this.updateRecapitulatif();
     },
 
@@ -607,7 +667,7 @@ export default {
       this.form.montant_recapitulatif_mandat = Number(this.form.montant_mandat_total) + this.form.montant_mandat_batiment_total_f.reduce((a, b) => Number(a) + Number(b));
       this.form.montant_recapitulatif_somme1 = Number(this.form.montant_recapitulatif_mandat)
 
-      this.form.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.form.montant_travauxTerrain_total) +Number(this.form.montant_5_depl_debours);
+      this.form.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.form.montant_travauxTerrain_total_zi) + Number(this.form.montant_travauxTerrain_batiment_total_f_somme_zi) + Number(this.form.montant_5_depl_debours);
       this.form.montant_recapitulatif_somme2 = Number(this.form.montant_recapitulatif_somme1) + Number(this.form.montant_recapitulatif_terrain_materialisation_deplacements);
 
       this.form.montant_recapitulatif_bureau = Number(this.form.montant_travauxBureau_total);
@@ -647,6 +707,43 @@ export default {
       this.form.montant_mandat6_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
       this.form.montant_mandat_batiment_total = new Array(Number(this.form.nb_batiments)).fill(0);
       this.form.montant_mandat_batiment_total_f = new Array(Number(this.form.nb_batiments)).fill(0);
+      // Travaux terrain
+      this.form.nb_travauxTerrain1_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain2_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain3_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain4_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain5_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain6_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain7_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain8_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain9_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain10_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain11_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain12_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain13_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain14_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain15_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.nb_travauxTerrain16_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain1_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain2_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain3_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain4_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain5_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain6_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain7_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain8_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain9_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain10_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain11_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain12_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain13_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain14_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain15_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain16_batiment = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain_batiment_total = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain_batiment_total_f = new Array(Number(this.form.nb_batiments)).fill(0);
+      this.form.montant_travauxTerrain_batiment_total_f_somme = 0;
+      this.form.montant_travauxTerrain_batiment_total_f_somme_zi = 0;
     },
 
     /** Set format for comptabilité: 0.00 CHF */

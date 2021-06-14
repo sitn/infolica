@@ -1,4 +1,4 @@
-<div class="emoluments">
+<div class="emoluments" v-if="emolumentsUnits.length > 0">
 
     <md-dialog :md-active.sync="showEmolumentsDialog">
       <md-dialog-title>Émoluments</md-dialog-title>
@@ -247,10 +247,10 @@
                   </tr>
                   <tr>
                     <td class="tg-0pky" colspan="5">Total intermédiaire</td>
-                    <td class="tg-0pky alignRight">{{ form.montant_mandat_total }} CHF</td>
+                    <td class="tg-0pky montantTotal alignRight">{{ form.montant_mandat_total }} CHF</td>
                     <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax alignCenter">x f</td>
-                      <td class="tg-0lax alignRight">{{ form.montant_mandat_batiment_total_f[i-1] }} CHF</td>
+                      <td class="tg-0lax montantTotal alignRight">{{ form.montant_mandat_batiment_total_f[i-1] }} CHF</td>
                     </template>
                   </tr>
                 </tbody>
@@ -275,11 +275,15 @@
                     <th class="tg-0lax alignCenter">Prix unit.</th>
                     <th class="tg-0lax alignCenter">Nombre</th>
                     <th class="tg-0lax alignCenter montant">Montant</th>
+                    <template v-for="i in form.nb_batiments">
+                      <th class="tg-0lax alignCenter">Nombre</th>
+                      <th class="tg-0lax alignCenter montant">Montant</th>
+                    </template>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td class="tg-0lax subtitle" colspan="6">2.1 Points fixes planimétriques</td>
+                    <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form.nb_batiments)">2.1 Points fixes planimétriques</td>
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.11</td>
@@ -288,6 +292,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[6].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain1" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain1 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain1_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain1_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.12</td>
@@ -296,6 +304,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[7].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain2" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain2 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain2_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain2_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.13</td>
@@ -304,6 +316,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[8].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain3" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain3 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain3_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain3_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.14</td>
@@ -312,6 +328,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[9].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain4" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain4 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain4_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain4_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.15</td>
@@ -320,10 +340,14 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[10].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain5" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain5 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain5_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain5_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.16</em></td>
-                    <td class="tg-0lax" colspan="5"><em>Contrôles lors de visées pério.</em></td>
+                    <td class="tg-0lax" :colspan="5 + 2*Number(form.nb_batiments)"><em>Contrôles lors de visées pério.</em></td>
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
@@ -332,6 +356,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[11].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain6" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain6 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain6_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain6_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
@@ -340,6 +368,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[12].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain7" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain7 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain7_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain7_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
@@ -348,6 +380,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[13].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain8" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain8 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain8_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain8_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.17</td>
@@ -356,6 +392,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[14].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain9" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain9 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain9_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain9_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.18</td>
@@ -364,6 +404,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[15].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain10" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain10 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain10_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain10_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.19</td>
@@ -372,6 +416,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[16].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain11" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain11 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain11_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain11_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.110</td>
@@ -380,6 +428,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[17].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain12" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain12 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain12_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain12_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.111</td>
@@ -388,6 +440,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[18].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain13" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain13 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain13_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain13_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.112</td>
@@ -396,9 +452,13 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[19].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain14" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain14 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain14_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain14_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
-                    <td class="tg-0lax subtitle" colspan="6">2.3 Situation</td>
+                    <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form.nb_batiments)">2.3 Situation</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.31</td>
@@ -407,6 +467,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[20].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain15" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain15 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain15_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain15_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.32</td>
@@ -415,9 +479,13 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[21].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain16" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain16 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain16_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain16_batiment[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
-                    <td class="tg-0lax subtitle" colspan="6">2.2 Points limites</td>
+                    <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form.nb_batiments)">2.2 Points limites</td>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.21</td>
@@ -426,6 +494,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[22].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain17" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain17 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.22</td>
@@ -434,6 +506,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[23].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain18" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain18 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.23</td>
@@ -442,6 +518,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[24].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain19" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain19 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.24</td>
@@ -450,6 +530,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[25].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain20" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain20 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.25</td>
@@ -458,6 +542,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[26].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain21" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain21 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.26</td>
@@ -466,6 +554,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[27].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain22" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain22 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.27</td>
@@ -474,6 +566,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[28].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain23" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain23 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.28</td>
@@ -482,6 +578,10 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[29].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain24" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain24 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.29</td>
@@ -490,11 +590,42 @@
                     <td class="tg-0lax alignRight">{{ emolumentsUnits[30].montant }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain25" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain25 }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax notEditable"></td>
+                      <td class="tg-0lax notEditable"></td>
+                    </template>
                   </tr>
                   <tr>
-                    <td class="tg-0pky" colspan="5">Total intermédiaire</td>
+                    <td class="tg-0pky" colspan="5">Somme</td>
                     <td class="tg-0pky alignRight">{{ form.montant_travauxTerrain_total }} CHF</td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax notEditable"></td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain_batiment_total[i-1] }} CHF</td>
+                    </template>
                   </tr>
+                  <tr>
+                    <td class="tg-0pky" colspan="5">Application du facteur de correction lié à la surface des bâtiments</td>
+                    <td class="tg-0pky notEditable"></td>
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax alignCenter">x f</td>
+                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain_batiment_total_f[i-1] }} CHF</td>
+                    </template>
+                  </tr>
+                  <template v-if="Number(form.nb_batiments) > 0">
+                    <tr>
+                      <td class="tg-0pky" colspan="5">Total des travaux de terrain sans bâtiments</td>
+                      <td class="tg-0pky alignRight">{{ form.montant_travauxTerrain_total }} CHF</td>
+                      <td class="tg-0pky" :colspan="(2* Number(form.nb_batiments))-1">Total des travaux de terrain pour bâtiments</td>
+                      <td class="tg-0pky alignRight">{{ form.montant_travauxTerrain_batiment_total_f_somme }} CHF</td>
+                    </tr>
+                    <tr>
+                      <td class="tg-0pky" colspan="5">x supplément terrain zi</td>
+                      <td class="tg-0pky montantTotal alignRight">{{ form.montant_travauxTerrain_total_zi }} CHF</td>
+                      <td class="tg-0pky" :colspan="(2* Number(form.nb_batiments))-1">x supplément terrain zi</td>
+                      <td class="tg-0pky montantTotal alignRight">{{ form.montant_travauxTerrain_batiment_total_f_somme_zi }} CHF</td>
+                    </tr>
+
+                  </template>
                 </tbody>
               </table>
             </md-card-content>
