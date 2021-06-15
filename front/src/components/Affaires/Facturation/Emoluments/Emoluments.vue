@@ -17,6 +17,7 @@ export default {
       return {
         emolumentsUnits: [],
         form: {},
+        n_divers: 10,
       }
   },
 
@@ -49,7 +50,6 @@ export default {
         plans_folio: null,
         parcelles: null,
         echelle: null,
-        no_facture: null,
         technicien: this.affaire.technicien_id,
         nb_pfp3_hors_mutation: null,
         pente: 0,
@@ -59,6 +59,7 @@ export default {
         nb_batiments: 0,
         indice_application: 1.22,
         indice_tva: 7.7, // %
+        remarque: "",
         //mandats
         nb_mandat1: 0,
         nb_mandat2: 0,
@@ -281,11 +282,20 @@ export default {
         nb_servitudes1: 0,
         nb_servitudes2: 0,
         nb_servitudes3: 0,
-        montant_servitudes1: 0,
-        montant_servitudes2: 0,
-        montant_servitudes3: 0,
-        montant_servitudes_total: 0,
+        nb_servitudes4: 0,
+        nb_servitudes5: 0,
+        montant_rf1: 0,
+        montant_rf2: 0,
+        montant_rf3: 0,
+        montant_rf4: 0,
+        montant_rf5: 0,
+        montant_rf_total: 0,
         // Divers
+        divers_intitule: new Array(this.n_divers).fill(null),
+        divers_nb: new Array(this.n_divers).fill(0),
+        divers_prix_unitaire: new Array(this.n_divers).fill(0),
+        divers_montant: new Array(this.n_divers).fill(0),
+        montant_relations_autres_services: 0,
         montant_divers_total: 0,
         // Récapitulatif
         montant_recapitulatif_mandat: 0,
@@ -840,14 +850,32 @@ export default {
     /**
      * Update montants travaux matérialisation
      */
-    updateMontantServitudes() {
-      this.form.montant_servitudes1 = Number(this.form.nb_servitudes1) * this.emolumentsUnits[95].montant;
-      this.form.montant_servitudes2 = Number(this.form.nb_servitudes2) * this.emolumentsUnits[96].montant;
-      this.form.montant_servitudes3 = Number(this.form.nb_servitudes3) * this.emolumentsUnits[97].montant;
-      this.form.montant_servitudes_total = 
-        Number(this.form.montant_servitudes1) +
-        Number(this.form.montant_servitudes2) +
-        Number(this.form.montant_servitudes3);
+    updateMontantRF() {
+      this.form.montant_rf1 = Number(this.form.nb_servitudes1) * this.emolumentsUnits[95].montant;
+      this.form.montant_rf2 = Number(this.form.nb_servitudes2) * this.emolumentsUnits[96].montant;
+      this.form.montant_rf3 = Number(this.form.nb_servitudes3) * this.emolumentsUnits[97].montant;
+      this.form.montant_rf4 = Number(this.form.nb_servitudes4) * this.emolumentsUnits[98].montant;
+      this.form.montant_rf5 = Number(this.form.nb_servitudes5) * this.emolumentsUnits[99].montant;
+      
+      this.form.montant_rf_total = 
+        Number(this.form.montant_rf1) +
+        Number(this.form.montant_rf2) +
+        Number(this.form.montant_rf3) +
+        Number(this.form.montant_rf4) +
+        Number(this.form.montant_rf5);
+      
+      this.updateRecapitulatif();
+    },
+
+    updateMontantDivers() {
+      this.form.montant_divers_total = 0;
+      for (let i=0; i<this.n_divers; i++) {
+        if (this.form.divers_nb[i] && this.form.divers_prix_unitaire[i] && Number(this.form.divers_nb[i]) >= 0 && Number(this.form.divers_prix_unitaire[i]) >= 0) {
+          this.form.divers_montant[i] = Number(this.form.divers_nb[i]) * Number(this.form.divers_prix_unitaire[i]);
+          this.form.montant_divers_total += this.form.divers_montant[i];
+        }
+      }
+      this.form.montant_divers_total += this.form.montant_relations_autres_services;
       
       this.updateRecapitulatif();
     },
@@ -874,7 +902,7 @@ export default {
       this.form.montant_recapitulatif_tva = this.round(Number(this.form.montant_recapitulatif_somme6) * Number(this.form.indice_tva) / 100, 0.05);
       this.form.montant_recapitulatif_somme7 = this.form.montant_recapitulatif_somme6 + Number(this.form.montant_recapitulatif_tva);
 
-      this.form.montant_recapitulatif_registre_foncier = Number(this.form.montant_servitudes_total);
+      this.form.montant_recapitulatif_registre_foncier = Number(this.form.montant_rf_total);
 
       this.form.montant_recapitulatif_total = Number(this.form.montant_recapitulatif_somme7) + Number(this.form.montant_recapitulatif_registre_foncier);
 
@@ -890,7 +918,8 @@ export default {
       this.updateMontantTravauxTerrain();
       this.updateMontantTravauxMaterialisation();
       this.updateMontantTravauxBureau();
-      this.updateMontantServitudes();
+      this.updateMontantRF();
+      this.updateMontantDivers();
     },
 
     /** Set format for comptabilité: 0.00 CHF */
