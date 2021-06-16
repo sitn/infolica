@@ -191,9 +191,6 @@ facture_type_facture_id = 1
 # Client cadastration
 client_cadastration_id = 2896
 
-# Plans juridiquement en vigueur
-plan_vigueur_check_text = PLAN JURIDIQUEMENT EN VIGUEUR
-
 ######################################################################################
 # Accès dossiers
 ######################################################################################
