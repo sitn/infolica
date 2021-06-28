@@ -24,6 +24,16 @@
   text-align: center;
 }
 
+.nbSelect{
+  width: 100px !important;
+  text-align: center;
+  height: 20px;
+}
+
+.md-field .md-input, .md-field .md-textarea {
+  height: 32px;
+}
+
 .inputMontant {
   width: 110px;
   text-align: Right;
