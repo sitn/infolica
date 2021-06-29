@@ -15,33 +15,6 @@
               <div class="md-layout md-alignment-top-space-between">
                 <div class="md-layout-item">
                   <md-field class="formField">
-                    <label>Parcelle(s)</label>
-                    <md-input v-model="form.parcelles"></md-input>
-                  </md-field>
-                  
-                  <md-field class="formField">
-                    <label>Plan(s) folio</label>
-                    <md-input v-model="form.plans_folio"></md-input>
-                  </md-field>
-                
-                  <md-field class="formField">
-                    <label>Echelle</label>
-                    <md-input v-model="form.echelle"></md-input>
-                  </md-field>
-
-                  <md-field class="formField">
-                    <label>Technicien</label>
-                    <md-input v-model="form.technicien"></md-input>
-                  </md-field>
-                </div>
-                
-                <div class="md-layout-item">
-                  <md-field class="formField">
-                    <label>Nb PFP3 rétablis hors mutation</label>
-                    <md-input v-model="form.nb_pfp3_hors_mutation" type="number" onkeypress="return /[0-9]/i.test(event.key)"></md-input>
-                  </md-field>
-                  
-                  <md-field class="formField">
                     <label>Nombre de bâtiments</label>
                     <md-select v-model="form.nb_batiments" md-dense @md-selected="updateNbBatiments">
                       <md-option v-for="item in [0, 1, 2, 3]" :value="item">{{ item }}</md-option>
@@ -61,7 +34,7 @@
                           <td class="tg-0lax alignCenter">{{ i }}</td>
                           <td class="tg-0lax">
                             <md-field class="nbField">
-                              <md-select v-model="form.batiment_f[i-1]" md-dense @md-selected="computeAll()">
+                              <md-select v-model="form.batiment_f[i-1]" md-dense @md-selected="updateBatimentCorrectionFactor()">
                                 <md-option :value="0.5">0.5 (1-50m2)</md-option>
                                 <md-option :value="0.6">0.6 (51-100m2)</md-option>
                                 <md-option :value="0.7">0.7 (101-150m2)</md-option>
@@ -848,18 +821,6 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation17.montant }} CHF</td>
                   </tr>
                   <tr>
-                    <td class="tg-0lax subtitle" colspan="6">5. Déplacement et débours</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[48].nom }}</td> -->
-                    <td class="tg-0lax">{{ form2.deplacementDebours1.nom }}</td>
-                    <td class="tg-0lax alignCenter">{{ form2.deplacementDebours1.unite }}</td>
-                    <td class="tg-0lax alignRight">{{ form2.deplacementDebours1.prix_unitaire }} CHF</td>
-                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.deplacementDebours1.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                    <td class="tg-0lax alignRight">{{ form2.deplacementDebours1.montant }} CHF</td>
-                  </tr>
-                  <tr>
                     <td class="tg-0pky tabulation" colspan="5">Total 3.1,2</td>
                     <td class="tg-0pky alignRight">{{ total.montant_31_32_std_compl }} CHF</td>
                   </tr>
@@ -874,10 +835,6 @@
                   <tr>
                     <td class="tg-0pky tabulation" colspan="5">Total 3.4</td>
                     <td class="tg-0pky alignRight">{{ total.montant_34_matdiff }} CHF</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0pky tabulation" colspan="5">Total 5</td>
-                    <td class="tg-0pky alignRight">{{ total.montant_5_depl_debours }} CHF</td>
                   </tr>
                   <tr>
                     <td class="tg-0pky" colspan="5">Total intermédiaire</td>
@@ -1795,8 +1752,14 @@
                     <td class="tg-0lax montant alignRight"><md-field class="nbField"><md-input v-model="form.montant_relations_autres_services" class="inputMontant" @change="updateMontants()" @focus="$event.target.select()"></md-input>CHF</md-field></td>
                   </tr>
                   <tr>
-                    <td class="tg-0lax" colspan="3">Total intermédiaire</td>
-                    <td class="tg-0lax montantTotal alignRight">{{ total.montant_divers_total }} CHF</td>
+                    <td class="tg-0lax">5. {{ form2.deplacementDebours1.nom }}</td>
+                    <td class="tg-0lax alignRight">{{ form2.deplacementDebours1.prix_unitaire }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.deplacementDebours1.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form2.deplacementDebours1.montant }} CHF</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax" colspan="3">Total intermédiaire (divers + déplacements et débours)</td>
+                    <td class="tg-0lax montantTotal alignRight">{{ total.montant_divers_total_with_5_depl_debours }} CHF</td>
                   </tr>
                 </tbody>
               </table>
