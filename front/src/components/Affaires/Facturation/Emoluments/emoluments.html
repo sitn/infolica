@@ -1804,8 +1804,147 @@
           </md-card>
         </md-tab>
 
+        <md-tab md-label="Registre foncier">
+          <md-card>
+            <md-card-header>
+              <div class="md-title">Registre foncier</div>
+            </md-card-header>
+            <md-card-content>
+              
+              <table class="tg">
+                <thead>
+                  <tr>
+                    <th class="tg-0lax alignCenter">Code</th>
+                    <th class="tg-0lax alignCenter">Position</th>
+                    <th class="tg-0lax alignCenter">Unité</th>
+                    <th class="tg-0lax alignCenter">Prix unit.</th>
+                    <th class="tg-0lax alignCenter">Nombre</th>
+                    <th class="tg-0lax alignCenter montant">Montant</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr> 
+                    <td class="tg-0lax">.1</td>
+                    <!-- <td class="tg-0lax">{{ emolumentsUnits[95].nom }}</td> -->
+                    <td class="tg-0lax">{{ form2.registreFoncier1.nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ form2.registreFoncier1.unite }}</td>
+                    <td class="tg-0lax alignRight">{{ form2.registreFoncier1.prix_unitaire }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.registreFoncier1.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form2.registreFoncier1.montant }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.2</td>
+                    <!-- <td class="tg-0lax">{{ emolumentsUnits[96].nom }}</td> -->
+                    <td class="tg-0lax">{{ form2.registreFoncier2.nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ form2.registreFoncier2.unite }}</td>
+                    <td class="tg-0lax alignRight">{{ form2.registreFoncier2.prix_unitaire }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.registreFoncier2.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form2.registreFoncier2.montant }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">.3</td>
+                    <!-- <td class="tg-0lax">{{ emolumentsUnits[97].nom }}</td> -->
+                    <td class="tg-0lax">{{ form2.registreFoncier3.nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ form2.registreFoncier3.unite }}</td>
+                    <td class="tg-0lax alignRight">{{ form2.registreFoncier3.prix_unitaire }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.registreFoncier3.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form2.registreFoncier3.montant }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax"></td>
+                    <!-- <td class="tg-0lax">{{ emolumentsUnits[98].nom }}</td> -->
+                    <td class="tg-0lax">{{ form2.registreFoncier4.nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ form2.registreFoncier4.unite }}</td>
+                    <td class="tg-0lax alignRight">{{ form2.registreFoncier4.prix_unitaire }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.registreFoncier4.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form2.registreFoncier4.montant }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax"></td>
+                    <!-- <td class="tg-0lax">{{ emolumentsUnits[99].nom }}</td> -->
+                    <td class="tg-0lax">{{ form2.registreFoncier5.nom }}</td>
+                    <td class="tg-0lax alignCenter">{{ form2.registreFoncier5.unite }}</td>
+                    <td class="tg-0lax alignRight">{{ form2.registreFoncier5.prix_unitaire }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.registreFoncier5.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form2.registreFoncier5.montant }} CHF</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0pky" colspan="5">Total intermédiaire</td>
+                    <td class="tg-0pky alignRight">{{ total.montant_rf_total }} CHF</td>
+                  </tr>
+                </tbody>
+              </table>
+            </md-card-content>
+          </md-card>
+        </md-tab>
 
-        <!-- insert tabs here -->
+        <md-tab md-label="Récapitulatif" ref="tabRecapitulatif">
+          <md-card>
+            <md-card-header>
+              <div class="md-title">Récapitulatif</div>
+            </md-card-header>
+            <md-card-content>
+              
+              <table class="tg">
+                <thead>
+                  <tr>
+                    <th class="tg-0lax alignCenter">Domaine</th>
+                    <th class="tg-0lax alignCenter">Indice</th>
+                    <th class="tg-0lax alignCenter montant">Montant</th>
+                    <th class="tg-0lax alignCenter montant">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr> 
+                    <td class="tg-0lax" colspan="2">Mandat</td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_mandat }} CHF</td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_somme1 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax" colspan="2">Travaux de terrain. matérialisation, déplacements et débours</td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_terrain_materialisation_deplacements }} CHF</td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_somme2 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax" colspan="2">Travaux de bureau</td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_bureau }} CHF</td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_somme3 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">Indice d'application</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input class="nbInput" v-model="form.indice_application" @keyup="updateRecapitulatif()"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_indice_application }} CHF</td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_somme4 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax" colspan="2">Matériel, travaux selon le temps consacré et relations avec d'autres services</td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_materiel_divers }} CHF</td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_somme5 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax" colspan="2">Matérialisation différée des limites y compris indice d'application</td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_matdiff }} CHF</td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_somme6 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax">TVA</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input class="nbInput" v-model="form.indice_tva" @keyup="updateRecapitulatif()"></md-input>%</md-field></td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_tva }} CHF</td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_somme7 }} CHF</td>
+                  </tr>
+                  <tr> 
+                    <td class="tg-0lax" colspan="3">Inscription au registre foncier</td>
+                    <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_registre_foncier }} CHF</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0pky" colspan="3">Montant total du mandat</td>
+                    <td class="tg-0pky montantTotal alignRight">{{ total.montant_recapitulatif_total }} CHF</td>
+                  </tr>
+                </tbody>
+              </table>
+            </md-card-content>
+          </md-card>
+        </md-tab>
         
       </md-tabs>
 

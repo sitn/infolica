@@ -39,6 +39,9 @@ export default {
       this.form.batiment_f = [0.8, 1.3];
     },
     
+    /**
+     * Get emoluments units from DB
+     */
     getEmolumentsUnit() {
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENTS_ENDPOINT,
@@ -58,7 +61,7 @@ export default {
               tableau_emolument_id: x,
               nom: tmp[x-1].nom,
               unite: tmp[x-1].unite,
-              prix_unitaire: Number(tmp[x-1].montant),
+              prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
               nombre: 0,
               batiment: null,
               batiment_f: 1,
@@ -74,7 +77,7 @@ export default {
               tableau_emolument_id: x,
               nom: tmp[x-1].nom,
               unite: tmp[x-1].unite,
-              prix_unitaire: Number(tmp[x-1].montant),
+              prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
               nombre: 0,
               batiment: null,
               batiment_f: 1,
@@ -90,7 +93,7 @@ export default {
               tableau_emolument_id: x,
               nom: tmp[x-1].nom,
               unite: tmp[x-1].unite,
-              prix_unitaire: Number(tmp[x-1].montant),
+              prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
               nombre: 0,
               batiment: null,
               batiment_f: 1,
@@ -106,7 +109,7 @@ export default {
               tableau_emolument_id: x,
               nom: tmp[x-1].nom,
               unite: tmp[x-1].unite,
-              prix_unitaire: Number(tmp[x-1].montant),
+              prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
               nombre: 0,
               batiment: null,
               batiment_f: 1,
@@ -122,7 +125,7 @@ export default {
               tableau_emolument_id: x,
               nom: tmp[x-1].nom,
               unite: tmp[x-1].unite,
-              prix_unitaire: Number(tmp[x-1].montant),
+              prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
               nombre: 0,
               batiment: null,
               batiment_f: 1,
@@ -138,7 +141,7 @@ export default {
               tableau_emolument_id: x,
               nom: tmp[x-1].nom,
               unite: tmp[x-1].unite,
-              prix_unitaire: Number(tmp[x-1].montant),
+              prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
               nombre: 0,
               batiment: null,
               batiment_f: 1,
@@ -146,8 +149,6 @@ export default {
             }
             i = i+1;
           });
-
-          console.log("this.form2 = ", this.form2)
 
           // Divers
           for (let i=0; i<this.n_divers; i++) {
@@ -190,23 +191,6 @@ export default {
         remarque: "",
         montant_relations_autres_services: numeral(0).format("0.00"),
 
-        montant_recapitulatif_mandat: 0,
-        montant_recapitulatif_terrain_materialisation_deplacements: 0,
-        montant_recapitulatif_bureau: 0,
-        montant_recapitulatif_indice_application: 0,
-        montant_recapitulatif_materiel_divers: 0,
-        montant_recapitulatif_matdiff: 0,
-        montant_recapitulatif_tva: 0,
-        montant_recapitulatif_registre_foncier: 0,
-        montant_recapitulatif_somme1: 0,
-        montant_recapitulatif_somme2: 0,
-        montant_recapitulatif_somme3: 0,
-        montant_recapitulatif_somme4: 0,
-        montant_recapitulatif_somme5: 0,
-        montant_recapitulatif_somme6: 0,
-        montant_recapitulatif_somme7: 0,
-        montant_recapitulatif_total: 0,
-
         // Bâtiments
         batiment_f: [],
       };
@@ -232,6 +216,23 @@ export default {
         montant_travauxBureau_total: 0,
         montant_travauxBureau_batiment_total_f_somme: 0,
         montant_divers_total: 0,
+        montant_rf_total: 0,
+        montant_recapitulatif_mandat: 0,
+        montant_recapitulatif_somme1: 0,
+        montant_recapitulatif_terrain_materialisation_deplacements: 0,
+        montant_recapitulatif_somme2: 0,
+        montant_recapitulatif_bureau: 0,
+        montant_recapitulatif_somme3: 0,
+        montant_recapitulatif_indice_application: 0,
+        montant_recapitulatif_somme4: 0,
+        montant_recapitulatif_materiel_divers: 0,
+        montant_recapitulatif_somme5: 0,
+        montant_recapitulatif_matdiff: 0,
+        montant_recapitulatif_somme6: 0,
+        montant_recapitulatif_tva: 0,
+        montant_recapitulatif_somme7: 0,
+        montant_recapitulatif_registre_foncier: 0,
+        montant_recapitulatif_total: 0,
       };
 
       this.setComptabiliteFormat();
@@ -379,7 +380,6 @@ export default {
     updateMontants() {
       //form
       for (let key in this.form2) {
-        console.log("key = ", key)
         this.form2[key].montant = numeral(Number(this.form2[key].nombre) * Number(this.form2[key].prix_unitaire)).format("0.00");
       }
       //update format montant_relation_autres_services
@@ -532,6 +532,7 @@ export default {
         Number(this.total.montant_44surf) +
         Number(this.total.montant_42pl);
 
+      //Divers
       this.total.montant_divers_total = 
         Number(this.form2.divers1.montant) +
         Number(this.form2.divers2.montant) +
@@ -545,49 +546,45 @@ export default {
         Number(this.form2.divers10.montant) +
         Number(this.form.montant_relations_autres_services);
 
+      //Registre foncier
+      this.total.montant_rf_total =
+        Number(this.form2.registreFoncier1.montant) +
+        Number(this.form2.registreFoncier2.montant) +
+        Number(this.form2.registreFoncier3.montant) +
+        Number(this.form2.registreFoncier4.montant) +
+        Number(this.form2.registreFoncier5.montant);
 
+
+      this.updateRecapitulatif();
       this.setComptabiliteFormat();
     },
 
 
-    updateMontantDivers() {
-      this.form.montant_divers_total = 0;
-      for (let i=0; i<this.n_divers; i++) {
-        if (this.form.nb_divers[i] && this.form.divers_prix_unitaire[i] && Number(this.form.nb_divers[i]) >= 0 && Number(this.form.divers_prix_unitaire[i]) >= 0) {
-          this.form.montant_divers[i] = Number(this.form.nb_divers[i]) * Number(this.form.divers_prix_unitaire[i]);
-          this.form.montant_divers_total += Number(this.form.montant_divers[i]);
-        }
-      }
-      this.form.montant_divers_total += Number(this.form.montant_relations_autres_services);
-      
-      this.updateRecapitulatif();
-    },
-
     updateRecapitulatif() {
-      this.form.montant_recapitulatif_mandat = Number(this.form.montant_mandat_total) + this.form.montant_mandat_batiment_total_f.length > 0? Number(this.form.montant_mandat_batiment_total_f.reduce((a, b) => Number(a) + Number(b))): 0;
-      this.form.montant_recapitulatif_somme1 = Number(this.form.montant_recapitulatif_mandat)
+      this.total.montant_recapitulatif_mandat = Number(this.total.montant_mandat_total);// + this.form.montant_mandat_batiment_total_f.length > 0? Number(this.form.montant_mandat_batiment_total_f.reduce((a, b) => Number(a) + Number(b))): 0;
+      this.total.montant_recapitulatif_somme1 = Number(this.total.montant_recapitulatif_mandat)
 
-      this.form.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.form.montant_travauxTerrain_total_zi) + Number(this.form.montant_travauxTerrain_batiment_total_f_somme_zi) + Number(this.form.montant_5_depl_debours);
-      this.form.montant_recapitulatif_somme2 = Number(this.form.montant_recapitulatif_somme1) + Number(this.form.montant_recapitulatif_terrain_materialisation_deplacements);
+      this.total.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.total.montant_travauxTerrain_total_zi)// + Number(this.total.montant_travauxTerrain_batiment_total_f_somme_zi) + Number(this.total.montant_5_depl_debours);
+      this.total.montant_recapitulatif_somme2 = Number(this.total.montant_recapitulatif_somme1) + Number(this.total.montant_recapitulatif_terrain_materialisation_deplacements);
 
-      this.form.montant_recapitulatif_bureau = Number(this.form.montant_travauxBureau_total) + Number(this.form.montant_travauxBureau_batiment_total_f_somme);
-      this.form.montant_recapitulatif_somme3 = Number(this.form.montant_recapitulatif_somme2) + Number(this.form.montant_recapitulatif_bureau);
+      this.total.montant_recapitulatif_bureau = Number(this.total.montant_travauxBureau_total)// + Number(this.total.montant_travauxBureau_batiment_total_f_somme);
+      this.total.montant_recapitulatif_somme3 = Number(this.total.montant_recapitulatif_somme2) + Number(this.total.montant_recapitulatif_bureau);
 
-      this.form.montant_recapitulatif_indice_application = this.round( Number(this.form.montant_recapitulatif_somme3) * (Number(this.form.indice_application) - 1));
-      this.form.montant_recapitulatif_somme4 = Number(this.form.montant_recapitulatif_somme3) + Number(this.form.montant_recapitulatif_indice_application);
+      this.total.montant_recapitulatif_indice_application = this.round( Number(this.total.montant_recapitulatif_somme3) * (Number(this.form.indice_application) - 1));
+      this.total.montant_recapitulatif_somme4 = Number(this.total.montant_recapitulatif_somme3) + Number(this.total.montant_recapitulatif_indice_application);
 
-      this.form.montant_recapitulatif_materiel_divers = Number(this.form.montant_33_materiel) + Number(this.form.montant_divers_total);
-      this.form.montant_recapitulatif_somme5 = Number(this.form.montant_recapitulatif_somme4) + Number(this.form.montant_recapitulatif_materiel_divers);
+      this.total.montant_recapitulatif_materiel_divers = Number(this.total.montant_33_materiel) + Number(this.total.montant_divers_total);
+      this.total.montant_recapitulatif_somme5 = Number(this.total.montant_recapitulatif_somme4) + Number(this.total.montant_recapitulatif_materiel_divers);
 
-      this.form.montant_recapitulatif_matdiff = this.round( Number(this.form.montant_34_matdiff) * Number(this.form.indice_application));
-      this.form.montant_recapitulatif_somme6 = Number(this.form.montant_recapitulatif_somme5) + Number(this.form.montant_recapitulatif_matdiff);
+      this.total.montant_recapitulatif_matdiff = this.round( Number(this.total.montant_34_matdiff) * Number(this.form.indice_application));
+      this.total.montant_recapitulatif_somme6 = Number(this.total.montant_recapitulatif_somme5) + Number(this.total.montant_recapitulatif_matdiff);
 
-      this.form.montant_recapitulatif_tva = this.round(Number(this.form.montant_recapitulatif_somme6) * Number(this.form.indice_tva) / 100, 0.05);
-      this.form.montant_recapitulatif_somme7 = this.form.montant_recapitulatif_somme6 + Number(this.form.montant_recapitulatif_tva);
+      this.total.montant_recapitulatif_tva = this.round(Number(this.total.montant_recapitulatif_somme6) * Number(this.form.indice_tva) / 100, 0.05);
+      this.total.montant_recapitulatif_somme7 = this.total.montant_recapitulatif_somme6 + Number(this.total.montant_recapitulatif_tva);
 
-      this.form.montant_recapitulatif_registre_foncier = Number(this.form.montant_rf_total);
+      this.total.montant_recapitulatif_registre_foncier = Number(this.total.montant_rf_total);
 
-      this.form.montant_recapitulatif_total = Number(this.form.montant_recapitulatif_somme7) + Number(this.form.montant_recapitulatif_registre_foncier);
+      this.total.montant_recapitulatif_total = Number(this.total.montant_recapitulatif_somme7) + Number(this.total.montant_recapitulatif_registre_foncier);
 
       this.setComptabiliteFormat();
     },
