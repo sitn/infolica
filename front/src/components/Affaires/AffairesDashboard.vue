@@ -164,10 +164,15 @@ export default {
 
               Object.keys(obj).forEach(function(key) {
                 // Formater la date en DD.MM.YYYY
-                if (key.includes("date") && obj[key] !== null && obj[key] !== "") {
+                if ((key.includes("date") || key.includes("echeance")) && obj[key] !== null && obj[key] !== "") {
                   obj[key] = moment(obj[key], process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
                 }
               });
+
+              obj.urgent_echeance_reste = null;
+              if (obj.urgent_echeance !== null) {
+                obj.urgent_echeance_reste = Math.ceil(Math.max(0, moment(obj.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT)-new Date())/1000/3600/24)+1;
+              }
               resolve(obj);
             }
           })

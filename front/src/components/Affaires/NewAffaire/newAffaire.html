@@ -201,6 +201,22 @@
                 </div>
             </div>
             
+            <!-- Urgence -->
+            <div v-if="showUrgentCB" class="md-layout md-gutter md-alignment-center-space-between" style="padding-bottom: 20px;">
+                <div class="md-layout-item md-small-size-100 md-size-25">
+                    <md-checkbox v-model="form.urgent">Affaire urgente</md-checkbox>
+                    <md-datepicker v-if="form.urgent" md-immediately style="margin-bottom: 4px;" v-model="form.urgent_echeance">
+                        <label>Échéance</label>
+                    </md-datepicker>
+                </div>
+                <div class="md-layout-item md-small-size-100">
+                    <div v-if="form.urgent" style="border: 1px dotted black;">
+                        <p v-if="form.urgent" style="margin: 5px;">
+                            <em>En créant l'affaire, un e-mail automatique sera envoyé au·à la chef·fe de projet sélectionné·e, au·à la coordinateur·rice de projets, au·à la préposé·e aux servitudes, au·à la géomètre cantonal·e et au secrétariat.</em>
+                        </p>
+                    </div>
+                </div>
+            </div>
             
             <div v-if="showClientsForm">
                 <div style="text-align: right;">

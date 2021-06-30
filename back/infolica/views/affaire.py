@@ -6,10 +6,11 @@ from pyramid.response import FileResponse
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Affaire, AffaireType, ModificationAffaireType
-from infolica.models.models import ModificationAffaire, VAffaire, Facture
+from infolica.models.models import ModificationAffaire, VAffaire, Facture, Cadastre, Operateur
 from infolica.models.models import ControleGeometre, ControleMutation, ControlePPE, SuiviMandat
 from infolica.models.models import AffaireEtape
 from infolica.scripts.utils import Utils
+from infolica.scripts.mailer import send_mail
 
 from sqlalchemy import and_, or_
 
@@ -102,7 +103,9 @@ def affaire_cockpit_view(request):
             'operateur_id': affaire.technicien_id,
             'operateur_initiales': affaire.technicien_initiales,
             'cadastre': affaire.cadastre,
-            'description': affaire.nom
+            'description': affaire.nom,
+            'urgent': affaire.urgent,
+            'urgent_echeance': datetime.strftime(affaire.urgent_echeance, '%Y-%m-%d') if not affaire.urgent_echeance is None else None
         })
     
     return affaires
@@ -269,6 +272,32 @@ def affaires_new_view(request):
     params['operateur_id'] = request.params['operateur_id'] if 'operateur_id' in request.params else None
     params['datetime'] = datetime.now()
     Utils.addNewRecord(request, AffaireEtape, params)
+
+    # Envoyer e-mail si l'affaire est urgente
+    if model.urgent:
+        mail_list = []
+        operateur_affaire_urgente = request.registry.settings['operateur_affaire_urgente'].split(',')
+        for op_id in operateur_affaire_urgente:
+            op_mail = request.dbsession.query(Operateur).filter(Operateur.id == op_id).first().mail
+            mail_list.append(op_mail)
+        # Add technicien
+        technicien = request.dbsession.query(Operateur).filter(Operateur.id == model.technicien_id).first()
+        mail_list.append(technicien.mail)
+
+        subject = "Infolica - Affaire urgente"
+        cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == model.cadastre_id).first().nom
+        affaire_nom = " (" + model.no_access + ")" if model.no_access is not None else ""
+        text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(model.id)) + "'>" + str(model.id) + affaire_nom + "</a></b> a été ouverte avec la mention 'URGENTE'.<br>"
+        echeance = "non défini"
+        if not model.urgent_echeance is None:
+            echeance = datetime.strptime(model.urgent_echeance, '%Y-%m-%d').strftime("%d.%m.%Y")
+        text += "Échéance: " + echeance + "<br><br>"
+        text += "Merci de traiter cette affaire en priorité."
+        text += "<br><br><br>Données de l'affaire:<br> \
+                <ul><li>Chef de projet: " + str(technicien.initiales) + "</li> + \
+                <li>Cadastre: " + str(cadastre) + "</li> + \
+                <li>Description: " + str(model.nom) + "</li></ul>"
+        send_mail(request, mail_list, "", subject, html=text)
 
 
     # Add facture

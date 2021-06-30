@@ -137,6 +137,8 @@ class Affaire(Base):
     chemin = Column(Text)
     abandon = Column(Boolean)
     resume = Column(Text)
+    urgent = Column(Boolean)
+    urgent_echeance = Column(Date)
 
 
 class AffaireEtapeIndex(Base):
@@ -902,6 +904,8 @@ class VAffaire(Base):
     etape_priorite = Column(Integer)
     etape_ordre = Column(BigInteger)
     abandon = Column(Boolean)
+    urgent = Column(Boolean)
+    urgent_echeance = Column(Date)
 
 
 class VEnvois(Base):

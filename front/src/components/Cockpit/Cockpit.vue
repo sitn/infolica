@@ -7,8 +7,10 @@ import AffairesChezClient from "@/components/Cockpit/AffairesChezClient/Affaires
 import Matdiff_secr from "@/components/Cockpit/Matdiff_secr/Matdiff_secr.vue";
 import Matdiff_mo from "@/components/Cockpit/Matdiff_mo/Matdiff_mo.vue";
 
-import { handleException } from '@/services/exceptionsHandler'
-import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper'
+import { handleException } from '@/services/exceptionsHandler';
+import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper';
+
+import moment from "moment";
 
 export default {
   name: "Cockpit",
@@ -33,6 +35,7 @@ export default {
         showFinProcessus: false,
         showMatdiff_secr: false,
         showMatdiff_mo: false,
+        showOnlyAffairesUrgentes: false,
         showPPE: false,
         role: {
             secretaire: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID),
@@ -106,7 +109,11 @@ export default {
                     }
 
                     // set title to show on cockpit
-                    x.title = (x.no_access? 'Affaire ' + x.id + ' - ': '') + x.cadastre + ' - ' + x.description 
+                    x.title = (x.no_access? 'Affaire ' + x.id + ' - ': '') + x.cadastre + ' - ' + x.description;
+                    
+                    // set time for urgent_echeance
+                    x.urgent_echeance_sort = x.urgent_echeance? new Date(moment(x.urgent_echeance, process.env.VUE_APP_DATEFORMAT_WS)).getTime(): null;
+                    x.urgent_echeance = x.urgent_echeance? moment(x.urgent_echeance, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null;
                 });
                 this.affaires_bk = tmp;
                 if (!this.affaires.length > 0) {
@@ -196,6 +203,11 @@ export default {
         // filter affaire type
         if (this.selectedAffaireTypes_id && this.selectedAffaireTypes_id > 0) {
             this.affaires = this.affaires.filter(x => x.affaire_type_id === this.selectedAffaireTypes_id);
+        }
+
+        // filter affaire urgente
+        if (this.showOnlyAffairesUrgentes) {
+            this.affaires = this.affaires.filter(x => x.urgent);
         }
         
         this.loadingAffaires = false;
