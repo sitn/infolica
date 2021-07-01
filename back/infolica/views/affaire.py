@@ -10,7 +10,6 @@ from infolica.models.models import ModificationAffaire, VAffaire, Facture, Cadas
 from infolica.models.models import ControleGeometre, ControleMutation, ControlePPE, SuiviMandat
 from infolica.models.models import AffaireEtape
 from infolica.scripts.utils import Utils
-from infolica.scripts.mailer import send_mail
 
 from sqlalchemy import and_, or_
 
@@ -275,32 +274,7 @@ def affaires_new_view(request):
 
     # Envoyer e-mail si l'affaire est urgente
     if model.urgent:
-        mail_list = []
-        # operateur_affaire_urgente = request.registry.settings['operateur_affaire_urgente'].split(',')
-        # for op_id in operateur_affaire_urgente:
-        #     op_mail = request.dbsession.query(Operateur).filter(Operateur.id == op_id).first().mail
-        #     mail_list.append(op_mail)
-        # # Add technicien + creator of affaire
-        technicien = request.dbsession.query(Operateur).filter(Operateur.id == model.technicien_id).first()
-        # mail_list.append(technicien.mail)
-        creator = request.dbsession.query(Operateur).filter(Operateur.id == request.params['operateur_id']).first() # ------------- TO REMOVE
-        mail_list.append(creator.mail) # ------------- TO REMOVE
-
-        subject = "Infolica - Affaire urgente"
-        cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == model.cadastre_id).first().nom
-        affaire_nom = " (" + model.no_access + ")" if model.no_access is not None else ""
-        text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(model.id)) + "'>" + str(model.id) + affaire_nom + "</a></b> a été ouverte avec la mention 'URGENTE'.<br>"
-        echeance = "non défini"
-        if not model.urgent_echeance is None:
-            echeance = datetime.strptime(model.urgent_echeance, '%Y-%m-%d').strftime("%d.%m.%Y")
-        text += "Échéance: " + echeance + "<br><br>"
-        text += "Merci de traiter cette affaire en priorité."
-        text += "<br><br><br>Données de l'affaire:<br> \
-                <ul><li>Chef de projet: " + str(technicien.initiales) + "</li>\
-                <li>Cadastre: " + str(cadastre) + "</li>\
-                <li>Description: " + str(model.nom) + "</li></ul>"
-        send_mail(request, mail_list, "", subject, html=text)
-
+        Utils.sendMailAffaireUrgente(request, model)
 
     # Add facture
     if 'facture_client_id' in request.params:
@@ -341,6 +315,9 @@ def affaires_update_view(request):
     if not record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(Affaire.__tablename__, id_affaire))
+
+    # stock affaire_urgence info before update
+    affaire_urgence = record.urgent is True
 
     # Get role depending on affaire type
     affaire_type = params['type_id'] if 'type_id' in params else record.type_id
@@ -388,8 +365,11 @@ def affaires_update_view(request):
             else:
                 raise CustomError(CustomError.DIRECTORY_NOT_FOUND.format(chemin_affaire))
 
-
     record = Utils.set_model_record(record, params)
+
+    # If urgence defined after affaire creation, send e-mail
+    if not affaire_urgence and "urgent" in params:
+        Utils.sendMailAffaireUrgente(request, record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
 

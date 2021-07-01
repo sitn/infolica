@@ -125,12 +125,12 @@ export default {
      * Enregistrer les modifications
      */
     async onConfirmEdit() {
-      var formData = new FormData();
+      let formData = new FormData();
       formData.append("id_affaire", this.affaire.id);
       formData.append("technicien_id", this.form.technicien.id);
       formData.append("type_id", this.form.typeAffaire.id);
       formData.append("information", this.affaire.information);
-      formData.append("vref", this.affaire.vref || null);
+      formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
       
       if (this.affaire.nom !== null) {
         formData.append("nom", this.affaire.nom || null);
