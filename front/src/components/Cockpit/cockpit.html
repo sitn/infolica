@@ -59,7 +59,6 @@
                 
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell md-sort-by="affaire_type" md-label="Type d'affaire">{{ item.affaire_type }}</md-table-cell>
-                    <md-table-cell md-sort-by="urgent_echeance_sort" md-label="Échéance">{{ item.urgent_echeance }}</md-table-cell>
                     <md-table-cell md-sort-by="dashboard_0" md-label="Coordination"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" @click="openAffaire(item)" v-on:click.middle="openAffaire(item, mode=1)" v-if="item.dashboard_0">{{ item.dashboard_0 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_1" md-label="Traitement"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" @click="openAffaire(item)" v-on:click.middle="openAffaire(item, mode=1)" v-if="item.dashboard_1">{{ item.dashboard_1 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_2" md-label="Ctrl tech."><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" @click="openAffaire(item)" v-on:click.middle="openAffaire(item, mode=1)" v-if="item.dashboard_2">{{ item.dashboard_2 }}</md-button></md-table-cell>

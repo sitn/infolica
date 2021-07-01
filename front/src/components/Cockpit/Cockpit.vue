@@ -103,17 +103,22 @@ export default {
                 // Filtrer les affaires qui ne sont pas chez le client
                 tmp = tmp.filter(x => x.etape_id !== Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID) && x.etape_id !== Number(process.env.VUE_APP_ETAPE_DEVIS_ID));
 
+                let nom_affaire = null;
                 tmp.forEach(x => {
+                    // set time for urgent_echeance
+                    x.urgent_echeance = x.urgent_echeance? moment(x.urgent_echeance, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null;
+                        
                     for (let i=0; i<this.affaireEtapes.length; i++) {
-                        x["dashboard_" + i.toString()] = i === x.etape_ordre-1? (x.no_access? x.no_access: String(x.id)): null;
+                        nom_affaire = null;
+                        if (i === x.etape_ordre-1) {
+                            nom_affaire = x.no_access? x.no_access: String(x.id)
+                            nom_affaire += x.urgent_echeance === null? "": " / "+ x.urgent_echeance;
+                        }
+                        x["dashboard_" + i.toString()] = nom_affaire;
                     }
 
                     // set title to show on cockpit
                     x.title = (x.no_access? 'Affaire ' + x.id + ' - ': '') + x.cadastre + ' - ' + x.description;
-                    
-                    // set time for urgent_echeance
-                    x.urgent_echeance_sort = x.urgent_echeance? new Date(moment(x.urgent_echeance, process.env.VUE_APP_DATEFORMAT_WS)).getTime(): null;
-                    x.urgent_echeance = x.urgent_echeance? moment(x.urgent_echeance, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null;
                 });
                 this.affaires_bk = tmp;
                 if (!this.affaires.length > 0) {
