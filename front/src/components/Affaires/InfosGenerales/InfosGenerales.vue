@@ -148,7 +148,6 @@ export default {
         formData.append("urgent", this.affaireUrgente.urgent);
         
         if (this.affaireUrgente.urgent_echeance !== null) {
-          console.log(this.affaireUrgente.urgent_echeance)
           formData.append("urgent_echeance", moment(this.affaireUrgente.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
         }
       }
@@ -494,6 +493,7 @@ export default {
       this.affaireUrgente.disabled = this.affaireUrgente.urgent === true || ![
         Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID),
         Number(process.env.VUE_APP_ADMIN_ROLE_ID),
+        Number(process.env.VUE_APP_PPE_ROLE_ID),
       ].includes(role_id);
     }
 
