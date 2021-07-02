@@ -95,8 +95,10 @@ export default {
         travaux_chef_equipe: Number(process.env.VUE_APP_ETAPE_TRAVAUX_CHEF_EQUIPE_ID),
         validation: Number(process.env.VUE_APP_ETAPE_VALIDATION_ID),
         envoi: Number(process.env.VUE_APP_ETAPE_ENVOI_ID),
+        envoi_cadastration: Number(process.env.VUE_APP_ETAPE_ENVOI_CADASTRATION_ID),
         envoi_pcop: Number(process.env.VUE_APP_ETAPE_ENVOI_PCOP_ID),
-        fin_processus: Number(process.env.VUE_APP_FIN_PROCESSUS_ID)
+        signature_art35: Number(process.env.VUE_APP_ETAPE_SIGNATURE_ART35_ID),
+        fin_processus: Number(process.env.VUE_APP_FIN_PROCESSUS_ID),
       },
       clientTypes_conf: {
         physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID),

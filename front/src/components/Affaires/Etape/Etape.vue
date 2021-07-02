@@ -36,6 +36,8 @@ export default {
       updateAffaireDate: {
         text: "",
         value: false,
+        date_type: "",
+        show: false,
       },
     };
   },
@@ -87,26 +89,7 @@ export default {
       }
 
       // Update affaire dates
-      if ((this.affaire.etape_id === this.etapes_affaire_conf.envoi && this.affaire.type_id !== this.typesAffaires_conf.pcop) || (this.affaire.etape_id === this.etapes_affaire_conf.envoi_pcop && this.affaire.type_id === this.typesAffaires_conf.pcop)) {
-        this.updateAffaireDate = {
-          text: "Mettre à jour la date d'envoi de l'affaire",
-          value: true
-        };
-      } else if (this.affaire.etape_id === this.etapes_affaire_conf.validation) {
-        this.updateAffaireDate = {
-          text: "Mettre à jour la date de validation de l'affaire",
-          value: true
-        };
-
-        // Si aucun numéro n'est réservé dans l'affaire, clôre l'affaire
-        if ((this.etapeAffaire.prochaine && this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.fin_processus) &&
-            (![this.typesAffaires_conf.mutation, this.typesAffaires_conf.modification, this.typesAffaires_conf.remaniement_parcellaire,
-               this.typesAffaires_conf.modification_visa, this.typesAffaires_conf.modification_mutation].includes(this.affaire.type_id)) &&
-            (this.numerosReserves.length === 0)) {
-          this.updateAffaireDate.text = "Mettre à jour les dates de validation et de clôture de l'affaire";
-          this.cloreAffaire = true;
-        }
-      }
+      this.saveDatesDiv();
 
       this.etapeAffaire.showDialog = true;
     },
@@ -115,23 +98,21 @@ export default {
      * Enregistrer la nouvelle étape
      */
     async updateAffaireEtape() {
+      if (!this.etapeAffaire.prochaine || !this.etapeAffaire.prochaine.id) {
+        return
+      }
+
       // if updateAffaireDate.value is true, update date affaire
       if (this.updateAffaireDate.value) {
-        if (this.affaire.etape_id === this.etapes_affaire_conf.envoi || this.affaire.etape_id === this.etapes_affaire_conf.envoi_pcop) {
-          this.updateAffaire('date_envoi');
+        this.updateAffaire(this.updateAffaireDate.date_type);
+
+        if (this.cloreAffaire) {
+          //Clore affaire
+          this.$refs.clotureAffaire.onConfirmCloture(false);
+          this.cloreAffaire = false;
         
-        } else if (this.affaire.etape_id === this.etapes_affaire_conf.validation) {
-          this.updateAffaire('date_validation');
-          
-          if (this.cloreAffaire) {
-            //Clore affaire
-            this.$refs.clotureAffaire.onConfirmCloture(false);
-            this.cloreAffaire = false;
-          
-          }
         }
       }
-      
 
       // fix value of this.etapeAffaire.chef_equipe_id to null if another step is selected
       this.etapeAffaire.chef_equipe_id = this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.travaux_chef_equipe? this.etapeAffaire.chef_equipe_id: null;
@@ -148,7 +129,8 @@ export default {
 
       this.updateAffaireDate = {
         text: "",
-        value: false
+        value: false,
+        date_type: ""
       };
     },
 
@@ -178,8 +160,100 @@ export default {
      */
     setNumerosReserves(data) {
       this.numerosReserves = data;
-    }
+    },
 
+    /**
+     * On select next step
+     */
+    onSelectNextStep(etape) {
+      if (etape.id === this.etapes_affaire_conf.fin_processus) {
+        this.updateAffaireDate = {
+          text: "Mettre à jour la date de validation de l'affaire",
+          value: true,
+          date_type: "date_validation"
+        };
+
+        // Si aucun numéro n'est réservé dans l'affaire, clôre l'affaire
+        if ((this.etapeAffaire.prochaine && this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.fin_processus) &&
+            (![this.typesAffaires_conf.mutation, this.typesAffaires_conf.modification, this.typesAffaires_conf.remaniement_parcellaire,
+               this.typesAffaires_conf.modification_visa, this.typesAffaires_conf.modification_mutation].includes(this.affaire.type_id)) &&
+            (this.numerosReserves.length === 0)) {
+          this.updateAffaireDate.text = "Mettre à jour les dates de validation et de clôture de l'affaire";
+          this.cloreAffaire = true;
+        }
+      }
+
+      this.saveDatesDiv();
+    },
+
+    /**
+     * set Save Dates div
+     */
+    saveDatesDiv() {
+      this.updateAffaireDate.show = (
+        [this.etapes_affaire_conf.envoi, this.etapes_affaire_conf.validation].includes(this.affaire.etape_id) && this.affaire.type_id !== this.typesAffaires_conf.pcop) ||
+        (this.etapes_affaire_conf.envoi_pcop === this.affaire.etape_id && this.affaire.type_id === this.typesAffaires_conf.pcop) || 
+        this.etapeAffaire.prochaine && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.fin_processus && this.affaire.type_id === this.typesAffaires_conf.cadastration;
+      
+      if (this.etapeAffaire.prochaine && this.etapeAffaire.prochaine.id) {
+        this.setNewEtapeParameters();
+      }
+    },
+
+    /**
+     * set New Etape
+     */
+    setNewEtapeParameters() {
+      this.updateAffaireDate = {
+        text: "",
+        value: false,
+        date_type: "",
+        show: false
+      };
+
+      if (
+        (this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.fin_processus) &&
+        ![this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe].includes(this.affaire.type_id)
+      ) {
+        // update date_validation if next step is "fin de processus"
+        if (
+          (this.etapeAffaire.prochaine && this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.fin_processus) &&
+          (![this.typesAffaires_conf.mutation, this.typesAffaires_conf.modification, this.typesAffaires_conf.remaniement_parcellaire,
+          this.typesAffaires_conf.modification_visa, this.typesAffaires_conf.modification_mutation].includes(this.affaire.type_id)) && (this.numerosReserves.length === 0)
+        ) {
+          // also close affaire if none number is reserved
+          this.updateAffaireDate = {
+            text: "Mettre à jour les dates de validation et de clôture de l'affaire",
+            value: true,
+            date_type: "date_validation",
+            show: true
+          };
+        } else {
+          this.updateAffaireDate = {
+            text: "Mettre à jour la date de validation de l'affaire",
+            value: true,
+            date_type: "date_validation",
+            show: true
+          };
+        }
+      } else if (
+        // Mise à jour de la date d'envoi
+        ((this.affaire.etape_id === this.etapes_affaire_conf.envoi && ![this.typesAffaires_conf.pcop, this.typesAffaires_conf.cadastration].includes(this.affaire.type_id)) ||
+        (this.affaire.etape_id === this.etapes_affaire_conf.envoi_pcop && this.affaire.type_id === this.typesAffaires_conf.pcop) ||
+        (this.affaire.etape_id === this.etapes_affaire_conf.envoi_cadastration && this.affaire.type_id === this.typesAffaires_conf.cadastration)) &&
+        ([this.etapes_affaire_conf.validation, this.etapes_affaire_conf.signature_art35].includes(this.etapeAffaire.prochaine.id) ||
+        [this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe].includes(this.affaire.type_id))
+      ) {
+        console.log(([this.etapes_affaire_conf.validation, this.etapes_affaire_conf.signature_art35].includes(this.etapeAffaire.prochaine.id) ||
+        this.affaire.type_id === [this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe].includes(this.typesAffaires_conf.ppe)))
+        this.updateAffaireDate = {
+          text: "Mettre à jour la date d'envoi de l'affaire",
+          value: true,
+          date_type: "date_envoi",
+          show: true
+        };
+      }
+    }
 
   },
 
