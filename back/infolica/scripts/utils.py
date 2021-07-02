@@ -339,15 +339,15 @@ class Utils(object):
         subject = "Infolica - Affaire urgente"
         cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == model.cadastre_id).first().nom
         affaire_nom = " (" + model.no_access + ")" if model.no_access is not None else ""
-        text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(model.id)) + "'>" + str(model.id) + affaire_nom + "</a></b> a été ouverte avec la mention 'URGENTE'.<br>"
+        text = "La mention 'URGENTE' a été attribuée à l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(model.id)) + "'>" + str(model.id) + affaire_nom + "</a></b>.<br>"
         echeance = "non défini"
         if not model.urgent_echeance is None:
             echeance = datetime.strptime(model.urgent_echeance, '%Y-%m-%d').strftime("%d.%m.%Y")
-            text += "Échéance: " + echeance + "<br><br>"
-            text += "Merci de traiter cette affaire en priorité."
-            text += "<br><br><br>Données de l'affaire:<br> \
-                    <ul><li>Chef de projet: " + str(technicien.initiales) + "</li>\
-                    <li>Cadastre: " + str(cadastre) + "</li>\
-                    <li>Description: " + str(model.nom) + "</li></ul>"
+        text += "Échéance: " + echeance + "<br><br>"
+        text += "Merci de traiter cette affaire en priorité."
+        text += "<br><br><br>Données de l'affaire:<br> \
+                <ul><li>Chef de projet: " + str(technicien.initiales) + "</li>\
+                <li>Cadastre: " + str(cadastre) + "</li>\
+                <li>Description: " + str(model.nom) + "</li></ul>"
         send_mail(request, mail_list, "", subject, html=text)
         return
