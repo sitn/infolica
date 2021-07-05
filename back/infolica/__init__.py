@@ -1,9 +1,7 @@
 from pyramid.config import Configurator
 from pyramid.events import NewRequest
-<<<<<<< HEAD
 from pyramid.security import remember
-=======
->>>>>>> upstream/master
+
 from papyrus.renderers import GeoJSON
 
 #Authentification
