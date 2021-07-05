@@ -326,15 +326,13 @@ class Utils(object):
     @classmethod
     def sendMailAffaireUrgente(cls, request, model):
         mail_list = []
-        # operateur_affaire_urgente = request.registry.settings['operateur_affaire_urgente'].split(',')
-        # for op_id in operateur_affaire_urgente:
-        #     op_mail = request.dbsession.query(Operateur).filter(Operateur.id == op_id).first().mail
-        #     mail_list.append(op_mail)
-        # # Add technicien + creator of affaire
+        operateur_affaire_urgente = request.registry.settings['operateur_affaire_urgente'].split(',')
+        for op_id in operateur_affaire_urgente:
+            op_mail = request.dbsession.query(Operateur).filter(Operateur.id == op_id).first().mail
+            mail_list.append(op_mail)
+        # Add technicien + creator of affaire
         technicien = request.dbsession.query(Operateur).filter(Operateur.id == model.technicien_id).first()
-        # mail_list.append(technicien.mail)
-        creator = request.dbsession.query(Operateur).filter(Operateur.id == request.params['operateur_id']).first() # ------------- TO REMOVE
-        mail_list.append(creator.mail) # ------------- TO REMOVE
+        mail_list.append(technicien.mail)
 
         subject = "Infolica - Affaire urgente"
         cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == model.cadastre_id).first().nom
