@@ -3,8 +3,10 @@ from datetime import date, datetime
 from sqlalchemy import func, and_, desc
 from infolica.models.models import Numero, AffaireNumero, Fonction, Role, FonctionRole, ReservationNumerosMO
 from infolica.models.models import SuiviMandat, ControleGeometre, ControleMutation, ControlePPE
-from infolica.models.models import AffaireEtape
+from infolica.models.models import AffaireEtape, Cadastre, Operateur
 from infolica.scripts.ldap_query import LDAPQuery
+from infolica.scripts.mailer import send_mail
+
 from shutil import copytree, ignore_patterns
 import json
 import os
@@ -320,3 +322,30 @@ class Utils(object):
         request.dbsession.flush()
         return record
 
+
+    @classmethod
+    def sendMailAffaireUrgente(cls, request, model):
+        mail_list = []
+        operateur_affaire_urgente = request.registry.settings['operateur_affaire_urgente'].split(',')
+        for op_id in operateur_affaire_urgente:
+            op_mail = request.dbsession.query(Operateur).filter(Operateur.id == op_id).first().mail
+            mail_list.append(op_mail)
+        # Add technicien + creator of affaire
+        technicien = request.dbsession.query(Operateur).filter(Operateur.id == model.technicien_id).first()
+        mail_list.append(technicien.mail)
+
+        subject = "Infolica - Affaire urgente"
+        cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == model.cadastre_id).first().nom
+        affaire_nom = " (" + model.no_access + ")" if model.no_access is not None else ""
+        text = "La mention 'URGENTE' a été attribuée à l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(model.id)) + "'>" + str(model.id) + affaire_nom + "</a></b>.<br>"
+        echeance = "non défini"
+        if not model.urgent_echeance is None:
+            echeance = datetime.strptime(model.urgent_echeance, '%Y-%m-%d').strftime("%d.%m.%Y")
+        text += "Échéance: " + echeance + "<br><br>"
+        text += "Merci de traiter cette affaire en priorité."
+        text += "<br><br><br>Données de l'affaire:<br> \
+                <ul><li>Chef de projet: " + str(technicien.initiales) + "</li>\
+                <li>Cadastre: " + str(cadastre) + "</li>\
+                <li>Description: " + str(model.nom) + "</li></ul>"
+        send_mail(request, mail_list, "", subject, html=text)
+        return

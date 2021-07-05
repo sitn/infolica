@@ -3,10 +3,11 @@
     <!-- TITRE -->
     <md-toolbar class="affaireDashboardTitle">
         <div style="width: 96% " class="md-layout md-gutter md-alignment-center-space-between">
-            <div class="md-layout-item">
+            <div class="md-layout-item md-size-70">
                 <h1 style="margin-bottom: 0px;">
                     Affaire {{ affaire.id }}
                     <span v-if="affaire.no_access !== null">[{{ affaire.no_access }}]</span>
+                    <span v-if="affaire.urgent && affaire.date_envoi === null && !affaire.abandon" style="padding-left: 30px; padding-right: 30px; color:red">!!! AFFAIRE URGENTE !!! <span style="font-size: 20px;" v-if="affaire.urgent_echeance">Échéance: {{ affaire.urgent_echeance }}, il reste {{ affaire.urgent_echeance_reste }} jour(s)</span></span>
                     <span v-if="affaire.abandon"> - ABANDONNE</span>
                 </h1>
             </div>

@@ -6,10 +6,10 @@ from email.utils import formatdate
 def send_mail(request, mail_list, text, subject, html=None):
     """
     mail_list: list of mail adresses (send to)
-    text: Mail text. Note that mail footer is set to "Ce mail est généré automatiquement. Ne pas répondre à cette adresse e-mail."
+    text: Mail text. Note that mail footer is set to "Ce courrier a été généré automatiquement. Merci de ne pas y répondre."
     subject: mail subject
     """
-    text += "\n\nCe mail est généré automatiquement.\nNe pas répondre à cette adresse e-mail."
+    text += "\n\nMeilleures salutations,\nInfolica\n\nCe courrier a été généré automatiquement. Merci de ne pas y répondre."
     msg = EmailMessage()
     msg['From'] = request.registry.settings["infolica_mail"]
     msg['To'] = ', '.join(mail_list)
@@ -20,7 +20,7 @@ def send_mail(request, mail_list, text, subject, html=None):
         msg.add_alternative("""
             <html>
                 <head></head>
-                <body>{}</body>
+                <body>{}<br><br>Meilleures salutations,<br>Infolica<br><br><em style="font-size: 14px;">Ce courrier a été généré automatiquement. Merci de ne pas y répondre.</em></body>
             </html>
         """.format(html), subtype="html")
     s = smtplib.SMTP(request.registry.settings["infolica_smtp"])
