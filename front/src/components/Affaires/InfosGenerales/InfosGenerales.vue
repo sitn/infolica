@@ -457,18 +457,14 @@ export default {
     },
 
     /**
-     * on set echance
+     * on set echeance
      */
     onSetUrgentEcheance() {
-      setTimeout(() => {
-        if (this.affaireUrgente.urgent_echeance !== null) {
-          this.affaireUrgente.urgent_echeance = moment(this.affaireUrgente.urgent_echeance).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
-        } else {
-          this.affaireUrgente.urgent_echeance = null;
-        }
-        
-        100 
-       });
+      if (this.affaireUrgente.urgent_echeance !== null) {
+        this.affaireUrgente.urgent_echeance = moment(this.affaireUrgente.urgent_echeance).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+      } else {
+        this.affaireUrgente.urgent_echeance = null;
+      }
     },
 
     /**
