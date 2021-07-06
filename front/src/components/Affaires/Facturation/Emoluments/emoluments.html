@@ -1,4 +1,4 @@
-<div class="emoluments" v-if="emolumentsUnits.length > 0">
+<div class="emoluments" v-if="emolumentsUnits.length > 0 && Object.keys(form2).length > 0 && form3.length>0">
 
     <md-dialog :md-active.sync="showEmolumentsDialog">
       <md-dialog-title>Émoluments</md-dialog-title>
@@ -22,8 +22,14 @@
                   </md-field>
                   
                   <div v-if="form.nb_batiments > 0">
-                    <table class="tg">
+                    <table class="tg" style="width: 200px;">
                       <thead>
+                        <tr>
+                          <th colspan="2" class="overHead">
+                            <md-icon>warning</md-icon>
+                            Indiquer les surfaces des bâtiments dans l'ordre du plus grand au plus petit.
+                          </th>
+                        </tr>
                         <tr>
                           <th class="tg-0lax alignCenter">Bâtiment</th>
                           <th class="tg-0lax alignCenter">Facteur correctif</th>
@@ -115,9 +121,9 @@
                   <template v-if="form.nb_batiments > 0">
                     <tr>
                       <th class="tg-0lax alignCenter" colspan="6"></th>
-                      <!-- <template v-for="i in form.nb_batiments">
-                        <th class="tg-0lax batiment-separator alignCenter alignCenter" colspan="2">Bâtiment {{i}}</th>
-                      </template> -->
+                      <template v-for="i in form.nb_batiments">
+                        <th class="tg-0lax batiment-separator alignCenter alignCenter" colspan="2">Bâtiment {{i}} (f = {{ form.batiment_f[i-1] }})</th>
+                      </template>
                     </tr>
                   </template>
                   <tr>
@@ -127,98 +133,92 @@
                     <th class="tg-0lax alignCenter">Prix unit.</th>
                     <th class="tg-0lax alignCenter">Nombre</th>
                     <th class="tg-0lax alignCenter montant">Montant</th>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <th class="tg-0lax batiment-separator alignCenter">Nombre</th>
                       <th class="tg-0lax alignCenter montant">Montant</th>
-                    </template> -->
+                    </template>
                   </tr>
                 </thead>
                 <tbody>
                   <tr> 
                     <td class="tg-0lax">.1</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[0].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.mandat1.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.mandat1.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.mandat1.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.mandat1.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.mandat1.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax batiment-separator notEditable"></td>
                       <td class="tg-0lax notEditable"></td>
-                    </template> -->
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.4</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[1].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.mandat2.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.mandat2.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.mandat2.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.mandat2.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.mandat2.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax batiment-separator notEditable"></td>
                       <td class="tg-0lax notEditable"></td>
-                    </template> -->
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.5</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[2].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.mandat3.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.mandat3.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.mandat3.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.mandat3.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.mandat3.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax batiment-separator notEditable"></td>
                       <td class="tg-0lax notEditable"></td>
-                    </template> -->
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.2</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[3].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.mandat4.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.mandat4.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.mandat4.prix_unitaire }} CHF</td>
                     <td class="tg-0lax notEditable"></td>
                     <td class="tg-0lax alignRight notEditable"></td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_mandat_batiment[i-1]" class="nbInput" @keyup="updateMontantMandat()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_mandat2_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].mandat4.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].mandat4.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.3</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[4].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.mandat5.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.mandat5.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.mandat5.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.mandat5.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.mandat5.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_mandat_batiment[i-1]" class="nbInput" @keyup="updateMontantMandat()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_mandat3_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].mandat5.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].mandat5.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[5].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.mandat6.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.mandat6.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.mandat6.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.mandat6.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.mandat6.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form2.nb_mandat_batiment[i-1]" class="nbInput" @keyup="updateMontantMandat()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_mandat6_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].mandat6.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].mandat6.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0pky" colspan="5">Somme</td>
                     <td class="tg-0pky alignRight">{{ total.montant_mandat_total }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax batiment-separator notEditable"></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_mandat_batiment_total[i-1] }} CHF</td>
-                    </template> -->
+                      <td class="tg-0lax alignRight">{{ total.montant_mandat_batiment_total[i-1] }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0pky" colspan="5">Total intermédiaire</td>
@@ -270,7 +270,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.11</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[6].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain1.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain1.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain1.prix_unitaire }} CHF</td>
@@ -283,7 +282,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.12</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[7].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain2.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain2.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain2.prix_unitaire }} CHF</td>
@@ -296,7 +294,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.13</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[8].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain3.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain3.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain3.prix_unitaire }} CHF</td>
@@ -309,7 +306,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.14</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[9].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain4.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain4.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain4.prix_unitaire }} CHF</td>
@@ -322,7 +318,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.15</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[10].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain5.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain5.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain5.prix_unitaire }} CHF</td>
@@ -339,7 +334,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[11].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain6.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain6.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain6.prix_unitaire }} CHF</td>
@@ -352,7 +346,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[12].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain7.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain7.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain7.prix_unitaire }} CHF</td>
@@ -365,7 +358,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[13].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain8.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain8.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain8.prix_unitaire }} CHF</td>
@@ -378,7 +370,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.17</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[14].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain9.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain9.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain9.prix_unitaire }} CHF</td>
@@ -391,7 +382,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.18</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[15].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain10.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain10.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain10.prix_unitaire }} CHF</td>
@@ -404,7 +394,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.19</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[16].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain11.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain11.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain11.prix_unitaire }} CHF</td>
@@ -417,7 +406,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.110</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[17].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain12.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain12.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain12.prix_unitaire }} CHF</td>
@@ -430,7 +418,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.111</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[18].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain13.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain13.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain13.prix_unitaire }} CHF</td>
@@ -443,7 +430,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.112</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[19].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain14.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain14.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain14.prix_unitaire }} CHF</td>
@@ -459,7 +445,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.31</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[20].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain15.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain15.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain15.prix_unitaire }} CHF</td>
@@ -472,7 +457,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.32</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[21].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain16.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain16.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain16.prix_unitaire }} CHF</td>
@@ -488,7 +472,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.21</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[22].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain17.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain17.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain17.prix_unitaire }} CHF</td>
@@ -501,7 +484,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.22</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[23].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain18.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain18.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain18.prix_unitaire }} CHF</td>
@@ -514,7 +496,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.23</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[24].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain19.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain19.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain19.prix_unitaire }} CHF</td>
@@ -527,7 +508,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.24</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[25].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain20.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain20.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain20.prix_unitaire }} CHF</td>
@@ -540,7 +520,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.25</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[26].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain21.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain21.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain21.prix_unitaire }} CHF</td>
@@ -553,7 +532,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.26</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[27].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain22.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain22.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain22.prix_unitaire }} CHF</td>
@@ -566,7 +544,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.27</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[28].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain23.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain23.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain23.prix_unitaire }} CHF</td>
@@ -579,7 +556,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.28</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[29].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain24.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain24.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain24.prix_unitaire }} CHF</td>
@@ -592,7 +568,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.29</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[30].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxTerrain25.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxTerrain25.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain25.prix_unitaire }} CHF</td>
@@ -663,7 +638,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.11</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[31].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation1.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation1.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation1.prix_unitaire }} CHF</td>
@@ -672,7 +646,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.115</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[32].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation2.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation2.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation2.prix_unitaire }} CHF</td>
@@ -681,7 +654,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.12</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[33].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation3.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation3.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation3.prix_unitaire }} CHF</td>
@@ -690,7 +662,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.13</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[34].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation4.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation4.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation4.prix_unitaire }} CHF</td>
@@ -699,7 +670,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.15</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[35].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation5.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation5.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation5.prix_unitaire }} CHF</td>
@@ -708,7 +678,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.16</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[36].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation6.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation6.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation6.prix_unitaire }} CHF</td>
@@ -717,7 +686,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax">.17</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[37].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation7.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation7.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation7.prix_unitaire }} CHF</td>
@@ -729,7 +697,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[38].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation8.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation8.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation8.prix_unitaire }} CHF</td>
@@ -738,7 +705,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[39].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation9.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation9.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation9.prix_unitaire }} CHF</td>
@@ -747,7 +713,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[40].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation10.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation10.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation10.prix_unitaire }} CHF</td>
@@ -756,7 +721,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[41].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation11.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation11.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation11.prix_unitaire }} CHF</td>
@@ -765,7 +729,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[42].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation12.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation12.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation12.prix_unitaire }} CHF</td>
@@ -774,7 +737,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[43].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation13.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation13.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation13.prix_unitaire }} CHF</td>
@@ -786,7 +748,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[44].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation14.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation14.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation14.prix_unitaire }} CHF</td>
@@ -795,7 +756,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[45].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation15.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation15.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation15.prix_unitaire }} CHF</td>
@@ -804,7 +764,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[46].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation16.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation16.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation16.prix_unitaire }} CHF</td>
@@ -813,7 +772,6 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[47].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxMaterialisation17.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation17.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation17.prix_unitaire }} CHF</td>
@@ -882,7 +840,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.11</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[49].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau1.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau1.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau1.prix_unitaire }} CHF</td>
@@ -895,7 +852,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.12</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[50].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau2.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau2.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau2.prix_unitaire }} CHF</td>
@@ -908,7 +864,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.13</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[51].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau3.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau3.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau3.prix_unitaire }} CHF</td>
@@ -921,7 +876,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[52].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau4.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau4.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau4.prix_unitaire }} CHF</td>
@@ -934,7 +888,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.14</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[53].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau5.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau5.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau5.prix_unitaire }} CHF</td>
@@ -947,7 +900,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.15</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[54].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau6.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau6.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau6.prix_unitaire }} CHF</td>
@@ -960,7 +912,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.16</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[55].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau7.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau7.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau7.prix_unitaire }} CHF</td>
@@ -973,7 +924,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.17</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[56].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau8.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau8.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau8.prix_unitaire }} CHF</td>
@@ -986,7 +936,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[57].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau9.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau9.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau9.prix_unitaire }} CHF</td>
@@ -999,7 +948,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.18</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[58].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau10.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau10.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau10.prix_unitaire }} CHF</td>
@@ -1012,7 +960,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.19</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[59].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau11.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau11.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau11.prix_unitaire }} CHF</td>
@@ -1025,7 +972,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[60].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau12.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau12.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau12.prix_unitaire }} CHF</td>
@@ -1041,7 +987,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.31</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[61].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau13.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau13.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau13.prix_unitaire }} CHF</td>
@@ -1054,7 +999,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.32</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[62].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau14.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau14.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau14.prix_unitaire }} CHF</td>
@@ -1067,7 +1011,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.33</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[63].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau15.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau15.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau15.prix_unitaire }} CHF</td>
@@ -1080,7 +1023,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.34</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[64].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau16.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau16.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau16.prix_unitaire }} CHF</td>
@@ -1093,7 +1035,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.35</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[65].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau17.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau17.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau17.prix_unitaire }} CHF</td>
@@ -1106,7 +1047,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.36</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[66].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau18.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau18.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau18.prix_unitaire }} CHF</td>
@@ -1119,7 +1059,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[67].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau19.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau19.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau19.prix_unitaire }} CHF</td>
@@ -1132,7 +1071,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.37</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[68].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau20.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau20.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau20.prix_unitaire }} CHF</td>
@@ -1145,7 +1083,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.38</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[69].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau21.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau21.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau21.prix_unitaire }} CHF</td>
@@ -1158,7 +1095,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[70].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau22.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau22.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau22.prix_unitaire }} CHF</td>
@@ -1174,7 +1110,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.41</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[71].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau23.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau23.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau23.prix_unitaire }} CHF</td>
@@ -1187,7 +1122,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.42</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[72].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau24.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau24.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau24.prix_unitaire }} CHF</td>
@@ -1200,7 +1134,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.43</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[73].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau25.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau25.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau25.prix_unitaire }} CHF</td>
@@ -1213,7 +1146,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.44</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[74].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau26.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau26.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau26.prix_unitaire }} CHF</td>
@@ -1226,7 +1158,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.45</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[75].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau27.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau27.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau27.prix_unitaire }} CHF</td>
@@ -1242,7 +1173,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.21</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[76].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau28.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau28.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau28.prix_unitaire }} CHF</td>
@@ -1255,7 +1185,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.22</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[77].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau29.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau29.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau29.prix_unitaire }} CHF</td>
@@ -1268,7 +1197,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[78].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau30.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau30.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau30.prix_unitaire }} CHF</td>
@@ -1281,7 +1209,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.23</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[79].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau31.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau31.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau31.prix_unitaire }} CHF</td>
@@ -1294,7 +1221,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.24</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[80].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau32.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau32.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau32.prix_unitaire }} CHF</td>
@@ -1307,7 +1233,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.25</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[81].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau33.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau33.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau33.prix_unitaire }} CHF</td>
@@ -1320,7 +1245,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.26</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[82].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau34.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau34.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau34.prix_unitaire }} CHF</td>
@@ -1333,7 +1257,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.27</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[83].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau35.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau35.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau35.prix_unitaire }} CHF</td>
@@ -1346,7 +1269,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.28</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[84].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau36.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau36.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau36.prix_unitaire }} CHF</td>
@@ -1359,7 +1281,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.29</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[85].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau37.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau37.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau37.prix_unitaire }} CHF</td>
@@ -1372,7 +1293,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.210</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[86].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau38.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau38.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau38.prix_unitaire }} CHF</td>
@@ -1385,7 +1305,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.211</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[87].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau39.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau39.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau39.prix_unitaire }} CHF</td>
@@ -1398,7 +1317,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.212</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[88].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau40.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau40.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau40.prix_unitaire }} CHF</td>
@@ -1411,7 +1329,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.213</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[89].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau41.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau41.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau41.prix_unitaire }} CHF</td>
@@ -1424,7 +1341,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[90].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau42.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau42.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau42.prix_unitaire }} CHF</td>
@@ -1437,7 +1353,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.214</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[91].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau43.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau43.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau43.prix_unitaire }} CHF</td>
@@ -1450,7 +1365,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.215</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[92].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau44.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau44.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau44.prix_unitaire }} CHF</td>
@@ -1463,7 +1377,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[93].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau45.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau45.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau45.prix_unitaire }} CHF</td>
@@ -1476,7 +1389,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[94].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.travauxBureau46.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxBureau46.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.travauxBureau46.prix_unitaire }} CHF</td>
@@ -1788,7 +1700,6 @@
                 <tbody>
                   <tr> 
                     <td class="tg-0lax">.1</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[95].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.registreFoncier1.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.registreFoncier1.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.registreFoncier1.prix_unitaire }} CHF</td>
@@ -1797,7 +1708,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.2</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[96].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.registreFoncier2.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.registreFoncier2.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.registreFoncier2.prix_unitaire }} CHF</td>
@@ -1806,7 +1716,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax">.3</td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[97].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.registreFoncier3.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.registreFoncier3.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.registreFoncier3.prix_unitaire }} CHF</td>
@@ -1815,7 +1724,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[98].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.registreFoncier4.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.registreFoncier4.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.registreFoncier4.prix_unitaire }} CHF</td>
@@ -1824,7 +1732,6 @@
                   </tr>
                   <tr> 
                     <td class="tg-0lax"></td>
-                    <!-- <td class="tg-0lax">{{ emolumentsUnits[99].nom }}</td> -->
                     <td class="tg-0lax">{{ form2.registreFoncier5.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form2.registreFoncier5.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form2.registreFoncier5.prix_unitaire }} CHF</td>
