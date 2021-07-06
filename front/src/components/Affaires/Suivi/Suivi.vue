@@ -67,8 +67,15 @@ export default {
               x.next_datetime = x.next_datetime? moment(new Date(x.next_datetime)).format(process.env.VUE_APP_DATETIMEFORMAT_CLIENT): null;
             });
 
-            // set sort by date value where it is null
+            let primaryKeys = [];
             tmp.forEach(x => {
+              // fix duplicate primary key due to duplicate first step (see view in database)
+              if (primaryKeys.includes(x.id)) {
+                x.id = 0;
+              }
+              primaryKeys.push(x.id);
+              
+              // set sort by date value where it is null
               if (x.next_datetime_sort === 0) {
                 x.next_datetime_sort = max_next_datetime_sort + 1;
               }
