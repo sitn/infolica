@@ -28,6 +28,7 @@ export default {
         loadingAffaires: true,
         newAffaireAllowed: false,
         operateurs: [],
+        plural: '',
         refreshAffaire: null,
         searchAffaire: null,
         selectedOperateur_id: -1,
@@ -215,6 +216,12 @@ export default {
             this.affaires = this.affaires.filter(x => x.urgent);
         }
         
+        // set plural or not
+        this.plural = '';
+        if (this.affaires.length > 1){
+            this.plural = 's';
+        }
+
         this.loadingAffaires = false;
     },
 

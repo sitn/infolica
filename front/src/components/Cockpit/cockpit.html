@@ -21,35 +21,39 @@
 
     <md-card>
         <md-card-content>
+            <div class="md-layout md-gutter md-alignment-center-space-between">
+                <div class="md-layout-item md-size-80" style="display: flex;">
+                    <md-field style="width: 250px !important;">
+                        <label>Rechercher</label>
+                        <md-input v-model="searchAffaire" placeholder="Nom d'affaire" v-on:keyup="updateTable"></md-input>
+                        <md-icon>search</md-icon>
+                    </md-field>
+    
+                    <md-field style="margin-left: 50px; width: 250px !important;">
+                        <label for="operateur">Opérateur·rice</label>
+                        <md-select v-model="selectedOperateur_id" name="operateur" id="operateur" @md-selected="updateTable" md-dense>
+                          <md-option :value="-1">Tous</md-option>
+                          <md-option v-for="item in operateurs" :value="item.id">{{ item.nom }}</md-option>
+                        </md-select>
+                    </md-field>
+                    
+                    <md-field style="margin-left: 50px; width: 250px !important;">
+                        <label>Type(s) d'affaire</label>
+                        <md-select v-model="selectedAffaireTypes_id" @md-selected="updateTable" md-dense>
+                            <md-option :value="-1">Tous</md-option>
+                            <md-option v-for="item in affaireTypes" :value="item.id">{{ item.nom }}</md-option>
+                        </md-select>
+                    </md-field>
+    
+                    <md-checkbox v-model="showFinProcessus" @change="updateTable" style="margin-left: 50px; margin-top:25px;">Afficher l'étape fin de processus</md-checkbox>
+                    <md-checkbox v-model="showOnlyAffairesUrgentes" @change="updateTable" style="margin-left: 50px; margin-top:25px;">Afficher les affaires urgentes</md-checkbox>
+                </div>
 
-            <div style="display: flex;">
-                <md-field style="width: 250px !important;">
-                    <label>Rechercher</label>
-                    <md-input v-model="searchAffaire" placeholder="Nom d'affaire" v-on:keyup="updateTable"></md-input>
-                </md-field>
-
-                <md-field style="margin-left: 50px; width: 250px !important;">
-                    <label for="operateur">Opérateur·rice</label>
-                    <md-select v-model="selectedOperateur_id" name="operateur" id="operateur" @md-selected="updateTable" md-dense>
-                      <md-option :value="-1">Tous</md-option>
-                      <md-option v-for="item in operateurs" :value="item.id">{{ item.nom }}</md-option>
-                    </md-select>
-                </md-field>
-                
-                <md-field style="margin-left: 50px; width: 250px !important;">
-                    <label>Type(s) d'affaire</label>
-                    <md-select v-model="selectedAffaireTypes_id" @md-selected="updateTable" md-dense>
-                        <md-option :value="-1">Tous</md-option>
-                        <md-option v-for="item in affaireTypes" :value="item.id">{{ item.nom }}</md-option>
-                    </md-select>
-                </md-field>
-
-                <md-checkbox v-model="showFinProcessus" @change="updateTable" style="margin-left: 50px; margin-top:25px;">Afficher l'étape fin de processus</md-checkbox>
-                <md-checkbox v-model="showOnlyAffairesUrgentes" @change="updateTable" style="margin-left: 50px; margin-top:25px;">Afficher les affaires urgentes</md-checkbox>
-
-                <p style="margin-top: 25px;">({{ affaires.length }} affaires)</p>
+                <div class="md-layout-item" style="text-align: right;">
+                    <p style="margin-top: 25px;">({{ affaires.length }} affaire{{ plural }} affichée{{ plural }})</p>
+                </div>
             </div>
-            
+
             <md-progress-bar md-mode="indeterminate" v-if="loadingAffaires"></md-progress-bar>
             <md-table v-model="affaires" md-sort="id" md-sort-order="desc" md-card>
 
