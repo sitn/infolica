@@ -198,6 +198,7 @@ export default {
       this.total = {
         montant_mandat_total: 0,
         montant_mandat_batiment_total: new Array(Number(this.form.nb_batiments)).fill(0),
+        montant_mandat_batiment_total_f: new Array(Number(this.form.nb_batiments)).fill(0),
         montant_21pfp: 0,
         montant_23sit: 0,
         montant_22pl: 0,
@@ -238,7 +239,7 @@ export default {
 
       console.log("this.total.montant_mandat_batiment_total = ", this.total.montant_mandat_batiment_total)
 
-      this.setComptabiliteFormat();
+      // this.setComptabiliteFormat();
       this.computeZi();
       this.updateRecapitulatif();
     },
@@ -317,7 +318,6 @@ export default {
         Number(this.form2.mandat6.montant);
 
       for (let j=0; j<Number(this.form.nb_batiments); j++) {
-        console.log("toto")
         this.total.montant_mandat_batiment_total[j] = 
           Number(this.form3[j].mandat1.montant) +
           Number(this.form3[j].mandat2.montant) +
@@ -326,7 +326,11 @@ export default {
           Number(this.form3[j].mandat5.montant) +
           Number(this.form3[j].mandat6.montant);
 
+        this.total.montant_mandat_batiment_total_f[j] =
+          Number(this.total.montant_mandat_batiment_total[j]) * Number(this.form.batiment_f[j]);
       }
+
+
 
       //Montants totaux TravauxTerrain
       this.total.montant_21pfp = 
@@ -497,7 +501,7 @@ export default {
 
 
     updateRecapitulatif() {
-      this.total.montant_recapitulatif_mandat = Number(this.total.montant_mandat_total);// + this.form.montant_mandat_batiment_total_f.length > 0? Number(this.form.montant_mandat_batiment_total_f.reduce((a, b) => Number(a) + Number(b))): 0;
+      this.total.montant_recapitulatif_mandat = Number(this.total.montant_mandat_total) + this.total.montant_mandat_batiment_total_f.length > 0? Number(this.total.montant_mandat_batiment_total_f.reduce((a, b) => Number(a) + Number(b))): 0;
       this.total.montant_recapitulatif_somme1 = Number(this.total.montant_recapitulatif_mandat)
 
       this.total.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.total.montant_travauxTerrain_total_zi) + Number(this.total.montant_5_depl_debours)// + Number(this.total.montant_travauxTerrain_batiment_total_f_somme_zi);
@@ -535,7 +539,15 @@ export default {
 
     /** Set format for comptabilité: 0.00 CHF */
     setComptabiliteFormat() {
-      Object.keys(this.total).forEach(x => this.total[x] = numeral(this.total[x]).format("0.00"));
+      Object.keys(this.total).forEach(x => {
+        if (Array.isArray(this.total[x])) {
+          for (let i=0; i<this.form.nb_batiments; i++) {
+            this.total[x][i] = numeral(this.total[x][i]).format("0.00");
+          }
+        } else {
+          this.total[x] = numeral(this.total[x]).format("0.00");
+        }
+      });
     },
 
     /**
