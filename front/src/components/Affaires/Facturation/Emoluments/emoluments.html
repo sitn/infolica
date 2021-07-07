@@ -246,9 +246,9 @@
                   <template v-if="form.nb_batiments > 0">
                     <tr>
                       <th class="tg-0lax alignCenter" colspan="6"></th>
-                      <!-- <template v-for="i in form.nb_batiments">
-                        <th class="tg-0lax batiment-separator alignCenter alignCenter" colspan="2">Bâtiment {{i}}</th>
-                      </template> -->
+                      <template v-for="i in form.nb_batiments">
+                        <th class="tg-0lax batiment-separator alignCenter alignCenter" colspan="2">Bâtiment {{i}} (f = {{ form.batiment_f[i-1] }})</th>
+                      </template>
                     </tr>
                   </template>
                   <tr>
@@ -258,10 +258,10 @@
                     <th class="tg-0lax alignCenter">Prix unit.</th>
                     <th class="tg-0lax alignCenter">Nombre</th>
                     <th class="tg-0lax alignCenter montant">Montant</th>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <th class="tg-0lax batiment-separator alignCenter">Nombre</th>
                       <th class="tg-0lax alignCenter montant">Montant</th>
-                    </template> -->
+                    </template>
                   </tr>
                 </thead>
                 <tbody>
@@ -275,10 +275,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain1.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain1.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain1.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain1_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain1_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain1.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain1.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.12</td>
@@ -287,10 +287,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain2.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain2.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain2.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain2_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain2_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain2.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain2.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.13</td>
@@ -299,10 +299,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain3.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain3.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain3.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain3_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain3_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain3.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain3.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.14</td>
@@ -311,10 +311,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain4.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain4.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain4.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain4_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain4_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain4.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain4.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.15</td>
@@ -323,10 +323,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain5.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain5.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain5.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain5_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain5_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain5.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain5.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.16</em></td>
@@ -339,10 +339,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain6.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain6.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain6.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain6_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain6_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain6.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain6.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
@@ -351,10 +351,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain7.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain7.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain7.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain7_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain7_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain7.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain7.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax"></td>
@@ -363,10 +363,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain8.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain8.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain8.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain8_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain8_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain8.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain8.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.17</td>
@@ -375,10 +375,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain9.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain9.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain9.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain9_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain9_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain9.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain9.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.18</td>
@@ -387,10 +387,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain10.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain10.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain10.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain10_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain10_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain10.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain10.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.19</td>
@@ -399,10 +399,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain11.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain11.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain11.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain11_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain11_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain11.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain11.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.110</td>
@@ -411,10 +411,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain12.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain12.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain12.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain12_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain12_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain12.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain12.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.111</td>
@@ -423,10 +423,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain13.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain13.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain13.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain13_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain13_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain13.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain13.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.112</td>
@@ -435,10 +435,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain14.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain14.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain14.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain14_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain14_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain14.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain14.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form.nb_batiments)">2.3 Situation</td>
@@ -450,10 +450,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain15.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain15.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain15.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain15_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain15_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain15.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain15.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.32</td>
@@ -462,10 +462,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain16.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain16.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain16.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
-                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form.nb_travauxTerrain16_batiment[i-1]" class="nbInput" @keyup="updateMontantTravauxTerrain()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form.montant_travauxTerrain16_batiment[i-1] }} CHF</td>
-                    </template> -->
+                    <template v-for="i in form.nb_batiments">
+                      <td class="tg-0lax batiment-separator"><md-field class="nbField"><md-input v-model="form3[i-1].travauxTerrain16.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax alignRight">{{ form3[i-1].travauxTerrain16.montant }} CHF</td>
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form.nb_batiments)">2.2 Points limites</td>
@@ -477,10 +477,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain17.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain17.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain17.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax batiment-separator notEditable"></td>
                       <td class="tg-0lax notEditable"></td>
-                    </template> -->
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.22</td>
@@ -489,10 +489,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain18.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain18.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain18.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax batiment-separator notEditable"></td>
                       <td class="tg-0lax notEditable"></td>
-                    </template> -->
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.23</td>
@@ -501,10 +501,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain19.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain19.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain19.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax batiment-separator notEditable"></td>
                       <td class="tg-0lax notEditable"></td>
-                    </template> -->
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.24</td>
@@ -513,10 +513,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain20.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain20.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain20.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax batiment-separator notEditable"></td>
                       <td class="tg-0lax notEditable"></td>
-                    </template> -->
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.25</td>
@@ -525,10 +525,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain21.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain21.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain21.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax batiment-separator notEditable"></td>
                       <td class="tg-0lax notEditable"></td>
-                    </template> -->
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.26</td>
@@ -537,10 +537,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain22.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain22.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain22.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax batiment-separator notEditable"></td>
                       <td class="tg-0lax notEditable"></td>
-                    </template> -->
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.27</td>
@@ -549,10 +549,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain23.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain23.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain23.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax batiment-separator notEditable"></td>
                       <td class="tg-0lax notEditable"></td>
-                    </template> -->
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.28</td>
@@ -561,10 +561,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain24.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain24.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain24.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax batiment-separator notEditable"></td>
                       <td class="tg-0lax notEditable"></td>
-                    </template> -->
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0lax">.29</td>
@@ -573,10 +573,10 @@
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain25.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxTerrain25.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form2.travauxTerrain25.montant }} CHF</td>
-                    <!-- <template v-for="i in form.nb_batiments">
+                    <template v-for="i in form.nb_batiments">
                       <td class="tg-0lax batiment-separator notEditable"></td>
                       <td class="tg-0lax notEditable"></td>
-                    </template> -->
+                    </template>
                   </tr>
                   <tr>
                     <td class="tg-0pky" colspan="5">Somme</td>

@@ -237,8 +237,6 @@ export default {
         montant_divers_total_with_5_depl_debours: 0,
       };
 
-      console.log("this.total.montant_mandat_batiment_total = ", this.total.montant_mandat_batiment_total)
-
       // this.setComptabiliteFormat();
       this.computeZi();
       this.updateRecapitulatif();
