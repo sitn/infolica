@@ -228,7 +228,6 @@ export default {
             date_type: "date_validation",
             show: true
           };
-          this.cloreAffaire = true;
         } else {
           this.updateAffaireDate = {
             text: "Mettre à jour la date de validation de l'affaire",
@@ -236,7 +235,6 @@ export default {
             date_type: "date_validation",
             show: true
           };
-          this.cloreAffaire = false;
         }
       } else if (
         // Mise à jour de la date d'envoi
@@ -254,7 +252,6 @@ export default {
           date_type: "date_envoi",
           show: true
         };
-        this.cloreAffaire = false;
       }
     }
 

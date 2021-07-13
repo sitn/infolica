@@ -214,9 +214,7 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-          let tmp = response.data;
-          tmp.push({id: 1, nom: "Bien-fonds", ordre: 1, toLowerCase: () => "bien-fonds", toString: () => "Bien-fonds"});
-          this.types_numeros_mo = stringifyAutocomplete(tmp).sort((a,b) => (a.nom > b.nom) ? 1 : ((b.nom > a.nom) ? -1 : 0));
+          this.types_numeros_mo = stringifyAutocomplete(response.data);
         }
       }).catch(err => handleException(err, this));
     },
