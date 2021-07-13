@@ -246,7 +246,6 @@ export default {
         ([this.etapes_affaire_conf.validation, this.etapes_affaire_conf.signature_art35].includes(this.etapeAffaire.prochaine.id) ||
         [this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe].includes(this.affaire.type_id))
       ) {
-        console.log(([this.etapes_affaire_conf.validation, this.etapes_affaire_conf.signature_art35].includes(this.etapeAffaire.prochaine.id) ||
         this.affaire.type_id === [this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe].includes(this.typesAffaires_conf.ppe)))
         this.updateAffaireDate = {
           text: "Mettre à jour la date d'envoi de l'affaire",
