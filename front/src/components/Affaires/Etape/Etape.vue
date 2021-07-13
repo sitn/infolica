@@ -108,9 +108,11 @@ export default {
 
         if (this.cloreAffaire) {
           //Clore affaire
-          this.$refs.clotureAffaire.onConfirmCloture(false);
-          this.cloreAffaire = false;
-        
+          setTimeout(() => {
+            // timout pour éviter une erreur indéterminée
+            this.$refs.clotureAffaire.onConfirmCloture(false);
+            this.cloreAffaire = false;
+          }, 200);
         }
       }
 
