@@ -117,15 +117,23 @@ export default {
             let tmp = response.data;
             tmp.forEach(x => {
               if (x.numero_relation_type_id === this.numeroRelationTypeId_mutation) {
-                this.numero_provenance.push(x.numero_base + x.numero_base_suffixe);
+                this.numero_provenance.push(x.numero_base);
               } else {
-                this.numero_base.push(x.numero_base + x.numero_base_suffixe);
+                this.numero_base.push(x.numero_base + (x.numero_base_suffixe? "/" + x.numero_base_suffixe: ""));
               }
             });
           } 
 
-          if (this.numero_provenance.length === 0) this.numero_provenance = "-";
-          if (this.numero_base.length === 0) this.numero_base = "-";
+          if (this.numero_provenance.length === 0) {
+            this.numero_provenance = "-";
+          } else {
+            this.numero_provenance = this.numero_provenance.join(", ");
+          }
+          if (this.numero_base.length === 0) {
+            this.numero_base = "-";
+          } else {
+            this.numero_base = this.numero_base.join(", ");
+          }
         }).catch(err => handleException(err, this));
     },
 
@@ -150,15 +158,23 @@ export default {
             let tmp = response.data;
             tmp.forEach(x => {
               if (x.numero_relation_type_id === this.numeroRelationTypeId_mutation) {
-                this.numero_destination.push(x.numero_associe + x.numero_associe_suffixe);
+                this.numero_destination.push(x.numero_associe);
               } else {
-                this.numero_associe.push(x.numero_associe + x.numero_associe_suffixe);
+                this.numero_associe.push(x.numero_associe + (x.numero_associe_suffixe? "/" + x.numero_associe_suffixe: ""));
               }
             });
           }
 
-          if (this.numero_destination.length === 0) this.numero_destination = "-";
-          if (this.numero_associe.length === 0) this.numero_associe = "-";
+          if (this.numero_destination.length === 0) {
+            this.numero_destination = "-";
+          } else {
+            this.numero_destination = this.numero_destination.join(", ");
+          }
+          if (this.numero_associe.length === 0) {
+            this.numero_associe = "-";
+          } else {
+            this.numero_associe = this.numero_associe.join(", ");
+          }
         }).catch(err => handleException(err, this));
     },
 
