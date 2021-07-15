@@ -12,14 +12,17 @@ export default {
   props: {},
   data: () => ({
     cadastre_liste: [],
-    numero: [],
-    numero_edit: [],
-    numero_affaires: [],
-    numero_provenance: [],
-    numero_destination: [],
-    editNumeroAllowed: false,
     editionActivated: false,
+    editNumeroAllowed: false,
     etatsNumeros: [],
+    numero: [],
+    numero_affaires: [],
+    numero_associe: [],
+    numero_base: [],
+    numero_destination: [],
+    numero_edit: [],
+    numero_provenance: [],
+    numeroRelationTypeId_mutation: Number(process.env.VUE_APP_RELATION_TYPE_MUTATION_ID)
   }),
 
   methods: {
@@ -27,7 +30,7 @@ export default {
      * Initialize permissions to edit numero
      */
     initPermissions() {
-      this.editNumeroAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION)
+      this.editNumeroAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION);
     },
 
     /*
@@ -54,9 +57,7 @@ export default {
               this.numero.suffixe = "-"
             }
           }
-        }).catch(err => {
-          handleException(err, this);
-        });
+        }).catch(err => handleException(err, this));
     },
 
 
@@ -71,9 +72,7 @@ export default {
             return obj.nom;
           });
         }
-      }).catch(err => {
-        handleException(err, this);
-      });
+      }).catch(err => handleException(err, this));
     },
 
 
@@ -94,9 +93,7 @@ export default {
           if (response && response.data) {
             this.numero_affaires = response.data;
           }
-        }).catch(err => {
-          handleException(err, this);
-        })
+        }).catch(err => handleException(err, this));
     },
 
 
@@ -114,14 +111,22 @@ export default {
             headers: {"Accept": "application/json"}
           }
         ).then(response => {
+          this.numero_provenance = [];
+          this.numero_base = [];
           if (response.data) {
-            this.numero_provenance = response.data.map(x => x.numero_base + x.numero_base_suffixe);
-          } else {
-            this.numero_provenance = "-"
-          }
-        }).catch(err => {
-          handleException(err, this);
-        });
+            let tmp = response.data;
+            tmp.forEach(x => {
+              if (x.numero_relation_type_id === this.numeroRelationTypeId_mutation) {
+                this.numero_provenance.push(x.numero_base + x.numero_base_suffixe);
+              } else {
+                this.numero_base.push(x.numero_base + x.numero_base_suffixe);
+              }
+            });
+          } 
+
+          if (this.numero_provenance.length === 0) this.numero_provenance = "-";
+          if (this.numero_base.length === 0) this.numero_base = "-";
+        }).catch(err => handleException(err, this));
     },
 
 
@@ -139,14 +144,22 @@ export default {
             headers: {"Accept": "application/json"}
           }
         ).then(response => {
+          this.numero_destination = [];
+          this.numero_associe = [];
           if (response.data) {
-            this.numero_destination = response.data.map(x => x.numero_associe + x.numero_associe_suffixe);
-          } else {
-            this.numero_destination = "-"
+            let tmp = response.data;
+            tmp.forEach(x => {
+              if (x.numero_relation_type_id === this.numeroRelationTypeId_mutation) {
+                this.numero_destination.push(x.numero_associe + x.numero_associe_suffixe);
+              } else {
+                this.numero_associe.push(x.numero_associe + x.numero_associe_suffixe);
+              }
+            });
           }
-        }).catch(err => {
-          handleException(err, this);
-        });
+
+          if (this.numero_destination.length === 0) this.numero_destination = "-";
+          if (this.numero_associe.length === 0) this.numero_associe = "-";
+        }).catch(err => handleException(err, this));
     },
 
     /*
