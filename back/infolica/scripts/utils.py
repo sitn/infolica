@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*--
 from datetime import date, datetime
 from sqlalchemy import func, and_, desc
-from infolica.models.models import Numero, AffaireNumero, Fonction, Role, FonctionRole, ReservationNumerosMO
-from infolica.models.models import SuiviMandat, ControleGeometre, ControleMutation, ControlePPE
-from infolica.models.models import AffaireEtape, Cadastre, Operateur
+from infolica.models.models import Numero, AffaireNumero, Fonction, Role, FonctionRole, ReservationNumerosMO, Cadastre, Operateur
 from infolica.scripts.ldap_query import LDAPQuery
 from infolica.scripts.mailer import send_mail
 

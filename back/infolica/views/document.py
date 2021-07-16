@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*--
 from pyramid.view import view_config
-import pyramid.httpexceptions as exc
 
-from infolica.exceptions.custom_error import CustomError
-from infolica.models.constant import Constant
-from infolica.models.models import Service
+from infolica.models.models import Affaire, Service
 from infolica.scripts.utils import Utils
 
 import os
 import json
-from datetime import datetime
 from docxtpl import DocxTemplate, RichText
 
 
@@ -37,12 +33,21 @@ def save_document_view(request):
         output_file_name += "_" + service.abreviation
         relPath = service.relpath.strip('/').strip('\\')
 
+    affaire_relpath = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
+    
+    if affaire_relpath is None:
+        affaire_relpath = affaire_id
+        
+    affaire_path = os.path.normcase(os.path.join(affaires_directory, affaire_relpath))
+    
     filename = output_file_name + '.docx'
-    file_path = os.path.normcase(os.path.join(affaires_directory, affaire_id, relPath, filename))
-    folder_path = os.path.dirname(file_path)
+    file_path = os.path.normcase(os.path.join(affaire_path, relPath, filename))
 
-    if not os.path.exists(folder_path):
-        Utils.create_affaire_folder(request, folder_path)
+    if not os.path.exists(affaire_path):
+        Utils.create_affaire_folder(request, affaire_path)
+        # update affaire chemin
+        affaire = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
+        affaire.chemin = affaire_relpath
 
     # Set context
     context = json.loads(values)

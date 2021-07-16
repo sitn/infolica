@@ -194,7 +194,10 @@ export default {
     this.searchAffaireDocuments();
     this.searchAffaireDossier();
 
-    this.$root.$on("searchAffaireDocuments", () => this.searchAffaireDocuments())
+    this.$root.$on("searchAffaireDocuments", () => {
+      this.searchAffaireDossier()
+      this.searchAffaireDocuments()
+    })
 
     // show edit affaire path
     if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {
