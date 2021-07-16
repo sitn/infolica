@@ -23,12 +23,16 @@ export const handleException = function (error, component) {
     //Back-end errors: show entire message
     else if (error && error.response && error.response.data && error.response.data.message)
     {
-        component.$root.$emit("ShowError", error.response.data.message);   
+        component.$root.$emit("ShowError", "Une erreur est survenue, contacter l'administrateur. " + error.response.data.message);   
+    }
+    //Custom error
+    else if(error){
+        component.$root.$emit("ShowError", error);   
     }
     //All other error codes
     else
     {
-       component.$root.$emit("ShowError", "Une erreur est survenue");   
+       component.$root.$emit("ShowError", "Une erreur est survenue, contacter l'administrateur.");   
     }
 };
 

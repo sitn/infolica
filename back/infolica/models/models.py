@@ -629,6 +629,8 @@ class NumeroRelation(Base):
         NumeroRelationType.id), nullable=False)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
 
+    UniqueConstraint(numero_id_base, numero_id_associe, relation_type_id, affaire_id)
+
 
 class AffaireNumeroType(Base):
     __tablename__ = 'affaire_numero_type'
