@@ -2,7 +2,11 @@
     <md-card>  
         <md-card-content>          
             <img class="logo" alt="ne.ch" src="@/assets/logo.png">
-            <h2>Infolica <span style="margin: 0px 10px 0px 10px; font-weight: normal; font-size: 13px;"> v {{ version }}</span></h2>
+            <h2>Infolica 
+              <md-badge md-content="New" class="md-square">
+                <md-button class="md-dense" style="width: auto !important; min-width: auto !important; margin: -5px 25px 0px 10px; font-weight: normal; font-size: 13px; color: white;"> v {{ version }} </md-button>
+              </md-badge>
+            </h2>
             <h2 style="color: rgb(255, 51, 0);" v-if="!instance.isProd"><md-icon class="md-accent">warning</md-icon> {{ instance.name }} <md-icon class="md-accent">warning</md-icon></h2>
 
             <nav class="menu" v-if="$route.name !== 'Login'">
@@ -29,7 +33,7 @@
               <md-menu md-align-trigger>
                 <md-button md-menu-trigger v-on:click="goTo('About')" v-on:click.middle="openInNewTab('About')">à propos</md-button>
               </md-menu>              
-            </nav>           
+            </nav>
 
             <div class="user" v-if="$route.name !== 'Login'">
               <em class="material-icons md-light">account_circle</em>
