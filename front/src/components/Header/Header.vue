@@ -15,6 +15,7 @@ export default {
       return {
           loggedUserName: String,
           isAdmin: false,
+          version: null,
       }
   },
 
@@ -56,6 +57,10 @@ export default {
       this.isAdmin = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
     },
 
+    checkVersion() {
+      this.version = process.env.VUE_APP_VERSION;
+    },
+
     /**
      * Open link in new tab
      */
@@ -81,6 +86,7 @@ export default {
       this.setUserName(session_user);
 
       this.checkIsAdmin();
+      this.checkVersion();
   }
 }
 </script>
