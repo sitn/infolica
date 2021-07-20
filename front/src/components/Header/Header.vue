@@ -3,7 +3,7 @@
 
 
 <script>
-import { checkPermission } from '@/services/helper'
+import { checkPermission } from '@/services/helper';
 
 
 export default {
@@ -15,7 +15,10 @@ export default {
       return {
           loggedUserName: String,
           isAdmin: false,
-          version: null,
+          versionBtn: {
+            version: null,
+            showBadge: false
+          }
       }
   },
 
@@ -57,8 +60,12 @@ export default {
       this.isAdmin = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
     },
 
-    checkVersion() {
-      this.version = process.env.VUE_APP_VERSION;
+    /**
+     * set version and badge if new
+     */
+    checkVersion(version, isNew=false) {
+      this.versionBtn.version = version;
+      this.versionBtn.showBadge = isNew;
     },
 
     /**
@@ -67,6 +74,13 @@ export default {
     openInNewTab(data) {
       let routedata = this.$router.resolve({ name: data });
       window.open(routedata.href, "_blank");
+    },
+
+    /**
+     * Open notes MAJ
+     */
+    openNotesMAJ() {
+      this.$root.$emit("openNotesMAJ");
     }
 
   },
@@ -86,7 +100,8 @@ export default {
       this.setUserName(session_user);
 
       this.checkIsAdmin();
-      this.checkVersion();
+      
+      this.$root.$on("checkVersion", (version, isNew) => this.checkVersion(version, isNew));
   }
 }
 </script>
