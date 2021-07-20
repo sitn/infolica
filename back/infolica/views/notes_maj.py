@@ -18,7 +18,7 @@ def notes_maj_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(NotesMAJ).all()
+    query = request.dbsession.query(NotesMAJ).order_by(NotesMAJ.id.desc()).all()
     return Utils.serialize_many(query)
 
 
