@@ -7,6 +7,7 @@ from infolica.models.constant import Constant
 from infolica.models.models import NotesMAJ
 from infolica.scripts.utils import Utils
 
+from datetime import date
 
 
 @view_config(route_name='notes_maj', request_method='GET', renderer='json')
@@ -17,8 +18,17 @@ def notes_maj_view(request):
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
+    
+    active = request.params["active"] if "active" in request.params else "false"
+    
+    query = request.dbsession.query(NotesMAJ)
+    
+    if active == "true":
+        today = date.today()
+        query = query.filter(NotesMAJ.delai - today >= 0)
 
-    query = request.dbsession.query(NotesMAJ).order_by(NotesMAJ.id.desc()).all()
+    query = query.order_by(NotesMAJ.id.desc()).all()
+
     return Utils.serialize_many(query)
 
 

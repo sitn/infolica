@@ -20,7 +20,7 @@ export default {
      * Get Notes
      */
     getNotesMAJ() {
-      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_NOTESMAJ_ENDPOINT,
+      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_NOTESMAJ_ENDPOINT + "?active=true",
         {
           withCredentials: true,
           headers: {"Accept": "application/json"}
@@ -28,10 +28,13 @@ export default {
       ).then(response => {
         if (response && response.data) {
           let tmp = response.data;
+
           tmp.forEach( x => {
             x.date_client = moment(x.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
             x.delai_client = moment(x.delai, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            x.title = "Version " + String(x.version) + " du " + String(x.date_client);
           });
+
           this.notes = tmp;
 
           // Update version btn in header

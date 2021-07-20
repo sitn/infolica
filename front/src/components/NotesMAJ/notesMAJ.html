@@ -1,20 +1,14 @@
 <div class="notesmaj" v-if="showNotesMAJ">
     <md-card class="notesMAJ" v-if="$route.name !== 'Login' && showNotesMAJ">
-        <md-card-header class="justifyTitleBtn">
+        <md-card-header class="justifyTitleBtn" style="padding-bottom: 0px;">
             <div class="md-title"><b>Mise à jour</b></div>
             <div><md-button style="min-width: auto; width: auto;" title="Fermer la fenêtre d'informations" @click="showNotesMAJ=false" class="md-dense"><md-icon>close</md-icon></md-button></div>
         </md-card-header>
         <md-card-content>
             <p>La dernière mise à jour comporte les éléments suivants:</p>
-            <md-table v-model="notes" md-sort="id" md-sort-order="desc">
-                <md-table-row slot="md-table-row" slot-scope="{ item }">
-                    <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
-                    <md-table-cell md-label="Date" md-sort-by="date">{{ item.date_client }}</md-table-cell>
-                    <md-table-cell md-label="version" md-sort-by="version">{{ item.version }}</md-table-cell>
-                    <md-table-cell md-label="Titre" md-sort-by="titre">{{ item.titre }}</md-table-cell>
-                    <md-table-cell md-label="Descrption" md-sort-by="message">{{ item.message }}</md-table-cell>
-                </md-table-row>
-            </md-table>
+            <ul style="margin-top: 0px;">
+                <li v-for="item in notes" :title="item.title">{{ item.titre }}: {{ item.message }}</li>
+            </ul>
             <p><a @click="goTo('About')">Consulter l'historique</a></p>
         </md-card-content>
     </md-card>
