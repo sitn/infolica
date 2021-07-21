@@ -244,6 +244,7 @@ export default {
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_PPE_ROLE_ID)) {
             _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
+            _this.permission.affaireCloture = [ _this.typesAffaires_conf.ppe, _this.typesAffaires_conf.modification_ppe].includes(_this.affaire.type_id);
           }
           
           // Opérateur responsable peut référencer des numéros
