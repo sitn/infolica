@@ -147,11 +147,15 @@ export default {
     }
   },
   mounted: function(){
-    this.getNotesMAJ();
     this.getVersion();
-
+    
     this.$root.$on("openNotesMAJ", () => this.showNotesMAJ = true);
-    this.$root.$on("notesMaj_hasAdminRights", (hasAdminRights) => this.permissions.admin = hasAdminRights);
+    
+    this.$root.$on("notesMaj_hasAdminRights", (hasAdminRights) => {
+      this.permissions.admin = hasAdminRights;
+      this.getNotesMAJ();
+      this.getVersion();
+    });
   }
 }
 </script>
