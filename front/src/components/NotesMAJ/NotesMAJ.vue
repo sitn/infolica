@@ -13,6 +13,12 @@ export default {
     return {
       notes: [],
       showNotesMAJ: true,
+      newNote: {
+        show: false,
+        titre: null,
+        message: null,
+        delai: moment(new Date() + 24*3600*1000).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+      }
     }
   },
   methods: {
@@ -36,13 +42,24 @@ export default {
           });
 
           this.notes = tmp;
+        }
+      }).catch(err => handleException(err, this));
+    },
 
-          // Update version btn in header
-          let lastUpdate = tmp[0];
-          let version = lastUpdate.version;
-          let isNew = (moment(lastUpdate.delai, process.env.VUE_APP_DATEFORMAT_WS) - new Date()) / 1000 / 3600 / 24 + 1 > 0;
-          this.$root.$emit("checkVersion", version, isNew);
-
+    /**
+     * Get version
+     */
+    getVersion() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_VERSION_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          console.log(response.data)
+          this.$root.$emit("checkVersion", response.data.version, response.data.isNew);
         }
       }).catch(err => handleException(err, this));
     },
@@ -59,6 +76,7 @@ export default {
   },
   mounted: function(){
     this.getNotesMAJ();
+    this.getVersion();
 
     this.$root.$on("openNotesMAJ", () => this.showNotesMAJ = true);
 }

@@ -7,7 +7,7 @@ from infolica.models.constant import Constant
 from infolica.models.models import NotesMAJ
 from infolica.scripts.utils import Utils
 
-from datetime import date
+from datetime import date, datetime
 
 
 @view_config(route_name='notes_maj', request_method='GET', renderer='json')
@@ -30,6 +30,28 @@ def notes_maj_view(request):
     query = query.order_by(NotesMAJ.id.desc()).all()
 
     return Utils.serialize_many(query)
+
+
+@view_config(route_name='version', request_method='GET', renderer='json')
+def version_view(request):
+    """
+    Return version
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+    
+    model_version = request.dbsession.query(NotesMAJ).order_by(NotesMAJ.id.desc()).first()
+    model_delai = request.dbsession.query(NotesMAJ).order_by(NotesMAJ.delai.desc()).first()
+
+    now = datetime.now()
+
+    version = {
+        'version': model_version.version,
+        'isNew': datetime.combine(model_delai.delai, datetime.min.time()) >= now
+    }
+
+    return version
 
 
 @view_config(route_name='notes_maj', request_method='POST', renderer='json')
