@@ -42,25 +42,26 @@ export const getCurrentUserRoleId = function () {
  * Set current user functions
  */
 export const setCurrentUserFunctions = async function () {    
-    axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CURRENT_USERS_FUNCTIONS_ENDPOINT,
-        {
-            withCredentials: true,
-            headers: {"Accept": "application/json"}
-        })
-        .then(response =>{
-            if(response && response.data){
-                var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
-    
-                if(session_user){
-                    session_user.fonctions = response.data.fonctions;
-                    session_user.role_id = response.data.role_id;
-                    localStorage.setItem('infolica_user', JSON.stringify(session_user));
-                }
-            }
+    return new Promise ((resolve, reject) => {
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CURRENT_USERS_FUNCTIONS_ENDPOINT,
+            {
+                withCredentials: true,
+                headers: {"Accept": "application/json"}
             })
-        .catch(() => {
-            //To do message
-        });
+            .then(response =>{
+                if(response && response.data){
+                    var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+        
+                    if(session_user){
+                        session_user.fonctions = response.data.fonctions;
+                        session_user.role_id = response.data.role_id;
+                        localStorage.setItem('infolica_user', JSON.stringify(session_user));
+                    }
+                    resolve(response);
+                }
+            })
+            .catch(() => reject);
+    })
 };
 
 /*
@@ -416,5 +417,12 @@ export const adjustColumnWidths = function() {
             clearInterval(interval);
         }
     }, 1000);
+}
+
+export const disabledDates_fct = function(date) {
+    const day = date.getDay();
+    const now = new Date()
+
+    return day === 6 || day === 0 || date < now;
 }
 

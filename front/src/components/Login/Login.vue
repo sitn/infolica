@@ -4,7 +4,7 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {setCurrentUserFunctions} from '@/services/helper';
+import {checkPermission, setCurrentUserFunctions} from '@/services/helper';
 
 export default {
   name: 'Login',
@@ -76,7 +76,9 @@ export default {
            */
           processLogin (data) {
             localStorage.setItem('infolica_user', JSON.stringify(data));
-            setCurrentUserFunctions();
+            setCurrentUserFunctions().then(() => {
+              this.$root.$emit("notesMaj_hasAdminRights", checkPermission(process.env.VUE_APP_FONCTION_ADMIN));
+            });
             this.$root.$emit('infolica_user_logged_in', data);
           },
 
@@ -94,7 +96,7 @@ export default {
 
     mounted: function(){
       //Logout
-      this.$root.$on("infolica_user_logout", () =>{        
+      this.$root.$on("infolica_user_logout", () => {        
         this.doLogout();    
         this.processLogout();    
       });
