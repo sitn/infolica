@@ -37,10 +37,6 @@ def version_view(request):
     """
     Return version
     """
-    # Check connected
-    if not Utils.check_connected(request):
-        raise exc.HTTPForbidden()
-    
     model_version = request.dbsession.query(NotesMAJ).order_by(NotesMAJ.version.desc()).first()
     model_delai = request.dbsession.query(NotesMAJ).order_by(NotesMAJ.delai.desc()).first()
 
