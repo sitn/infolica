@@ -1,6 +1,5 @@
 from sqlalchemy import (
     Column,
-    Index,
     Integer,
     BigInteger,
     Float,
@@ -752,6 +751,18 @@ class EtapeMailer(Base):
     etape_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id), nullable=False)
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
     sendmail = Column(Boolean)
+
+
+class NotesMAJ(Base):
+    __tablename__ = 'notes_maj'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
+    version = Column(Text, nullable=False)
+    titre = Column(Text, nullable=False)
+    message = Column(Text, nullable=False)
+    date = Column(Date, nullable=False)
+    delai = Column(Date, nullable=False)
 
 
 # ======================== VUES ========================

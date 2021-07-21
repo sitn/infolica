@@ -3,7 +3,7 @@
 
 
 <script>
-import { checkPermission } from '@/services/helper'
+import { checkPermission } from '@/services/helper';
 
 
 export default {
@@ -15,6 +15,10 @@ export default {
       return {
           loggedUserName: String,
           isAdmin: false,
+          versionBtn: {
+            version: null,
+            showBadge: false
+          }
       }
   },
 
@@ -57,11 +61,26 @@ export default {
     },
 
     /**
+     * set version and badge if new
+     */
+    checkVersion(version, isNew=false) {
+      this.versionBtn.version = version;
+      this.versionBtn.showBadge = isNew;
+    },
+
+    /**
      * Open link in new tab
      */
     openInNewTab(data) {
       let routedata = this.$router.resolve({ name: data });
       window.open(routedata.href, "_blank");
+    },
+
+    /**
+     * Open notes MAJ
+     */
+    openNotesMAJ() {
+      this.$root.$emit("openNotesMAJ");
     }
 
   },
@@ -81,6 +100,8 @@ export default {
       this.setUserName(session_user);
 
       this.checkIsAdmin();
+      
+      this.$root.$on("checkVersion", (version, isNew) => this.checkVersion(version, isNew));
   }
 }
 </script>
