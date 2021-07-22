@@ -750,10 +750,9 @@
                   <tr>
                     <td class="tg-0lax"></td>
                     <td class="tg-0lax">Sélectionner ce qui convient</td>
-                    <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation14.unite }}</td>
-                    <td class="tg-0lax alignRight" colspan="2">
+                    <td class="tg-0lax alignRight" colspan="3">
                       <md-field  class="nbField">
-                        <md-select v-model="total.montant_34_matdiff" md-dense class="nbSelect" @md-selected="updateMontants()">
+                        <md-select v-model="total.montant_34_matdiff" md-dense class="nbSelect" @md-selected="matDiffChanged">
                           <md-option :value="0">0 point (0 CHF)</md-option>
                           <md-option :value="form2.travauxMaterialisation14.prix_unitaire">{{ form2.travauxMaterialisation14.nom }} ({{ form2.travauxMaterialisation14.prix_unitaire }} CHF)</md-option>
                           <md-option :value="form2.travauxMaterialisation15.prix_unitaire">{{ form2.travauxMaterialisation15.nom }} ({{ form2.travauxMaterialisation15.prix_unitaire }} CHF)</md-option>
@@ -803,7 +802,7 @@
                     <tr>
                       <th class="tg-0lax alignCenter" colspan="6"></th>
                       <template v-for="i in form.nb_batiments">
-                        <th class="tg-0lax batiment-separator alignCenter alignCenter" colspan="2">Bâtiment {{i}}</th>
+                        <th class="tg-0lax batiment-separator alignCenter alignCenter" colspan="2">Bâtiment {{i}} (f = {{ form.batiment_f[i-1] }})</th>
                       </template>
                     </tr>
                   </template>
@@ -1435,16 +1434,16 @@
                   <tr> 
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.divers1.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
-                      <md-field class="nbField" @md-selected="updateMontants()">
-                        <md-select v-model="form2.divers1.prix_unitaire" md-dense class="nbSelect">
+                      <md-field class="nbField">
+                        <md-select v-model="form2.divers1.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
                           <md-option :value="0"></md-option>
-                          <md-option :value="182">182 CHF</md-option>
-                          <md-option :value="157">157 CHF</md-option>
-                          <md-option :value="133">133 CHF</md-option>
-                          <md-option :value="111">111 CHF</md-option>
-                          <md-option :value="101">101 CHF</md-option>
-                          <md-option :value="97">97 CHF</md-option>
-                          <md-option :value="73">73 CHF</md-option>
+                          <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
+                          <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
+                          <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
+                          <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
+                          <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
+                          <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
+                          <md-option :value="73">73 CHF - Apprenant·e</md-option>
                         </md-select>
                       </md-field>
                     </td>
@@ -1454,16 +1453,16 @@
                   <tr> 
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.divers2.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
-                      <md-field class="nbField" @md-selected="updateMontants()">
-                        <md-select v-model="form2.divers2.prix_unitaire" md-dense class="nbSelect">
+                      <md-field class="nbField">
+                        <md-select v-model="form2.divers2.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
                           <md-option :value="0"></md-option>
-                          <md-option :value="182">182 CHF</md-option>
-                          <md-option :value="157">157 CHF</md-option>
-                          <md-option :value="133">133 CHF</md-option>
-                          <md-option :value="111">111 CHF</md-option>
-                          <md-option :value="101">101 CHF</md-option>
-                          <md-option :value="97">97 CHF</md-option>
-                          <md-option :value="73">73 CHF</md-option>
+                          <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
+                          <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
+                          <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
+                          <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
+                          <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
+                          <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
+                          <md-option :value="73">73 CHF - Apprenant·e</md-option>
                         </md-select>
                       </md-field>
                     </td>
@@ -1473,16 +1472,16 @@
                   <tr> 
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.divers3.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
-                      <md-field class="nbField" @md-selected="updateMontants()">
-                        <md-select v-model="form2.divers3.prix_unitaire" md-dense class="nbSelect">
+                      <md-field class="nbField">
+                        <md-select v-model="form2.divers3.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
                           <md-option :value="0"></md-option>
-                          <md-option :value="182">182 CHF</md-option>
-                          <md-option :value="157">157 CHF</md-option>
-                          <md-option :value="133">133 CHF</md-option>
-                          <md-option :value="111">111 CHF</md-option>
-                          <md-option :value="101">101 CHF</md-option>
-                          <md-option :value="97">97 CHF</md-option>
-                          <md-option :value="73">73 CHF</md-option>
+                          <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
+                          <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
+                          <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
+                          <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
+                          <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
+                          <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
+                          <md-option :value="73">73 CHF - Apprenant·e</md-option>
                         </md-select>
                       </md-field>
                     </td>
@@ -1492,16 +1491,16 @@
                   <tr> 
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.divers4.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
-                      <md-field class="nbField" @md-selected="updateMontants()">
-                        <md-select v-model="form2.divers4.prix_unitaire" md-dense class="nbSelect">
+                      <md-field class="nbField">
+                        <md-select v-model="form2.divers4.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
                           <md-option :value="0"></md-option>
-                          <md-option :value="182">182 CHF</md-option>
-                          <md-option :value="157">157 CHF</md-option>
-                          <md-option :value="133">133 CHF</md-option>
-                          <md-option :value="111">111 CHF</md-option>
-                          <md-option :value="101">101 CHF</md-option>
-                          <md-option :value="97">97 CHF</md-option>
-                          <md-option :value="73">73 CHF</md-option>
+                          <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
+                          <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
+                          <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
+                          <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
+                          <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
+                          <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
+                          <md-option :value="73">73 CHF - Apprenant·e</md-option>
                         </md-select>
                       </md-field>
                     </td>
@@ -1511,16 +1510,16 @@
                   <tr> 
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.divers5.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
-                      <md-field class="nbField" @md-selected="updateMontants()">
-                        <md-select v-model="form2.divers5.prix_unitaire" md-dense class="nbSelect">
+                      <md-field class="nbField">
+                        <md-select v-model="form2.divers5.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
                           <md-option :value="0"></md-option>
-                          <md-option :value="182">182 CHF</md-option>
-                          <md-option :value="157">157 CHF</md-option>
-                          <md-option :value="133">133 CHF</md-option>
-                          <md-option :value="111">111 CHF</md-option>
-                          <md-option :value="101">101 CHF</md-option>
-                          <md-option :value="97">97 CHF</md-option>
-                          <md-option :value="73">73 CHF</md-option>
+                          <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
+                          <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
+                          <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
+                          <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
+                          <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
+                          <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
+                          <md-option :value="73">73 CHF - Apprenant·e</md-option>
                         </md-select>
                       </md-field>
                     </td>
@@ -1530,16 +1529,16 @@
                   <tr>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.divers6.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
-                      <md-field class="nbField" @md-selected="updateMontants()">
-                        <md-select v-model="form2.divers6.prix_unitaire" md-dense class="nbSelect">
+                      <md-field class="nbField">
+                        <md-select v-model="form2.divers6.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
                           <md-option :value="0"></md-option>
-                          <md-option :value="182">182 CHF</md-option>
-                          <md-option :value="157">157 CHF</md-option>
-                          <md-option :value="133">133 CHF</md-option>
-                          <md-option :value="111">111 CHF</md-option>
-                          <md-option :value="101">101 CHF</md-option>
-                          <md-option :value="97">97 CHF</md-option>
-                          <md-option :value="73">73 CHF</md-option>
+                          <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
+                          <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
+                          <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
+                          <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
+                          <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
+                          <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
+                          <md-option :value="73">73 CHF - Apprenant·e</md-option>
                         </md-select>
                       </md-field>
                     </td>
@@ -1549,16 +1548,16 @@
                   <tr>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.divers7.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
-                      <md-field class="nbField" @md-selected="updateMontants()">
-                        <md-select v-model="form2.divers7.prix_unitaire" md-dense class="nbSelect">
+                      <md-field class="nbField">
+                        <md-select v-model="form2.divers7.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
                           <md-option :value="0"></md-option>
-                          <md-option :value="182">182 CHF</md-option>
-                          <md-option :value="157">157 CHF</md-option>
-                          <md-option :value="133">133 CHF</md-option>
-                          <md-option :value="111">111 CHF</md-option>
-                          <md-option :value="101">101 CHF</md-option>
-                          <md-option :value="97">97 CHF</md-option>
-                          <md-option :value="73">73 CHF</md-option>
+                          <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
+                          <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
+                          <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
+                          <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
+                          <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
+                          <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
+                          <md-option :value="73">73 CHF - Apprenant·e</md-option>
                         </md-select>
                       </md-field>
                     </td>
@@ -1568,16 +1567,16 @@
                   <tr>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.divers8.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
-                      <md-field class="nbField" @md-selected="updateMontants()">
-                        <md-select v-model="form2.divers8.prix_unitaire" md-dense class="nbSelect">
+                      <md-field class="nbField">
+                        <md-select v-model="form2.divers8.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
                           <md-option :value="0"></md-option>
-                          <md-option :value="182">182 CHF</md-option>
-                          <md-option :value="157">157 CHF</md-option>
-                          <md-option :value="133">133 CHF</md-option>
-                          <md-option :value="111">111 CHF</md-option>
-                          <md-option :value="101">101 CHF</md-option>
-                          <md-option :value="97">97 CHF</md-option>
-                          <md-option :value="73">73 CHF</md-option>
+                          <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
+                          <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
+                          <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
+                          <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
+                          <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
+                          <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
+                          <md-option :value="73">73 CHF - Apprenant·e</md-option>
                         </md-select>
                       </md-field>
                     </td>
@@ -1587,16 +1586,16 @@
                   <tr>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.divers9.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
-                      <md-field class="nbField" @md-selected="updateMontants()">
-                        <md-select v-model="form2.divers9.prix_unitaire" md-dense class="nbSelect">
+                      <md-field class="nbField">
+                        <md-select v-model="form2.divers9.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
                           <md-option :value="0"></md-option>
-                          <md-option :value="182">182 CHF</md-option>
-                          <md-option :value="157">157 CHF</md-option>
-                          <md-option :value="133">133 CHF</md-option>
-                          <md-option :value="111">111 CHF</md-option>
-                          <md-option :value="101">101 CHF</md-option>
-                          <md-option :value="97">97 CHF</md-option>
-                          <md-option :value="73">73 CHF</md-option>
+                          <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
+                          <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
+                          <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
+                          <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
+                          <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
+                          <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
+                          <md-option :value="73">73 CHF - Apprenant·e</md-option>
                         </md-select>
                       </md-field>
                     </td>
@@ -1606,16 +1605,16 @@
                   <tr>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.divers10.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
-                      <md-field class="nbField" @md-selected="updateMontants()">
-                        <md-select v-model="form2.divers10.prix_unitaire" md-dense class="nbSelect">
+                      <md-field class="nbField">
+                        <md-select v-model="form2.divers10.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
                           <md-option :value="0"></md-option>
-                          <md-option :value="182">182 CHF</md-option>
-                          <md-option :value="157">157 CHF</md-option>
-                          <md-option :value="133">133 CHF</md-option>
-                          <md-option :value="111">111 CHF</md-option>
-                          <md-option :value="101">101 CHF</md-option>
-                          <md-option :value="97">97 CHF</md-option>
-                          <md-option :value="73">73 CHF</md-option>
+                          <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
+                          <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
+                          <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
+                          <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
+                          <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
+                          <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
+                          <md-option :value="73">73 CHF - Apprenant·e</md-option>
                         </md-select>
                       </md-field>
                     </td>

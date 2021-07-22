@@ -665,8 +665,32 @@ export default {
         }
       }
 
-    }
+    },
 
+    /**
+     * selected option mat diff
+     */
+    matDiffChanged(montant) {
+      console.log("montant = ", montant)
+      let travauxMaterialisation = [
+        "travauxMaterialisation14",
+        "travauxMaterialisation15",
+        "travauxMaterialisation16",
+        "travauxMaterialisation17"
+      ]
+      
+      for (let element_i of travauxMaterialisation) {
+        if (Number(this.form2[element_i].prix_unitaire) === Number(montant)) {
+          this.form2[element_i].nombre = 1;
+          this.form2[element_i].montant = montant;
+        } else {
+          this.form2[element_i].nombre = 0;
+          this.form2[element_i].montant = 0;
+        }
+      }
+      
+      this.updateMontants()
+    }
 
   },
 
