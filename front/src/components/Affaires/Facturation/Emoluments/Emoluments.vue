@@ -459,12 +459,6 @@ export default {
         Number(this.form2.travauxMaterialisation12.montant) +
         Number(this.form2.travauxMaterialisation13.montant);
       
-      this.total.montant_34_matdiff = 
-        Number(this.form2.travauxMaterialisation14.montant) +
-        Number(this.form2.travauxMaterialisation15.montant) +
-        Number(this.form2.travauxMaterialisation16.montant) +
-        Number(this.form2.travauxMaterialisation17.montant);
-      
       this.total.montant_5_depl_debours = 
         Number(this.form2.deplacementDebours1.montant);
       

@@ -746,37 +746,23 @@
                   <tr>
                     <td class="tg-0lax subtitle" colspan="6">3.4 Matérialisation différée</td>
                   </tr>
+
                   <tr>
                     <td class="tg-0lax"></td>
-                    <td class="tg-0lax">{{ form2.travauxMaterialisation14.nom }}</td>
+                    <td class="tg-0lax">Sélectionner ce qui convient</td>
                     <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation14.unite }}</td>
-                    <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation14.prix_unitaire }} CHF</td>
-                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxMaterialisation14.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                    <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation14.montant }} CHF</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax"></td>
-                    <td class="tg-0lax">{{ form2.travauxMaterialisation15.nom }}</td>
-                    <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation15.unite }}</td>
-                    <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation15.prix_unitaire }} CHF</td>
-                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxMaterialisation15.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                    <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation15.montant }} CHF</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax"></td>
-                    <td class="tg-0lax">{{ form2.travauxMaterialisation16.nom }}</td>
-                    <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation16.unite }}</td>
-                    <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation16.prix_unitaire }} CHF</td>
-                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxMaterialisation16.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                    <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation16.montant }} CHF</td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax"></td>
-                    <td class="tg-0lax">{{ form2.travauxMaterialisation17.nom }}</td>
-                    <td class="tg-0lax alignCenter">{{ form2.travauxMaterialisation17.unite }}</td>
-                    <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation17.prix_unitaire }} CHF</td>
-                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form2.travauxMaterialisation17.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                    <td class="tg-0lax alignRight">{{ form2.travauxMaterialisation17.montant }} CHF</td>
+                    <td class="tg-0lax alignRight" colspan="2">
+                      <md-field  class="nbField">
+                        <md-select v-model="total.montant_34_matdiff" md-dense class="nbSelect" @md-selected="updateMontants()">
+                          <md-option :value="0">0 point (0 CHF)</md-option>
+                          <md-option :value="form2.travauxMaterialisation14.prix_unitaire">{{ form2.travauxMaterialisation14.nom }} ({{ form2.travauxMaterialisation14.prix_unitaire }} CHF)</md-option>
+                          <md-option :value="form2.travauxMaterialisation15.prix_unitaire">{{ form2.travauxMaterialisation15.nom }} ({{ form2.travauxMaterialisation15.prix_unitaire }} CHF)</md-option>
+                          <md-option :value="form2.travauxMaterialisation16.prix_unitaire">{{ form2.travauxMaterialisation16.nom }} ({{ form2.travauxMaterialisation16.prix_unitaire }} CHF)</md-option>
+                          <md-option :value="form2.travauxMaterialisation17.prix_unitaire">{{ form2.travauxMaterialisation17.nom }} ({{ form2.travauxMaterialisation17.prix_unitaire }} CHF)</md-option>
+                        </md-select>
+                      </md-field>
+                    </td>
+                    <td class="tg-0lax alignRight">{{ total.montant_34_matdiff }} CHF</td>
                   </tr>
                   <tr>
                     <td class="tg-0pky tabulation" colspan="5">Total 3.1,2</td>
