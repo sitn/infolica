@@ -235,6 +235,10 @@ export default {
         montant_recapitulatif_registre_foncier: 0,
         montant_recapitulatif_total: 0,
         montant_divers_total_with_5_depl_debours: 0,
+        montant_travauxTerrain_batiment_total: new Array(Number(this.form.nb_batiments)).fill(0),
+        montant_travauxTerrain_batiment_total_f: new Array(Number(this.form.nb_batiments)).fill(0),
+        montant_travauxTerrain_batiment_total_f_somme: 0,
+        montant_travauxTerrain_batiment_total_f_somme_zi: 0,
       };
 
       // this.setComptabiliteFormat();
@@ -316,6 +320,7 @@ export default {
         Number(this.form2.mandat6.montant);
 
       for (let j=0; j<Number(this.form.nb_batiments); j++) {
+        // Mandat
         this.total.montant_mandat_batiment_total[j] = 
           Number(this.form3[j].mandat1.montant) +
           Number(this.form3[j].mandat2.montant) +
@@ -326,9 +331,30 @@ export default {
 
         this.total.montant_mandat_batiment_total_f[j] =
           Number(this.total.montant_mandat_batiment_total[j]) * Number(this.form.batiment_f[j]);
+      
+        // Travaux terrain
+        this.total.montant_travauxTerrain_batiment_total[j] =
+          Number(this.form3[j].travauxTerrain1.montant) +
+          Number(this.form3[j].travauxTerrain2.montant) +
+          Number(this.form3[j].travauxTerrain3.montant) +
+          Number(this.form3[j].travauxTerrain4.montant) +
+          Number(this.form3[j].travauxTerrain5.montant) +
+          Number(this.form3[j].travauxTerrain6.montant) +
+          Number(this.form3[j].travauxTerrain7.montant) +
+          Number(this.form3[j].travauxTerrain8.montant) +
+          Number(this.form3[j].travauxTerrain9.montant) +
+          Number(this.form3[j].travauxTerrain10.montant) +
+          Number(this.form3[j].travauxTerrain11.montant) +
+          Number(this.form3[j].travauxTerrain12.montant) +
+          Number(this.form3[j].travauxTerrain13.montant) +
+          Number(this.form3[j].travauxTerrain14.montant) +
+          Number(this.form3[j].travauxTerrain15.montant) +
+          Number(this.form3[j].travauxTerrain16.montant);
+
+        this.total.montant_travauxTerrain_batiment_total_f[j] =
+          Number(this.total.montant_travauxTerrain_batiment_total[j]) * Number(this.form.batiment_f[j]);
+
       }
-
-
 
       //Montants totaux TravauxTerrain
       this.total.montant_21pfp = 
@@ -369,6 +395,12 @@ export default {
 
       this.total.montant_travauxTerrain_total_zi =
         Number(this.total.montant_travauxTerrain_total) * Number(this.form.zi);
+
+      this.total.montant_travauxTerrain_batiment_total_f_somme =
+        Number(this.total.montant_travauxTerrain_batiment_total_f.reduce((a, b) => Number(a) + Number(b)));
+
+      this.total.montant_travauxTerrain_batiment_total_f_somme_zi =
+        Number(this.total.montant_travauxTerrain_batiment_total_f_somme) * Number(this.form.zi);
 
       //Montants totaux TravauxMatérialisation
       this.total.montant_31_32_std_compl = 
@@ -502,7 +534,7 @@ export default {
       this.total.montant_recapitulatif_mandat = Number(this.total.montant_mandat_total) + this.total.montant_mandat_batiment_total_f.length > 0? Number(this.total.montant_mandat_batiment_total_f.reduce((a, b) => Number(a) + Number(b))): 0;
       this.total.montant_recapitulatif_somme1 = Number(this.total.montant_recapitulatif_mandat)
 
-      this.total.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.total.montant_travauxTerrain_total_zi) + Number(this.total.montant_5_depl_debours)// + Number(this.total.montant_travauxTerrain_batiment_total_f_somme_zi);
+      this.total.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.total.montant_travauxTerrain_total_zi) + Number(this.total.montant_5_depl_debours) + Number(this.total.montant_travauxTerrain_batiment_total_f_somme_zi);
       this.total.montant_recapitulatif_somme2 = Number(this.total.montant_recapitulatif_somme1) + Number(this.total.montant_recapitulatif_terrain_materialisation_deplacements);
 
       this.total.montant_recapitulatif_bureau = Number(this.total.montant_travauxBureau_total)// + Number(this.total.montant_travauxBureau_batiment_total_f_somme);
