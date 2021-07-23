@@ -65,7 +65,6 @@ export default {
       selectedClient: null, // workaround to get client object in md-select
       showNewFactureBtn: false,
       showFactureDialog: false,
-      showEmolumentsDialog: true, //false,
       showReferenceNumeroFacture: false,
     }
   },
@@ -610,6 +609,13 @@ export default {
      */
     setSelectedClientObject(client) {
       this.selectedFacture.client = {...client};
+    },
+
+    /**
+     * open emolument dialog
+     */
+    openEmolumentsDialog() {
+      this.$refs.emoluments.showEmolumentsDialog = true;
     }
 
   },

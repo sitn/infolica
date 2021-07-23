@@ -10,7 +10,7 @@
                 Devis et factures
             </div>
             <div>
-                <md-button class="md-primary" v-on:click="showEmolumentsDialog = true;" v-if="showNewFactureBtn && permission.editFactureAllowed">Emoluments</md-button>
+                <md-button class="md-primary" v-on:click="openEmolumentsDialog" v-if="showNewFactureBtn && permission.editFactureAllowed">Emoluments</md-button>
                 <md-button class="md-primary" v-on:click="newFacture('devis')" v-if="showNewFactureBtn && permission.editFactureAllowed">Nouveau devis</md-button>
                 <md-button class="md-primary" v-on:click="newFacture('facture')" v-if="showNewFactureBtn">Nouvelle facture</md-button>
             </div>
@@ -253,6 +253,6 @@
         <md-dialog-confirm :md-active.sync="deleteFactureActive" md-title="Supprimer la facture" :md-content="deleteFactureMessage" md-confirm-text="Confirmer" md-cancel-text="Annuler" @md-confirm="onConfirmDelete" @md-cancel="onCancelDelete" />
     </div>
 
-    <Emoluments :showEmolumentsDialog="showEmolumentsDialog" :affaire="affaire" />
+    <Emoluments ref="emoluments" :affaire="affaire" />
 
 </div>

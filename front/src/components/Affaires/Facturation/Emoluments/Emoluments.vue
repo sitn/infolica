@@ -4,14 +4,12 @@
 
 <script>
 import { handleException } from '@/services/exceptionsHandler';
-// import NumerosAffaireVue from '../../NumerosAffaire/NumerosAffaire.vue';
 const numeral = require("numeral");
 
 export default {
   name: 'Emoluments',
   props: {
     affaire: {type: Object},
-    showEmolumentsDialog: {type: Boolean, default: false}
   },
   data: function () {
       return {
@@ -28,30 +26,30 @@ export default {
           travauxMaterialisation: [32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48],
           deplacementDebours: [49],
           travauxBureau: [50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95],
-          registreFoncier: [96,97,98,99,100]
+          registreFoncier: [96,97,98,99,100],
+          divers: 101,
+          relations_autres_services: 102,
+          forfait_rf: 103
         },
+        showEmolumentsDialog: true,
         total: {}
       }
   },
 
   methods:{
-    init2remove() {
-      this.form_general.nb_batiments = 2;
-      this.form_general.batiment_f = [1.3, 0.8];
-      this.updateNbBatiments();
-      
-      
+    fillFakeValues() {
+
       for (let i=0; i<3; i++){
         // mandat
         let idx = Math.ceil(Math.random() * this.indexFromDB.mandat.length);
         let idx2 = Math.floor(Math.random() * this.form_general.nb_batiments);
         this.form_detail["mandat"+String(idx)].nombre = 1;
-        this.form_detail_batiment[idx2]["mandat"+String(idx)].nombre = 1;
+        if (this.form_general.nb_batiments>0) this.form_detail_batiment[idx2]["mandat"+String(idx)].nombre = 1;
         // travauxTerrain
         idx = Math.ceil(Math.random() * this.indexFromDB.travauxTerrain.length);
         idx2 = Math.floor(Math.random() * this.form_general.nb_batiments);
         this.form_detail["travauxTerrain"+String(idx)].nombre = 1;
-        this.form_detail_batiment[idx2]["travauxTerrain"+String(idx)].nombre = 1;
+        if (this.form_general.nb_batiments>0) this.form_detail_batiment[idx2]["travauxTerrain"+String(idx)].nombre = 1;
         // travauxMaterialisation
         idx = Math.ceil(Math.random() * this.indexFromDB.travauxMaterialisation.length);
         this.form_detail["travauxMaterialisation"+String(idx)].nombre = 1;
@@ -59,7 +57,7 @@ export default {
         idx = Math.ceil(Math.random() * this.indexFromDB.travauxBureau.length);
         idx2 = Math.floor(Math.random() * this.form_general.nb_batiments);
         this.form_detail["travauxBureau"+String(idx)].nombre = 1;
-        this.form_detail_batiment[idx2]["travauxBureau"+String(idx)].nombre = 1;
+        if (this.form_general.nb_batiments>0) this.form_detail_batiment[idx2]["travauxBureau"+String(idx)].nombre = 1;
         // registreFoncier
         idx = Math.ceil(Math.random() * this.indexFromDB.registreFoncier.length);
         this.form_detail["registreFoncier"+String(idx)].nombre = 1;
@@ -68,6 +66,8 @@ export default {
       this.form_detail.divers1.montant = 182;
       this.form_detail.divers1.prix_unitaire = 182;
       this.form_detail.divers1.nom = "test";
+
+      this.updateMontants();
     },
     
     /**
@@ -184,7 +184,7 @@ export default {
           // Divers
           for (let i=0; i<this.n_divers; i++) {
             this.form_detail["divers" + String(i+1)] = {
-              tableau_emolument_id: 101,
+              tableau_emolument_id: this.indexFromDB.divers,
               nom: null,
               unite: "Heure",
               prix_unitaire: null,
@@ -193,6 +193,30 @@ export default {
               batiment_f: 1,
               montant: numeral(0).format("0.00"),
             }
+          }
+
+          //relations avec autres services
+          this.form_detail["relations_autres_services1"] = {
+            tableau_emolument_id: this.indexFromDB.relations_autres_services,
+            nom: "Relations avec d'autres services (de 50.00 à 200.00 CHF)",
+            unite: "-",
+            prix_unitaire: numeral(0).format("0.00"),
+            nombre: 1,
+            batiment: 0,
+            batiment_f: 1,
+            montant: numeral(0).format("0.00"),
+          }
+
+          //forfait RF
+          this.form_detail["forfait_rf1"] = {
+            tableau_emolument_id: this.indexFromDB.divers,
+            nom: "Forfait RF",
+            unite: "-",
+            prix_unitaire: numeral(0).format("0.00"),
+            nombre: 1,
+            batiment: 0,
+            batiment_f: 1,
+            montant: numeral(0).format("0.00"),
           }
 
           this.emolumentsUnits = tmp;
@@ -215,26 +239,23 @@ export default {
         indice_application: 1.22,
         tva_pc: 7.7, // %
         remarque: "",
-        montant_relations_autres_services: numeral(0).format("0.00"),
 
         // Bâtiments
         batiment_f: [],
       };
 
-      this.init2remove();
-
 
       this.total = {
         montant_mandat_total: 0,
-        montant_mandat_batiment_total: new Array(Number(this.form_general.nb_batiments)).fill(0),
-        montant_mandat_batiment_total_f: new Array(Number(this.form_general.nb_batiments)).fill(0),
+        montant_mandat_batiment_total: this.form_general.nb_batiments>0? new Array(Number(this.form_general.nb_batiments)).fill(0): [],
+        montant_mandat_batiment_total_f: this.form_general.nb_batiments>0? new Array(Number(this.form_general.nb_batiments)).fill(0): [],
         montant_21pfp: 0,
         montant_23sit: 0,
         montant_22pl: 0,
         montant_travauxTerrain_total: 0,
         montant_travauxTerrain_total_zi: 0,
-        montant_travauxTerrain_batiment_total: new Array(Number(this.form_general.nb_batiments)).fill(0),
-        montant_travauxTerrain_batiment_total_f: new Array(Number(this.form_general.nb_batiments)).fill(0),
+        montant_travauxTerrain_batiment_total: this.form_general.nb_batiments>0? new Array(Number(this.form_general.nb_batiments)).fill(0): [],
+        montant_travauxTerrain_batiment_total_f: this.form_general.nb_batiments>0? new Array(Number(this.form_general.nb_batiments)).fill(0): [],
         montant_travauxTerrain_batiment_total_f_somme: 0,
         montant_travauxTerrain_batiment_total_f_somme_zi: 0,
         montant_31_32_std_compl: 0,
@@ -248,8 +269,8 @@ export default {
         montant_44surf: 0,
         montant_42pl: 0,
         montant_travauxBureau_total: 0,
-        montant_travauxBureau_batiment_total: new Array(Number(this.form_general.nb_batiments)).fill(0),
-        montant_travauxBureau_batiment_total_f: new Array(Number(this.form_general.nb_batiments)).fill(0),
+        montant_travauxBureau_batiment_total: this.form_general.nb_batiments>0? new Array(Number(this.form_general.nb_batiments)).fill(0): [],
+        montant_travauxBureau_batiment_total_f: this.form_general.nb_batiments>0? new Array(Number(this.form_general.nb_batiments)).fill(0): [],
         montant_travauxBureau_batiment_total_f_somme: 0,
         montant_divers_total: 0,
         montant_rf_total: 0,
@@ -272,17 +293,16 @@ export default {
         montant_divers_total_with_5_depl_debours: 0,
       };
 
-      // this.setComptabiliteFormat();
       this.computeZi();
       this.updateRecapitulatif();
     },
 
-    
     /**
-     * update nb bâtiments
+     * Add batiment
      */
-    updateNbBatiments() {
-      this.form_detail_batiment = [];
+    addBatiment() {
+      this.form_general.nb_batiments += 1;
+
       for (let i=0; i<Number(this.form_general.nb_batiments); i++)  {
         this.form_detail_batiment.push( JSON.parse( JSON.stringify(this.form_detail)) );
         for (let key in this.form_detail_batiment[i]) {
@@ -293,6 +313,28 @@ export default {
         }
       }
     },
+
+    /**
+     * Remove batiment
+     */
+    removeBatiment(batiment_i) {
+      let tmp = [];
+      let c = 1; // renumérotation bâtiment
+      for (let i=0; i<this.form_general.nb_batiments; i++) {
+        if (this.form_detail_batiment[i]['mandat1'].batiment !== batiment_i) {
+          for (let key in this.form_detail_batiment[i]) {
+            this.form_detail_batiment[i][key].batiment = c;
+          }
+          tmp.push(this.form_detail_batiment[i]);
+          c += 1;
+        }
+      }
+
+      this.form_detail_batiment = JSON.parse(JSON.stringify(tmp));
+      this.form_general.batiment_f.splice(batiment_i-1,1);
+      this.form_general.nb_batiments -= 1;
+    },
+
 
     /**
      * Update batimentCorrectionFactor
@@ -318,8 +360,6 @@ export default {
         Number(this.form_general.diff_visibilite_pc) + 
         Number(this.form_general.trafic_pc)
       ).format("0.00");
-
-      this.computeAll();
     },
 
     /**
@@ -338,8 +378,10 @@ export default {
         }
       }
       
-      //update format montant_relation_autres_services
-      this.form_general.montant_relations_autres_services = numeral(this.form_general.montant_relations_autres_services).format("0.00");
+      // cas particuliers relations_autres_services et forfait_rf
+      this.form_detail.relations_autres_services1.prix_unitaire = numeral(this.form_detail.relations_autres_services1.prix_unitaire).format("0.00");
+      this.form_detail.forfait_rf1.prix_unitaire = numeral(this.form_detail.forfait_rf1.prix_unitaire).format("0.00");
+      
 
       // update montant_total par categorie
       //Montants totaux Mandat
@@ -418,8 +460,6 @@ export default {
 
         this.total.montant_travauxBureau_batiment_total_f[j] =
           Number(this.total.montant_travauxBureau_batiment_total[j]) * Number(this.form_general.batiment_f[j]);
-
-        
       }
 
       //Montants totaux TravauxTerrain
@@ -463,7 +503,7 @@ export default {
         Number(this.total.montant_travauxTerrain_total) * Number(this.form_general.zi);
 
       this.total.montant_travauxTerrain_batiment_total_f_somme =
-        Number(this.total.montant_travauxTerrain_batiment_total_f.reduce((a, b) => Number(a) + Number(b)));
+        this.form_general.nb_batiments>0? Number(this.total.montant_travauxTerrain_batiment_total_f.reduce((a, b) => Number(a) + Number(b))): 0;
 
       this.total.montant_travauxTerrain_batiment_total_f_somme_zi =
         Number(this.total.montant_travauxTerrain_batiment_total_f_somme) * Number(this.form_general.zi);
@@ -559,7 +599,7 @@ export default {
         Number(this.total.montant_42pl);
 
       this.total.montant_travauxBureau_batiment_total_f_somme = 
-        Number(this.total.montant_travauxBureau_batiment_total_f.reduce((a, b) => Number(a) + Number(b)));
+        this.form_general.nb_batiments>0? Number(this.total.montant_travauxBureau_batiment_total_f.reduce((a, b) => Number(a) + Number(b))): 0;
 
       //Divers
       this.total.montant_divers_total = 
@@ -573,7 +613,7 @@ export default {
         Number(this.form_detail.divers8.montant) +
         Number(this.form_detail.divers9.montant) +
         Number(this.form_detail.divers10.montant) +
-        Number(this.form_general.montant_relations_autres_services);
+        Number(this.form_detail.relations_autres_services1.montant);
 
       this.total.montant_divers_total_with_5_depl_debours = 
         Number(this.total.montant_divers_total) +
@@ -585,16 +625,17 @@ export default {
         Number(this.form_detail.registreFoncier2.montant) +
         Number(this.form_detail.registreFoncier3.montant) +
         Number(this.form_detail.registreFoncier4.montant) +
-        Number(this.form_detail.registreFoncier5.montant);
+        Number(this.form_detail.registreFoncier5.montant) +
+        Number(this.form_detail.forfait_rf1.montant);
 
 
       this.updateRecapitulatif();
-      this.setComptabiliteFormat();
     },
 
 
     updateRecapitulatif() {
-      this.total.montant_recapitulatif_mandat = Number(this.total.montant_mandat_total) + this.total.montant_mandat_batiment_total_f.length > 0? Number(this.total.montant_mandat_batiment_total_f .reduce((a, b) => Number(a) + Number(b))): 0;
+      let mandat_batiment = (this.form_general.nb_batiments > 0)? Number(this.total.montant_mandat_batiment_total_f.reduce((a, b) => Number(a) + Number(b))): 0
+      this.total.montant_recapitulatif_mandat = Number(this.total.montant_mandat_total) + mandat_batiment;
       this.total.montant_recapitulatif_somme1 = Number(this.total.montant_recapitulatif_mandat)
 
       this.total.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.total.montant_travauxTerrain_total_zi) + Number(this.total.montant_5_depl_debours) + Number(this.total.montant_travauxTerrain_batiment_total_f_somme_zi);
@@ -620,14 +661,6 @@ export default {
       this.total.montant_recapitulatif_total = Number(this.total.montant_recapitulatif_somme7) + Number(this.total.montant_recapitulatif_registre_foncier);
 
       this.setComptabiliteFormat();
-    },
-
-
-    /**
-     * Compute all
-     */
-    computeAll() {
-      this.updateMontants();
     },
 
     /** Set format for comptabilité: 0.00 CHF */

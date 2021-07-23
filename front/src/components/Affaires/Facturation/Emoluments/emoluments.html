@@ -1,7 +1,7 @@
-<div class="emoluments" v-if="emolumentsUnits.length > 0 && Object.keys(form_detail).length > 0 && form_detail_batiment.length>0">
+<div class="emoluments" v-if="emolumentsUnits.length > 0 && Object.keys(form_detail).length > 0">
 
     <md-dialog :md-active.sync="showEmolumentsDialog">
-      <md-dialog-title>Émoluments</md-dialog-title>
+      <md-dialog-title>Émoluments <md-button class="md-raised md-primary" @click="fillFakeValues">Remplir de fake-values</md-button></md-dialog-title>
       <md-dialog-content>
 
       <md-tabs md-dynamic-height @md-changed="changeHandler">
@@ -14,16 +14,11 @@
 
               <div class="md-layout md-alignment-top-space-between">
                 <div class="md-layout-item">
-                  <md-field class="formField">
-                    <label>Nombre de bâtiments</label>
-                    <md-select v-model="form_general.nb_batiments" md-dense @md-selected="updateNbBatiments">
-                      <md-option v-for="item in [0, 1, 2, 3]" :value="item">{{ item }}</md-option>
-                    </md-select>
-                  </md-field>
-                  
-                  <div v-if="form_general.nb_batiments > 0">
+
+                  <div>
+                    <h3>Bâtiments</h3>
                     <table class="tg" style="width: 200px;">
-                      <thead>
+                      <thead v-if="form_general.nb_batiments>0">
                         <tr>
                           <th colspan="2" class="overHead">
                             <md-icon>warning</md-icon>
@@ -55,19 +50,25 @@
                               </md-select>
                             </md-field>
                           </td>
+                          <td class="tg-0lax alignCenter">
+                            <md-button class="md-dense md-accent" style="min-width: auto;" title="Supprimer le bâtiment" @click="removeBatiment(i)"><md-icon>delete</md-icon></md-button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="tg-0lax alignRight" style="border: 0px" colspan="3"><em>Ajouter un bâtiment</em> <md-button style="min-width: auto;" class="md-dense md-primary" @click="addBatiment" title="Ajouter un bâtiment"><md-icon>add</md-icon></md-button></td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                 </div>
-                
+
                 <div class="md-layout-item">
                   <md-field class="formField">
                     <label>Pente [%]</label>
                     <md-input v-model="form_general.pente_pc" @keyup="computeZi()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input>
                     <span style="margin-left: 3px;">%</span>
                   </md-field>
-                  
+
                   <md-field class="formField">
                     <label>Diff. visibilité</label>
                     <md-select v-model="form_general.diff_visibilite_pc" md-dense @md-selected="computeZi()">
@@ -76,7 +77,7 @@
                       <md-option :value="0.2">20%</md-option>
                     </md-select>
                   </md-field>
-                  
+
                   <md-field class="formField">
                     <label>Trafic</label>
                     <md-select v-model="form_general.trafic_pc" md-dense @md-selected="computeZi()">
@@ -87,7 +88,7 @@
                       <md-option :value="0.4">40%</md-option>
                     </md-select>
                   </md-field>
-                  
+
                   <md-field class=formField>
                     <label>Zi</label>
                     <md-input v-model="form_general.zi" readonly></md-input>
@@ -102,13 +103,13 @@
                   <md-textarea v-model="form_general.remarque"></md-textarea>
                 </md-field>
               </div>
-              
+
             </md-card-content>
           </md-card>
-          
+
         </md-tab>
 
-        
+
         <md-tab md-label="Mandat">
           <md-card>
             <md-card-header>
@@ -140,7 +141,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.1</td>
                     <td class="tg-0lax">{{ form_detail.mandat1.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.mandat1.unite }}</td>
@@ -240,7 +241,7 @@
               <div class="md-title">2. Travaux de terrain</div>
             </md-card-header>
             <md-card-content>
-  
+
               <table class="tg">
                 <thead>
                   <template v-if="form_general.nb_batiments > 0">
@@ -268,7 +269,7 @@
                   <tr>
                     <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form_general.nb_batiments)">2.1 Points fixes planimétriques</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.11</td>
                     <td class="tg-0lax">{{ form_detail.travauxTerrain1.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxTerrain1.unite }}</td>
@@ -636,7 +637,7 @@
                   <tr>
                     <td class="tg-0lax subtitle" colspan="6">3.1,2 Types stanndards et complémentaires</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.11</td>
                     <td class="tg-0lax">{{ form_detail.travauxMaterialisation1.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxMaterialisation1.unite }}</td>
@@ -823,7 +824,7 @@
                   <tr>
                     <td class="tg-0lax subtitle" :colspan="6 + 2* Number(form_general.nb_batiments)">4.1 Points fixes planimétriques</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.11</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau1.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau1.unite }}</td>
@@ -835,7 +836,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau1.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.12</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau2.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau2.unite }}</td>
@@ -847,7 +848,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau2.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.13</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau3.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau3.unite }}</td>
@@ -859,7 +860,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau3.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"></td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau4.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau4.unite }}</td>
@@ -871,7 +872,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau4.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.14</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau5.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau5.unite }}</td>
@@ -883,7 +884,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau5.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.15</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau6.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau6.unite }}</td>
@@ -895,7 +896,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau6.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.16</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau7.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau7.unite }}</td>
@@ -907,7 +908,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau7.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.17</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau8.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau8.unite }}</td>
@@ -919,7 +920,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau8.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"></td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau9.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau9.unite }}</td>
@@ -931,7 +932,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau9.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.18</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau10.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau10.unite }}</td>
@@ -943,7 +944,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau10.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.19</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau11.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau11.unite }}</td>
@@ -955,7 +956,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau11.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"></td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau12.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau12.unite }}</td>
@@ -970,7 +971,7 @@
                   <tr>
                     <td class="tg-0lax subtitle" :colspan="6 + 2* Number(form_general.nb_batiments)">4.3 Situation</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.31</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau13.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau13.unite }}</td>
@@ -982,7 +983,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau13.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.32</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau14.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau14.unite }}</td>
@@ -994,7 +995,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau14.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.33</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau15.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau15.unite }}</td>
@@ -1006,7 +1007,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau15.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.34</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau16.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau16.unite }}</td>
@@ -1018,7 +1019,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau16.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.35</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau17.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau17.unite }}</td>
@@ -1030,7 +1031,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau17.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.36</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau18.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau18.unite }}</td>
@@ -1042,7 +1043,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau18.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"></td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau19.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau19.unite }}</td>
@@ -1054,7 +1055,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau19.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.37</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau20.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau20.unite }}</td>
@@ -1066,7 +1067,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau20.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.38</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau21.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau21.unite }}</td>
@@ -1078,7 +1079,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau21.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"></td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau22.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau22.unite }}</td>
@@ -1093,7 +1094,7 @@
                   <tr>
                     <td class="tg-0lax subtitle" :colspan="6 + 2* Number(form_general.nb_batiments)">4.4 Surfaces</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.41</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau23.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau23.unite }}</td>
@@ -1105,7 +1106,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau23.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.42</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau24.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau24.unite }}</td>
@@ -1117,7 +1118,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau24.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.43</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau25.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau25.unite }}</td>
@@ -1129,7 +1130,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau25.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.44</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau26.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau26.unite }}</td>
@@ -1141,7 +1142,7 @@
                       <td class="tg-0lax alignRight">{{ form_detail_batiment[i-1].travauxBureau26.montant }} CHF</td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.45</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau27.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau27.unite }}</td>
@@ -1156,7 +1157,7 @@
                   <tr>
                     <td class="tg-0lax subtitle" :colspan="6 + 2* Number(form_general.nb_batiments)">4.2 Points limites</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.21</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau28.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau28.unite }}</td>
@@ -1168,7 +1169,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.22</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau29.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau29.unite }}</td>
@@ -1180,7 +1181,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"></td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau30.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau30.unite }}</td>
@@ -1192,7 +1193,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.23</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau31.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau31.unite }}</td>
@@ -1204,7 +1205,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.24</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau32.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau32.unite }}</td>
@@ -1216,7 +1217,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.25</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau33.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau33.unite }}</td>
@@ -1228,7 +1229,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.26</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau34.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau34.unite }}</td>
@@ -1240,7 +1241,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.27</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau35.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau35.unite }}</td>
@@ -1252,7 +1253,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.28</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau36.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau36.unite }}</td>
@@ -1264,7 +1265,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.29</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau37.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau37.unite }}</td>
@@ -1276,7 +1277,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.210</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau38.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau38.unite }}</td>
@@ -1288,7 +1289,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.211</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau39.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau39.unite }}</td>
@@ -1300,7 +1301,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.212</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau40.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau40.unite }}</td>
@@ -1312,7 +1313,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.213</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau41.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau41.unite }}</td>
@@ -1324,7 +1325,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"></td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau42.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau42.unite }}</td>
@@ -1336,7 +1337,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.214</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau43.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau43.unite }}</td>
@@ -1348,7 +1349,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.215</td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau44.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau44.unite }}</td>
@@ -1360,7 +1361,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"></td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau45.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau45.unite }}</td>
@@ -1372,7 +1373,7 @@
                       <td class="tg-0lax notEditable"></td>
                     </template>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"></td>
                     <td class="tg-0lax">{{ form_detail.travauxBureau46.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.travauxBureau46.unite }}</td>
@@ -1420,7 +1421,7 @@
               <div class="md-title">Travaux divers</div>
             </md-card-header>
             <md-card-content>
-              
+
               <table class="tg">
                 <thead>
                   <tr>
@@ -1431,7 +1432,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form_detail.divers1.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
                       <md-field class="nbField">
@@ -1450,7 +1451,7 @@
                     <td class="tg-0lax alignRight"><md-field class="nbField"><md-input v-model="form_detail.divers1.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax montant alignRight">{{ form_detail.divers1.montant }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form_detail.divers2.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
                       <md-field class="nbField">
@@ -1469,7 +1470,7 @@
                     <td class="tg-0lax alignRight"><md-field class="nbField"><md-input v-model="form_detail.divers2.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax montant alignRight">{{ form_detail.divers2.montant }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form_detail.divers3.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
                       <md-field class="nbField">
@@ -1488,7 +1489,7 @@
                     <td class="tg-0lax alignRight"><md-field class="nbField"><md-input v-model="form_detail.divers3.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax montant alignRight">{{ form_detail.divers3.montant }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form_detail.divers4.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
                       <md-field class="nbField">
@@ -1507,7 +1508,7 @@
                     <td class="tg-0lax alignRight"><md-field class="nbField"><md-input v-model="form_detail.divers4.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax montant alignRight">{{ form_detail.divers4.montant }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form_detail.divers5.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax alignCenter">
                       <md-field class="nbField">
@@ -1621,11 +1622,11 @@
                     <td class="tg-0lax alignRight"><md-field class="nbField"><md-input v-model="form_detail.divers10.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                     <td class="tg-0lax montant alignRight">{{ form_detail.divers10.montant }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">Relations avec d'autres services (de 50.00 à 200.00 CHF)</td>
                     <td class="tg-0lax notEditable"></td>
                     <td class="tg-0lax notEditable"></td>
-                    <td class="tg-0lax montant alignRight"><md-field class="nbField"><md-input v-model="form_general.montant_relations_autres_services" class="inputMontant" @change="updateMontants()" @focus="$event.target.select()"></md-input>CHF</md-field></td>
+                    <td class="tg-0lax montant alignRight"><md-field class="nbField"><md-input v-model="form_detail.relations_autres_services1.prix_unitaire" class="inputMontant" @focusout="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input>CHF</md-field></td>
                   </tr>
                   <tr>
                     <td class="tg-0lax">5. {{ form_detail.deplacementDebours1.nom }}</td>
@@ -1649,7 +1650,7 @@
               <div class="md-title">Registre foncier</div>
             </md-card-header>
             <md-card-content>
-              
+
               <table class="tg">
                 <thead>
                   <tr>
@@ -1662,7 +1663,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.1</td>
                     <td class="tg-0lax">{{ form_detail.registreFoncier1.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.registreFoncier1.unite }}</td>
@@ -1670,7 +1671,7 @@
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form_detail.registreFoncier1.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form_detail.registreFoncier1.montant }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.2</td>
                     <td class="tg-0lax">{{ form_detail.registreFoncier2.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.registreFoncier2.unite }}</td>
@@ -1678,7 +1679,7 @@
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form_detail.registreFoncier2.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form_detail.registreFoncier2.montant }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">.3</td>
                     <td class="tg-0lax">{{ form_detail.registreFoncier3.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.registreFoncier3.unite }}</td>
@@ -1686,7 +1687,7 @@
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form_detail.registreFoncier3.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form_detail.registreFoncier3.montant }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"></td>
                     <td class="tg-0lax">{{ form_detail.registreFoncier4.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.registreFoncier4.unite }}</td>
@@ -1694,13 +1695,19 @@
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form_detail.registreFoncier4.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form_detail.registreFoncier4.montant }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax"></td>
                     <td class="tg-0lax">{{ form_detail.registreFoncier5.nom }}</td>
                     <td class="tg-0lax alignCenter">{{ form_detail.registreFoncier5.unite }}</td>
                     <td class="tg-0lax alignRight">{{ form_detail.registreFoncier5.prix_unitaire }} CHF</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form_detail.registreFoncier5.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ form_detail.registreFoncier5.montant }} CHF</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax"></td>
+                    <td class="tg-0lax">{{ form_detail.forfait_rf1.nom }}</td>
+                    <td class="tg-0lax notEditable" colspan="3"></td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input v-model="form_detail.forfait_rf1.prix_unitaire" class="inputMontant" @focusout="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input>CHF</md-field></td>
                   </tr>
                   <tr>
                     <td class="tg-0pky" colspan="5">Total intermédiaire</td>
@@ -1718,7 +1725,7 @@
               <div class="md-title">Récapitulatif</div>
             </md-card-header>
             <md-card-content>
-              
+
               <table class="tg">
                 <thead>
                   <tr>
@@ -1729,46 +1736,47 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax" colspan="2">Mandat</td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_mandat }} CHF</td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_somme1 }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax" colspan="2">Travaux de terrain. matérialisation, déplacements et débours</td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_terrain_materialisation_deplacements }} CHF</td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_somme2 }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax" colspan="2">Travaux de bureau</td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_bureau }} CHF</td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_somme3 }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">Indice d'application</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input class="nbInput" v-model="form_general.indice_application" @keyup="updateRecapitulatif()"></md-input></md-field></td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_indice_application }} CHF</td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_somme4 }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax" colspan="2">Matériel, travaux selon le temps consacré et relations avec d'autres services</td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_materiel_divers }} CHF</td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_somme5 }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax" colspan="2">Matérialisation différée des limites y compris indice d'application</td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_matdiff }} CHF</td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_somme6 }} CHF</td>
                   </tr>
-                  <tr> 
+                  <tr>
                     <td class="tg-0lax">TVA</td>
                     <td class="tg-0lax"><md-field class="nbField"><md-input class="nbInput" v-model="form_general.tva_pc" @keyup="updateRecapitulatif()"></md-input>%</md-field></td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_tva }} CHF</td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_somme7 }} CHF</td>
                   </tr>
-                  <tr> 
-                    <td class="tg-0lax" colspan="3">Inscription au registre foncier</td>
+                  <tr>
+                    <td class="tg-0lax" colspan="2">Inscription au registre foncier</td>
                     <td class="tg-0lax alignRight">{{ total.montant_recapitulatif_registre_foncier }} CHF</td>
+                    <td class="tg-0lax notEditable"></td>
                   </tr>
                   <tr>
                     <td class="tg-0pky" colspan="3">Montant total du mandat</td>
@@ -1779,7 +1787,7 @@
             </md-card-content>
           </md-card>
         </md-tab>
-        
+
       </md-tabs>
 
       </md-dialog-content>
@@ -1789,6 +1797,4 @@
         <md-button class="md-elevation-3 md-primary" @click="postEmolument" :disabled="!enableSave">Enregistrer</md-button>
       </md-dialog-actions>
     </md-dialog>
-    
-    
 </div>
