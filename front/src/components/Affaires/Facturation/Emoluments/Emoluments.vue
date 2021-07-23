@@ -17,9 +17,9 @@ export default {
       return {
         divers: [],
         emolumentsUnits: [],
-        form: {}, //général
-        form2: {}, //emoluments sans bâtiment
-        form3: [], //emoluments avec bâtiments
+        form_general: {}, //général
+        form_detail: {}, //emoluments sans bâtiment
+        form_detail_batiment: [], //emoluments avec bâtiments
         n_divers: 10,
         enableSave: false,
         indexFromDB: {
@@ -36,9 +36,38 @@ export default {
 
   methods:{
     init2remove() {
-      this.form.nb_batiments = 2;
-      this.form.batiment_f = [1.3, 0.8];
+      this.form_general.nb_batiments = 2;
+      this.form_general.batiment_f = [1.3, 0.8];
       this.updateNbBatiments();
+      
+      
+      for (let i=0; i<3; i++){
+        // mandat
+        let idx = Math.ceil(Math.random() * this.indexFromDB.mandat.length);
+        let idx2 = Math.floor(Math.random() * this.form_general.nb_batiments);
+        this.form_detail["mandat"+String(idx)].nombre = 1;
+        this.form_detail_batiment[idx2]["mandat"+String(idx)].nombre = 1;
+        // travauxTerrain
+        idx = Math.ceil(Math.random() * this.indexFromDB.travauxTerrain.length);
+        idx2 = Math.floor(Math.random() * this.form_general.nb_batiments);
+        this.form_detail["travauxTerrain"+String(idx)].nombre = 1;
+        this.form_detail_batiment[idx2]["travauxTerrain"+String(idx)].nombre = 1;
+        // travauxMaterialisation
+        idx = Math.ceil(Math.random() * this.indexFromDB.travauxMaterialisation.length);
+        this.form_detail["travauxMaterialisation"+String(idx)].nombre = 1;
+        // travauxBureau
+        idx = Math.ceil(Math.random() * this.indexFromDB.travauxBureau.length);
+        idx2 = Math.floor(Math.random() * this.form_general.nb_batiments);
+        this.form_detail["travauxBureau"+String(idx)].nombre = 1;
+        this.form_detail_batiment[idx2]["travauxBureau"+String(idx)].nombre = 1;
+        // registreFoncier
+        idx = Math.ceil(Math.random() * this.indexFromDB.registreFoncier.length);
+        this.form_detail["registreFoncier"+String(idx)].nombre = 1;
+      }
+      this.form_detail.divers1.nombre = 1;
+      this.form_detail.divers1.montant = 182;
+      this.form_detail.divers1.prix_unitaire = 182;
+      this.form_detail.divers1.nom = "test";
     },
     
     /**
@@ -59,13 +88,13 @@ export default {
           // Mandat
           let i = 1;
           this.indexFromDB.mandat.forEach(x => {
-            this.form2["mandat" + String(i)] = {
+            this.form_detail["mandat" + String(i)] = {
               tableau_emolument_id: x,
               nom: tmp[x-1].nom,
               unite: tmp[x-1].unite,
               prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
               nombre: 0,
-              batiment: null,
+              batiment: 0,
               batiment_f: 1,
               montant: numeral(0).format("0.00"),
             }
@@ -75,13 +104,13 @@ export default {
           // Travaux terrain
           i = 1;
           this.indexFromDB.travauxTerrain.forEach(x => {
-            this.form2["travauxTerrain" + String(i)] = {
+            this.form_detail["travauxTerrain" + String(i)] = {
               tableau_emolument_id: x,
               nom: tmp[x-1].nom,
               unite: tmp[x-1].unite,
               prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
               nombre: 0,
-              batiment: null,
+              batiment: 0,
               batiment_f: 1,
               montant: numeral(0).format("0.00"),
             }
@@ -91,13 +120,13 @@ export default {
           // Travaux matérialisation
           i = 1;
           this.indexFromDB.travauxMaterialisation.forEach(x => {
-            this.form2["travauxMaterialisation" + String(i)] = {
+            this.form_detail["travauxMaterialisation" + String(i)] = {
               tableau_emolument_id: x,
               nom: tmp[x-1].nom,
               unite: tmp[x-1].unite,
               prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
               nombre: 0,
-              batiment: null,
+              batiment: 0,
               batiment_f: 1,
               montant: numeral(0).format("0.00"),
             }
@@ -107,13 +136,13 @@ export default {
           // Déplacements et débours
           i = 1;
           this.indexFromDB.deplacementDebours.forEach(x => {
-            this.form2["deplacementDebours" + String(i)] = {
+            this.form_detail["deplacementDebours" + String(i)] = {
               tableau_emolument_id: x,
               nom: tmp[x-1].nom,
               unite: tmp[x-1].unite,
               prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
               nombre: 0,
-              batiment: null,
+              batiment: 0,
               batiment_f: 1,
               montant: numeral(0).format("0.00"),
             }
@@ -123,13 +152,13 @@ export default {
           // Travaux bureau
           i = 1;
           this.indexFromDB.travauxBureau.forEach(x => {
-            this.form2["travauxBureau" + String(i)] = {
+            this.form_detail["travauxBureau" + String(i)] = {
               tableau_emolument_id: x,
               nom: tmp[x-1].nom,
               unite: tmp[x-1].unite,
               prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
               nombre: 0,
-              batiment: null,
+              batiment: 0,
               batiment_f: 1,
               montant: numeral(0).format("0.00"),
             }
@@ -139,13 +168,13 @@ export default {
           // RF
           i = 1;
           this.indexFromDB.registreFoncier.forEach(x => {
-            this.form2["registreFoncier" + String(i)] = {
+            this.form_detail["registreFoncier" + String(i)] = {
               tableau_emolument_id: x,
               nom: tmp[x-1].nom,
               unite: tmp[x-1].unite,
               prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
               nombre: 0,
-              batiment: null,
+              batiment: 0,
               batiment_f: 1,
               montant: numeral(0).format("0.00"),
             }
@@ -154,13 +183,13 @@ export default {
 
           // Divers
           for (let i=0; i<this.n_divers; i++) {
-            this.form2["divers" + String(i+1)] = {
-              tableau_emolument_id: null,
+            this.form_detail["divers" + String(i+1)] = {
+              tableau_emolument_id: 101,
               nom: null,
               unite: "Heure",
               prix_unitaire: null,
               nombre: 0,
-              batiment: null,
+              batiment: 0,
               batiment_f: 1,
               montant: numeral(0).format("0.00"),
             }
@@ -176,15 +205,15 @@ export default {
 
 
     async initForm() {
-      this.form = {
+      this.form_general = {
         affaire_id: this.affaire.id,
-        pente: 0,
-        visibilite: 0,
-        trafic: 0,
+        pente_pc: 0,
+        diff_visibilite_pc: 0,
+        trafic_pc: 0,
         zi: 1,
         nb_batiments: 0,
         indice_application: 1.22,
-        indice_tva: 7.7, // %
+        tva_pc: 7.7, // %
         remarque: "",
         montant_relations_autres_services: numeral(0).format("0.00"),
 
@@ -197,15 +226,15 @@ export default {
 
       this.total = {
         montant_mandat_total: 0,
-        montant_mandat_batiment_total: new Array(Number(this.form.nb_batiments)).fill(0),
-        montant_mandat_batiment_total_f: new Array(Number(this.form.nb_batiments)).fill(0),
+        montant_mandat_batiment_total: new Array(Number(this.form_general.nb_batiments)).fill(0),
+        montant_mandat_batiment_total_f: new Array(Number(this.form_general.nb_batiments)).fill(0),
         montant_21pfp: 0,
         montant_23sit: 0,
         montant_22pl: 0,
         montant_travauxTerrain_total: 0,
         montant_travauxTerrain_total_zi: 0,
-        montant_travauxTerrain_batiment_total: new Array(Number(this.form.nb_batiments)).fill(0),
-        montant_travauxTerrain_batiment_total_f: new Array(Number(this.form.nb_batiments)).fill(0),
+        montant_travauxTerrain_batiment_total: new Array(Number(this.form_general.nb_batiments)).fill(0),
+        montant_travauxTerrain_batiment_total_f: new Array(Number(this.form_general.nb_batiments)).fill(0),
         montant_travauxTerrain_batiment_total_f_somme: 0,
         montant_travauxTerrain_batiment_total_f_somme_zi: 0,
         montant_31_32_std_compl: 0,
@@ -219,8 +248,8 @@ export default {
         montant_44surf: 0,
         montant_42pl: 0,
         montant_travauxBureau_total: 0,
-        montant_travauxBureau_batiment_total: new Array(Number(this.form.nb_batiments)).fill(0),
-        montant_travauxBureau_batiment_total_f: new Array(Number(this.form.nb_batiments)).fill(0),
+        montant_travauxBureau_batiment_total: new Array(Number(this.form_general.nb_batiments)).fill(0),
+        montant_travauxBureau_batiment_total_f: new Array(Number(this.form_general.nb_batiments)).fill(0),
         montant_travauxBureau_batiment_total_f_somme: 0,
         montant_divers_total: 0,
         montant_rf_total: 0,
@@ -253,13 +282,14 @@ export default {
      * update nb bâtiments
      */
     updateNbBatiments() {
-      this.form3 = [];
-      for (let i=0; i<Number(this.form.nb_batiments); i++)  {
-        this.form3.push( JSON.parse( JSON.stringify(this.form2)) );
-        for (let key in this.form3[i]) {
-          this.form3[i][key].batiment = i+1;
-          this.form3[i][key].montant = numeral(0).format("0.00");
-          this.form3[i][key].nombre = 0;
+      this.form_detail_batiment = [];
+      for (let i=0; i<Number(this.form_general.nb_batiments); i++)  {
+        this.form_detail_batiment.push( JSON.parse( JSON.stringify(this.form_detail)) );
+        for (let key in this.form_detail_batiment[i]) {
+          this.form_detail_batiment[i][key].batiment = i+1;
+          this.form_detail_batiment[i][key].montant = numeral(0).format("0.00");
+          this.form_detail_batiment[i][key].nombre = 0;
+          this.form_detail_batiment[i][key].batiment_f = this.form_general.batiment_f[i];
         }
       }
     },
@@ -268,9 +298,9 @@ export default {
      * Update batimentCorrectionFactor
      */
     updateBatimentCorrectionFactor() {
-      for (let i=0; i<Number(this.form.nb_batiments); i++) {
-        for (let key in this.form3[i]) {
-          this.form3[i][key].batiment_f = Number(this.form.batiment_f[i]);
+      for (let i=0; i<Number(this.form_general.nb_batiments); i++) {
+        for (let key in this.form_detail_batiment[i]) {
+          this.form_detail_batiment[i][key].batiment_f = Number(this.form_general.batiment_f[i]);
         }
       }
 
@@ -282,11 +312,11 @@ export default {
      * Update value of zi
      */
     computeZi() {
-      this.form.zi = numeral(
+      this.form_general.zi = numeral(
         1 + 
-        Number(this.form.pente) / 100 +
-        Number(this.form.visibilite) + 
-        Number(this.form.trafic)
+        Number(this.form_general.pente_pc) / 100 +
+        Number(this.form_general.diff_visibilite_pc) + 
+        Number(this.form_general.trafic_pc)
       ).format("0.00");
 
       this.computeAll();
@@ -296,133 +326,133 @@ export default {
      * Update montants
      */
     updateMontants() {
-      //form2
-      for (let key in this.form2) {
-        this.form2[key].montant = numeral(Number(this.form2[key].nombre) * Number(this.form2[key].prix_unitaire)).format("0.00");
+      //form_detail
+      for (let key in this.form_detail) {
+        this.form_detail[key].montant = numeral(Number(this.form_detail[key].nombre) * Number(this.form_detail[key].prix_unitaire)).format("0.00");
       }
          
-      //form3
-      for (let i=0; i<Number(this.form.nb_batiments); i++) {
-        for (let key in this.form3[i]) {
-          this.form3[i][key].montant = numeral(Number(this.form3[i][key].nombre) * Number(this.form3[i][key].prix_unitaire)).format("0.00");
+      //form_detail_batiment
+      for (let i=0; i<Number(this.form_general.nb_batiments); i++) {
+        for (let key in this.form_detail_batiment[i]) {
+          this.form_detail_batiment[i][key].montant = numeral(Number(this.form_detail_batiment[i][key].nombre) * Number(this.form_detail_batiment[i][key].prix_unitaire)).format("0.00");
         }
       }
       
       //update format montant_relation_autres_services
-      this.form.montant_relations_autres_services = numeral(this.form.montant_relations_autres_services).format("0.00");
+      this.form_general.montant_relations_autres_services = numeral(this.form_general.montant_relations_autres_services).format("0.00");
 
       // update montant_total par categorie
       //Montants totaux Mandat
       this.total.montant_mandat_total = 
-        Number(this.form2.mandat1.montant) +
-        Number(this.form2.mandat2.montant) +
-        Number(this.form2.mandat3.montant) +
-        Number(this.form2.mandat4.montant) +
-        Number(this.form2.mandat5.montant) +
-        Number(this.form2.mandat6.montant);
+        Number(this.form_detail.mandat1.montant) +
+        Number(this.form_detail.mandat2.montant) +
+        Number(this.form_detail.mandat3.montant) +
+        Number(this.form_detail.mandat4.montant) +
+        Number(this.form_detail.mandat5.montant) +
+        Number(this.form_detail.mandat6.montant);
 
-      for (let j=0; j<Number(this.form.nb_batiments); j++) {
+      for (let j=0; j<Number(this.form_general.nb_batiments); j++) {
         // Mandat
         this.total.montant_mandat_batiment_total[j] = 
-          Number(this.form3[j].mandat1.montant) +
-          Number(this.form3[j].mandat2.montant) +
-          Number(this.form3[j].mandat3.montant) +
-          Number(this.form3[j].mandat4.montant) +
-          Number(this.form3[j].mandat5.montant) +
-          Number(this.form3[j].mandat6.montant);
+          Number(this.form_detail_batiment[j].mandat1.montant) +
+          Number(this.form_detail_batiment[j].mandat2.montant) +
+          Number(this.form_detail_batiment[j].mandat3.montant) +
+          Number(this.form_detail_batiment[j].mandat4.montant) +
+          Number(this.form_detail_batiment[j].mandat5.montant) +
+          Number(this.form_detail_batiment[j].mandat6.montant);
 
         this.total.montant_mandat_batiment_total_f[j] =
-          Number(this.total.montant_mandat_batiment_total[j]) * Number(this.form.batiment_f[j]);
+          Number(this.total.montant_mandat_batiment_total[j]) * Number(this.form_general.batiment_f[j]);
       
         // Travaux terrain
         this.total.montant_travauxTerrain_batiment_total[j] =
-          Number(this.form3[j].travauxTerrain1.montant) +
-          Number(this.form3[j].travauxTerrain2.montant) +
-          Number(this.form3[j].travauxTerrain3.montant) +
-          Number(this.form3[j].travauxTerrain4.montant) +
-          Number(this.form3[j].travauxTerrain5.montant) +
-          Number(this.form3[j].travauxTerrain6.montant) +
-          Number(this.form3[j].travauxTerrain7.montant) +
-          Number(this.form3[j].travauxTerrain8.montant) +
-          Number(this.form3[j].travauxTerrain9.montant) +
-          Number(this.form3[j].travauxTerrain10.montant) +
-          Number(this.form3[j].travauxTerrain11.montant) +
-          Number(this.form3[j].travauxTerrain12.montant) +
-          Number(this.form3[j].travauxTerrain13.montant) +
-          Number(this.form3[j].travauxTerrain14.montant) +
-          Number(this.form3[j].travauxTerrain15.montant) +
-          Number(this.form3[j].travauxTerrain16.montant);
+          Number(this.form_detail_batiment[j].travauxTerrain1.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain2.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain3.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain4.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain5.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain6.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain7.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain8.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain9.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain10.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain11.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain12.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain13.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain14.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain15.montant) +
+          Number(this.form_detail_batiment[j].travauxTerrain16.montant);
 
         this.total.montant_travauxTerrain_batiment_total_f[j] =
-          Number(this.total.montant_travauxTerrain_batiment_total[j]) * Number(this.form.batiment_f[j]);
+          Number(this.total.montant_travauxTerrain_batiment_total[j]) * Number(this.form_general.batiment_f[j]);
 
         // Travaux bureau
         this.total.montant_travauxBureau_batiment_total[j] =
-          Number(this.form3[j].travauxBureau1.montant) +
-          Number(this.form3[j].travauxBureau2.montant) +
-          Number(this.form3[j].travauxBureau3.montant) +
-          Number(this.form3[j].travauxBureau4.montant) +
-          Number(this.form3[j].travauxBureau5.montant) +
-          Number(this.form3[j].travauxBureau6.montant) +
-          Number(this.form3[j].travauxBureau7.montant) +
-          Number(this.form3[j].travauxBureau8.montant) +
-          Number(this.form3[j].travauxBureau9.montant) +
-          Number(this.form3[j].travauxBureau10.montant) +
-          Number(this.form3[j].travauxBureau11.montant) +
-          Number(this.form3[j].travauxBureau12.montant) +
-          Number(this.form3[j].travauxBureau13.montant) +
-          Number(this.form3[j].travauxBureau14.montant) +
-          Number(this.form3[j].travauxBureau15.montant) +
-          Number(this.form3[j].travauxBureau16.montant) +
-          Number(this.form3[j].travauxBureau17.montant) +
-          Number(this.form3[j].travauxBureau18.montant) +
-          Number(this.form3[j].travauxBureau19.montant) +
-          Number(this.form3[j].travauxBureau20.montant) +
-          Number(this.form3[j].travauxBureau21.montant) +
-          Number(this.form3[j].travauxBureau22.montant) +
-          Number(this.form3[j].travauxBureau23.montant) +
-          Number(this.form3[j].travauxBureau24.montant) +
-          Number(this.form3[j].travauxBureau25.montant) +
-          Number(this.form3[j].travauxBureau26.montant) +
-          Number(this.form3[j].travauxBureau27.montant);
+          Number(this.form_detail_batiment[j].travauxBureau1.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau2.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau3.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau4.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau5.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau6.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau7.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau8.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau9.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau10.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau11.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau12.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau13.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau14.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau15.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau16.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau17.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau18.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau19.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau20.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau21.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau22.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau23.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau24.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau25.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau26.montant) +
+          Number(this.form_detail_batiment[j].travauxBureau27.montant);
 
         this.total.montant_travauxBureau_batiment_total_f[j] =
-          Number(this.total.montant_travauxBureau_batiment_total[j]) * Number(this.form.batiment_f[j]);
+          Number(this.total.montant_travauxBureau_batiment_total[j]) * Number(this.form_general.batiment_f[j]);
 
         
       }
 
       //Montants totaux TravauxTerrain
       this.total.montant_21pfp = 
-        Number(this.form2.travauxTerrain1.montant) +
-        Number(this.form2.travauxTerrain2.montant) +
-        Number(this.form2.travauxTerrain3.montant) +
-        Number(this.form2.travauxTerrain4.montant) +
-        Number(this.form2.travauxTerrain5.montant) +
-        Number(this.form2.travauxTerrain6.montant) +
-        Number(this.form2.travauxTerrain7.montant) +
-        Number(this.form2.travauxTerrain8.montant) +
-        Number(this.form2.travauxTerrain9.montant) +
-        Number(this.form2.travauxTerrain10.montant) +
-        Number(this.form2.travauxTerrain11.montant) +
-        Number(this.form2.travauxTerrain12.montant) +
-        Number(this.form2.travauxTerrain13.montant) +
-        Number(this.form2.travauxTerrain14.montant);
+        Number(this.form_detail.travauxTerrain1.montant) +
+        Number(this.form_detail.travauxTerrain2.montant) +
+        Number(this.form_detail.travauxTerrain3.montant) +
+        Number(this.form_detail.travauxTerrain4.montant) +
+        Number(this.form_detail.travauxTerrain5.montant) +
+        Number(this.form_detail.travauxTerrain6.montant) +
+        Number(this.form_detail.travauxTerrain7.montant) +
+        Number(this.form_detail.travauxTerrain8.montant) +
+        Number(this.form_detail.travauxTerrain9.montant) +
+        Number(this.form_detail.travauxTerrain10.montant) +
+        Number(this.form_detail.travauxTerrain11.montant) +
+        Number(this.form_detail.travauxTerrain12.montant) +
+        Number(this.form_detail.travauxTerrain13.montant) +
+        Number(this.form_detail.travauxTerrain14.montant);
       
       this.total.montant_23sit = 
-        Number(this.form2.travauxTerrain15.montant) +
-        Number(this.form2.travauxTerrain16.montant);
+        Number(this.form_detail.travauxTerrain15.montant) +
+        Number(this.form_detail.travauxTerrain16.montant);
       
       this.total.montant_22pl = 
-        Number(this.form2.travauxTerrain17.montant) +
-        Number(this.form2.travauxTerrain18.montant) +
-        Number(this.form2.travauxTerrain19.montant) +
-        Number(this.form2.travauxTerrain20.montant) +
-        Number(this.form2.travauxTerrain21.montant) +
-        Number(this.form2.travauxTerrain22.montant) +
-        Number(this.form2.travauxTerrain23.montant) +
-        Number(this.form2.travauxTerrain24.montant) +
-        Number(this.form2.travauxTerrain25.montant);
+        Number(this.form_detail.travauxTerrain17.montant) +
+        Number(this.form_detail.travauxTerrain18.montant) +
+        Number(this.form_detail.travauxTerrain19.montant) +
+        Number(this.form_detail.travauxTerrain20.montant) +
+        Number(this.form_detail.travauxTerrain21.montant) +
+        Number(this.form_detail.travauxTerrain22.montant) +
+        Number(this.form_detail.travauxTerrain23.montant) +
+        Number(this.form_detail.travauxTerrain24.montant) +
+        Number(this.form_detail.travauxTerrain25.montant);
       
       this.total.montant_travauxTerrain_total = 
         Number(this.total.montant_21pfp) +
@@ -430,37 +460,37 @@ export default {
         Number(this.total.montant_22pl);
 
       this.total.montant_travauxTerrain_total_zi =
-        Number(this.total.montant_travauxTerrain_total) * Number(this.form.zi);
+        Number(this.total.montant_travauxTerrain_total) * Number(this.form_general.zi);
 
       this.total.montant_travauxTerrain_batiment_total_f_somme =
         Number(this.total.montant_travauxTerrain_batiment_total_f.reduce((a, b) => Number(a) + Number(b)));
 
       this.total.montant_travauxTerrain_batiment_total_f_somme_zi =
-        Number(this.total.montant_travauxTerrain_batiment_total_f_somme) * Number(this.form.zi);
+        Number(this.total.montant_travauxTerrain_batiment_total_f_somme) * Number(this.form_general.zi);
 
       //Montants totaux TravauxMatérialisation
       this.total.montant_31_32_std_compl = 
-        Number(this.form2.travauxMaterialisation1.montant) +
-        Number(this.form2.travauxMaterialisation2.montant) +
-        Number(this.form2.travauxMaterialisation3.montant) +
-        Number(this.form2.travauxMaterialisation4.montant) +
-        Number(this.form2.travauxMaterialisation5.montant) +
-        Number(this.form2.travauxMaterialisation6.montant) +
-        Number(this.form2.travauxMaterialisation7.montant);
+        Number(this.form_detail.travauxMaterialisation1.montant) +
+        Number(this.form_detail.travauxMaterialisation2.montant) +
+        Number(this.form_detail.travauxMaterialisation3.montant) +
+        Number(this.form_detail.travauxMaterialisation4.montant) +
+        Number(this.form_detail.travauxMaterialisation5.montant) +
+        Number(this.form_detail.travauxMaterialisation6.montant) +
+        Number(this.form_detail.travauxMaterialisation7.montant);
       
       this.total.montant_31_32_std_compl_zi = 
-        this.total.montant_31_32_std_compl * Number(this.form.zi);
+        this.total.montant_31_32_std_compl * Number(this.form_general.zi);
 
       this.total.montant_33_materiel = 
-        Number(this.form2.travauxMaterialisation8.montant) +
-        Number(this.form2.travauxMaterialisation9.montant) +
-        Number(this.form2.travauxMaterialisation10.montant) +
-        Number(this.form2.travauxMaterialisation11.montant) +
-        Number(this.form2.travauxMaterialisation12.montant) +
-        Number(this.form2.travauxMaterialisation13.montant);
+        Number(this.form_detail.travauxMaterialisation8.montant) +
+        Number(this.form_detail.travauxMaterialisation9.montant) +
+        Number(this.form_detail.travauxMaterialisation10.montant) +
+        Number(this.form_detail.travauxMaterialisation11.montant) +
+        Number(this.form_detail.travauxMaterialisation12.montant) +
+        Number(this.form_detail.travauxMaterialisation13.montant);
       
       this.total.montant_5_depl_debours = 
-        Number(this.form2.deplacementDebours1.montant);
+        Number(this.form_detail.deplacementDebours1.montant);
       
       this.total.montant_travauxMaterialisation_total = 
         Number(this.total.montant_31_32_std_compl_zi) +
@@ -469,58 +499,58 @@ export default {
 
       //Montants totaux TravauxBureau
       this.total.montant_41pfp = 
-        Number(this.form2.travauxBureau1.montant) +
-        Number(this.form2.travauxBureau2.montant) +
-        Number(this.form2.travauxBureau3.montant) +
-        Number(this.form2.travauxBureau4.montant) +
-        Number(this.form2.travauxBureau5.montant) +
-        Number(this.form2.travauxBureau6.montant) +
-        Number(this.form2.travauxBureau7.montant) +
-        Number(this.form2.travauxBureau8.montant) +
-        Number(this.form2.travauxBureau9.montant) +
-        Number(this.form2.travauxBureau10.montant) +
-        Number(this.form2.travauxBureau11.montant) +
-        Number(this.form2.travauxBureau12.montant);
+        Number(this.form_detail.travauxBureau1.montant) +
+        Number(this.form_detail.travauxBureau2.montant) +
+        Number(this.form_detail.travauxBureau3.montant) +
+        Number(this.form_detail.travauxBureau4.montant) +
+        Number(this.form_detail.travauxBureau5.montant) +
+        Number(this.form_detail.travauxBureau6.montant) +
+        Number(this.form_detail.travauxBureau7.montant) +
+        Number(this.form_detail.travauxBureau8.montant) +
+        Number(this.form_detail.travauxBureau9.montant) +
+        Number(this.form_detail.travauxBureau10.montant) +
+        Number(this.form_detail.travauxBureau11.montant) +
+        Number(this.form_detail.travauxBureau12.montant);
       
       this.total.montant_43sit = 
-        Number(this.form2.travauxBureau13.montant) +
-        Number(this.form2.travauxBureau14.montant) +
-        Number(this.form2.travauxBureau15.montant) +
-        Number(this.form2.travauxBureau16.montant) +
-        Number(this.form2.travauxBureau17.montant) +
-        Number(this.form2.travauxBureau18.montant) +
-        Number(this.form2.travauxBureau19.montant) +
-        Number(this.form2.travauxBureau20.montant) +
-        Number(this.form2.travauxBureau21.montant) +
-        Number(this.form2.travauxBureau22.montant);
+        Number(this.form_detail.travauxBureau13.montant) +
+        Number(this.form_detail.travauxBureau14.montant) +
+        Number(this.form_detail.travauxBureau15.montant) +
+        Number(this.form_detail.travauxBureau16.montant) +
+        Number(this.form_detail.travauxBureau17.montant) +
+        Number(this.form_detail.travauxBureau18.montant) +
+        Number(this.form_detail.travauxBureau19.montant) +
+        Number(this.form_detail.travauxBureau20.montant) +
+        Number(this.form_detail.travauxBureau21.montant) +
+        Number(this.form_detail.travauxBureau22.montant);
       
       this.total.montant_44surf = 
-        Number(this.form2.travauxBureau23.montant) +
-        Number(this.form2.travauxBureau24.montant) +
-        Number(this.form2.travauxBureau25.montant) +
-        Number(this.form2.travauxBureau26.montant) +
-        Number(this.form2.travauxBureau27.montant);
+        Number(this.form_detail.travauxBureau23.montant) +
+        Number(this.form_detail.travauxBureau24.montant) +
+        Number(this.form_detail.travauxBureau25.montant) +
+        Number(this.form_detail.travauxBureau26.montant) +
+        Number(this.form_detail.travauxBureau27.montant);
       
       this.total.montant_42pl = 
-        Number(this.form2.travauxBureau28.montant) +
-        Number(this.form2.travauxBureau29.montant) +
-        Number(this.form2.travauxBureau30.montant) +
-        Number(this.form2.travauxBureau31.montant) +
-        Number(this.form2.travauxBureau32.montant) +
-        Number(this.form2.travauxBureau33.montant) +
-        Number(this.form2.travauxBureau34.montant) +
-        Number(this.form2.travauxBureau35.montant) +
-        Number(this.form2.travauxBureau36.montant) +
-        Number(this.form2.travauxBureau37.montant) +
-        Number(this.form2.travauxBureau38.montant) +
-        Number(this.form2.travauxBureau39.montant) +
-        Number(this.form2.travauxBureau40.montant) +
-        Number(this.form2.travauxBureau41.montant) +
-        Number(this.form2.travauxBureau42.montant) +
-        Number(this.form2.travauxBureau43.montant) +
-        Number(this.form2.travauxBureau44.montant) +
-        Number(this.form2.travauxBureau45.montant) +
-        Number(this.form2.travauxBureau46.montant);
+        Number(this.form_detail.travauxBureau28.montant) +
+        Number(this.form_detail.travauxBureau29.montant) +
+        Number(this.form_detail.travauxBureau30.montant) +
+        Number(this.form_detail.travauxBureau31.montant) +
+        Number(this.form_detail.travauxBureau32.montant) +
+        Number(this.form_detail.travauxBureau33.montant) +
+        Number(this.form_detail.travauxBureau34.montant) +
+        Number(this.form_detail.travauxBureau35.montant) +
+        Number(this.form_detail.travauxBureau36.montant) +
+        Number(this.form_detail.travauxBureau37.montant) +
+        Number(this.form_detail.travauxBureau38.montant) +
+        Number(this.form_detail.travauxBureau39.montant) +
+        Number(this.form_detail.travauxBureau40.montant) +
+        Number(this.form_detail.travauxBureau41.montant) +
+        Number(this.form_detail.travauxBureau42.montant) +
+        Number(this.form_detail.travauxBureau43.montant) +
+        Number(this.form_detail.travauxBureau44.montant) +
+        Number(this.form_detail.travauxBureau45.montant) +
+        Number(this.form_detail.travauxBureau46.montant);
 
       this.total.montant_travauxBureau_total = 
         Number(this.total.montant_41pfp) +
@@ -533,17 +563,17 @@ export default {
 
       //Divers
       this.total.montant_divers_total = 
-        Number(this.form2.divers1.montant) +
-        Number(this.form2.divers2.montant) +
-        Number(this.form2.divers3.montant) +
-        Number(this.form2.divers4.montant) +
-        Number(this.form2.divers5.montant) +
-        Number(this.form2.divers6.montant) +
-        Number(this.form2.divers7.montant) +
-        Number(this.form2.divers8.montant) +
-        Number(this.form2.divers9.montant) +
-        Number(this.form2.divers10.montant) +
-        Number(this.form.montant_relations_autres_services);
+        Number(this.form_detail.divers1.montant) +
+        Number(this.form_detail.divers2.montant) +
+        Number(this.form_detail.divers3.montant) +
+        Number(this.form_detail.divers4.montant) +
+        Number(this.form_detail.divers5.montant) +
+        Number(this.form_detail.divers6.montant) +
+        Number(this.form_detail.divers7.montant) +
+        Number(this.form_detail.divers8.montant) +
+        Number(this.form_detail.divers9.montant) +
+        Number(this.form_detail.divers10.montant) +
+        Number(this.form_general.montant_relations_autres_services);
 
       this.total.montant_divers_total_with_5_depl_debours = 
         Number(this.total.montant_divers_total) +
@@ -551,11 +581,11 @@ export default {
       
       //Registre foncier
       this.total.montant_rf_total =
-        Number(this.form2.registreFoncier1.montant) +
-        Number(this.form2.registreFoncier2.montant) +
-        Number(this.form2.registreFoncier3.montant) +
-        Number(this.form2.registreFoncier4.montant) +
-        Number(this.form2.registreFoncier5.montant);
+        Number(this.form_detail.registreFoncier1.montant) +
+        Number(this.form_detail.registreFoncier2.montant) +
+        Number(this.form_detail.registreFoncier3.montant) +
+        Number(this.form_detail.registreFoncier4.montant) +
+        Number(this.form_detail.registreFoncier5.montant);
 
 
       this.updateRecapitulatif();
@@ -573,16 +603,16 @@ export default {
       this.total.montant_recapitulatif_bureau = Number(this.total.montant_travauxBureau_total) + Number(this.total.montant_travauxBureau_batiment_total_f_somme);
       this.total.montant_recapitulatif_somme3 = Number(this.total.montant_recapitulatif_somme2) + Number(this.total.montant_recapitulatif_bureau);
 
-      this.total.montant_recapitulatif_indice_application = this.round( Number(this.total.montant_recapitulatif_somme3) * (Number(this.form.indice_application) - 1));
+      this.total.montant_recapitulatif_indice_application = this.round( Number(this.total.montant_recapitulatif_somme3) * (Number(this.form_general.indice_application) - 1));
       this.total.montant_recapitulatif_somme4 = Number(this.total.montant_recapitulatif_somme3) + Number(this.total.montant_recapitulatif_indice_application);
 
       this.total.montant_recapitulatif_materiel_divers = Number(this.total.montant_33_materiel) + Number(this.total.montant_divers_total);
       this.total.montant_recapitulatif_somme5 = Number(this.total.montant_recapitulatif_somme4) + Number(this.total.montant_recapitulatif_materiel_divers);
 
-      this.total.montant_recapitulatif_matdiff = this.round( Number(this.total.montant_34_matdiff) * Number(this.form.indice_application));
+      this.total.montant_recapitulatif_matdiff = this.round( Number(this.total.montant_34_matdiff) * Number(this.form_general.indice_application));
       this.total.montant_recapitulatif_somme6 = Number(this.total.montant_recapitulatif_somme5) + Number(this.total.montant_recapitulatif_matdiff);
 
-      this.total.montant_recapitulatif_tva = this.round(Number(this.total.montant_recapitulatif_somme6) * Number(this.form.indice_tva) / 100, 0.05);
+      this.total.montant_recapitulatif_tva = this.round(Number(this.total.montant_recapitulatif_somme6) * Number(this.form_general.tva_pc) / 100, 0.05);
       this.total.montant_recapitulatif_somme7 = this.total.montant_recapitulatif_somme6 + Number(this.total.montant_recapitulatif_tva);
 
       this.total.montant_recapitulatif_registre_foncier = Number(this.total.montant_rf_total);
@@ -604,7 +634,7 @@ export default {
     setComptabiliteFormat() {
       Object.keys(this.total).forEach(x => {
         if (Array.isArray(this.total[x])) {
-          for (let i=0; i<this.form.nb_batiments; i++) {
+          for (let i=0; i<this.form_general.nb_batiments; i++) {
             this.total[x][i] = numeral(this.total[x][i]).format("0.00");
           }
         } else {
@@ -634,58 +664,74 @@ export default {
      * postFormular
      */
     async postEmolument() {
-      let formData = new FormData();
-      formData.append('form', this.form);
-
-      this.$http.post(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENTS_FACTURE_ENDPOINT,
-        formData,
-        {
-          withCredentials: true,
-          headers: {"Accept": "application/json"}
-        }
-      ).then(response => {
+      this.postEmolumentsGeneral().then(response => {
         if (response && response.data) {
-          this.showEmolumentsDialog = false;
-          this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctment");
+          this.postEmolumentsDetail(response.data.emolument_affaire_id).then(response => {
+            if (response && response.data) {
+              this.showEmolumentsDialog = false;
+              this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
+            }
+          }).catch(err => handleException(err, this));
         }
-      }).catch(err => handleException(err, this)); 
+      }).catch(err => handleException(err, this));
     },
 
-    /**
-     * form to array of objects
-     */
-    form2ArrayObj() {
-      let form_ = [];
-      for (const key in Object.keys(this.form)) {
-        if (key.startsWith("montant_") && Number(this.form[key]) > 0) {
-          form_.push({
+    async postEmolumentsGeneral() {
+      let formData = new FormData();
+      formData.append("data", JSON.stringify(this.form_general));
 
-          });
-        }
-      }
+      return new Promise((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err)); 
+      });
+    },
 
+    async postEmolumentsDetail(emolument_affaire_id) {
+      let form = this.form_detail_batiment;
+      form.push(this.form_detail)
+
+      let formData = new FormData();
+      formData.append("data", JSON.stringify(form));
+      formData.append("emolument_affaire_id", emolument_affaire_id);
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err)); 
+      });
     },
 
     /**
      * selected option mat diff
      */
     matDiffChanged(montant) {
-      console.log("montant = ", montant)
       let travauxMaterialisation = [
         "travauxMaterialisation14",
         "travauxMaterialisation15",
         "travauxMaterialisation16",
         "travauxMaterialisation17"
-      ]
+      ];
       
       for (let element_i of travauxMaterialisation) {
-        if (Number(this.form2[element_i].prix_unitaire) === Number(montant)) {
-          this.form2[element_i].nombre = 1;
-          this.form2[element_i].montant = montant;
+        if (Number(this.form_detail[element_i].prix_unitaire) === Number(montant)) {
+          this.form_detail[element_i].nombre = 1;
+          this.form_detail[element_i].montant = montant;
         } else {
-          this.form2[element_i].nombre = 0;
-          this.form2[element_i].montant = 0;
+          this.form_detail[element_i].nombre = 0;
+          this.form_detail[element_i].montant = 0;
         }
       }
       

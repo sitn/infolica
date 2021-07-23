@@ -5,7 +5,10 @@ import pyramid.httpexceptions as exc
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import EmolumentFacture, VEmolumentsFactures, TableauEmoluments
+from infolica.models.models import EmolumentAffaire, Emolument
 from infolica.scripts.utils import Utils
+
+import json
 
 ###########################################################
 # EMOLUMENTS
@@ -106,3 +109,61 @@ def emolument_facture_delete_view(request):
     request.dbsession.delete(record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(EmolumentFacture.__tablename__))
+
+###############################################################################################################
+
+@view_config(route_name='emolument_affaire', request_method='POST', renderer='json')
+def emolument_affaire_new_view(request):
+    """
+    Add new emolument_affaire
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+        raise exc.HTTPForbidden()
+
+    params = request.params
+    data = json.loads(params["data"])
+
+    record = EmolumentAffaire()
+    record = Utils.set_model_record(record, data)
+
+    request.dbsession.add(record)
+    request.dbsession.flush()
+
+    return {"emolument_affaire_id": record.id}
+
+
+@view_config(route_name='emolument', request_method='POST', renderer='json')
+def emolument_new_view(request):
+    """
+    Add new emolument
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+        raise exc.HTTPForbidden()
+
+    params = request.params
+    data = json.loads(params['data'])
+    emolument_affaire_id = params['emolument_affaire_id']
+
+    for batiment_i in data:
+        for emolument_i in batiment_i:
+            if float(batiment_i[emolument_i]['montant']) > 0 and float(batiment_i[emolument_i]['nombre']) > 0:
+                params = Utils._params(
+                    emolument_affaire_id=int(emolument_affaire_id),
+                    tableau_emolument_id=int(batiment_i[emolument_i]['tableau_emolument_id']),
+                    position=batiment_i[emolument_i]['nom'],
+                    prix_unitaire=float(batiment_i[emolument_i]['prix_unitaire']),
+                    nombre=int(batiment_i[emolument_i]['nombre']),
+                    batiment=int(batiment_i[emolument_i]['batiment']),
+                    batiment_f=float(batiment_i[emolument_i]['batiment_f']),
+                    montant=float(batiment_i[emolument_i]['montant'])
+                )
+
+                record = Emolument()
+                record = Utils.set_model_record(record, params)
+
+                request.dbsession.add(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Emolument.__tablename__))
+
