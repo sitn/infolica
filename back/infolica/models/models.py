@@ -33,7 +33,7 @@ class Operateur(Base):
     entree = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     sortie = Column(Date)
     mail = Column(Text)
-
+    last_notemaj_id = Column(BigInteger)
 
 class Cadastre(Base):
     __tablename__ = 'cadastre'
