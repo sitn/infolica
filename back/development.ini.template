@@ -7,10 +7,10 @@
 use = egg:infolica
 
 infolica_url_base = http://127.0.0.1:8080/infolica
-infolica_mail = 
-admin_mail =
-infolica_smtp = 
-infolica_balance_mail = 
+infolica_mail = /*TO COMPLETE*/
+admin_mail = /*TO COMPLETE*/
+infolica_smtp = /*TO COMPLETE*/
+infolica_balance_mail = /*TO COMPLETE*/
 
 pyramid.reload_templates = true
 pyramid.debug_authorization = false
@@ -53,16 +53,6 @@ ldap_login_query_attributes= uid, givenName, sn, mail, telephoneNumber, mobile
 
 # Le scope de la recherche (LEVEL, SUBTREE)
 ldap_login_query_scope= SUBTREE
-
-# L'attribut qui correspond au login d'un utilisateur LDAP
-ldap_user_attribute_login= uid
-
-# Les autres attributs d'un utilisateur LDAP
-ldap_user_attribute_firstname= givenName
-ldap_user_attribute_lastname= sn
-ldap_user_attribute_telephone= telephoneNumber
-ldap_user_attribute_mail= mail
-ldap_user_attribute_mobile= mobile
 
 
 ###########################################################
