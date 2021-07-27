@@ -1,10 +1,10 @@
-<div class="notesmaj" v-if="showNotesMAJ">
+<div class="notesmaj" v-if="showNotesMAJ" id="notesmaj">
     <md-card class="notesMAJ" v-if="$route.name !== 'Login' && showNotesMAJ">
         <md-card-header class="justifyTitleBtn" style="padding-bottom: 0px;">
             <div class="md-title"><b>Information</b></div>
             <div>
                 <md-button style="min-width: auto; width: auto;" title="Ajouter une note de mise à jour" @click="openNewNote" class="md-dense" v-if="permissions.admin"><md-icon>add</md-icon></md-button>
-                <md-button style="min-width: auto; width: auto;" title="Fermer la fenêtre d'informations" @click="showNotesMAJ=false" class="md-dense"><md-icon>close</md-icon></md-button>
+                <md-button style="min-width: auto; width: auto;" title="Fermer la fenêtre d'informations" @click="closeInfobulle" class="md-dense"><md-icon>close</md-icon></md-button>
             </div>
         </md-card-header>
         <md-card-content>
@@ -46,7 +46,7 @@
                     <p><a @click="goTo('About')">Consulter l'historique</a></p>
                 </div>
                 <div>
-                    <md-button class="md-dense md-primary md-raised" @click="closeInfobulle()" title="Ne plus afficher l'information">
+                    <md-button class="md-dense md-primary md-raised" @click="closeAndSaveInfobulle()" title="Ne plus afficher l'information">
                         <md-icon>thumb_up</md-icon>
                         <span style="display: inline-block; height: 13px; vertical-align: middle; margin-left: 5px;"> J'ai compris</span>
                     </md-button>

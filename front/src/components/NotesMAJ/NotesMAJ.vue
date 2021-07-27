@@ -81,6 +81,7 @@ export default {
       if(this.$router && this.$router.currentRoute && this.$router.currentRoute.name != route) {
         this.$router.push({ name: route});
         this.showNotesMAJ = false;
+        this.updateMainDivHeight();
       }
     },
 
@@ -199,6 +200,10 @@ export default {
           this.mustUpdateLastVersionOperateur = false;
           this.notes = [];
         }
+
+        // set main_div height
+        this.updateMainDivHeight();
+
       });
 
       this.getOperateurById().then(response => {
@@ -209,9 +214,29 @@ export default {
     },
 
     /**
+     * update div "main" height
+     */
+    updateMainDivHeight() {
+      if (this.showNotesMAJ) {
+        // recursively check untill element notesmaj is ready
+        const interval = setInterval(() => {
+          let div_notesmaj = document.getElementById('notesmaj');
+          if (div_notesmaj) {
+            document.getElementById('main').setAttribute("style","height: calc(100% - " + String(div_notesmaj.offsetHeight + 9) + "px)");
+            clearInterval(interval);
+          }
+          return;
+        }, 200);
+
+      } else {
+        document.getElementById('main').setAttribute("style","height: calc(100% - 60px)");
+      }
+    },
+
+    /**
      * closeInfobulle with saving lastId notes MAJ
      */
-    async closeInfobulle() {
+    async closeAndSaveInfobulle() {
       if (this.mustUpdateLastVersionOperateur) {
         let formData = new FormData();
         formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
@@ -231,20 +256,31 @@ export default {
         }).catch(err => handleException(err, this));
       }
 
+      // fermer l'infobulle et setter la hauteur du div main
+      this.closeInfobulle();
+    },
+
+    /**
+     * close infobulle
+     */
+    closeInfobulle() {
       // fermer l'infobulle
       this.showNotesMAJ = false;
+      //set main_div height
+      this.updateMainDivHeight();
     }
 
   },
 
   mounted: function(){
     this.getVersion();
+    this.getPermissions();
     
     if (JSON.parse(localStorage.getItem("infolica_user")) && JSON.parse(localStorage.getItem("infolica_user")).id) {
       this.compareOperateurVersionWithCurrentVersion();
     }
 
-    this.$root.$on("openNotesMAJ", () => {this.compareOperateurVersionWithCurrentVersion(); this.showNotesMAJ=true});
+    this.$root.$on("openNotesMAJ", () => {this.compareOperateurVersionWithCurrentVersion(); this.showNotesMAJ=true;});
     this.$root.$on("notesMaj_set_default_params", () => this.showNotesMAJ = false);
 
     this.$root.$on("notesMaj_hasAdminRights", () => {
