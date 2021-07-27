@@ -483,6 +483,7 @@ export default {
         
         numeros_references_card: [
           this.typesAffaires_conf.cadastration,
+          this.typesAffaires_conf.pcop,
           this.typesAffaires_conf.ppe,
           this.typesAffaires_conf.mat_diff,
           this.typesAffaires_conf.revision_abornement,

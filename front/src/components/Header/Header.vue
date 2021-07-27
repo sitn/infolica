@@ -81,8 +81,7 @@ export default {
      */
     openNotesMAJ() {
       this.$root.$emit("openNotesMAJ");
-    }
-
+    },
   },
 
   mounted: function(){
