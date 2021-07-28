@@ -42,7 +42,7 @@ export default {
         selected_id: 0,
         selected_adress: ''
       },
-      clientContactsListe: [],
+      clientContactsListe: [{}],
       clientsListe: [],
       clientsListe_bk: [],
       searchClientsListe: [],
