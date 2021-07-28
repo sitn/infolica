@@ -57,6 +57,7 @@ export default {
         numeros: []
       },
       tableau_balance: [],
+      selectedBalanceFiles: [],
       showAskDDPCreation: false,
       showBalanceMenu: false,
     };
@@ -215,7 +216,7 @@ export default {
       if (file && file.filepath) {
         promises.push(this.uploadIndividualBalance(file));
       } else {
-        this.balanceFiles.forEach(file => {
+        this.selectedBalanceFiles.forEach(file => {
           promises.push(this.uploadIndividualBalance(file));
         });
       }
@@ -650,6 +651,42 @@ export default {
     openBalanceMenu() {
       this.getBalanceFiles();
       this.showBalanceMenu = true;
+    },
+
+    /**
+     * Save reference numeros
+     */
+    async saveReferenceNumeros(numeros) {
+      let numeros_ = numeros.map(x => ({
+        numero_id: x.id,
+        etat_id: x.etat_id
+      }));
+
+      let formData = new FormData();
+      formData.append("affaire_id", this.affaire.id);
+      formData.append("numeros_liste", JSON.stringify(numeros_));
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          )
+          .then(response => {
+            this.$root.$emit("searchAffaireNumeros");
+            this.$root.$emit("ShowMessage", "Le(s) numéro(s) sélectionné(s) ont été correctement ajouté(s) à l'affaire");
+            resolve(response);
+          }).catch(err => reject(err));
+      });
+    },
+
+    /**
+     * Update balance files selection
+     */
+    onSelectBalanceFile(files) {
+      this.selectedBalanceFiles = files;
     }
 
   },

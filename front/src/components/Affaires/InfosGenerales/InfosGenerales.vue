@@ -7,7 +7,10 @@ import {handleException} from '@/services/exceptionsHandler';
 import {stringifyAutocomplete,
         getClients,
         filterList,
-        getDocument} from '@/services/helper';
+        getDocument,
+        getCurrentUserRoleId} from '@/services/helper';
+
+const moment = require("moment");
 
 export default {
   name: "InfosGénérales",
@@ -23,6 +26,11 @@ export default {
       affaire_backup: {},
       infoGenReadonly: true,
       affaireReadonly: true,
+      affaireUrgente: {
+        disabled: true,
+        urgent: false,
+        urgent_echeance: null,
+      },
       operateursListe: [],
       typesAffairesListe_all: [],
       typesAffairesListe: [],
@@ -108,6 +116,7 @@ export default {
      */
     onCancelEdit() {
       Object.assign(this.affaire, this.affaire_backup);
+      this.setAffaireUrgente();
       this.infoGenReadonly = true;
       this.$emit('modify-off', true);
     },
@@ -116,12 +125,12 @@ export default {
      * Enregistrer les modifications
      */
     async onConfirmEdit() {
-      var formData = new FormData();
+      let formData = new FormData();
       formData.append("id_affaire", this.affaire.id);
       formData.append("technicien_id", this.form.technicien.id);
       formData.append("type_id", this.form.typeAffaire.id);
       formData.append("information", this.affaire.information);
-      formData.append("vref", this.affaire.vref || null);
+      formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
       
       if (this.affaire.nom !== null) {
         formData.append("nom", this.affaire.nom || null);
@@ -133,6 +142,14 @@ export default {
 
       if (this.form.client_envoi && this.form.client_envoi.id) {
         formData.append("client_envoi_id", this.form.client_envoi.id || null);
+      }
+
+      if (this.affaireUrgente.urgent) {
+        formData.append("urgent", this.affaireUrgente.urgent);
+        
+        if (this.affaireUrgente.urgent_echeance !== null) {
+          formData.append("urgent_echeance", moment(this.affaireUrgente.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
+        }
       }
 
       formData.append("client_commande_complement", this.form.client_commande_complement || null);
@@ -150,8 +167,10 @@ export default {
       ).then(() => { //response =>{
           this.infoGenReadonly = true;
           this.$emit('modify-off', true);
-          this.$parent.setAffaire();
-          this.copyAffaire();
+          this.$parent.setAffaire().then(() => {
+            this.copyAffaire();
+            this.enableAffaireUrgente();
+          });
         })
         //Error
         .catch(err => {
@@ -435,6 +454,43 @@ export default {
           }
         }).catch(err => handleException(err, this));
       }
+    },
+
+    /**
+     * on set echeance
+     */
+    onSetUrgentEcheance() {
+      if (this.affaireUrgente.urgent_echeance !== null) {
+        this.affaireUrgente.urgent_echeance = moment(this.affaireUrgente.urgent_echeance).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+      } else {
+        this.affaireUrgente.urgent_echeance = null;
+      }
+    },
+
+    /**
+     * Set Affaire urgente
+     */
+    setAffaireUrgente() {
+      this.affaireUrgente = {
+        urgent: this.affaire.urgent,
+        urgent_echeance: this.affaire.urgent_echeance,
+        disabled: true,
+      }
+    },
+
+    /**
+     * Enable edit Affaire Urgente
+     */
+    enableAffaireUrgente() {
+      //Check role_id
+      let role_id = getCurrentUserRoleId();
+          
+      // Secrétariat peut modifier des factures à tout moment, éditer les informations des affaires et référencer des numéros à l'affaire
+      this.affaireUrgente.disabled = this.affaireUrgente.urgent === true || ![
+        Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID),
+        Number(process.env.VUE_APP_ADMIN_ROLE_ID),
+        Number(process.env.VUE_APP_PPE_ROLE_ID),
+      ].includes(role_id);
     }
 
   },
@@ -447,9 +503,11 @@ export default {
     this.searchAffaireDestination();
     this.initClientsListe();
     this.searchClientsFacture();
+    this.setAffaireUrgente();
     this.$root.$on('reloadClientFactureInfosGen', () => this.searchClientsFacture());
     this.affaireReadonly = !this.permission.editAffaireAllowed;
     this.show.clientFacture = this.affaire.type_id !== this.typesAffaires_conf.pcop;
+    this.enableAffaireUrgente();
   }
 };
 </script>

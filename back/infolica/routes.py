@@ -177,4 +177,7 @@ def includeme(config):
     config.add_route('types_numeros_mo', '/infolica/api/types_numeros_mo')
     #Open Folder
     config.add_route('open_folder', '/infolica/api/open_folder')
-
+    #Notes de mise à jour
+    config.add_route('notes_maj', '/infolica/api/notes_maj')
+    config.add_route('version', '/infolica/api/version')
+    config.add_route('operateur_notes_maj', '/infolica/api/operateur_notes_maj')

@@ -8,1401 +8,1433 @@
             <div class="md-title"><b>Listing des améliorations apportées d'une version à une autre</b></div>
         </md-card-header>
         <md-card-content>
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 03.06.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Suivi de l'affaire: Le tableau des étapes a été modifié. Désormais on affiche le nom de l'opérateur et la date de réalisation de l'étape.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Réservation de numéros: la quittance est désormais directement enregistrée dans le dossier de l'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Parts de copropriétés: Diverses correction de bugs.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
+            <md-table v-model="notes" md-card>
+                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                    <md-table-cell md-label="Date">{{ item.date_client }}</md-table-cell>
+                    <md-table-cell md-label="version">{{ item.version }}</md-table-cell>
+                    <md-table-cell md-label="Titre">{{ item.titre }}</md-table-cell>
+                    <md-table-cell md-label="Descrption">{{ item.message }}</md-table-cell>
+                </md-table-row>
+            </md-table>
 
+            <p v-if="!expandNotes"><a @click="expandNotes=true">Montrer plus</a></p>
 
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 01.06.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Introduction de l'écriture inclusive.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 25.05.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Abandon d'affaire: Une affaire de modification ouverte par erreur peut être abandonnée sans répercussion. Les données de l'affaires sont basculée dans l'affaire parent (pas d'abandon/suppression de BF). 
-                                <span>
-                                    *Le cas de l'abandon d'une affaire d'abandon partiel n'est pas traité. **La fenêtre d'abandon de l'affaire a été améliorée.
+            <div v-if="expandNotes">
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 10.06.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Suivie d'affaire: Correction du chargement du suivi de l'affaire et du tableau de suivi d'affaire dans le mail de l'étape.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 03.06.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Suivi de l'affaire: Le tableau des étapes a été modifié. Désormais on affiche le nom de l'opérateur et la date de réalisation de l'étape.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Réservation de numéros: la quittance est désormais directement enregistrée dans le dossier de l'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Parts de copropriétés: Diverses correction de bugs.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 01.06.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Suivi d'affaire: Le tableau de suivi d'affaire a été modifié. Notamment, on n'affiche plus qui a déclanché l'affaire mais celui qui l'a réalisée.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Introduction de l'écriture inclusive.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 25.05.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Abandon d'affaire: Une affaire de modification ouverte par erreur peut être abandonnée sans répercussion. Les données de l'affaires sont basculée dans l'affaire parent (pas d'abandon/suppression de BF). 
+                                    <span>
+                                        *Le cas de l'abandon d'une affaire d'abandon partiel n'est pas traité. **La fenêtre d'abandon de l'affaire a été améliorée.
+                                    </span>
                                 </span>
-                            </span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 21.05.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cadastration: lorsqu'un numéro est délié d'une affaire, les factures y relatives sont automatiquement supprimées.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cadastration: lorsqu'un nouveau numéro est référencé à l'affaire, une facture est automatiquement liée à ce numéro.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 19.05.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Réservation de numéros: Les numéros de base potentiels correspondent aux numéros référencés dans l'affaire. Il faut référencer le/s numéro/s de base avant de réserver des unités/parts ou DDP.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Numéros référencés dans une affaire: ajout de la possibilité de supprimer le lien entre le numéro et l'affaire pour l'opérateur administrateur.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Création d'affaire: Possibilité de référencer le bien-fonds de base pour certaines affaires (PPE, PCOP et autres...) directement depuis le masque de création de l'affaire.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 10.05.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Balance: Ajout de la possibilité d'abandonner un numéro lors de la saisie de la balance (le numéro peut être abandonné ou utilisé pour créer un DDP).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Balance: Correction d'une erreur lors du référencement du bien-fonds de base lors de la création d'un DDP.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Balance: Il est désormais possible de charger plusieurs désignations dans une affaire pour constituer la balance globale.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 05.05.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Consultations de l'affaire: L'en-tête est désormais fixe (on voit toujours le numéro de l'affaire peu importe où on se trouve dans la consultation de l'affaire).</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 04.05.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Mat diff: Correction du chargement des affaire en mat diff par opérateur.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Consultation d'affaire: Ajout d'un bouton sur la map redirigeant directement sur le guichet cartographique dans le thème cadastre.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Article 35: Il est désormais possible de réserver des numéros de la MO dans ce type d'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Numéros: La recherche des premier numéros disponibles affiche désormais également le prochain numéro de bien-fonds dans chaque cadastre.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Numéros de la MO: Correction d'un bug qui réservait des numéros (autre que points de détail) en partant de 1 lorsqu'un numéro de plan était saisi dans le formulaire de réservation.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 30.04.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Edition d'affaire: Le champ "personne de contact" lorsque le client commande/envoi est une entreprise suggère les personnes de contact enregistrées.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cockpit - Mat diff à réaliser: Filtre par opérateur.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 29.04.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Numéros de la MO: Amélioration de la recherche et de l'affichage des numéros de la MO.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Suivi d'affaire: correction du texte lors de la réservation de numéros de la MO.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 28.04.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Infos générales de l'affaire: Correction d'un bug qui renvoyait l'utilisateur (secrétariat) sur la page de connexion lors de la modification du client commande/envoi de l'affaire.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 27.04.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Base de données: Corrections de numéros et affaires selon comparaisons avec Terris.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cockpit: amélioration du chargement des affaires en cours.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Réservation de numéros de la MO: filtre du tableau (affiche par défaut les réservations de la semaine précédante).</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 23.04.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cockpit: amélioration du chargement des affaires.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 22.04.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Erreurs: Clarification des erreurs quand une requête retourne une erreur.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Consultation historique numéro: correction de l'erreur levée lorsqu'aucune affaire n'est liée à un numéro.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Infos générales de l'affaire: correction d'un bug qui affichait les clients des devis dans l'encart du client de la facture.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Devis: il est désormais à nouveau possible de modifier un devis.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Ajout de l'étape de fin de processus aux affaires clôturées dans Infolica si elle n'était pas déjà saisie.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Les affaires qui avaient été validées dand GEOS et Infolica (sans réservation de numéro) ont été clôturées dans Infolica.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 21.04.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Etape affaire: Si aucun numéro n'est réservé dans l'affaire, l'affaire est clôturée lors de la validation.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cockpit: Modification de la sélection du type d'affaire (soit tous, soit un seul).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Documents: Correction du chargement du chemin de l'affaire lorsque celui-ci est faux (le texte du chemin d'affaire affiche un commentaire).</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 20.04.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Documents affaire: Correction d'un bug lors du téléchargement d'un fichier qui était conservé dans le cache.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Document Affaire: Le rôle admin peut désormais corriger le chemin de l'affaire s'il est faux.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Edition de client: la page de création de client s'ouvre désormais sans avoir à cliquer sur "modifier les données du client".</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cockpit: la consultation des affaires dans l'étape "Devis" se fait dans le tableau des affaires chez le client.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 16.04.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Affaires chez le client: tout le monde peut consulter les affaires chez les clients pour tout type d'affaire (extension de l'option qui était jusqu'alors dispo uniquement à la PPE).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Facturation: la date de facture se met automatiquement seulement dans l'étape prép. admin. pour la création de nouvelles factures.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Ajout type d'affaire MPD.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Génération auto du "no_access" lors de la création de nouveaux biens-fonds.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de certains immeubles (état, unité de PPE, no_access).</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 15.04.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Mise à jour du cockpit (suppression mat-diff dans le tableau de suivi + renommage des étapes).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Clients: Ajout titre "Monsieur et Madame".</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de réservation de numéros DDP/PPE/PCOP sur un bien-fonds.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 13.04.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Mise à jour de l'édition de la balance de l'affaire (récupérer la balance du fichier désignation et possibilité de créer/supprimer des DDP et immatriculer du DP ou exmatriculer un BF).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Création d'affaire: le dossier créé dans affaires_conservation a désormais la date de création de l'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Diverses corrections.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 31.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de la recherche de bf dans la création d'affaire.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 30.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Map: affichage des affaires voisines en travail (Merci MK).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Interaction avec la map: il faut appuyer sur CTRL + zoom (molette souris) pour zoomer (Merci MK).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction liée à l'authentification (Merci MK).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Client (commande, envoi et facture): correction de l'affichage du client lors de modification.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 29.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Contrôle du coordinateur de projet: Affichage de tous les champs d'emblée.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de la base de données des clients.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Les opérateurs PPE peuvent à nouveau créer des clients.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Intégration des biens-fonds en vigueur de Terris.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 26.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction du nom de certains blocs dans la consultation d'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction du filtre des affaires dans le cockpit.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de l'affichage de la date de modification des documents dans le dossier de l'affaire.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 25.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Affaire de suppression de DDP désormais gérée dans l'affaire de type division/réunion.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de l'immatriculation de DP et d'exmatriculation de BF.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 23.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Numéros: ajout d'une vue du premier numéro de la MO disponible par cadastre, type et plan et adaptation du design de la page.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Mail d'étape: ajout du cadastre.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Facturation de cadastration: correction de l'édition de facture (les numéros référencés à une facture ne disparaissent plus de la facture après édition).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Facturation de cadastration: Séparation des boutons pour générer la req et la lettre au propriétaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de l'affichage du chemin de l'affaire dans la partie "Documents".</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cockpit: Par défaut, n'affiche pas les mat-diff.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 22.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">PPE: Ajout du cadre de référencement de numéros dans l'affaire afin de mentionner le bien-fonds de base.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Clients: Mise à jour des clients remplacés dans les affaires non envoyées. Il ne devrait plus y avoir de client pas automatiquement repris lors de la modification d'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Numéros: amélioration de l'affichage des numéros en projet (*), DDP entre parenthèses et unités et parts cop avec leur suffixe (lettre d'unité ou 'part' respectivement).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cockpit: affiche toutes les affaires pour les utilisateurs secrétariat, responsable, RF et admin.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Contrôle lors de la création de numéro: impossible de créer un numéro sup au numéro max du cadastre +1.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 21.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Déploiement de la production.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Migration définitive des données de ACCESS.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-            
-            
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 18.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction droit de modification de client dans l'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Affaire de servitude: ajout référence numéro.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Modification de la page de consultation/édition de client: par défaut les champs ne sont pas éditable. Il faut cliquer sur le bouton modifier pour les éditer.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 17.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Affaire de pcop: adaptation pour qu'elle n'ait pas de facture.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Facturation cadastration: liste des BF référencés à jour selon les BF déjà facturés.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 16.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Réservation de numéros de la MO: correction de saisie du plan pour les points de détail et de l'import des données.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 15.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Référence de numéros à une affaire désormais possible pour l'opérateur MO.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de l'affichage des adresses d'envoi.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cadastration: Le client est par défaut GEON - DGY.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Création de cadastration: texte auto 'Cadastration sur ' dans le champ "Description".</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Parts de copropriété: correction du chemin de l'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Récupération de la balance dans le fichier 'Des_xxx.docx' lors de la préparation du dossier final</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 11.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Mise à jour des droits et des valeurs par défaut pour l'opérateur secrétariat.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction des droits d'édition des clients.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 10.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction du format d'adresse des clients dans l'affaire et dans la facture.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de la création d'un BF de base s'il n'existe pas encore dans la base de données dans la réservation de numéros.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 08.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Ajout des droits d'édition des affaires PCOP et AUTRE pour l'utilisateur "secrétariat".</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Réservation de numéros: Correction d'un bug qui rendait possible l'enregistrement d'un DDP, une unité de PPE ou une part de copropriété sans immeuble de base.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction du login.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 07.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Création d'un mode d'emploi sur bookstack.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Corrections diverses: édition de clients et création d'affaire.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 03.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">PPE: affichage d'un asterisque sur le bien-fonds de base s'il n'est pas déposé.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Modification de PPE: possibilité d'abandonner et réactiver des numéros réservés.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Modification d'affaire: Correction du suivi d'affaire (désormais il dépend du type de modification).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Droits utilisateur: Corrections et améliorations.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 02.03.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">PPE: Créer un immeuble de base s'il n'existe pas dans la base de données.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 26.02.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de l'affichage des grands tableaux.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Consultation d'affaire: recharger automatiquement le suivi d'affaire lorsqu'une nouvelle étape a été enregistrée.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">PPE: si affaire chez le client, propose automatiquement la prochaine étape "travail opérateur".</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 25.02.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Affaire: Mise à jour des dates d'envoi et de validation via l'étape.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cockpit: filtre automatique par opérateur connecté, tous types d'affaires.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de l'affichage de la première ligne des tableau (le titre de la colonne correspond à la bonne colonne).</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 24.02.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Création d'affaire: tri alphabétique des opérateurs dans la liste.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cockpit PPE - Ajout d'un espace de gestion des affaires en attente chez le client.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Améliorations diverses.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 23.02.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de la première étape pour les affaires créées par les chefs d'équipe.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Amélioration de la page de cockpit.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Boutons entrée/cloture de mat diff dans le container "Immeubles, numéros MO et balance" - ajout d'un label pour préciser la fonction du bouton.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 22.02.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Ajout d'un panneau de suivi des matérialisations différées à réaliser pour le technicien.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de la gestion des biens fonds mat diff dans la consultation d'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cockpit: Ajout colonne étape mat diff + préselection opérateur + sélection affaire type.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Amélioration de la génération des req de mat diff.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction du chargement de la page de cockpit.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction diverses et adaptation des droits selon le type d'utilisateur.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 11.02.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Récupération des dossiers de travail de l'affaire (consultables dans l'onglet Documents).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction étape de saisie de la balance: validation technique.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Ajout possibilité de supprimer un préavis en passant par le bouton action.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction des droits sur l'application sur le frontend.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Création d'une section de gestion des biens-fonds mat diff qui ont été matérialisés pour la création de la req.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Mise à jour du login avec les nouveaux groupes LDAP.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 05.02.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Affichage de la balance (+ récupération) à partir du moment de la préparation du dossier final (phase précédant l'envoi).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de l'importation des affaires de modification.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 04.02.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Ajout de la navigation entre les affaires de base et les affaires de modification en cliquant sur le bouton contenant le numéro d'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Suppression désormais possible de la mention mat diff losque l'affaire est envoyée ou cloturée.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de l'import des numéros avec mention mat-diff.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de l'importation des affaires de type modification.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 03.02.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Numéros et BF liés à l'affaire: la réservation n'est plus possible lorsque la date d'envoi de l'affaire est saisie.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cockpit: filtrer par opérateur et revenir à une vue avec tous les opérateur.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Ajout d'une barre de chargement pour indiquer quand le tableau du cockpit charge les affaires.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Uniformisation des termes chef d'équipe, technicien et collaborateur. Désormais: opérateur.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 02.02.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Suppression type d'affaire Devis. On ouvre une affaire normale et on passe par l'étape "devis" pour créer les devis.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Récupération du masque de cockpit (suivi technique de l'affaire) et ajout du filtre par opérateur.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Récupération de l'historique des affaires du tableau de suivi des affaires (à l'exception des affaires de cadastrations et rétablissement de PFP3).</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 28.01.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Ajout réservation de numéros MO dans l'affaire de cadastration.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Affichage des clients pour la facturation dans le résumé de l'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de la recherche d'affaire par client.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Enregistrement de la balance.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de l'affichage de la map lorsque la fenêtre du navigateur n'est pas à l'échelle 100% (Il ne faut pas modifier l'échelle de la page en cours de consultation, mais recharger la page après).</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 22.01.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Adaptation du contenu affiché par type d'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction du format de la date dans le bordereau de l'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de l'import de la base de données clients.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Mise à jour du bordereau de l'affaire.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 13.01.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Envoi d'e-mail lors de changement d'étape (reste à paramétrer si les acteurs souhaitent ou non recevoir un mail).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Sélection de l'opérateur dans le dialoge de changemenet d'état (il n'est plus obligatoire de le saisir à la création de l'affaire).</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 12.01.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Données importées depuis Access.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Client - correction clients "personnes individuelle": possibilité d'ajouter un nom d'entreprise.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Client - correction à l'importation: récupère les noms des entreprises/ASSA/SARL, etc. contenus jusqu'alors dans la rubrique Titre dans ACCESS.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Consultation d'affaire: correction du zoom.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de bugs divers.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 05.01.2021</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Base de données: importer les données de Access.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Réactivation de l'affaire: Possibilité de réactiver une affaire abandonnée ou clôturée et de revenir à l'état juridique précédent.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Préavis: A la création d'un préavis, le fichier est automatiquement généré et enregistré dans le dossier de l'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Création d'affaire: Le champ 'Description' est obligatoire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Dossier de l'affaire: Affiche le contenu du dossier de l'affaire et permet de télécharger les fichiers.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Informations générales de l'affaire: ajout d'un espace d'informations générales ou spécificités de l'affaire et suppression de l'espace de remarques de l'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Facturation: ajout d'une section "devis".</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Suivi affaire: Envoi d'un e-mail de notification à la personne concernée par la prochaine étape avec l'historique de l'affaire.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Suivi affaire: Correction de la sélection auto de l'étape suivant.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Contrôles et suivis: Il n'est plus nécessaire d'entrer la date et le nom de l'opérateur, ils sont récupérés à la volée.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Réservation de numéros de la MO: Validation du formulaire + demande de confirmation de la réservation avant enregistrement.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cadastration: Possibilité de référencer des biens-fonds à une facture.</span>
-                        </md-list-item>
-
-                        <md-list-item>
-                            <md-icon>check_box_outline_blank</md-icon>
-                            <span class="md-list-item-text">Balances: Intégrer les contrôles des biens-fonds mutés.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box_outline_blank</md-icon>
-                            <span class="md-list-item-text">Affaire de RP: Ajout "Provient du RP" et "Va dans le RP" dans les balances.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box_outline_blank</md-icon>
-                            <span class="md-list-item-text">Affaire de division: contrôler s'il y a des DDP créés et s'il existait des DDP sur les biens-fonds à supprimer.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 09.10.2020</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Controle du géomètre: Créé.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Balance: Récupérées depuis GEOS.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Ajout du DP dans les balances.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cadastration: Possibilité de référencer des biens-fonds à une facture.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Abandon d'affaire: Ajout d'un bouton abrégé pour la clôture et l'abandon de l'affaire. L'abandon occasionne l'abandon des numéros réservés.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Numéros de la MO (PFP, DP, bâtiments, etc): réservation et affichage des numéros réservés dans l'affaire (réservations pas encore récupérées de ACCESS) et prise en comte des "cadastres conjoints", comme la Chaux-de-Fonds et les Eplatures.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Numéros de la MO: Télécharger la réquisition de radiation de mat-diff.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Controle PPE: Formulaire mis à jour + gestion de plusieurs contrôles.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Cadastration: Générer une lettre pour le propriétaire et une req pour le RF.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Préavis: adaptation des adresses de demande au SCAT aux services de l'urbanisme des villes.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Correction de bugs.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
-
-            <md-card>
-                <md-card-header>
-                    <div class="md-title">Etat au 14.08.2020</div>
-                </md-card-header>
-                <md-card-content>
-                    <md-list>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Générer la page de demande (bouton "Bordereau de l'affaire" en haut de la page de consultation d'une affaire).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Imprimer quittance immeubles réservés. Bouton visible dans l'encart "Réservation de numéros" si au moin un numéro est réservé.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Modification d'affaire - abandon partiel: mise à jour de l'affaire, création d'une affaire de suppression des biens-fonds référencés (l'affaire de modification est clôturée à la création et l'affaire fille reste active).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Modification d'affaire: lorsque la modification récupère tous les numéros de l'affaire de base (i.e. plus aucun numéro n'est actif dans l'affaire de base), l'affaire de base est clôturée à l'ouverture de l'affaire de modification.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Possibilité d'enregistrer des personnes de contact pour un client "personne moral".
-                                <span class="md-list-item-text">Les contacts sont proposés dans le champ "A l'attention de..." lors de la création d'affaire ou de la création de facture.</span>
-                            </span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Gestion améliorée des adresses (notamment de facturation).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Réservation de numéros: le type de numéro est défini automatiquement à la réservation selon le type d'affaire.
-                                <span class="md-list-item-text" style="font-weight: bold; color: red;">La réservation de numéros (DP, Bâtiments, etc) n'est pas encore disponible !!</span>
-                            </span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Affichage des panneaux déroulant de la consultation de l'affaire selon le type d'affaire et réordonné.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Date de validation de l'affaire: proposition de mise à jour lorsque le contrôle a été réalisé. Une erreur est levée lorsque la date est inférieure à une étape ultérieure.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Création d'affaire et facturation: ajout d'un bouton pour recharger la liste des clients si un client a été enregistré à la volée.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Changement de type d'affaire dans le panneau de consultation possible seulement dans certains cas (affaire de type autre à division par exemple).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Création de client: formulaire revisité (distinction personne morale vs personne physique et liste de sélection pour le titre d'une personne physique).</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Recherche de client par type_client/nom/prénom/nom entreprise.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Recherche d'affaire par client.</span>
-                        </md-list-item>
-                        <md-list-item>
-                            <md-icon>check_box</md-icon>
-                            <span class="md-list-item-text">Corrections de bugs.</span>
-                        </md-list-item>
-                    </md-list>
-                </md-card-content>
-            </md-card>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 21.05.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cadastration: lorsqu'un numéro est délié d'une affaire, les factures y relatives sont automatiquement supprimées.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cadastration: lorsqu'un nouveau numéro est référencé à l'affaire, une facture est automatiquement liée à ce numéro.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 19.05.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Réservation de numéros: Les numéros de base potentiels correspondent aux numéros référencés dans l'affaire. Il faut référencer le/s numéro/s de base avant de réserver des unités/parts ou DDP.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Numéros référencés dans une affaire: ajout de la possibilité de supprimer le lien entre le numéro et l'affaire pour l'opérateur administrateur.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Création d'affaire: Possibilité de référencer le bien-fonds de base pour certaines affaires (PPE, PCOP et autres...) directement depuis le masque de création de l'affaire.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 10.05.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Balance: Ajout de la possibilité d'abandonner un numéro lors de la saisie de la balance (le numéro peut être abandonné ou utilisé pour créer un DDP).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Balance: Correction d'une erreur lors du référencement du bien-fonds de base lors de la création d'un DDP.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Balance: Il est désormais possible de charger plusieurs désignations dans une affaire pour constituer la balance globale.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 05.05.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Consultations de l'affaire: L'en-tête est désormais fixe (on voit toujours le numéro de l'affaire peu importe où on se trouve dans la consultation de l'affaire).</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 04.05.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Mat diff: Correction du chargement des affaire en mat diff par opérateur.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Consultation d'affaire: Ajout d'un bouton sur la map redirigeant directement sur le guichet cartographique dans le thème cadastre.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Article 35: Il est désormais possible de réserver des numéros de la MO dans ce type d'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Numéros: La recherche des premier numéros disponibles affiche désormais également le prochain numéro de bien-fonds dans chaque cadastre.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Numéros de la MO: Correction d'un bug qui réservait des numéros (autre que points de détail) en partant de 1 lorsqu'un numéro de plan était saisi dans le formulaire de réservation.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 30.04.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Edition d'affaire: Le champ "personne de contact" lorsque le client commande/envoi est une entreprise suggère les personnes de contact enregistrées.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cockpit - Mat diff à réaliser: Filtre par opérateur.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 29.04.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Numéros de la MO: Amélioration de la recherche et de l'affichage des numéros de la MO.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Suivi d'affaire: correction du texte lors de la réservation de numéros de la MO.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 28.04.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Infos générales de l'affaire: Correction d'un bug qui renvoyait l'utilisateur (secrétariat) sur la page de connexion lors de la modification du client commande/envoi de l'affaire.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 27.04.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Base de données: Corrections de numéros et affaires selon comparaisons avec Terris.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cockpit: amélioration du chargement des affaires en cours.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Réservation de numéros de la MO: filtre du tableau (affiche par défaut les réservations de la semaine précédante).</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 23.04.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cockpit: amélioration du chargement des affaires.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 22.04.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Erreurs: Clarification des erreurs quand une requête retourne une erreur.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Consultation historique numéro: correction de l'erreur levée lorsqu'aucune affaire n'est liée à un numéro.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Infos générales de l'affaire: correction d'un bug qui affichait les clients des devis dans l'encart du client de la facture.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Devis: il est désormais à nouveau possible de modifier un devis.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Ajout de l'étape de fin de processus aux affaires clôturées dans Infolica si elle n'était pas déjà saisie.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Les affaires qui avaient été validées dand GEOS et Infolica (sans réservation de numéro) ont été clôturées dans Infolica.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 21.04.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Etape affaire: Si aucun numéro n'est réservé dans l'affaire, l'affaire est clôturée lors de la validation.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cockpit: Modification de la sélection du type d'affaire (soit tous, soit un seul).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Documents: Correction du chargement du chemin de l'affaire lorsque celui-ci est faux (le texte du chemin d'affaire affiche un commentaire).</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 20.04.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Documents affaire: Correction d'un bug lors du téléchargement d'un fichier qui était conservé dans le cache.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Document Affaire: Le rôle admin peut désormais corriger le chemin de l'affaire s'il est faux.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Edition de client: la page de création de client s'ouvre désormais sans avoir à cliquer sur "modifier les données du client".</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cockpit: la consultation des affaires dans l'étape "Devis" se fait dans le tableau des affaires chez le client.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 16.04.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Affaires chez le client: tout le monde peut consulter les affaires chez les clients pour tout type d'affaire (extension de l'option qui était jusqu'alors dispo uniquement à la PPE).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Facturation: la date de facture se met automatiquement seulement dans l'étape prép. admin. pour la création de nouvelles factures.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Ajout type d'affaire MPD.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Génération auto du "no_access" lors de la création de nouveaux biens-fonds.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de certains immeubles (état, unité de PPE, no_access).</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 15.04.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Mise à jour du cockpit (suppression mat-diff dans le tableau de suivi + renommage des étapes).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Clients: Ajout titre "Monsieur et Madame".</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de réservation de numéros DDP/PPE/PCOP sur un bien-fonds.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 13.04.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Mise à jour de l'édition de la balance de l'affaire (récupérer la balance du fichier désignation et possibilité de créer/supprimer des DDP et immatriculer du DP ou exmatriculer un BF).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Création d'affaire: le dossier créé dans affaires_conservation a désormais la date de création de l'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Diverses corrections.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 31.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de la recherche de bf dans la création d'affaire.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 30.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Map: affichage des affaires voisines en travail (Merci MK).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Interaction avec la map: il faut appuyer sur CTRL + zoom (molette souris) pour zoomer (Merci MK).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction liée à l'authentification (Merci MK).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Client (commande, envoi et facture): correction de l'affichage du client lors de modification.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 29.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Contrôle du coordinateur de projet: Affichage de tous les champs d'emblée.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de la base de données des clients.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Les opérateurs PPE peuvent à nouveau créer des clients.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Intégration des biens-fonds en vigueur de Terris.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 26.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction du nom de certains blocs dans la consultation d'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction du filtre des affaires dans le cockpit.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de l'affichage de la date de modification des documents dans le dossier de l'affaire.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 25.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Affaire de suppression de DDP désormais gérée dans l'affaire de type division/réunion.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de l'immatriculation de DP et d'exmatriculation de BF.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 23.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Numéros: ajout d'une vue du premier numéro de la MO disponible par cadastre, type et plan et adaptation du design de la page.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Mail d'étape: ajout du cadastre.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Facturation de cadastration: correction de l'édition de facture (les numéros référencés à une facture ne disparaissent plus de la facture après édition).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Facturation de cadastration: Séparation des boutons pour générer la req et la lettre au propriétaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de l'affichage du chemin de l'affaire dans la partie "Documents".</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cockpit: Par défaut, n'affiche pas les mat-diff.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 22.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">PPE: Ajout du cadre de référencement de numéros dans l'affaire afin de mentionner le bien-fonds de base.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Clients: Mise à jour des clients remplacés dans les affaires non envoyées. Il ne devrait plus y avoir de client pas automatiquement repris lors de la modification d'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Numéros: amélioration de l'affichage des numéros en projet (*), DDP entre parenthèses et unités et parts cop avec leur suffixe (lettre d'unité ou 'part' respectivement).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cockpit: affiche toutes les affaires pour les utilisateurs secrétariat, responsable, RF et admin.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Contrôle lors de la création de numéro: impossible de créer un numéro sup au numéro max du cadastre +1.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 21.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Déploiement de la production.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Migration définitive des données de ACCESS.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+                
+                
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 18.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction droit de modification de client dans l'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Affaire de servitude: ajout référence numéro.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Modification de la page de consultation/édition de client: par défaut les champs ne sont pas éditable. Il faut cliquer sur le bouton modifier pour les éditer.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 17.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Affaire de pcop: adaptation pour qu'elle n'ait pas de facture.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Facturation cadastration: liste des BF référencés à jour selon les BF déjà facturés.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 16.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Réservation de numéros de la MO: correction de saisie du plan pour les points de détail et de l'import des données.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 15.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Référence de numéros à une affaire désormais possible pour l'opérateur MO.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de l'affichage des adresses d'envoi.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cadastration: Le client est par défaut GEON - DGY.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Création de cadastration: texte auto 'Cadastration sur ' dans le champ "Description".</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Parts de copropriété: correction du chemin de l'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Récupération de la balance dans le fichier 'Des_xxx.docx' lors de la préparation du dossier final</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 11.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Mise à jour des droits et des valeurs par défaut pour l'opérateur secrétariat.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction des droits d'édition des clients.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 10.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction du format d'adresse des clients dans l'affaire et dans la facture.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de la création d'un BF de base s'il n'existe pas encore dans la base de données dans la réservation de numéros.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 08.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Ajout des droits d'édition des affaires PCOP et AUTRE pour l'utilisateur "secrétariat".</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Réservation de numéros: Correction d'un bug qui rendait possible l'enregistrement d'un DDP, une unité de PPE ou une part de copropriété sans immeuble de base.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction du login.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 07.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Création d'un mode d'emploi sur bookstack.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Corrections diverses: édition de clients et création d'affaire.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 03.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">PPE: affichage d'un asterisque sur le bien-fonds de base s'il n'est pas déposé.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Modification de PPE: possibilité d'abandonner et réactiver des numéros réservés.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Modification d'affaire: Correction du suivi d'affaire (désormais il dépend du type de modification).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Droits utilisateur: Corrections et améliorations.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 02.03.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">PPE: Créer un immeuble de base s'il n'existe pas dans la base de données.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 26.02.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de l'affichage des grands tableaux.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Consultation d'affaire: recharger automatiquement le suivi d'affaire lorsqu'une nouvelle étape a été enregistrée.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">PPE: si affaire chez le client, propose automatiquement la prochaine étape "travail opérateur".</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 25.02.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Affaire: Mise à jour des dates d'envoi et de validation via l'étape.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cockpit: filtre automatique par opérateur connecté, tous types d'affaires.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de l'affichage de la première ligne des tableau (le titre de la colonne correspond à la bonne colonne).</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 24.02.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Création d'affaire: tri alphabétique des opérateurs dans la liste.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cockpit PPE - Ajout d'un espace de gestion des affaires en attente chez le client.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Améliorations diverses.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 23.02.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de la première étape pour les affaires créées par les chefs d'équipe.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Amélioration de la page de cockpit.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Boutons entrée/cloture de mat diff dans le container "Immeubles, numéros MO et balance" - ajout d'un label pour préciser la fonction du bouton.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 22.02.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Ajout d'un panneau de suivi des matérialisations différées à réaliser pour le technicien.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de la gestion des biens fonds mat diff dans la consultation d'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cockpit: Ajout colonne étape mat diff + préselection opérateur + sélection affaire type.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Amélioration de la génération des req de mat diff.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction du chargement de la page de cockpit.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction diverses et adaptation des droits selon le type d'utilisateur.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 11.02.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Récupération des dossiers de travail de l'affaire (consultables dans l'onglet Documents).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction étape de saisie de la balance: validation technique.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Ajout possibilité de supprimer un préavis en passant par le bouton action.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction des droits sur l'application sur le frontend.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Création d'une section de gestion des biens-fonds mat diff qui ont été matérialisés pour la création de la req.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Mise à jour du login avec les nouveaux groupes LDAP.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 05.02.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Affichage de la balance (+ récupération) à partir du moment de la préparation du dossier final (phase précédant l'envoi).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de l'importation des affaires de modification.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 04.02.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Ajout de la navigation entre les affaires de base et les affaires de modification en cliquant sur le bouton contenant le numéro d'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Suppression désormais possible de la mention mat diff losque l'affaire est envoyée ou cloturée.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de l'import des numéros avec mention mat-diff.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de l'importation des affaires de type modification.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 03.02.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Numéros et BF liés à l'affaire: la réservation n'est plus possible lorsque la date d'envoi de l'affaire est saisie.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cockpit: filtrer par opérateur et revenir à une vue avec tous les opérateur.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Ajout d'une barre de chargement pour indiquer quand le tableau du cockpit charge les affaires.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Uniformisation des termes chef d'équipe, technicien et collaborateur. Désormais: opérateur.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 02.02.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Suppression type d'affaire Devis. On ouvre une affaire normale et on passe par l'étape "devis" pour créer les devis.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Récupération du masque de cockpit (suivi technique de l'affaire) et ajout du filtre par opérateur.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Récupération de l'historique des affaires du tableau de suivi des affaires (à l'exception des affaires de cadastrations et rétablissement de PFP3).</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 28.01.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Ajout réservation de numéros MO dans l'affaire de cadastration.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Affichage des clients pour la facturation dans le résumé de l'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de la recherche d'affaire par client.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Enregistrement de la balance.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de l'affichage de la map lorsque la fenêtre du navigateur n'est pas à l'échelle 100% (Il ne faut pas modifier l'échelle de la page en cours de consultation, mais recharger la page après).</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 22.01.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Adaptation du contenu affiché par type d'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction du format de la date dans le bordereau de l'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de l'import de la base de données clients.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Mise à jour du bordereau de l'affaire.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 13.01.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Envoi d'e-mail lors de changement d'étape (reste à paramétrer si les acteurs souhaitent ou non recevoir un mail).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Sélection de l'opérateur dans le dialoge de changemenet d'état (il n'est plus obligatoire de le saisir à la création de l'affaire).</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 12.01.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Données importées depuis Access.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Client - correction clients "personnes individuelle": possibilité d'ajouter un nom d'entreprise.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Client - correction à l'importation: récupère les noms des entreprises/ASSA/SARL, etc. contenus jusqu'alors dans la rubrique Titre dans ACCESS.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Consultation d'affaire: correction du zoom.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de bugs divers.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 05.01.2021</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Base de données: importer les données de Access.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Réactivation de l'affaire: Possibilité de réactiver une affaire abandonnée ou clôturée et de revenir à l'état juridique précédent.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Préavis: A la création d'un préavis, le fichier est automatiquement généré et enregistré dans le dossier de l'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Création d'affaire: Le champ 'Description' est obligatoire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Dossier de l'affaire: Affiche le contenu du dossier de l'affaire et permet de télécharger les fichiers.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Informations générales de l'affaire: ajout d'un espace d'informations générales ou spécificités de l'affaire et suppression de l'espace de remarques de l'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Facturation: ajout d'une section "devis".</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Suivi affaire: Envoi d'un e-mail de notification à la personne concernée par la prochaine étape avec l'historique de l'affaire.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Suivi affaire: Correction de la sélection auto de l'étape suivant.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Contrôles et suivis: Il n'est plus nécessaire d'entrer la date et le nom de l'opérateur, ils sont récupérés à la volée.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Réservation de numéros de la MO: Validation du formulaire + demande de confirmation de la réservation avant enregistrement.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cadastration: Possibilité de référencer des biens-fonds à une facture.</span>
+                            </md-list-item>
+    
+                            <md-list-item>
+                                <md-icon>check_box_outline_blank</md-icon>
+                                <span class="md-list-item-text">Balances: Intégrer les contrôles des biens-fonds mutés.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box_outline_blank</md-icon>
+                                <span class="md-list-item-text">Affaire de RP: Ajout "Provient du RP" et "Va dans le RP" dans les balances.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box_outline_blank</md-icon>
+                                <span class="md-list-item-text">Affaire de division: contrôler s'il y a des DDP créés et s'il existait des DDP sur les biens-fonds à supprimer.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 09.10.2020</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Controle du géomètre: Créé.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Balance: Récupérées depuis GEOS.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Ajout du DP dans les balances.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cadastration: Possibilité de référencer des biens-fonds à une facture.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Abandon d'affaire: Ajout d'un bouton abrégé pour la clôture et l'abandon de l'affaire. L'abandon occasionne l'abandon des numéros réservés.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Numéros de la MO (PFP, DP, bâtiments, etc): réservation et affichage des numéros réservés dans l'affaire (réservations pas encore récupérées de ACCESS) et prise en comte des "cadastres conjoints", comme la Chaux-de-Fonds et les Eplatures.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Numéros de la MO: Télécharger la réquisition de radiation de mat-diff.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Controle PPE: Formulaire mis à jour + gestion de plusieurs contrôles.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Cadastration: Générer une lettre pour le propriétaire et une req pour le RF.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Préavis: adaptation des adresses de demande au SCAT aux services de l'urbanisme des villes.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Correction de bugs.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+    
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Etat au 14.08.2020</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <md-list>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Générer la page de demande (bouton "Bordereau de l'affaire" en haut de la page de consultation d'une affaire).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Imprimer quittance immeubles réservés. Bouton visible dans l'encart "Réservation de numéros" si au moin un numéro est réservé.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Modification d'affaire - abandon partiel: mise à jour de l'affaire, création d'une affaire de suppression des biens-fonds référencés (l'affaire de modification est clôturée à la création et l'affaire fille reste active).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Modification d'affaire: lorsque la modification récupère tous les numéros de l'affaire de base (i.e. plus aucun numéro n'est actif dans l'affaire de base), l'affaire de base est clôturée à l'ouverture de l'affaire de modification.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Possibilité d'enregistrer des personnes de contact pour un client "personne moral".
+                                    <span class="md-list-item-text">Les contacts sont proposés dans le champ "A l'attention de..." lors de la création d'affaire ou de la création de facture.</span>
+                                </span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Gestion améliorée des adresses (notamment de facturation).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Réservation de numéros: le type de numéro est défini automatiquement à la réservation selon le type d'affaire.
+                                    <span class="md-list-item-text" style="font-weight: bold; color: red;">La réservation de numéros (DP, Bâtiments, etc) n'est pas encore disponible !!</span>
+                                </span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Affichage des panneaux déroulant de la consultation de l'affaire selon le type d'affaire et réordonné.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Date de validation de l'affaire: proposition de mise à jour lorsque le contrôle a été réalisé. Une erreur est levée lorsque la date est inférieure à une étape ultérieure.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Création d'affaire et facturation: ajout d'un bouton pour recharger la liste des clients si un client a été enregistré à la volée.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Changement de type d'affaire dans le panneau de consultation possible seulement dans certains cas (affaire de type autre à division par exemple).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Création de client: formulaire revisité (distinction personne morale vs personne physique et liste de sélection pour le titre d'une personne physique).</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Recherche de client par type_client/nom/prénom/nom entreprise.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Recherche d'affaire par client.</span>
+                            </md-list-item>
+                            <md-list-item>
+                                <md-icon>check_box</md-icon>
+                                <span class="md-list-item-text">Corrections de bugs.</span>
+                            </md-list-item>
+                        </md-list>
+                    </md-card-content>
+                </md-card>
+            </div>
         </md-card-content>
     </md-card>
 </div>

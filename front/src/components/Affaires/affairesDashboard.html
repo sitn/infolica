@@ -3,10 +3,11 @@
     <!-- TITRE -->
     <md-toolbar class="affaireDashboardTitle">
         <div style="width: 96% " class="md-layout md-gutter md-alignment-center-space-between">
-            <div class="md-layout-item">
+            <div class="md-layout-item md-size-70">
                 <h1 style="margin-bottom: 0px;">
                     Affaire {{ affaire.id }}
                     <span v-if="affaire.no_access !== null">[{{ affaire.no_access }}]</span>
+                    <span v-if="affaire.urgent && affaire.date_envoi === null && !affaire.abandon" style="padding-left: 30px; padding-right: 30px; color:red">!!! AFFAIRE URGENTE !!! <span style="font-size: 20px;" v-if="affaire.urgent_echeance">Échéance: {{ affaire.urgent_echeance }}, il reste {{ affaire.urgent_echeance_reste }} jour(s)</span></span>
                     <span v-if="affaire.abandon"> - ABANDONNE</span>
                 </h1>
             </div>
@@ -53,9 +54,9 @@
                                 <md-input v-model="[affaire.localisation_e | 0, affaire.localisation_n | 0].join(' / ')" readonly></md-input>
                             </md-field>
                         </div>
-                        <div style="text-align: right;" class="md-layout-item" v-if="affaire.type_id===typesAffaires_conf.mutation">
+                        <div style="text-align: right;" class="md-layout-item">
                             <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('cadastre')">Cadastre</md-button>
-                            <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('environnement')">Environnement</md-button>
+                            <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('sites_pollues')">Sites Pollués</md-button>
                             <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('amenagement_territoire')">Aménagement du territoire</md-button>
                         </div>
                         <div class="md-layout-item md-size-100" v-if="showMovePointComment">

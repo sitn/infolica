@@ -44,6 +44,8 @@ def affaires_etapes_view(request):
 
     records = request.dbsession.query(VEtapesAffaires).filter(
         VEtapesAffaires.affaire_id == affaire_id
+    ).order_by(
+        VEtapesAffaires.next_datetime.desc()
     ).all()
 
     return Utils.serialize_many(records)
@@ -94,18 +96,31 @@ def etapes_new_view(request):
                 VEtapesAffaires.affaire_id == model.affaire_id,
                 VEtapesAffaires.etape_priorite == int(request.registry.settings['affaire_etape_priorite_1_id'])
             )
-        ).order_by(VEtapesAffaires.id.desc()).all()
+        ).order_by(VEtapesAffaires.next_datetime.desc()).all()
         lastSteps = "".join(["<tr><td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
                               <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{} {}</td>\
                               <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
                               <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
-                              </tr>".format(i.datetime, i.operateur_prenom, i.operateur_nom, i.etape, i.remarque if i.remarque else "") for i in lastSteps])
+                              </tr>".format(
+                                  i.etape, 
+                                  i.next_operateur_prenom if i.next_operateur_prenom else "", 
+                                  i.next_operateur_nom if i.next_operateur_nom else "", 
+                                  i.next_datetime.strftime("%d.%m.%Y - %H:%M") if i.next_datetime else "", 
+                                  i.next_remarque if i.next_remarque else ""
+                                ) for i in lastSteps])
         
         affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
         text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire.id)) + "'>" + str(affaire.id) + affaire_nom + "</a></b> est en attente pour l'étape <b>"+ affaire_etape_index.nom +"</b>."
         text += "<br><br>Cadastre: " + str(affaire.cadastre)
         text += "<br>Description: " + str(affaire.nom)
-        text += ("<br><br><br><h4>Historique de l'affaire</h4><table style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'><tr><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Horodateur</th><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Opérateur</th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'><th>Etape</th><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Remarque</th></tr>" + lastSteps + "</table>") if lastSteps != "" else ""
+        text += ("<br><br><br><h4>Historique de l'affaire</h4>\
+            <table style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>\
+                <tr>\
+                    <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Étape</th>\
+                    <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Réalisée par</th>\
+                    <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Réalisée le</th>\
+                    <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Remarque</th>\
+                </tr>" + lastSteps + "</table>") if lastSteps != "" else ""
         subject = "Infolica - affaire " + str(affaire.id)
         send_mail(request, mail_list, "", subject, html=text)
 

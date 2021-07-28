@@ -1,5 +1,5 @@
 <div class="numerosHistory">
-    <md-toolbar>
+    <md-toolbar class="justifyTitleBtn">
         <h1 style="flex: 1;">Consultation d'immeuble</h1>
         <md-button class="md-accent md-raised" @click="openEditionNumero" v-if="editNumeroAllowed">Editer</md-button>
     </md-toolbar>
@@ -159,6 +159,22 @@
                     <md-field>
                         <label>Destination</label>
                         <md-textarea v-model="numero_destination" md-autogrow readonly></md-textarea>
+                    </md-field>
+                </div>
+            </div>
+
+            <!-- Immeuble de base et associé -->
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item md-small-size-30">
+                    <md-field>
+                        <label>Immeuble de base</label>
+                        <md-textarea v-model="numero_base" md-autogrow readonly></md-textarea>
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-small-size-30">
+                    <md-field>
+                        <label>Immeuble(s) associé(s)</label>
+                        <md-textarea v-model="numero_associe" md-autogrow readonly></md-textarea>
                     </md-field>
                 </div>
             </div>

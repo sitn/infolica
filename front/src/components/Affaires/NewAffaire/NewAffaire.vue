@@ -71,7 +71,8 @@ export default {
         information: null,
         technicien_id: JSON.parse(localStorage.getItem("infolica_user")).id,
         type: null,
-        vref: null
+        urgent: false,
+        urgent_echeance: null,
       },
       lastRecord: null,
       numerosReferences: [],
@@ -118,8 +119,11 @@ export default {
       role_conf: {
         ppe_user_id: Number(process.env.VUE_APP_PPE_ROLE_ID),
         mo_user_id: Number(process.env.VUE_APP_MO_ROLE_ID),
-        secretariat_user_id: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)
-      }
+        secretariat_user_id: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID),
+        responsable_user_id: Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID),
+        admin_user_id: Number(process.env.VUE_APP_ADMIN_ROLE_ID)
+      },
+      showUrgentCB: false,
     };
   },
   // Validations
@@ -143,6 +147,10 @@ export default {
         client_facture = {
           id: {required}
         };
+      }
+
+      if (this.form.urgent) {
+        form.technicien_id = {required};
       }
 
     } else {
@@ -304,6 +312,11 @@ export default {
               }
               
             }
+
+            if (userRoleID && [this.role_conf.responsable_user_id, this.role_conf.admin_user_id].includes(userRoleID)) {
+              this.showUrgentCB = true;
+            }
+
             this.types_affaires_list_bk = tmp;
             this.types_affaires_list = stringifyAutocomplete(tmp);
           }
@@ -524,8 +537,13 @@ export default {
       if (this.form.localisation_N) {
         formData.append("localisation_N", this.form.localisation_N);
       }
-      if (this.form.vref) {
-        formData.append("vref", this.form.vref);
+      if (this.form.urgent) {
+        formData.append("urgent", this.form.urgent);
+      }
+      if (this.form.urgent && this.form.urgent_echeance) {
+        formData.append("urgent_echeance", 
+          moment(this.form.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)
+        );
       }
       if (this.form.date_ouverture) {
         formData.append("date_ouverture",
@@ -997,7 +1015,6 @@ export default {
         this.form.cadastre = this.cadastres_list.filter(x => x.id === this.selectedModificationAffaire.cadastre_id)[0];
         this.form.nom = modif_type + this.selectedModificationAffaire.nom;
         this.form.nom_ = this.selectedModificationAffaire.nom; // garder le nom pas modifié en mémoire
-        this.form.vref = this.selectedModificationAffaire.vref;
         this.form.client_commande = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_commande_id)[0];
         this.form.client_commande_complement = this.selectedModificationAffaire.client_commande_complement;
         this.form.client_envoi = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_envoi_id)[0];

@@ -1,6 +1,5 @@
 from sqlalchemy import (
     Column,
-    Index,
     Integer,
     BigInteger,
     Float,
@@ -34,7 +33,7 @@ class Operateur(Base):
     entree = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     sortie = Column(Date)
     mail = Column(Text)
-
+    last_notemaj_id = Column(BigInteger)
 
 class Cadastre(Base):
     __tablename__ = 'cadastre'
@@ -137,6 +136,8 @@ class Affaire(Base):
     chemin = Column(Text)
     abandon = Column(Boolean)
     resume = Column(Text)
+    urgent = Column(Boolean)
+    urgent_echeance = Column(Date)
 
 
 class AffaireEtapeIndex(Base):
@@ -654,6 +655,8 @@ class NumeroRelation(Base):
         NumeroRelationType.id), nullable=False)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
 
+    UniqueConstraint(numero_id_base, numero_id_associe, relation_type_id, affaire_id)
+
 
 class AffaireNumeroType(Base):
     __tablename__ = 'affaire_numero_type'
@@ -775,6 +778,18 @@ class EtapeMailer(Base):
     etape_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id), nullable=False)
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
     sendmail = Column(Boolean)
+
+
+class NotesMAJ(Base):
+    __tablename__ = 'notes_maj'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
+    version = Column(Text, nullable=False)
+    titre = Column(Text, nullable=False)
+    message = Column(Text, nullable=False)
+    date = Column(Date, nullable=False)
+    delai = Column(Date, nullable=False)
 
 
 # ======================== VUES ========================
@@ -929,6 +944,8 @@ class VAffaire(Base):
     etape_priorite = Column(Integer)
     etape_ordre = Column(BigInteger)
     abandon = Column(Boolean)
+    urgent = Column(Boolean)
+    urgent_echeance = Column(Date)
 
 
 class VEnvois(Base):
@@ -955,7 +972,7 @@ class VEtapesAffaires(Base):
                       'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger)
-    etape_id = Column(BigInteger)
+    etape_id = Column(BigInteger, primary_key=True)
     etape = Column(Text)
     remarque = Column(Text)
     datetime = Column(DateTime)
@@ -965,12 +982,12 @@ class VEtapesAffaires(Base):
     operateur_initiales = Column(Text)
     etape_ordre = Column(BigInteger)
     etape_priorite = Column(Integer)
-    next_operateur_id = Column(Integer)
+    next_operateur_id = Column(BigInteger)
     next_operateur_nom = Column(Text)
     next_operateur_prenom = Column(Text)
     next_operateur_initiales = Column(Text)
     next_remarque = Column(Text)
-    next_datetime = Column(Text)
+    next_datetime = Column(DateTime)
 
 
 class VAffairesPreavis(Base):
