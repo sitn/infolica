@@ -294,7 +294,7 @@ export default {
       };
 
       this.computeZi();
-      this.updateRecapitulatif();
+      this.updateMontants()
     },
 
     /**

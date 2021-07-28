@@ -595,20 +595,22 @@
                       <td class="tg-0lax alignRight">{{ total.montant_travauxTerrain_batiment_total_f[i-1] }} CHF</td>
                     </template>
                   </tr>
-                  <template v-if="Number(form_general.nb_batiments) > 0">
                     <tr>
                       <td class="tg-0pky" colspan="5">Total des travaux de terrain sans bâtiments</td>
                       <td class="tg-0pky alignRight">{{ total.montant_travauxTerrain_total }} CHF</td>
-                      <td class="tg-0pky batiment-separator" :colspan="(2* Number(form_general.nb_batiments))-1">Total des travaux de terrain pour bâtiments</td>
-                      <td class="tg-0pky alignRight">{{ total.montant_travauxTerrain_batiment_total_f_somme }} CHF</td>
+                      <template v-if="Number(form_general.nb_batiments) > 0">
+                        <td class="tg-0pky batiment-separator" :colspan="(2* Number(form_general.nb_batiments))-1">Total des travaux de terrain pour bâtiments</td>
+                        <td class="tg-0pky alignRight">{{ total.montant_travauxTerrain_batiment_total_f_somme }} CHF</td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0pky" colspan="5">x supplément terrain zi</td>
                       <td class="tg-0pky montantTotal alignRight">{{ total.montant_travauxTerrain_total_zi }} CHF</td>
-                      <td class="tg-0pky batiment-separator" :colspan="(2* Number(form_general.nb_batiments))-1">x supplément terrain zi</td>
-                      <td class="tg-0pky montantTotal alignRight">{{ total.montant_travauxTerrain_batiment_total_f_somme_zi }} CHF</td>
+                      <template v-if="Number(form_general.nb_batiments) > 0">
+                        <td class="tg-0pky batiment-separator" :colspan="(2* Number(form_general.nb_batiments))-1">x supplément terrain zi</td>
+                        <td class="tg-0pky montantTotal alignRight">{{ total.montant_travauxTerrain_batiment_total_f_somme_zi }} CHF</td>
+                      </template>
                     </tr>
-                  </template>
                 </tbody>
               </table>
             </md-card-content>
