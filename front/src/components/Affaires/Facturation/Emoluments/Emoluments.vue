@@ -14,12 +14,13 @@ export default {
   data: function () {
       return {
         divers: [],
+        emolumentsGeneral_list: [],
         emolumentsUnits: [],
+        enableSave: false,
         form_general: {}, //général
         form_detail: {}, //emoluments sans bâtiment
         form_detail_batiment: [], //emoluments avec bâtiments
         n_divers: 10,
-        enableSave: false,
         indexFromDB: {
           mandat: [1,2,3,4,5,6],
           travauxTerrain: [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
@@ -31,7 +32,7 @@ export default {
           relations_autres_services: 102,
           forfait_rf: 103
         },
-        showEmolumentsDialog: true,
+        showEmolumentsDialog: false,
         total: {}
       }
   },
@@ -44,12 +45,18 @@ export default {
         let idx = Math.ceil(Math.random() * this.indexFromDB.mandat.length);
         let idx2 = Math.floor(Math.random() * this.form_general.nb_batiments);
         this.form_detail["mandat"+String(idx)].nombre = 1;
-        if (this.form_general.nb_batiments>0) this.form_detail_batiment[idx2]["mandat"+String(idx)].nombre = 1;
+        if (this.form_general.nb_batiments>0) {
+          let idx = Math.ceil(Math.random() * this.indexFromDB.mandat.length);
+          this.form_detail_batiment[idx2]["mandat"+String(idx)].nombre = 1;
+        }
         // travauxTerrain
         idx = Math.ceil(Math.random() * this.indexFromDB.travauxTerrain.length);
         idx2 = Math.floor(Math.random() * this.form_general.nb_batiments);
         this.form_detail["travauxTerrain"+String(idx)].nombre = 1;
-        if (this.form_general.nb_batiments>0) this.form_detail_batiment[idx2]["travauxTerrain"+String(idx)].nombre = 1;
+        if (this.form_general.nb_batiments>0) {
+          let idx = Math.ceil(Math.random() * this.indexFromDB.mandat.length);
+          this.form_detail_batiment[idx2]["travauxTerrain"+String(idx)].nombre = 1;
+        }
         // travauxMaterialisation
         idx = Math.ceil(Math.random() * this.indexFromDB.travauxMaterialisation.length);
         this.form_detail["travauxMaterialisation"+String(idx)].nombre = 1;
@@ -57,7 +64,10 @@ export default {
         idx = Math.ceil(Math.random() * this.indexFromDB.travauxBureau.length);
         idx2 = Math.floor(Math.random() * this.form_general.nb_batiments);
         this.form_detail["travauxBureau"+String(idx)].nombre = 1;
-        if (this.form_general.nb_batiments>0) this.form_detail_batiment[idx2]["travauxBureau"+String(idx)].nombre = 1;
+        if (this.form_general.nb_batiments>0) {
+          let idx = Math.ceil(Math.random() * this.indexFromDB.mandat.length);
+          this.form_detail_batiment[idx2]["travauxBureau"+String(idx)].nombre = 1;
+        }
         // registreFoncier
         idx = Math.ceil(Math.random() * this.indexFromDB.registreFoncier.length);
         this.form_detail["registreFoncier"+String(idx)].nombre = 1;
@@ -75,7 +85,7 @@ export default {
      */
     async getEmolumentsUnit() {
       this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENTS_ENDPOINT,
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_TABLEAU_EMOLUMENTS_ENDPOINT,
         {
           withCredentials: true,
           headers: {"Accept": "application/json"}
@@ -228,21 +238,25 @@ export default {
     },
 
 
-    async initForm() {
-      this.form_general = {
-        affaire_id: this.affaire.id,
-        pente_pc: 0,
-        diff_visibilite_pc: 0,
-        trafic_pc: 0,
-        zi: 1,
-        nb_batiments: 0,
-        indice_application: 1.22,
-        tva_pc: 7.7, // %
-        remarque: "",
+    async initForm(form_general=true) {
 
-        // Bâtiments
-        batiment_f: [],
-      };
+      if (form_general) {
+        this.form_general = {
+          id: null,
+          affaire_id: this.affaire.id,
+          pente_pc: 0,
+          diff_visibilite_pc: 0,
+          trafic_pc: 0,
+          zi: 1,
+          nb_batiments: 0,
+          indice_application: 1.22,
+          tva_pc: 7.7, // %
+          remarque: "",
+  
+          // Bâtiments
+          batiment_f: [],
+        };
+      }
 
 
       this.total = {
@@ -295,6 +309,21 @@ export default {
 
       this.computeZi();
       this.updateMontants()
+    },
+
+    /**
+     * set form for nb of batiment
+     */
+    setFormDetail() {
+      for (let i=0; i<Number(this.form_general.nb_batiments); i++)  {
+        this.form_detail_batiment.push( JSON.parse( JSON.stringify(this.form_detail)) );
+        for (let key in this.form_detail_batiment[i]) {
+          this.form_detail_batiment[i][key].batiment = i+1;
+          this.form_detail_batiment[i][key].montant = numeral(0).format("0.00");
+          this.form_detail_batiment[i][key].nombre = 0;
+          this.form_detail_batiment[i][key].batiment_f = this.form_general.batiment_f[i];
+        }
+      }
     },
 
     /**
@@ -357,8 +386,8 @@ export default {
       this.form_general.zi = numeral(
         1 + 
         Number(this.form_general.pente_pc) / 100 +
-        Number(this.form_general.diff_visibilite_pc) + 
-        Number(this.form_general.trafic_pc)
+        Number(this.form_general.diff_visibilite_pc) / 100 + 
+        Number(this.form_general.trafic_pc) / 100
       ).format("0.00");
     },
 
@@ -694,7 +723,7 @@ export default {
 
 
     /**
-     * postFormular
+     * postFormular (main)
      */
     async postEmolument() {
       this.postEmolumentsGeneral().then(response => {
@@ -703,6 +732,9 @@ export default {
             if (response && response.data) {
               this.showEmolumentsDialog = false;
               this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
+
+              // refresh emoluments_general_list
+              this.getEmolumentsGeneral();
             }
           }).catch(err => handleException(err, this));
         }
@@ -769,6 +801,90 @@ export default {
       }
       
       this.updateMontants()
+    },
+
+    /**
+     * Get emoluments affaire - general
+     */
+    async getEmolumentsGeneral() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_ENDPOINT + "?affaire_id=" + this.affaire.id,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.initForm();
+
+          this.emolumentsGeneral_list = new Array(response.data.lenght);
+          for (let j=0; j<response.data.length; j++) {
+            this.emolumentsGeneral_list[j] = JSON.parse(JSON.stringify(this.form_general));
+          }
+          for (const [i, form_gen_i] of response.data.entries()) {
+            // Parcourir les form_gen
+
+            for (const key in this.form_general){
+              // Set parameters
+
+              if (key in form_gen_i) {
+                this.emolumentsGeneral_list[i][key] = form_gen_i[key];
+              }
+            }
+          }
+          this.initForm(false);
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Get emoluments
+     */
+    async getEmolumentsDetail(emolument_affaire_id) {
+      // set form_general
+      this.form_general = this.emolumentsGeneral_list.filter(x => x.id === emolument_affaire_id)[0];
+      this.setFormDetail();
+
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id,
+        {
+          withCredentials: true,
+          headers: {'Accept': 'application/json'}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          for (const emol of response.data) {
+            // iterate through response
+            if (emol.batiment === 0) {
+              // No building
+              for (let form_emol in this.form_detail) {
+                // iterate through form_detail to fill values
+                if (this.form_detail[form_emol].tableau_emolument_id === emol.tableau_emolument_id) {
+                  this.form_detail[form_emol]["nom"] = emol.position;
+                  this.form_detail[form_emol]["prix_unitaire"] = emol.prix_unitaire;
+                  this.form_detail[form_emol]["nombre"] = emol.nombre;
+                  this.form_detail[form_emol]["montant"] = numeral(emol.montant).format("0.00");
+                  break;
+                }
+              }
+            } else {
+              // Buildings
+              for (let form_emol in this.form_detail_batiment[emol.batiment-1]) {
+                // iterate this.form_detail_batiment to fill values
+                if (this.form_detail_batiment[emol.batiment-1][form_emol].tableau_emolument_id === emol.tableau_emolument_id) {
+                  this.form_detail_batiment[emol.batiment-1][form_emol]["nom"] = emol.position;
+                  this.form_detail_batiment[emol.batiment-1][form_emol]["prix_unitaire"] = emol.prix_unitaire;
+                  this.form_detail_batiment[emol.batiment-1][form_emol]["nombre"] = emol.nombre;
+                  this.form_detail_batiment[emol.batiment-1][form_emol]["montant"] = numeral(emol.montant).format("0.00");
+                  break;
+                }
+              }
+            }
+          }
+          this.updateMontants();
+          this.showEmolumentsDialog = true;
+        }
+      }).catch(err => handleException(err, this));
     }
 
   },
@@ -776,6 +892,7 @@ export default {
   mounted: function(){
     // this.initForm();
     this.getEmolumentsUnit();
+    this.getEmolumentsGeneral();
   }
 }
 </script>

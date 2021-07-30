@@ -19,6 +19,15 @@
         <md-card-expand>
             <md-card-expand-content>
                 <md-card-content>
+
+                    <!-- Emoluments -->
+                    <div v-if="$refs.emoluments && $refs.emoluments.emolumentsGeneral_list && $refs.emoluments.emolumentsGeneral_list[0]">
+                        <ul>
+                            <li v-for="item in $refs.emoluments.emolumentsGeneral_list"><a @click="$refs.emoluments.getEmolumentsDetail(item.id)">{{ item }}</a></li>
+                        </ul>
+                    </div>
+
+
                     <h3>Devis</h3>
                     <div v-if="affaire_devis[0]">
                         <md-table v-model="affaire_devis" md-sort="date" md-sort-order="desc" md-fixed-header>

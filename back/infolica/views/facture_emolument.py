@@ -15,16 +15,89 @@ import json
 ###########################################################
 
 
-@view_config(route_name='emoluments', request_method='GET', renderer='json')
-def emoluments_view(request):
+@view_config(route_name='tableau_emoluments', request_method='GET', renderer='json')
+def tableau_emoluments_view(request):
     """
-    Return all emoluments available
+    Return table of emoluments 
     """
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(TableauEmoluments).all()
+    return Utils.serialize_many(query)
+
+
+@view_config(route_name='emolument_affaire', request_method='GET', renderer='json')
+def emolument_affaire_view(request):
+    """
+    Return emolument_affaire
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+
+    query = request.dbsession.query(EmolumentAffaire)
+    
+    if not affaire_id is None:
+        query = query.filter(EmolumentAffaire.affaire_id == affaire_id)
+    
+    emolument_affaire = query.all()
+    
+    
+    # Récupérer les données des bâtiments
+    result = []
+    for emolument_affaire_i in emolument_affaire:
+        query_bat = request.dbsession.query(
+            Emolument.batiment,
+            Emolument.batiment_f
+        ).filter(
+            Emolument.emolument_affaire_id == emolument_affaire_i.id
+        ).filter(
+            Emolument.batiment > 0
+        ).group_by(
+            Emolument.batiment,
+            Emolument.batiment_f
+        ).all()
+        
+        batiment_f = [y for _, y in query_bat]
+
+        result.append(
+            Utils._params(
+                id = emolument_affaire_i.id,
+                affaire_id = emolument_affaire_i.affaire_id,
+                pente_pc = emolument_affaire_i.pente_pc,
+                diff_visibilite_pc = emolument_affaire_i.diff_visibilite_pc,
+                trafic_pc = emolument_affaire_i.trafic_pc,
+                zi = emolument_affaire_i.zi ,
+                indice_application = emolument_affaire_i.indice_application,
+                tva_pc = emolument_affaire_i.tva_pc,
+                remarque = emolument_affaire_i.remarque,
+                nb_batiments = len(batiment_f),
+                batiment_f = batiment_f
+            )
+        )
+    
+    return result
+
+
+@view_config(route_name='emolument', request_method='GET', renderer='json')
+def emolument_view(request):
+    """
+    Return emoluments of emoluments_affaire 
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    emolument_affaire_id = request.params['emolument_affaire_id'] if 'emolument_affaire_id' in request.params else None
+
+    query = request.dbsession.query(Emolument).filter(
+        Emolument.emolument_affaire_id == emolument_affaire_id
+    ).all()
+
     return Utils.serialize_many(query)
 
 
