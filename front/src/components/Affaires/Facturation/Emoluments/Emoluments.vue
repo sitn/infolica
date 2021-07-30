@@ -726,19 +726,37 @@ export default {
      * postFormular (main)
      */
     async postEmolument() {
-      this.postEmolumentsGeneral().then(response => {
-        if (response && response.data) {
-          this.postEmolumentsDetail(response.data.emolument_affaire_id).then(response => {
-            if (response && response.data) {
-              this.showEmolumentsDialog = false;
-              this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
-
-              // refresh emoluments_general_list
-              this.getEmolumentsGeneral();
-            }
-          }).catch(err => handleException(err, this));
-        }
-      }).catch(err => handleException(err, this));
+      if (this.form_general.id) {
+        // update form
+        this.putEmolumentsGeneral().then(response => {
+          if (response && response.data) {
+            this.putEmolumentsDetail(this.form_general.id).then(response => {
+              if (response && response.data) {
+                this.showEmolumentsDialog = false;
+                this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
+  
+                // refresh emoluments_general_list
+                this.getEmolumentsGeneral();
+              }
+            }).catch(err => handleException(err, this));
+          }
+        }).catch(err => handleException(err, this));
+      } else {
+        // create form
+        this.postEmolumentsGeneral().then(response => {
+          if (response && response.data) {
+            this.postEmolumentsDetail(response.data.emolument_affaire_id).then(response => {
+              if (response && response.data) {
+                this.showEmolumentsDialog = false;
+                this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
+  
+                // refresh emoluments_general_list
+                this.getEmolumentsGeneral();
+              }
+            }).catch(err => handleException(err, this));
+          }
+        }).catch(err => handleException(err, this));
+      }
     },
 
     async postEmolumentsGeneral() {
@@ -768,6 +786,46 @@ export default {
 
       return new Promise((resolve, reject) => {
         this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err)); 
+      });
+    },
+
+
+    async putEmolumentsGeneral() {
+      let formData = new FormData();
+      formData.append("data", JSON.stringify(this.form_general));
+      formData.append("emolument_affaire_id", this.form_general.id)
+
+      return new Promise((resolve, reject) => {
+        this.$http.put(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err)); 
+      });
+    },
+
+    async putEmolumentsDetail(emolument_affaire_id) {
+      let form = this.form_detail_batiment;
+      form.push(this.form_detail)
+
+      let formData = new FormData();
+      formData.append("data", JSON.stringify(form));
+      formData.append("emolument_affaire_id", emolument_affaire_id);
+
+      return new Promise((resolve, reject) => {
+        this.$http.put(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT,
           formData,
           {
