@@ -261,7 +261,7 @@ def emolument_affaire_new_view(request):
 
     record = Utils.set_model_record(record, data)
 
-    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(EmolumentAffaire.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentAffaire.__tablename__))
 
 
 @view_config(route_name='emolument', request_method='PUT', renderer='json')
@@ -284,6 +284,7 @@ def emolument_new_view(request):
 
     for batiment_i in data:
         for emolument_i in batiment_i:
+            # get emolument if already exists in DB
             record = query.filter(
                 Emolument.batiment==batiment_i[emolument_i]['batiment']
             ).filter(
@@ -292,7 +293,11 @@ def emolument_new_view(request):
 
             if not record is None:
                 # comparer les valeurs enregistrées
-                if not record.montant == float(batiment_i[emolument_i]['montant']):
+                if (not float(record.montant) == float(batiment_i[emolument_i]['montant']) \
+                    or not record.position == batiment_i[emolument_i]['nom'] \
+                    or not int(record.nombre) == int(batiment_i[emolument_i]['nombre']) \
+                    or not float(record.batiment_f) == float(batiment_i[emolument_i]['batiment_f'])):
+
                     # Mettre à jour les données si le nouveau montant n'est pas nul
                     if float(batiment_i[emolument_i]['montant']) > 0:
                         params = Utils._params(
