@@ -188,8 +188,12 @@ export default {
     * Handle save data success
     */
     initPostData () {
-      if (this.form.co !== null && !this.form.co.startsWith("c/o ")) {
-        this.form.co = "c/o " + this.form.co;
+      if (this.form.co === null || this.form.co === "") {
+        this.form.co = null;
+      } else {
+        if (!this.form.co.startsWith("c/o ")) {
+          this.form.co = "c/o " + this.form.co;
+        }
       }
 
       let formData = new FormData();
