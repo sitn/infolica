@@ -25,12 +25,12 @@
                     
                     <div class="md-layout-item md-small-size-100 md-size-50">
                         <md-field :class="getValidationClass($v.form.technicien_id)">
-                            <label for="technicien_id">Opérateur</label>
+                            <label for="technicien_id">Opérateur·rice</label>
                             <md-select name="technicien_id" id="technicien_id" v-model="form.technicien_id"
                                 :disabled="sending" md-dense>
                             <md-option v-for="item in operateurs_list" :key="item.id" :value="item.id">{{item.nom}}</md-option>
                         </md-select>
-                        <span class="md-error" v-if="!$v.form.technicien_id.required">L'opérateur est obligatoire</span>
+                        <span class="md-error" v-if="!$v.form.technicien_id.required">L'opérateur·rice est obligatoire</span>
                     </md-field>
                 </div>
             </div>
@@ -42,6 +42,7 @@
                     <md-autocomplete v-model="form.type"
                         md-dense required
                         @md-selected="onSelectType"
+                        @md-changed="initMask"
                         :md-options="types_affaires_list"
                         :class="getValidationClass($v.form.type)">
                         <label>Type d'affaire</label>
@@ -200,6 +201,22 @@
                 </div>
             </div>
             
+            <!-- Urgence -->
+            <div v-if="showUrgentCB" class="md-layout md-gutter md-alignment-center-space-between" style="padding-bottom: 20px;">
+                <div class="md-layout-item md-small-size-100 md-size-25">
+                    <md-checkbox v-model="form.urgent">Affaire urgente</md-checkbox>
+                    <md-datepicker v-if="form.urgent" md-immediately style="margin-bottom: 4px;" v-model="form.urgent_echeance">
+                        <label>Échéance</label>
+                    </md-datepicker>
+                </div>
+                <div class="md-layout-item md-small-size-100">
+                    <div v-if="form.urgent" style="border: 1px dotted black;">
+                        <p v-if="form.urgent" style="margin: 5px;">
+                            <em>En créant l'affaire, un e-mail automatique sera envoyé au·à la chef·fe de projet sélectionné·e, au·à la préposé·e aux servitudes et au·à la coordinateur·rice de projets.</em>
+                        </p>
+                    </div>
+                </div>
+            </div>
             
             <div v-if="showClientsForm">
                 <div style="text-align: right;">
@@ -236,17 +253,7 @@
                     </div>
                 </div>
                 
-                <!-- v-ref -->
-                <!-- <div class="md-layout md-gutter">
-                    <div class="md-layout-item md-small-size-100 md-size-50">
-                        <md-field :class="getValidationClass($v.form.vref)">
-                            <label for="vref">v/ref</label>
-                            <md-input name="vref" id="vref" v-model="form.vref" :disabled="sending" />
-                        </md-field>
-                    </div>
-                </div>
-
-                <br> -->
+                <br>
                 <md-divider style="background-color: blue;"></md-divider>
                 
                 <!-- Client ENVOI et ligne complément -->
@@ -298,7 +305,6 @@
                             <md-autocomplete id="client_facture_id" v-model="client_facture"
                                 :md-options="search_clients_list" md-dense
                                 @md-changed="searchClients(client_facture)"
-                                @md-selected="initClientMoralPersonnes(client_facture.id, 'facture')"
                                 :class="getValidationClass($v.client_facture.id)"
                                 required>
                                 <label>Facturer à (débiteur)</label>
@@ -308,18 +314,6 @@
                                 <span class="md-error" v-if="!$v.client_facture.id.required">Le client facture est obligatoire</span>
                             </md-autocomplete>
                         </div>
-    
-                        <div class="md-layout-item md-small-size-100 md-size-50" v-if="showClientComplement(client_facture)">
-                            <md-autocomplete v-model="client_facture_complement"
-                                :md-options="client_moral_personnes.facture"
-                                md-dense>
-                                <label>À l'attention de...</label>
-                                <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                    Le contact "{{ term }}" n'existe pas dans la base. <a @click="openCreateContact(client_facture.id)">Le créer !</a>
-                                </template>
-                            </md-autocomplete>
-                        </div>
-                        
                     </div>
                     
                     
@@ -340,28 +334,48 @@
 
             <br />
 
+            <!-- Numéros concernés par l'affaire -->
+            <div v-if="showReferenceNumeros">
+                <md-button class="md-raised md-primary" v-on:click="callOpenReferenceDialog">Lier des numéros à l'affaire</md-button>
+    
+                <md-table v-model="numerosReferences" v-if="numerosReferences.length>0" md-card>
+                    <md-table-toolbar>
+                        <div class="md-toolbar-section-start"><div class="md-title">Numéros liés à l'affaire</div></div>
+                    </md-table-toolbar>
+    
+                    <md-table-row slot="md-table-row" slot-scope=" { item }">
+                        <md-table-cell md-label="Cadastre">{{ item.cadastre }}</md-table-cell>
+                        <md-table-cell md-label="Numéro">{{ item.numero_sitn }}</md-table-cell>
+                        <md-table-cell md-label="Supprimer">
+                            <md-button class="md-icon-button md-dense md-accent" @click="deleteNumeroReference(item)">
+                                <md-icon>delete</md-icon>
+                            </md-button>
+                        </md-table-cell>
+                    </md-table-row>
+                </md-table>
+            </div>
+
             <!-- Coordonnées -->
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-small-size-100">
                     <md-field :class="getValidationClass($v.form.localisation)">
                         <label for="localisation">Coordonnées</label>
                         <md-input v-model=form.localisation readonly></md-input>
-                        <span class="md-error" v-if="!$v.form.localisation.required">La localisation de l'affaire est
-                            obligatoire</span>
+                        <span class="md-error" v-if="!$v.form.localisation.required">La localisation de l'affaire est obligatoire</span>
                     </md-field>
 
                 </div>
 
                 <div class="md-layout-item md-small-size-100">
                     <autocomplete
-                    ref="autocomplete"
-                    placeholder="Rechercher un bien-fonds"
-                    :source="searchSITNEndpoint"
-                    input-class="form-control"
-                    results-property="features"
-                    :results-display="formattedDisplay"
-                    @selected="handleSelectSITNItem"
-                    >
+                        ref="autocomplete"
+                        placeholder="Rechercher un bien-fonds"
+                        :source="searchSITNEndpoint"
+                        input-class="form-control"
+                        results-property="features"
+                        :results-display="formattedDisplay"
+                        @selected="handleSelectSITNItem"
+                        >
                     </autocomplete>
                 </div>
             </div>
@@ -378,4 +392,10 @@
     </md-card>
 
     <md-snackbar :md-active.sync="dataSaved">L'affaire {{ lastRecord }} a été enregistrée avec succès</md-snackbar>
+    
+    <!-- Référence de numéros -->
+    <ReferenceNumeros ref="formReference" 
+                      :affaire_numeros_anciens="numerosReferences"
+                      :cadastre_id="form.cadastre.id"
+                      :saveNumerosReferences="referenceNumeros" />
 </div>

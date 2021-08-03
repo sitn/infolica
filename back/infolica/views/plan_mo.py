@@ -15,6 +15,9 @@ def plans_mo_view(request):
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(VPlan).order_by(VPlan.planno.asc()).all()
-        
+    query = request.dbsession.query(VPlan).order_by(
+        VPlan.cadastre_id.asc(), 
+        VPlan.planno.asc()
+    ).all()
+
     return Utils.serialize_many(query)

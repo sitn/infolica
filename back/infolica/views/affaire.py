@@ -6,7 +6,7 @@ from pyramid.response import FileResponse
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Affaire, AffaireType, ModificationAffaireType
-from infolica.models.models import ModificationAffaire, VAffaire, Facture
+from infolica.models.models import ModificationAffaire, VAffaire, Facture, Cadastre, Operateur
 from infolica.models.models import ControleGeometre, ControleMutation, ControlePPE, SuiviMandat
 from infolica.models.models import AffaireEtape
 from infolica.scripts.utils import Utils
@@ -102,7 +102,9 @@ def affaire_cockpit_view(request):
             'operateur_id': affaire.technicien_id,
             'operateur_initiales': affaire.technicien_initiales,
             'cadastre': affaire.cadastre,
-            'description': affaire.nom
+            'description': affaire.nom,
+            'urgent': affaire.urgent,
+            'urgent_echeance': datetime.strftime(affaire.urgent_echeance, '%Y-%m-%d') if not affaire.urgent_echeance is None else None
         })
     
     return affaires
@@ -265,6 +267,9 @@ def affaires_new_view(request):
     params['datetime'] = datetime.now()
     Utils.addNewRecord(request, AffaireEtape, params)
 
+    # Envoyer e-mail si l'affaire est urgente
+    if model.urgent:
+        Utils.sendMailAffaireUrgente(request, model)
 
     # Add facture
     if 'facture_client_id' in request.params:
@@ -305,6 +310,9 @@ def affaires_update_view(request):
     if not record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(Affaire.__tablename__, id_affaire))
+
+    # stock affaire_urgence info before update
+    affaire_urgence = record.urgent is True
 
     # Get role depending on affaire type
     affaire_type = params['type_id'] if 'type_id' in params else record.type_id
@@ -352,8 +360,11 @@ def affaires_update_view(request):
             else:
                 raise CustomError(CustomError.DIRECTORY_NOT_FOUND.format(chemin_affaire))
 
-
     record = Utils.set_model_record(record, params)
+
+    # If urgence defined after affaire creation, send e-mail
+    if not affaire_urgence and "urgent" in params:
+        Utils.sendMailAffaireUrgente(request, record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
 

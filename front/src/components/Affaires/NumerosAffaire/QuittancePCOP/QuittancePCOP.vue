@@ -11,7 +11,6 @@ import {
   getDocument,
   setClientsAdresse_
 } from "@/services/helper";
-import moment from "moment";
 
 export default {
   name: "quittancePCOP",
@@ -96,6 +95,10 @@ export default {
           this.numeros_base.push({numero_base: x.numero_base, numero_base_id: x.numero_base_id});
         }
       });
+
+      // preselect first bf base
+      this.form.bfBase = this.numeros_base[0].numero_base;
+      this.updateNumerosPCOP();
     },
 
     /**
@@ -130,11 +133,11 @@ export default {
         vref: this.affaire.vref,
         cadastre: this.affaire.cadastre,
         dateEnvoi: getCurrentDate(),
-        dateDemande: moment(this.affaire.date_ouverture, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        dateDemande: this.affaire.date_ouverture,
         numeros_de: "",
         numeros_a: "",
         nombreNumerosReserves: "",
-        bfBase: ""
+        bfBase: this.numeros_base[0]
       };
     },
 
@@ -151,7 +154,7 @@ export default {
           ADRESSE_: this.form.adresse_,
           TITRE: this.form.titre,
           NREF: this.form.nref,
-          VREF: String(this.form.vref),
+          VREF: this.form.vref,
           DATEENVOI: String(this.form.dateEnvoi),
           DATEDEMANDE: String(this.form.dateDemande),
           NUMEROSRESERVES: String(this.form.numeros_de) + " à " + String(this.form.numeros_a),

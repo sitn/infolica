@@ -21,34 +21,39 @@
 
     <md-card>
         <md-card-content>
+            <div class="md-layout md-gutter md-alignment-center-space-between">
+                <div class="md-layout-item md-size-80" style="display: flex;">
+                    <md-field style="width: 250px !important;">
+                        <label>Rechercher</label>
+                        <md-input v-model="searchAffaire" placeholder="Nom d'affaire" v-on:keyup="updateTable"></md-input>
+                        <md-icon>search</md-icon>
+                    </md-field>
+    
+                    <md-field style="margin-left: 50px; width: 250px !important;">
+                        <label for="operateur">Opérateur·rice</label>
+                        <md-select v-model="selectedOperateur_id" name="operateur" id="operateur" @md-selected="updateTable" md-dense>
+                          <md-option :value="-1">Tous</md-option>
+                          <md-option v-for="item in operateurs" :value="item.id">{{ item.nom }}</md-option>
+                        </md-select>
+                    </md-field>
+                    
+                    <md-field style="margin-left: 50px; width: 250px !important;">
+                        <label>Type(s) d'affaire</label>
+                        <md-select v-model="selectedAffaireTypes_id" @md-selected="updateTable" md-dense>
+                            <md-option :value="-1">Tous</md-option>
+                            <md-option v-for="item in affaireTypes" :value="item.id">{{ item.nom }}</md-option>
+                        </md-select>
+                    </md-field>
+    
+                    <md-checkbox v-model="showFinProcessus" @change="updateTable" style="margin-left: 50px; margin-top:25px;">Afficher l'étape fin de processus</md-checkbox>
+                    <md-checkbox v-model="showOnlyAffairesUrgentes" @change="updateTable" style="margin-left: 50px; margin-top:25px;">Afficher les affaires urgentes</md-checkbox>
+                </div>
 
-            <div style="display: flex;">
-                <md-field style="width: 250px !important;">
-                    <label>Rechercher</label>
-                    <md-input v-model="searchAffaire" placeholder="Nom d'affaire" v-on:keyup="updateTable"></md-input>
-                </md-field>
-
-                <md-field style="margin-left: 50px; width: 250px !important;">
-                    <label for="operateur">Opérateur</label>
-                    <md-select v-model="selectedOperateur_id" name="operateur" id="operateur" @md-selected="updateTable" md-dense>
-                      <md-option :value="-1">Tous</md-option>
-                      <md-option v-for="item in operateurs" :value="item.id">{{ item.nom }}</md-option>
-                    </md-select>
-                </md-field>
-                
-                <md-field style="margin-left: 50px; width: 250px !important;">
-                    <label>Type(s) d'affaire</label>
-                    <md-select v-model="selectedAffaireTypes_id" @md-selected="updateTable" md-dense>
-                        <md-option :value="-1">Tous</md-option>
-                        <md-option v-for="item in affaireTypes" :value="item.id">{{ item.nom }}</md-option>
-                    </md-select>
-                </md-field>
-
-                <md-checkbox v-model="showFinProcessus" @change="updateTable" style="margin-left: 50px; margin-top:25px;">Afficher l'étape fin de processus</md-checkbox>
-
-                <p style="margin-top: 25px;">({{ affaires.length }} affaires)</p>
+                <div class="md-layout-item" style="text-align: right;">
+                    <p style="margin-top: 25px;">({{ affaires.length }} affaire{{ plural }} affichée{{ plural }})</p>
+                </div>
             </div>
-            
+
             <md-progress-bar md-mode="indeterminate" v-if="loadingAffaires"></md-progress-bar>
             <md-table v-model="affaires" md-sort="id" md-sort-order="desc" md-card>
 
@@ -58,17 +63,17 @@
                 
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell md-sort-by="affaire_type" md-label="Type d'affaire">{{ item.affaire_type }}</md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_0" md-label="Coordination"><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_0">{{ item.dashboard_0 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_1" md-label="Traitement"><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_1">{{ item.dashboard_1 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_2" md-label="Ctrl tech."><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_2">{{ item.dashboard_2 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_3" md-label="Report serv."><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_3">{{ item.dashboard_3 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_4" md-label="Ctrl juridique"><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_4">{{ item.dashboard_4 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_5" md-label="Prép. admin."><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_5">{{ item.dashboard_5 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_6" md-label="Signature"><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_6">{{ item.dashboard_6 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_7" md-label="Expédition"><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_7">{{ item.dashboard_7 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_8" md-label="Validation BD"><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_8">{{ item.dashboard_8 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_9" md-label="Signature Art.35"><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_9">{{ item.dashboard_9 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_10" md-label="Fin de processus  (<30 j>)" v-if="showFinProcessus"><md-button class="affBtn md-raised" :title="item.title" @click="openAffaire(item)" v-if="item.dashboard_10">{{ item.dashboard_10 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_0" md-label="Coordination"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" @click="openAffaire(item)" v-on:click.middle="openAffaire(item, mode=1)" v-if="item.dashboard_0">{{ item.dashboard_0 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_1" md-label="Traitement"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" @click="openAffaire(item)" v-on:click.middle="openAffaire(item, mode=1)" v-if="item.dashboard_1">{{ item.dashboard_1 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_2" md-label="Ctrl tech."><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" @click="openAffaire(item)" v-on:click.middle="openAffaire(item, mode=1)" v-if="item.dashboard_2">{{ item.dashboard_2 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_3" md-label="Report serv."><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" @click="openAffaire(item)" v-on:click.middle="openAffaire(item, mode=1)" v-if="item.dashboard_3">{{ item.dashboard_3 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_4" md-label="Ctrl juridique"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" @click="openAffaire(item)" v-on:click.middle="openAffaire(item, mode=1)" v-if="item.dashboard_4">{{ item.dashboard_4 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_5" md-label="Prép. admin."><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" @click="openAffaire(item)" v-on:click.middle="openAffaire(item, mode=1)" v-if="item.dashboard_5">{{ item.dashboard_5 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_6" md-label="Signature"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" @click="openAffaire(item)" v-on:click.middle="openAffaire(item, mode=1)" v-if="item.dashboard_6">{{ item.dashboard_6 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_7" md-label="Expédition"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" @click="openAffaire(item)" v-on:click.middle="openAffaire(item, mode=1)" v-if="item.dashboard_7">{{ item.dashboard_7 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_8" md-label="Validation BD"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" @click="openAffaire(item)" v-on:click.middle="openAffaire(item, mode=1)" v-if="item.dashboard_8">{{ item.dashboard_8 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_9" md-label="Signature Art.35"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" @click="openAffaire(item)" v-on:click.middle="openAffaire(item, mode=1)" v-if="item.dashboard_9">{{ item.dashboard_9 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_10" md-label="Fin de processus  (<30 j>)" v-if="showFinProcessus"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" @click="openAffaire(item)" v-on:click.middle="openAffaire(item, mode=1)" v-if="item.dashboard_10">{{ item.dashboard_10 }}</md-button></md-table-cell>
                 </md-table-row>
             </md-table>
 

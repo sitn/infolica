@@ -187,28 +187,17 @@ export default {
     },
 
 
-    // /**
-    //  * Open folder
-    //  */
-    // async openFolder(){
-    //   this.$http.get(
-    //     process.env.VUE_APP_API_URL + process.env.VUE_APP_OPEN_FOLDER_ENDPOINT + '?affaire_id=' + this.affaire.id,
-    //     {
-    //       withCredentials: true,
-    //       headers: {"Accept": "application/json"}
-    //     }
-    //   ).then(response => {
-    //     if (response && response.data) {
-    //       window.open('file:///' + response.data.affaire_path, '_blank');
-    //     }
-    //   }).catch(err => handleException(err, this));
-    // }
 
   },
 
   mounted: function() {
     this.searchAffaireDocuments();
     this.searchAffaireDossier();
+
+    this.$root.$on("searchAffaireDocuments", () => {
+      this.searchAffaireDossier()
+      this.searchAffaireDocuments()
+    })
 
     // show edit affaire path
     if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {

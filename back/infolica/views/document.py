@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*--
 from pyramid.view import view_config
-import pyramid.httpexceptions as exc
 
-from infolica.exceptions.custom_error import CustomError
-from infolica.models.constant import Constant
-from infolica.models.models import Service
+from infolica.models.models import Affaire, Service
 from infolica.scripts.utils import Utils
 
 import os
 import json
-from datetime import datetime
 from docxtpl import DocxTemplate, RichText
 
 
@@ -23,26 +19,35 @@ def save_document_view(request):
     affaires_directory = settings['affaires_directory']
 
     # Get request params
-    affaire_id = request.params['affaire_id']
+    affaire_id = str(request.params['affaire_id'])
     template = request.params['template']
     values = request.params['values']
     service_id = request.params['service_id'] if 'service_id' in request.params else None
+    relPath = request.params['relpath'].strip('/').strip('\\') if 'relpath' in request.params else ""
+    filename = request.params['filename'] if 'filename' in request.params else None
 
     # Set output file name
-    output_file_name=template
-    relPath = ""
+    output_file_name = filename if filename is not None else template
     if service_id:
         service = request.dbsession.query(Service).filter(Service.id == service_id).first()
-        output_file_name = service.abreviation
-        relPath = service.relpath
+        output_file_name += "_" + service.abreviation
+        relPath = service.relpath.strip('/').strip('\\')
 
-    date_time = datetime.now().strftime("%Y%m%d")
-    filename = output_file_name + "_" + date_time + '.docx'
-    file_path = os.path.normcase(os.path.join(affaires_directory, affaire_id, relPath, filename))
-    folder_path = os.path.dirname(file_path)
+    affaire_relpath = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
+    
+    if affaire_relpath is None:
+        affaire_relpath = affaire_id
+        
+    affaire_path = os.path.normcase(os.path.join(affaires_directory, affaire_relpath))
+    
+    filename = output_file_name + '.docx'
+    file_path = os.path.normcase(os.path.join(affaire_path, relPath, filename))
 
-    if not os.path.exists(folder_path):
-        Utils.create_affaire_folder(request, folder_path)
+    if not os.path.exists(affaire_path):
+        Utils.create_affaire_folder(request, affaire_path)
+        # update affaire chemin
+        affaire = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
+        affaire.chemin = affaire_relpath
 
     # Set context
     context = json.loads(values)
@@ -56,5 +61,5 @@ def save_document_view(request):
     doc.render(context)
     doc.save(file_path)
 
-    return {'filename': filename}
+    return {'filename': filename, "folderpath": relPath}
 

@@ -33,18 +33,17 @@
                                     <div v-if="affaire_numeros_anciens[0]">
                                         <md-table v-model="affaire_numeros_anciens" md-sort="id" md-sort-order="desc" md-fixed-header>
                                             <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ disabledNum: !item.affaire_numero_actif }">
-                                                <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">
-                                                    {{ item.numero_id }}
-                                                </md-table-cell>
-                                                <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">
-                                                    {{ item.numero_cadastre }}
-                                                </md-table-cell>
+                                                <md-table-cell md-label="Id" md-sort-by="numero_id" v-if="false">{{ item.numero_id }}</md-table-cell>
+                                                <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
                                                 <md-table-cell md-label="Numéro" md-sort-by="numero" md-numeric>{{ item.numero_sitn }}</md-table-cell>
-                                                <md-table-cell md-label="Etat" md-sort-by="numero_etat">
-                                                    {{ item.numero_etat }}
-                                                </md-table-cell>
-                                                <md-table-cell md-label="Repris par" md-sort-by="affaire_destination_id">    
+                                                <md-table-cell md-label="Etat" md-sort-by="numero_etat">{{ item.numero_etat }}</md-table-cell>
+                                                <md-table-cell md-label="Repris par" md-sort-by="affaire_destination_id">
                                                     <a v-bind:href="item.affaire_destination_href">{{item.affaire_destination_id }}</a>
+                                                </md-table-cell>
+                                                <md-table-cell md-label="Délier de l'affaire" v-if="show.deleteReferencedNumberColumn">
+                                                    <md-button class="md-icon-button md-accent md-dense" @click="onRemoveNumeroReference(item)">
+                                                        <md-icon>delete</md-icon>
+                                                    </md-button>
                                                 </md-table-cell>
                                             </md-table-row>
                                         </md-table>
@@ -92,14 +91,14 @@
                                                 <md-table-cell md-label="Mat diff" class="actionsColumn" v-if="typesAffaires_conf.mutation === affaire.type_id || affaire.type_id === typesAffaires_conf.modification_mutation">
                                                     <!-- Si le numéro est différé -->
                                                     <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && editMatDiffAllowed && item.affaire_numero_actif">
-                                                        <md-button v-if="item.numero_type_id===types_numeros.bf"  @click="confirmCreateDiffererNumero(item, 'sortie')" 
+                                                        <md-button v-if="item.numero_type_id===types_numeros.bf || item.numero_type_id===types_numeros.ddp"  @click="confirmCreateDiffererNumero(item, 'sortie')" 
                                                             class="md-accent md-raised md-icon-button md-dense" title="Retirer la mention Mat Diff du BF (le BF est matérialisé)">
                                                             <md-icon>access_time</md-icon>
                                                         </md-button>
                                                     </div>
                                                     <!-- Si le numéro n'est pas encore différé -->
                                                     <div v-if="item.numero_diff_entree === null && item.numero_diff_sortie === null && editMatDiffAllowed && item.affaire_numero_actif && item.active">
-                                                        <md-button v-if="item.numero_type_id===types_numeros.bf"  title="Différer la matérialisation du BF"
+                                                        <md-button v-if="item.numero_type_id===types_numeros.bf || item.numero_type_id===types_numeros.ddp"  title="Différer la matérialisation du BF"
                                                             class="md-primary md-icon-button md-dense" @click="confirmCreateDiffererNumero(item, 'entree')">
                                                             <md-icon>access_time</md-icon>
                                                         </md-button>
@@ -132,8 +131,12 @@
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item" v-if="show.balance">
                             <!-- Balance des biens-fonds -->
-                            <!-- <Balance :affaire_numeros_all="affaire_numeros_all" :affaire="affaire" /> -->
-                            <BalanceFromFile :numeros_nouveaux_bk="affaire_numeros_nouveaux" :numeros_anciens_bk="affaire_numeros_anciens" :affaire="affaire" :types_numeros="types_numeros" :numerosBaseListe="numerosBaseListe" />
+                            <BalanceFromFile :numeros_nouveaux_bk="affaire_numeros_nouveaux" 
+                                :numeros_anciens_bk="affaire_numeros_anciens" 
+                                :affaire="affaire" 
+                                :types_numeros="types_numeros" 
+                                :numerosBaseListe="numerosBaseListe" 
+                                :etatNumeros_conf="etatNumeros_conf" />
                         </div>
                     </div>
                     
@@ -143,13 +146,18 @@
     </md-card>
 
     <!-- Référence de numéros -->
-    <ReferenceNumeros ref="formReference" :affaire_numeros_anciens="affaire_numeros_anciens"/>
+    <ReferenceNumeros ref="formReference" 
+                      :affaire_numeros_anciens="affaire_numeros_anciens"
+                      :cadastre_id="affaire.cadastre_id"
+                      :saveNumerosReferences="saveReferenceNumeros" />
+    
     <!-- Réservation de numéros -->
     <ReservationNumeros ref="formReservation"
                         :affaire="affaire" 
-                        :numerosBaseListe="numerosBaseListe" 
+                        :numerosBaseListe="affaire_numeros_anciens" 
                         :typesAffaires_conf="typesAffaires_conf"
                         :types_numeros="types_numeros" />
+
     <!-- Quittance pour les numéros de parts de copropriété réservés -->
     <QuittancePCOP :affaire="affaire" 
                    :affaire_numeros_anciens="affaire_numeros_anciens" 

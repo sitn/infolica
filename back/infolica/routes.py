@@ -30,6 +30,7 @@ def includeme(config):
     config.add_route('modification_affaire_by_affaire_mere', '/infolica/api/modification_affaire_by_affaire_mere/{id}')
     config.add_route('modification_affaire_by_affaire_fille', '/infolica/api/modification_affaire_by_affaire_fille/{id}')
     config.add_route('affaires_cockpit', '/infolica/api/affaires_cockpit')
+    config.add_route('abandon_affaire_reopen_parent_affaire', '/infolica/api/abandon_affaire_reopen_parent_affaire')
     #Factures
     config.add_route('factures', '/infolica/api/factures')
     config.add_route('factures_s', '/infolica/api/factures/')
@@ -161,7 +162,8 @@ def includeme(config):
     config.add_route('balance_mutation_names', '/infolica/api/balance_mutation_names')
     config.add_route('balance_by_affaire_id', '/infolica/api/balance')
     config.add_route('balance_check_existing_oldBF', '/infolica/api/balance_check_existing_oldbf')
-    config.add_route('balance_from_file_by_affaire_id', '/infolica/api/balance_from_file')
+    config.add_route('balance_files_by_affaire_id', '/infolica/api/balance_files')
+    config.add_route('balance_from_file', '/infolica/api/balance_from_file')
     #Reservation_numeros_mo
     config.add_route('reservation_numeros_mo_by_affaire_id', '/infolica/api/reservation_numeros_mo/{id}')
     config.add_route('reservation_numeros_mo', '/infolica/api/reservation_numeros_mo')
@@ -172,4 +174,7 @@ def includeme(config):
     config.add_route('types_numeros_mo', '/infolica/api/types_numeros_mo')
     #Open Folder
     config.add_route('open_folder', '/infolica/api/open_folder')
-
+    #Notes de mise à jour
+    config.add_route('notes_maj', '/infolica/api/notes_maj')
+    config.add_route('version', '/infolica/api/version')
+    config.add_route('operateur_notes_maj', '/infolica/api/operateur_notes_maj')

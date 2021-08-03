@@ -7,6 +7,20 @@
 export default {
   name: 'Notifications',
   data: () => ({
+    alert: {
+      active: false,
+      title: "",
+      content: ""
+    },
+    confirmation: {
+      active: false,
+      title: "",
+      content: "",
+      confirmText: "OK",
+      cancelText: "Annuler",
+      onCancel: () => {},
+      onConfirm: () => {}
+    },
     msg: String,
     showSnackbar: false,
     isError: false,
@@ -28,6 +42,28 @@ export default {
       this.isError = true;
       this.showSnackbar = true;
       this.duration = 10000;
+    });
+
+    //Show Alert Dialog
+    this.$root.$on('ShowAlert', (alert) =>{
+      this.alert = {
+        active: true,
+        title: alert.title || "",
+        content: alert.content || ""
+      };
+    });
+
+    //Show Confirmation Dialog
+    this.$root.$on('ShowConfirmation', (confirmation) =>{
+      this.confirmation = {
+        active: true,
+        title: confirmation.title || "",
+        content: confirmation.content || "",
+        confirmText: confirmation.confirmText || "Confirmer",
+        cancelText: confirmation.cancelText || "Annuler",
+        onCancel: () => { this.confirmation.sync = false },
+        onConfirm: () => confirmation.onConfirm()
+      };
     });
   }
 }

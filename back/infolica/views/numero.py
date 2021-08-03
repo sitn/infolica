@@ -9,7 +9,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import AffaireNumero, Numero, NumeroDiffere, NumeroEtat
 from infolica.models.models import NumeroEtatHisto, NumeroType, VNumeros
-from infolica.models.models import VNumerosAffaires, Affaire
+from infolica.models.models import VNumerosAffaires, Affaire, Facture
 from infolica.scripts.utils import Utils
 
 from datetime import datetime
@@ -349,8 +349,8 @@ def affaire_numero_delete_view(request):
         affnum_id = request.params["id"]
         record = request.dbsession.query(AffaireNumero).filter(AffaireNumero.id == affnum_id).first()
     elif "affaire_id" in request.params and "numero_id" in request.params:
-        affaire_id = request.params["affaire_id"]
-        numero_id = request.params["numero_id"]
+        affaire_id = int(request.params["affaire_id"])
+        numero_id = int(request.params["numero_id"])
         record = request.dbsession.query(AffaireNumero).filter(and_(
             AffaireNumero.affaire_id == affaire_id,
             AffaireNumero.numero_id == numero_id
@@ -358,13 +358,28 @@ def affaire_numero_delete_view(request):
     else:
         raise CustomError(CustomError.INCOMPLETE_REQUEST)
 
-    request.dbsession.delete(record)
-
     if not record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(AffaireNumero.__tablename__, affnum_id))
 
-    record = Utils.set_model_record(record, request.params)
+
+    # Get affaire_type_id and config values
+    affaire_type_id = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().type_id
+    affaire_type_cadastration_id = int(request.registry.settings['affaire_type_cadastration_id'])
+
+    # supprimer la facture du numéro si c'est une affaire de cadastration
+    if affaire_type_id == affaire_type_cadastration_id:
+        factNum = request.dbsession.query(Facture).filter(and_(
+            Facture.affaire_id == affaire_id,
+            Facture.numeros.op("@>")("{" + str(numero_id) + "}")
+        )).all()
+
+        for fact in factNum:
+            request.dbsession.delete(fact)
+
+
+
+    request.dbsession.delete(record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(AffaireNumero.__tablename__))
 

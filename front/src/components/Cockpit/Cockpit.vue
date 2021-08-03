@@ -7,8 +7,10 @@ import AffairesChezClient from "@/components/Cockpit/AffairesChezClient/Affaires
 import Matdiff_secr from "@/components/Cockpit/Matdiff_secr/Matdiff_secr.vue";
 import Matdiff_mo from "@/components/Cockpit/Matdiff_mo/Matdiff_mo.vue";
 
-import { handleException } from '@/services/exceptionsHandler'
-import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper'
+import { handleException } from '@/services/exceptionsHandler';
+import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper';
+
+import moment from "moment";
 
 export default {
   name: "Cockpit",
@@ -26,6 +28,7 @@ export default {
         loadingAffaires: true,
         newAffaireAllowed: false,
         operateurs: [],
+        plural: '',
         refreshAffaire: null,
         searchAffaire: null,
         selectedOperateur_id: -1,
@@ -33,6 +36,7 @@ export default {
         showFinProcessus: false,
         showMatdiff_secr: false,
         showMatdiff_mo: false,
+        showOnlyAffairesUrgentes: false,
         showPPE: false,
         role: {
             secretaire: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID),
@@ -100,13 +104,22 @@ export default {
                 // Filtrer les affaires qui ne sont pas chez le client
                 tmp = tmp.filter(x => x.etape_id !== Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID) && x.etape_id !== Number(process.env.VUE_APP_ETAPE_DEVIS_ID));
 
+                let nom_affaire = null;
                 tmp.forEach(x => {
+                    // set time for urgent_echeance
+                    x.urgent_echeance = x.urgent_echeance? moment(x.urgent_echeance, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null;
+                        
                     for (let i=0; i<this.affaireEtapes.length; i++) {
-                        x["dashboard_" + i.toString()] = i === x.etape_ordre-1? (x.no_access? x.no_access: String(x.id)): null;
+                        nom_affaire = null;
+                        if (i === x.etape_ordre-1) {
+                            nom_affaire = x.no_access? x.no_access: String(x.id)
+                            nom_affaire += x.urgent_echeance === null? "": " / "+ x.urgent_echeance;
+                        }
+                        x["dashboard_" + i.toString()] = nom_affaire;
                     }
 
                     // set title to show on cockpit
-                    x.title = (x.no_access? 'Affaire ' + x.id + ' - ': '') + x.cadastre + ' - ' + x.description 
+                    x.title = (x.no_access? 'Affaire ' + x.id + ' - ': '') + x.cadastre + ' - ' + x.description;
                 });
                 this.affaires_bk = tmp;
                 if (!this.affaires.length > 0) {
@@ -157,9 +170,14 @@ export default {
     /**
      * open affaire
      */
-    openAffaire(data) {
+    openAffaire(data, mode=0) {
         let id = data.id;
-        this.$router.push({ name: "AffairesDashboard", params: {id}});
+        if (mode===0) {
+            this.$router.push({ name: "AffairesDashboard", params: {id}});
+        } else if (mode===1) {
+            let routedata = this.$router.resolve({name: "AffairesDashboard", params: {id}});
+            window.open(routedata.href, "_blank");
+        }
     },
 
     /**
@@ -192,7 +210,18 @@ export default {
         if (this.selectedAffaireTypes_id && this.selectedAffaireTypes_id > 0) {
             this.affaires = this.affaires.filter(x => x.affaire_type_id === this.selectedAffaireTypes_id);
         }
+
+        // filter affaire urgente
+        if (this.showOnlyAffairesUrgentes) {
+            this.affaires = this.affaires.filter(x => x.urgent);
+        }
         
+        // set plural or not
+        this.plural = '';
+        if (this.affaires.length > 1){
+            this.plural = 's';
+        }
+
         this.loadingAffaires = false;
     },
 

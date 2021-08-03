@@ -50,9 +50,10 @@ export default {
     return {
       affaire: {},
       affaireLoaded: false,
+      chefs_equipe_list: [],
       duplicationAffaireForm: null,
       mapLoaded: false,
-      chefs_equipe_list: [],
+      numerosReserves: [],
       parentAffaireReadOnly: false,
       permission: {
         abandonAffaireEnabled: false,
@@ -67,6 +68,7 @@ export default {
         editSuiviMandatAllowed: false,
       },
       showConfirmAbandonAffaireDialog: false,
+      showConfirmAbandonErrorAffaireDialog: false,
       typesAffaires: [],
       typesAffaires_conf: {
         mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION),
@@ -93,8 +95,10 @@ export default {
         travaux_chef_equipe: Number(process.env.VUE_APP_ETAPE_TRAVAUX_CHEF_EQUIPE_ID),
         validation: Number(process.env.VUE_APP_ETAPE_VALIDATION_ID),
         envoi: Number(process.env.VUE_APP_ETAPE_ENVOI_ID),
+        envoi_cadastration: Number(process.env.VUE_APP_ETAPE_ENVOI_CADASTRATION_ID),
         envoi_pcop: Number(process.env.VUE_APP_ETAPE_ENVOI_PCOP_ID),
-        fin_processus: Number(process.env.VUE_APP_FIN_PROCESSUS_ID)
+        signature_art35: Number(process.env.VUE_APP_ETAPE_SIGNATURE_ART35_ID),
+        fin_processus: Number(process.env.VUE_APP_FIN_PROCESSUS_ID),
       },
       clientTypes_conf: {
         physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID),
@@ -162,10 +166,15 @@ export default {
 
               Object.keys(obj).forEach(function(key) {
                 // Formater la date en DD.MM.YYYY
-                if (key.includes("date") && obj[key] !== null && obj[key] !== "") {
+                if ((key.includes("date") || key.includes("echeance")) && obj[key] !== null && obj[key] !== "") {
                   obj[key] = moment(obj[key], process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
                 }
               });
+
+              obj.urgent_echeance_reste = null;
+              if (obj.urgent_echeance !== null) {
+                obj.urgent_echeance_reste = Math.ceil(Math.max(0, moment(obj.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT)-new Date())/1000/3600/24)+1;
+              }
               resolve(obj);
             }
           })
@@ -235,6 +244,7 @@ export default {
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_PPE_ROLE_ID)) {
             _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
+            _this.permission.affaireCloture = [ _this.typesAffaires_conf.ppe, _this.typesAffaires_conf.modification_ppe].includes(_this.affaire.type_id);
           }
           
           // Opérateur responsable peut référencer des numéros
@@ -328,7 +338,7 @@ export default {
     /**
      * Abandon affaire
      */
-    async callAbandonAffaire() {
+    async callAbandonAffaireAndNumeros() {
       let formData = new FormData();
       formData.append("id_affaire", this.affaire.id);
       formData.append("abandon", true);
@@ -417,13 +427,13 @@ export default {
      * Open Theme SITN
      */
     openSitnTheme(theme) {
-      var route;
-      if (theme === "environnement") {
-        route = process.env.VUE_APP_SITN_ENVIRONNEMENT_URL;
-      } else if (theme === "amenagement_territoire") {
+      let route;
+      if (theme === "amenagement_territoire") {
           route = process.env.VUE_APP_SITN_AMENAGEMENT_TERRITOIRE_URL;
       } else if (theme === "cadastre") {
           route = process.env.VUE_APP_SITN_CADASTRE_URL;
+      } else if (theme === "sites_pollues") {
+          route = process.env.VUE_APP_SITN_SITES_POLLUES_URL;
       } else {
         return null;
       }
@@ -536,6 +546,41 @@ export default {
       return formData;
     
     },
+
+    /**
+     * open Abandon menu
+     */
+    openAbandonMenu() {
+      this.numerosReserves = this.$refs.numeros.affaire_numeros_nouveaux;
+
+      this.showConfirmAbandonErrorAffaireDialog = [
+        this.typesAffaires_conf.modification_visa,
+        this.typesAffaires_conf.modification_duplicata,
+        this.typesAffaires_conf.modification_mutation,
+        this.typesAffaires_conf.modification_ppe
+      ].includes(this.affaire.type_id);
+
+      this.showConfirmAbandonAffaireDialog = true;
+    },
+
+    /**
+     * abandon affaire and reactivate parent-affaire
+     */
+    async callAbandonAffaireAndReactivateParentAffaire() {
+      let formData = new FormData();
+      formData.append('affaire_id', this.affaire.id);
+      formData.append('operateur_id', JSON.parse(localStorage.getItem("infolica_user")).id);
+
+      this.$http.post(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_ABANDON_AFFAIRE_REOUVERTURE_AFFAIRE_PARENT_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(() => this.$router.go(0))
+      .catch(err => handleException(err));
+    }
 
   },
 

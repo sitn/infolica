@@ -4,7 +4,7 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
-import { getCurrentDate, getDocument, getCurrentUserRoleId, stringifyAutocomplete } from "@/services/helper";
+import { getCurrentDate, saveDocument, getCurrentUserRoleId, stringifyAutocomplete, stringifyAutocomplete2 } from "@/services/helper";
 import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
 import ReservationNumeros from "@/components/Affaires/NumerosAffaire/ReservationNumeros/ReservationNumeros.vue";
 import QuittancePCOP from "@/components/Affaires/NumerosAffaire/QuittancePCOP/QuittancePCOP.vue";
@@ -49,6 +49,7 @@ export default {
       numerosMoLoading: true,
       show: {
         balance: false,
+        deleteReferencedNumberColumn: false,
         numeros_references_card: false,
         numeros_reserves_card: false,
         numeros_reserves_immeuble_base: false,
@@ -69,7 +70,8 @@ export default {
         dp: Number(process.env.VUE_APP_NUMERO_TYPE_DP)
       },
       etatNumeros_conf: {
-        projet: Number(process.env.VUE_APP_NUMERO_PROJET_ID)
+        projet: Number(process.env.VUE_APP_NUMERO_PROJET_ID),
+        abandonne: Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)
       }
       // numeros_base_relations: []
     };
@@ -96,11 +98,23 @@ export default {
           const routeAffaireData = this.$router.resolve({ name: "Affaires" });
 
           if (response && response.data) {
-            this.affaire_numeros_all = response.data;
-            this.affaire_numeros_nouveaux = response.data.filter(
+            this.affaire_numeros_all = stringifyAutocomplete2(response.data, ["numero_sitn"]);
+            this.affaire_numeros_all.forEach(x => {
+              if (x.numero_id === Number(process.env.VUE_APP_NUMERO_DP_ID)) {
+                x.numero_sitn = "DP";
+                x.numero_cadastre = "-";
+                x.numero_etat = "-";
+              } else if (x.numero_id === Number(process.env.VUE_APP_NUMERO_RP_ID)) {
+                x.numero_sitn = "RP";
+                x.numero_cadastre = "-";
+                x.numero_etat = "-";
+              }
+            })
+
+            this.affaire_numeros_nouveaux = this.affaire_numeros_all.filter(
               x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_NOUVEAU_ID)
             );
-            this.affaire_numeros_anciens = response.data.filter(
+            this.affaire_numeros_anciens = this.affaire_numeros_all.filter(
               x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID)
             );
             this.affaire_numeros_nouveaux.forEach(function(element) {
@@ -113,12 +127,12 @@ export default {
 
             //Affaires links
             this.affaire_numeros_anciens.map( function(item) {
-              item.affaire_destination_href = routeAffaireData.href + '/' + item.affaire_destination_id;
+              item.affaire_destination_href = routeAffaireData.href + '/edit/' + item.affaire_destination_id;
               return item;
             });
 
             this.affaire_numeros_nouveaux.map( function(item) {
-              item.affaire_destination_href = routeAffaireData.href + '/' + item.affaire_destination_id;
+              item.affaire_destination_href = routeAffaireData.href + '/edit/' + item.affaire_destination_id;
               return item;
             });
 
@@ -361,6 +375,30 @@ export default {
     //   });
     // },
 
+    // /**
+    //  * Génère une quittance des numéros réservés dans l'affaire
+    //  */
+    // async doQuittanceNumerosReserves() {
+    //   let tmp = this.getCadastresNumerosNumerosBases(this.affaire_numeros_nouveaux);
+    //   let cadastres = tmp[0];
+    //   let numeros = tmp[1];
+    //   let numeros_bases = tmp[2];
+
+    //   let formData = new FormData();
+    //   formData.append("template", "NumerosReserves");
+    //   formData.append("values", JSON.stringify({
+    //     "affaire_id": this.affaire.id,
+    //     "date": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+    //     "cadastre": cadastres,
+    //     "numero": numeros,
+    //     "numero_base": numeros_bases
+    //   }));
+
+    //   getDocument(formData).then(response => {
+    //     this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'");
+    //   }).catch(err => handleException(err, this));
+    // },
+
     /**
      * Génère une quittance des numéros réservés dans l'affaire
      */
@@ -371,7 +409,10 @@ export default {
       let numeros_bases = tmp[2];
 
       let formData = new FormData();
+      formData.append("affaire_id", this.affaire.id);
       formData.append("template", "NumerosReserves");
+      formData.append("relpath", process.env.VUE_APP_RELPATH_DESIGNATIONS_ENDPOINT);
+      formData.append("filename", this.affaire.id + "_Res_biens-fonds");
       formData.append("values", JSON.stringify({
         "affaire_id": this.affaire.id,
         "date": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
@@ -380,8 +421,9 @@ export default {
         "numero_base": numeros_bases
       }));
 
-      getDocument(formData).then(response => {
-        this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'");
+      saveDocument(formData).then(response => {
+        this.$root.$emit("ShowMessage", "Le fichier '" + response.data.filename + "' se trouve dans le dossier '"+ response.data.folderpath +"' de l'affaire");
+        this.$root.$emit("searchAffaireDocuments");
       }).catch(err => handleException(err, this));
     },
 
@@ -421,37 +463,73 @@ export default {
      * Define if element is visible or not
      */
     showPermissions() {
-      let typeAffaire_modification_all = [this.typesAffaires_conf.modification, this.typesAffaires_conf.modification_visa, this.typesAffaires_conf.modification_duplicata, this.typesAffaires_conf.modification_abandon_partiel, this.typesAffaires_conf.modification_mutation, this.typesAffaires_conf.modification_ppe]
+      let role_id = getCurrentUserRoleId();
+
+      let typeAffaire_modification_all = [
+        this.typesAffaires_conf.modification,
+        this.typesAffaires_conf.modification_visa,
+        this.typesAffaires_conf.modification_duplicata,
+        this.typesAffaires_conf.modification_abandon_partiel,
+        this.typesAffaires_conf.modification_mutation,
+        this.typesAffaires_conf.modification_ppe
+      ];
+      
       this.show = {
-        numeros_reserves_card: typeAffaire_modification_all.concat([this.typesAffaires_conf.mutation, 
-                                                                    this.typesAffaires_conf.ppe, 
-                                                                    this.typesAffaires_conf.pcop]).includes(this.affaire.type_id),
+        numeros_reserves_card: typeAffaire_modification_all.concat([
+          this.typesAffaires_conf.mutation, 
+          this.typesAffaires_conf.ppe, 
+          this.typesAffaires_conf.pcop
+        ]).includes(this.affaire.type_id),
         
-        numeros_references_card: [this.typesAffaires_conf.cadastration,
-                                  this.typesAffaires_conf.ppe,
-                                  this.typesAffaires_conf.mat_diff,
-                                  this.typesAffaires_conf.revision_abornement,
-                                  this.typesAffaires_conf.autre,
-                                  this.typesAffaires_conf.servitude,
-                                  this.typesAffaires_conf.mpd,
-                                  this.typesAffaires_conf.modification_abandon_partiel].includes(this.affaire.type_id),
+        numeros_references_card: [
+          this.typesAffaires_conf.cadastration,
+          this.typesAffaires_conf.pcop,
+          this.typesAffaires_conf.ppe,
+          this.typesAffaires_conf.mat_diff,
+          this.typesAffaires_conf.revision_abornement,
+          this.typesAffaires_conf.autre,
+          this.typesAffaires_conf.servitude,
+          this.typesAffaires_conf.mpd,
+          this.typesAffaires_conf.modification_abandon_partiel
+        ].includes(this.affaire.type_id),
 
-        numeros_reserves_immeuble_base: [this.typesAffaires_conf.pcop,
-                                         this.typesAffaires_conf.modification_pcop,
-                                         this.typesAffaires_conf.modification_ppe,
-                                         this.typesAffaires_conf.ppe].includes(this.affaire.type_id),
+        numeros_reserves_immeuble_base: [
+          this.typesAffaires_conf.pcop,
+          this.typesAffaires_conf.modification_pcop,
+          this.typesAffaires_conf.modification_ppe,
+          this.typesAffaires_conf.ppe
+        ].includes(this.affaire.type_id),
 
-        reservation_numeros_mo: [this.typesAffaires_conf.mutation, 
-                                 this.typesAffaires_conf.autre,
-                                 this.typesAffaires_conf.cadastration,
-                                 this.typesAffaires_conf.revision_abornement,
-                                 this.typesAffaires_conf.modification,
-                                 this.typesAffaires_conf.modification_mutation,
-                                 this.typesAffaires_conf.mpd,
-                                 this.typesAffaires_conf.art35,
-                                 this.typesAffaires_conf.retablissement_pfp3].includes(this.affaire.type_id),
+        reservation_numeros_mo: [
+          this.typesAffaires_conf.mutation, 
+          this.typesAffaires_conf.autre,
+          this.typesAffaires_conf.cadastration,
+          this.typesAffaires_conf.revision_abornement,
+          this.typesAffaires_conf.modification,
+          this.typesAffaires_conf.modification_mutation,
+          this.typesAffaires_conf.mpd,
+          this.typesAffaires_conf.art35,
+          this.typesAffaires_conf.retablissement_pfp3
+        ].includes(this.affaire.type_id),
 
-        balance: [this.typesAffaires_conf.mutation, this.typesAffaires_conf.modification_mutation].includes(this.affaire.type_id),
+        balance: [
+          this.typesAffaires_conf.mutation,
+          this.typesAffaires_conf.modification_mutation,
+          this.typesAffaires_conf.modification_visa,
+          this.typesAffaires_conf.modification_duplicata
+        ].includes(this.affaire.type_id),
+
+        deleteReferencedNumberColumn: [
+          this.typesAffaires_conf.cadastration,
+          this.typesAffaires_conf.ppe,
+          this.typesAffaires_conf.mat_diff,
+          this.typesAffaires_conf.revision_abornement,
+          this.typesAffaires_conf.autre,
+          this.typesAffaires_conf.servitude,
+          this.typesAffaires_conf.mpd,
+          this.typesAffaires_conf.modification_abandon_partiel
+        ].includes(this.affaire.type_id)
+          && role_id && !isNaN(role_id) && Number(process.env.VUE_APP_ADMIN_ROLE_ID) === Number(role_id),
       }
     },
 
@@ -482,6 +560,88 @@ export default {
         }).catch(err => handleException(err, this));
       })
     },
+
+
+    /**
+     * Fonction appelée lorsque des numéros sont référencés à l'affaire 
+     */
+    async saveReferenceNumeros(numeros) {
+      let numeros_ = numeros.map(x => ({
+        numero_id: x.id,
+        etat_id: x.etat_id
+      }));
+
+      let formData = new FormData();
+      formData.append("affaire_id", this.affaire.id);
+      formData.append("numeros_liste", JSON.stringify(numeros_));
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          )
+          .then(response => {
+            this.$root.$emit("searchAffaireNumeros");
+            this.$root.$emit("ShowMessage", "Le(s) numéro(s) sélectionné(s) ont été correctement ajouté(s) à l'affaire");
+            this.$root.$emit("updateNumerosFactureList");
+            this.$root.$emit("searchAffaireFactures");
+            resolve(response);
+          }).catch(err => reject(err));
+      });
+    },
+
+  /**
+   * Remove link referenced Number
+   */
+  onRemoveNumeroReference(item) {
+    // Control if numeros relations are based on current item
+    let testBaseNumber = this.affaire_numeros_nouveaux.some(x => x.numero_base_id === item.numero_id);
+
+    if (testBaseNumber) {
+      this.$root.$emit("ShowAlert", {
+        title: "Action impossible",
+        content: "Le numéro " + item.numero + " du cadastre de " + item.numero_cadastre + " est utilisé comme bien-fonds de base pour des numéros dans cette affaire."
+      });
+    } else {
+      
+      let content = "Confirmer la suppression du lien entre le numéro "  + item.numero + " du cadastre de " + item.numero_cadastre + " et l'affaire " + this.affaire.id + "."
+      if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
+        content += " Les factures liées à ce numéro seront également supprimée automatiquement."
+      }
+      
+      this.$root.$emit("ShowConfirmation", {
+        title: "Demande de confirmation",
+        content: content,
+        onConfirm: () => { this.deleteNumeroAffaire(item) }
+      })
+
+    }
+  },
+
+
+  /**
+   * Supprimer lien numéro_affaire
+   */
+  async deleteNumeroAffaire(item) {
+    this.$http.delete(
+      process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT
+        + "?affaire_id=" + item.affaire_id + "&numero_id=" + item.numero_id,
+      {
+        withCredentials: true,
+        headers: { Accept: "application/json" }
+      }
+    ).then(response => {
+      if (response && response.data) {
+        this.searchAffaireNumeros();
+        this.$root.$emit("ShowMessage", "Le numéro " + item.numero + " du cadastre de " + item.numero_cadastre + " a bien été délié de l'affaire");
+        this.$root.$emit("searchAffaireFactures");
+      }
+    }).catch(err => handleException(err, this));
+  }
+
 
   },
   mounted: function() {

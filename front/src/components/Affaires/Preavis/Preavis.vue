@@ -363,9 +363,9 @@ export default {
       }
 
       let formData = new FormData();
-      formData.append("affaire_id", this.affaire.id)
-      formData.append("template", "Preavis")
-      formData.append("service_id", service_id)
+      formData.append("affaire_id", this.affaire.id);
+      formData.append("template", "Preavis");
+      formData.append("service_id", service_id);
       formData.append("values", JSON.stringify({
         ADRESSE_SERVICE: form.adresse_service,
         DATE_ENVOI: String(getCurrentDate()),
@@ -381,7 +381,8 @@ export default {
 
       saveDocument(formData)
       .then(response => {
-          this.$root.$emit("ShowMessage", "Le fichier '" + response.data.filename + " a été enregistré dans le dossier de l'affaire");
+          this.$root.$emit("ShowMessage", "Le fichier '" + response.data.filename + " a été enregistré dans le dossier '" + response.data.folderpath + "' de l'affaire");
+          this.$root.$emit("searchAffaireDocuments");
       })
       .catch(err => handleException(err, this));
     },

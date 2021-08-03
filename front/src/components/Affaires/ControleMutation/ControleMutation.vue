@@ -18,7 +18,17 @@ export default {
     showNewControleMutationBtn: false,
     needToCreateControleMutation: false,
     chefsProjetMO_liste: [],
-    controleMutation: {}
+    controleMutation: {},
+    checkAll: {
+      suivi_: false,
+      bf_: false,
+      cs_: false,
+      od_: false,
+      bat_: false,
+      serv_: false,
+      suiv_mut_: false,
+      div_: false,
+    }
   }),
 
   methods: {
@@ -209,6 +219,30 @@ export default {
           handleException(err, this);
         });
     },
+
+    /**
+     * Select all checkbox (subdomain)
+     */
+    selectAll(key_) {
+      for (let key in this.controleMutation) {
+        if (["suivi_", ].includes(key_)) {
+          if (key.startsWith(key_)) {
+            if (this.checkAll[key_]) {
+              // Case desactivée
+              this.controleMutation[key] = moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            } else {
+              // Case activée
+              this.controleMutation[key] = null;
+            }
+          }
+        } else {
+          if (key.startsWith(key_)) {  
+            this.controleMutation[key] = this.checkAll[key_];
+          }
+        }
+      }
+
+    }
   },
 
   mounted: function() {
