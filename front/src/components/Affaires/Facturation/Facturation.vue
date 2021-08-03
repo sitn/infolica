@@ -616,6 +616,7 @@ export default {
      */
     openEmolumentsDialog() {
       this.$refs.emoluments.showEmolumentsDialog = true;
+      this.$refs.emoluments.initForm();
     }
 
   },

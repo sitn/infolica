@@ -13,6 +13,7 @@ export default {
   },
   data: function () {
       return {
+        disabled: false,
         divers: [],
         emolumentsGeneral_list: [],
         emolumentsUnits: [],
@@ -33,6 +34,7 @@ export default {
           forfait_rf: 103
         },
         showEmolumentsDialog: false,
+        showProgressBar: false,
         total: {}
       }
   },
@@ -238,7 +240,7 @@ export default {
     },
 
 
-    async initForm(form_general=true) {
+    initForm(form_general=true) {
 
       if (form_general) {
         this.form_general = {
@@ -256,6 +258,11 @@ export default {
           // Bâtiments
           batiment_f: [],
         };
+
+        //init form-detail to 0
+        for (const element in this.form_detail) {
+          this.form_detail[element].nombre = 0;
+        }
       }
 
 
@@ -315,6 +322,7 @@ export default {
      * set form for nb of batiment
      */
     setFormDetail() {
+      this.form_detail_batiment = [];
       for (let i=0; i<Number(this.form_general.nb_batiments); i++)  {
         this.form_detail_batiment.push( JSON.parse( JSON.stringify(this.form_detail)) );
         for (let key in this.form_detail_batiment[i]) {
@@ -332,15 +340,14 @@ export default {
     addBatiment() {
       this.form_general.nb_batiments += 1;
 
-      for (let i=0; i<Number(this.form_general.nb_batiments); i++)  {
-        this.form_detail_batiment.push( JSON.parse( JSON.stringify(this.form_detail)) );
-        for (let key in this.form_detail_batiment[i]) {
-          this.form_detail_batiment[i][key].batiment = i+1;
-          this.form_detail_batiment[i][key].montant = numeral(0).format("0.00");
-          this.form_detail_batiment[i][key].nombre = 0;
-          this.form_detail_batiment[i][key].batiment_f = this.form_general.batiment_f[i];
-        }
+      let tmp = JSON.parse( JSON.stringify(this.form_detail));
+      for (const key in tmp) {
+        tmp[key].batiment = this.form_general.nb_batiments;
+        tmp[key].montant = numeral(0).format("0.00");
+        tmp[key].nombre = 0;
+        tmp[key].batiment_f = this.form_general.batiment_f[this.form_general.nb_batiments];
       }
+      this.form_detail_batiment.push(tmp);
     },
 
     /**
@@ -358,10 +365,11 @@ export default {
           c += 1;
         }
       }
-
       this.form_detail_batiment = JSON.parse(JSON.stringify(tmp));
       this.form_general.batiment_f.splice(batiment_i-1,1);
       this.form_general.nb_batiments -= 1;
+      this.initForm(false);
+      this.updateMontants();
     },
 
 
@@ -697,10 +705,10 @@ export default {
       Object.keys(this.total).forEach(x => {
         if (Array.isArray(this.total[x])) {
           for (let i=0; i<this.form_general.nb_batiments; i++) {
-            this.total[x][i] = numeral(this.total[x][i]).format("0.00");
+            this.total[x][i] = numeral(this.round(this.total[x][i])).format("0.00");
           }
         } else {
-          this.total[x] = numeral(this.total[x]).format("0.00");
+          this.total[x] = numeral(this.round(this.total[x])).format("0.00");
         }
       });
     },
@@ -726,6 +734,10 @@ export default {
      * postFormular (main)
      */
     async postEmolument() {
+      // show progressbar
+      this.showProgressBar = true;
+      this.disabled = true;
+
       if (this.form_general.id) {
         // update form
         this.putEmolumentsGeneral().then(response => {
@@ -737,6 +749,10 @@ export default {
   
                 // refresh emoluments_general_list
                 this.getEmolumentsGeneral();
+                
+                // hide progressbar
+                this.showProgressBar = false;
+                this.disabled = false;
               }
             }).catch(err => handleException(err, this));
           }
@@ -748,14 +764,28 @@ export default {
             this.postEmolumentsDetail(response.data.emolument_affaire_id).then(response => {
               if (response && response.data) {
                 this.showEmolumentsDialog = false;
+
                 this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
-  
                 // refresh emoluments_general_list
                 this.getEmolumentsGeneral();
+                
+                // hide progressbar
+                this.showProgressBar = false;
+                this.disabled = false;
               }
-            }).catch(err => handleException(err, this));
+            }).catch(err => {
+              handleException(err, this);
+              // hide progressbar
+              this.showProgressBar = false;
+              this.disabled = false;
+            });
           }
-        }).catch(err => handleException(err, this));
+        }).catch(err => {
+          handleException(err, this)
+          // hide progressbar
+          this.showProgressBar = false;
+          this.disabled = false;
+        });
       }
     },
 
@@ -777,7 +807,7 @@ export default {
     },
 
     async postEmolumentsDetail(emolument_affaire_id) {
-      let form = this.form_detail_batiment;
+      let form = JSON.parse(JSON.stringify(this.form_detail_batiment));
       form.push(this.form_detail)
 
       let formData = new FormData();
@@ -817,7 +847,7 @@ export default {
     },
 
     async putEmolumentsDetail(emolument_affaire_id) {
-      let form = this.form_detail_batiment;
+      let form = JSON.parse(JSON.stringify(this.form_detail_batiment));
       form.push(this.form_detail)
 
       let formData = new FormData();
@@ -943,6 +973,14 @@ export default {
           this.showEmolumentsDialog = true;
         }
       }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * Cancel formular edition
+     */
+    onCancel() {
+      this.showEmolumentsDialog = false;
+      this.getEmolumentsGeneral();
     }
 
   },
