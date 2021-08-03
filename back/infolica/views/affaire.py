@@ -125,10 +125,16 @@ def affaires_search_view(request):
     
     params_affaires = {}
     client_id = None
+    date_from = None
+    date_to = None
     for key in request.params.keys():
         if "client" in key:
             client_id = request.params[key]
             client_in_params = True
+        elif "date_from" in key:
+            date_from = datetime.strptime(request.params[key], '%Y-%m-%d')
+        elif "date_to" in key:
+            date_to = datetime.strptime(request.params[key], '%Y-%m-%d')
         else:
             params_affaires[key] = request.params[key]
     
@@ -151,10 +157,16 @@ def affaires_search_view(request):
             VAffaire.client_envoi_id == client_id,
             VAffaire.id.in_(affaires_id_by_clients_facture)
         ))
-        print("toto")
     else:
         query = query.filter(*conditions)
 
+    # filtrer les affaires par critères temporels
+    if not date_from is None:
+        query = query.filter(VAffaire.date_ouverture >= date_from)
+    
+    if not date_to is None:
+        query = query.filter(VAffaire.date_ouverture <= date_to)
+    
     query = query.limit(search_limit).all()
     return Utils.serialize_many(query)
 
