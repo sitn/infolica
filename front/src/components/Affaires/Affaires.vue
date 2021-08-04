@@ -126,7 +126,11 @@ export default {
      * filter clients liste by search term
      */
     filterClients(searchTerm) {
-      this.searchClientsListe = filterList(this.clients, searchTerm, 3).slice(0,20);
+      if (searchTerm && typeof searchTerm === "string") {
+        this.searchClientsListe = filterList(this.clients, searchTerm, 3).slice(0,20);
+      } else {
+        this.searchClientsListe = [null];
+      }
     },
 
     /**
