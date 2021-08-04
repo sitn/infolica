@@ -6,7 +6,7 @@ from pyramid.response import FileResponse
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Affaire, AffaireType, ModificationAffaireType
-from infolica.models.models import ModificationAffaire, VAffaire, Facture, Cadastre, Operateur
+from infolica.models.models import ModificationAffaire, VAffaire, Facture, Client
 from infolica.models.models import ControleGeometre, ControleMutation, ControlePPE, SuiviMandat
 from infolica.models.models import AffaireEtape
 from infolica.scripts.utils import Utils
@@ -130,7 +130,6 @@ def affaires_search_view(request):
     for key in request.params.keys():
         if "client" in key:
             client_id = request.params[key]
-            client_in_params = True
         elif "date_from" in key:
             date_from = datetime.strptime(request.params[key], '%Y-%m-%d')
         elif "date_to" in key:
@@ -149,16 +148,14 @@ def affaires_search_view(request):
     
     # Chercher les affaires par les conditions (sauf client_facture)
     conditions = Utils.get_search_conditions(VAffaire, params_affaires)
-    query = request.dbsession.query(VAffaire)
+    query = request.dbsession.query(VAffaire).filter(*conditions)
+
     if client_id is not None:
         query = query.filter(or_(
-            *conditions,
             VAffaire.client_commande_id == client_id,
             VAffaire.client_envoi_id == client_id,
             VAffaire.id.in_(affaires_id_by_clients_facture)
         ))
-    else:
-        query = query.filter(*conditions)
 
     # filtrer les affaires par critères temporels
     if not date_from is None:
@@ -168,7 +165,24 @@ def affaires_search_view(request):
         query = query.filter(VAffaire.date_ouverture <= date_to)
     
     query = query.limit(search_limit).all()
-    return Utils.serialize_many(query)
+
+    results = Utils.serialize_many(query)
+
+    for i, result in enumerate(results):
+        clients_facture = request.dbsession.query(
+            Client.entreprise,
+            Client.titre,
+            Client.prenom,
+            Client.nom
+        ).filter(
+            Facture.affaire_id == result['id']
+        ).filter(
+            Facture.client_id == Client.id
+        ).all()
+
+        results[i]["client_facture"] = [{'entreprise': x[0], 'titre': x[1], 'nom': x[2], 'prenom': x[3]} for x in clients_facture]
+
+    return results
 
 
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')

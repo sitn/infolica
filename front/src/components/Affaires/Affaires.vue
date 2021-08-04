@@ -200,7 +200,24 @@ export default {
           }
         ).then(response => {
           if (response && response.data) {
-            this.affaires = response.data;
+            let tmp = response.data;
+            tmp.forEach(x => {
+              if (x.client_commande_id) {
+                x.client_commande_ = x.client_commande_entreprise? x.client_commande_entreprise: [x.client_commande_titre, x.client_commande_prenom, x.client_commande_nom].filter(Boolean).join(" ");
+              }
+              if (x.client_envoi_id) {
+                x.client_envoi_ = x.client_envoi_entreprise? x.client_envoi_entreprise: [x.client_envoi_titre, x.client_envoi_prenom, x.client_envoi_nom].filter(Boolean).join(" ");
+              }
+              if (x.client_facture.length > 0) {
+                let tmp_ = [];
+                for (const cf of x.client_facture) {
+                  tmp_.push(cf.entreprise? cf.entreprise: [cf.titre, cf.prenom, cf.nom].filter(Boolean).join(" "));
+                }
+                x.client_facture_ = tmp_.filter(Boolean).join(', ');
+              }
+            });
+
+            this.affaires = tmp;
           }
         }).catch(err => {
           handleException(err, this);
