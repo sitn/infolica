@@ -1420,7 +1420,7 @@
           <md-tab md-label="Divers">
             <md-card>
               <md-card-header>
-                <div class="md-title">Travaux divers</div>
+                <div class="md-title">5. Divers</div>
               </md-card-header>
               <md-card-content>
 
@@ -1630,18 +1630,21 @@
                       <td class="tg-0lax notEditable"></td>
                       <td class="tg-0lax montant alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.relations_autres_services1.prix_unitaire" class="inputMontant" @focusout="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input>CHF</md-field></td>
                     </tr>
-                    <tr>
-                      <td class="tg-0lax">5. {{ form_detail.deplacementDebours1.nom }}</td>
-                      <td class="tg-0lax alignRight">{{ form_detail.deplacementDebours1.prix_unitaire }} CHF</td>
-                      <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.deplacementDebours1.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax alignRight">{{ form_detail.deplacementDebours1.montant }} CHF</td>
-                    </tr>
-                    <tr>
-                      <td class="tg-0lax" colspan="3">Total intermédiaire (divers + déplacements et débours)</td>
-                      <td class="tg-0lax montantTotal alignRight">{{ total.montant_divers_total_with_5_depl_debours }} CHF</td>
-                    </tr>
-                  </tbody>
-                </table>
+                    <td class="tg-0lax" colspan="3">Total intermédiaire</td>
+                    <td class="tg-0lax montantTotal alignRight">{{ total.montant_divers_total }} CHF</td>
+                  </tr>
+                  <tr>
+                    <td colspan="4" style="height: 25px; border: 0px;">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax">{{ form_detail.deplacementDebours1.nom }}</td>
+                    <td class="tg-0lax alignRight">{{ form_detail.deplacementDebours1.prix_unitaire }} CHF</td>
+                    <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.deplacementDebours1.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
+                    <td class="tg-0lax alignRight">{{ form_detail.deplacementDebours1.montant }} CHF</td>
+                  </tr>
+                </tbody>
+              </table>
               </md-card-content>
             </md-card>
           </md-tab>
@@ -1649,7 +1652,7 @@
           <md-tab md-label="Registre foncier">
             <md-card>
               <md-card-header>
-                <div class="md-title">Registre foncier</div>
+                <div class="md-title">6. Registre foncier</div>
               </md-card-header>
               <md-card-content>
 
@@ -1724,7 +1727,7 @@
           <md-tab md-label="Récapitulatif" ref="tabRecapitulatif">
             <md-card>
               <md-card-header>
-                <div class="md-title">Récapitulatif</div>
+                <div class="md-title">7. Récapitulatif</div>
               </md-card-header>
               <md-card-content>
 

@@ -403,11 +403,21 @@ export default {
      * Update montants
      */
     updateMontants() {
+      //update form_detail.relations_autres_services1
+      if (this.form_detail.relations_autres_services1.prix_unitaire) {
+        if (Number(this.form_detail.relations_autres_services1.prix_unitaire) > 0) {
+          this.form_detail.relations_autres_services1.nombre = 1;
+        } else {
+          this.form_detail.relations_autres_services1.nombre = 0;
+        }
+      } else {
+        this.form_detail.relations_autres_services1.nombre = 0;
+      }
+
       //form_detail
       for (let key in this.form_detail) {
         this.form_detail[key].montant = numeral(Number(this.form_detail[key].nombre) * Number(this.form_detail[key].prix_unitaire)).format("0.00");
       }
-         
       //form_detail_batiment
       for (let i=0; i<Number(this.form_general.nb_batiments); i++) {
         for (let key in this.form_detail_batiment[i]) {
@@ -419,7 +429,6 @@ export default {
       this.form_detail.relations_autres_services1.prix_unitaire = numeral(this.form_detail.relations_autres_services1.prix_unitaire).format("0.00");
       this.form_detail.forfait_rf1.prix_unitaire = numeral(this.form_detail.forfait_rf1.prix_unitaire).format("0.00");
       
-
       // update montant_total par categorie
       //Montants totaux Mandat
       this.total.montant_mandat_total = 
@@ -652,10 +661,6 @@ export default {
         Number(this.form_detail.divers10.montant) +
         Number(this.form_detail.relations_autres_services1.montant);
 
-      this.total.montant_divers_total_with_5_depl_debours = 
-        Number(this.total.montant_divers_total) +
-        Number(this.total.montant_5_depl_debours);
-      
       //Registre foncier
       this.total.montant_rf_total =
         Number(this.form_detail.registreFoncier1.montant) +
