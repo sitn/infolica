@@ -22,6 +22,7 @@ export default {
         form_detail: {}, //emoluments sans bâtiment
         form_detail_batiment: [], //emoluments avec bâtiments
         n_divers: 10,
+        pointsMatDiff_nombre: 0,
         indexFromDB: {
           mandat: [1,2,3,4,5,6],
           travauxTerrain: [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
@@ -416,17 +417,17 @@ export default {
 
       //form_detail
       for (let key in this.form_detail) {
-        this.form_detail[key].montant = numeral(Number(this.form_detail[key].nombre) * Number(this.form_detail[key].prix_unitaire)).format("0.00");
+        this.form_detail[key].montant = numeral(this.round(Number(this.form_detail[key].nombre) * Number(this.form_detail[key].prix_unitaire))).format("0.00");
       }
       //form_detail_batiment
       for (let i=0; i<Number(this.form_general.nb_batiments); i++) {
         for (let key in this.form_detail_batiment[i]) {
-          this.form_detail_batiment[i][key].montant = numeral(Number(this.form_detail_batiment[i][key].nombre) * Number(this.form_detail_batiment[i][key].prix_unitaire)).format("0.00");
+          this.form_detail_batiment[i][key].montant = numeral(this.round(Number(this.form_detail_batiment[i][key].nombre) * Number(this.form_detail_batiment[i][key].prix_unitaire))).format("0.00");
         }
       }
       
       // cas particuliers relations_autres_services et forfait_rf
-      this.form_detail.relations_autres_services1.prix_unitaire = numeral(this.form_detail.relations_autres_services1.prix_unitaire).format("0.00");
+      this.form_detail.relations_autres_services1.prix_unitaire = numeral(this.round(this.form_detail.relations_autres_services1.prix_unitaire)).format("0.00");
       this.form_detail.forfait_rf1.prix_unitaire = numeral(this.form_detail.forfait_rf1.prix_unitaire).format("0.00");
       
       // update montant_total par categorie
@@ -577,6 +578,12 @@ export default {
       
       this.total.montant_5_depl_debours = 
         Number(this.form_detail.deplacementDebours1.montant);
+
+      this.total.montant_34_matdiff = 
+        Number(this.form_detail.travauxMaterialisation14.montant) +
+        Number(this.form_detail.travauxMaterialisation15.montant) +
+        Number(this.form_detail.travauxMaterialisation16.montant) +
+        Number(this.form_detail.travauxMaterialisation17.montant);
       
       this.total.montant_travauxMaterialisation_total = 
         Number(this.total.montant_31_32_std_compl_zi) +
@@ -705,15 +712,49 @@ export default {
       this.setComptabiliteFormat();
     },
 
+
+    /** Set nombre points mat_diff */
+    updateMatDiff() {
+      // répartir les points dans les bons émoluments
+      this.form_detail.travauxMaterialisation14.nombre = 0;
+      this.form_detail.travauxMaterialisation15.nombre = 0;
+      this.form_detail.travauxMaterialisation16.nombre = 0;
+      this.form_detail.travauxMaterialisation17.nombre = 0;
+
+      let tmp = Number(this.pointsMatDiff_nombre);
+      console.log(tmp)
+      let c = 1;
+      while (tmp > 0) {
+        if (c <= 5) {
+          // de 1 à 5 points
+          this.form_detail.travauxMaterialisation14.nombre += 1;
+        } else if (c <= 10) {
+          // de 6 à 10 points
+          this.form_detail.travauxMaterialisation15.nombre += 1;
+        } else if (c <= 15) {
+          // de 11 à 15 points
+          this.form_detail.travauxMaterialisation16.nombre += 1;
+        } else {
+          // plus de 16 points
+          this.form_detail.travauxMaterialisation17.nombre += 1;
+        }
+
+        tmp -= 1;
+        c += 1;
+      }
+
+      this.updateMontants();
+    },
+
     /** Set format for comptabilité: 0.00 CHF */
     setComptabiliteFormat() {
       Object.keys(this.total).forEach(x => {
         if (Array.isArray(this.total[x])) {
           for (let i=0; i<this.form_general.nb_batiments; i++) {
-            this.total[x][i] = numeral(this.round(this.total[x][i])).format("0.00");
+            this.total[x][i] = numeral(this.total[x][i]).format("0.00");
           }
         } else {
-          this.total[x] = numeral(this.round(this.total[x])).format("0.00");
+          this.total[x] = numeral(this.total[x]).format("0.00");
         }
       });
     },
@@ -870,30 +911,6 @@ export default {
         ).then(response => resolve(response))
         .catch(err => reject(err)); 
       });
-    },
-
-    /**
-     * selected option mat diff
-     */
-    matDiffChanged(montant) {
-      let travauxMaterialisation = [
-        "travauxMaterialisation14",
-        "travauxMaterialisation15",
-        "travauxMaterialisation16",
-        "travauxMaterialisation17"
-      ];
-      
-      for (let element_i of travauxMaterialisation) {
-        if (Number(this.form_detail[element_i].prix_unitaire) === Number(montant)) {
-          this.form_detail[element_i].nombre = 1;
-          this.form_detail[element_i].montant = montant;
-        } else {
-          this.form_detail[element_i].nombre = 0;
-          this.form_detail[element_i].montant = 0;
-        }
-      }
-      
-      this.updateMontants()
     },
 
     /**

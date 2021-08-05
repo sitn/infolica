@@ -749,21 +749,13 @@
                     <tr>
                       <td class="tg-0lax subtitle" colspan="6">3.4 Matérialisation différée</td>
                     </tr>
-
+                    
                     <tr>
                       <td class="tg-0lax"></td>
-                      <td class="tg-0lax">Sélectionner ce qui convient</td>
-                      <td class="tg-0lax alignRight" colspan="3">
-                        <md-field  class="nbField">
-                          <md-select :disabled="disabled" v-model="total.montant_34_matdiff" md-dense class="nbSelect" @md-selected="matDiffChanged">
-                            <md-option :value="0">0 point (0 CHF)</md-option>
-                            <md-option :value="form_detail.travauxMaterialisation14.prix_unitaire">{{ form_detail.travauxMaterialisation14.nom }} ({{ form_detail.travauxMaterialisation14.prix_unitaire }} CHF)</md-option>
-                            <md-option :value="form_detail.travauxMaterialisation15.prix_unitaire">{{ form_detail.travauxMaterialisation15.nom }} ({{ form_detail.travauxMaterialisation15.prix_unitaire }} CHF)</md-option>
-                            <md-option :value="form_detail.travauxMaterialisation16.prix_unitaire">{{ form_detail.travauxMaterialisation16.nom }} ({{ form_detail.travauxMaterialisation16.prix_unitaire }} CHF)</md-option>
-                            <md-option :value="form_detail.travauxMaterialisation17.prix_unitaire">{{ form_detail.travauxMaterialisation17.nom }} ({{ form_detail.travauxMaterialisation17.prix_unitaire }} CHF)</md-option>
-                          </md-select>
-                        </md-field>
-                      </td>
+                      <td class="tg-0lax">Points</td>
+                      <td class="tg-0lax alignCenter">{{ form_detail.travauxMaterialisation14.unite }}</td>
+                      <td class="tg-0lax alignCenter">Voir ci-dessous</td>
+                      <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="pointsMatDiff_nombre" class="nbInput" @keyup="updateMatDiff()" @focus="$event.target.select()" onkeypress="return /[0-9]/i.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax alignRight">{{ total.montant_34_matdiff }} CHF</td>
                     </tr>
                     <tr>
@@ -788,6 +780,19 @@
                     </tr>
                   </tbody>
                 </table>
+
+                <br>
+
+                <p>
+                  Montant mat diff: 
+                  <ul style="margin-top: 0px;">
+                    <li>De 1 à 5 points: {{ form_detail.travauxMaterialisation14.prix_unitaire }}CHF / PCE</li>
+                    <li>De 6 à 10 points: {{ form_detail.travauxMaterialisation15.prix_unitaire }}CHF / PCE</li>
+                    <li>De 11 à 15 points: {{ form_detail.travauxMaterialisation16.prix_unitaire }}CHF / PCE</li>
+                    <li>Plus de 16 points: {{ form_detail.travauxMaterialisation17.prix_unitaire }}CHF / PCE</li>
+                  </ul>  
+                  
+                </p>
               </md-card-content>
             </md-card>
           </md-tab>
