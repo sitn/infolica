@@ -222,7 +222,7 @@ export default {
 
           //forfait RF
           this.form_detail["forfait_rf1"] = {
-            tableau_emolument_id: this.indexFromDB.divers,
+            tableau_emolument_id: this.indexFromDB.forfait_rf,
             nom: "Forfait RF",
             unite: "-",
             prix_unitaire: numeral(0).format("0.00"),
