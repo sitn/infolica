@@ -981,16 +981,30 @@ export default {
         )
         .then(response => {
         if (response && response.data) {
-          _this.selectedModificationAffaire = response.data;
+          let tmp = response.data;
+          if (tmp.date_envoi) {
+            // L'affaire a bien une date d'envoi
+            if (!tmp.date_cloture) {
+              // L'affaire n'est pas clôturée
 
-          //Fill values
-          this.fillValuesFromModificationAffaire();
+              _this.selectedModificationAffaire = response.data;
 
-          //Expand numéros card
-          this.$refs.expandCollapseBtn.$el.click();
+              //Fill values
+              this.fillValuesFromModificationAffaire();
 
-          //Search numéros immeubles
-          _this.setModificationAffaireNuméros();
+              //Expand numéros card
+              this.$refs.expandCollapseBtn.$el.click();
+
+              //Search numéros immeubles
+              _this.setModificationAffaireNuméros();
+            } else {
+              this.$root.$emit("ShowError", "L'affaire de base est déjà été clôturée. Contrôler le numéro de l'affaire") 
+            }
+
+          } else {
+            this.$root.$emit("ShowError", "L'affaire de base n'a pas encore été envoyée. Contrôler le numéro de l'affaire") 
+          }
+
         }
         else{
           handleException({msg : "Affaire non trouvée"}, this);

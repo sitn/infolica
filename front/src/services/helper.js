@@ -125,6 +125,21 @@ export const getEtatsNumeros = async function () {
 };
 
 /*
+ * Get Etapes Affaire
+ */
+export const getEtapesAffaire = async function () {
+    return new Promise((resolve, reject) => {
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_ETAPES_INDEX_ENDPOINT,
+            {
+              withCredentials: true,
+              headers: {"Accept": "application/json"}
+            })
+            .then(response => resolve(response))
+            .catch(() => reject);
+    });
+};
+
+/*
  * Get clients
  */
 export const getClients = async function () {
