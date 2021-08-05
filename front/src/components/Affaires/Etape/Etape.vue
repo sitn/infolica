@@ -215,7 +215,7 @@ export default {
 
       if (
         (this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.fin_processus) &&
-        ![this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe].includes(this.affaire.type_id)
+        ![this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe, this.typesAffaires_conf.pcop].includes(this.affaire.type_id)
       ) {
         // update date_validation if next step is "fin de processus"
         if (
@@ -246,7 +246,7 @@ export default {
         (this.affaire.etape_id === this.etapes_affaire_conf.envoi_pcop && this.affaire.type_id === this.typesAffaires_conf.pcop) ||
         (this.affaire.etape_id === this.etapes_affaire_conf.envoi_cadastration && this.affaire.type_id === this.typesAffaires_conf.cadastration)) &&
         ([this.etapes_affaire_conf.validation, this.etapes_affaire_conf.signature_art35].includes(this.etapeAffaire.prochaine.id) ||
-        [this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe].includes(this.affaire.type_id))
+        [this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe, this.typesAffaires_conf.pcop].includes(this.affaire.type_id))
       ) {
         this.updateAffaireDate = {
           text: "Mettre à jour la date d'envoi de l'affaire",
