@@ -414,6 +414,17 @@ export default {
       } else {
         this.form_detail.relations_autres_services1.nombre = 0;
       }
+      
+      //update form_detail.forfait_rf1.prix_unitaire
+      if (this.form_detail.forfait_rf1.prix_unitaire) {
+        if (Number(this.form_detail.forfait_rf1.prix_unitaire) > 0) {
+          this.form_detail.forfait_rf1.nombre = 1;
+        } else {
+          this.form_detail.forfait_rf1.nombre = 0;
+        }
+      } else {
+        this.form_detail.forfait_rf1.nombre = 0;
+      }
 
       // set number of pces matdiff
       this.pointsMatDiff_nombre = 
