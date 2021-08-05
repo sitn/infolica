@@ -24,7 +24,7 @@
                 <md-card-content>
                     <div class="md-layout md-gutter">
                         <!-- id -->
-                        <div class="md-layout-item md-small-size-30">
+                        <div class="md-layout-item md-size-25 md-small-size-50">
                             <md-field>
                                 <label>ID</label>
                                 <md-input type="number" v-model="search.id"></md-input>
@@ -32,17 +32,31 @@
                         </div>
 
                         <!-- nom -->
-                        <div class="md-layout-item md-small-size-30">
+                        <div class="md-layout-item md-size-25 md-small-size-50">
                             <md-field>
                                 <label>Référence ACCESS (p.ex.CF_1492)</label>
                                 <md-input v-model="search.nom"></md-input>
                             </md-field>
                         </div>
+
+                        <!-- Opétateur -->
+                        <div class="md-layout-item md-size-25 md-small-size-50">
+                            <md-autocomplete md-dense v-model="search.operateur" :md-options="operateurs_liste" >
+                            <label>Opérateur</label>
+                            </md-autocomplete>
+                        </div>
+
+                        <!-- Etape -->
+                        <div class="md-layout-item md-size-25 md-small-size-50">
+                            <md-autocomplete md-dense v-model="search.etape" :md-options="etapes_liste" >
+                            <label>Étape</label>
+                            </md-autocomplete>
+                        </div>
                     </div>
 
                     <div class="md-layout md-gutter">
                         <!-- Cadastre -->
-                        <div class="md-layout-item md-small-size-30">
+                        <div class="md-layout-item md-size-25 md-small-size-50">
                             <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste" md-dense>
                                 <label>Cadastre</label>
                                 <template slot="md-autocomplete-item" slot-scope="{ item }">
@@ -51,13 +65,23 @@
                             </md-autocomplete>
                         </div>
                         <!-- Type -->
-                        <div class="md-layout-item md-small-size-30">
+                        <div class="md-layout-item md-size-25 md-small-size-50">
                             <md-autocomplete v-model="search.type" :md-options="types_affaires" md-dense>
                                 <label>Type</label>
                                 <template slot="md-autocomplete-item" slot-scope="{ item }">
                                     {{ item.nom }}
                                 </template>
                             </md-autocomplete>
+                        </div>
+                        <!-- Date de -->
+                        <div class="md-layout-item md-size-25 md-small-size-50" style="display: flex;">
+                            <md-datepicker v-model="search.dateFrom" :md-disabled-dates="disabledStartDates" md-immediately>
+                                <label>Depuis</label>
+                            </md-datepicker>
+            
+                            <md-datepicker style="margin-left: 20px;" v-model="search.dateTo" :md-disabled-dates="disabledEndDates" md-immediately>
+                                <label>Jusqu'au</label>
+                            </md-datepicker>
                         </div>
                     </div>
 
@@ -105,7 +129,13 @@
                         <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
                         <md-table-cell md-label="Type" md-sort-by="type_affaire">{{ item.type_affaire }}</md-table-cell>
                         <md-table-cell md-label="Description" md-sort-by="nom">{{ item.nom }}</md-table-cell>
-                        <!-- <md-table-cell md-label="Client" md-sort-by="client_commande_nom">{{ item.client_commande_nom }}</md-table-cell> -->
+                        <md-table-cell md-label="Client" md-sort-by="client_commande_nom">
+                            <ul style="padding-left: 0px;">
+                                <li v-if="item.client_commande_">Commande: {{ item.client_commande_ }}</li>
+                                <li v-if="item.client_envoi_prenom">Envoi: {{ item.client_envoi_ }}</li>
+                                <li v-if="item.client_facture_">Facture: {{ item.client_facture_ }}</li>
+                            </ul>
+                        </md-table-cell>
                         <md-table-cell md-label="Étape" md-sort-by="etape">{{ item.etape }}</md-table-cell>
                         <md-table-cell md-label="Opérateur·rice" md-sort-by="technicien_nom">{{ item.technicien_prenom }} {{ item.technicien_nom }}</md-table-cell>
                         <md-table-cell md-label="Date d'ouverture" md-sort-by="date_ouverture">{{ item.date_ouverture | formatDate }}</md-table-cell>
