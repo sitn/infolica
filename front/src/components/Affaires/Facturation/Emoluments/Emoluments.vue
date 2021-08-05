@@ -415,6 +415,13 @@ export default {
         this.form_detail.relations_autres_services1.nombre = 0;
       }
 
+      // set number of pces matdiff
+      this.pointsMatDiff_nombre = 
+        this.form_detail.travauxMaterialisation14.nombre +
+        this.form_detail.travauxMaterialisation15.nombre +
+        this.form_detail.travauxMaterialisation16.nombre +
+        this.form_detail.travauxMaterialisation17.nombre;
+
       //form_detail
       for (let key in this.form_detail) {
         this.form_detail[key].montant = numeral(this.round(Number(this.form_detail[key].nombre) * Number(this.form_detail[key].prix_unitaire))).format("0.00");
