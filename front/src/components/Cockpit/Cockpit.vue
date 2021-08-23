@@ -105,6 +105,7 @@ export default {
                 tmp = tmp.filter(x => x.etape_id !== Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID) && x.etape_id !== Number(process.env.VUE_APP_ETAPE_DEVIS_ID));
 
                 let nom_affaire = null;
+                let elapsedTime = "";
                 tmp.forEach(x => {
                     // set time for urgent_echeance
                     x.urgent_echeance = x.urgent_echeance? moment(x.urgent_echeance, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null;
@@ -112,14 +113,21 @@ export default {
                     for (let i=0; i<this.affaireEtapes.length; i++) {
                         nom_affaire = null;
                         if (i === x.etape_ordre-1) {
-                            nom_affaire = (x.no_access? x.no_access: String(x.id)) + " — " + x.etape_days_elapsed;
+                            nom_affaire = x.no_access? x.no_access: String(x.id);
                             nom_affaire += x.urgent_echeance === null? "": " / "+ x.urgent_echeance;
                         }
                         x["dashboard_" + i.toString()] = nom_affaire;
                     }
 
                     // set title to show on cockpit
-                    x.title = (x.no_access? 'Affaire ' + x.id + ' - ': '') + x.cadastre + ' - ' + x.description;
+                    if (x.etape_days_elapsed === 0) {
+                        elapsedTime = "aujourd'hui";
+                    } else if (x.etape_days_elapsed === 1) {
+                        elapsedTime = "hier";
+                    } else {
+                        elapsedTime = x.etape_days_elapsed + " jours";
+                    }
+                    x.title = (x.no_access? 'Affaire ' + x.id + ' — ': '') + x.cadastre + ' — ' + x.description  + " — Dans cette étape depuis " + elapsedTime;
                 });
                 this.affaires_bk = tmp;
                 if (!this.affaires.length > 0) {
