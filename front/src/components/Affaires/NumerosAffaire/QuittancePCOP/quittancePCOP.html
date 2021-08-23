@@ -30,12 +30,12 @@
                         </div>
     
                         <div class="md-layout-item md-size-50">
-                            <md-datepicker v-model="form.dateDemande" md-immediately>
+                            <md-datepicker v-model="form.dateDemande" :md-model-type="String" md-immediately>
                                 <label>Date de la demande</label>
                             </md-datepicker>
                         </div>
                         <div class="md-layout-item md-size-50">
-                            <md-datepicker v-model="form.dateEnvoi" md-immediately>
+                            <md-datepicker v-model="form.dateEnvoi" :md-model-type="String" md-immediately>
                                 <label>Date de l'envoi</label>
                             </md-datepicker>
                         </div>
