@@ -112,7 +112,7 @@ export default {
                     for (let i=0; i<this.affaireEtapes.length; i++) {
                         nom_affaire = null;
                         if (i === x.etape_ordre-1) {
-                            nom_affaire = x.no_access? x.no_access: String(x.id)
+                            nom_affaire = (x.no_access? x.no_access: String(x.id)) + " — " + x.etape_days_elapsed;
                             nom_affaire += x.urgent_echeance === null? "": " / "+ x.urgent_echeance;
                         }
                         x["dashboard_" + i.toString()] = nom_affaire;
