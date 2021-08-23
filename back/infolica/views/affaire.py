@@ -99,6 +99,7 @@ def affaire_cockpit_view(request):
             'etape_id': affaire.etape_id,
             'etape_ordre': affaire.etape_ordre,
             'etape_datetime': datetime.strftime(affaire.etape_datetime, '%Y-%m-%d %H:%M:%S'),
+            'etape_days_elapsed': (datetime.now() - affaire.etape_datetime).days,
             'operateur_id': affaire.technicien_id,
             'operateur_initiales': affaire.technicien_initiales,
             'cadastre': affaire.cadastre,
