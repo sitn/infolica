@@ -21,34 +21,25 @@
                     <div class="md-layout md-gutter">
                         <!-- Cadastre -->
                         <div class="md-layout-item md-size-50">
-                            <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste" :class="getValidationClass('cadastre')" md-dense>
+                            <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste" md-dense @md-selected="initNumerosList">
                                 <label>Cadastre</label>
                                 <template slot="md-autocomplete-item" slot-scope="{ item }">
                                     {{ item.nom }}
                                 </template>
-                                <span class="md-error" v-if="isModeCreate && !$v.search.cadastre.required">Le cadastre est obligatoire</span>
                             </md-autocomplete>
                         </div>
                         <!-- Numéro -->
                         <div class="md-layout-item md-size-25">
-                            <md-field :class="getValidationClass('numero')">
+                            <md-field>
                                 <label>Numéro</label>
-                                <md-input v-model="search.numero" type="number"></md-input>
-                                <span class="md-error" v-if="isModeCreate && !$v.search.numero.required">Le numéro est obligatoire</span>
+                                <md-input v-model="search.numero" type="number" @keyup="initNumerosList"></md-input>
                             </md-field>
                         </div>
                         <!-- SUFFIXE -->
                         <div class="md-layout-item md-size-25">
-                            <!-- Dans le cas d'une édition de nouvelle unité de PPE -->
-                            <md-field :class="getValidationClass('suffixe')" v-if="isModeCreatePPE">
+                            <md-field>
                                 <label>Unité</label>
-                                <md-input v-model="search.suffixe"></md-input>
-                                <span class="md-error" v-if="isModeCreate && !$v.search.suffixe.required">Le numéro est obligatoire</span>
-                            </md-field>
-                            <!-- Hors mode création de nouvelle unité de PPE -->
-                            <md-field v-else>
-                                <label>Unité</label>
-                                <md-input v-model="search.suffixe"></md-input>
+                                <md-input v-model="search.suffixe" @keyup="initNumerosList"></md-input>
                             </md-field>
                         </div>
                     </div>
@@ -56,75 +47,57 @@
                     <div class="md-layout md-gutter">
                         <!-- Type -->
                         <div class="md-layout-item">
-                            <md-autocomplete v-model="search.type" :md-options="numeros_types_liste" :class="getValidationClass('type')" md-dense>
+                            <md-autocomplete v-model="search.type" :md-options="numeros_types_liste" @md-changed="initNumerosList" md-dense>
                                 <label>Type</label>
                                 <template slot="md-autocomplete-item" slot-scope="{ item }">
                                     {{ item.nom }}
                                 </template>
-                                <span class="md-error" v-if="isModeCreate && !$v.search.type.required">Le type est obligatoire</span>
                             </md-autocomplete>
                         </div>
                         <!-- Etat -->
                         <div class="md-layout-item">
-                            <md-autocomplete v-model="search.etat" :md-options="numeros_etats_liste" :class="getValidationClass('etat')" md-dense>
+                            <md-autocomplete v-model="search.etat" :md-options="numeros_etats_liste" @md-changed="initNumerosList" md-dense>
                                 <label>Etat</label>
                                 <template slot="md-autocomplete-item" slot-scope="{ item }">
                                     {{ item.nom }}
                                 </template>
-                                <span class="md-error" v-if="isModeCreate && !$v.search.etat.required">L'état est obligatoire</span>
                             </md-autocomplete>
                         </div>
                     </div>
 
-                    <div class="md-layout md-gutter">
-                        <div class="md-layout md-alignment-bottom-right">
-                            <md-button class="md-primary" v-on:click="initNumerosList">
-                                Rechercher
-                            </md-button>
-                        </div>
-                    </div>
                 </md-card-content>
 
                 <md-divider />
 
                 <md-card-content>
 
-                    <!-- Afficher le tableau des immeubles si la liste est non nulle -->
-                    <div v-if="numeros_liste.length>0">
-                        <!-- Table des biens-fonds -->
-                        <md-table v-model="numeros_liste" md-sort="numero" md-sort-order="desc" @md-selected="onSelect" md-fixed-header>
-                            <md-table-toolbar>
-                                <h1 class="md-title">Résultat de la recherche</h1>
-                            </md-table-toolbar>
-                            <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple"
-                                class="md-primary md-raised" md-auto-select>
-                                <md-table-cell md-label="Cadastre" md-sort-by="cadastre">
-                                    {{ item.cadastre }}
-                                </md-table-cell>
-                                <md-table-cell md-label="Type" md-sort-by="type_numero">
-                                    {{ item.type_numero }}
-                                </md-table-cell>
-                                <md-table-cell md-label="Numéro" md-sort-by="numero">
-                                    {{ item.numero_sitn }}
-                                </md-table-cell>
-                                <md-table-cell md-label="État" md-sort-by="etat">
-                                    {{ item.etat }}
-                                </md-table-cell>
-                            </md-table-row>
-                        </md-table>
-                    </div>
+                    <!-- Table des biens-fonds -->
+                    <md-table v-model="numeros_liste" md-sort="numero" md-sort-order="desc" @md-selected="onSelect" md-fixed-header>
+                        <md-table-toolbar>
+                            <h1 class="md-title">Résultat de la recherche</h1>
+                        </md-table-toolbar>
 
-                    <!-- Proposer de créer le numéro si le numéro recherché n'existe pas encore dans la base de données -->
-                    <div v-else>
-                        <p>Aucun numéro correspondant à la recherche.</p>
-                        <p>Enregistrer le numéro avec les critères mentionnés dans la base de données?</p>
+                        <md-table-empty-state
+                            md-label="Aucun numéro trouvé"
+                            md-description="Tous les critères sont-ils corrects?">
+                        </md-table-empty-state>
 
-                        <div class="md-layout md-alignment-bottom-right">
-                            <md-button class="md-primary md-raised" v-on:click="validateForm">
-                                Créer
-                            </md-button>
-                        </div>
-                    </div>
+                        <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple"
+                            class="md-primary md-raised" md-auto-select>
+                            <md-table-cell md-label="Cadastre" md-sort-by="cadastre">
+                                {{ item.cadastre }}
+                            </md-table-cell>
+                            <md-table-cell md-label="Type" md-sort-by="type_numero">
+                                {{ item.type_numero }}
+                            </md-table-cell>
+                            <md-table-cell md-label="Numéro" md-sort-by="numero">
+                                {{ item.numero_sitn }}
+                            </md-table-cell>
+                            <md-table-cell md-label="État" md-sort-by="etat">
+                                {{ item.etat }}
+                            </md-table-cell>
+                        </md-table-row>
+                    </md-table>
 
                 </md-card-content>
             </md-card>

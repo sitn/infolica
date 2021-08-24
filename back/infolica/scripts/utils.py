@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*--
 from datetime import date, datetime
 from sqlalchemy import func, and_, desc
+from sqlalchemy import String
+from sqlalchemy.sql.expression import cast
 from infolica.models.models import Numero, AffaireNumero, Fonction, Role, FonctionRole, ReservationNumerosMO, Cadastre, Operateur
 from infolica.scripts.ldap_query import LDAPQuery
 from infolica.scripts.mailer import send_mail
@@ -124,18 +126,18 @@ class Utils(object):
         Get search conditions
         """
         conditions = list()
-        condition_not_in = False  # pour les conditions NOT IN, p. ex. référencement numéros à affaire
 
         for param in params:
             if param == 'matDiff':
                 continue
             if param.startswith('_'):
+                # pour les conditions NOT IN, p. ex. référencement numéros à affaire
                 param = param[1:]
-                condition_not_in = True
-            
-            if condition_not_in:
                 conditions.append(~getattr(model, param).in_(json.loads(params["_"+param])))
-                condition_not_in = False
+            elif param.startswith('%'):
+                # pour les conditions numérique qui contiennent un sous ensemble (p.ex. 101 est contenu dans 2101)
+                param = param[1:]
+                conditions.append(cast(getattr(model, param), String).like("%" + params["%"+param] + "%"))
             else:
                 if params[param].isdigit() and not param == 'npa' and not param == 'no_access':
                     tmp = int(params[param])
