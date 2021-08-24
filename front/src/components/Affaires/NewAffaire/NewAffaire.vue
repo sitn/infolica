@@ -813,7 +813,7 @@ export default {
      * Cancel edit
      */
     cancelEdit() {
-      this.$router.push({ name: "Affaires" });
+      this.$router.push({ name: "Cockpit" });
     },
 
     /**
@@ -839,10 +839,10 @@ export default {
     searchSITNEndpoint(input) {
       let cadastre_ = null;
       if (this.form.cadastre && this.form.cadastre.id !== null) {
-        cadastre_ = this.form.cadastre.nom;
+        cadastre_ = this.form.cadastre.nom.slice(0, -1);
         
         // only keep first part of cadastre name (problems with '-' and '/')
-        cadastre_ = cadastre_.split(/[-/ ]/)[0];
+        cadastre_ = cadastre_.split(/[-/ ]/).filter(Boolean).join(" ");
       }
 
       return (
