@@ -65,7 +65,7 @@
                                         
                                         <div>
                                             <md-button class="md-primary" @click="doQuittanceNumerosReserves" v-if="affaire_numeros_nouveaux.length > 0">Quittance</md-button>
-                                            <md-button class="md-primary" @click="callOpenQuittancePCOPDialog" v-if="permission.editNumerosAllowed && affaire.type_id === typesAffaires_conf.pcop">Quittance PCOP</md-button>
+                                            <md-button class="md-primary" @click="callOpenQuittancePCOPDialog" v-if="affaire.type_id === typesAffaires_conf.pcop && affaire_numeros_nouveaux.length > 0">Quittance PCOP</md-button>
                                             <md-button class="md-primary" @click="callOpenReservationDialog" v-if="permission.editNumerosAllowed && permission.editAffaireAllowed">Réservation</md-button>
                                         </div>
                                     </div>
