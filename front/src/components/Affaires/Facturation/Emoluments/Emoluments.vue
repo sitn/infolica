@@ -10,8 +10,11 @@ export default {
   name: 'Emoluments',
   props: {
     affaire: {type: Object},
+    affaire_factures: {type: Array},
+    configFactureTypeID: {type: Object},
     factureTypes: {type: Array},
     numeros_references: {type: Array},
+    permission: {type: Object},
     typesAffaires_conf: {type: Object},
   },
   data: function () {
@@ -47,6 +50,7 @@ export default {
 
         showEmolumentsDialog: false,
         showProgressBar: false,
+        showSendValuesToFacture: false,
         total: {}
       }
   },
@@ -1060,6 +1064,21 @@ export default {
       items.forEach(x => {
         this.form_general.numeros_id.push(x.numero_id);
       });
+    },
+
+    /**
+     * Save values to facture
+     */
+    saveToFacture(facture) {
+      this.$root.$emit("OpenFactureWithEmolumentsValues", [
+        facture,
+        this.total.montant_recapitulatif_somme5,
+        this.total.montant_recapitulatif_matdiff,
+        this.total.montant_recapitulatif_tva,
+        this.total.montant_recapitulatif_registre_foncier,
+        this.total.montant_recapitulatif_total
+      ]);
+      this.showEmolumentsDialog = false;
     }
 
   },

@@ -1819,6 +1819,26 @@
                 </table>
               </md-card-content>
             </md-card>
+
+            <!-- Balancer les valeurs dans les factures. -->
+            <div v-if="form_general.facture_type_id === configFactureTypeID.facture && permission.cloreEmolumentEnabled">
+              <h3>Enregistrer dans la facture</h3>
+
+              <md-table v-model="affaire_factures" md-card>
+                <md-table-empty-state
+                  md-label="Aucune facture trouvée"
+                  md-description="Enregistrer d'abord la facture vide avant de récupérer les montants des émoluments" />
+                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                  <md-table-cell md-label="Client">{{ item.adresse_facturation_ }}</md-table-cell>
+                  <md-table-cell md-label="Bien-fonds" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
+                  <md-table-cell md-label="Action">
+                    <md-button style="min-width: min-content;" class="md-primary" title="Envoyer les valeurs dans la facture" @click="saveToFacture(item)">
+                      <md-icon>read_more</md-icon>
+                    </md-button>
+                  </md-table-cell>
+                </md-table-row>
+              </md-table>
+            </div>
           </md-tab>
 
         </md-tabs>

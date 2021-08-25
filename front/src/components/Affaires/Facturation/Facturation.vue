@@ -651,6 +651,16 @@ export default {
     this.$root.$on("searchAffaireFactures", () => {
       setTimeout(() => {  this.searchAffaireFactures() }, 500);
     });
+
+    this.$root.$on("OpenFactureWithEmolumentsValues", (data) => {
+      let facture_emoluments = data[0];
+      facture_emoluments.montant_mo = data[1];
+      facture_emoluments.montant_mat_diff = data[2];
+      facture_emoluments.montant_tva = data[3];
+      facture_emoluments.montant_rf = data[4];
+      facture_emoluments.montant_total = data[5];
+      this.openFactureEdition(facture_emoluments, "facture");
+    });
   }
 };
 </script>
