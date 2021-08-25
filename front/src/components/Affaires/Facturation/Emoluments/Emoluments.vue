@@ -1000,6 +1000,22 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
+
+          // Prepare divers
+          for (let i=0; i<this.n_divers; i++) {
+            this.form_detail["divers" + String(i+1)] = {
+              tableau_emolument_id: this.indexFromDB.divers,
+              nom: null,
+              unite: "Heure",
+              prix_unitaire: null,
+              nombre: 0,
+              batiment: 0,
+              batiment_f: 1,
+              montant: numeral(0).format("0.00"),
+            }
+          }
+
+          let divers_counter = 1;
           for (const emol of response.data) {
             // iterate through response
             if (emol.batiment === 0) {
@@ -1007,12 +1023,17 @@ export default {
               for (let form_emol in this.form_detail) {
                 // iterate through form_detail to fill values
                 if (this.form_detail[form_emol].tableau_emolument_id === emol.tableau_emolument_id) {
-                  this.form_detail[form_emol]["nom"] = emol.position;
-                  this.form_detail[form_emol]["prix_unitaire"] = numeral(emol.prix_unitaire).format("0.00");
-                  this.form_detail[form_emol]["nombre"] = emol.nombre;
-                  this.form_detail[form_emol]["montant"] = numeral(emol.montant).format("0.00");
                   if (this.form_detail[form_emol].tableau_emolument_id === this.indexFromDB.divers) {
-                    this.form_detail[form_emol].prix_unitaire = Number(this.form_detail[form_emol].prix_unitaire)
+                    this.form_detail["divers" + String(divers_counter)]["nom"] = emol.position;
+                    this.form_detail["divers" + String(divers_counter)]["prix_unitaire"] = Number(emol.prix_unitaire);
+                    this.form_detail["divers" + String(divers_counter)]["nombre"] = emol.nombre;
+                    this.form_detail["divers" + String(divers_counter)]["montant"] = numeral(emol.montant).format("0.00");
+                    divers_counter += 1;
+                  } else {
+                    this.form_detail[form_emol]["nom"] = emol.position;
+                    this.form_detail[form_emol]["prix_unitaire"] = numeral(emol.prix_unitaire).format("0.00");
+                    this.form_detail[form_emol]["nombre"] = emol.nombre;
+                    this.form_detail[form_emol]["montant"] = numeral(emol.montant).format("0.00");
                   }
                   break;
                 }
