@@ -305,8 +305,8 @@ def affaires_new_view(request):
     params['datetime'] = datetime.now()
     Utils.addNewRecord(request, AffaireEtape, params)
 
-    # Envoyer e-mail si l'affaire est urgente
-    if model.urgent:
+    # Envoyer e-mail si l'affaire est urgente (sauf si c'est une PPE ou modif de PPE)
+    if model.urgent and (model.type_id != int(request.registry.settings['affaire_type_ppe_id']) or model.type_id != int(request.registry.settings['affaire_type_modification_ppe_id'])):
         Utils.sendMailAffaireUrgente(request, model)
 
     # Add facture
