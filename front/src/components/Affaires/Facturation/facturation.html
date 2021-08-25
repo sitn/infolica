@@ -262,6 +262,6 @@
         <md-dialog-confirm :md-active.sync="deleteFactureActive" md-title="Supprimer la facture" :md-content="deleteFactureMessage" md-confirm-text="Confirmer" md-cancel-text="Annuler" @md-confirm="onConfirmDelete" @md-cancel="onCancelDelete" />
     </div>
 
-    <Emoluments ref="emoluments" :affaire="affaire" />
+    <Emoluments ref="emoluments" :affaire="affaire" :typesAffaires_conf="typesAffaires_conf" :numeros_references="numeros_references_bk" :factureTypes="factureTypes" />
 
 </div>

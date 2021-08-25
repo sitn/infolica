@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*--
+from sqlalchemy.sql.elements import and_
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import EmolumentFacture, VEmolumentsFactures, TableauEmoluments
+from infolica.models.models import EmolumentFacture, VEmolumentsFactures, TableauEmoluments, VNumerosAffaires
 from infolica.models.models import EmolumentAffaire, Emolument
 from infolica.scripts.utils import Utils
 
@@ -63,6 +64,16 @@ def emolument_affaire_view(request):
         ).all()
         
         batiment_f = [y for _, y in query_bat]
+        numeros = []
+        numeros_id = []
+        if emolument_affaire_i.numeros_id and len(emolument_affaire_i.numeros_id) > 0:
+            numeros_id = emolument_affaire_i.numeros_id
+            numeros = Utils.serialize_many(request.dbsession.query(VNumerosAffaires).filter(
+                and_(
+                    VNumerosAffaires.numero_id.in_(tuple(emolument_affaire_i.numeros_id)),
+                    VNumerosAffaires.affaire_id == emolument_affaire_i.affaire_id
+                )
+            ).all())
 
         result.append(
             Utils._params(
@@ -76,7 +87,11 @@ def emolument_affaire_view(request):
                 tva_pc = emolument_affaire_i.tva_pc,
                 remarque = emolument_affaire_i.remarque,
                 nb_batiments = len(batiment_f),
-                batiment_f = batiment_f
+                batiment_f = batiment_f,
+                numeros_id = numeros_id,
+                numeros = numeros,
+                facture_type_id = emolument_affaire_i.facture_type_id,
+                utilise = emolument_affaire_i.utilise
             )
         )
     

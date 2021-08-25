@@ -12,55 +12,78 @@
                 <div class="md-title">Informations générales</div>
               </md-card-header>
               <md-card-content>
+                
+                <div class="md-gutter md-layout md-alignment-top-space-between">
+                  <div class="md-layout-item" style="width: 400px;">
+                    <md-field class="formField">
+                      <label>Type d'émolument</label>
+                      <md-select :disabled="disabled" v-model="form_general.facture_type_id" md-dense>
+                        <md-option v-for="item in factureTypes" :value="item.id">{{ item.nom }}</md-option>
+                      </md-select>
+                    </md-field>
+                  </div>
+
+                  <div class="md-layout-item" v-if="affaire.type_id === typesAffaires_conf.cadastration" style="width: 400px;">
+                    <h3>Bien-fonds</h3>
+
+                      <md-table v-model="numeros_references" md-card @md-selected="onSelectBFReferences" :md-selected-value.sync="form_general.numeros" >
+                        <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" md-auto-select>
+                          <md-table-cell md-label="Cadastre">{{ item.numero_cadastre }}</md-table-cell>
+                          <md-table-cell md-label="Numéro">{{ item.numero }}</md-table-cell>
+                        </md-table-row>
+                      </md-table>
+                  </div>
+                </div>
+                
+                <br>
+                <br>
+
                 <div class="md-layout md-alignment-top-space-between">
                   <div class="md-layout-item">
-
-                    <div>
-                      <h3>Bâtiments</h3>
-                      <table class="tg" style="width: 200px;">
-                        <thead v-if="form_general.nb_batiments>0">
-                          <tr>
-                            <th colspan="2" class="overHead">
-                              <md-icon>warning</md-icon>
-                              Indiquer les surfaces des bâtiments dans l'ordre du plus grand au plus petit.
-                            </th>
-                          </tr>
-                          <tr>
-                            <th class="tg-0lax alignCenter">Bâtiment</th>
-                            <th class="tg-0lax alignCenter">Facteur correctif</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="i in form_general.nb_batiments">
-                            <td class="tg-0lax alignCenter">{{ i }}</td>
-                            <td class="tg-0lax">
-                              <md-field class="nbField">
-                                <md-select :disabled="disabled" v-model="form_general.batiment_f[i-1]" md-dense @md-selected="updateBatimentCorrectionFactor()">
-                                  <md-option :value="0.5">0.5 (1-50m2)</md-option>
-                                  <md-option :value="0.6">0.6 (51-100m2)</md-option>
-                                  <md-option :value="0.7">0.7 (101-150m2)</md-option>
-                                  <md-option :value="0.8">0.8 (151-200m2)</md-option>
-                                  <md-option :value="0.9">0.9 (201-250m2)</md-option>
-                                  <md-option :value="1.0">1.0 (251-300m2)</md-option>
-                                  <md-option :value="1.1">1.1 (301-400m2)</md-option>
-                                  <md-option :value="1.2">1.2 (401-500m2)</md-option>
-                                  <md-option :value="1.3">1.3 (501-750m2)</md-option>
-                                  <md-option :value="1.4">1.4 (751-1000m2)</md-option>
-                                  <md-option :value="1.5">1.5 (>1000m2)</md-option>
-                                </md-select>
-                              </md-field>
-                            </td>
-                            <td class="tg-0lax alignCenter" v-if="!disabled">
-                              <md-button class="md-dense md-accent" style="min-width: auto;" title="Supprimer le bâtiment" @click="removeBatiment(i)"><md-icon>delete</md-icon></md-button>
-                            </td>
-                          </tr>
-                          <tr v-if="!disabled">
-                            <td class="tg-0lax alignRight" style="border: 0px" colspan="3"><em>Ajouter un bâtiment</em> <md-button style="min-width: auto;" class="md-dense md-primary" @click="addBatiment" title="Ajouter un bâtiment"><md-icon>add</md-icon></md-button></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
+                    <h3>Bâtiments</h3>
+                    <table class="tg" style="width: 200px;">
+                      <thead v-if="form_general.nb_batiments>0">
+                        <tr>
+                          <th colspan="2" class="overHead">
+                            <md-icon>warning</md-icon>
+                            Indiquer les surfaces des bâtiments dans l'ordre du plus grand au plus petit.
+                          </th>
+                        </tr>
+                        <tr>
+                          <th class="tg-0lax alignCenter">Bâtiment</th>
+                          <th class="tg-0lax alignCenter">Facteur correctif</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="i in form_general.nb_batiments">
+                          <td class="tg-0lax alignCenter">{{ i }}</td>
+                          <td class="tg-0lax">
+                            <md-field class="nbField">
+                              <md-select :disabled="disabled" v-model="form_general.batiment_f[i-1]" md-dense @md-selected="updateBatimentCorrectionFactor()">
+                                <md-option :value="0.5">0.5 (1-50m2)</md-option>
+                                <md-option :value="0.6">0.6 (51-100m2)</md-option>
+                                <md-option :value="0.7">0.7 (101-150m2)</md-option>
+                                <md-option :value="0.8">0.8 (151-200m2)</md-option>
+                                <md-option :value="0.9">0.9 (201-250m2)</md-option>
+                                <md-option :value="1.0">1.0 (251-300m2)</md-option>
+                                <md-option :value="1.1">1.1 (301-400m2)</md-option>
+                                <md-option :value="1.2">1.2 (401-500m2)</md-option>
+                                <md-option :value="1.3">1.3 (501-750m2)</md-option>
+                                <md-option :value="1.4">1.4 (751-1000m2)</md-option>
+                                <md-option :value="1.5">1.5 (>1000m2)</md-option>
+                              </md-select>
+                            </md-field>
+                          </td>
+                          <td class="tg-0lax alignCenter" v-if="!disabled">
+                            <md-button class="md-dense md-accent" style="min-width: auto;" title="Supprimer le bâtiment" @click="removeBatiment(i)"><md-icon>delete</md-icon></md-button>
+                          </td>
+                        </tr>
+                        <tr v-if="!disabled">
+                          <td class="tg-0lax alignRight" style="border: 0px" colspan="3"><em>Ajouter un bâtiment</em> <md-button style="min-width: auto;" class="md-dense md-primary" @click="addBatiment" title="Ajouter un bâtiment"><md-icon>add</md-icon></md-button></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                </div>
 
                   <div class="md-layout-item">
                     <md-field class="formField">

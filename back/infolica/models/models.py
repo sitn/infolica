@@ -247,6 +247,9 @@ class EmolumentAffaire(Base):
     indice_application = Column(Float)
     tva_pc = Column(Float)
     remarque = Column(Text)
+    numeros_id = Column(ARRAY(BigInteger))
+    facture_type_id = Column(BigInteger)
+    utilise = Column(Boolean)
 
 
 class Emolument(Base):

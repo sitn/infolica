@@ -10,6 +10,9 @@ export default {
   name: 'Emoluments',
   props: {
     affaire: {type: Object},
+    factureTypes: {type: Array},
+    numeros_references: {type: Array},
+    typesAffaires_conf: {type: Object},
   },
   data: function () {
       return {
@@ -23,6 +26,10 @@ export default {
         form_detail_batiment: [], //emoluments avec bâtiments
         n_divers: 10,
         pointsMatDiff_nombre: 0,
+
+        // ####################################################################################
+        // SI LE TABLEAU DES EMOLUMENTS EST MODIFIE, APPORTER LES MODIFICATIONS ICI !     START
+        // ####################################################################################
         indexFromDB: {
           mandat: [1,2,3,4,5,6],
           travauxTerrain: [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
@@ -34,6 +41,10 @@ export default {
           relations_autres_services: 102,
           forfait_rf: 103
         },
+        // ####################################################################################
+        // SI LE TABLEAU DES EMOLUMENTS EST MODIFIE, APPORTER LES MODIFICATIONS ICI !      STOP
+        // ####################################################################################
+
         showEmolumentsDialog: false,
         showProgressBar: false,
         total: {}
@@ -63,6 +74,7 @@ export default {
         // travauxMaterialisation
         idx = Math.ceil(Math.random() * this.indexFromDB.travauxMaterialisation.length);
         this.form_detail["travauxMaterialisation"+String(idx)].nombre = 1;
+
         // travauxBureau
         idx = Math.ceil(Math.random() * this.indexFromDB.travauxBureau.length);
         idx2 = Math.floor(Math.random() * this.form_general.nb_batiments);
@@ -255,6 +267,10 @@ export default {
           indice_application: 1.22,
           tva_pc: 7.7, // %
           remarque: "",
+          facture_type_id: 1,
+          numeros: [],
+          numeros_id: [],
+          utilise: false,
   
           // Bâtiments
           batiment_f: [],
@@ -989,9 +1005,12 @@ export default {
                 // iterate through form_detail to fill values
                 if (this.form_detail[form_emol].tableau_emolument_id === emol.tableau_emolument_id) {
                   this.form_detail[form_emol]["nom"] = emol.position;
-                  this.form_detail[form_emol]["prix_unitaire"] = emol.prix_unitaire;
+                  this.form_detail[form_emol]["prix_unitaire"] = numeral(emol.prix_unitaire).format("0.00");
                   this.form_detail[form_emol]["nombre"] = emol.nombre;
                   this.form_detail[form_emol]["montant"] = numeral(emol.montant).format("0.00");
+                  if (this.form_detail[form_emol].tableau_emolument_id === this.indexFromDB.divers) {
+                    this.form_detail[form_emol].prix_unitaire = Number(this.form_detail[form_emol].prix_unitaire)
+                  }
                   break;
                 }
               }
@@ -1001,7 +1020,7 @@ export default {
                 // iterate this.form_detail_batiment to fill values
                 if (this.form_detail_batiment[emol.batiment-1][form_emol].tableau_emolument_id === emol.tableau_emolument_id) {
                   this.form_detail_batiment[emol.batiment-1][form_emol]["nom"] = emol.position;
-                  this.form_detail_batiment[emol.batiment-1][form_emol]["prix_unitaire"] = emol.prix_unitaire;
+                  this.form_detail_batiment[emol.batiment-1][form_emol]["prix_unitaire"] = numeral(emol.prix_unitaire).format("0.00");
                   this.form_detail_batiment[emol.batiment-1][form_emol]["nombre"] = emol.nombre;
                   this.form_detail_batiment[emol.batiment-1][form_emol]["montant"] = numeral(emol.montant).format("0.00");
                   break;
@@ -1011,6 +1030,16 @@ export default {
           }
           this.updateMontants();
           this.showEmolumentsDialog = true;
+
+          // if cadastration, load numeros concerned by emoluments
+          if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
+            this.form_general.numeros = [];
+            if (this.form_general.numeros_id.length > 0) {
+              this.form_general.numeros_id.forEach(x => {
+                this.form_general.numeros.push(this.numeros_references.filter(y => y.numero_id === x)[0]);
+              });
+            }
+          }
         }
       }).catch(err => handleException(err, this));
     },
@@ -1021,6 +1050,17 @@ export default {
     onCancel() {
       this.showEmolumentsDialog = false;
       this.getEmolumentsGeneral();
+    },
+
+    /**
+     * on select BF reference (cadastration)
+     */
+    onSelectBFReferences(items) {
+      this.form_general.numeros = items;
+      this.form_general.numeros_id = [];
+      items.forEach(x => {
+        this.form_general.numeros_id.push(x.numero_id);
+      });
     }
 
   },

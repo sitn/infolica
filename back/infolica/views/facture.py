@@ -4,7 +4,7 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import Facture, VFactures
+from infolica.models.models import Facture, FactureType, VFactures
 from infolica.scripts.utils import Utils
 
 import json
@@ -25,6 +25,19 @@ def factures_view(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(VFactures).all()
+    return Utils.serialize_many(query)
+
+
+@view_config(route_name='facture_type', request_method='GET', renderer='json')
+def facture_type_view(request):
+    """
+    Return all facture types
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
+
+    query = request.dbsession.query(FactureType).all()
     return Utils.serialize_many(query)
 
 
@@ -51,10 +64,6 @@ def factures_new_view(request):
     """
     Add new facture
     """
-    # # Check authorization
-    # if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
-    #     raise exc.HTTPForbidden()
-
     # Check connected
     if not Utils.check_connected(request):
         raise exc.HTTPForbidden()

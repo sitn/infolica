@@ -6,7 +6,7 @@
 import { getCurrentDate,
          getClients,
          filterList,
-        //  stringifyAutocomplete,
+         stringifyAutocomplete2,
          getDocument,
          logAffaireEtape } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
@@ -47,6 +47,7 @@ export default {
       deleteFactureActive: false,
       deleteFactureId: null,
       deleteFactureMessage: "",
+      factureTypes: [],
       lastRecordSAP: null,
       selectedFacture: {
         id: null,
@@ -617,11 +618,30 @@ export default {
     openEmolumentsDialog() {
       this.$refs.emoluments.showEmolumentsDialog = true;
       this.$refs.emoluments.initForm();
+    },
+
+
+    /**
+     * get facture_types
+     */
+    getFactureTypes() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_TYPE_ENDPOINT,
+        {
+          withCredentials: true,
+          Headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.factureTypes = stringifyAutocomplete2(response.data);
+        }
+      }).catch(err => handleException(err, this));
     }
 
   },
 
   mounted: function() {
+    this.getFactureTypes();
     this.searchClients();
     this.searchAffaireNumeros().then(() => {
       this.searchAffaireFactures();
