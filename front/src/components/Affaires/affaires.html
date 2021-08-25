@@ -83,6 +83,10 @@
                                 <label>Jusqu'au</label>
                             </md-datepicker>
                         </div>
+
+                        <div class="md-layout-item md-size25 md-small-size-50">
+                            <md-checkbox v-model="search.limitNbResults" class="md-primary">Limiter la recherche aux 20 premiers résultats (pour des raisons de performances).</md-checkbox>
+                        </div>
                     </div>
 
                     <div class="md-layout md-gutter">
@@ -116,8 +120,9 @@
 
         <md-card>
             <!-- Results Header -->
-            <md-card-header>
+            <md-card-header class="justifyTitleBtn">
                 <div class="md-title">Résultats</div>
+                <div>({{ affaires.length }} affaire<span v-if="affaires.length >= 2">s</span> affichée<span v-if="affaires.length >= 2">s</span>)</div>
             </md-card-header>
 
             <!-- Results Content -->
@@ -139,6 +144,7 @@
                         <md-table-cell md-label="Étape" md-sort-by="etape">{{ item.etape }}</md-table-cell>
                         <md-table-cell md-label="Opérateur·rice" md-sort-by="technicien_nom">{{ item.technicien_prenom }} {{ item.technicien_nom }}</md-table-cell>
                         <md-table-cell md-label="Date d'ouverture" md-sort-by="date_ouverture">{{ item.date_ouverture | formatDate }}</md-table-cell>
+                        <md-table-cell md-label="Date d'envoi" md-sort-by="date_envoi">{{ item.date_envoi | formatDate }}</md-table-cell>
                         <md-table-cell md-label="Consulter" class="actionsColumn">
                             <md-button class="md-icon-button md-primary" v-on:click="doOpenAffaire(item.id)">
                                 <md-icon>open_in_new</md-icon>

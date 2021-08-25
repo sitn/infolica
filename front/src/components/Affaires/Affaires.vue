@@ -39,6 +39,7 @@ export default {
       dateFrom: null,
       dateTo: null,
       etape: null,
+      limitNbResults: true,
     },
     searchClientsListe: [],
     types_affaires: []
@@ -146,13 +147,17 @@ export default {
       this.search.dateFrom = null;
       this.search.dateTo = null;
       this.search.etape = null;
+      this.search.limitNbResults = true;
     },
     
     /*
      * SEARCH AFFAIRE
      */
     async searchAffaires() {
-      var formData = new FormData();
+      let formData = new FormData();
+
+      formData.append("limitNbResults", this.search.limitNbResults);
+
       if (this.search.id) {
         formData.append("id", this.search.id);
       }

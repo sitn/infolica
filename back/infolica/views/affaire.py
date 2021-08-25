@@ -99,7 +99,7 @@ def affaire_cockpit_view(request):
             'etape_id': affaire.etape_id,
             'etape_ordre': affaire.etape_ordre,
             'etape_datetime': datetime.strftime(affaire.etape_datetime, '%Y-%m-%d %H:%M:%S'),
-            'etape_days_elapsed': (datetime.now() - affaire.etape_datetime).days,
+            'etape_days_elapsed': (datetime.now().date() - affaire.etape_datetime.date()).days,
             'operateur_id': affaire.technicien_id,
             'operateur_initiales': affaire.technicien_initiales,
             'cadastre': affaire.cadastre,
@@ -128,6 +128,7 @@ def affaires_search_view(request):
     client_id = None
     date_from = None
     date_to = None
+    limitNbResults = True
     for key in request.params.keys():
         if "client" in key:
             client_id = request.params[key]
@@ -135,6 +136,11 @@ def affaires_search_view(request):
             date_from = datetime.strptime(request.params[key], '%Y-%m-%d')
         elif "date_to" in key:
             date_to = datetime.strptime(request.params[key], '%Y-%m-%d')
+        elif "limitNbResults" in key:
+            if request.params[key] == "true":
+                limitNbResults = True
+            else:
+                limitNbResults = False
         else:
             params_affaires[key] = request.params[key]
     
@@ -165,7 +171,12 @@ def affaires_search_view(request):
     if not date_to is None:
         query = query.filter(VAffaire.date_ouverture <= date_to)
     
-    query = query.limit(search_limit).all()
+    
+    if limitNbResults:
+        print("toto")
+        query = query.limit(search_limit)
+
+    query = query.all()
 
     results = Utils.serialize_many(query)
 
@@ -294,8 +305,8 @@ def affaires_new_view(request):
     params['datetime'] = datetime.now()
     Utils.addNewRecord(request, AffaireEtape, params)
 
-    # Envoyer e-mail si l'affaire est urgente
-    if model.urgent:
+    # Envoyer e-mail si l'affaire est urgente (sauf si c'est une PPE ou modif de PPE)
+    if model.urgent and (model.type_id != int(request.registry.settings['affaire_type_ppe_id']) or model.type_id != int(request.registry.settings['affaire_type_modification_ppe_id'])):
         Utils.sendMailAffaireUrgente(request, model)
 
     # Add facture
