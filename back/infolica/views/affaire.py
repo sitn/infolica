@@ -128,6 +128,7 @@ def affaires_search_view(request):
     client_id = None
     date_from = None
     date_to = None
+    limitNbResults = True
     for key in request.params.keys():
         if "client" in key:
             client_id = request.params[key]
@@ -135,6 +136,11 @@ def affaires_search_view(request):
             date_from = datetime.strptime(request.params[key], '%Y-%m-%d')
         elif "date_to" in key:
             date_to = datetime.strptime(request.params[key], '%Y-%m-%d')
+        elif "limitNbResults" in key:
+            if request.params[key] == "true":
+                limitNbResults = True
+            else:
+                limitNbResults = False
         else:
             params_affaires[key] = request.params[key]
     
@@ -165,7 +171,12 @@ def affaires_search_view(request):
     if not date_to is None:
         query = query.filter(VAffaire.date_ouverture <= date_to)
     
-    query = query.limit(search_limit).all()
+    
+    if limitNbResults:
+        print("toto")
+        query = query.limit(search_limit)
+
+    query = query.all()
 
     results = Utils.serialize_many(query)
 
