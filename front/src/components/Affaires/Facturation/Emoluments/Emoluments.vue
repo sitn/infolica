@@ -736,7 +736,7 @@ export default {
       this.total.montant_recapitulatif_matdiff = this.round( Number(this.total.montant_34_matdiff) * Number(this.form_general.indice_application));
       this.total.montant_recapitulatif_somme6 = Number(this.total.montant_recapitulatif_somme5) + Number(this.total.montant_recapitulatif_matdiff);
 
-      this.total.montant_recapitulatif_tva = this.round(Number(this.total.montant_recapitulatif_somme6) * Number(this.form_general.tva_pc) / 100, 0.05);
+      this.total.montant_recapitulatif_tva = this.round(Number(this.total.montant_recapitulatif_somme5) * Number(this.form_general.tva_pc) / 100, 0.05) + this.round(Number(this.total.montant_recapitulatif_matdiff) * Number(this.form_general.tva_pc) / 100, 0.05);
       this.total.montant_recapitulatif_somme7 = this.total.montant_recapitulatif_somme6 + Number(this.total.montant_recapitulatif_tva);
 
       this.total.montant_recapitulatif_registre_foncier = Number(this.total.montant_rf_total);
@@ -756,7 +756,6 @@ export default {
       this.form_detail.travauxMaterialisation17.nombre = 0;
 
       let tmp = Number(this.pointsMatDiff_nombre);
-      console.log(tmp)
       let c = 1;
       while (tmp > 0) {
         if (c <= 5) {

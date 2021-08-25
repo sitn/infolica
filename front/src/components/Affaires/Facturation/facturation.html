@@ -20,15 +20,21 @@
             <md-card-expand-content>
                 <md-card-content>
 
+                    <h3>Devis</h3>
+                    
                     <!-- Emoluments -->
                     <div v-if="$refs.emoluments && $refs.emoluments.emolumentsGeneral_list && $refs.emoluments.emolumentsGeneral_list[0]">
                         <ul>
-                            <li v-for="item in $refs.emoluments.emolumentsGeneral_list"><a @click="$refs.emoluments.getEmolumentsDetail(item.id)">{{ item }}</a></li>
+                            <li v-for="item in $refs.emoluments.emolumentsGeneral_list" v-if="item.facture_type_id === configFactureTypeID.devis">
+                                <a @click="$refs.emoluments.getEmolumentsDetail(item.id)">Emolument id: {{ item.id }} ( {{ item.nb_batiments }} bâtiment<span v-if="item.nb_batiments > 1">s</span>
+                                    <span v-if="item.numeros.length > 0"> | bien<span v-if="item.numeros.length > 1">s</span>-fonds: <template v-for="num in item.numeros"> {{ num.numero }}</template></span>
+                                    <span v-if="item.remarque"> | {{ item.remarque }}</span>
+                                    )
+                                </a>
+                            </li>
                         </ul>
                     </div>
 
-
-                    <h3>Devis</h3>
                     <div v-if="affaire_devis[0]">
                         <md-table v-model="affaire_devis" md-sort="date" md-sort-order="desc" md-fixed-header>
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
@@ -60,6 +66,19 @@
                     
                     <md-divider></md-divider>
                     <h3>Factures</h3>
+
+                    <!-- Emoluments -->
+                    <div v-if="$refs.emoluments && $refs.emoluments.emolumentsGeneral_list && $refs.emoluments.emolumentsGeneral_list[0]">
+                        <ul>
+                            <li v-for="item in $refs.emoluments.emolumentsGeneral_list" v-if="item.facture_type_id === configFactureTypeID.facture">
+                                <a @click="$refs.emoluments.getEmolumentsDetail(item.id)">Emolument id: {{ item.id }} ( {{ item.nb_batiments }} bâtiment<span v-if="item.nb_batiments > 1">s</span>
+                                    <span v-if="item.numeros.length > 0"> | bien<span v-if="item.numeros.length > 1">s</span>-fonds: <template v-for="num in item.numeros"> {{ num.numero }}</template></span>
+                                    <span v-if="item.remarque"> | {{ item.remarque }}</span>
+                                    )
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
 
                     <div v-if="affaire_factures[0]">
                         <md-table v-model="affaire_factures" md-sort="date" md-sort-order="desc" md-fixed-header>
