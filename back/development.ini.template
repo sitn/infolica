@@ -129,6 +129,7 @@ affaire_type_mpd_id = 8
 affaire_type_retablissement_pfp3_id = 12
 affaire_type_autre_id = 7
 affaire_type_part_copropriete_id = 10
+affaire_type_modification_ppe_id = 20
 affaire_type_modification_ordre_separation = 100
 
 # ID Numéros-types biens-fonds

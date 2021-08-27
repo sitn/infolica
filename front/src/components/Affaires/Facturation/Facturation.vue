@@ -174,6 +174,7 @@ export default {
               id: x.id,
               nom: x.adresse_,
               type_id: x.type_client,
+              besoin_vref_facture: x.besoin_vref_facture,
               toLowerCase: () => x.adresse_.toLowerCase(),
               toString: () => x.adresse_
             }));

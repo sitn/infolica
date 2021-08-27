@@ -173,7 +173,6 @@ def affaires_search_view(request):
     
     
     if limitNbResults:
-        print("toto")
         query = query.limit(search_limit)
 
     query = query.all()

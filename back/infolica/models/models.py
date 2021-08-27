@@ -73,6 +73,7 @@ class Client(Base):
     no_sap = Column(Text)
     no_bdp_bdee = Column(Text)
     no_access = Column(Text)
+    besoin_vref_facture = Column(Boolean)
 
 
 class ClientMoralPersonne(Base):
@@ -609,6 +610,8 @@ class NumeroDiffere(Base):
     date_sortie = Column(Date)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
     req_radiation = Column(Boolean)
+    req_ref = Column(Text)
+    date_controle = Column(Date)
 
 
 class NumeroRelationType(Base):
