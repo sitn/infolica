@@ -58,6 +58,7 @@ export default {
       permission: {
         abandonAffaireEnabled: false,
         cloreAffaireEnabled: false,
+        cloreEmolumentEnabled: false,
         editAffaireAllowed: false,
         editClientAllowed: false,
         editControleGeometreAllowed: false,
@@ -229,6 +230,7 @@ export default {
             _this.permission.editAffaireAllowed = true;
             _this.permission.editFactureAllowed = true;
             _this.permission.editClientAllowed = true;
+            _this.permission.cloreEmolumentEnabled = true;
             _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.affaireCloture = _this.affaire.type_id === _this.typesAffaires_conf.pcop;
           }

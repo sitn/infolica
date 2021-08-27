@@ -236,6 +236,36 @@ class EmolumentFacture(Base):
     montant = Column(Float, default=0.0, nullable=False)
 
 
+class EmolumentAffaire(Base):
+    __tablename__ = 'emolument_affaire'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
+    pente_pc = Column(Integer)
+    diff_visibilite_pc = Column(Integer)
+    trafic_pc = Column(Integer)
+    zi = Column(Float)
+    indice_application = Column(Float)
+    tva_pc = Column(Float)
+    remarque = Column(Text)
+    numeros_id = Column(ARRAY(BigInteger))
+    facture_type_id = Column(BigInteger)
+    utilise = Column(Boolean)
+
+
+class Emolument(Base):
+    __tablename__ = 'emolument'
+    __table_args__ = {'schema': 'infolica'}
+    emolument_affaire_id = Column(BigInteger, primary_key=True)
+    tableau_emolument_id = Column(BigInteger, primary_key=True)
+    position = Column(Text, primary_key=True)
+    prix_unitaire = Column(Float)
+    nombre = Column(Integer)
+    batiment = Column(Integer, primary_key=True)
+    batiment_f = Column(Float)
+    montant = Column(Float)
+
+
 class SuiviMandat(Base):
     __tablename__ = 'suivi_mandat'
     __table_args__ = {'schema': 'infolica'}

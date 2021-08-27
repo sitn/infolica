@@ -106,7 +106,7 @@ class Utils(object):
                     val = True
                 if val == 'false':
                     val = False
-                if val == "null":
+                if val == "null" or val == "":
                     val = None
 
                 setattr(record, att, val)

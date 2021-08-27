@@ -35,7 +35,12 @@ def includeme(config):
     config.add_route('factures', '/infolica/api/factures')
     config.add_route('factures_s', '/infolica/api/factures/')
     config.add_route('facture_by_id', '/infolica/api/factures/{id}')
+    config.add_route('facture_type', '/infolica/api/facture_type')
     config.add_route('affaires_factures_by_affaire_id', '/infolica/api/affaires_factures/{id}')
+    config.add_route('emoluments', '/infolica/api/emoluments')
+    config.add_route('tableau_emoluments', '/infolica/api/tableau_emoluments')
+    config.add_route('emolument_affaire', '/infolica/api/emolument_affaire')
+    config.add_route('emolument', '/infolica/api/emolument')
     #Login
     config.add_route('login', '/infolica/api/login')
     config.add_route('login_s', '/infolica/api/login/')
