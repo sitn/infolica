@@ -56,49 +56,6 @@ export default {
   },
 
   methods:{
-    fillFakeValues() {
-
-      for (let i=0; i<3; i++){
-        // mandat
-        let idx = Math.ceil(Math.random() * this.indexFromDB.mandat.length);
-        let idx2 = Math.floor(Math.random() * this.form_general.nb_batiments);
-        this.form_detail["mandat"+String(idx)].nombre = 1;
-        if (this.form_general.nb_batiments>0) {
-          let idx = Math.ceil(Math.random() * this.indexFromDB.mandat.length);
-          this.form_detail_batiment[idx2]["mandat"+String(idx)].nombre = 1;
-        }
-        // travauxTerrain
-        idx = Math.ceil(Math.random() * this.indexFromDB.travauxTerrain.length);
-        idx2 = Math.floor(Math.random() * this.form_general.nb_batiments);
-        this.form_detail["travauxTerrain"+String(idx)].nombre = 1;
-        if (this.form_general.nb_batiments>0) {
-          let idx = Math.ceil(Math.random() * this.indexFromDB.mandat.length);
-          this.form_detail_batiment[idx2]["travauxTerrain"+String(idx)].nombre = 1;
-        }
-        // travauxMaterialisation
-        idx = Math.ceil(Math.random() * this.indexFromDB.travauxMaterialisation.length);
-        this.form_detail["travauxMaterialisation"+String(idx)].nombre = 1;
-
-        // travauxBureau
-        idx = Math.ceil(Math.random() * this.indexFromDB.travauxBureau.length);
-        idx2 = Math.floor(Math.random() * this.form_general.nb_batiments);
-        this.form_detail["travauxBureau"+String(idx)].nombre = 1;
-        if (this.form_general.nb_batiments>0) {
-          let idx = Math.ceil(Math.random() * this.indexFromDB.mandat.length);
-          this.form_detail_batiment[idx2]["travauxBureau"+String(idx)].nombre = 1;
-        }
-        // registreFoncier
-        idx = Math.ceil(Math.random() * this.indexFromDB.registreFoncier.length);
-        this.form_detail["registreFoncier"+String(idx)].nombre = 1;
-      }
-      this.form_detail.divers1.nombre = 1;
-      this.form_detail.divers1.montant = 182;
-      this.form_detail.divers1.prix_unitaire = 182;
-      this.form_detail.divers1.nom = "test";
-
-      this.updateMontants();
-    },
-    
     /**
      * Get emoluments units from DB
      */
