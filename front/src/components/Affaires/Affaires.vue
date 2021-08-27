@@ -42,6 +42,7 @@ export default {
       limitNbResults: true,
     },
     searchClientsListe: [],
+    showProgressBar: false,
     types_affaires: []
   }),
 
@@ -154,6 +155,8 @@ export default {
      * SEARCH AFFAIRE
      */
     async searchAffaires() {
+      this.showProgressBar = true;
+
       let formData = new FormData();
 
       formData.append("limitNbResults", this.search.limitNbResults);
@@ -223,8 +226,10 @@ export default {
             });
 
             this.affaires = tmp;
+            this.showProgressBar = false;
           }
         }).catch(err => {
+          this.showProgressBar = false;
           handleException(err, this);
         });
     },
