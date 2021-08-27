@@ -47,7 +47,8 @@ export default {
       mail: null,
       no_sap: null,
       no_bdp_bdee: null,
-      co: null
+      co: null,
+      besoin_vref_facture: false,
     },
     lastRecord: null,
     permission: {
@@ -103,6 +104,7 @@ export default {
       this.form.no_sap = null;
       this.form.no_bdp_bdee = null;
       this.form.co = null;
+      this.form.besoin_vref_facture = false;
     },
 
     /*
@@ -220,6 +222,7 @@ export default {
       formData.append("mail", this.form.mail || null);
       formData.append("no_sap", this.form.no_sap || null);
       formData.append("no_bdp_bdee", this.form.no_bdp_bdee || null);
+      formData.append("besoin_vref_facture", this.form.besoin_vref_facture);
 
       return formData;
     },

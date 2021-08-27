@@ -190,6 +190,10 @@
                         </template>
                         <!-- <span class="md-error" v-if="!$v.selectedFacture.client.objectValidation">Le client est obligatoire</span> -->
                     </md-autocomplete>
+
+                    <div style="background-color: #eff551;" v-if="selectedClient && selectedClient.besoin_vref_facture">
+                        <md-icon style="margin-left: 5px;">warning</md-icon> <span>Le client demande d'indiquer une référence sur la facture.</span>
+                    </div>
         
                 </div>
 
