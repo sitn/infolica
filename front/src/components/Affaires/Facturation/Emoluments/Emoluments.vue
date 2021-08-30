@@ -1062,9 +1062,9 @@ export default {
   },
 
   mounted: function(){
-    // this.initForm();
-    this.getEmolumentsUnit();
-    this.getEmolumentsGeneral();
+    this.getEmolumentsUnit().then(()=>{
+      this.getEmolumentsGeneral();
+    });
   }
 }
 </script>
