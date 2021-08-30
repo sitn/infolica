@@ -1831,6 +1831,7 @@
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                   <md-table-cell md-label="Client">{{ item.adresse_facturation_ }}</md-table-cell>
                   <md-table-cell md-label="Bien-fonds" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
+                  <md-table-cell md-label="Remarque" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.remarque }}</md-table-cell>
                   <md-table-cell md-label="Action">
                     <md-button style="min-width: min-content;" class="md-primary" title="Envoyer les valeurs dans la facture" @click="saveToFacture(item)">
                       <md-icon>read_more</md-icon>
