@@ -23,7 +23,6 @@ export default {
         divers: [],
         emolumentsGeneral_list: [],
         emolumentsUnits: [],
-        enableSave: false,
         form_general: {}, //général
         form_detail: {}, //emoluments sans bâtiment
         form_detail_batiment: [], //emoluments avec bâtiments
@@ -237,9 +236,34 @@ export default {
           batiment_f: [],
         };
 
+
+        for (const emol in this.form_detail) {
+          this.form_detail[emol].nombre = 0;
+          this.form_detail[emol].montant = numeral(0).format("0.00");
+        }
+
+        //relations avec autres services
+        this.form_detail["relations_autres_services1"].prix_unitaire = numeral(0).format("0.00"),
+        this.form_detail["relations_autres_services1"].nombre = 1,
+        this.form_detail["relations_autres_services1"].montant = numeral(0).format("0.00"),
+
+        //forfait RF
+        this.form_detail["forfait_rf1"].prix_unitaire = numeral(0).format("0.00");
+        this.form_detail["forfait_rf1"].nombre = 1;
+        this.form_detail["forfait_rf1"].montant = numeral(0).format("0.00");
+
         //init form-detail to 0
-        for (const element in this.form_detail) {
-          this.form_detail[element].nombre = 0;
+        for (let i=0; i<this.n_divers; i++) {
+          this.form_detail["divers" + String(i+1)] = {
+            tableau_emolument_id: this.indexFromDB.divers,
+            nom: null,
+            unite: "Heure",
+            prix_unitaire: null,
+            nombre: 0,
+            batiment: 0,
+            batiment_f: 1,
+            montant: numeral(0).format("0.00"),
+          }
         }
       }
 
@@ -292,6 +316,7 @@ export default {
         montant_divers_total_with_5_depl_debours: 0,
       };
 
+      this.disabled = false;
       this.computeZi();
       this.updateMontants()
     },
@@ -682,7 +707,7 @@ export default {
       this.total.montant_recapitulatif_mandat = Number(this.total.montant_mandat_total) + mandat_batiment;
       this.total.montant_recapitulatif_somme1 = Number(this.total.montant_recapitulatif_mandat)
 
-      this.total.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.total.montant_travauxTerrain_total_zi) + Number(this.total.montant_5_depl_debours) + Number(this.total.montant_travauxTerrain_batiment_total_f_somme_zi);
+      this.total.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.total.montant_travauxTerrain_total_zi) + Number(this.total.montant_31_32_std_compl) + Number(this.total.montant_5_depl_debours) + Number(this.total.montant_travauxTerrain_batiment_total_f_somme_zi);
       this.total.montant_recapitulatif_somme2 = Number(this.total.montant_recapitulatif_somme1) + Number(this.total.montant_recapitulatif_terrain_materialisation_deplacements);
 
       this.total.montant_recapitulatif_bureau = Number(this.total.montant_travauxBureau_total) + Number(this.total.montant_travauxBureau_batiment_total_f_somme);
@@ -760,13 +785,6 @@ export default {
       num = Number(num);
       multiple = Number(multiple);
       return Math.round(num / multiple) * multiple;
-    },
-
-    /**
-     * Event handler when tab changed
-     */
-    changeHandler(index) {
-      this.enableSave = index === this.$refs.tabRecapitulatif.$el.id;
     },
 
 
@@ -947,6 +965,8 @@ export default {
     async getEmolumentsDetail(emolument_affaire_id) {
       // set form_general
       this.form_general = this.emolumentsGeneral_list.filter(x => x.id === emolument_affaire_id)[0];
+      this.disabled = this.form_general.utilise;
+
       this.setFormDetail();
 
       this.$http.get(
@@ -1047,7 +1067,25 @@ export default {
     /**
      * Save values to facture
      */
-    saveToFacture(facture) {
+    async saveToFacture(facture) {
+      let formData = new FormData();
+      formData.append("emolument_affaire_id", JSON.stringify(this.form_general.id));
+      formData.append("utilise", true);
+
+      this.$http.put(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_FREEZE_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.getEmolumentsGeneral();
+        } 
+      }).catch(err => handleException(err, this));
+
+
       this.$root.$emit("OpenFactureWithEmolumentsValues", [
         facture,
         this.total.montant_recapitulatif_somme5,
@@ -1057,14 +1095,46 @@ export default {
         this.total.montant_recapitulatif_total
       ]);
       this.showEmolumentsDialog = false;
+    },
+
+    /**
+     * Set prix unitaire divers format
+     */
+    setPrixUnitaireFormat() {
+      for (let i=0; i<this.n_divers; i++) {
+        if (this.form_detail["divers" + String(i+1)].prix_unitaire && Number(this.form_detail["divers" + String(i+1)].prix_unitaire) > 0) {
+          this.form_detail["divers" + String(i+1)].prix_unitaire = numeral(Number(this.form_detail["divers" + String(i+1)].prix_unitaire)).format("0.00");
+        } else {
+          this.form_detail["divers" + String(i+1)].prix_unitaire = null;
+        }
+      }
+    },
+
+
+    /**
+     * Supprimer le préavis (général + detail !)
+     */
+    removePreavis(emolument_affaire_id) {
+      this.$http.delete(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id + "&affaire_id=" + this.affaire.id,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.showEmolumentsDialog = false;
+          this.getEmolumentsGeneral();
+        }
+      }).catch(err => handleException(err, this));
     }
 
   },
 
   mounted: function(){
-    // this.initForm();
-    this.getEmolumentsUnit();
-    this.getEmolumentsGeneral();
+    this.getEmolumentsUnit().then(()=>{
+      this.getEmolumentsGeneral();
+    });
   }
 }
 </script>

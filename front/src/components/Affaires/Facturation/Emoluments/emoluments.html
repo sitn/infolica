@@ -1,11 +1,14 @@
 <div class="emoluments" v-if="emolumentsUnits.length > 0 && Object.keys(form_detail).length > 0">
 
     <md-dialog :md-active.sync="showEmolumentsDialog">
-      <md-dialog-title>Émoluments</md-dialog-title>
+      <md-dialog-title class="justifyTitleBtn">
+        Émoluments
+        <md-button class="md-accent md-raised" v-if="!disabled && form_general.id" @click="removePreavis(form_general.id)">Supprimer</md-button>
+      </md-dialog-title>
       <md-dialog-content>
         <md-progress-bar md-mode="indeterminate" v-if="showProgressBar"></md-progress-bar>
 
-        <md-tabs md-dynamic-height @md-changed="changeHandler">
+        <md-tabs md-dynamic-height>
           <md-tab md-label="Général">
             <md-card>
               <md-card-header>
@@ -120,12 +123,12 @@
 
                 </div>
 
-                <div class="md-layout md-alignment-top-space-between">
+                <!-- <div class="md-layout md-alignment-top-space-between">
                   <md-field>
                     <label>Remarques</label>
                     <md-textarea v-model="form_general.remarque"></md-textarea>
                   </md-field>
-                </div>
+                </div> -->
 
               </md-card-content>
             </md-card>
@@ -610,7 +613,7 @@
                         <td class="tg-0lax alignRight">{{ total.montant_travauxTerrain_batiment_total[i-1] }} CHF</td>
                       </template>
                     </tr>
-                    <tr>
+                    <tr v-if="Number(form_general.nb_batiments) > 0">
                       <td class="tg-0pky" colspan="5">Application du facteur de correction lié à la surface du bâtiment</td>
                       <td class="tg-0pky notEditable"></td>
                       <template v-for="i in form_general.nb_batiments">
@@ -618,22 +621,22 @@
                         <td class="tg-0lax alignRight">{{ total.montant_travauxTerrain_batiment_total_f[i-1] }} CHF</td>
                       </template>
                     </tr>
-                      <tr>
-                        <td class="tg-0pky" colspan="5">Total des travaux de terrain sans bâtiments</td>
-                        <td class="tg-0pky alignRight">{{ total.montant_travauxTerrain_total }} CHF</td>
-                        <template v-if="Number(form_general.nb_batiments) > 0">
-                          <td class="tg-0pky batiment-separator" :colspan="(2* Number(form_general.nb_batiments))-1">Total des travaux de terrain pour bâtiments</td>
-                          <td class="tg-0pky alignRight">{{ total.montant_travauxTerrain_batiment_total_f_somme }} CHF</td>
-                        </template>
-                      </tr>
-                      <tr>
-                        <td class="tg-0pky" colspan="5">x supplément terrain zi</td>
-                        <td class="tg-0pky montantTotal alignRight">{{ total.montant_travauxTerrain_total_zi }} CHF</td>
-                        <template v-if="Number(form_general.nb_batiments) > 0">
-                          <td class="tg-0pky batiment-separator" :colspan="(2* Number(form_general.nb_batiments))-1">x supplément terrain zi</td>
-                          <td class="tg-0pky montantTotal alignRight">{{ total.montant_travauxTerrain_batiment_total_f_somme_zi }} CHF</td>
-                        </template>
-                      </tr>
+                    <tr v-if="Number(form_general.nb_batiments) > 0">
+                      <td class="tg-0pky" colspan="5">Total des travaux de terrain sans bâtiments</td>
+                      <td class="tg-0pky alignRight">{{ total.montant_travauxTerrain_total }} CHF</td>
+                      <template v-if="Number(form_general.nb_batiments) > 0">
+                        <td class="tg-0pky batiment-separator" :colspan="(2* Number(form_general.nb_batiments))-1">Total des travaux de terrain pour bâtiments</td>
+                        <td class="tg-0pky alignRight">{{ total.montant_travauxTerrain_batiment_total_f_somme }} CHF</td>
+                      </template>
+                    </tr>
+                    <tr>
+                      <td class="tg-0pky" colspan="5">x supplément terrain zi</td>
+                      <td class="tg-0pky montantTotal alignRight">{{ total.montant_travauxTerrain_total_zi }} CHF</td>
+                      <template v-if="Number(form_general.nb_batiments) > 0">
+                        <td class="tg-0pky batiment-separator" :colspan="(2* Number(form_general.nb_batiments))-1">x supplément terrain zi</td>
+                        <td class="tg-0pky montantTotal alignRight">{{ total.montant_travauxTerrain_batiment_total_f_somme_zi }} CHF</td>
+                      </template>
+                    </tr>
                   </tbody>
                 </table>
               </md-card-content>
@@ -1423,7 +1426,7 @@
                         <td class="tg-0lax alignRight">{{ total.montant_travauxBureau_batiment_total[i-1] }} CHF</td>
                       </template>
                     </tr>
-                    <tr>
+                    <tr v-if="Number(form_general.nb_batiments) > 0">
                       <td class="tg-0pky" colspan="5">Application du facteur de correction lié à la surface du bâtiment</td>
                       <td class="tg-0pky notEditable"></td>
                       <template v-for="i in form_general.nb_batiments">
@@ -1464,191 +1467,61 @@
                   <tbody>
                     <tr>
                       <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers1.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
-                      <td class="tg-0lax alignCenter">
-                        <md-field class="nbField">
-                          <md-select :disabled="disabled" v-model="form_detail.divers1.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
-                            <md-option :value="0"></md-option>
-                            <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
-                            <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
-                            <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
-                            <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
-                            <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
-                            <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
-                            <md-option :value="73">73 CHF - Apprenant·e</md-option>
-                          </md-select>
-                        </md-field>
-                      </td>
+                      <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers1.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat"></md-input>CHF</md-field></td>
                       <td class="tg-0lax alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers1.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight">{{ form_detail.divers1.montant }} CHF</td>
                     </tr>
                     <tr>
                       <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers2.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
-                      <td class="tg-0lax alignCenter">
-                        <md-field class="nbField">
-                          <md-select :disabled="disabled" v-model="form_detail.divers2.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
-                            <md-option :value="0"></md-option>
-                            <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
-                            <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
-                            <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
-                            <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
-                            <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
-                            <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
-                            <md-option :value="73">73 CHF - Apprenant·e</md-option>
-                          </md-select>
-                        </md-field>
-                      </td>
+                      <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers2.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat"></md-input>CHF</md-field></td>
                       <td class="tg-0lax alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers2.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight">{{ form_detail.divers2.montant }} CHF</td>
                     </tr>
                     <tr>
                       <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers3.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
-                      <td class="tg-0lax alignCenter">
-                        <md-field class="nbField">
-                          <md-select :disabled="disabled" v-model="form_detail.divers3.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
-                            <md-option :value="0"></md-option>
-                            <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
-                            <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
-                            <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
-                            <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
-                            <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
-                            <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
-                            <md-option :value="73">73 CHF - Apprenant·e</md-option>
-                          </md-select>
-                        </md-field>
-                      </td>
+                      <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers3.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat"></md-input>CHF</md-field></td>
                       <td class="tg-0lax alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers3.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight">{{ form_detail.divers3.montant }} CHF</td>
                     </tr>
                     <tr>
                       <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers4.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
-                      <td class="tg-0lax alignCenter">
-                        <md-field class="nbField">
-                          <md-select :disabled="disabled" v-model="form_detail.divers4.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
-                            <md-option :value="0"></md-option>
-                            <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
-                            <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
-                            <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
-                            <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
-                            <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
-                            <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
-                            <md-option :value="73">73 CHF - Apprenant·e</md-option>
-                          </md-select>
-                        </md-field>
-                      </td>
+                      <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers4.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat"></md-input>CHF</md-field></td>
                       <td class="tg-0lax alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers4.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight">{{ form_detail.divers4.montant }} CHF</td>
                     </tr>
                     <tr>
                       <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers5.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
-                      <td class="tg-0lax alignCenter">
-                        <md-field class="nbField">
-                          <md-select :disabled="disabled" v-model="form_detail.divers5.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
-                            <md-option :value="0"></md-option>
-                            <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
-                            <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
-                            <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
-                            <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
-                            <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
-                            <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
-                            <md-option :value="73">73 CHF - Apprenant·e</md-option>
-                          </md-select>
-                        </md-field>
-                      </td>
+                      <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers5.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat"></md-input>CHF</md-field></td>
                       <td class="tg-0lax alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers5.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight">{{ form_detail.divers5.montant }} CHF</td>
                     </tr>
                     <tr>
                       <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers6.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
-                      <td class="tg-0lax alignCenter">
-                        <md-field class="nbField">
-                          <md-select :disabled="disabled" v-model="form_detail.divers6.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
-                            <md-option :value="0"></md-option>
-                            <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
-                            <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
-                            <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
-                            <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
-                            <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
-                            <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
-                            <md-option :value="73">73 CHF - Apprenant·e</md-option>
-                          </md-select>
-                        </md-field>
-                      </td>
+                      <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers6.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat"></md-input>CHF</md-field></td>
                       <td class="tg-0lax alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers6.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight">{{ form_detail.divers6.montant }} CHF</td>
                     </tr>
                     <tr>
                       <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers7.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
-                      <td class="tg-0lax alignCenter">
-                        <md-field class="nbField">
-                          <md-select :disabled="disabled" v-model="form_detail.divers7.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
-                            <md-option :value="0"></md-option>
-                            <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
-                            <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
-                            <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
-                            <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
-                            <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
-                            <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
-                            <md-option :value="73">73 CHF - Apprenant·e</md-option>
-                          </md-select>
-                        </md-field>
-                      </td>
+                      <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers7.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat"></md-input>CHF</md-field></td>
                       <td class="tg-0lax alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers7.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight">{{ form_detail.divers7.montant }} CHF</td>
                     </tr>
                     <tr>
                       <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers8.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
-                      <td class="tg-0lax alignCenter">
-                        <md-field class="nbField">
-                          <md-select :disabled="disabled" v-model="form_detail.divers8.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
-                            <md-option :value="0"></md-option>
-                            <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
-                            <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
-                            <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
-                            <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
-                            <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
-                            <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
-                            <md-option :value="73">73 CHF - Apprenant·e</md-option>
-                          </md-select>
-                        </md-field>
-                      </td>
+                      <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers8.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat"></md-input>CHF</md-field></td>
                       <td class="tg-0lax alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers8.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight">{{ form_detail.divers8.montant }} CHF</td>
                     </tr>
                     <tr>
                       <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers9.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
-                      <td class="tg-0lax alignCenter">
-                        <md-field class="nbField">
-                          <md-select :disabled="disabled" v-model="form_detail.divers9.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
-                            <md-option :value="0"></md-option>
-                            <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
-                            <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
-                            <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
-                            <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
-                            <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
-                            <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
-                            <md-option :value="73">73 CHF - Apprenant·e</md-option>
-                          </md-select>
-                        </md-field>
-                      </td>
+                      <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers9.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat"></md-input>CHF</md-field></td>
                       <td class="tg-0lax alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers9.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight">{{ form_detail.divers9.montant }} CHF</td>
                     </tr>
                     <tr>
                       <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers10.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
-                      <td class="tg-0lax alignCenter">
-                        <md-field class="nbField">
-                          <md-select :disabled="disabled" v-model="form_detail.divers10.prix_unitaire" md-dense class="nbSelect" @md-selected="updateMontants()">
-                            <md-option :value="0"></md-option>
-                            <md-option :value="182">182 CHF - Géomètre cantonal·e</md-option>
-                            <md-option :value="157">157 CHF - Ingénieur·e en géomatique</md-option>
-                            <md-option :value="133">133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</md-option>
-                            <md-option :value="111">111 CHF - Géomaticien·ne</md-option>
-                            <md-option :value="101">101 CHF - Collaborateur·rice technique</md-option>
-                            <md-option :value="97">97 CHF - Personnel de secrétariat</md-option>
-                            <md-option :value="73">73 CHF - Apprenant·e</md-option>
-                          </md-select>
-                        </md-field>
-                      </td>
+                      <td class="tg-0lax"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers10.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat"></md-input>CHF</md-field></td>
                       <td class="tg-0lax alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers10.nombre" class="nbInput" @keyup="updateMontants()" @focus="$event.target.select()"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight">{{ form_detail.divers10.montant }} CHF</td>
                     </tr>
@@ -1663,6 +1536,21 @@
                   </tr>
                   <tr>
                     <td colspan="4" style="height: 25px; border: 0px;">
+                      <div style="margin: 10px 0px 10px 0px; font-size: 12px;">
+                        Tarif horaire:
+
+                        <div style="column-count: 2; vertical-align: text-top;">
+                          <ul style="margin: 0px;">
+                            <li>182 CHF - Géomètre cantonal·e</li>
+                            <li>157 CHF - Ingénieur·e en géomatique</li>
+                            <li>133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</li>
+                            <li>111 CHF - Géomaticien·ne</li>
+                            <li>101 CHF - Collaborateur·rice technique</li>
+                            <li>97 CHF - Personnel de secrétariat</li>
+                            <li>73 CHF - Apprenant·e</li>
+                          </ul>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                   <tr>
@@ -1821,7 +1709,7 @@
             </md-card>
 
             <!-- Balancer les valeurs dans les factures. -->
-            <div v-if="form_general.facture_type_id === configFactureTypeID.facture && permission.cloreEmolumentEnabled">
+            <div v-if="form_general.facture_type_id === configFactureTypeID.facture && permission.cloreEmolumentEnabled && form_general.id">
               <h3>Enregistrer dans la facture</h3>
 
               <md-table v-model="affaire_factures" md-card>
@@ -1831,6 +1719,7 @@
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                   <md-table-cell md-label="Client">{{ item.adresse_facturation_ }}</md-table-cell>
                   <md-table-cell md-label="Bien-fonds" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
+                  <md-table-cell md-label="Remarque" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.remarque }}</md-table-cell>
                   <md-table-cell md-label="Action">
                     <md-button style="min-width: min-content;" class="md-primary" title="Envoyer les valeurs dans la facture" @click="saveToFacture(item)">
                       <md-icon>read_more</md-icon>
@@ -1846,8 +1735,8 @@
       </md-dialog-content>
 
       <md-dialog-actions>
-        <md-button class="md-elevation-3 md-accent" @click="onCancel">Annuler</md-button>
-        <md-button class="md-elevation-3 md-primary" @click="postEmolument" :disabled="!enableSave">Enregistrer</md-button>
+        <md-button class="md-elevation-3 md-accent" @click="onCancel">Fermer</md-button>
+        <md-button class="md-elevation-3 md-primary" @click="postEmolument" v-if="!disabled">Enregistrer</md-button>
       </md-dialog-actions>
     </md-dialog>
 </div>

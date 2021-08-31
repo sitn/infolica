@@ -195,6 +195,28 @@ def update_emolument_affaire_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentAffaire.__tablename__))
 
 
+@view_config(route_name='emolument_affaire_freeze', request_method='PUT', renderer='json')
+def update_emolument_affaire_freeze_view(request):
+    """
+    Freeze emolument_affaire
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+        raise exc.HTTPForbidden()
+
+    params = request.params
+    
+    record_id = params['emolument_affaire_id'] if 'emolument_affaire_id' in params else None
+
+    record = request.dbsession.query(EmolumentAffaire).filter(
+        EmolumentAffaire.id == record_id
+    ).first()
+
+    record = Utils.set_model_record(record, params)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentAffaire.__tablename__))
+
+
 @view_config(route_name='emolument', request_method='PUT', renderer='json')
 def update_emolument_view(request):
     """
@@ -270,6 +292,44 @@ def update_emolument_view(request):
         request.dbsession.delete(item)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Emolument.__tablename__))
+
+
+@view_config(route_name='emolument_affaire', request_method='DELETE', renderer='json')
+def emolument_affaire_delete_view(request):
+    """
+    Delete emolument_affaire
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+        raise exc.HTTPForbidden()
+
+    emolument_affaire_id = request.params['emolument_affaire_id'] if "emolument_affaire_id" in request.params else None
+    affaire_id = request.params['affaire_id'] if "affaire_id" in request.params else None
+
+    # Remove from EmolumentAffaire
+    record = request.dbsession.query(EmolumentAffaire).filter(
+        EmolumentAffaire.id == emolument_affaire_id
+    ).filter(
+        EmolumentAffaire.affaire_id == affaire_id
+    ).first()
+
+    if not record:
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(EmolumentAffaire.__tablename__, emolument_affaire_id))
+
+    request.dbsession.delete(record)
+
+    # Remove from Emolument
+    records = request.dbsession.query(Emolument).filter(
+        Emolument.emolument_affaire_id == emolument_affaire_id
+    ).all()
+
+    for record in records:
+        request.dbsession.delete(record)
+
+
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Emolument.__tablename__))
+
 
 
 # @view_config(route_name='facture_emoluments_by_facture_id', request_method='GET', renderer='json')
