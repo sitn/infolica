@@ -1057,6 +1057,19 @@ export default {
         this.total.montant_recapitulatif_total
       ]);
       this.showEmolumentsDialog = false;
+    },
+
+    /**
+     * Set prix unitaire divers format
+     */
+    setPrixUnitaireFormat() {
+      for (let i=0; i<this.n_divers; i++) {
+        if (this.form_detail["divers" + String(i+1)].prix_unitaire && Number(this.form_detail["divers" + String(i+1)].prix_unitaire) > 0) {
+          this.form_detail["divers" + String(i+1)].prix_unitaire = numeral(Number(this.form_detail["divers" + String(i+1)].prix_unitaire)).format("0.00");
+        } else {
+          this.form_detail["divers" + String(i+1)].prix_unitaire = null;
+        }
+      }
     }
 
   },
