@@ -195,6 +195,28 @@ def update_emolument_affaire_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentAffaire.__tablename__))
 
 
+@view_config(route_name='emolument_affaire_freeze', request_method='PUT', renderer='json')
+def update_emolument_affaire_freeze_view(request):
+    """
+    Freeze emolument_affaire
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+        raise exc.HTTPForbidden()
+
+    params = request.params
+    
+    record_id = params['emolument_affaire_id'] if 'emolument_affaire_id' in params else None
+
+    record = request.dbsession.query(EmolumentAffaire).filter(
+        EmolumentAffaire.id == record_id
+    ).first()
+
+    record = Utils.set_model_record(record, params)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentAffaire.__tablename__))
+
+
 @view_config(route_name='emolument', request_method='PUT', renderer='json')
 def update_emolument_view(request):
     """

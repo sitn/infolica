@@ -30,6 +30,7 @@
                                     <span v-if="item.numeros.length > 0"> | bien<span v-if="item.numeros.length > 1">s</span>-fonds: <template v-for="num in item.numeros"> {{ num.numero }}</template></span>
                                     <span v-if="item.remarque"> | {{ item.remarque }}</span>
                                     )
+                                    <span v-if="item.utilise"> - Utilisé</span>
                                 </a>
                             </li>
                         </ul>
@@ -75,6 +76,7 @@
                                     <span v-if="item.numeros.length > 0"> | bien<span v-if="item.numeros.length > 1">s</span>-fonds: <template v-for="num in item.numeros"> {{ num.numero }}</template></span>
                                     <span v-if="item.remarque"> | {{ item.remarque }}</span>
                                     )
+                                    <span v-if="item.utilise"> - Utilisé</span>
                                 </a>
                             </li>
                         </ul>

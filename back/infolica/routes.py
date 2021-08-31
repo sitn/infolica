@@ -136,6 +136,7 @@ def includeme(config):
     config.add_route('emolument_facture','/infolica/api/emolument_facture')
     config.add_route('emolument_facture_s','/infolica/api/emolument_facture/')
     config.add_route('facture_emoluments_by_facture_id','/infolica/api/facture_emoluments/{id}')
+    config.add_route('emolument_affaire_freeze','/infolica/api/emolument_affaire_freeze')
     #Envois
     config.add_route('envois_by_id','/infolica/api/envois/{id}')
     config.add_route('envois','/infolica/api/envois')

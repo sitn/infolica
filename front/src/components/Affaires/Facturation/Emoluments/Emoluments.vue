@@ -300,6 +300,7 @@ export default {
         montant_divers_total_with_5_depl_debours: 0,
       };
 
+      this.disabled = false;
       this.computeZi();
       this.updateMontants()
     },
@@ -948,6 +949,8 @@ export default {
     async getEmolumentsDetail(emolument_affaire_id) {
       // set form_general
       this.form_general = this.emolumentsGeneral_list.filter(x => x.id === emolument_affaire_id)[0];
+      this.disabled = this.form_general.utilise;
+
       this.setFormDetail();
 
       this.$http.get(
@@ -1048,7 +1051,25 @@ export default {
     /**
      * Save values to facture
      */
-    saveToFacture(facture) {
+    async saveToFacture(facture) {
+      let formData = new FormData();
+      formData.append("emolument_affaire_id", JSON.stringify(this.form_general.id));
+      formData.append("utilise", true);
+
+      this.$http.put(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_FREEZE_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.getEmolumentsGeneral();
+        } 
+      }).catch(err => handleException(err, this));
+
+
       this.$root.$emit("OpenFactureWithEmolumentsValues", [
         facture,
         this.total.montant_recapitulatif_somme5,

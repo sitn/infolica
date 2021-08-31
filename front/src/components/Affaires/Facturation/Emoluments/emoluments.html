@@ -5,7 +5,7 @@
       <md-dialog-content>
         <md-progress-bar md-mode="indeterminate" v-if="showProgressBar"></md-progress-bar>
 
-        <md-tabs md-dynamic-height @md-changed="changeHandler">
+        <md-tabs md-dynamic-height>
           <md-tab md-label="Général">
             <md-card>
               <md-card-header>
@@ -1706,7 +1706,7 @@
             </md-card>
 
             <!-- Balancer les valeurs dans les factures. -->
-            <div v-if="form_general.facture_type_id === configFactureTypeID.facture && permission.cloreEmolumentEnabled">
+            <div v-if="form_general.facture_type_id === configFactureTypeID.facture && permission.cloreEmolumentEnabled && form_general.id">
               <h3>Enregistrer dans la facture</h3>
 
               <md-table v-model="affaire_factures" md-card>
