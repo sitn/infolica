@@ -189,7 +189,7 @@ facture_type_facture_id = 1
 client_cadastration_id = 2896
 
 # Opérateurs à contacter pour les affaires urgentes
-operateur_affaire_urgente = 9,15,21,35,39,45,59,60
+operateur_affaire_urgente = 15,57,59,60
 
 ######################################################################################
 # Accès dossiers
