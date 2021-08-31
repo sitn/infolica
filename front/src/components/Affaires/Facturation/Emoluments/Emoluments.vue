@@ -23,7 +23,6 @@ export default {
         divers: [],
         emolumentsGeneral_list: [],
         emolumentsUnits: [],
-        enableSave: false,
         form_general: {}, //général
         form_detail: {}, //emoluments sans bâtiment
         form_detail_batiment: [], //emoluments avec bâtiments
@@ -238,8 +237,17 @@ export default {
         };
 
         //init form-detail to 0
-        for (const element in this.form_detail) {
-          this.form_detail[element].nombre = 0;
+        for (let i=0; i<this.n_divers; i++) {
+          this.form_detail["divers" + String(i+1)] = {
+            tableau_emolument_id: this.indexFromDB.divers,
+            nom: null,
+            unite: "Heure",
+            prix_unitaire: null,
+            nombre: 0,
+            batiment: 0,
+            batiment_f: 1,
+            montant: numeral(0).format("0.00"),
+          }
         }
       }
 
@@ -682,7 +690,7 @@ export default {
       this.total.montant_recapitulatif_mandat = Number(this.total.montant_mandat_total) + mandat_batiment;
       this.total.montant_recapitulatif_somme1 = Number(this.total.montant_recapitulatif_mandat)
 
-      this.total.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.total.montant_travauxTerrain_total_zi) + Number(this.total.montant_5_depl_debours) + Number(this.total.montant_travauxTerrain_batiment_total_f_somme_zi);
+      this.total.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.total.montant_travauxTerrain_total_zi) + Number(this.total.montant_31_32_std_compl) + Number(this.total.montant_5_depl_debours) + Number(this.total.montant_travauxTerrain_batiment_total_f_somme_zi);
       this.total.montant_recapitulatif_somme2 = Number(this.total.montant_recapitulatif_somme1) + Number(this.total.montant_recapitulatif_terrain_materialisation_deplacements);
 
       this.total.montant_recapitulatif_bureau = Number(this.total.montant_travauxBureau_total) + Number(this.total.montant_travauxBureau_batiment_total_f_somme);
@@ -760,13 +768,6 @@ export default {
       num = Number(num);
       multiple = Number(multiple);
       return Math.round(num / multiple) * multiple;
-    },
-
-    /**
-     * Event handler when tab changed
-     */
-    changeHandler(index) {
-      this.enableSave = index === this.$refs.tabRecapitulatif.$el.id;
     },
 
 
