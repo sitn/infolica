@@ -236,6 +236,22 @@ export default {
           batiment_f: [],
         };
 
+
+        for (const emol in this.form_detail) {
+          this.form_detail[emol].nombre = 0;
+          this.form_detail[emol].montant = numeral(0).format("0.00");
+        }
+
+        //relations avec autres services
+        this.form_detail["relations_autres_services1"].prix_unitaire = numeral(0).format("0.00"),
+        this.form_detail["relations_autres_services1"].nombre = 1,
+        this.form_detail["relations_autres_services1"].montant = numeral(0).format("0.00"),
+
+        //forfait RF
+        this.form_detail["forfait_rf1"].prix_unitaire = numeral(0).format("0.00");
+        this.form_detail["forfait_rf1"].nombre = 1;
+        this.form_detail["forfait_rf1"].montant = numeral(0).format("0.00");
+
         //init form-detail to 0
         for (let i=0; i<this.n_divers; i++) {
           this.form_detail["divers" + String(i+1)] = {
