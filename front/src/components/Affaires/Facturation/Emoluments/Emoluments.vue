@@ -1092,6 +1092,25 @@ export default {
           this.form_detail["divers" + String(i+1)].prix_unitaire = null;
         }
       }
+    },
+
+
+    /**
+     * Supprimer le préavis (général + detail !)
+     */
+    removePreavis(emolument_affaire_id) {
+      this.$http.delete(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id + "&affaire_id=" + this.affaire.id,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.showEmolumentsDialog = false;
+          this.getEmolumentsGeneral();
+        }
+      }).catch(err => handleException(err, this));
     }
 
   },
