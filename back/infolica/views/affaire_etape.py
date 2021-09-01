@@ -110,7 +110,7 @@ def etapes_new_view(request):
                                 ) for i in lastSteps])
         
         affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
-        text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire.id)) + "'>" + str(affaire.id) + affaire_nom + "</a></b> est en attente pour l'étape <b>"+ affaire_etape_index.nom +"</b>."
+        text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire.id)) + "'>" + str(affaire.id) + affaire_nom + "</a></b>" + (" (avec mention urgente)" if affaire.urgent else "") + " est en attente pour l'étape <b>"+ affaire_etape_index.nom +"</b>."
         text += "<br><br>Cadastre: " + str(affaire.cadastre)
         text += "<br>Description: " + str(affaire.nom)
         text += ("<br><br><br><h4>Historique de l'affaire</h4>\
@@ -121,7 +121,7 @@ def etapes_new_view(request):
                     <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Réalisée le</th>\
                     <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Remarque</th>\
                 </tr>" + lastSteps + "</table>") if lastSteps != "" else ""
-        subject = "Infolica - affaire " + str(affaire.id)
+        subject = "Infolica - affaire " + str(affaire.id) + (" - URGENT" if affaire.urgent else "")
         send_mail(request, mail_list, "", subject, html=text)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireEtape.__tablename__))
