@@ -158,7 +158,7 @@ def emolument_new_view(request):
                     tableau_emolument_id=int(batiment_i[emolument_i]['tableau_emolument_id']),
                     position=batiment_i[emolument_i]['nom'],
                     prix_unitaire=float(batiment_i[emolument_i]['prix_unitaire']),
-                    nombre=int(batiment_i[emolument_i]['nombre']),
+                    nombre=float(batiment_i[emolument_i]['nombre']),
                     batiment=int(batiment_i[emolument_i]['batiment']),
                     batiment_f=float(batiment_i[emolument_i]['batiment_f']),
                     montant=float(batiment_i[emolument_i]['montant'])
@@ -252,14 +252,14 @@ def update_emolument_view(request):
                 if (not float(record.montant) == float(batiment_i[emolument_i]['montant']) \
                     or not record.tableau_emolument_id == batiment_i[emolument_i]['tableau_emolument_id'] \
                     or not record.position == batiment_i[emolument_i]['nom'] \
-                    or not int(record.nombre) == int(batiment_i[emolument_i]['nombre']) \
+                    or not float(record.nombre) == float(batiment_i[emolument_i]['nombre']) \
                     or not float(record.batiment_f) == float(batiment_i[emolument_i]['batiment_f'])):
 
                     # Mettre à jour les données si le nouveau montant n'est pas nul
                     if float(batiment_i[emolument_i]['montant']) > 0:
                         params = Utils._params(
                             position=batiment_i[emolument_i]['nom'],
-                            nombre=int(batiment_i[emolument_i]['nombre']),
+                            nombre=float(batiment_i[emolument_i]['nombre']),
                             batiment_f=float(batiment_i[emolument_i]['batiment_f']),
                             montant=float(batiment_i[emolument_i]['montant'])
                         )
@@ -276,7 +276,7 @@ def update_emolument_view(request):
                         tableau_emolument_id=int(batiment_i[emolument_i]['tableau_emolument_id']),
                         position=batiment_i[emolument_i]['nom'],
                         prix_unitaire=float(batiment_i[emolument_i]['prix_unitaire']),
-                        nombre=int(batiment_i[emolument_i]['nombre']),
+                        nombre=float(batiment_i[emolument_i]['nombre']),
                         batiment=int(batiment_i[emolument_i]['batiment']),
                         batiment_f=float(batiment_i[emolument_i]['batiment_f']),
                         montant=float(batiment_i[emolument_i]['montant'])
