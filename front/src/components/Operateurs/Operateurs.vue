@@ -3,154 +3,260 @@
 
 
 <script>
-import {handleException} from '@/services/exceptionsHandler'
-import {checkPermission, adjustColumnWidths} from '@/services/helper'
+import {handleException} from '@/services/exceptionsHandler';
+import {checkPermission, adjustColumnWidths} from '@/services/helper';
+const moment = require('moment');
 
 export default {
   name: 'Operateurs',
   props: {},
   data: () => ({
-      operateurs: [],
+    currentDeleteId: null,
       deleteOperateurActive: false,
       deleteMessage: '',
-      currentDeleteId: null,
       editionOperateursAllowed: false,
+      form: {
+        id: null,
+        nom: null,
+        prenom: null,
+        initiales: null,
+        login: null,
+        responsable: false,
+        chef_equipe: false,
+        mail: null,
+      },
+      operateurs: [],
       search: {
         nom: null,
         prenom: null,
         login: null
+      },
+      divEditUser: {
+        title: "",
+        show: false,
       }
   }),
   methods: {
-        /**
-         * Search operateurs
-        */
-        async searchOperateurs () {
-          var formData = new FormData();
-          if(this.search.nom)
-            formData.append("nom", this.search.nom);
+    /**
+     * Search operateurs
+    */
+    async searchOperateurs () {
+      var formData = new FormData();
+      if(this.search.nom)
+        formData.append("nom", this.search.nom);
 
-          if(this.search.prenom)
-            formData.append("prenom", this.search.prenom);
+      if(this.search.prenom)
+        formData.append("prenom", this.search.prenom);
 
-          if(this.search.login)
-            formData.append("login", this.search.login);
+      if(this.search.login)
+        formData.append("login", this.search.login);
 
-          this.$http.post(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_OPERATEURS_ENDPOINT, 
-            formData,
-            {
-              withCredentials: true,
-              headers: {"Accept": "application/json"}
-            }
-          )
-          .then(response =>{
-            if(response && response.data){
-              this.operateurs = response.data;
-            }
-          })
-          //Error 
-          .catch(err => {
-            handleException(err, this);  
-          })
-        },
-
-        /**
-         * Clear the form
-         */
-        clearForm () {
-          this.search.nom = null;
-          this.search.prenom = null;
-          this.search.login = null;
-        },
-
-
-        /**
-         * Call edit operateur
-         */
-        callEditOperateur (id) {
-         this.$router.push({ name: "OperateursEdit", params: { id: id } }) ; 
-        },
-        
-        /**
-         * Call delete operateur
-         */
-        callDeleteOperateur (id, nom, prenom) {
-          this.currentDeleteId = id;
-
-          if(prenom && nom)
-            this.deleteMessage = prenom + ' ' + nom;
-          else if(nom)
-            this.deleteMessage = nom;
-          else
-            this.deleteMessage = "-";
-
-          this.deleteMessage = "Confirmer la suppression de l'operateur '<strong>" + this.deleteMessage + "<strong>' ?";
-
-          this.deleteOperateurActive = true;
-        },
-
-        /**
-        * Delete operateur
-        */
-        onConfirmDelete () {
-
-          /*var formData = new FormData();
-          
-          if(this.currentDeleteId)
-            formData.append("id", this.currentDeleteId);*/
-
-          this.$http.delete(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT + "?id=" +  this.currentDeleteId, 
-            {
-              withCredentials: true,
-              headers: {"Accept": "application/json"}
-            }
-          )
-          .then(response =>{
-            if(response && response.data){
-              this.searchOperateurs();
-            }
-          })
-          //Error 
-          .catch(err => {
-            handleException(err, this);  
-          })
-        },
-
-
-        /**
-        * Import AD users
-        */
-        importADUsers () {
-          this.$http.get(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_ADD_OPERATEURS_AD_ENDPOINT, 
-            {
-              withCredentials: true,
-              headers: {"Accept": "application/json"}
-            }
-          )
-          .then(response =>{
-            if(response && response.data && response.data.count && response.data.count > 0){
-              this.$root.$emit("ShowMessage", response.data.count + " opérateurs importés avec succès depuis l'AD");
-              this.searchOperateurs();
-            }
-            else{
-              handleException(response, this);  
-            }
-          })
-          //Error 
-          .catch(err => {
-            handleException(err, this);  
-          })
-        },
-
-        /**
-        * Cancel Delete operateur
-        */
-        onCancelDelete () {
-          this.currentDeleteId = null;
+      this.$http.post(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_OPERATEURS_ENDPOINT, 
+        formData,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
         }
+      )
+      .then(response =>{
+        if(response && response.data){
+          this.operateurs = response.data;
+        }
+      })
+      //Error 
+      .catch(err => {
+        handleException(err, this);  
+      })
+    },
+
+    /**
+     * Clear the form
+     */
+    clearForm () {
+      this.search.nom = null;
+      this.search.prenom = null;
+      this.search.login = null;
+    },
+
+
+    /**
+     * Call edit operateur
+     */
+    callEditOperateur (op) {
+      for (const elem in this.form) {
+        this.form[elem] = op[elem];
+      }
+
+      this.divEditUser.title = "Modifier un·e opérateur·rice existant·e";
+      this.divEditUser.show = true;
+    },
+    
+    /**
+     * Call delete operateur
+     */
+    callDeleteOperateur (id, nom, prenom) {
+      this.currentDeleteId = id;
+
+      if(prenom && nom)
+        this.deleteMessage = prenom + ' ' + nom;
+      else if(nom)
+        this.deleteMessage = nom;
+      else
+        this.deleteMessage = "-";
+
+      this.deleteMessage = "Confirmer la suppression de l'operateur '<strong>" + this.deleteMessage + "<strong>' ?";
+
+      this.deleteOperateurActive = true;
+    },
+
+    /**
+    * Delete operateur
+    */
+    onConfirmDelete () {
+
+      this.$http.delete(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT + "?id=" +  this.currentDeleteId, 
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      )
+      .then(response =>{
+        if(response && response.data){
+          this.searchOperateurs();
+          this.$root.$emit('ShowMessage', "L'opérateur a bien été supprimé.");
+        }
+      })
+      //Error 
+      .catch(err => {
+        handleException(err, this);  
+      })
+    },
+
+    /**
+    * Cancel Delete operateur
+    */
+    onCancelDelete () {
+      this.currentDeleteId = null;
+    },
+
+    /**
+     * Create user
+     */
+    createUser() {
+      this.clearFormEditClient();
+      this.divEditUser.title = "Enregistrer un·e nouvel·le opérateur·rice";
+      this.divEditUser.show = true;
+    },
+
+    /**
+     * On cancel edition
+     */
+    onCancelNewOperateur() {
+      this.divEditUser.show = false;
+      this.clearFormEditClient();
+    },
+
+    /**
+     * Clear form edit operateur
+     */
+    clearFormEditClient() {
+      this.form = {
+        id: null,
+        nom: null,
+        prenom: null,
+        initiales: null,
+        login: null,
+        responsable: false,
+        chef_equipe: false,
+        mail: null,
+      };
+    },
+
+    /**
+     * On save edition
+     */
+    onSaveNewOperateur() {
+      let formData = new FormData();
+
+      let errors = [];
+      for (const elem in this.form) {
+        if (this.form[elem] !== null && this.form[elem] !== "") {
+          formData.append(elem, this.form[elem]);
+        } else {
+          if (elem !== "id") {
+            errors.push(elem);
+          }
+        }
+      }
+
+      // afficher les erreurs
+      if (errors.length > 0) {
+        alert("Certains éléments n'ont pas été renseignés. Merci d'apporter les modifications nécessaire(s) aux champ(s) suivant(s):  " + errors.join(", "));
+        return;
+      }
+
+      formData.append("entree", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
+
+      let request = null;
+      let success_msg = "";
+      if (this.form.id) {
+        // modifier un opérateur existant
+        request = this.putOperateur(formData);
+        success_msg = "L'opérateur a bien été modifié.";
+      } else {
+        // Créer un nouvel opérateur
+        request = this.postOperateur(formData);
+        success_msg = "L'opérateur a bien été créé.";
+      }
+
+      // apply callbacks
+      request.then(response => {
+        if (response && response.data) {
+          this.onCancelNewOperateur();
+          this.searchOperateurs();
+          this.$root.$emit('ShowMessage', success_msg);
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * post operateur
+     */
+    async postOperateur(formData) {
+      return new Promise((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
+
+    /**
+     * put operateur
+     */
+    async putOperateur(formData) {
+      return new Promise((resolve, reject) => {
+        this.$http.put(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    }
+
+
   },
 
   mounted: function(){
