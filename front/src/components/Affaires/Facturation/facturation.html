@@ -10,7 +10,7 @@
                 Devis et factures
             </div>
             <div>
-                <md-button class="md-primary" v-on:click="openEmolumentsDialog" v-if="showNewFactureBtn && permission.editFactureAllowed">Nouvel Emolument</md-button>
+                <md-button class="md-primary" v-on:click="openEmolumentsDialog" v-if="showNewFactureBtn && permission.editEmolumentAllowed">Nouvel Emolument</md-button>
                 <md-button class="md-primary" v-on:click="newFacture('devis')" v-if="showNewFactureBtn && permission.editFactureAllowed">Nouveau devis</md-button>
                 <md-button class="md-primary" v-on:click="newFacture('facture')" v-if="showNewFactureBtn">Nouvelle facture</md-button>
             </div>

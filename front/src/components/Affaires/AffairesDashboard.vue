@@ -62,6 +62,7 @@ export default {
         editAffaireAllowed: false,
         editClientAllowed: false,
         editControleGeometreAllowed: false,
+        editEmolumentAllowed: false,
         editFactureAllowed: false,
         editNumerosReferencesAllowed: false,
         editNumerosAllowed: false,
@@ -199,6 +200,7 @@ export default {
           _this.permission.editNumerosMOAllowed = checkPermission(process.env.VUE_APP_NUMERO_MO_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editControleGeometreAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_CONTROLE_GEOMETRE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editSuiviMandatAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_SUIVI_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.editEmolumentAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editFactureAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.affaireCloture = checkPermission(process.env.VUE_APP_AFFAIRE_CLOTURE);
           _this.permission.affaireReactivation = checkPermission(process.env.VUE_APP_AFFAIRE_REACTIVATION);
@@ -229,6 +231,7 @@ export default {
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)) {
             _this.permission.editAffaireAllowed = true;
             _this.permission.editFactureAllowed = true;
+            _this.permission.editEmolumentAllowed = true;
             _this.permission.editClientAllowed = true;
             _this.permission.cloreEmolumentEnabled = true;
             _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
@@ -256,7 +259,7 @@ export default {
           }
 
           // Si l'opérateur de l'affaire est l'utilisateur connecté, il doit pouvoir réserver/référencer et modifier le contenu de l'affaire
-          if(_this.affaire.technicien_id === JSON.parse(localStorage.getItem("infolica_user")).id){
+          if(_this.affaire.technicien_id === JSON.parse(localStorage.getItem("infolica_user")).id) {
             _this.permission.editNumerosAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editNumerosMOAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
