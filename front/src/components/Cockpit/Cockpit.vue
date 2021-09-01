@@ -25,6 +25,8 @@ export default {
         affaires_bk: [],
         affaireEtapes: [],
         affaireTypes: [],
+        current_sort: "id",
+        current_sort_order: "desc",
         loadingAffaires: true,
         newAffaireAllowed: false,
         operateurs: [],
@@ -129,6 +131,9 @@ export default {
                     }
                     x.title = (x.no_access? 'Affaire ' + x.id + ' — ': '') + x.cadastre + ' — ' + x.description  + " — Dans cette étape depuis " + elapsedTime;
                 });
+
+                tmp = this.customSort(tmp);
+
                 this.affaires_bk = tmp;
                 if (!this.affaires.length > 0) {
                     this.affaires = tmp;
@@ -257,6 +262,32 @@ export default {
                 this.operateurs = tmp;
             }
         }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * custom sort
+     */
+    customSort (value) {
+        return value.sort((a, b) => {
+            const sortBy = this.current_sort;
+
+            let c = a[sortBy];
+            let d = b[sortBy];
+
+            if (!c) {
+                return 1;
+            }
+
+            if (!d) {
+                return -1;
+            }
+
+            if (this.current_sort_order === 'asc') {
+                return String(c).localeCompare(String(d));
+            } else {
+                return String(d).localeCompare(String(c));
+            }
+        });
     }
   },
 
