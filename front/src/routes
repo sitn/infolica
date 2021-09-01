@@ -5,7 +5,6 @@ import NewAffaire from './components/Affaires/NewAffaire/NewAffaire.vue'
 import Clients from './components/Clients/Clients.vue'
 import ClientsEdit from './components/Clients/ClientsEdit.vue'
 import Operateurs from './components/Operateurs/Operateurs.vue'
-import OperateursEdit from './components/Operateurs/OperateursEdit.vue'
 import Numeros from './components/Numeros/Numeros.vue'
 import NumerosHistory from './components/Numeros/NumerosHistory.vue'
 import About from './components/About/About.vue'
@@ -21,8 +20,6 @@ const routes = [
     { path: '/clients/new', component: ClientsEdit, name: 'ClientsNew' },
     { path: '/clients/edit/:id', component: ClientsEdit, name: 'ClientsEdit' },
     { path: '/operateurs', component: Operateurs, name: 'Operateurs' },
-    { path: '/operateurs/new', component: OperateursEdit, name: 'OperateursNew' },
-    { path: '/operateurs/edit/:id', component: OperateursEdit, name: 'OperateursEdit' },
     { path: '/login', component: Login, name: 'Login' },
     { path: '/numeros', component: Numeros, name: 'Numeros' },
     { path: '/numeros/:id', component: NumerosHistory, name: 'NumerosHistory' },

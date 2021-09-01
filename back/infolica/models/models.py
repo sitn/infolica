@@ -260,7 +260,7 @@ class Emolument(Base):
     tableau_emolument_id = Column(BigInteger, primary_key=True)
     position = Column(Text, primary_key=True)
     prix_unitaire = Column(Float)
-    nombre = Column(Integer)
+    nombre = Column(Float)
     batiment = Column(Integer, primary_key=True)
     batiment_f = Column(Float)
     montant = Column(Float)

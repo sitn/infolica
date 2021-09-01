@@ -839,7 +839,7 @@ export default {
             });
           }
         }).catch(err => {
-          handleException(err, this)
+          handleException(err, this);
           // hide progressbar
           this.showProgressBar = false;
           this.disabled = false;
