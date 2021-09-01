@@ -130,3 +130,7 @@
   border-right: 0px !important;
   padding-bottom: 10px !important;
 }
+
+.highlightEmolument {
+  background-color: lightgreen;
+}
