@@ -223,6 +223,8 @@ export default {
 
 
     initForm(form_general=true) {
+      // empty form_detail_batiment
+      this.form_detail_batiment= [];
 
       if (form_general) {
         this.form_general = {
@@ -814,9 +816,6 @@ export default {
                 this.showEmolumentsDialog = false;
                 this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
   
-                // empty form_detail_batiment
-                this.form_detail_batiment= [];
-
                 // refresh emoluments_general_list
                 this.getEmolumentsGeneral();
                 
@@ -837,9 +836,6 @@ export default {
 
                 this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
                 
-                // empty form_detail_batiment
-                this.form_detail_batiment= [];
-
                 // refresh emoluments_general_list
                 this.getEmolumentsGeneral();
                 
