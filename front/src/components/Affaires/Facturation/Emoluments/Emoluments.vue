@@ -19,6 +19,15 @@ export default {
   },
   data: function () {
       return {
+        confirmationRemoveDialog: {
+          title: "Demande de confirmation",
+          msg: "Confirmez-vous la suppression de l'émolument?",
+          confirmBtn: "Confirmer",
+          cancelBtn: "Annuler",
+          show: false,
+          onConfirm: () => {},
+          onCancel: () => {},
+        },
         disabled: false,
         divers: [],
         emolumentsGeneral_list: [],
@@ -214,6 +223,8 @@ export default {
 
 
     initForm(form_general=true) {
+      // empty form_detail_batiment
+      this.form_detail_batiment= [];
 
       if (form_general) {
         this.form_general = {
@@ -824,6 +835,7 @@ export default {
                 this.showEmolumentsDialog = false;
 
                 this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
+                
                 // refresh emoluments_general_list
                 this.getEmolumentsGeneral();
                 
@@ -1115,9 +1127,9 @@ export default {
 
 
     /**
-     * Supprimer le préavis (général + detail !)
+     * Supprimer l'émolument (général + detail !)
      */
-    removePreavis(emolument_affaire_id) {
+    removeEmolumentAffaire(emolument_affaire_id) {
       this.$http.delete(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id + "&affaire_id=" + this.affaire.id,
         {
@@ -1130,8 +1142,24 @@ export default {
           this.getEmolumentsGeneral();
         }
       }).catch(err => handleException(err, this));
-    }
+    },
 
+    /**
+     * on remove emolument
+     */
+    onRemoveEmolumentAffaire(emolument_affaire_id) {
+      this.confirmationRemoveDialog.show = true;
+      this.confirmationRemoveDialog.onConfirm = () => {
+        this.removeEmolumentAffaire(emolument_affaire_id);
+        this.confirmationRemoveDialog.onConfirm = () => {};
+        this.confirmationRemoveDialog.onCancel = () => {};
+      };
+      this.confirmationRemoveDialog.onCancel = () => {
+        this.confirmationRemoveDialog.show = false;
+        this.confirmationRemoveDialog.onConfirm = () => {};
+        this.confirmationRemoveDialog.onCancel = () => {};
+      };
+    }
   },
 
   mounted: function(){
