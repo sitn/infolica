@@ -3,7 +3,7 @@
     <md-dialog :md-active.sync="showEmolumentsDialog">
       <md-dialog-title class="justifyTitleBtn">
         Émoluments
-        <md-button class="md-accent md-raised" v-if="!disabled && form_general.id" @click="removePreavis(form_general.id)">Supprimer</md-button>
+        <md-button class="md-accent md-raised" v-if="!disabled && form_general.id" @click="onRemoveEmolumentAffaire(form_general.id)">Supprimer</md-button>
       </md-dialog-title>
       <md-dialog-content>
         <md-progress-bar md-mode="indeterminate" v-if="showProgressBar"></md-progress-bar>
@@ -1739,4 +1739,14 @@
         <md-button class="md-elevation-3 md-primary" @click="postEmolument" v-if="!disabled">Enregistrer</md-button>
       </md-dialog-actions>
     </md-dialog>
+
+
+    <md-dialog-confirm
+      :md-active.sync="confirmationRemoveDialog.show"
+      :md-title="confirmationRemoveDialog.title"
+      :md-content="confirmationRemoveDialog.msg"
+      :md-confirm-text="confirmationRemoveDialog.confirmBtn"
+      :md-cancel-text="confirmationRemoveDialog.cancelBtn"
+      @md-cancel="confirmationRemoveDialog.onCancel"
+      @md-confirm="confirmationRemoveDialog.onConfirm" />
 </div>
