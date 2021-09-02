@@ -57,6 +57,14 @@
                     </md-field>
                 </div>
 
+                <div class="md-layout-item"
+                    v-if="affaire.type_id === typesAffaires_conf.art35 && affaire.etape_id === etapes_affaire_conf.travaux_chef_equipe">
+                    <h3>Sélectionner le type d'article 35</h3>
+                    <md-radio v-model="art35Radio" value="Affaire avec changement de surface de biens-fonds">Affaire avec changement de surface de biens-fonds</md-radio>
+                    <md-radio v-model="art35Radio" value="Affaire avec changement de surface dans ses natures">Affaire avec changement de surface dans ses natures</md-radio>
+                    <md-radio v-model="art35Radio" value="Affaire sans changement de l’état descriptif">Affaire sans changement de l’état descriptif</md-radio>
+                </div>
+
                 <div class="md-layout md-alignment-center-center" v-if="updateAffaireDate.show">
                     <md-checkbox v-model="updateAffaireDate.value">{{ updateAffaireDate.text }}</md-checkbox>
                 </div>

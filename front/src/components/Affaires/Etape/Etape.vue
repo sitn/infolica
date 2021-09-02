@@ -24,6 +24,7 @@ export default {
   data() {
     return {
       affaireEtapes: [],
+      art35Radio: "",
       cloreAffaire: false,
       etapeAffaire: {
         prochaine: null,
@@ -124,6 +125,12 @@ export default {
         this.$root.$emit("ShowMessage", "L'étape a bien été mise à jour");
         this.etapeAffaire.showDialog = false;
 
+        // art35: set type in specificite.
+        if (this.affaire.etape_id === this.etapes_affaire_conf.travaux_chef_equipe && this.affaire.type_id === this.typesAffaires_conf.art35) {
+          this.updateAffaierSpecificite_art35();
+        }
+
+
         // event emitter
         this.$emit('setAffaire');
         this.$root.$emit('getAffaireSuivi');
@@ -135,6 +142,29 @@ export default {
         date_type: ""
       };
     },
+
+    /**
+     * update affaire specificite art 35
+     */
+    async updateAffaierSpecificite_art35() {
+      let formData = new FormData();
+      formData.append('id_affaire', this.affaire.id);
+      formData.append("information", this.art35Radio + ". " + this.affaire.information);
+
+      this.$http.put(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      ).then(() => {
+        this.art35Radio = "";
+        this.$emit('setAffaire');
+      })
+      .catch(err => handleException(err, this));
+    },
+
 
     /**
      * updateAffaire
