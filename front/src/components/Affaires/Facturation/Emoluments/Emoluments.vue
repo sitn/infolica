@@ -1022,7 +1022,6 @@ export default {
                 this.form_general.batiment_f[emol.batiment-1] = emol.batiment_f;
 
                 // iterate this.form_detail_batiment to fill values
-                this.form_general.batiment_
                 if (this.form_detail_batiment[emol.batiment-1][form_emol].tableau_emolument_id === emol.tableau_emolument_id) {
                   this.form_detail_batiment[emol.batiment-1][form_emol]["nom"] = emol.position;
                   this.form_detail_batiment[emol.batiment-1][form_emol]["prix_unitaire"] = numeral(emol.prix_unitaire).format("0.00");
