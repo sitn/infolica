@@ -61,6 +61,8 @@ def emolument_affaire_view(request):
         ).group_by(
             Emolument.batiment,
             Emolument.batiment_f
+        ).order_by(
+            Emolument.batiment.asc() # Really important with respect to implementation of loading form_detail_batiment in front !! 
         ).all()
         
         batiment_f = [y for _, y in query_bat]
