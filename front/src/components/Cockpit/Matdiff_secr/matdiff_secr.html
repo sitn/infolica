@@ -15,7 +15,7 @@
         <md-card-expand>
             <md-card-expand-content>
                 <md-card-content>
-                    <div style="width: 900px;">
+                    <div style="width: 1000px;">
                         <md-table v-model="numerosDifferes" md-sort="diff_affaire_id" md-sort-order="desc" md-card md-fixed-header>
                             <md-table-toolbar>
                                 <h1 class="md-title">Matérialisations réalisées</h1>
@@ -30,6 +30,7 @@
                                 <md-table-cell md-label="Affaire" md-sort-by="diff_affaire_id" md-numeric>{{ item.diff_affaire_id }}</md-table-cell>
                                 <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
                                 <md-table-cell md-label="Bien-fonds" md-numeric>{{ item.numero }}</md-table-cell>
+                                <md-table-cell md-label="Réquisition">Réq. no {{ item.diff_req_ref? item.diff_req_ref: '??' }}</md-table-cell>
                                 <md-table-cell md-label="Générer la req de radiation">
                                     <md-button class="md-primary md-icon-button" @click="generateReq(item)" title="Générer la réquisition de radiation de Mat Diff pour le registre foncier">
                                         <md-icon>save_alt</md-icon>

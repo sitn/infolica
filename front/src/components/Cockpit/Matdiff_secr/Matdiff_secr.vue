@@ -64,7 +64,8 @@ export default {
         "ANNEE": new Date().getFullYear(),
         "CADASTRE": this.selectedItem.cadastre,
         "BIENS_FONDS": this.selectedItem.numero,
-        "DATE": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT)
+        "DATE": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        "REFERENCE_REQUISITION": this.selectedItem.diff_req_ref,
       }));
 
       getDocument(formData).then(response => {

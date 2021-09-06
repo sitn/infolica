@@ -470,7 +470,8 @@ def numero_differe_view(request):
         VNumeros.diff_operateur_id,
         VNumeros.diff_operateur_nom,
         VNumeros.diff_operateur_prenom,
-        VNumeros.diff_operateur_initiales
+        VNumeros.diff_operateur_initiales,
+        VNumeros.diff_req_ref
     )
     
     if role == "mo":
@@ -497,7 +498,8 @@ def numero_differe_view(request):
         VNumeros.diff_operateur_id,
         VNumeros.diff_operateur_nom,
         VNumeros.diff_operateur_prenom,
-        VNumeros.diff_operateur_initiales
+        VNumeros.diff_operateur_initiales,
+        VNumeros.diff_req_ref
     ).having(func.array_length(num_agg, 1) > 0).all()
 
     numeros = []
@@ -512,7 +514,8 @@ def numero_differe_view(request):
             'diff_operateur_id': num[6],
             'diff_operateur_nom': num[7],
             'diff_operateur_prenom': num[8],
-            'diff_operateur_initiales': num[9]
+            'diff_operateur_initiales': num[9],
+            'diff_req_ref': num[10],
         })
 
     return numeros
