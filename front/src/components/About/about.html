@@ -9,12 +9,19 @@
         </md-card-header>
         <md-card-content>
             <md-table v-model="notes" md-card>
+            <!-- <md-table v-model="notes_.mdData" md-card> -->
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell md-label="Date">{{ item.date_client }}</md-table-cell>
                     <md-table-cell md-label="version">{{ item.version }}</md-table-cell>
                     <md-table-cell md-label="Titre">{{ item.titre }}</md-table-cell>
                     <md-table-cell md-label="Descrption">{{ item.message }}</md-table-cell>
                 </md-table-row>
+
+                <!-- <md-table-pagination
+                    :md-page-size="rowsPerPage"
+                    :md-page-options="[15, 25, 50]"
+                    :md-update="updatePagination"
+                    :md-data.sync="notes_" /> -->
             </md-table>
 
             <p v-if="!expandNotes"><a @click="expandNotes=true">Montrer plus</a></p>

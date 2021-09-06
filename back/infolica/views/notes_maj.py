@@ -6,6 +6,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import NotesMAJ, Operateur
 from infolica.scripts.utils import Utils
+import numpy as np
 
 from datetime import date, datetime
 
@@ -20,17 +21,47 @@ def notes_maj_view(request):
         raise exc.HTTPForbidden()
     
     lastNoteMaj_id = request.params ["lastNoteMaj_id"] if "lastNoteMaj_id" in request.params else None
+    ### pagination
+    # page = int(request.params ["page"]) if "page" in request.params else None
+    # per_page = int(request.params ["per_page"]) if "per_page" in request.params else None
+    # sort = request.params ["sort"] if "sort" in request.params else None
+    # sort_order = request.params ["sort_order"] if "sort_order" in request.params else None
 
     query = request.dbsession.query(NotesMAJ)
+
+    ### pagination
+    # total = query.count()
     
     if not lastNoteMaj_id is None:
         if lastNoteMaj_id == 'null':
             lastNoteMaj_id = 0
         query = query.filter(NotesMAJ.id > lastNoteMaj_id)
 
-    query = query.order_by(NotesMAJ.id.desc()).all()
 
-    return Utils.serialize_many(query)
+    ### pagination
+    # if sort:
+    #     if sort_order == 'asc':
+    #         query = query.order_by(getattr(NotesMAJ, sort).asc())
+    #     else:
+    #         query = query.order_by(getattr(NotesMAJ, sort).desc())
+
+    # if page and per_page:
+    #     query = query.limit(per_page).offset((page-1)*per_page)
+        
+    query = query.all()
+
+    ### pagination
+    # response = {
+    #     "total": total,
+    #     "page": page,
+    #     "per_page": per_page,
+    #     "total_pages": np.ceil(total/per_page),
+    #     "data": Utils.serialize_many(query)
+    # }
+
+    ### no pagination
+    response = Utils.serialize_many(query)
+    return response
 
 
 @view_config(route_name='version', request_method='GET', renderer='json')

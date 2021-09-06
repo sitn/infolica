@@ -15,9 +15,43 @@ export default {
     return {
       expandNotes: false,
       notes: [],
+      // notes_: {
+      //   mdCount: null,
+      //   mdPage: null,
+      //   mdData: [],
+      // },
+      // rowsPerPage: 15,
     }
   },
   methods: {
+    // updatePagination (page, pageSize, sort, sortOrder) {
+    //   console.log('pagination has updated', page, pageSize, sort, sortOrder);
+    //   if (!(page && pageSize && sort && sortOrder)) return false;
+    //   this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_NOTESMAJ_ENDPOINT + 
+    //     "?page=" + page +
+    //     "&per_page=" + pageSize +
+    //     ((sort && sort !== undefined)? ("&sort=" + sort): "") +
+    //     ((sortOrder && sortOrder !== undefined)? ("&sort_order=" + sortOrder): ""),
+    //     {
+    //       withCredentials: true,
+    //       headers: {"Accept": "application/json"}
+    //     }
+    //   ).then(({data: resp}) => {
+    //     console.log("resp = ", resp)
+    //     if (resp) {
+    //       this.rowsPerPage = resp.per_page;
+    //       this.notes_ = {
+    //         mdCount: resp.total,
+    //         mdPage: resp.page,
+    //         mdTotalPages: resp.total_pages,
+    //         mdData: resp.data
+    //       };
+    //       console.log("this.notes_ = ", this.notes_)
+    //     }
+    //   }).catch(err => handleException(err, this));
+    // },
+
+
     /**
      * Get Notes
      */
@@ -41,6 +75,7 @@ export default {
   },
   mounted: function(){
     this.getNotesMAJ();
+    // this.updatePagination(1, 15, "id", "desc"); // pagination
   }
 }
 </script>
