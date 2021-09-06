@@ -283,9 +283,17 @@ export default {
             }
 
             if (this.current_sort_order === 'asc') {
-                return String(c).localeCompare(String(d));
+                if (isNaN(c) || isNaN(d)) {
+                    return String(c).localeCompare(String(d));
+                } else {
+                    return c > d;
+                }
             } else {
-                return String(d).localeCompare(String(c));
+                if (isNaN(c) || isNaN(d)) {
+                    return String(d).localeCompare(String(c));
+                } else {
+                    return c < d;
+                }
             }
         });
     }

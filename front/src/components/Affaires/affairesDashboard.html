@@ -76,7 +76,7 @@
         </div>
 
         <!-- PREAVIS -->
-        <div class="affairesDashboard" v-if="affaire.type_id===typesAffaires_conf.mutation">
+        <div class="affairesDashboard" v-if="[typesAffaires_conf.mutation, typesAffaires_conf.modification_mutation].includes(affaire.type_id)">
             <preavis :affaire="affaire" />
         </div>
 

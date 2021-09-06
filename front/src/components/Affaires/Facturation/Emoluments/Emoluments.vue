@@ -418,7 +418,7 @@ export default {
      */
     updateMontants() {
       //update form_detail.relations_autres_services1
-      if (this.form_detail.relations_autres_services1.prix_unitaire) {
+      if (this.form_detail.relations_autres_services1 && this.form_detail.relations_autres_services1.prix_unitaire) {
         if (Number(this.form_detail.relations_autres_services1.prix_unitaire) > 0) {
           this.form_detail.relations_autres_services1.nombre = 1;
         } else {
@@ -426,6 +426,7 @@ export default {
         }
       } else {
         this.form_detail.relations_autres_services1.nombre = 0;
+        this.form_detail.relations_autres_services1.prix_unitaire = numeral(0).format("0.00");
       }
       
       //update form_detail.forfait_rf1.prix_unitaire

@@ -69,6 +69,9 @@ def affaire_cockpit_view(request):
     since = datetime.now() - timedelta(days=affaire_show_timedelta)
     
     query = request.dbsession.query(VAffaire)
+
+    # Filtrer les affaires abandonnées
+    query = query.filter(VAffaire.abandon == False)
     
     if type_id is not None:
         query = query.filter(VAffaire.type_id == type_id)

@@ -135,7 +135,7 @@ class Affaire(Base):
     localisation_N = Column(Float, nullable=False)
     vref = Column(Text)
     chemin = Column(Text)
-    abandon = Column(Boolean)
+    abandon = Column(Boolean, nullable=False, default=False)
     resume = Column(Text)
     urgent = Column(Boolean)
     urgent_echeance = Column(Date)
