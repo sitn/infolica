@@ -4,8 +4,7 @@
 
 <script>
 import AffairesChezClient from "@/components/Cockpit/AffairesChezClient/AffairesChezClient.vue";
-import Matdiff_secr from "@/components/Cockpit/Matdiff_secr/Matdiff_secr.vue";
-import Matdiff_mo from "@/components/Cockpit/Matdiff_mo/Matdiff_mo.vue";
+import Matdiff from "@/components/Cockpit/Matdiff/Matdiff.vue";
 
 import { handleException } from '@/services/exceptionsHandler';
 import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper';
@@ -16,8 +15,7 @@ export default {
   name: "Cockpit",
   components: {
       AffairesChezClient,
-      Matdiff_secr,
-      Matdiff_mo,
+      Matdiff,
   },
   data: () => {
     return {
@@ -38,6 +36,7 @@ export default {
         showFinProcessus: false,
         showMatdiff_secr: false,
         showMatdiff_mo: false,
+        showMatdiff_coord: false,
         showOnlyAffairesUrgentes: false,
         showPPE: false,
         role: {
@@ -75,8 +74,9 @@ export default {
 
             //Check if role responsable
             if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.responsable  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
-                this.showMatdiff_secr = true;
+                // this.showMatdiff_secr = true;
                 this.showMatdiff_mo = true;
+                this.showMatdiff_coord = true;
             } 
             
         }, 500);

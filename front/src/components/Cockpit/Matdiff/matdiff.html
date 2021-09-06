@@ -1,0 +1,40 @@
+<div id="matdiff_mo">
+    <md-card>
+        <!-- Results Header -->
+        <md-card-header>
+            <div class="md-title">
+                <md-card-expand-trigger>
+                    <md-button class="md-icon-button expandCollapseBtn">
+                        <md-icon>keyboard_arrow_down</md-icon>
+                    </md-button>
+                </md-card-expand-trigger>
+                Matérialisation différée
+            </div>
+        </md-card-header>
+
+        <md-card-expand>
+            <md-card-expand-content>
+                <md-card-content>
+
+                    <!-- OPERATEUR MO - MAT DIFF A REALISER -->
+                    <div>
+                        <Matdiff_mo v-if="showMatdiff_secr" :operateurs="operateurs" :selectedOperateur_id_parent="selectedOperateur_id" ></Matdiff_mo>
+                    </div>
+                    
+                    
+                    <!-- OPERATEUR SECRETARIAT - REQUISITION RADIATION MENTION MAT DIFF -->
+                    <div>
+                        <Matdiff_secr v-if="showMatdiff_mo"></Matdiff_secr>
+                    </div>
+                    
+                    <!-- OPERATEUR COORDINATEUR - CONTROLE MAT DIFF -->
+                    <div>
+                        <Matdiff_ctrl :operateurs="operateurs" :selectedOperateur_id_parent="selectedOperateur_id" ></Matdiff_ctrl>
+                    </div>
+
+                </md-card-content>
+            </md-card-expand-content>
+        </md-card-expand>
+
+    </md-card>
+</div>

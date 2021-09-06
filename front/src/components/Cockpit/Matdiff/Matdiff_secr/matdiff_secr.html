@@ -1,0 +1,37 @@
+<div id="matdiff_secr">
+
+    <div style="width: 900px;">
+        <md-table v-model="numerosDifferes" md-sort="diff_affaire_id" md-sort-order="desc" md-card md-fixed-header>
+            <md-table-toolbar>
+                <h1 class="md-title">Matérialisations réalisées - réquisitions à produire</h1>
+            </md-table-toolbar>
+                
+            <md-table-empty-state
+                md-label="Aucune mat diff"
+                md-description="Aucune Matérialisation différée n'a été réalisée.">
+            </md-table-empty-state>
+
+            <md-table-row slot="md-table-row" slot-scope="{ item }">
+                <md-table-cell md-label="Affaire" md-sort-by="diff_affaire_id" md-numeric>{{ item.diff_affaire_id }}</md-table-cell>
+                <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
+                <md-table-cell md-label="Bien-fonds" md-numeric>{{ item.numero }}</md-table-cell>
+                <md-table-cell md-label="Générer la req de radiation">
+                    <md-button class="md-primary md-icon-button" @click="generateReq(item)" title="Générer la réquisition de radiation de Mat Diff pour le registre foncier">
+                        <md-icon>save_alt</md-icon>
+                    </md-button>
+                </md-table-cell>
+            </md-table-row>
+        </md-table>
+    </div>
+
+    <md-dialog-confirm
+      :md-active.sync="showConfirmationDialog"
+      md-title="Radiation de mention matérialisation différée"
+      md-content="En appuyant sur OK, la réquisition de radiation de matérialisation différée sera produite. Les numéros vont être supprimés de la liste."
+      md-confirm-text="OK"
+      md-cancel-text="Annuler"
+      @md-cancel="onCancelGenerateReq"
+      @md-confirm="onConfirmGenerateReq" />
+
+</div>
+

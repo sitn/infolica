@@ -490,6 +490,13 @@ def numero_differe_view(request):
             VNumeros.diff_sortie.isnot(None),
             VNumeros.etat_id.in_((numero_projet_id, numero_vigueur_id)) 
         ))
+    
+    elif role == "coord":
+        query = query.filter(and_(
+            VNumeros.diff_sortie.isnot(None),
+            VNumeros.diff_controle == None 
+        ))
+
         
     result = query.group_by(
         VNumeros.diff_affaire_id,
