@@ -223,9 +223,7 @@ export default {
 
 
     initForm(form_general=true) {
-      // empty form_detail_batiment
-      this.form_detail_batiment= [];
-
+      
       if (form_general) {
         this.form_general = {
           id: null,
@@ -276,6 +274,9 @@ export default {
             montant: numeral(0).format("0.00"),
           }
         }
+        
+        // empty form_detail_batiment
+        this.form_detail_batiment= [];
       }
 
 
