@@ -350,7 +350,7 @@ export const filterList = function(list, searchTerm, nLetters=0) {
         if (searchTerm.length >= nLetters) {
             result = list.filter(x => {
                 return !searchTerm_.some(y => {
-                    return !x.nom.toLowerCase().includes(y.toLowerCase());
+                    return !x.nom.toLowerCase().startsWith(y.toLowerCase()) && !x.nom.toLowerCase().includes(" " + y.toLowerCase());
                 });
             });
         } else {
