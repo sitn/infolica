@@ -143,8 +143,8 @@
               </md-card-header>
               <md-card-content>
 
-                <table class="tg">
-                  <thead>
+                <table class="tg customTable">
+                  <thead class="customTableHead">
                     <template v-if="form_general.nb_batiments > 0">
                       <tr>
                         <th class="tg-0lax alignCenter" colspan="6"></th>
@@ -166,7 +166,7 @@
                       </template>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody class="customTableBody">
                     <tr>
                       <td class="tg-0lax code">.1</td>
                       <td class="tg-0lax position">{{ form_detail.mandat1.nom }}</td>
@@ -268,8 +268,8 @@
               </md-card-header>
               <md-card-content>
 
-                <table class="tg">
-                  <thead>
+                <table class="tg customTable">
+                  <thead class="customTableHead">
                     <template v-if="form_general.nb_batiments > 0">
                       <tr>
                         <th class="tg-0lax alignCenter" colspan="6"></th>
@@ -291,7 +291,7 @@
                       </template>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody class="customTableBody">
                     <tr>
                       <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form_general.nb_batiments)">2.1 Points fixes planimétriques</td>
                     </tr>
@@ -650,8 +650,8 @@
               </md-card-header>
               <md-card-content>
 
-                <table class="tg">
-                  <thead>
+                <table class="tg customTable">
+                  <thead class="customTableHead">
                     <tr>
                       <th class="tg-0lax alignCenter code">Code</th>
                       <th class="tg-0lax alignCenter position">Position</th>
@@ -661,7 +661,7 @@
                       <th class="tg-0lax alignCenter montant">Montant</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody class="customTableBody">
                     <tr>
                       <td class="tg-0lax subtitle" colspan="6">3.1,2 Types stanndards et complémentaires</td>
                     </tr>
@@ -832,8 +832,8 @@
               </md-card-header>
               <md-card-content>
 
-                <table class="tg">
-                  <thead>
+                <table class="tg customTable">
+                  <thead class="customTableHead">
                     <template v-if="form_general.nb_batiments > 0">
                       <tr>
                         <th class="tg-0lax alignCenter" colspan="6"></th>
@@ -855,7 +855,7 @@
                       </template>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody class="customTableBody">
                     <tr>
                       <td class="tg-0lax subtitle" :colspan="6 + 2* Number(form_general.nb_batiments)">4.1 Points fixes planimétriques</td>
                     </tr>
@@ -1457,8 +1457,8 @@
               </md-card-header>
               <md-card-content>
 
-                <table class="tg">
-                  <thead>
+                <table class="tg customTable">
+                  <thead class="customTableHead">
                     <tr>
                       <th class="tg-0lax position_divers alignCenter">Travaux selon le temps consacré</th>
                       <th class="tg-0lax prix_unitaire alignCenter">Prix horaire</th>
@@ -1466,7 +1466,7 @@
                       <th class="tg-0lax montant alignCenter">Montant</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody class="customTableBody">
                     <tr>
                       <td class="tg-0lax position_divers"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers1.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
                       <td class="tg-0lax prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers1.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
@@ -1574,8 +1574,8 @@
               </md-card-header>
               <md-card-content>
 
-                <table class="tg">
-                  <thead>
+                <table class="tg customTable">
+                  <thead class="customTableHead">
                     <tr>
                       <th class="tg-0lax alignCenter code">Code</th>
                       <th class="tg-0lax alignCenter position">Position</th>
@@ -1585,7 +1585,7 @@
                       <th class="tg-0lax alignCenter montant">Montant</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody class="customTableBody">
                     <tr>
                       <td class="tg-0lax code">.1</td>
                       <td class="tg-0lax position">{{ form_detail.registreFoncier1.nom }}</td>
@@ -1649,16 +1649,16 @@
               </md-card-header>
               <md-card-content>
 
-                <table class="tg">
-                  <thead>
+                <table class="tg customTable">
+                  <thead class="customTableHead">
                     <tr>
-                      <th class="tg-0lax alignCenter position">Domaine</th>
+                      <th class="tg-0lax alignCenter position_recapitulatif">Domaine</th>
                       <th class="tg-0lax alignCenter number">Indice</th>
                       <th class="tg-0lax alignCenter montant">Montant</th>
                       <th class="tg-0lax alignCenter montant">Total</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody class="customTableBody">
                     <tr>
                       <td class="tg-0lax" colspan="2">Mandat</td>
                       <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_mandat }} CHF</td>
@@ -1675,7 +1675,7 @@
                       <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme3 }} CHF</td>
                     </tr>
                     <tr>
-                      <td class="tg-0lax position">Indice d'application</td>
+                      <td class="tg-0lax position_recapitulatif">Indice d'application</td>
                       <td class="tg-0lax number"><md-field class="nbField"><md-input :disabled="disabled" class="nbInput" v-model="form_general.indice_application" @keyup="updateRecapitulatif()"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_indice_application }} CHF</td>
                       <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme4 }} CHF</td>
@@ -1691,7 +1691,7 @@
                       <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme6 }} CHF</td>
                     </tr>
                     <tr>
-                      <td class="tg-0lax position">TVA</td>
+                      <td class="tg-0lax position_recapitulatif">TVA</td>
                       <td class="tg-0lax number"><md-field class="nbField"><md-input :disabled="disabled" class="nbInput" v-model="form_general.tva_pc" @keyup="updateRecapitulatif()"></md-input>%</md-field></td>
                       <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_tva }} CHF</td>
                       <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme7 }} CHF</td>
