@@ -1022,7 +1022,7 @@ export default {
                 if (this.form_detail[form_emol].tableau_emolument_id === emol.tableau_emolument_id) {
                   if (this.form_detail[form_emol].tableau_emolument_id === this.indexFromDB.divers) {
                     this.form_detail["divers" + String(divers_counter)]["nom"] = emol.position;
-                    this.form_detail["divers" + String(divers_counter)]["prix_unitaire"] = Number(emol.prix_unitaire);
+                    this.form_detail["divers" + String(divers_counter)]["prix_unitaire"] = numeral(emol.prix_unitaire).format("0.00");
                     this.form_detail["divers" + String(divers_counter)]["nombre"] = emol.nombre;
                     this.form_detail["divers" + String(divers_counter)]["montant"] = numeral(emol.montant).format("0.00");
                     divers_counter += 1;
