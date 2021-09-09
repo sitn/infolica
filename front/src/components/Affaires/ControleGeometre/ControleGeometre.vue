@@ -17,6 +17,10 @@ export default {
   },
   data: () => ({
     operateurs_liste: [],
+    checkAll: {
+      ctrl_jur: false,
+      sign: false
+    },
     controleGeometre: {},
     operateur: {
       id: null,
@@ -214,6 +218,53 @@ export default {
         }
       })
       .catch(err => handleException(err, this));
+    },
+
+    /**
+     * Select all
+     */
+    selectAll(type_ctrl) {
+      let items = [];
+
+      if (type_ctrl === "ctrl_jur" && [this.typesAffaires_conf.mutation,
+                                       this.typesAffaires_conf.modification,
+                                       this.typesAffaires_conf.modification_duplicata,
+                                       this.typesAffaires_conf.modification_mutation,
+                                       this.typesAffaires_conf.modification_visa].includes(this.affaire.type_id)) {
+        items = [48, 49, 12, 2, 50, 14, 3, 51, 10, 1, 52, 5, 6, 53, 9, 8, 54, 4, 55, 56];
+        for (const item of items) {
+          this.controleGeometre["check_" + String(item)] = this.checkAll.ctrl_jur;
+        }
+      }
+
+      if (type_ctrl === "sign") {
+        if (![this.typesAffaires_conf.cadastration, this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe].includes(this.affaire.type_id)) {
+          if (this.affaire.type_id === this.typesAffaires_conf.revision_abornement) {
+            items = [57, 26, 27, 23, 25, 44, 45, 15, 18, 19, 17, 58, 59, 21, 22];
+          } else if (this.affaire.type_id === this.typesAffaires_conf.retablissement_pfp3) {
+            items = [57, 26, 27, 23, 25, 46, 47, 15, 18, 19, 17, 58, 59, 21, 22];
+          } else if (this.affaire.type_id === this.typesAffaires_conf.modification_duplicata) {
+            items = [57, 26, 27, 23, 25, 15, 18, 19, 17, 58, 59, 40, 21, 22, 39];
+          } else if ([this.typesAffaires_conf.modification_visa, this.typesAffaires_conf.modification_mutation, this.typesAffaires_conf.modification].includes(this.affaire.type_id)) {
+            items = [57, 26, 27, 23, 25, 15, 18, 19, 17, 58, 59, 42, 21, 22, 41];
+          } else if (this.affaire.type_id === this.typesAffaires_conf.art35) {
+            items = [57, 26, 27, 23, 25, 15, 18, 19, 17, 58, 59, 20, 21, 22];
+          } else if (this.affaire.type_id === this.typesAffaires_conf.servitude) {
+            items = [57, 26, 27, 23, 25, 15, 18, 19, 17, 58, 59, 21, 22, 43];
+          } else  {
+            items = [57, 26, 27, 23, 25, 15, 18, 19, 17, 58, 59, 21, 22];
+          }
+        } else if(this.affaire.type_id === this.typesAffaires_conf.cadastration) {
+          items = [60, 29, 31, 28, 32, 61, 57, 23, 25, 1, 37, 18, 19, 20, 34, 17, 35, 36, 38, 21, 22];
+        } else {
+          items = [48, 49, 62, 57, 26, 27, 23, 25, 61, 62, 63, 50, 64, 65];
+        }
+
+        for (const item of items) {
+          this.controleGeometre["check_" + String(item)] = this.checkAll.sign;
+        }
+      }
+
     }
 
   },

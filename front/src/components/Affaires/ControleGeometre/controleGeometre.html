@@ -35,6 +35,8 @@
                                     </md-card-header>
                                     
                                     <md-card-content>
+                                        <md-checkbox style="padding-left: 30px;" v-model="checkAll.ctrl_jur" @change="selectAll('ctrl_jur')">Tout cocher</md-checkbox>
+
                                         <div class="md-subhead">Informations générales</div>
                                         <md-checkbox class="md-primary" v-model="controleGeometre.check_48">Adresses (commande, envoi, facturation)</md-checkbox>
                                         <md-checkbox class="md-primary" v-model="controleGeometre.check_49">Référencement géographique</md-checkbox>
@@ -80,6 +82,8 @@
                                     </md-card-header>
                                     
                                     <md-card-content>
+                                        <md-checkbox style="padding-left: 30px;" v-model="checkAll.sign" @change="selectAll('sign')">Tout cocher</md-checkbox>
+
                                         <div v-if="![typesAffaires_conf.cadastration, typesAffaires_conf.ppe, typesAffaires_conf.modification_ppe].includes(affaire.type_id)">
                                             <div class="md-subhead">Facture</div>
                                             <md-checkbox class="md-primary" v-model="controleGeometre.check_57">N° d'affaire</md-checkbox>
