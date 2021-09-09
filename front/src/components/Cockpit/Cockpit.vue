@@ -286,13 +286,13 @@ export default {
                 if (isNaN(c) || isNaN(d)) {
                     return String(c).localeCompare(String(d));
                 } else {
-                    return c > d;
+                    return (c > d)? 1: -1;
                 }
             } else {
                 if (isNaN(c) || isNaN(d)) {
                     return String(d).localeCompare(String(c));
                 } else {
-                    return c < d;
+                    return (c > d)? -1: 1;
                 }
             }
         });
