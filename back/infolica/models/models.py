@@ -569,6 +569,24 @@ class ControleGeometre(Base):
     check_45 = Column(Boolean)  # Le montant est correct (~300.- par PL)
     check_46 = Column(Boolean)  # Le nombre de points est le même que sur le plan
     check_47 = Column(Boolean)  # Le montant est correct (~ 380.- par PFP)
+    check_48 = Column(Boolean)  # Adresses (commande, envoi, facturation)
+    check_49 = Column(Boolean)  # Référencement géographique
+    check_50 = Column(Boolean)  # N° de biens-fonds réservés = n° de biens-fonds utilisés
+    check_51 = Column(Boolean)  # Si plusieurs destinataires, la répartition est indiquée (devis et factures)
+    check_52 = Column(Boolean)  # Indication sur l'avancement de la saisie des servitudes
+    check_53 = Column(Boolean)  # Surface du bien-fonds de base ne change pas lors de la création d'un DDP
+    check_54 = Column(Boolean)  # Surface totale de chaque bien-fonds
+    check_55 = Column(Boolean)  # Nom de rue pour un bien-fonds non construit en zone à bâtir
+    check_56 = Column(Boolean)  # Informations concernant la Mat. Diff. (immeuble, facture, désignation)
+    check_57 = Column(Boolean)  # N° d'affaire
+    check_58 = Column(Boolean)  # Surface totale de chaque bien-fonds
+    check_59 = Column(Boolean)  # Sommes des surfaces des natures pour chaque bien-fonds
+    check_60 = Column(Boolean)  # Référencement géographique de l'affaire
+    check_61 = Column(Boolean)  # Remarque(s) de la rubrique "Devis et factures"
+    check_62 = Column(Boolean)  # Dossier complet (formule de légende, plan de situation, plans d'étage, coupes, plans de façade)
+    check_63 = Column(Boolean)  # N° et état juridique du BF de base
+    check_64 = Column(Boolean)  # Informations cohérentes entre plan de situation et plans d'étage
+    check_65 = Column(Boolean)  # Nombres de documents indiqués sur la formule de légende
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
     date = Column(Date)
     remarque = Column(Text)

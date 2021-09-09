@@ -149,6 +149,24 @@ export default {
       formData.append("check_45", this.controleGeometre.check_45);
       formData.append("check_46", this.controleGeometre.check_46);
       formData.append("check_47", this.controleGeometre.check_47);
+      formData.append("check_48", this.controleGeometre.check_48);
+      formData.append("check_49", this.controleGeometre.check_49);
+      formData.append("check_50", this.controleGeometre.check_50);
+      formData.append("check_51", this.controleGeometre.check_51);
+      formData.append("check_52", this.controleGeometre.check_52);
+      formData.append("check_53", this.controleGeometre.check_53);
+      formData.append("check_54", this.controleGeometre.check_54);
+      formData.append("check_55", this.controleGeometre.check_55);
+      formData.append("check_56", this.controleGeometre.check_56);
+      formData.append("check_57", this.controleGeometre.check_57);
+      formData.append("check_58", this.controleGeometre.check_58);
+      formData.append("check_59", this.controleGeometre.check_59);
+      formData.append("check_60", this.controleGeometre.check_60);
+      formData.append("check_61", this.controleGeometre.check_61);
+      formData.append("check_62", this.controleGeometre.check_62);
+      formData.append("check_63", this.controleGeometre.check_63);
+      formData.append("check_64", this.controleGeometre.check_64);
+      formData.append("check_65", this.controleGeometre.check_65);
 
       this.$http
         .put(
