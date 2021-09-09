@@ -1,21 +1,10 @@
 # APACHE mod_wsgi needs to be enabled
 # CHANGE THE APP PATH HERE:
-
 WSGIScriptAlias /infolica_api path/to/wsgi/file/app.wsgi
 Alias "/infolica" "path/to/dist"
 
-## Uncomment this to enable maintenance and comment line above ##
-#DocumentRoot  "/path/to/maintenance/folder"
-#Alias "/infolica_api" "/path/to/maintenance/folder"
-#RewriteEngine  on
-#RewriteRule    "^/(.+)" "" [R,L]
-#<location />
-#    Require all granted
-#</location>
-## End of maintenance part
-
-#ProxyRequests off
-#ProxyPreserveHost on
+ProxyRequests off
+ProxyPreserveHost on
 
 #ProxyPass /infolica/api http://127.0.0.1/infolica_api/infolica/api
 #ProxyPassReverse /infolica/api http://127.0.0.1/infolica_api/infolica/api
