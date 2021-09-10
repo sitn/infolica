@@ -1,6 +1,11 @@
 .md-dialog {
-  width: 1500px;
+  min-width: 2000px;
   margin: auto;
+}
+
+.md-dialog-content {
+  height: 1000px;
+  padding-bottom: 0px;
 }
 
 .formField {
@@ -35,13 +40,13 @@
 }
 
 .inputMontant {
-  width: 110px;
+  width: 70px;
   text-align: Right;
   margin-right: 5px;
 }
 
 .inputText {
-  width: 400px;
+  width: 200px;
   text-align: Left;
 }
 
@@ -98,10 +103,6 @@
   background-color: lightgray;
 }
 
-.montant {
-  width: 110px;
-}
-
 .montantTotal {
   font-weight: bold;
 }
@@ -133,4 +134,57 @@
 
 .highlightEmolument {
   background-color: lightgreen;
+}
+
+.hideNulls {
+  font-size: 0px !important;
+}
+
+.customTable .customTableHead {
+  width: calc(100% - 1em);
+}
+
+.customTable .customTableBody, .customTable .customTableHead {
+  display: block;
+}
+
+.customTable .customTableBody {
+  overflow-y: scroll;
+  max-height: 450px;
+}
+
+th, td {
+  width: 150px !important;
+}
+
+.code {
+  width: 50px !important;
+}
+
+.position {
+  width: 250px !important;
+}
+
+.position_divers {
+  width: 400px !important;
+}
+
+.position_recapitulatif {
+  width: 400px !important;
+}
+
+.unite {
+  width: 100px !important;
+}
+
+.prix_unitaire {
+  width: 120px !important;
+}
+
+.nombre {
+  width: 70px !important;
+}
+
+.montant {
+  width: 80px;
 }

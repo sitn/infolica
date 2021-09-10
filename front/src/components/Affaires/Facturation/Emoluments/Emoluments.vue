@@ -68,164 +68,168 @@ export default {
      * Get emoluments units from DB
      */
     async getEmolumentsUnit() {
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_TABLEAU_EMOLUMENTS_ENDPOINT,
-        {
-          withCredentials: true,
-          headers: {"Accept": "application/json"}
-        }
-      ).then(response => {
-        if (response && response.data) {
-          let tmp = response.data;
-          tmp.forEach(x => x.montant = Number(x.montant));
-
-          // Mandat
-          let i = 1;
-          this.indexFromDB.mandat.forEach(x => {
-            this.form_detail["mandat" + String(i)] = {
-              tableau_emolument_id: x,
-              nom: tmp[x-1].nom,
-              unite: tmp[x-1].unite,
-              prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
-              nombre: 0,
-              batiment: 0,
-              batiment_f: 1,
-              montant: numeral(0).format("0.00"),
-            }
-            i = i+1;
-          });
-
-          // Travaux terrain
-          i = 1;
-          this.indexFromDB.travauxTerrain.forEach(x => {
-            this.form_detail["travauxTerrain" + String(i)] = {
-              tableau_emolument_id: x,
-              nom: tmp[x-1].nom,
-              unite: tmp[x-1].unite,
-              prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
-              nombre: 0,
-              batiment: 0,
-              batiment_f: 1,
-              montant: numeral(0).format("0.00"),
-            }
-            i = i+1;
-          });
-
-          // Travaux matérialisation
-          i = 1;
-          this.indexFromDB.travauxMaterialisation.forEach(x => {
-            this.form_detail["travauxMaterialisation" + String(i)] = {
-              tableau_emolument_id: x,
-              nom: tmp[x-1].nom,
-              unite: tmp[x-1].unite,
-              prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
-              nombre: 0,
-              batiment: 0,
-              batiment_f: 1,
-              montant: numeral(0).format("0.00"),
-            }
-            i = i+1;
-          });
-
-          // Déplacements et débours
-          i = 1;
-          this.indexFromDB.deplacementDebours.forEach(x => {
-            this.form_detail["deplacementDebours" + String(i)] = {
-              tableau_emolument_id: x,
-              nom: tmp[x-1].nom,
-              unite: tmp[x-1].unite,
-              prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
-              nombre: 0,
-              batiment: 0,
-              batiment_f: 1,
-              montant: numeral(0).format("0.00"),
-            }
-            i = i+1;
-          });
-
-          // Travaux bureau
-          i = 1;
-          this.indexFromDB.travauxBureau.forEach(x => {
-            this.form_detail["travauxBureau" + String(i)] = {
-              tableau_emolument_id: x,
-              nom: tmp[x-1].nom,
-              unite: tmp[x-1].unite,
-              prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
-              nombre: 0,
-              batiment: 0,
-              batiment_f: 1,
-              montant: numeral(0).format("0.00"),
-            }
-            i = i+1;
-          });
-
-          // RF
-          i = 1;
-          this.indexFromDB.registreFoncier.forEach(x => {
-            this.form_detail["registreFoncier" + String(i)] = {
-              tableau_emolument_id: x,
-              nom: tmp[x-1].nom,
-              unite: tmp[x-1].unite,
-              prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
-              nombre: 0,
-              batiment: 0,
-              batiment_f: 1,
-              montant: numeral(0).format("0.00"),
-            }
-            i = i+1;
-          });
-
-          // Divers
-          for (let i=0; i<this.n_divers; i++) {
-            this.form_detail["divers" + String(i+1)] = {
-              tableau_emolument_id: this.indexFromDB.divers,
-              nom: null,
-              unite: "Heure",
-              prix_unitaire: null,
-              nombre: 0,
-              batiment: 0,
-              batiment_f: 1,
-              montant: numeral(0).format("0.00"),
-            }
+      return new Promise((resolve, reject) => {
+        this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_TABLEAU_EMOLUMENTS_ENDPOINT,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
           }
-
-          //relations avec autres services
-          this.form_detail["relations_autres_services1"] = {
-            tableau_emolument_id: this.indexFromDB.relations_autres_services,
-            nom: "Relations avec d'autres services (de 50.00 à 200.00 CHF)",
-            unite: "-",
-            prix_unitaire: numeral(0).format("0.00"),
-            nombre: 1,
-            batiment: 0,
-            batiment_f: 1,
-            montant: numeral(0).format("0.00"),
+        ).then(response => {
+          if (response && response.data) {
+            let tmp = response.data;
+            tmp.forEach(x => x.montant = Number(x.montant));
+  
+            // Mandat
+            let i = 1;
+            this.indexFromDB.mandat.forEach(x => {
+              this.form_detail["mandat" + String(i)] = {
+                tableau_emolument_id: x,
+                nom: tmp[x-1].nom,
+                unite: tmp[x-1].unite,
+                prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
+                nombre: 0,
+                batiment: 0,
+                batiment_f: 1,
+                montant: numeral(0).format("0.00"),
+              }
+              i = i+1;
+            });
+  
+            // Travaux terrain
+            i = 1;
+            this.indexFromDB.travauxTerrain.forEach(x => {
+              this.form_detail["travauxTerrain" + String(i)] = {
+                tableau_emolument_id: x,
+                nom: tmp[x-1].nom,
+                unite: tmp[x-1].unite,
+                prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
+                nombre: 0,
+                batiment: 0,
+                batiment_f: 1,
+                montant: numeral(0).format("0.00"),
+              }
+              i = i+1;
+            });
+  
+            // Travaux matérialisation
+            i = 1;
+            this.indexFromDB.travauxMaterialisation.forEach(x => {
+              this.form_detail["travauxMaterialisation" + String(i)] = {
+                tableau_emolument_id: x,
+                nom: tmp[x-1].nom,
+                unite: tmp[x-1].unite,
+                prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
+                nombre: 0,
+                batiment: 0,
+                batiment_f: 1,
+                montant: numeral(0).format("0.00"),
+              }
+              i = i+1;
+            });
+  
+            // Déplacements et débours
+            i = 1;
+            this.indexFromDB.deplacementDebours.forEach(x => {
+              this.form_detail["deplacementDebours" + String(i)] = {
+                tableau_emolument_id: x,
+                nom: tmp[x-1].nom,
+                unite: tmp[x-1].unite,
+                prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
+                nombre: 0,
+                batiment: 0,
+                batiment_f: 1,
+                montant: numeral(0).format("0.00"),
+              }
+              i = i+1;
+            });
+  
+            // Travaux bureau
+            i = 1;
+            this.indexFromDB.travauxBureau.forEach(x => {
+              this.form_detail["travauxBureau" + String(i)] = {
+                tableau_emolument_id: x,
+                nom: tmp[x-1].nom,
+                unite: tmp[x-1].unite,
+                prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
+                nombre: 0,
+                batiment: 0,
+                batiment_f: 1,
+                montant: numeral(0).format("0.00"),
+              }
+              i = i+1;
+            });
+  
+            // RF
+            i = 1;
+            this.indexFromDB.registreFoncier.forEach(x => {
+              this.form_detail["registreFoncier" + String(i)] = {
+                tableau_emolument_id: x,
+                nom: tmp[x-1].nom,
+                unite: tmp[x-1].unite,
+                prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
+                nombre: 0,
+                batiment: 0,
+                batiment_f: 1,
+                montant: numeral(0).format("0.00"),
+              }
+              i = i+1;
+            });
+  
+            // Divers
+            for (let i=0; i<this.n_divers; i++) {
+              this.form_detail["divers" + String(i+1)] = {
+                tableau_emolument_id: this.indexFromDB.divers,
+                nom: null,
+                unite: "Heure",
+                prix_unitaire: null,
+                nombre: 0,
+                batiment: 0,
+                batiment_f: 1,
+                montant: numeral(0).format("0.00"),
+              }
+            }
+  
+            //relations avec autres services
+            this.form_detail["relations_autres_services1"] = {
+              tableau_emolument_id: this.indexFromDB.relations_autres_services,
+              nom: "Relations avec d'autres services (de 50.00 à 200.00 CHF)",
+              unite: "-",
+              prix_unitaire: numeral(0).format("0.00"),
+              nombre: 1,
+              batiment: 0,
+              batiment_f: 1,
+              montant: numeral(0).format("0.00"),
+            }
+  
+            //forfait RF
+            this.form_detail["forfait_rf1"] = {
+              tableau_emolument_id: this.indexFromDB.forfait_rf,
+              nom: "Forfait RF",
+              unite: "-",
+              prix_unitaire: numeral(0).format("0.00"),
+              nombre: 1,
+              batiment: 0,
+              batiment_f: 1,
+              montant: numeral(0).format("0.00"),
+            }
+  
+            this.emolumentsUnits = tmp;
+            resolve(tmp);
+  
+            this.initForm();
+  
           }
-
-          //forfait RF
-          this.form_detail["forfait_rf1"] = {
-            tableau_emolument_id: this.indexFromDB.forfait_rf,
-            nom: "Forfait RF",
-            unite: "-",
-            prix_unitaire: numeral(0).format("0.00"),
-            nombre: 1,
-            batiment: 0,
-            batiment_f: 1,
-            montant: numeral(0).format("0.00"),
-          }
-
-          this.emolumentsUnits = tmp;
-
-          this.initForm();
-
-        }
-      }).catch(err => handleException(err, this));
+        }).catch(err => {
+          handleException(err, this);
+          reject(err);
+        });
+      });
     },
 
 
     initForm(form_general=true) {
-      // empty form_detail_batiment
-      this.form_detail_batiment= [];
-
+      
       if (form_general) {
         this.form_general = {
           id: null,
@@ -276,6 +280,9 @@ export default {
             montant: numeral(0).format("0.00"),
           }
         }
+        
+        // empty form_detail_batiment
+        this.form_detail_batiment= [];
       }
 
 
@@ -418,7 +425,7 @@ export default {
      */
     updateMontants() {
       //update form_detail.relations_autres_services1
-      if (this.form_detail.relations_autres_services1.prix_unitaire) {
+      if (this.form_detail.relations_autres_services1 && this.form_detail.relations_autres_services1.prix_unitaire) {
         if (Number(this.form_detail.relations_autres_services1.prix_unitaire) > 0) {
           this.form_detail.relations_autres_services1.nombre = 1;
         } else {
@@ -426,6 +433,7 @@ export default {
         }
       } else {
         this.form_detail.relations_autres_services1.nombre = 0;
+        this.form_detail.relations_autres_services1.prix_unitaire = numeral(0).format("0.00");
       }
       
       //update form_detail.forfait_rf1.prix_unitaire
@@ -966,7 +974,7 @@ export default {
               }
             }
           }
-          this.initForm(false);
+          this.initForm(false); // ddd
         }
       }).catch(err => handleException(err, this));
     },
@@ -1014,7 +1022,7 @@ export default {
                 if (this.form_detail[form_emol].tableau_emolument_id === emol.tableau_emolument_id) {
                   if (this.form_detail[form_emol].tableau_emolument_id === this.indexFromDB.divers) {
                     this.form_detail["divers" + String(divers_counter)]["nom"] = emol.position;
-                    this.form_detail["divers" + String(divers_counter)]["prix_unitaire"] = Number(emol.prix_unitaire);
+                    this.form_detail["divers" + String(divers_counter)]["prix_unitaire"] = numeral(emol.prix_unitaire).format("0.00");
                     this.form_detail["divers" + String(divers_counter)]["nombre"] = emol.nombre;
                     this.form_detail["divers" + String(divers_counter)]["montant"] = numeral(emol.montant).format("0.00");
                     divers_counter += 1;
