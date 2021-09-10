@@ -17,7 +17,6 @@ export default {
   },
   props: {
     operateurs: {type: Array},
-    selectedOperateur_id_parent: {type: Number, default: () => -1},
     showMatdiff_secr: {type: Boolean},
     showMatdiff_mo: {type: Boolean},
     showMatdiff_ctrl: {type: Boolean},
@@ -30,10 +29,6 @@ export default {
       selectedOperateur_id: -1,
     }
   },
-  mounted: function() {
-    // init selectedOperateur_id from parent component
-    this.selectedOperateur_id = this.selectedOperateur_id_parent;
-  }
 };
 </script>
 

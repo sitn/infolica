@@ -12,7 +12,6 @@ export default {
   name: "Matdiff_mo",
   props: {
     operateurs: {type: Array},
-    selectedOperateur_id_parent: {type: Number, default: () => -1}
   },
   data: () => {
     return {
