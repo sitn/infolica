@@ -36,7 +36,7 @@ export default {
         showFinProcessus: false,
         showMatdiff_secr: false,
         showMatdiff_mo: false,
-        showMatdiff_coord: false,
+        showMatdiff_ctrl: false,
         showOnlyAffairesUrgentes: false,
         showPPE: false,
         role: {
@@ -76,7 +76,7 @@ export default {
             if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.responsable  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
                 // this.showMatdiff_secr = true;
                 this.showMatdiff_mo = true;
-                this.showMatdiff_coord = true;
+                this.showMatdiff_ctrl = true;
             } 
             
         }, 500);

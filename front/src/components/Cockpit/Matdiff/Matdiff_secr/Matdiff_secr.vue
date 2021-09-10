@@ -12,8 +12,9 @@ export default {
   name: "Matdiff_secr",
   data: () => {
     return {
-      numerosDifferes: [{}],
+      numerosDifferes: [],
       selectedItem: [],
+      plural: "",
       showConfirmationDialog: false,
     }
   },
@@ -34,6 +35,12 @@ export default {
           let tmp = response.data;
           tmp.forEach(x => x.numero = x.numero.join(', '));
           this.numerosDifferes = tmp;
+
+          if (tmp.length > 1) {
+            this.plural = "s";
+          } else {
+            this.plural = "";
+          }
         }
       }).catch(err => handleException(err, this));
     },

@@ -493,6 +493,11 @@ def numero_differe_view(request):
         ))
     
     elif role == "coord":
+        user_id = request.params['user_id'] if 'user_id' in request.params else None
+        
+        if user_id is not None:
+            query = query.filter(VNumeros.diff_operateur_id == user_id)
+        
         query = query.filter(and_(
             VNumeros.diff_sortie.isnot(None),
             VNumeros.diff_controle == None 

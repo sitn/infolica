@@ -17,21 +17,22 @@
                 <md-card-content>
 
                     <!-- OPERATEUR MO - MAT DIFF A REALISER -->
-                    <div>
-                        <Matdiff_mo v-if="showMatdiff_secr" :operateurs="operateurs" :selectedOperateur_id_parent="selectedOperateur_id" ></Matdiff_mo>
-                    </div>
-                    
-                    
-                    <!-- OPERATEUR SECRETARIAT - REQUISITION RADIATION MENTION MAT DIFF -->
-                    <div>
-                        <Matdiff_secr v-if="showMatdiff_mo"></Matdiff_secr>
+                    <div v-if="showMatdiff_mo">
+                        <Matdiff_mo :operateurs="operateurs" :selectedOperateur_id_parent="selectedOperateur_id" ></Matdiff_mo>
+                        <br>
                     </div>
                     
                     <!-- OPERATEUR COORDINATEUR - CONTROLE MAT DIFF -->
-                    <div>
-                        <Matdiff_ctrl :operateurs="operateurs" :selectedOperateur_id_parent="selectedOperateur_id" ></Matdiff_ctrl>
+                    <div v-if="showMatdiff_ctrl">
+                        <Matdiff_ctrl :operateurs="operateurs" ></Matdiff_ctrl>
+                        <br>
                     </div>
-
+                    
+                    <!-- OPERATEUR SECRETARIAT - REQUISITION RADIATION MENTION MAT DIFF -->
+                    <div v-if="showMatdiff_secr">
+                        <Matdiff_secr></Matdiff_secr>
+                    </div>
+                    
                 </md-card-content>
             </md-card-expand-content>
         </md-card-expand>

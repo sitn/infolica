@@ -11,13 +11,13 @@ export default {
   name: "Matdiff_ctrl",
   props: {
     operateurs: {type: Array},
-    selectedOperateur_id_parent: {type: Number, default: () => -1}
   },
   data: () => {
     return {
-      affaires: [{}],
-      affaires_bk: [{}],
-      selectedOperateur_id: JSON.parse(localStorage.getItem("infolica_user")).id,
+      affaires: [],
+      loading: false,
+      plural: "",
+      selectedOperateur_id: -1,
     }
   },
 
@@ -26,7 +26,12 @@ export default {
      * Get numeros differes for coordinateurs users
      */
     async getNumerosDifferes() {
+      this.loading = true;
+
       let params =  "?role=coord";
+      if (this.selectedOperateur_id >= 0) {
+        params += "&user_id=" + this.selectedOperateur_id;
+      }
 
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_DIFFERES_ENDPOINT + params,
@@ -41,25 +46,23 @@ export default {
             x.numero = x.numero.join(', '),
             x.diff_entree = Number(moment(x.diff_entree, process.env.VUE_APP_DATEFORMAT_WS))
           });
-          this.affaires_bk = tmp;
+          this.affaires = tmp;
 
-          this.filterAffaires();
+          // set plural
+          if (tmp.length > 1) {
+            this.plural = "s";
+          } else {
+            this.plural = "";
+          }
+
+          this.loading = false;
         }
-      }).catch(err => handleException(err, this));
+      }).catch(err => {
+        handleException(err, this);
+        this.loading = false;
+      });
     },
 
-    /**
-     * Filter Affaires
-     */
-    filterAffaires() {
-      //filter affaire type PPE and step client
-      this.affaires = this.affaires_bk;
-
-      if (this.selectedOperateur_id > 0) {
-        this.affaires = this.affaires.filter(x => x.diff_operateur_id === this.selectedOperateur_id);
-      }
-
-    },
 
     /**
      * openAffaire
@@ -72,9 +75,6 @@ export default {
 
   mounted: function() {
     this.getNumerosDifferes();
-
-    // init selectedOperateur_id from parent component
-    this.selectedOperateur_id = this.selectedOperateur_id_parent;
   }
 };
 </script>
