@@ -4,16 +4,15 @@
         <md-button class="md-raised md-accent" v-if="newAffaireAllowed" @click="$router.push({name: 'NewAffaire'})">Nouvelle affaire</md-button>
     </md-toolbar>
 
-    <!-- Panneau de gestion des mat diff pour la réquisition de radiation de mention au RF (secrétariat) -->
-    <div v-if="showMatdiff_secr">
-        <Matdiff_secr />
+    <!-- mat diff -->
+    <div>
+        <Matdiff v-if="showMatdiff_secr || showMatdiff_mo"
+            :operateurs="operateurs"
+            :showMatdiff_secr="showMatdiff_secr"
+            :showMatdiff_mo="showMatdiff_mo"
+            :showMatdiff_ctrl="showMatdiff_ctrl" ></Matdiff>
     </div>
     
-    <!-- Panneau de suivi des immeuble en mat diff de l'opérateur MO -->
-    <div v-if="showMatdiff_mo">
-        <Matdiff_mo :operateurs="operateurs" :selectedOperateur_id_parent="selectedOperateur_id" />
-    </div>
-
     <!-- Panneau de suivi des affaires chez le client de l'opérateur PPE -->
     <div>
         <AffairesChezClient :operateurs="operateurs" :affaireTypes="affaireTypes" :selectedOperateur_id_parent="selectedOperateur_id" />

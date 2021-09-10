@@ -45,6 +45,7 @@ export default {
         onConfirm: () => {}
       },
       editMatDiffAllowed: false,
+      editMatDiffCtrlAllowed: false,
       numerosBaseListe: [],
       numerosMoLoading: true,
       show: {
@@ -118,7 +119,7 @@ export default {
               x => x.affaire_numero_type_id === Number(process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID)
             );
             this.affaire_numeros_nouveaux.forEach(function(element) {
-              if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)) {
+              if ([Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID), Number(process.env.VUE_APP_NUMERO_SUPPRIME_ID)].includes(element.numero_etat_id)) {
                 element.active = false;
               } else if (element.numero_etat_id === Number(process.env.VUE_APP_NUMERO_PROJET_ID)) {
                 element.active = true;
@@ -156,11 +157,11 @@ export default {
      */
     isNumeroBaseInAffaire(numero) {
       // Filtrer les numéros de base
-      var numerosAssocies = this.affaire_numeros_nouveaux.filter(x => {
+      let numerosAssocies = this.affaire_numeros_nouveaux.filter(x => {
         return parseInt(x.numero_base_id) == parseInt(numero.numero_id);
       });
       // Créer un array avec les numéros pour l'affichage du message
-      var numerosAssociesArray = [];
+      let numerosAssociesArray = [];
       numerosAssocies.forEach(x => numerosAssociesArray.push(x.numero));
       // Empêcher la suppression si des numéros sont définis sur le numéro de base, supprimer sinon
       if (numerosAssocies[0]) {
@@ -183,7 +184,7 @@ export default {
      */
     onDeleteReserveNumero(numero_id) {
       // get numéro pour l'update
-      var numero_ = {};
+      let numero_ = {};
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
@@ -223,7 +224,7 @@ export default {
           if (response && response.status === 200) {
             this.searchAffaireNumeros();
             // Afficher le changement d'état
-            var etat = "Abandonné";
+            let etat = "Abandonné";
             if (numero_.etat === "Abandonné") {
               etat = "Projet";
             }
@@ -281,10 +282,19 @@ export default {
             title: "Matérialisation différée",
             content: "Le numéro " + numero.numero + " a été matérialisé et la mention 'mat diff' va être supprimée.",
             show: true,
-            onConfirm: () => this.doUpdateDiffererNumero(numero)
+            onConfirm: () => this.doUpdateDiffererNumero(numero, "date_sortie")
           };
         } else {
           this.showAlertMatDiffDialog = true;
+        }
+      } else if (etat === "controle") {
+        if (this.affaire.date_envoi !== null) {
+          this.confirmDialog = {
+            title: "Matérialisation différée",
+            content: "Le numéro " + numero.numero + " a été contrôlé.",
+            show: true,
+            onConfirm: () => this.doUpdateDiffererNumero(numero, "date_controle")
+          };
         }
       }
     },
@@ -293,7 +303,7 @@ export default {
      * Créer Différer un numéro
      */
     async doCreateDiffererNumero(numero) {
-      var formData = new FormData();
+      let formData = new FormData();
       formData.append("numero_id", numero.numero_id);
       formData.append("affaire_id", this.$route.params.id)
       formData.append("date_entree", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
@@ -322,12 +332,10 @@ export default {
     /**
      * Mettre à jour Différer un numéro
      */
-    async doUpdateDiffererNumero(numero) {
-      var formData = new FormData();
+    async doUpdateDiffererNumero(numero, date_type) {
+      let formData = new FormData();
       formData.append("numero_diff_id", numero.numero_diff_id);
-      formData.append("numero_id", numero.numero_id);
-      formData.append("date_entree", numero.numero_diff_entree);
-      formData.append("date_sortie", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
+      formData.append(date_type, moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
 
       this.$http
         .put(
@@ -342,7 +350,7 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.searchAffaireNumeros();
-            this.$root.$emit("ShowMessage", "La mention 'différé' du numéro " + numero.numero + " a été correctement supprimée");
+            this.$root.$emit("ShowMessage", "Le numéro " + numero.numero + " a été mis à jour avec succès.");
           }
         })
         .catch(err => {
@@ -356,9 +364,9 @@ export default {
     // async getImmeublesAssocies() {
     //   return new Promise((resolve, reject) => {
     //     // Récupère la liste des id des numéros référencés
-    //     var numeros_base_id_list = this.affaire_numeros_anciens.map(x => x.numero_id);
+    //     let numeros_base_id_list = this.affaire_numeros_anciens.map(x => x.numero_id);
   
-    //     var formData = new FormData();
+    //     let formData = new FormData();
     //     formData.append("numeros_base_id_list", JSON.stringify(numeros_base_id_list));
   
     //     this.$http.post(
@@ -454,8 +462,11 @@ export default {
       //Check if role secretaire
       this.editMatDiffAllowed = this.permission.editNumerosAllowed;
       let role_id = getCurrentUserRoleId();
-      if(role_id && !isNaN(role_id) && [Number(process.env.VUE_APP_MO_ROLE_ID), Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)].includes(Number(role_id))) {
+      if (role_id && !isNaN(role_id) && [Number(process.env.VUE_APP_MO_ROLE_ID), Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)].includes(Number(role_id))) {
         this.editMatDiffAllowed = true;
+      }
+      if (role_id && !isNaN(role_id) && [Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID), Number(process.env.VUE_APP_ADMIN_ROLE_ID)].includes(Number(role_id))) {
+        this.editMatDiffCtrlAllowed = true;
       }
     },
 

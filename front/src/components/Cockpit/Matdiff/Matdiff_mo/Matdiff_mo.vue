@@ -12,25 +12,38 @@ export default {
   name: "Matdiff_mo",
   props: {
     operateurs: {type: Array},
-    selectedOperateur_id_parent: {type: Number, default: () => -1}
   },
   data: () => {
     return {
-      affaires: [{}],
-      affaires_bk: [{}],
+      affaires: [],
+      loading: false,
+      plural: "",
       selectedOperateur_id: JSON.parse(localStorage.getItem("infolica_user")).id,
     }
   },
 
   methods: {
+    async initSelectedOperateur() {
+      return new Promise((resolve) => {
+        if (checkPermission(process.env.VUE_APP_FONCTION_ADMIN) || getCurrentUserRoleId() === Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)) {
+          this.selectedOperateur_id = -1;
+        } else {
+          this.selectedOperateur_id = JSON.parse(localStorage.getItem("infolica_user")).id;
+        }
+        resolve(this.selectedOperateur_id);
+      });
+    },
+
+
     /**
      * Get numeros differes for MO users
      */
     async getNumerosDifferes() {
-      let params =  "?role=mo&user_id=" + this.selectedOperateur_id;
-      if (checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ||
-          getCurrentUserRoleId() === Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)) {
-        params =  "?role=mo"
+      this.loading = true;
+
+      let params = "?role=mo";
+      if (this.selectedOperateur_id >= 0) {
+        params += "&user_id=" + this.selectedOperateur_id;
       }
 
       this.$http.get(
@@ -46,25 +59,21 @@ export default {
             x.numero = x.numero.join(', '),
             x.diff_entree = Number(moment(x.diff_entree, process.env.VUE_APP_DATEFORMAT_WS))
           });
-          this.affaires_bk = tmp;
+          this.affaires = tmp;
 
-          this.filterAffaires();
+          // set plural
+          if (tmp.length > 1) {
+            this.plural = "s";
+          } else {
+            this.plural = "";
+          }
+
+          this.loading = false;
         }
-      }).catch(err => handleException(err, this));
-    },
-
-
-    /**
-     * Filter Affaires
-     */
-    filterAffaires() {
-      //filter affaire type PPE and step client
-      this.affaires = this.affaires_bk;
-
-      if (this.selectedOperateur_id > 0) {
-        this.affaires = this.affaires.filter(x => x.diff_operateur_id === this.selectedOperateur_id);
-      }
-
+      }).catch(err => {
+        handleException(err, this);
+        this.loading = false;
+      });
     },
 
 
@@ -78,10 +87,9 @@ export default {
   },
 
   mounted: function() {
-    this.getNumerosDifferes();
-
-    // init selectedOperateur_id from parent component
-    this.selectedOperateur_id = this.selectedOperateur_id_parent;
+    this.initSelectedOperateur().then(() => {
+      this.getNumerosDifferes();
+    });
   }
 };
 </script>
