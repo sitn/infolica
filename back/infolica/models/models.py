@@ -587,6 +587,7 @@ class ControleGeometre(Base):
     check_63 = Column(Boolean)  # N° et état juridique du BF de base
     check_64 = Column(Boolean)  # Informations cohérentes entre plan de situation et plans d'étage
     check_65 = Column(Boolean)  # Nombres de documents indiqués sur la formule de légende
+    check_66 = Column(Boolean)  # Contenu de la facture
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
     date = Column(Date)
     remarque = Column(Text)
