@@ -103,6 +103,13 @@
                                                             <md-icon>access_time</md-icon>
                                                         </md-button>
                                                     </div>
+                                                    <!-- Si le numéro est prêt pour le contrôle -->
+                                                    <div v-if="item.numero_diff_entree !== null && item.numero_diff_sortie !== null && item.numero_diff_controle === null && editMatDiffCtrlAllowed && item.affaire_numero_actif">
+                                                        <md-button v-if="item.numero_type_id===types_numeros.bf || item.numero_type_id===types_numeros.ddp"  title="Contrôle du bien-fonds effectué"
+                                                            class="md-icon-button md-dense" style="background-color: lightgreen;" @click="confirmCreateDiffererNumero(item, 'controle')">
+                                                            <md-icon>access_time</md-icon>
+                                                        </md-button>
+                                                    </div>
                                                 </md-table-cell>
                                             </md-table-row>
                                         </md-table>
