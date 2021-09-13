@@ -26,7 +26,7 @@
                     <div v-if="$refs.emoluments && $refs.emoluments.emolumentsGeneral_list && $refs.emoluments.emolumentsGeneral_list[0]">
                         <ul>
                             <li v-for="item in $refs.emoluments.emolumentsGeneral_list" v-if="item.facture_type_id === configFactureTypeID.devis">
-                                <a @click="$refs.emoluments.getEmolumentsDetail(item.id)">Emolument id: {{ item.id }} ( {{ item.nb_batiments }} bâtiment<span v-if="item.nb_batiments > 1">s</span>
+                                <a @click="$refs.emoluments.openEmolumentDialog(item.id)">Emolument id: {{ item.id }} ( {{ item.nb_batiments }} bâtiment<span v-if="item.nb_batiments > 1">s</span>
                                     <span v-if="item.numeros.length > 0"> | bien<span v-if="item.numeros.length > 1">s</span>-fonds: <template v-for="num in item.numeros"> {{ num.numero }}</template></span>
                                     <span v-if="item.remarque"> | {{ item.remarque }}</span>
                                     )
@@ -72,7 +72,7 @@
                     <div v-if="$refs.emoluments && $refs.emoluments.emolumentsGeneral_list && $refs.emoluments.emolumentsGeneral_list[0]">
                         <ul>
                             <li v-for="item in $refs.emoluments.emolumentsGeneral_list" v-if="item.facture_type_id === configFactureTypeID.facture">
-                                <a @click="$refs.emoluments.getEmolumentsDetail(item.id)">Emolument id: {{ item.id }} ( {{ item.nb_batiments }} bâtiment<span v-if="item.nb_batiments > 1">s</span>
+                                <a @click="$refs.emoluments.openEmolumentDialog(item.id)">Emolument id: {{ item.id }} ( {{ item.nb_batiments }} bâtiment<span v-if="item.nb_batiments > 1">s</span>
                                     <span v-if="item.numeros.length > 0"> | bien<span v-if="item.numeros.length > 1">s</span>-fonds: <template v-for="num in item.numeros"> {{ num.numero }}</template></span>
                                     <span v-if="item.remarque"> | {{ item.remarque }}</span>
                                     )
@@ -290,6 +290,7 @@
     <Emoluments ref="emoluments"
                 :affaire="affaire"
                 :typesAffaires_conf="typesAffaires_conf"
+                :clientTypes_conf="clientTypes_conf"
                 :numeros_references="numeros_references_bk"
                 :permission="permission"
                 :configFactureTypeID="configFactureTypeID"

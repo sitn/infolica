@@ -3,6 +3,7 @@
 
 
 <script>
+// import { stringifyAutocomplete2 } from '@/services/helper';
 import { handleException } from '@/services/exceptionsHandler';
 const numeral = require("numeral");
 
@@ -11,6 +12,7 @@ export default {
   props: {
     affaire: {type: Object},
     affaire_factures: {type: Array},
+    // clientTypes_conf: {type: Object},
     configFactureTypeID: {type: Object},
     factureTypes: {type: Array},
     numeros_references: {type: Array},
@@ -19,6 +21,7 @@ export default {
   },
   data: function () {
       return {
+        // clientsFacture_list: [],
         confirmationRemoveDialog: {
           title: "Demande de confirmation",
           msg: "Confirmez-vous la suppression de l'émolument?",
@@ -32,6 +35,7 @@ export default {
         divers: [],
         emolumentsGeneral_list: [],
         emolumentsUnits: [],
+        factures_repartition: [],
         form_general: {}, //général
         form_detail: {}, //emoluments sans bâtiment
         form_detail_batiment: [], //emoluments avec bâtiments
@@ -246,6 +250,7 @@ export default {
           numeros: [],
           numeros_id: [],
           utilise: false,
+          facture_repartition: [],
   
           // Bâtiments
           batiment_f: [],
@@ -1167,7 +1172,98 @@ export default {
         this.confirmationRemoveDialog.onConfirm = () => {};
         this.confirmationRemoveDialog.onCancel = () => {};
       };
-    }
+    },
+
+
+    openEmolumentDialog(emolument_affaire_id) {
+      this.initFactureRepartition();
+      this.getEmolumentAffaireRepartition(emolument_affaire_id);
+      this.getEmolumentsDetail(emolument_affaire_id);
+
+    },
+
+    /**
+     * get emolument_affaire_repartition
+     */
+    async getEmolumentAffaireRepartition(emolument_affaire_id) {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_REPARTITION_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id,
+        {
+          withCredentials: true,
+          headers: {Accept: "appication/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          console.log("response.data = ", response.data)
+        } else {
+          console.log("else")
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * init facture repartition
+     */
+    initFactureRepartition() {
+      this.factures_repartition = JSON.parse(JSON.stringify(this.affaire_factures));
+      
+      this.factures_repartition.forEach(x => {
+        x.emolument_repartition_pc = 0;
+      });
+    },
+
+    // /**
+    //  * Search Clients facture
+    //  */
+    // async searchClientsFacture() {
+    //   this.$http.get(
+    //     process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_FACTURES_ENDPOINT + this.affaire.id,
+    //     {
+    //       withCredentials: true,
+    //       headers: {Accept: "appication/json"}
+    //     }
+    //   ).then(response => {
+    //     if (response && response.data) {
+    //       let tmp = response.data.filter(x => x.type_id === Number(process.env.VUE_APP_FACTURE_TYPE_FACTURE_ID));
+
+    //       let tmp2 = [];
+    //       tmp.forEach(x => {
+    //         // construct names
+    //         let nom_ = [
+    //             x.client_entreprise,
+    //             [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" ")
+    //           ].filter(Boolean).join(", ");
+
+
+    //         // construct adresses
+    //         let adress_ = "";
+    //         if (x.client_type_id === this.clientTypes_conf.moral) {
+    //           adress_ = [
+    //             x.client_premiere_ligne,
+    //             [(x.client_premiere_ligne? "Par" : null), x.client_entreprise].filter(Boolean).join(" "),
+    //             x.client_co,
+    //             x.client_adresse,
+    //             x.client_case_postale,
+    //             [x.client_npa, x.client_localite].filter(Boolean).join(" ")
+    //           ].filter(Boolean).join("\n");
+    //         } else {
+    //           adress_ = [
+    //             x.client_premiere_ligne,
+    //             [x.client_premiere_ligne? "Par" : null, x.client_titre, x.client_prenom, x.client_nom].filter(Boolean).join(" "),
+    //             x.client_co,
+    //             x.client_adresse,
+    //             x.client_case_postale,
+    //             [x.client_npa, x.client_localite].filter(Boolean).join(" ")
+    //           ].filter(Boolean).join("\n");
+    //         }
+
+    //         tmp2.push({"nom": nom_, "adresse": adress_});
+    //       });
+
+    //       this.clientsFacture_list = stringifyAutocomplete2(tmp2, "nom");
+    //     }
+    //   }).catch(err => handleException(err, this));
+    // },
   },
 
   mounted: function(){

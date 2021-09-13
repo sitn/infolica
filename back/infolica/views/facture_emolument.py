@@ -5,8 +5,8 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import EmolumentFacture, VEmolumentsFactures, TableauEmoluments, VNumerosAffaires
-from infolica.models.models import EmolumentAffaire, Emolument
+from infolica.models.models import TableauEmoluments, VNumerosAffaires
+from infolica.models.models import EmolumentAffaire, Emolument, EmolumentAffaireRepartition
 from infolica.scripts.utils import Utils
 
 import json
@@ -76,6 +76,13 @@ def emolument_affaire_view(request):
                     VNumerosAffaires.affaire_id == emolument_affaire_i.affaire_id
                 )
             ).all())
+        
+        # Récupérer les liens sur la facture (répartition des montants)
+        facture_repartition = Utils.serialize_many(
+            request.dbsession.query(EmolumentAffaireRepartition).filter(
+                EmolumentAffaireRepartition.emolument_affaire_id == emolument_affaire_i.id
+            ).all()
+        )
 
         result.append(
             Utils._params(
@@ -93,7 +100,8 @@ def emolument_affaire_view(request):
                 numeros_id = numeros_id,
                 numeros = numeros,
                 facture_type_id = emolument_affaire_i.facture_type_id,
-                utilise = emolument_affaire_i.utilise
+                utilise = emolument_affaire_i.utilise,
+                facture_repartition = facture_repartition
             )
         )
     
@@ -334,87 +342,74 @@ def emolument_affaire_delete_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Emolument.__tablename__))
 
 
+#######################################
+###  EMOLUMENT AFFAIRE REPARTITION  ###
+#######################################
 
-# @view_config(route_name='facture_emoluments_by_facture_id', request_method='GET', renderer='json')
-# def facture_emoluments_view(request):
-#     """
-#     Return all emoluments in facture
-#     """
-#     # Check connected
-#     if not Utils.check_connected(request):
-#         raise exc.HTTPForbidden()
+@view_config(route_name='emolument_affaire_repartiton', request_method='GET', renderer='json')
+def emolument_affaire_repartiton_view(request):
+    """
+    get emolument_affaire_repartiton
+    """
+    # Check connected
+    if not Utils.check_connected(request):
+        raise exc.HTTPForbidden()
 
-#     facture_id = request.matchdict["id"]
+    records = request.dbsession.query(EmolumentAffaireRepartition)
+    
+    if "emolument_affaire_id" in request.params:
+        records = records.filter(EmolumentAffaireRepartition.emolument_affaire_id == request.params["emolument_affaire_id"])
+    
+    if "facture_id" in request.params:
+        records = records.filter(EmolumentAffaireRepartition.facture_id == request.params["facture_id"])
+    
+    records = records.all()
 
-#     query = request.dbsession.query(VEmolumentsFactures).filter(
-#         VEmolumentsFactures.facture_id == facture_id
-#     ).all()
-#     return Utils.serialize_many(query)
-
-
-# @view_config(route_name='emolument_facture', request_method='POST', renderer='json')
-# @view_config(route_name='emolument_facture_s', request_method='POST', renderer='json')
-# def emolument_facture_new_view(request):
-#     """
-#     Add new emolument_facture
-#     """
-#     # Check authorization
-#     if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
-#         raise exc.HTTPForbidden()
-
-#     record = EmolumentFacture()
-#     record = Utils.set_model_record(record, request.params)
-
-#     request.dbsession.add(record)
-
-#     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentFacture.__tablename__))
+    if len(records)>0:
+        return Utils.serialize_many(records)
+    else:
+        return []
 
 
-# @view_config(route_name='emolument_facture', request_method='PUT', renderer='json')
-# @view_config(route_name='emolument_facture_s', request_method='PUT', renderer='json')
-# def emolument_facture_update_view(request):
-#     """
-#     Update emolument_facture
-#     """
-#     # Check authorization
-#     if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
-#         raise exc.HTTPForbidden()
+@view_config(route_name='emolument_affaire_repartiton', request_method='POST', renderer='json')
+def emolument_affaire_repartiton_new_view(request):
+    """
+    Add new emolument_affaire_repartiton
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+        raise exc.HTTPForbidden()
 
-#     emolument_facture_id = request.params['id'] if 'id' in request.params else None
+    record = EmolumentAffaireRepartition()
+    record = Utils.set_model_record(record, request.params)
 
-#     # Get the facture
-#     record = request.dbsession.query(EmolumentFacture).filter(
-#         EmolumentFacture.id == emolument_facture_id).first()
+    request.dbsession.add(record)
 
-#     if not record:
-#         raise CustomError(
-#             CustomError.RECORD_WITH_ID_NOT_FOUND.format(EmolumentFacture.__tablename__, emolument_facture_id))
-
-#     record = Utils.set_model_record(record, request.params)
-
-#     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentFacture.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Emolument.__tablename__))
 
 
-# @view_config(route_name='emolument_facture_by_id', request_method='DELETE', renderer='json')
-# def emolument_facture_delete_view(request):
-#     """
-#     Delete emolument_facture
-#     """
-#     # Check authorization
-#     if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
-#         raise exc.HTTPForbidden()
+@view_config(route_name='emolument_affaire_repartiton', request_method='PUT', renderer='json')
+def emolument_affaire_repartiton_update_view(request):
+    """
+    Update new emolument_affaire_repartiton
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+        raise exc.HTTPForbidden()
 
-#     id = request.matchdict['id']
+    emolument_affaire_id = request.params["emolument_affaire_id"] if "emolument_affaire_id" in request.params else None
+    facture_id = request.params["facture_id"] if "facture_id" in request.params else None
 
-#     record = request.dbsession.query(EmolumentFacture).filter(
-#         EmolumentFacture.id == id).first()
+    if emolument_affaire_id is None or facture_id is None:
+        raise CustomError(CustomError.INCOMPLETE_REQUEST.format(EmolumentAffaireRepartition.__tablename__))
 
-#     if not record:
-#         raise CustomError(
-#             CustomError.RECORD_WITH_ID_NOT_FOUND.format(EmolumentFacture.__tablename__, id))
+    record = request.dbsession.query(
+        EmolumentAffaireRepartition
+    ).filter(
+        EmolumentAffaireRepartition.emolument_affaire_id == emolument_affaire_id
+    ).filter(
+        EmolumentAffaireRepartition.facture_id == facture_id
+    )
+    record = Utils.set_model_record(record, request.params)
 
-#     request.dbsession.delete(record)
-
-#     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(EmolumentFacture.__tablename__))
-
-###############################################################################################################
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Emolument.__tablename__))
