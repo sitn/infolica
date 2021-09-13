@@ -171,6 +171,7 @@ export default {
       formData.append("check_63", this.controleGeometre.check_63);
       formData.append("check_64", this.controleGeometre.check_64);
       formData.append("check_65", this.controleGeometre.check_65);
+      formData.append("check_66", this.controleGeometre.check_66);
 
       this.$http
         .put(
@@ -257,7 +258,7 @@ export default {
         } else if(this.affaire.type_id === this.typesAffaires_conf.cadastration) {
           items = [60, 29, 31, 28, 32, 61, 57, 23, 25, 1, 37, 18, 19, 20, 34, 17, 35, 36, 38, 21, 22];
         } else {
-          items = [48, 49, 62, 57, 26, 27, 23, 25, 61, 62, 63, 50, 64, 65];
+          items = [48, 49, 62, 57, 26, 27, 23, 25, 61, 62, 63, 50, 64, 65, 66];
         }
 
         for (const item of items) {
