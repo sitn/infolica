@@ -1327,11 +1327,25 @@ export default {
         ).then(response => resolve(response))
         .catch(err => reject(err));
       });
+    },
+
+
+    /**
+     * on save emoluments repartitions
+     */
+    onSaveEmolumentsRepartitions() {
+      this.confirmationRemoveDialog.title = "Répartition des émoluments dans les factures";
+      this.confirmationRemoveDialog.msg = "En cliquant sur 'CONFIRMER', toutes les factures ayant un coefficient de répartition non nul récupéreront les valeurs de ce tableau<br>(si les factures comportaient d'anciennes valeurs, elles seront écrasées).<br>Les factures avec des coefficients nuls ne sont pas modifiées.";
+      this.confirmationRemoveDialog.confirmBtn = "Confirmer";
+      this.confirmationRemoveDialog.cancelBtn = "Annuler";
+      this.confirmationRemoveDialog.onCancel = () => this.confirmationRemoveDialog.show = false;
+      this.confirmationRemoveDialog.onConfirm = () => this.saveToFactures();
+      this.confirmationRemoveDialog.show = true;
     }
   },
 
   mounted: function(){
-    this.getEmolumentsUnit().then(()=>{
+    this.getEmolumentsUnit().then(() => {
       this.getEmolumentsGeneral();
     });
   }
