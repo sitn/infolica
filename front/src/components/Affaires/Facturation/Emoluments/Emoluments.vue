@@ -33,6 +33,7 @@ export default {
         },
         disabled: false,
         divers: [],
+        emolument_facture_repartition_ctrl: false,
         emolumentsGeneral_list: [],
         emolumentsUnits: [],
         factures_repartition: [],
@@ -830,6 +831,7 @@ export default {
                 this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
   
                 // refresh emoluments_general_list
+                this.postEmolumentAffaireRepartition(this.form_general.id);
                 this.getEmolumentsGeneral();
                 
                 // hide progressbar
@@ -1057,7 +1059,9 @@ export default {
               }
             }
           }
+
           this.updateMontants();
+          this.updateFactureRepartition();
           this.showEmolumentsDialog = true;
 
           // if cadastration, load numeros concerned by emoluments
@@ -1176,94 +1180,110 @@ export default {
 
 
     openEmolumentDialog(emolument_affaire_id) {
-      this.initFactureRepartition();
-      this.getEmolumentAffaireRepartition(emolument_affaire_id);
-      this.getEmolumentsDetail(emolument_affaire_id);
+      this.getEmolumentAffaireRepartition(emolument_affaire_id).then(response => {
+        if (response && response.data) {
+          this.initFactureRepartition(response.data);
+          this.updateFactureRepartition();
+        }
+      }).catch(err => handleException(err, this));
 
+      this.getEmolumentsDetail(emolument_affaire_id);
     },
 
     /**
      * get emolument_affaire_repartition
      */
     async getEmolumentAffaireRepartition(emolument_affaire_id) {
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_REPARTITION_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id,
+      return new Promise ((resolve, reject) => {
+        this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_REPARTITION_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id,
+          {
+            withCredentials: true,
+            headers: {Accept: "appication/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      })
+    },
+
+    /**
+     * save emolument_affaire_repartition
+     */
+    async postEmolumentAffaireRepartition(emolument_affaire_id) {
+      let formData = new FormData();
+      formData.append("emolument_affaire_id", emolument_affaire_id);
+      formData.append("emolument_facture_repartition", JSON.stringify(this.factures_repartition));
+
+      this.$http.post(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_REPARTITION_ENDPOINT,
+        formData,
         {
           withCredentials: true,
           headers: {Accept: "appication/json"}
         }
-      ).then(response => {
-        if (response && response.data) {
-          console.log("response.data = ", response.data)
-        } else {
-          console.log("else")
-        }
-      }).catch(err => handleException(err, this));
+      ).then(() => {})
+      .catch(err => handleException(err, this));
     },
 
     /**
      * init facture repartition
      */
-    initFactureRepartition() {
+    initFactureRepartition(emolument_facture_repartition) {
       this.factures_repartition = JSON.parse(JSON.stringify(this.affaire_factures));
       
-      this.factures_repartition.forEach(x => {
-        x.emolument_repartition_pc = 0;
-      });
+      if (emolument_facture_repartition.length > 0) {
+        // Il existe une/des relations entre l'émolument et les factures
+        this.factures_repartition.forEach(x => {
+          x.emolument_repartition = 0;
+          emolument_facture_repartition.some(y => {
+            if (y.facture_id === x.id) {
+              x.emolument_repartition = y.repartition;
+            }
+          });
+        });
+      } else {
+        // Il n'existe pas encore de relation entre l'émolument et les factures
+        if (this.factures_repartition.length === 1) {
+          this.factures_repartition[0].emolument_repartition = 100;
+        } else {
+          this.factures_repartition.forEach(x => {
+            x.emolument_repartition = 0;
+          });
+        }
+      }
     },
 
-    // /**
-    //  * Search Clients facture
-    //  */
-    // async searchClientsFacture() {
-    //   this.$http.get(
-    //     process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_FACTURES_ENDPOINT + this.affaire.id,
-    //     {
-    //       withCredentials: true,
-    //       headers: {Accept: "appication/json"}
-    //     }
-    //   ).then(response => {
-    //     if (response && response.data) {
-    //       let tmp = response.data.filter(x => x.type_id === Number(process.env.VUE_APP_FACTURE_TYPE_FACTURE_ID));
+    /**
+     * update facture repartition
+     */
+    updateFactureRepartition() {
+      let somme = 0;
+      this.factures_repartition.forEach(x => {
+        somme += Number(x.emolument_repartition);
+      });
 
-    //       let tmp2 = [];
-    //       tmp.forEach(x => {
-    //         // construct names
-    //         let nom_ = [
-    //             x.client_entreprise,
-    //             [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" ")
-    //           ].filter(Boolean).join(", ");
+      if (Math.abs(somme - 100) >= 0.011) {
+        this.emolument_facture_repartition_ctrl = true;
+        } else {
+        this.emolument_facture_repartition_ctrl = false;
+      }
 
-
-    //         // construct adresses
-    //         let adress_ = "";
-    //         if (x.client_type_id === this.clientTypes_conf.moral) {
-    //           adress_ = [
-    //             x.client_premiere_ligne,
-    //             [(x.client_premiere_ligne? "Par" : null), x.client_entreprise].filter(Boolean).join(" "),
-    //             x.client_co,
-    //             x.client_adresse,
-    //             x.client_case_postale,
-    //             [x.client_npa, x.client_localite].filter(Boolean).join(" ")
-    //           ].filter(Boolean).join("\n");
-    //         } else {
-    //           adress_ = [
-    //             x.client_premiere_ligne,
-    //             [x.client_premiere_ligne? "Par" : null, x.client_titre, x.client_prenom, x.client_nom].filter(Boolean).join(" "),
-    //             x.client_co,
-    //             x.client_adresse,
-    //             x.client_case_postale,
-    //             [x.client_npa, x.client_localite].filter(Boolean).join(" ")
-    //           ].filter(Boolean).join("\n");
-    //         }
-
-    //         tmp2.push({"nom": nom_, "adresse": adress_});
-    //       });
-
-    //       this.clientsFacture_list = stringifyAutocomplete2(tmp2, "nom");
-    //     }
-    //   }).catch(err => handleException(err, this));
-    // },
+      this.factures_repartition.forEach(x => {
+        if (Number(x.emolument_repartition) > 0) {
+          x.montant_mo = numeral(this.round((Number(this.total.montant_recapitulatif_somme5) * Number(x.emolument_repartition) / 100), 0.05)).format("0.00");
+          x.montant_mat_diff = numeral(this.round((Number(this.total.montant_recapitulatif_matdiff) * Number(x.emolument_repartition) / 100), 0.05)).format("0.00");
+          x.montant_rf = numeral(this.round((Number(this.total.montant_recapitulatif_tva) * Number(x.emolument_repartition) / 100), 0.05)).format("0.00");
+          x.montant_tva = numeral(this.round((Number(this.total.montant_recapitulatif_registre_foncier) * Number(x.emolument_repartition) / 100), 0.05)).format("0.00");
+          x.montant_total = numeral(this.round((Number(this.total.montant_recapitulatif_total) * Number(x.emolument_repartition) / 100), 0.05)).format("0.00");
+        } else {
+          x.montant_mo = numeral(0).format("0.00");
+          x.montant_mat_diff = numeral(0).format("0.00");
+          x.montant_rf = numeral(0).format("0.00");
+          x.montant_tva = numeral(0).format("0.00");
+          x.montant_total = numeral(0).format("0.00");
+        }
+      })
+    }
   },
 
   mounted: function(){

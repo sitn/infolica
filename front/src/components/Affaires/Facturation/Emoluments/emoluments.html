@@ -2,7 +2,7 @@
 
     <md-dialog :md-active.sync="showEmolumentsDialog">
       <md-dialog-title class="justifyTitleBtn">
-        Émoluments
+        <div class="md-title">Émoluments <span v-if="form_general && form_general.id"> (id: {{ form_general.id }})</span></div>
         <md-button class="md-accent md-raised" v-if="!disabled && form_general.id" @click="onRemoveEmolumentAffaire(form_general.id)">Supprimer</md-button>
       </md-dialog-title>
       <md-dialog-content>
@@ -16,33 +16,6 @@
               </md-card-header>
               <md-card-content>
 
-                 <!-- Définition de répartition des factures -->
-                <div v-if="form_general.facture_type_id === configFactureTypeID.facture && permission.cloreEmolumentEnabled && form_general.id">
-                  <h3>Répartition des émoluments dans les factures</h3>
-
-                  <md-table v-model="factures_repartition" style="width: 1000px;" md-card>
-                    <md-table-empty-state
-                      md-label="Aucune facture trouvée"
-                      md-description="Enregistrer d'abord la facture vide avant de récupérer les montants des émoluments" />
-                    <md-table-row slot="md-table-row" slot-scope="{ item }">
-                      <md-table-cell md-label="Client">{{ item.adresse_facturation_ }}</md-table-cell>
-                      <md-table-cell md-label="Bien-fonds" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
-                      <md-table-cell md-label="Remarque" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.remarque? item.remarque: "—" }}</md-table-cell>
-                      <md-table-cell md-label="Répartition">
-                        <md-field class="nbField" style="width: 50px;">
-                          <md-input v-model ="item.emolument_repartition_pc" class="nbInput" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>
-                          <span class="md-suffix" style="line-height: 20px;">%</span>
-                        </md-field>
-                      </md-table-cell>
-                      <!-- <md-table-cell md-label="Action">
-                        <md-button style="min-width: min-content;" class="md-primary" title="Envoyer les valeurs dans la facture" @click="saveToFacture(item)">
-                          <md-icon>read_more</md-icon>
-                        </md-button>
-                      </md-table-cell> -->
-                    </md-table-row>
-                  </md-table>
-                </div>
-                
                 <div class="md-gutter md-layout md-alignment-top-space-between">
                   <div class="md-layout-item" style="width: 400px;">
                     <md-field class="formField">
@@ -150,6 +123,44 @@
 
                 </div>
 
+                
+                 <!-- Définition de répartition des factures -->
+                <div v-if="form_general.facture_type_id === configFactureTypeID.facture && form_general.id">
+                  <h3>Répartition des émoluments dans les factures</h3>
+                  <div v-if="emolument_facture_repartition_ctrl" style="color: red;"><em>Vérifier la répartition dans les factures, qui ne vaut pas 100%.</em></div>
+
+                  <md-table v-model="factures_repartition" md-card>
+                    <md-table-empty-state
+                      md-label="Aucune facture trouvée"
+                      md-description="Enregistrer d'abord la facture vide avant de récupérer les montants des émoluments" />
+                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                      <md-table-cell md-label="Client">{{ item.adresse_facturation_ }}</md-table-cell>
+                      <md-table-cell md-label="Bien-fonds" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
+                      <md-table-cell md-label="MO">{{ item.montant_mo }} CHF</md-table-cell>
+                      <md-table-cell md-label="Mat Diff">{{ item.montant_mat_diff }} CHF</md-table-cell>
+                      <md-table-cell md-label="RF">{{ item.montant_rf }} CHF</md-table-cell>
+                      <md-table-cell md-label="TVA">{{ item.montant_tva }} CHF</md-table-cell>
+                      <md-table-cell md-label="Total">{{ item.montant_total }} CHF</md-table-cell>
+                      <md-table-cell md-label="Remarque" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.remarque? item.remarque: "—" }}</md-table-cell>
+                      <md-table-cell md-label="Répartition">
+                        <md-field class="nbField" style="width: 50px;">
+                          <md-input v-model ="item.emolument_repartition"
+                            class="nbInput" 
+                            onkeypress="return /[0-9]|[.]/g.test(event.key)" 
+                            @keyup="updateFactureRepartition" 
+                            v-bind:class="{ repartitionFaux: emolument_facture_repartition_ctrl === true, repartitionJuste: emolument_facture_repartition_ctrl === false }"
+                            :disabled="disabled"></md-input>
+                          <span class="md-suffix" style="line-height: 20px;">%</span>
+                        </md-field>
+                      </md-table-cell>
+                    </md-table-row>
+                  </md-table>
+
+                  <div>
+                    <md-button class="md-raised md-accent" title="Cette action enregistre les montants dans les factures et clôt le tableau des émoluments de manière définitive.">Enregistrer les factures (définitif)</md-button>
+                  </div>
+                </div>
+                
                 <!-- <div class="md-layout md-alignment-top-space-between">
                   <md-field>
                     <label>Remarques</label>

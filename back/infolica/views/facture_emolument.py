@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*--
 from sqlalchemy.sql.elements import and_
+from sqlalchemy.sql.sqltypes import Float
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
@@ -380,36 +381,54 @@ def emolument_affaire_repartiton_new_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise exc.HTTPForbidden()
 
-    record = EmolumentAffaireRepartition()
-    record = Utils.set_model_record(record, request.params)
-
-    request.dbsession.add(record)
-
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Emolument.__tablename__))
-
-
-@view_config(route_name='emolument_affaire_repartiton', request_method='PUT', renderer='json')
-def emolument_affaire_repartiton_update_view(request):
-    """
-    Update new emolument_affaire_repartiton
-    """
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
-        raise exc.HTTPForbidden()
-
     emolument_affaire_id = request.params["emolument_affaire_id"] if "emolument_affaire_id" in request.params else None
-    facture_id = request.params["facture_id"] if "facture_id" in request.params else None
+    emolument_facture_repartition = json.loads(request.params["emolument_facture_repartition"]) if "emolument_facture_repartition" in request.params else None
 
-    if emolument_affaire_id is None or facture_id is None:
-        raise CustomError(CustomError.INCOMPLETE_REQUEST.format(EmolumentAffaireRepartition.__tablename__))
-
-    record = request.dbsession.query(
-        EmolumentAffaireRepartition
-    ).filter(
+    # get records of current emolument_affaire_id
+    emolumentAffaireRepartition = request.dbsession.query(EmolumentAffaireRepartition).filter(
         EmolumentAffaireRepartition.emolument_affaire_id == emolument_affaire_id
-    ).filter(
-        EmolumentAffaireRepartition.facture_id == facture_id
-    )
-    record = Utils.set_model_record(record, request.params)
+    ).all()
+    
 
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Emolument.__tablename__))
+    # iterate through emolument_facture_repartition
+    for efr_i in emolument_facture_repartition:
+        # test if efr_i exists already in db
+        record = None
+        for idx, eaf_i in enumerate(emolumentAffaireRepartition):
+            if eaf_i.facture_id == efr_i['id']:
+                # La relation existe déjà, la modifier
+                record = emolumentAffaireRepartition.pop(idx)
+                break
+            
+        if not record is None:
+            if float(record.repartition) != float(efr_i['emolument_repartition']):
+                if float(efr_i['emolument_repartition']) == 0:
+                    # supprimer l'entrée car la répartition est nulle
+                    request.dbsession.delete(record)
+                else:
+                    # enregistrer la nouvelle répartition
+                    params = Utils._params(
+                        facture_id = efr_i['id'],
+                        emolument_affaire_id = emolument_affaire_id,
+                        repartition = efr_i['emolument_repartition']
+                    )
+                    record = Utils.set_model_record(record, params)
+        
+        else:
+            # Créer l'entrée inexistante et si la répartition est non nulle
+            if float(efr_i['emolument_repartition']) > 0:
+                record = EmolumentAffaireRepartition()
+                params = Utils._params(
+                    facture_id = efr_i['id'],
+                    emolument_affaire_id = emolument_affaire_id,
+                    repartition = efr_i['emolument_repartition']
+                )
+                record = Utils.set_model_record(record, params)
+
+                request.dbsession.add(record)
+
+    # remove items in db not posted
+    for item in emolumentAffaireRepartition:
+        request.dbsession.delete(item)            
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentAffaireRepartition.__tablename__))
