@@ -403,7 +403,7 @@ def affaires_update_view(request):
     record = Utils.set_model_record(record, params)
 
     # If urgence defined after affaire creation, send e-mail
-    if not affaire_urgence and "urgent" in params:
+    if not affaire_urgence and "urgent" in params and (record.type_id != int(request.registry.settings['affaire_type_ppe_id']) or record.type_id != int(request.registry.settings['affaire_type_modification_ppe_id'])):
         Utils.sendMailAffaireUrgente(request, record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
