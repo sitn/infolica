@@ -68,6 +68,9 @@ export default {
         editNumerosAllowed: false,
         editNumerosMOAllowed: false,
         editSuiviMandatAllowed: false,
+        editEmolumentIndiceApplication: false,
+        editEmolumentTva: false,
+        showEmolumentRepartition_saveToFactures_btn: false,
       },
       showConfirmAbandonAffaireDialog: false,
       showConfirmAbandonErrorAffaireDialog: false,
@@ -234,6 +237,8 @@ export default {
             _this.permission.editEmolumentAllowed = true;
             _this.permission.editClientAllowed = true;
             _this.permission.cloreEmolumentEnabled = true;
+            _this.permission.editEmolumentTva = true;
+            _this.permission.showEmolumentRepartition_saveToFactures_btn = true;
             _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.affaireCloture = _this.affaire.type_id === _this.typesAffaires_conf.pcop;
           }
@@ -254,6 +259,8 @@ export default {
           
           // Opérateur responsable peut référencer des numéros
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)) {
+            _this.permission.editEmolumentIndiceApplication = true;
+            _this.permission.editEmolumentTva = true;
             _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }

@@ -125,7 +125,7 @@
 
                 
                  <!-- Définition de répartition des factures -->
-                <div v-if="form_general.facture_type_id === configFactureTypeID.facture && form_general.id">
+                <div v-if="form_general.facture_type_id === configFactureTypeID.facture">
                   <h3>Répartition des émoluments dans les factures</h3>
                   <div v-if="emolument_facture_repartition_ctrl" style="color: red;"><em>
                     Vérifier la répartition dans les factures, dont le total ne vaut pas 100%.<br>
@@ -159,7 +159,7 @@
                     </md-table-row>
                   </md-table>
 
-                  <div>
+                  <div v-if="permission.showEmolumentRepartition_saveToFactures_btn">
                     <md-button @click="onSaveEmolumentsRepartitions" class="md-raised md-accent" title="Cette action enregistre les montants dans les factures et clôt le tableau des émoluments de manière définitive.">Enregistrer les factures (définitif)</md-button>
                   </div>
                 </div>
@@ -1705,7 +1705,7 @@
                     </tr>
                     <tr>
                       <td class="tg-0lax position_recapitulatif">Indice d'application</td>
-                      <td class="tg-0lax number"><md-field class="nbField"><md-input :disabled="disabled" class="nbInput" v-model="form_general.indice_application" @keyup="updateRecapitulatif()"></md-input></md-field></td>
+                      <td class="tg-0lax number"><md-field class="nbField"><md-input :disabled="disabled || !permission.editEmolumentIndiceApplication" class="nbInput" v-model="form_general.indice_application" @keyup="updateRecapitulatif()"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_indice_application }} CHF</td>
                       <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme4 }} CHF</td>
                     </tr>
@@ -1721,7 +1721,7 @@
                     </tr>
                     <tr>
                       <td class="tg-0lax position_recapitulatif">TVA</td>
-                      <td class="tg-0lax number"><md-field class="nbField"><md-input :disabled="disabled" class="nbInput" v-model="form_general.tva_pc" @keyup="updateRecapitulatif()"></md-input>%</md-field></td>
+                      <td class="tg-0lax number"><md-field class="nbField"><md-input :disabled="disabled || !permission.editEmolumentTva" class="nbInput" v-model="form_general.tva_pc" @keyup="updateRecapitulatif()"></md-input>%</md-field></td>
                       <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_tva }} CHF</td>
                       <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme7 }} CHF</td>
                     </tr>

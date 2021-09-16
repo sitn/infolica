@@ -617,8 +617,9 @@ export default {
      * open emolument dialog
      */
     openEmolumentsDialog() {
-      this.$refs.emoluments.showEmolumentsDialog = true;
       this.$refs.emoluments.initForm();
+      this.$refs.emoluments.initFactureRepartition([]);
+      this.$refs.emoluments.showEmolumentsDialog = true;
     },
 
 

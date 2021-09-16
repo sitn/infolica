@@ -1145,6 +1145,7 @@ class VFactures(Base):
     date = Column(Date)
     remarque = Column(Text)
     numeros = Column(ARRAY(BigInteger))
+    emolument_affaire_id = Column(BigInteger)
 
 
 class VReservationNumerosMO(Base):

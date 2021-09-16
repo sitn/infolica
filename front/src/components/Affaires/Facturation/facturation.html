@@ -90,6 +90,7 @@
                                 <md-table-cell md-label="Biens-fonds" md-sort-by="numero" style="width: 5%;" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
                                 <md-table-cell md-label="SAP Client" md-sort-by="client_no_sap" style="width: 5%;">{{ item.client_no_sap }}</md-table-cell>
                                 <md-table-cell md-label="Client" md-sort-by="adresse_facturation_" style="width: 15%;">{{ item.adresse_facturation_ }}</md-table-cell>
+                                <md-table-cell md-label="Emolument" md-sort-by="emolument_affaire_id" style="width: 5%;">{{ item.emolument_affaire_id? item.emolument_affaire_id: "–" }}</md-table-cell>
                                 <md-table-cell md-label="MO" md-sort-by="montant_mo" style="width: 5%;">CHF {{ item.montant_mo }}</md-table-cell>
                                 <md-table-cell md-label="Mat Diff" md-sort-by="montant_mat_diff" style="width: 5%;">CHF {{ item.montant_mat_diff }}</md-table-cell>
                                 <md-table-cell md-label="RF" md-sort-by="montant_rf" style="width: 5%;">CHF {{ item.montant_rf }}</md-table-cell>
@@ -105,12 +106,12 @@
                                         <md-icon>delete</md-icon>
                                     </md-button>
                                 </md-table-cell>
-                                <md-table-cell md-label="Lettre Propriétaire" class="actionsColumn" v-if="permission.editFactureAllowed && affaire.type_id === typesAffaires_conf.cadastration" style="width: 15%;">
+                                <md-table-cell md-label="Lettre Propriétaire" class="actionsColumn" v-if="permission.editFactureAllowed && affaire.type_id === typesAffaires_conf.cadastration" style="width: 10%;">
                                     <md-button class="md-primary md-icon-button md-dense" v-on:click="generateLettreProprietaire(item)" title="Générer les documents pour le RF et le propriétaire">
                                         <md-icon>save_alt</md-icon>
                                     </md-button>
                                 </md-table-cell>
-                                <md-table-cell md-label="Réquisition RF" class="actionsColumn" v-if="permission.editFactureAllowed && affaire.type_id === typesAffaires_conf.cadastration" style="width: 15%;">
+                                <md-table-cell md-label="Réquisition RF" class="actionsColumn" v-if="permission.editFactureAllowed && affaire.type_id === typesAffaires_conf.cadastration" style="width: 10%;">
                                     <md-button class="md-primary md-icon-button md-dense" v-on:click="generateReqRF(item)" title="Générer les documents pour le RF et le propriétaire">
                                         <md-icon>save_alt</md-icon>
                                     </md-button>
@@ -290,7 +291,6 @@
     <Emoluments ref="emoluments"
                 :affaire="affaire"
                 :typesAffaires_conf="typesAffaires_conf"
-                :clientTypes_conf="clientTypes_conf"
                 :numeros_references="numeros_references_bk"
                 :permission="permission"
                 :configFactureTypeID="configFactureTypeID"

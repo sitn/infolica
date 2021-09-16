@@ -3,7 +3,6 @@
 
 
 <script>
-// import { stringifyAutocomplete2 } from '@/services/helper';
 import { handleException } from '@/services/exceptionsHandler';
 const numeral = require("numeral");
 
@@ -12,7 +11,6 @@ export default {
   props: {
     affaire: {type: Object},
     affaire_factures: {type: Array},
-    // clientTypes_conf: {type: Object},
     configFactureTypeID: {type: Object},
     factureTypes: {type: Array},
     numeros_references: {type: Array},
@@ -822,9 +820,10 @@ export default {
                 this.showEmolumentsDialog = false;
                 this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
   
-                // refresh emoluments_general_list
                 this.postEmolumentAffaireRepartition(this.form_general.id);
+                // refresh emoluments_general_list
                 this.getEmolumentsGeneral();
+                this.$root.$emit("searchAffaireFactures");
                 
                 // hide progressbar
                 this.showProgressBar = false;
@@ -837,14 +836,17 @@ export default {
         // create form
         this.postEmolumentsGeneral().then(response => {
           if (response && response.data) {
-            this.postEmolumentsDetail(response.data.emolument_affaire_id).then(response => {
+            let emolument_affaire_id = response.data.emolument_affaire_id;
+            this.postEmolumentsDetail(emolument_affaire_id).then(response => {
               if (response && response.data) {
                 this.showEmolumentsDialog = false;
 
                 this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
                 
+                this.postEmolumentAffaireRepartition(emolument_affaire_id);
                 // refresh emoluments_general_list
                 this.getEmolumentsGeneral();
+                this.$root.$emit("searchAffaireFactures");
                 
                 // hide progressbar
                 this.showProgressBar = false;
@@ -1149,9 +1151,11 @@ export default {
     onRemoveEmolumentAffaire(emolument_affaire_id) {
       this.confirmationRemoveDialog.show = true;
       this.confirmationRemoveDialog.onConfirm = () => {
-        this.removeEmolumentAffaire(emolument_affaire_id);
-        this.confirmationRemoveDialog.onConfirm = () => {};
-        this.confirmationRemoveDialog.onCancel = () => {};
+        this.deleteEmolumentAffaireRepartition(emolument_affaire_id).then(() => {
+          this.removeEmolumentAffaire(emolument_affaire_id);
+          this.confirmationRemoveDialog.onConfirm = () => {};
+          this.confirmationRemoveDialog.onCancel = () => {};
+        })
       };
       this.confirmationRemoveDialog.onCancel = () => {
         this.confirmationRemoveDialog.show = false;
@@ -1205,6 +1209,22 @@ export default {
         }
       ).then(() => {})
       .catch(err => handleException(err, this));
+    },
+
+    /**
+     * Delete emolument_affaire_repartition
+     */
+    async deleteEmolumentAffaireRepartition(emolument_affaire_id) {
+      return new Promise ((resolve, reject) => {
+        this.$http.delete(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_REPARTITION_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id,
+          {
+            withCredentials: true,
+            headers: {Accept: "appication/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
     },
 
     /**

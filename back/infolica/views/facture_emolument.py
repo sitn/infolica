@@ -432,3 +432,22 @@ def emolument_affaire_repartiton_new_view(request):
         request.dbsession.delete(item)            
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentAffaireRepartition.__tablename__))
+
+
+@view_config(route_name='emolument_affaire_repartiton', request_method='DELETE', renderer='json')
+def emolument_affaire_repartiton_delete_view(request):
+    """
+    Delete emolument_affaire_repartiton by emolument_affaire_id
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+        raise exc.HTTPForbidden()
+
+    emolument_affaire_id = request.params["emolument_affaire_id"] if "emolument_affaire_id" in request.params else None
+
+    records = request.dbsession.query(EmolumentAffaireRepartition).filter(
+        EmolumentAffaireRepartition.emolument_affaire_id == emolument_affaire_id
+    ).all()
+
+    for record in records:
+        request.dbsession.delete(record)
