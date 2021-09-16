@@ -1276,8 +1276,8 @@ export default {
         if (Number(x.emolument_repartition) > 0) {
           x.montant_mo = numeral(this.round((Number(this.total.montant_recapitulatif_somme5) * Number(x.emolument_repartition) / somme_), 0.05)).format("0.00");
           x.montant_mat_diff = numeral(this.round((Number(this.total.montant_recapitulatif_matdiff) * Number(x.emolument_repartition) / somme_), 0.05)).format("0.00");
-          x.montant_rf = numeral(this.round((Number(this.total.montant_recapitulatif_tva) * Number(x.emolument_repartition) / somme_), 0.05)).format("0.00");
-          x.montant_tva = numeral(this.round((Number(this.total.montant_recapitulatif_registre_foncier) * Number(x.emolument_repartition) / somme_), 0.05)).format("0.00");
+          x.montant_rf = numeral(this.round((Number(this.total.montant_recapitulatif_registre_foncier) * Number(x.emolument_repartition) / somme_), 0.05)).format("0.00");
+          x.montant_tva = numeral(this.round((Number(this.total.montant_recapitulatif_tva) * Number(x.emolument_repartition) / somme_), 0.05)).format("0.00");
           x.montant_total = numeral(this.round((Number(this.total.montant_recapitulatif_total) * Number(x.emolument_repartition) / somme_), 0.05)).format("0.00");
         } else {
           x.montant_mo = numeral(0).format("0.00");
@@ -1294,9 +1294,16 @@ export default {
      */
     saveToFactures() {
       let promises = [];
+      let c = 0;
+      let facture_;
       this.factures_repartition.forEach(x => {
         if (Number(x.emolument_repartition) > 0) {
           promises.push(this.putFacture(x));
+          
+          if (c === 0) {
+            facture_ = x;
+          }
+          c += 1;
         }
       });
       
@@ -1310,6 +1317,9 @@ export default {
         this.fixEmolumentDefinitively();
         this.$root.$emit("searchAffaireFactures");
         this.$root.$emit("ShowMessage", successMessage);
+        if (c === 1) {
+          this.$root.$emit("openFacture", facture_);
+        }
       }).catch(err => handleException(err, this));
     },
 
