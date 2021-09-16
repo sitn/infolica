@@ -188,3 +188,11 @@ th, td {
 .montant {
   width: 80px;
 }
+
+.repartitionFaux {
+  background-color: lightcoral;
+}
+
+.repartitionJuste {
+  background-color: lightgreen;
+}

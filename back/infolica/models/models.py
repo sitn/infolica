@@ -223,19 +223,6 @@ class TableauEmoluments(Base):
     montant = Column(Float, default=0.0, nullable=False)
 
 
-class EmolumentFacture(Base):
-    __tablename__ = 'emolument_facture'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    facture_id = Column(BigInteger, ForeignKey(Facture.id), nullable=False)
-    emolument_id = Column(BigInteger, ForeignKey(
-        TableauEmoluments.id), nullable=False)
-    nombre = Column(Integer, nullable=False)
-    facteur_correctif = Column(Float, default=1.0, nullable=False)
-    batiment = Column(Text)
-    montant = Column(Float, default=0.0, nullable=False)
-
-
 class EmolumentAffaire(Base):
     __tablename__ = 'emolument_affaire'
     __table_args__ = {'schema': 'infolica'}
@@ -251,6 +238,14 @@ class EmolumentAffaire(Base):
     numeros_id = Column(ARRAY(BigInteger))
     facture_type_id = Column(BigInteger)
     utilise = Column(Boolean)
+
+
+class EmolumentAffaireRepartition(Base):
+    __tablename__ = 'emolument_affaire_repartition'
+    __table_args__ = {'schema': 'infolica'}
+    emolument_affaire_id = Column(BigInteger, ForeignKey(EmolumentAffaire.id), primary_key=True, nullable=False)
+    facture_id = Column(BigInteger, ForeignKey(Facture.id), primary_key=True, nullable=False)
+    repartition = Column(Float, nullable=False)
 
 
 class Emolument(Base):
@@ -1150,6 +1145,7 @@ class VFactures(Base):
     date = Column(Date)
     remarque = Column(Text)
     numeros = Column(ARRAY(BigInteger))
+    emolument_affaire_id = Column(BigInteger)
 
 
 class VReservationNumerosMO(Base):
