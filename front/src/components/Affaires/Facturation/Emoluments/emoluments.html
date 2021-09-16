@@ -1557,18 +1557,6 @@
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.divers8.montant>0)">{{ form_detail.divers8.montant }} CHF</span></td>
                     </tr>
                     <tr>
-                      <td class="tg-0lax position_divers"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers9.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
-                      <td class="tg-0lax prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers9.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
-                      <td class="tg-0lax nombre alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers9.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.divers9.nombre)>0, hideNulls: Number(form_detail.divers9.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.divers9.montant>0)">{{ form_detail.divers9.montant }} CHF</span></td>
-                    </tr>
-                    <tr>
-                      <td class="tg-0lax position_divers"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers10.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
-                      <td class="tg-0lax prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers10.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
-                      <td class="tg-0lax nombre alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers10.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.divers10.nombre)>0, hideNulls: Number(form_detail.divers10.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
-                      <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.divers10.montant>0)">{{ form_detail.divers10.montant }} CHF</span></td>
-                    </tr>
-                    <tr>
                       <td class="tg-0lax position">Relations avec d'autres services (de 50.00 à 200.00 CHF)</td>
                       <td class="tg-0lax prix_unitaire notEditable"></td>
                       <td class="tg-0lax nombre notEditable"></td>

@@ -40,7 +40,7 @@ export default {
         form_general: {}, //général
         form_detail: {}, //emoluments sans bâtiment
         form_detail_batiment: [], //emoluments avec bâtiments
-        n_divers: 10,
+        n_divers: 8,
         pointsMatDiff_nombre: 0,
 
         // ####################################################################################
@@ -699,18 +699,11 @@ export default {
         this.form_general.nb_batiments>0? Number(this.total.montant_travauxBureau_batiment_total_f.reduce((a, b) => Number(a) + Number(b))): 0;
 
       //Divers
-      this.total.montant_divers_total = 
-        Number(this.form_detail.divers1.montant) +
-        Number(this.form_detail.divers2.montant) +
-        Number(this.form_detail.divers3.montant) +
-        Number(this.form_detail.divers4.montant) +
-        Number(this.form_detail.divers5.montant) +
-        Number(this.form_detail.divers6.montant) +
-        Number(this.form_detail.divers7.montant) +
-        Number(this.form_detail.divers8.montant) +
-        Number(this.form_detail.divers9.montant) +
-        Number(this.form_detail.divers10.montant) +
-        Number(this.form_detail.relations_autres_services1.montant);
+      this.total.montant_divers_total = 0;
+      for (let i=0; i<this.n_divers; i++) {
+        this.total.montant_divers_total += Number(this.form_detail["divers" + String(i+1)].montant);
+      }
+      this.total.montant_divers_total += Number(this.form_detail.relations_autres_services1.montant);
 
       //Registre foncier
       this.total.montant_rf_total =
