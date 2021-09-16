@@ -127,7 +127,10 @@
                  <!-- Définition de répartition des factures -->
                 <div v-if="form_general.facture_type_id === configFactureTypeID.facture && form_general.id">
                   <h3>Répartition des émoluments dans les factures</h3>
-                  <div v-if="emolument_facture_repartition_ctrl" style="color: red;"><em>Vérifier la répartition dans les factures, qui ne vaut pas 100%.</em></div>
+                  <div v-if="emolument_facture_repartition_ctrl" style="color: red;"><em>
+                    Vérifier la répartition dans les factures, dont le total ne vaut pas 100%.<br>
+                    Si les parts impliquent des nombres à virgule, écrire une approximation à 2 chiffres après la virgule (33.33% et 66.66% par exemple). 
+                  </em></div>
 
                   <md-table v-model="factures_repartition" md-card>
                     <md-table-empty-state
@@ -157,7 +160,7 @@
                   </md-table>
 
                   <div>
-                    <md-button class="md-raised md-accent" title="Cette action enregistre les montants dans les factures et clôt le tableau des émoluments de manière définitive.">Enregistrer les factures (définitif)</md-button>
+                    <md-button @click="saveToFactures" class="md-raised md-accent" title="Cette action enregistre les montants dans les factures et clôt le tableau des émoluments de manière définitive.">Enregistrer les factures (définitif)</md-button>
                   </div>
                 </div>
                 
@@ -1747,27 +1750,6 @@
                 </table>
               </md-card-content>
             </md-card>
-
-            <!-- Balancer les valeurs dans les factures. -->
-            <!-- <div v-if="form_general.facture_type_id === configFactureTypeID.facture && permission.cloreEmolumentEnabled && form_general.id">
-              <h3>Enregistrer dans la facture</h3>
-
-              <md-table v-model="affaire_factures" md-card>
-                <md-table-empty-state
-                  md-label="Aucune facture trouvée"
-                  md-description="Enregistrer d'abord la facture vide avant de récupérer les montants des émoluments" />
-                <md-table-row slot="md-table-row" slot-scope="{ item }">
-                  <md-table-cell md-label="Client">{{ item.adresse_facturation_ }}</md-table-cell>
-                  <md-table-cell md-label="Bien-fonds" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
-                  <md-table-cell md-label="Remarque" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.remarque }}</md-table-cell>
-                  <md-table-cell md-label="Action">
-                    <md-button style="min-width: min-content;" class="md-primary" title="Envoyer les valeurs dans la facture" @click="saveToFacture(item)">
-                      <md-icon>read_more</md-icon>
-                    </md-button>
-                  </md-table-cell>
-                </md-table-row>
-              </md-table>
-            </div> -->
           </md-tab>
 
         </md-tabs>
