@@ -173,14 +173,14 @@
 
               </md-card-content>
             </md-card>
-
           </md-tab>
 
 
-          <md-tab md-label="Mandat">
+          
+          <md-tab md-label="Tableau des émoluments" ref="tabRecapitulatif">
             <md-card>
               <md-card-header>
-                <div class="md-title">1. Mandat</div>
+                <div class="md-title">Tableau d'émoluments</div>
               </md-card-header>
               <md-card-content>
 
@@ -188,13 +188,14 @@
                   <thead class="customTableHead">
                     <template v-if="form_general.nb_batiments > 0">
                       <tr>
-                        <th class="tg-0lax alignCenter" colspan="6"></th>
+                        <th class="tg-0lax alignCenter" colspan="7"></th>
                         <template v-for="i in form_general.nb_batiments">
                           <th class="tg-0lax batiment-separator alignCenter" colspan="2">Bâtiment {{i}} (f = {{ form_general.batiment_f[i-1] }})</th>
                         </template>
                       </tr>
                     </template>
                     <tr>
+                      <th class="chapter"></th>
                       <th class="tg-0lax alignCenter code">Code</th>
                       <th class="tg-0lax alignCenter position">Position</th>
                       <th class="tg-0lax alignCenter unite">Unité</th>
@@ -208,7 +209,8 @@
                     </tr>
                   </thead>
                   <tbody class="customTableBody">
-                    <tr>
+                    <tr class="rowChapterDistinction">
+                      <td class="chapter" rowspan="8" style="background-color: rgba(34, 139, 34, 0.5);">1. Mandat</td>
                       <td class="tg-0lax code">.1</td>
                       <td class="tg-0lax position">{{ form_detail.mandat1.nom }}</td>
                       <td class="tg-0lax alignCenter unite">{{ form_detail.mandat1.unite }}</td>
@@ -296,44 +298,8 @@
                         <td class="tg-0lax montant montantTotal alignRight">{{ total.montant_mandat_batiment_total_f[i-1] }} CHF</td>
                       </template>
                     </tr>
-                  </tbody>
-                </table>
-              </md-card-content>
-            </md-card>
-          </md-tab>
-
-          <md-tab md-label="Terrain">
-            <md-card>
-              <md-card-header>
-                <div class="md-title">2. Travaux de terrain</div>
-              </md-card-header>
-              <md-card-content>
-
-                <table class="tg customTable">
-                  <thead class="customTableHead">
-                    <template v-if="form_general.nb_batiments > 0">
-                      <tr>
-                        <th class="tg-0lax alignCenter" colspan="6"></th>
-                        <template v-for="i in form_general.nb_batiments">
-                          <th class="tg-0lax batiment-separator alignCenter" colspan="2">Bâtiment {{i}} (f = {{ form_general.batiment_f[i-1] }})</th>
-                        </template>
-                      </tr>
-                    </template>
-                    <tr>
-                      <th class="tg-0lax alignCenter code">Code</th>
-                      <th class="tg-0lax alignCenter position">Position</th>
-                      <th class="tg-0lax alignCenter unite">Unité</th>
-                      <th class="tg-0lax alignCenter prix_unitaire">Prix unit.</th>
-                      <th class="tg-0lax alignCenter nombre">Nombre</th>
-                      <th class="tg-0lax alignCenter montant">Montant</th>
-                      <template v-for="i in form_general.nb_batiments">
-                        <th class="tg-0lax batiment-separator alignCenter nombre">Nombre</th>
-                        <th class="tg-0lax alignCenter montant">Montant</th>
-                      </template>
-                    </tr>
-                  </thead>
-                  <tbody class="customTableBody">
-                    <tr>
+                    <tr class="rowChapterDistinction">
+                      <td class="chapter" rowspan="33" style="background-color: rgba(238, 130, 238, 0.5);">2. Terrain</td>
                       <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form_general.nb_batiments)">2.1 Points fixes planimétriques</td>
                     </tr>
                     <tr>
@@ -398,7 +364,7 @@
                     </tr>
                     <tr>
                       <td class="tg-0lax code">.16</em></td>
-                      <td class="tg-0lax" :colspan="5 + 2*Number(form_general.nb_batiments)"><em>Contrôles lors de visées pério.</em></td>
+                      <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form_general.nb_batiments)"><em>Contrôles lors de visées pério.</em></td>
                     </tr>
                     <tr>
                       <td class="tg-0lax code"></td>
@@ -678,33 +644,9 @@
                         <td class="tg-0pky montant montantTotal alignRight">{{ total.montant_travauxTerrain_batiment_total_f_somme_zi }} CHF</td>
                       </template>
                     </tr>
-                  </tbody>
-                </table>
-              </md-card-content>
-            </md-card>
-          </md-tab>
-
-          <md-tab md-label="Matérialisation">
-            <md-card>
-              <md-card-header>
-                <div class="md-title">3. Travaux de matérialisation</div>
-              </md-card-header>
-              <md-card-content>
-
-                <table class="tg customTable">
-                  <thead class="customTableHead">
-                    <tr>
-                      <th class="tg-0lax alignCenter code">Code</th>
-                      <th class="tg-0lax alignCenter position">Position</th>
-                      <th class="tg-0lax alignCenter unite">Unité</th>
-                      <th class="tg-0lax alignCenter prix_unitaire">Prix unit.</th>
-                      <th class="tg-0lax alignCenter nombre">Nombre</th>
-                      <th class="tg-0lax alignCenter montant">Montant</th>
-                    </tr>
-                  </thead>
-                  <tbody class="customTableBody">
-                    <tr>
-                      <td class="tg-0lax subtitle" colspan="6">3.1,2 Types stanndards et complémentaires</td>
+                    <tr class="rowChapterDistinction">
+                      <td class="chapter" rowspan="22" style="background-color: rgba(255, 166, 0, 0.5);">3. Matérialisation</td>
+                      <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form_general.nb_batiments)">3.1,2 Types stanndards et complémentaires</td>
                     </tr>
                     <tr>
                       <td class="tg-0lax code">.11</td>
@@ -713,6 +655,10 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxMaterialisation1.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxMaterialisation1.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxMaterialisation1.nombre)>0, hideNulls: Number(form_detail.travauxMaterialisation1.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxMaterialisation1.montant>0)">{{ form_detail.travauxMaterialisation1.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code">.115</td>
@@ -721,6 +667,10 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxMaterialisation2.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxMaterialisation2.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxMaterialisation2.nombre)>0, hideNulls: Number(form_detail.travauxMaterialisation2.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxMaterialisation2.montant>0)">{{ form_detail.travauxMaterialisation2.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code">.12</td>
@@ -729,6 +679,10 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxMaterialisation3.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxMaterialisation3.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxMaterialisation3.nombre)>0, hideNulls: Number(form_detail.travauxMaterialisation3.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxMaterialisation3.montant>0)">{{ form_detail.travauxMaterialisation3.montant }} CHF</span></td>
+                    <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code">.13</td>
@@ -737,6 +691,10 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxMaterialisation4.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxMaterialisation4.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxMaterialisation4.nombre)>0, hideNulls: Number(form_detail.travauxMaterialisation4.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxMaterialisation4.montant>0)">{{ form_detail.travauxMaterialisation4.montant }} CHF</span></td>
+                    <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code">.15</td>
@@ -745,6 +703,10 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxMaterialisation5.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxMaterialisation5.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxMaterialisation5.nombre)>0, hideNulls: Number(form_detail.travauxMaterialisation5.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxMaterialisation5.montant>0)">{{ form_detail.travauxMaterialisation5.montant }} CHF</span></td>
+                    <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code">.16</td>
@@ -753,6 +715,10 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxMaterialisation6.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxMaterialisation6.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxMaterialisation6.nombre)>0, hideNulls: Number(form_detail.travauxMaterialisation6.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxMaterialisation6.montant>0)">{{ form_detail.travauxMaterialisation6.montant }} CHF</span></td>
+                    <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code">.17</td>
@@ -761,9 +727,13 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxMaterialisation7.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxMaterialisation7.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxMaterialisation7.nombre)>0, hideNulls: Number(form_detail.travauxMaterialisation7.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxMaterialisation7.montant>0)">{{ form_detail.travauxMaterialisation7.montant }} CHF</span></td>
+                    <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
-                      <td class="tg-0lax subtitle" colspan="6">3.3 Matériel</td>
+                      <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form_general.nb_batiments)">3.3 Matériel</td>
                     </tr>
                     <tr>
                       <td class="tg-0lax code"></td>
@@ -772,6 +742,10 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxMaterialisation8.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxMaterialisation8.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxMaterialisation8.nombre)>0, hideNulls: Number(form_detail.travauxMaterialisation8.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxMaterialisation8.montant>0)">{{ form_detail.travauxMaterialisation8.montant }} CHF</span></td>
+                    <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code"></td>
@@ -780,6 +754,10 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxMaterialisation9.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxMaterialisation9.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxMaterialisation9.nombre)>0, hideNulls: Number(form_detail.travauxMaterialisation9.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxMaterialisation9.montant>0)">{{ form_detail.travauxMaterialisation9.montant }} CHF</span></td>
+                    <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code"></td>
@@ -788,6 +766,10 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxMaterialisation10.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxMaterialisation10.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxMaterialisation10.nombre)>0, hideNulls: Number(form_detail.travauxMaterialisation10.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxMaterialisation10.montant>0)">{{ form_detail.travauxMaterialisation10.montant }} CHF</span></td>
+                    <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code"></td>
@@ -796,6 +778,10 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxMaterialisation11.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxMaterialisation11.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxMaterialisation11.nombre)>0, hideNulls: Number(form_detail.travauxMaterialisation11.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxMaterialisation11.montant>0)">{{ form_detail.travauxMaterialisation11.montant }} CHF</span></td>
+                    <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code"></td>
@@ -804,6 +790,10 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxMaterialisation12.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxMaterialisation12.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxMaterialisation12.nombre)>0, hideNulls: Number(form_detail.travauxMaterialisation12.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxMaterialisation12.montant>0)">{{ form_detail.travauxMaterialisation12.montant }} CHF</span></td>
+                    <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code"></td>
@@ -812,9 +802,13 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxMaterialisation13.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxMaterialisation13.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxMaterialisation13.nombre)>0, hideNulls: Number(form_detail.travauxMaterialisation13.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxMaterialisation13.montant>0)">{{ form_detail.travauxMaterialisation13.montant }} CHF</span></td>
+                    <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
-                      <td class="tg-0lax subtitle" colspan="6">3.4 Matérialisation différée</td>
+                      <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form_general.nb_batiments)">3.4 Matérialisation différée</td>
                     </tr>
                     
                     <tr>
@@ -824,80 +818,53 @@
                       <td class="tg-0lax alignCenter prix_unitaire">Voir ci-dessous</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="pointsMatDiff_nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(pointsMatDiff_nombre)>0, hideNulls: Number(pointsMatDiff_nombre)==0}" @keyup="updateMatDiff()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(total.montant_34_matdiff)>0">{{ total.montant_34_matdiff }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0pky tabulation" colspan="5">Total 3.1,2</td>
                       <td class="tg-0pky montant alignRight">{{ total.montant_31_32_std_compl }} CHF</td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0pky tabulation-2" colspan="5">x supplément terrain zi</td>
                       <td class="tg-0pky montant alignRight">{{ total.montant_31_32_std_compl_zi }} CHF</td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0pky tabulation" colspan="5">Total 3.3</td>
                       <td class="tg-0pky montant alignRight">{{ total.montant_33_materiel }} CHF</td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0pky tabulation" colspan="5">Total 3.4</td>
                       <td class="tg-0pky montant alignRight">{{ total.montant_34_matdiff }} CHF</td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0pky" colspan="5">Total intermédiaire</td>
                       <td class="tg-0pky montant montantTotal alignRight">{{ total.montant_travauxMaterialisation_total }} CHF</td>
-                    </tr>
-                    <tr>
-                      <td class="tg-0kpy" colspan="6" style="border: 0px;">
-                        <div style="margin: 10px 0px 10px 0px; font-size: 12px;">
-                          <p>
-                            Montant mat diff:
-                            <ul style="margin-top: 0px;">
-                              <li>De 1 à 5 points:  prix_unitaire{{ form_detail.travauxMaterialisation14.prix_unitaire }}CHF / PCE</li>
-                              <li>De 6 à 10 points:  prix_unitaire{{ form_detail.travauxMaterialisation15.prix_unitaire }}CHF / PCE</li>
-                              <li>De 11 à 15 points:  prix_unitaire{{ form_detail.travauxMaterialisation16.prix_unitaire }}CHF / PCE</li>
-                              <li>Plus de 16 points:  prix_unitaire{{ form_detail.travauxMaterialisation17.prix_unitaire }}CHF / PCE</li>
-                            </ul>
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </md-card-content>
-            </md-card>
-          </md-tab>
-
-          <md-tab md-label="Bureau">
-            <md-card>
-              <md-card-header>
-                <div class="md-title">4. Travaux de bureau</div>
-              </md-card-header>
-              <md-card-content>
-
-                <table class="tg customTable">
-                  <thead class="customTableHead">
-                    <template v-if="form_general.nb_batiments > 0">
-                      <tr>
-                        <th class="tg-0lax alignCenter" colspan="6"></th>
-                        <template v-for="i in form_general.nb_batiments">
-                          <th class="tg-0lax batiment-separator alignCenter" colspan="2">Bâtiment {{i}} (f = {{ form_general.batiment_f[i-1] }})</th>
-                        </template>
-                      </tr>
-                    </template>
-                    <tr>
-                      <th class="tg-0lax alignCenter code">Code</th>
-                      <th class="tg-0lax alignCenter position">Position</th>
-                      <th class="tg-0lax alignCenter unite">Unité</th>
-                      <th class="tg-0lax alignCenter prix_unitaire">Prix unit.</th>
-                      <th class="tg-0lax alignCenter nombre">Nombre</th>
-                      <th class="tg-0lax alignCenter montant">Montant</th>
                       <template v-for="i in form_general.nb_batiments">
-                        <th class="tg-0lax batiment-separator alignCenter nombre">Nombre</th>
-                        <th class="tg-0lax alignCenter montant">Montant</th>
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
                       </template>
                     </tr>
-                  </thead>
-                  <tbody class="customTableBody">
-                    <tr>
+                    <tr class="rowChapterDistinction">
+                      <td class="chapter" rowspan="53" style="background-color: rgba(21, 91, 241, 0.5);">4. Bureau</td>
                       <td class="tg-0lax subtitle" :colspan="6 + 2* Number(form_general.nb_batiments)">4.1 Points fixes planimétriques</td>
                     </tr>
                     <tr>
@@ -1485,143 +1452,144 @@
                         <td class="tg-0pky montant montantTotal alignRight">{{ total.montant_travauxBureau_batiment_total_f_somme }} CHF</td>
                       </tr>
                     </template>
-                  </tbody>
-                </table>
-              </md-card-content>
-            </md-card>
-          </md-tab>
-
-          <md-tab md-label="Divers">
-            <md-card>
-              <md-card-header>
-                <div class="md-title">5. Divers + déplacements et débours</div>
-              </md-card-header>
-              <md-card-content>
-
-                <table class="tg customTable">
-                  <thead class="customTableHead">
-                    <tr>
-                      <th class="tg-0lax position_divers alignCenter">Travaux selon le temps consacré</th>
-                      <th class="tg-0lax prix_unitaire alignCenter">Prix horaire</th>
-                      <th class="tg-0lax nombre alignCenter">Nbr heure</th>
-                      <th class="tg-0lax montant alignCenter">Montant</th>
+                    <tr class="rowChapterDistinction">
+                      <td class="chapter" rowspan="1" style="background-color: rgba(228, 33, 33, 0.5);"></td>
+                      <td class="tg-0lax position" colspan="2">{{ form_detail.deplacementDebours1.nom }}</td>
+                      <td class="tg-0lax alignCenter unite">Heure</td>
+                      <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.deplacementDebours1.prix_unitaire }} CHF</td>
+                      <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.deplacementDebours1.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.deplacementDebours1.nombre)>0, hideNulls: Number(form_detail.deplacementDebours1.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
+                      <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.deplacementDebours1.montant>0)">{{ form_detail.deplacementDebours1.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
-                  </thead>
-                  <tbody class="customTableBody">
-                    <tr>
+                    <tr class="rowChapterDistinction">
+                      <td class="chapter" rowspan="10" style="background-color: rgba(228, 228, 33, 0.5);">5. Divers</td>
+                      <td class="tg-0lax code"></td>
                       <td class="tg-0lax position_divers"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers1.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignCenter unite">Heure</td>
                       <td class="tg-0lax prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers1.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
                       <td class="tg-0lax nombre alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers1.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.divers1.nombre)>0, hideNulls: Number(form_detail.divers1.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.divers1.montant>0)">{{ form_detail.divers1.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
+                      <td class="tg-0lax code"></td>
                       <td class="tg-0lax position_divers"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers2.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignCenter unite">Heure</td>
                       <td class="tg-0lax prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers2.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
                       <td class="tg-0lax nombre alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers2.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.divers2.nombre)>0, hideNulls: Number(form_detail.divers2.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.divers2.montant>0)">{{ form_detail.divers2.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
+                      <td class="tg-0lax code"></td>
                       <td class="tg-0lax position_divers"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers3.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignCenter unite">Heure</td>
                       <td class="tg-0lax prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers3.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
                       <td class="tg-0lax nombre alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers3.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.divers3.nombre)>0, hideNulls: Number(form_detail.divers3.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.divers3.montant>0)">{{ form_detail.divers3.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
+                      <td class="tg-0lax code"></td>
                       <td class="tg-0lax position_divers"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers4.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignCenter unite">Heure</td>
                       <td class="tg-0lax prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers4.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
                       <td class="tg-0lax nombre alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers4.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.divers4.nombre)>0, hideNulls: Number(form_detail.divers4.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.divers4.montant>0)">{{ form_detail.divers4.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
+                      <td class="tg-0lax code"></td>
                       <td class="tg-0lax position_divers"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers5.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignCenter unite">Heure</td>
                       <td class="tg-0lax prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers5.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
                       <td class="tg-0lax nombre alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers5.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.divers5.nombre)>0, hideNulls: Number(form_detail.divers5.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.divers5.montant>0)">{{ form_detail.divers5.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
+                      <td class="tg-0lax code"></td>
                       <td class="tg-0lax position_divers"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers6.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignCenter unite">Heure</td>
                       <td class="tg-0lax prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers6.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
                       <td class="tg-0lax nombre alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers6.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.divers6.nombre)>0, hideNulls: Number(form_detail.divers6.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.divers6.montant>0)">{{ form_detail.divers6.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
+                      <td class="tg-0lax code"></td>
                       <td class="tg-0lax position_divers"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers7.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignCenter unite">Heure</td>
                       <td class="tg-0lax prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers7.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
                       <td class="tg-0lax nombre alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers7.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.divers7.nombre)>0, hideNulls: Number(form_detail.divers7.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.divers7.montant>0)">{{ form_detail.divers7.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
+                      <td class="tg-0lax code"></td>
                       <td class="tg-0lax position_divers"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers8.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
+                      <td class="tg-0lax alignCenter unite">Heure</td>
                       <td class="tg-0lax prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers8.prix_unitaire" class="inputMontant" @keyup="updateMontants()" @focus="$event.target.select()" @focusout="setPrixUnitaireFormat" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
                       <td class="tg-0lax nombre alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.divers8.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.divers8.nombre)>0, hideNulls: Number(form_detail.divers8.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.divers8.montant>0)">{{ form_detail.divers8.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
-                      <td class="tg-0lax position">Relations avec d'autres services (de 50.00 à 200.00 CHF)</td>
-                      <td class="tg-0lax prix_unitaire notEditable"></td>
-                      <td class="tg-0lax nombre notEditable"></td>
+                      <td class="tg-0lax code"></td>
+                      <td class="tg-0lax position" colspan="4">Relations avec d'autres services (de 50.00 à 200.00 CHF)</td>
                       <td class="tg-0lax montant alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.relations_autres_services1.prix_unitaire" class="inputMontant" @focusout="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
-                    <td class="tg-0lax" colspan="3">Total intermédiaire</td>
-                    <td class="tg-0lax montant montantTotal alignRight">{{ total.montant_divers_total }} CHF</td>
-                  </tr>
-                  <tr>
-                    <td colspan="4" style="height: 25px; border: 0px;">
-                      <div style="margin: 10px 0px 10px 0px; font-size: 12px;">
-                        Tarif horaire:
-
-                        <div style="column-count: 2; vertical-align: text-top;">
-                          <ul style="margin: 0px;">
-                            <li>182 CHF - Géomètre cantonal·e</li>
-                            <li>157 CHF - Ingénieur·e en géomatique</li>
-                            <li>133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</li>
-                            <li>111 CHF - Géomaticien·ne</li>
-                            <li>101 CHF - Collaborateur·rice technique</li>
-                            <li>97 CHF - Personnel de secrétariat</li>
-                            <li>73 CHF - Apprenant·e</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="tg-0lax position">{{ form_detail.deplacementDebours1.nom }}</td>
-                    <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.deplacementDebours1.prix_unitaire }} CHF</td>
-                    <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.deplacementDebours1.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.deplacementDebours1.nombre)>0, hideNulls: Number(form_detail.deplacementDebours1.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
-                    <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.deplacementDebours1.montant>0)">{{ form_detail.deplacementDebours1.montant }} CHF</span></td>
-                  </tr>
-                </tbody>
-              </table>
-              </md-card-content>
-            </md-card>
-          </md-tab>
-
-          <md-tab md-label="Registre foncier">
-            <md-card>
-              <md-card-header>
-                <div class="md-title">6. Registre foncier</div>
-              </md-card-header>
-              <md-card-content>
-
-                <table class="tg customTable">
-                  <thead class="customTableHead">
                     <tr>
-                      <th class="tg-0lax alignCenter code">Code</th>
-                      <th class="tg-0lax alignCenter position">Position</th>
-                      <th class="tg-0lax alignCenter unite">Unité</th>
-                      <th class="tg-0lax alignCenter prix_unitaire">Prix unit.</th>
-                      <th class="tg-0lax alignCenter nombre">Nombre</th>
-                      <th class="tg-0lax alignCenter montant">Montant</th>
+                      <td class="tg-0lax" colspan="5">Total intermédiaire</td>
+                      <td class="tg-0lax montant montantTotal alignRight">{{ total.montant_divers_total }} CHF</td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
-                  </thead>
-                  <tbody class="customTableBody">
-                    <tr>
+                    <tr class="rowChapterDistinction">
+                      <td class="chapter" rowspan="7" style="background-color: rgba(135, 206, 250, 0.5);">6. Registre foncier</td>
                       <td class="tg-0lax code">.1</td>
                       <td class="tg-0lax position">{{ form_detail.registreFoncier1.nom }}</td>
                       <td class="tg-0lax alignCenter unite">{{ form_detail.registreFoncier1.unite }}</td>
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.registreFoncier1.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.registreFoncier1.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.registreFoncier1.nombre)>0, hideNulls: Number(form_detail.registreFoncier1.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.registreFoncier1.montant>0)">{{ form_detail.registreFoncier1.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code">.2</td>
@@ -1630,6 +1598,10 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.registreFoncier2.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.registreFoncier2.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.registreFoncier2.nombre)>0, hideNulls: Number(form_detail.registreFoncier2.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.registreFoncier2.montant>0)">{{ form_detail.registreFoncier2.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code">.3</td>
@@ -1638,6 +1610,10 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.registreFoncier3.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.registreFoncier3.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.registreFoncier3.nombre)>0, hideNulls: Number(form_detail.registreFoncier3.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.registreFoncier3.montant>0)">{{ form_detail.registreFoncier3.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code"></td>
@@ -1646,6 +1622,10 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.registreFoncier4.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.registreFoncier4.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.registreFoncier4.nombre)>0, hideNulls: Number(form_detail.registreFoncier4.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.registreFoncier4.montant>0)">{{ form_detail.registreFoncier4.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code"></td>
@@ -1654,22 +1634,34 @@
                       <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.registreFoncier5.prix_unitaire }} CHF</td>
                       <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.registreFoncier5.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.registreFoncier5.nombre)>0, hideNulls: Number(form_detail.registreFoncier5.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                       <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.registreFoncier5.montant>0)">{{ form_detail.registreFoncier5.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0lax code"></td>
-                      <td class="tg-0lax position">{{ form_detail.forfait_rf1.nom }}</td>
-                      <td class="tg-0lax notEditable" colspan="3"></td>
+                      <td class="tg-0lax position" colspan="4">{{ form_detail.forfait_rf1.nom }}</td>
                       <td class="tg-0lax montant"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.forfait_rf1.prix_unitaire" class="inputMontant" @focusout="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                     <tr>
                       <td class="tg-0pky" colspan="5">Total intermédiaire</td>
                       <td class="tg-0pky montant alignRight">{{ total.montant_rf_total }} CHF</td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </tr>
                   </tbody>
                 </table>
               </md-card-content>
             </md-card>
           </md-tab>
+
 
           <md-tab md-label="Récapitulatif" ref="tabRecapitulatif">
             <md-card>
@@ -1740,6 +1732,46 @@
             </md-card>
           </md-tab>
 
+
+          <md-tab md-label="Memento" ref="tabMemento">
+            <div class="md-layout md-gutter md-alignment-top-left">
+              <div class="md-layout-item">
+                <md-card>
+                  <md-card-header>
+                    <div class="md-title">Montant mat diff</div>
+                  </md-card-header>
+                  <md-card-content>
+                    Calcul du montant au point 3.4:
+                    <ul style="margin: 0px;">
+                      <li>De 1 à 5 points:  prix_unitaire{{ form_detail.travauxMaterialisation14.prix_unitaire }}CHF / PCE</li>
+                      <li>De 6 à 10 points:  prix_unitaire{{ form_detail.travauxMaterialisation15.prix_unitaire }}CHF / PCE</li>
+                      <li>De 11 à 15 points:  prix_unitaire{{ form_detail.travauxMaterialisation16.prix_unitaire }}CHF / PCE</li>
+                      <li>Plus de 16 points:  prix_unitaire{{ form_detail.travauxMaterialisation17.prix_unitaire }}CHF / PCE</li>
+                    </ul>
+                  </md-card-content>
+                </md-card>
+              </div>
+              <div class="md-layout-item">
+                <md-card>
+                  <md-card-header>
+                    <div class="md-title">Tarif horaire</div>
+                  </md-card-header>
+                  <md-card-content>
+                    Tarif horaire selon le titre (pour les divers):
+                    <ul style="margin: 0px;">
+                      <li>182 CHF - Géomètre cantonal·e</li>
+                      <li>157 CHF - Ingénieur·e en géomatique</li>
+                      <li>133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</li>
+                      <li>111 CHF - Géomaticien·ne</li>
+                      <li>101 CHF - Collaborateur·rice technique</li>
+                      <li>97 CHF - Personnel de secrétariat</li>
+                      <li>73 CHF - Apprenant·e</li>
+                    </ul>
+                  </md-card-content>
+                </md-card>
+              </div>
+            </div>
+          </md-tab>
         </md-tabs>
 
       </md-dialog-content>
