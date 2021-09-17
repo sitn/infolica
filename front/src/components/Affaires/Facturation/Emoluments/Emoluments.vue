@@ -493,7 +493,7 @@ export default {
           Number(this.form_detail_batiment[j].mandat6.montant);
 
         this.total.montant_mandat_batiment_total_f[j] =
-          Number(this.total.montant_mandat_batiment_total[j]) * Number(this.form_general.batiment_f[j]);
+          this.round(Number(this.total.montant_mandat_batiment_total[j]) * Number(this.form_general.batiment_f[j]));
       
         // Travaux terrain
         this.total.montant_travauxTerrain_batiment_total[j] =
@@ -515,7 +515,7 @@ export default {
           Number(this.form_detail_batiment[j].travauxTerrain16.montant);
 
         this.total.montant_travauxTerrain_batiment_total_f[j] =
-          Number(this.total.montant_travauxTerrain_batiment_total[j]) * Number(this.form_general.batiment_f[j]);
+          this.round(Number(this.total.montant_travauxTerrain_batiment_total[j]) * Number(this.form_general.batiment_f[j]));
 
         // Travaux bureau
         this.total.montant_travauxBureau_batiment_total[j] =
@@ -548,7 +548,7 @@ export default {
           Number(this.form_detail_batiment[j].travauxBureau27.montant);
 
         this.total.montant_travauxBureau_batiment_total_f[j] =
-          Number(this.total.montant_travauxBureau_batiment_total[j]) * Number(this.form_general.batiment_f[j]);
+          this.round(Number(this.total.montant_travauxBureau_batiment_total[j]) * Number(this.form_general.batiment_f[j]));
       }
 
       //Montants totaux TravauxTerrain
@@ -592,10 +592,10 @@ export default {
         Number(this.total.montant_travauxTerrain_total) * Number(this.form_general.zi);
 
       this.total.montant_travauxTerrain_batiment_total_f_somme =
-        this.form_general.nb_batiments>0? Number(this.total.montant_travauxTerrain_batiment_total_f.reduce((a, b) => Number(a) + Number(b))): 0;
+        this.form_general.nb_batiments>0? this.round(Number(this.total.montant_travauxTerrain_batiment_total_f.reduce((a, b) => Number(a) + Number(b)))): 0;
 
       this.total.montant_travauxTerrain_batiment_total_f_somme_zi =
-        Number(this.total.montant_travauxTerrain_batiment_total_f_somme) * Number(this.form_general.zi);
+        this.round(Number(this.total.montant_travauxTerrain_batiment_total_f_somme) * Number(this.form_general.zi));
 
       //Montants totaux TravauxMatérialisation
       this.total.montant_31_32_std_compl = 
@@ -694,7 +694,7 @@ export default {
         Number(this.total.montant_42pl);
 
       this.total.montant_travauxBureau_batiment_total_f_somme = 
-        this.form_general.nb_batiments>0? Number(this.total.montant_travauxBureau_batiment_total_f.reduce((a, b) => Number(a) + Number(b))): 0;
+        this.form_general.nb_batiments>0? this.round(Number(this.total.montant_travauxBureau_batiment_total_f.reduce((a, b) => Number(a) + Number(b)))): 0;
 
       //Divers
       this.total.montant_divers_total = 0;

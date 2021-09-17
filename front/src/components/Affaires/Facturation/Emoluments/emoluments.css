@@ -166,7 +166,7 @@ th, td {
 }
 
 .position_divers {
-  width: 400px !important;
+  width: 250px !important;
 }
 
 .position_recapitulatif {
@@ -195,4 +195,15 @@ th, td {
 
 .repartitionJuste {
   background-color: lightgreen;
+}
+
+.chapter {
+  width: 35px !important;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+}
+
+.rowChapterDistinction {
+  border-top: 3px solid;
 }
