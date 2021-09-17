@@ -299,7 +299,7 @@
                       </template>
                     </tr>
                     <tr class="rowChapterDistinction">
-                      <td class="chapter" rowspan="33" style="background-color: rgba(238, 130, 238, 0.5);">2. Terrain</td>
+                      <td class="chapter" :rowspan="Number(form_general.nb_batiments) > 0? 33: 31" style="background-color: rgba(238, 130, 238, 0.5);">2. Terrain</td>
                       <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form_general.nb_batiments)">2.1 Points fixes planimétriques</td>
                     </tr>
                     <tr>
@@ -864,7 +864,7 @@
                       </template>
                     </tr>
                     <tr class="rowChapterDistinction">
-                      <td class="chapter" rowspan="53" style="background-color: rgba(21, 91, 241, 0.5);">4. Bureau</td>
+                      <td class="chapter" :rowspan="Number(form_general.nb_batiments) > 0? 53: 51" style="background-color: rgba(21, 91, 241, 0.5);">4. Bureau</td>
                       <td class="tg-0lax subtitle" :colspan="6 + 2* Number(form_general.nb_batiments)">4.1 Points fixes planimétriques</td>
                     </tr>
                     <tr>
