@@ -136,7 +136,7 @@ venv.bak/
 /prepub.ini
 
 # alembic versions
-infolica/alembic/versions
+infolica/alembic/versions/old
 
 # log files
 **/*.log
