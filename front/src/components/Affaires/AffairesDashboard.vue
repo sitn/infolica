@@ -57,6 +57,7 @@ export default {
       parentAffaireReadOnly: false,
       permission: {
         abandonAffaireEnabled: false,
+        admin_permissions: false,
         cloreAffaireEnabled: false,
         cloreEmolumentEnabled: false,
         editAffaireAllowed: false,
@@ -197,6 +198,7 @@ export default {
           _this.affaireLoaded = true;
 
           _this.parentAffaireReadOnly = ((_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined) || (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined));
+          _this.permission.admin_permissions = false;
           _this.permission.abandonAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined);
           _this.permission.cloreAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
           _this.permission.editNumerosAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) && !_this.parentAffaireReadOnly;
