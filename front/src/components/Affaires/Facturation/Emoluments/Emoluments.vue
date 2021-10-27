@@ -986,7 +986,7 @@ export default {
     async getEmolumentsDetail(emolument_affaire_id) {
       // set form_general
       this.form_general = this.emolumentsGeneral_list.filter(x => x.id === emolument_affaire_id)[0];
-      this.disabled = this.form_general.utilise;
+      this.disabled = this.form_general.utilise && !this.permission.admin_permissions;
 
       this.setFormDetail();
 
