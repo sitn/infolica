@@ -11,7 +11,7 @@ from infolica.models.models import AffaireNumero, Numero, NumeroDiffere, NumeroE
 from infolica.models.models import NumeroEtatHisto, NumeroType, VNumeros
 from infolica.models.models import VNumerosAffaires, Affaire, Facture
 from infolica.scripts.utils import Utils
-
+from infolica.scripts.authentication import check_connected
 from datetime import datetime
 
 
@@ -22,7 +22,7 @@ def numeros_view(request):
     Return all numeros
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     numero = int(request.params['numero']) if 'numero' in request.params else None
@@ -84,7 +84,7 @@ def numeros_by_id_view(request):
     Return numeros by id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id
@@ -101,7 +101,7 @@ def numeros_search_view(request):
     Search numeros
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     settings = request.registry.settings
@@ -282,7 +282,7 @@ def affaire_numeros_view(request):
     numero_affaire
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
     conditions = list()
     affaire_id = request.matchdict["id"]
@@ -428,7 +428,7 @@ def numeros_affaire_view(request):
     Get affaires by numero_id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     numero_id = request.matchdict['id']
@@ -449,7 +449,7 @@ def numero_differe_view(request):
     get numero_differe
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     numero_projet_id = int(request.registry.settings['numero_projet_id'])

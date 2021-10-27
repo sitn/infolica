@@ -6,7 +6,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Facture, FactureType, VFactures
 from infolica.scripts.utils import Utils
-
+from infolica.scripts.authentication import check_connected
 import json
 
 ###########################################################
@@ -21,7 +21,7 @@ def factures_view(request):
     Return all factures
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(VFactures).all()
@@ -34,7 +34,7 @@ def facture_type_view(request):
     Return all facture types
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(FactureType).all()
@@ -47,7 +47,7 @@ def affaires_factures_view(request):
     Return all factures in affaire
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.matchdict["id"]
@@ -65,7 +65,7 @@ def factures_new_view(request):
     Add new facture
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     params = {}
@@ -91,7 +91,7 @@ def factures_update_view(request):
     #     raise exc.HTTPForbidden()
 
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     # id_facture

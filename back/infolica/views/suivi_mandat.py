@@ -6,6 +6,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import SuiviMandat
 from infolica.scripts.utils import Utils
+from infolica.scripts.authentication import check_connected
 
 
 @view_config(route_name='suivi_mandats', request_method='GET', renderer='json')
@@ -15,7 +16,7 @@ def suivi_mandats_view(request):
     Return all suivi_mandats
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(SuiviMandat).all()
@@ -28,7 +29,7 @@ def suivi_mandats_by_id_view(request):
     Return suivi_mandats by id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id
@@ -44,7 +45,7 @@ def affaire_suivi_mandats_by_affaire_id_view(request):
     Return suivi_mandats by affaire_id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id

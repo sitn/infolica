@@ -5,7 +5,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models import Constant
 from infolica.models.models import Client, ClientType, ClientMoralPersonne
 from infolica.scripts.utils import Utils
-
+from infolica.scripts.authentication import check_connected
 import json
 from datetime import datetime
 
@@ -27,7 +27,7 @@ def clients_view(request):
     Return all clients
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(Client).filter(Client.sortie == None).all()
@@ -40,7 +40,7 @@ def client_by_id_view(request):
     Return client by id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     id = request.matchdict['id']
@@ -56,7 +56,7 @@ def clients_search_view(request):
     Search clients
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     settings = request.registry.settings

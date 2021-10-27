@@ -7,7 +7,7 @@ from infolica.models.constant import Constant
 from infolica.models.models import ReservationNumerosMO, VReservationNumerosMO, Plan, Affaire
 from infolica.models.models import VProchainNumeroDisponible
 from infolica.scripts.utils import Utils
-
+from infolica.scripts.authentication import check_connected
 from sqlalchemy import and_, or_, func
 
 import os
@@ -21,7 +21,7 @@ def reservation_numeros_mo_by_affaire_id_view(request):
     Return all reservations_numeros_mo by affaire_id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     searchLimit = request.registry.settings['search_limit']
@@ -123,7 +123,7 @@ def numero_mo_next_view(request):
     Return all next available numero MO par cadastre, type et plan
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     cadastre_id = request.params['cadastre_id'] if 'cadastre_id' in request.params else None

@@ -6,7 +6,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models import Constant
 from infolica.models.models import ControleGeometre
 from infolica.scripts.utils import Utils
-
+from infolica.scripts.authentication import check_connected
 
 
 @view_config(route_name='controle_geometre_by_affaire_id', request_method='GET', renderer='json')
@@ -15,7 +15,7 @@ def controle_geometre_by_affaire_id_view(request):
     Return controle_geometre by affaire_id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id

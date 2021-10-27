@@ -8,7 +8,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Operateur
 from infolica.scripts.utils import Utils
-
+from infolica.scripts.authentication import check_connected
 from datetime import datetime
 
 
@@ -19,7 +19,7 @@ def operateurs_view(request):
     Return all operateurs
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(Operateur).filter(Operateur.sortie == None).all()
@@ -32,7 +32,7 @@ def operateur_by_id_view(request):
     Return operateur by id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     id = request.matchdict['id']
@@ -48,7 +48,7 @@ def operateurs_search_view(request):
     Search operateurs
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     settings = request.registry.settings

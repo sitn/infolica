@@ -10,6 +10,7 @@ from infolica.models.models import ModificationAffaire, VAffaire, Facture, Clien
 from infolica.models.models import ControleGeometre, ControleMutation, ControlePPE, SuiviMandat
 from infolica.models.models import AffaireEtape
 from infolica.scripts.utils import Utils
+from infolica.scripts.authentication import check_connected
 
 from sqlalchemy import and_, or_
 
@@ -30,8 +31,10 @@ def affaires_view(request):
     Return all affaires
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
+
+
 
     query = request.dbsession.query(VAffaire).order_by(VAffaire.id.desc()).all()
     return Utils.serialize_many(query)
@@ -43,7 +46,7 @@ def affaire_by_id_view(request):
     Return affaires by id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     id = request.matchdict['id']
@@ -58,7 +61,7 @@ def affaire_cockpit_view(request):
     Return active affaires (id, no_access, id_current_step)
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     type_id = request.params['type_id'] if 'type_id' in request.params else None
@@ -121,7 +124,7 @@ def affaires_search_view(request):
     Search affaires
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     settings = request.registry.settings
@@ -511,7 +514,7 @@ def modification_affaire_by_affaire_mere_view(request):
     Get modification affaire by affaire_mère
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_mere_id = request.matchdict["id"]
@@ -529,7 +532,7 @@ def modification_affaire_by_affaire_fille_view(request):
     Get modification affaire by affaire_fille
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_fille_id = request.matchdict["id"]
@@ -547,7 +550,7 @@ def affaire_spatial(request):
     Get modification affaire by affaire_fille
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     results = request.dbsession.query(VAffaire).filter(

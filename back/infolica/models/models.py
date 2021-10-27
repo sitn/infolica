@@ -11,7 +11,10 @@ from sqlalchemy import (
     ARRAY,
     ForeignKey,
     UniqueConstraint,
+    Table
 )
+
+from sqlalchemy.orm import relationship
 
 from geoalchemy2 import Geometry
 
@@ -19,6 +22,24 @@ import datetime
 from .constant import Constant
 from .meta import Base
 
+association_fonction_role = Table('fonction_role', Base.metadata,
+    Column('id', primary_key=True),
+    Column('role_id', ForeignKey('role.id')),
+    Column('fonction_id', ForeignKey('fonction.id'))
+)
+
+class Role(Base):
+    __tablename__ = 'role'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
+    fonctions = relationship("Fonction", secondary=association_fonction_role)
+
+class Fonction(Base):
+    __tablename__ = 'fonction'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
 
 class Operateur(Base):
     __tablename__ = 'operateur'
@@ -34,6 +55,8 @@ class Operateur(Base):
     sortie = Column(Date)
     mail = Column(Text)
     last_notemaj_id = Column(BigInteger)
+    role_id = Column(BigInteger, ForeignKey(Role.id))
+    role = relationship("Role", uselist=False)
 
 class Cadastre(Base):
     __tablename__ = 'cadastre'
@@ -742,28 +765,6 @@ class Preavis(Base):
 #     preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
 #     remarque = Column(Text, nullable=False)
 #     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
-
-
-class Fonction(Base):
-    __tablename__ = 'fonction'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-
-
-class Role(Base):
-    __tablename__ = 'role'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-
-
-class FonctionRole(Base):
-    __tablename__ = 'fonction_role'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    fonction_id = Column(BigInteger, ForeignKey(Fonction.id), nullable=False)
-    role_id = Column(BigInteger, ForeignKey(Role.id), nullable=False)
 
 
 class GeosBalance(Base):
