@@ -49,6 +49,11 @@ export default {
   data() {
     return {
       affaire: {},
+      affaireAttribution: {
+        checked: false,
+        show: false,
+        text: ""
+      },
       affaireLoaded: false,
       chefs_equipe_list: [],
       duplicationAffaireForm: null,
@@ -281,6 +286,18 @@ export default {
             }
             _this.parentAffaireReadOnly = false;
           }
+
+          // Set affaire attribution
+          if (_this.affaire.attribution) {
+            _this.affaireAttribution.checked = true;
+            _this.affaireAttribution.text = "Étape attribuée à " + _this.affaire.attribution;
+          } else {
+            _this.affaireAttribution.checked = false;
+            _this.affaireAttribution.text = "Cliquer pour s'attribuer l'étape";
+          }
+
+          // init params attribution affaire
+          _this.initParams();
       });
     },
 
@@ -594,6 +611,53 @@ export default {
         }
       ).then(() => this.$router.go(0))
       .catch(err => handleException(err));
+    },
+
+
+    /**
+     * Affaire Attribution Change State
+     */
+    async affaireAttributionChangeState() {
+      let formData = new FormData();
+      if (this.affaireAttribution.checked) {
+        formData.append("id_affaire", this.affaire.id);
+        formData.append("attribution", JSON.parse(localStorage.getItem("infolica_user")).initiales);
+      } else {
+        formData.append("id_affaire", this.affaire.id);
+        formData.append("attribution", null);
+      }
+      this.$http.put(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(() => this.setAffaire())
+      .catch(err => handleException(err));
+    },
+
+
+    /**
+     * initialize parameters
+     */
+    initParams() {
+      this.affaireAttribution.show = true;
+
+      let etapesAtributionAffaire = [
+        Number(process.env.VUE_APP_CONTROLE_TECHNIQUE_ID),
+        Number(process.env.VUE_APP_REPORT_SERVITUDES_ID),
+        Number(process.env.VUE_APP_CONTROLE_JURIDIQUE_ID),
+        Number(process.env.VUE_APP_PREPARATION_ADMINISTRATIVE_ID),
+        Number(process.env.VUE_APP_SIGNATURE_ID),
+        Number(process.env.VUE_APP_VALIDATION_ID)
+      ];
+
+      if (etapesAtributionAffaire.includes(this.affaire.etape_id)) {
+        this.affaireAttribution.show = true;
+      } else {
+        this.affaireAttribution.show = false;
+      }
     }
 
   },
@@ -601,6 +665,7 @@ export default {
   mounted: function() {
     this.setAffaire();
     this.getChefsEquipe();
+
     this.$root.$on('mapHandlerReady', () => this.showMap() );
     this.$root.$on('setAffaire', () => this.setAffaire() );
 

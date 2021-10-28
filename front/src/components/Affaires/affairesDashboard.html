@@ -32,7 +32,16 @@
             </div>
         </div>
 
-        <Etape :affaire="affaire" :chefs_equipe_list="chefs_equipe_list" :etapes_affaire_conf="etapes_affaire_conf" @setAffaire="setAffaire()" :typesAffaires_conf="typesAffaires_conf" />
+        <div class="md-layout-item">
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item">
+                    <Etape :affaire="affaire" :chefs_equipe_list="chefs_equipe_list" :etapes_affaire_conf="etapes_affaire_conf" @setAffaire="setAffaire()" :typesAffaires_conf="typesAffaires_conf" />
+                </div>
+                <div class="md-layout-item" style="max-width: 350px;" v-if="affaireAttribution.show">
+                    <md-checkbox @change="affaireAttributionChangeState" v-model="affaireAttribution.checked">{{ affaireAttribution.text }}</md-checkbox>
+                </div>
+            </div>
+        </div>
 
     </md-toolbar>
 

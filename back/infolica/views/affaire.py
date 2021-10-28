@@ -108,7 +108,8 @@ def affaire_cockpit_view(request):
             'cadastre': affaire.cadastre,
             'description': affaire.nom,
             'urgent': affaire.urgent,
-            'urgent_echeance': datetime.strftime(affaire.urgent_echeance, '%Y-%m-%d') if not affaire.urgent_echeance is None else None
+            'urgent_echeance': datetime.strftime(affaire.urgent_echeance, '%Y-%m-%d') if not affaire.urgent_echeance is None else None,
+            'attribution': affaire.attribution
         })
     
     return affaires

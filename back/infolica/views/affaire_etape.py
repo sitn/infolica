@@ -62,6 +62,7 @@ def etapes_new_view(request):
         raise exc.HTTPForbidden()
 
     chef_equipe_id = request.params['chef_equipe_id'] if 'chef_equipe_id' in request.params else None
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     
     # Add new step
     model = Utils.addNewRecord(request, AffaireEtape)
@@ -123,6 +124,13 @@ def etapes_new_view(request):
                 </tr>" + lastSteps + "</table>") if lastSteps != "" else ""
         subject = "Infolica - affaire " + str(affaire.id) + (" - URGENT" if affaire.urgent else "")
         send_mail(request, mail_list, "", subject, html=text)
+
+    # Finally erase attribution on affaire
+    affaire = None
+    affaire = request.dbsession.query(Affaire).filter(
+        Affaire.id == affaire_id
+    ).first()
+    affaire.attribution = None
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireEtape.__tablename__))
 

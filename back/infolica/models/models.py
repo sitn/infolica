@@ -139,6 +139,7 @@ class Affaire(Base):
     resume = Column(Text)
     urgent = Column(Boolean)
     urgent_echeance = Column(Date)
+    attribution = Column(Text)
 
 
 class AffaireEtapeIndex(Base):
@@ -969,6 +970,7 @@ class VAffaire(Base):
     abandon = Column(Boolean)
     urgent = Column(Boolean)
     urgent_echeance = Column(Date)
+    attribution = Column(Text)
 
 
 class VEnvois(Base):
