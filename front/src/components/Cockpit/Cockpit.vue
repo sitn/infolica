@@ -117,6 +117,7 @@ export default {
                         if (i === x.etape_ordre-1) {
                             nom_affaire = x.no_access? x.no_access: String(x.id);
                             nom_affaire += x.urgent_echeance === null? "": " / "+ x.urgent_echeance;
+                            nom_affaire += x.attribution === null? "": " / " + x.attribution;
                         }
                         x["dashboard_" + i.toString()] = nom_affaire;
                     }
