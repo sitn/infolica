@@ -75,7 +75,9 @@ def etapes_new_view(request):
 
     # only when chef_equipe is specified
     if chef_equipe_id:
-        mail_list.append( request.dbsession.query(Operateur).filter(Operateur.id == chef_equipe_id).first().mail )
+        chef_equipe_mail = request.dbsession.query(Operateur).filter(Operateur.id == chef_equipe_id).first().mail
+        if chef_equipe_mail is not None:
+            mail_list.append( chef_equipe_mail )
         # update chef d'équipe in affaire
         affaire = request.dbsession.query(Affaire).filter(Affaire.id == model.affaire_id).first()
         affaire.technicien_id = chef_equipe_id
