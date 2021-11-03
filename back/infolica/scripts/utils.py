@@ -6,7 +6,7 @@ from sqlalchemy.sql.expression import cast
 from infolica.models.models import Numero, AffaireNumero, Role, ReservationNumerosMO, Cadastre, Operateur
 from infolica.scripts.mailer import send_mail
 
-from infolica.scripts.authentication import get_user_functions
+from infolica.scripts.authentication import get_user_functions, check_connected
 
 from shutil import copytree, ignore_patterns
 import json
@@ -247,12 +247,12 @@ class Utils(object):
 
     @classmethod
     def has_permission(cls, request, fonction_name):
-        if not cls.check_connected(request):
+        if not check_connected(request):
             return False
         
         user_functions = get_user_functions(request)
 
-        if fonction_name in user_functions.fonctions:
+        if fonction_name in user_functions['fonctions']:
             return True
 
         return False
