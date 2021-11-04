@@ -4,6 +4,7 @@
 
 <script>
 import { handleException } from '@/services/exceptionsHandler';
+import { logAffaireEtape } from '@/services/helper';
 const numeral = require("numeral");
 
 export default {
@@ -819,6 +820,9 @@ export default {
               if (response && response.data) {
                 this.showEmolumentsDialog = false;
                 this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
+
+                //Log edition facture
+                logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_EMOLUMENTS_ID), "Edition de l'émolument no " + String(this.form_general.id));
   
                 this.postEmolumentAffaireRepartition(this.form_general.id);
                 // refresh emoluments_general_list
@@ -842,6 +846,9 @@ export default {
                 this.showEmolumentsDialog = false;
 
                 this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
+
+                //Log edition facture
+                logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_EMOLUMENTS_ID), "Edition de l'émolument no " + String(emolument_affaire_id));
                 
                 this.postEmolumentAffaireRepartition(emolument_affaire_id);
                 // refresh emoluments_general_list
@@ -910,7 +917,7 @@ export default {
     async putEmolumentsGeneral() {
       let formData = new FormData();
       formData.append("data", JSON.stringify(this.form_general));
-      formData.append("emolument_affaire_id", this.form_general.id)
+      formData.append("emolument_affaire_id", this.form_general.id);
 
       return new Promise((resolve, reject) => {
         this.$http.put(
