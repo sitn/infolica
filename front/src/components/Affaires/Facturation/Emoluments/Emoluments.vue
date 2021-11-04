@@ -19,7 +19,7 @@ export default {
   },
   data: function () {
       return {
-        // clientsFacture_list: [],
+        cadastrationFactureNumerosId_old: [],
         confirmationRemoveDialog: {
           title: "Demande de confirmation",
           msg: "Confirmez-vous la suppression de l'émolument?",
@@ -1088,6 +1088,73 @@ export default {
       items.forEach(x => {
         this.form_general.numeros_id.push(x.numero_id);
       });
+
+
+      // get facture id and check if there are other BF in facture
+      let factures = [];
+      let numeros_id = [];
+      let numeros_id_arr = [];
+      this.factures_repartition.filter(x => {
+        if (x.numeros_id.some(y => this.form_general.numeros_id.includes(y))) {
+          factures.push(x);
+          numeros_id_arr.push(x.numeros_id);
+          numeros_id.push(...x.numeros_id);
+        }
+      });
+      
+      
+      // rajouter/retirer les numéros des biens-fonds
+      let disappear = this.cadastrationFactureNumerosId_old.filter(y => !this.form_general.numeros_id.includes(y)); // left comparison, shows what disappears
+      if (disappear.length > 0) {
+        let tmp = [];
+        numeros_id_arr.filter(y => {
+          if (!y.includes(disappear[0])) {
+            tmp.push(...y);
+          }
+        });
+
+        // update form_general.numeros and form_general.numeros_id
+        this.form_general.numeros = [];
+        tmp.forEach(y => {
+          this.form_general.numeros.push(this.numeros_references.filter(z => z.numero_id === y)[0]);
+        });
+        this.form_general.numeros_id = tmp;
+        numeros_id = tmp;
+
+        // update factures
+        factures = factures.filter(y => !y.numeros_id.includes(disappear[0]));
+      }
+      
+      let appear = this.form_general.numeros_id.filter(y => !this.cadastrationFactureNumerosId_old.includes(y)); // left comparison, shows what appears
+      if (appear.length > 0) {
+        let tmp = [];
+        numeros_id.forEach(x => tmp.push(this.numeros_references.filter(y => y.numero_id === x)[0]));
+        this.form_general.numeros = tmp;
+      }
+
+
+      // update numeros_id_old
+      this.cadastrationFactureNumerosId_old = numeros_id;
+
+
+      // if only one facture selected, set emolument_repartition 100% automatically
+      if (factures.length === 1) {
+        let facture = factures[0];
+        
+        // set facture repartition to 100%
+        this.factures_repartition.forEach(x => {
+          if (x.numeros_id === facture.numeros_id) {
+            x.emolument_repartition = 100;
+          } else {
+            x.emolument_repartition = 0;
+          }
+        });
+
+      } else {
+        // set all facture repartitions to 0, it should be entered manually
+        this.factures_repartition.forEach(x => x.emolument_repartition = 0);
+      }
+
     },
 
     /**
