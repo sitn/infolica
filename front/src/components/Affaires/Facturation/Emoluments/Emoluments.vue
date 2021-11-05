@@ -879,6 +879,7 @@ export default {
       })
     },
 
+
     async postEmolumentsGeneral() {
       let formData = new FormData();
       formData.append("data", JSON.stringify(this.form_general));
