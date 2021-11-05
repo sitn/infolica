@@ -6,7 +6,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import NotesMAJ, Operateur
 from infolica.scripts.utils import Utils
-
+from infolica.scripts.authentication import check_connected
 from datetime import date, datetime
 
 
@@ -16,7 +16,7 @@ def notes_maj_view(request):
     Return all notes_maj
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
     
     lastNoteMaj_id = request.params ["lastNoteMaj_id"] if "lastNoteMaj_id" in request.params else None
@@ -127,7 +127,7 @@ def operateur_notes_maj_update_view(request):
     Update last seen notes_maj in operateur
     """
     # Check authorization
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     # Get operateur_id

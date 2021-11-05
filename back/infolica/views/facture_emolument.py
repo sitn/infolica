@@ -9,7 +9,7 @@ from infolica.models.constant import Constant
 from infolica.models.models import TableauEmoluments, VNumerosAffaires
 from infolica.models.models import EmolumentAffaire, Emolument, EmolumentAffaireRepartition
 from infolica.scripts.utils import Utils
-
+from infolica.scripts.authentication import check_connected
 import json
 
 ###########################################################
@@ -23,7 +23,7 @@ def tableau_emoluments_view(request):
     Return table of emoluments 
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(TableauEmoluments).all()
@@ -36,7 +36,7 @@ def emolument_affaire_view(request):
     Return emolument_affaire
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
@@ -115,7 +115,7 @@ def emolument_view(request):
     Return emoluments of emoluments_affaire 
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     emolument_affaire_id = request.params['emolument_affaire_id'] if 'emolument_affaire_id' in request.params else None
@@ -353,7 +353,7 @@ def emolument_affaire_repartiton_view(request):
     get emolument_affaire_repartiton
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     records = request.dbsession.query(EmolumentAffaireRepartition)

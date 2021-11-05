@@ -6,7 +6,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models import Constant
 from infolica.models.models import ControleMutation
 from infolica.scripts.utils import Utils
-
+from infolica.scripts.authentication import check_connected
 
 @view_config(route_name='controles_mutations', request_method='GET', renderer='json')
 @view_config(route_name='controles_mutations_s', request_method='GET', renderer='json')
@@ -15,7 +15,7 @@ def controles_mutations_view(request):
     Return all controles_mutations
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(ControleMutation).all()
@@ -28,7 +28,7 @@ def controles_mutations_by_id_view(request):
     Return controle_mutation by id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id
@@ -44,7 +44,7 @@ def controles_mutations_by_affaire_id_view(request):
     Return controle_mutation by affaire_id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id

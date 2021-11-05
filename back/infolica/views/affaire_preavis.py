@@ -6,7 +6,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Preavis, PreavisType, VAffairesPreavis
 from infolica.scripts.utils import Utils
-
+from infolica.scripts.authentication import check_connected
 ###########################################################
 # PREAVIS AFFAIRE
 ###########################################################
@@ -28,7 +28,7 @@ def affaire_preavis_view(request):
     GET preavis affaire
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.matchdict['id']
