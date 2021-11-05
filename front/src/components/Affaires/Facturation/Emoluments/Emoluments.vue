@@ -808,72 +808,77 @@ export default {
      * postFormular (main)
      */
     async postEmolument() {
-      // show progressbar
-      this.showProgressBar = true;
-      this.disabled = true;
-
-      if (this.form_general.id) {
-        // update form
-        this.putEmolumentsGeneral().then(response => {
-          if (response && response.data) {
-            this.putEmolumentsDetail(this.form_general.id).then(response => {
-              if (response && response.data) {
-                this.showEmolumentsDialog = false;
-                this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
-
-                //Log edition facture
-                logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_EMOLUMENTS_ID), "Edition de l'émolument no " + String(this.form_general.id));
+      return new Promise((resolve) => {
+        // show progressbar
+        this.showProgressBar = true;
+        this.disabled = true;
   
-                this.postEmolumentAffaireRepartition(this.form_general.id);
-                // refresh emoluments_general_list
-                this.getEmolumentsGeneral();
-                this.$root.$emit("searchAffaireFactures");
-                
+        if (this.form_general.id) {
+          // update form
+          this.putEmolumentsGeneral().then(response => {
+            if (response && response.data) {
+              this.putEmolumentsDetail(this.form_general.id).then(response => {
+                if (response && response.data) {
+                  this.showEmolumentsDialog = false;
+                  this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
+
+                  //Log edition facture
+                  logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_EMOLUMENTS_ID), "Edition de l'émolument no " + String(this.form_general.id));
+
+                  this.postEmolumentAffaireRepartition(this.form_general.id);
+                  // refresh emoluments_general_list
+                  this.getEmolumentsGeneral();
+                  this.$root.$emit("searchAffaireFactures");
+                  resolve(this.form_general.id);
+
+                  // hide progressbar
+                  this.showProgressBar = false;
+                  this.disabled = false;
+                }
+              }).catch(err => handleException(err, this));
+            }
+          }).catch(err => handleException(err, this));
+        } else {
+          // create form
+          this.postEmolumentsGeneral().then(response => {
+            if (response && response.data) {
+              let emolument_affaire_id = response.data.emolument_affaire_id;
+              this.postEmolumentsDetail(emolument_affaire_id).then(response => {
+                if (response && response.data) {
+                  this.showEmolumentsDialog = false;
+  
+                  this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
+
+                  //Log edition facture
+                  logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_EMOLUMENTS_ID), "Edition de l'émolument no " + String(emolument_affaire_id));
+                  
+                  this.postEmolumentAffaireRepartition(emolument_affaire_id);
+                  // refresh emoluments_general_list
+                  this.getEmolumentsGeneral();
+                  this.$root.$emit("searchAffaireFactures");
+                  resolve(emolument_affaire_id);
+
+                  // hide progressbar
+                  this.showProgressBar = false;
+                  this.disabled = false;
+                }
+              }).catch(err => {
+                handleException(err, this);
                 // hide progressbar
                 this.showProgressBar = false;
                 this.disabled = false;
-              }
-            }).catch(err => handleException(err, this));
-          }
-        }).catch(err => handleException(err, this));
-      } else {
-        // create form
-        this.postEmolumentsGeneral().then(response => {
-          if (response && response.data) {
-            let emolument_affaire_id = response.data.emolument_affaire_id;
-            this.postEmolumentsDetail(emolument_affaire_id).then(response => {
-              if (response && response.data) {
-                this.showEmolumentsDialog = false;
-
-                this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
-
-                //Log edition facture
-                logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_EMOLUMENTS_ID), "Edition de l'émolument no " + String(emolument_affaire_id));
-                
-                this.postEmolumentAffaireRepartition(emolument_affaire_id);
-                // refresh emoluments_general_list
-                this.getEmolumentsGeneral();
-                this.$root.$emit("searchAffaireFactures");
-                
-                // hide progressbar
-                this.showProgressBar = false;
-                this.disabled = false;
-              }
-            }).catch(err => {
-              handleException(err, this);
-              // hide progressbar
-              this.showProgressBar = false;
-              this.disabled = false;
-            });
-          }
-        }).catch(err => {
-          handleException(err, this);
-          // hide progressbar
-          this.showProgressBar = false;
-          this.disabled = false;
-        });
-      }
+              });
+            }
+          }).catch(err => {
+            handleException(err, this);
+            // hide progressbar
+            this.showProgressBar = false;
+            this.disabled = false;
+          });
+        }
+      })
     },
+
 
     async postEmolumentsGeneral() {
       let formData = new FormData();
@@ -1366,35 +1371,39 @@ export default {
     /**
      * Save factures relative to emolument repartitions
      */
-    saveToFactures() {
-      let promises = [];
-      let c = 0;
-      let facture_;
-      this.factures_repartition.forEach(x => {
-        if (Number(x.emolument_repartition) > 0) {
-          promises.push(this.putFacture(x));
-          
-          if (c === 0) {
-            facture_ = x;
-          }
-          c += 1;
-        }
-      });
-      
-      let successMessage = "La facture a été mise à jour avec succès."
-      if (promises.length > 1) {
-        successMessage = "Les factures ont été mises à jour avec succès."
-      }
+    async saveToFactures() {
+      this.postEmolument().then((response_id) => {
+        this.form_general.id = response_id;
 
-      Promise.all(promises).then(() => {
-        this.showEmolumentsDialog = false;
-        this.fixEmolumentDefinitively();
-        this.$root.$emit("searchAffaireFactures");
-        this.$root.$emit("ShowMessage", successMessage);
-        if (c === 1) {
-          this.$root.$emit("openFacture", facture_);
+        let promises = [];
+        let c = 0;
+        let facture_;
+        this.factures_repartition.forEach(x => {
+          if (Number(x.emolument_repartition) > 0) {
+            promises.push(this.putFacture(x));
+            
+            if (c === 0) {
+              facture_ = x;
+            }
+            c += 1;
+          }
+        });
+        
+        let successMessage = "La facture a été mise à jour avec succès."
+        if (promises.length > 1) {
+          successMessage = "Les factures ont été mises à jour avec succès."
         }
-      }).catch(err => handleException(err, this));
+  
+        Promise.all(promises).then(() => {
+          this.showEmolumentsDialog = false;
+          this.fixEmolumentDefinitively();
+          this.$root.$emit("searchAffaireFactures");
+          this.$root.$emit("ShowMessage", successMessage);
+          if (c === 1) {
+            this.$root.$emit("openFacture", facture_);
+          }
+        }).catch(err => handleException(err, this));
+      });
     },
 
     /**

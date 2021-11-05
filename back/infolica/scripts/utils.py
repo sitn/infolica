@@ -297,10 +297,15 @@ class Utils(object):
         operateur_affaire_urgente = request.registry.settings['operateur_affaire_urgente'].split(',')
         for op_id in operateur_affaire_urgente:
             op_mail = request.dbsession.query(Operateur).filter(Operateur.id == op_id).first().mail
-            mail_list.append(op_mail)
+            if op_mail is not None:
+                mail_list.append(op_mail)
         # Add technicien + creator of affaire
         technicien = request.dbsession.query(Operateur).filter(Operateur.id == model.technicien_id).first()
-        mail_list.append(technicien.mail)
+        if technicien.mail is not None:
+            mail_list.append(technicien.mail)
+
+        if len(mail_list) == 0:
+            return
 
         subject = "Infolica - Affaire urgente"
         cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == model.cadastre_id).first().nom
