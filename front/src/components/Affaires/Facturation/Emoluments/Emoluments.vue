@@ -4,6 +4,7 @@
 
 <script>
 import { handleException } from '@/services/exceptionsHandler';
+import { logAffaireEtape } from '@/services/helper';
 const numeral = require("numeral");
 
 export default {
@@ -19,7 +20,7 @@ export default {
   },
   data: function () {
       return {
-        // clientsFacture_list: [],
+        cadastrationFactureNumerosId_old: [],
         confirmationRemoveDialog: {
           title: "Demande de confirmation",
           msg: "Confirmez-vous la suppression de l'émolument?",
@@ -820,7 +821,10 @@ export default {
                 if (response && response.data) {
                   this.showEmolumentsDialog = false;
                   this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
-    
+
+                  //Log edition facture
+                  logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_EMOLUMENTS_ID), "Edition de l'émolument no " + String(this.form_general.id));
+
                   this.postEmolumentAffaireRepartition(this.form_general.id);
                   // refresh emoluments_general_list
                   this.getEmolumentsGeneral();
@@ -844,6 +848,9 @@ export default {
                   this.showEmolumentsDialog = false;
   
                   this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
+
+                  //Log edition facture
+                  logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_EMOLUMENTS_ID), "Edition de l'émolument no " + String(emolument_affaire_id));
                   
                   this.postEmolumentAffaireRepartition(emolument_affaire_id);
                   // refresh emoluments_general_list
@@ -914,7 +921,7 @@ export default {
     async putEmolumentsGeneral() {
       let formData = new FormData();
       formData.append("data", JSON.stringify(this.form_general));
-      formData.append("emolument_affaire_id", this.form_general.id)
+      formData.append("emolument_affaire_id", this.form_general.id);
 
       return new Promise((resolve, reject) => {
         this.$http.put(
@@ -1092,6 +1099,73 @@ export default {
       items.forEach(x => {
         this.form_general.numeros_id.push(x.numero_id);
       });
+
+
+      // get facture id and check if there are other BF in facture
+      let factures = [];
+      let numeros_id = [];
+      let numeros_id_arr = [];
+      this.factures_repartition.filter(x => {
+        if (x.numeros_id.some(y => this.form_general.numeros_id.includes(y))) {
+          factures.push(x);
+          numeros_id_arr.push(x.numeros_id);
+          numeros_id.push(...x.numeros_id);
+        }
+      });
+      
+      
+      // rajouter/retirer les numéros des biens-fonds
+      let disappear = this.cadastrationFactureNumerosId_old.filter(y => !this.form_general.numeros_id.includes(y)); // left comparison, shows what disappears
+      if (disappear.length > 0) {
+        let tmp = [];
+        numeros_id_arr.filter(y => {
+          if (!y.includes(disappear[0])) {
+            tmp.push(...y);
+          }
+        });
+
+        // update form_general.numeros and form_general.numeros_id
+        this.form_general.numeros = [];
+        tmp.forEach(y => {
+          this.form_general.numeros.push(this.numeros_references.filter(z => z.numero_id === y)[0]);
+        });
+        this.form_general.numeros_id = tmp;
+        numeros_id = tmp;
+
+        // update factures
+        factures = factures.filter(y => !y.numeros_id.includes(disappear[0]));
+      }
+      
+      let appear = this.form_general.numeros_id.filter(y => !this.cadastrationFactureNumerosId_old.includes(y)); // left comparison, shows what appears
+      if (appear.length > 0) {
+        let tmp = [];
+        numeros_id.forEach(x => tmp.push(this.numeros_references.filter(y => y.numero_id === x)[0]));
+        this.form_general.numeros = tmp;
+      }
+
+
+      // update numeros_id_old
+      this.cadastrationFactureNumerosId_old = numeros_id;
+
+
+      // if only one facture selected, set emolument_repartition 100% automatically
+      if (factures.length === 1) {
+        let facture = factures[0];
+        
+        // set facture repartition to 100%
+        this.factures_repartition.forEach(x => {
+          if (x.numeros_id === facture.numeros_id) {
+            x.emolument_repartition = 100;
+          } else {
+            x.emolument_repartition = 0;
+          }
+        });
+
+      } else {
+        // set all facture repartitions to 0, it should be entered manually
+        this.factures_repartition.forEach(x => x.emolument_repartition = 0);
+      }
+
     },
 
     /**

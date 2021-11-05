@@ -7,7 +7,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models.models import Affaire, GeosBalance, Numero, NumeroEtatHisto, AffaireNumero
 from infolica.scripts.utils import Utils
 from infolica.scripts.mailer import send_mail
-
+from infolica.scripts.authentication import check_connected
 import os
 import json
 from docx.api import Document
@@ -20,7 +20,7 @@ def balance_generate_table_view(request):
     Generate table balance 
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     send_mail(request, [request.registry.settings["infolica_balance_mail"]], "Génération Balance Infolica\nMail généré automatiquement", "Infolica-Balance")
@@ -33,7 +33,7 @@ def balance_mutation_names_view(request):
     Get balance by mutation names
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(GeosBalance.mutation).group_by(GeosBalance.mutation).all()
@@ -48,7 +48,7 @@ def balance_view(request):
     Return balance ef affaire from table GEOS
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
     
     mutation_name = request.params["mutation_name"] if "mutation_name" in request.params else None
@@ -139,7 +139,7 @@ def get_balance_files_view(request):
     Return balance
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.params["affaire_id"] if 'affaire_id' in request.params else None
@@ -165,7 +165,7 @@ def balance_from_file_view(request):
     Return balance
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     input_file = request.params["filepath"] if 'filepath' in request.params else None

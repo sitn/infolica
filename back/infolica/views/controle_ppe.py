@@ -6,6 +6,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models import Constant
 from infolica.models.models import ControlePPE
 from infolica.scripts.utils import Utils
+from infolica.scripts.authentication import check_connected
 
 
 @view_config(route_name='controles_ppe', request_method='GET', renderer='json')
@@ -15,7 +16,7 @@ def controles_ppe_view(request):
     Return all controles_ppe
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(ControlePPE).all()
@@ -28,7 +29,7 @@ def controles_ppe_by_id_view(request):
     Return controles_ppe by id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id
@@ -44,7 +45,7 @@ def controles_ppe_by_affaire_id_view(request):
     Return controles_ppe by affaire_id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id

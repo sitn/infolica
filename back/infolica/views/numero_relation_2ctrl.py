@@ -4,7 +4,7 @@ import pyramid.httpexceptions as exc
 
 from infolica.models.models import VNumerosRelations
 from infolica.scripts.utils import Utils
-
+from infolica.scripts.authentication import check_connected
 ###########################################################
 # NUMERO ETAT HISTO
 ###########################################################
@@ -16,7 +16,7 @@ def numero_base_relations_view(request):
     Get new numero_base_relations
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     numero_id = request.matchdict["id"]
@@ -35,7 +35,7 @@ def numero_associe_relations_view(request):
     Get new numero_associe_relations
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     numero_id = request.matchdict["id"]

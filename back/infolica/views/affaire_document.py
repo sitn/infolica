@@ -3,14 +3,11 @@ from pyramid.view import view_config
 from pyramid.response import FileResponse
 import pyramid.httpexceptions as exc
 
-from infolica.exceptions.custom_error import CustomError
-from infolica.models.constant import Constant
 from infolica.scripts.utils import Utils
 from infolica.models.models import Affaire
-
+from infolica.scripts.authentication import check_connected
 import os
-import shutil
-import subprocess
+
 from datetime import datetime
 
 
@@ -24,7 +21,7 @@ def affaire_dossier_view(request):
     GET documents folder
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_dossier = request.registry.settings["affaires_directory"]
@@ -47,7 +44,7 @@ def affaire_documents_view(request):
     GET documents affaire
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.matchdict['id']
@@ -80,7 +77,7 @@ def download_affaire_document_view(request):
     Download document
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaires_directory = request.registry.settings['affaires_directory']

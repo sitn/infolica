@@ -9,7 +9,7 @@ from infolica.models.constant import Constant
 from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffaires, VAffaire, EtapeMailer, Operateur, Affaire
 from infolica.scripts.utils import Utils
 from infolica.scripts.mailer import send_mail
-
+from infolica.scripts.authentication import check_connected
 import os
 
 ###########################################################
@@ -22,7 +22,7 @@ def etapes_index_view(request):
     GET etapes index
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     records = request.dbsession.query(AffaireEtapeIndex).filter(
@@ -37,7 +37,7 @@ def affaires_etapes_view(request):
     GET etapes affaire
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.matchdict['id']
@@ -58,7 +58,7 @@ def etapes_new_view(request):
     POST etapes affaire
     """
     # Check authorization
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     chef_equipe_id = request.params['chef_equipe_id'] if 'chef_equipe_id' in request.params else None

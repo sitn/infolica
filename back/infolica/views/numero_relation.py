@@ -6,7 +6,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import NumeroRelation, VNumerosRelations
 from infolica.scripts.utils import Utils
-
+from infolica.scripts.authentication import check_connected
 from sqlalchemy import and_
 
 
@@ -17,7 +17,7 @@ def numeros_relations_view(request):
     Return all numeros_relations
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(VNumerosRelations).all()
@@ -30,7 +30,7 @@ def numeros_relation_by_affaire_id_view(request):
     Return Numeros_relations
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.matchdict['id']
@@ -47,7 +47,7 @@ def numeros_relation_by_affaire_id_view(request):
 # @view_config(route_name='numeros_relations_by_numeroBase_s', request_method='POST', renderer='json')
 # def numeros_relations_by_numeroBase_view(request):
 #     # Check connected
-#     if not Utils.check_connected(request):
+#     if not check_connected(request):
 #         raise exc.HTTPForbidden()
 
 #     # Récupérer les indices des états projet et vigueur de la config

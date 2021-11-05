@@ -3,9 +3,10 @@ from datetime import date, datetime
 from sqlalchemy import func, and_, desc
 from sqlalchemy import String
 from sqlalchemy.sql.expression import cast
-from infolica.models.models import Numero, AffaireNumero, Fonction, Role, FonctionRole, ReservationNumerosMO, Cadastre, Operateur
-from infolica.scripts.ldap_query import LDAPQuery
+from infolica.models.models import Numero, AffaireNumero, Role, ReservationNumerosMO, Cadastre, Operateur
 from infolica.scripts.mailer import send_mail
+
+from infolica.scripts.authentication import get_user_functions, check_connected
 
 from shutil import copytree, ignore_patterns
 import json
@@ -232,58 +233,29 @@ class Utils(object):
         """
         results = []
 
-        query = request.dbsession.query(Fonction, Role, FonctionRole).filter(
-            Role.id == role_id).filter(Role.id == FonctionRole.role_id).filter(
-            Fonction.id == FonctionRole.fonction_id).all()
+        role = request.dbsession.query(Role).get(role_id)
 
-        for f, r, fr in query:
-            one_item = {}
-            one_item["id"] = f.id
-            one_item["nom"] = f.nom
+        functions = role.fonctions
 
-            results.append(one_item)
-
-        return results
-
-    @classmethod
-    def get_fonctions_roles_by_name(cls, request, role_name):
-        results = []
-
-        query = request.dbsession.query(Fonction, Role, FonctionRole).filter(
-            Role.nom == role_name).filter(Role.id == FonctionRole.role_id).filter(
-            Fonction.id == FonctionRole.fonction_id).all()
-
-        for f, r, fr in query:
-            one_item = {}
-            one_item["id"] = f.id
-            one_item["nom"] = f.nom
-
-            results.append(one_item)
+        for function in functions:
+             results.append({
+                'id': function.id,
+                'nom': function.nom
+            })
 
         return results
 
     @classmethod
     def has_permission(cls, request, fonction_name):
-        if not cls.check_connected(request):
+        if not check_connected(request):
             return False
+        
+        user_functions = get_user_functions(request)
 
-        user_dn = request.authenticated_userid
+        if fonction_name in user_functions['fonctions']:
+            return True
 
-        role_name = LDAPQuery.get_user_group_by_dn(request, user_dn)
-
-        fonctions = cls.get_fonctions_roles_by_name(request, role_name)
-        fonctions_names = [x for x in fonctions if x["nom"] == fonction_name]
-        return len(fonctions_names) > 0
-
-    @classmethod
-    def check_connected(cls, request):
-
-        user = request.authenticated_userid
-
-        if user is None:
-            return False
-
-        return True
+        return False
 
     @classmethod
     def get_role_id_by_name(cls, request, role_name):
@@ -294,10 +266,6 @@ class Utils(object):
             return query.id
 
         return None
-
-    @classmethod
-    def get_nouveaux_operateurs_ad(cls, request):
-        return LDAPQuery.get_infolica_users(request)
 
     @classmethod
     def create_affaire_folder(cls, request, affaire_folder):
