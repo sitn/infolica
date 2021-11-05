@@ -1075,7 +1075,9 @@ export default {
             this.form_general.numeros = [];
             if (this.form_general.numeros_id.length > 0) {
               this.form_general.numeros_id.forEach(x => {
-                this.form_general.numeros.push(this.numeros_references.filter(y => y.numero_id === x)[0]);
+                if (this.numeros_references.length > 0) {
+                  this.form_general.numeros.push(this.numeros_references.filter(y => y.numero_id === x)[0]);
+                }
               });
             }
           }
@@ -1128,7 +1130,9 @@ export default {
         // update form_general.numeros and form_general.numeros_id
         this.form_general.numeros = [];
         tmp.forEach(y => {
-          this.form_general.numeros.push(this.numeros_references.filter(z => z.numero_id === y)[0]);
+          if (this.numeros_references.length > 0) {
+            this.form_general.numeros.push(this.numeros_references.filter(z => z.numero_id === y)[0]);
+          }
         });
         this.form_general.numeros_id = tmp;
         numeros_id = tmp;
@@ -1140,7 +1144,9 @@ export default {
       let appear = this.form_general.numeros_id.filter(y => !this.cadastrationFactureNumerosId_old.includes(y)); // left comparison, shows what appears
       if (appear.length > 0) {
         let tmp = [];
-        numeros_id.forEach(x => tmp.push(this.numeros_references.filter(y => y.numero_id === x)[0]));
+        if (this.numeros_references.length > 0) {
+          numeros_id.forEach(x => tmp.push(this.numeros_references.filter(y => y.numero_id === x)[0]));
+        }
         this.form_general.numeros = tmp;
       }
 
