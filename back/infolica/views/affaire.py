@@ -18,6 +18,7 @@ import os
 import json
 from datetime import datetime, timedelta
 from docxtpl import DocxTemplate, RichText
+import re
 
 ###########################################################
 # AFFAIRE
@@ -585,3 +586,38 @@ def affaire_spatial(request):
         counter += 1
 
     return affaires
+
+
+@view_config(route_name="guichet_rf_saisie_pm", request_method="GET", renderer="json")
+def guichet_rf_saisie_pm_view(request):
+    """
+    Get date_envoi for guichet_rf saisie_pm
+    """
+    affaire_id = request.params['infolica_affaire_id'] if "infolica_affaire_id" in request.params else None
+
+    if affaire_id is None:
+        raise exc.HTTPBadRequest(detail="Aucune référence à l'affaire donnée")
+
+    # recherche de l'affaire
+    if affaire_id.isnumeric():
+        affaire = request.dbsession.query(VAffaire).filter(
+            VAffaire.id == affaire_id
+        ).first()
+    else:
+        # tester si le nom entré est dans l'ancien format N_1234_0
+        affaire_id2 = re.split('(\d+)', affaire_id)
+        affaire_id2 = affaire_id2[0] + "_" + affaire_id2[1] + "_0"
+
+        affaire = request.dbsession.query(VAffaire).filter(
+            VAffaire.no_access == affaire_id2
+        ).first()
+
+    if affaire is None:
+        raise exc.HTTPServerError(detail="Aucune affaire trouvée avec la référence donnée : infolica_affaire_id = " + affaire_id)
+
+    data_pm = {
+        'infolica_affaire_id': affaire.id,
+        'plan_date': datetime.strftime(affaire.date_envoi, "%d.%m.%Y")
+    }
+
+    return data_pm

@@ -183,3 +183,5 @@ def includeme(config):
     config.add_route('notes_maj', '/infolica/api/notes_maj')
     config.add_route('version', '/infolica/api/version')
     config.add_route('operateur_notes_maj', '/infolica/api/operateur_notes_maj')
+    #External ressources
+    config.add_route('guichet_rf_saisie_pm', '/infolica/api/guichet_rf_saisie_pm')
