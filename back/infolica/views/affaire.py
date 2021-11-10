@@ -12,7 +12,7 @@ from infolica.models.models import AffaireEtape
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, func
 
 import os
 import json
@@ -609,7 +609,7 @@ def guichet_rf_saisie_pm_view(request):
         affaire_id2 = affaire_id2[0] + "_" + affaire_id2[1] + "_0"
 
         affaire = request.dbsession.query(VAffaire).filter(
-            VAffaire.no_access == affaire_id2
+            func.lower(VAffaire.no_access) == func.lower(affaire_id2)
         ).first()
 
     if affaire is None:
