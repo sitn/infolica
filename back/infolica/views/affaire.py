@@ -12,7 +12,7 @@ from infolica.models.models import AffaireEtape
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, func
 
 import os
 import json
@@ -596,8 +596,17 @@ def guichet_rf_saisie_pm_view(request):
     affaire_id = request.params['infolica_affaire_id'] if "infolica_affaire_id" in request.params else None
 
     if affaire_id is None:
-        raise exc.HTTPBadRequest(detail="Aucune référence à l'affaire donnée")
+        result = {
+            'search_term': None,
+            'infolica_affaire_id': None,
+            'infolica_affaire_nom': None,
+            'plan_date': None,
+            'status': 'error',
+            'detail': "Le numéro/nom de l'affaire est manquant dans la requête"
+        }
+        return result
 
+    affaire = None
     # recherche de l'affaire
     if affaire_id.isnumeric():
         affaire = request.dbsession.query(VAffaire).filter(
@@ -606,18 +615,32 @@ def guichet_rf_saisie_pm_view(request):
     else:
         # tester si le nom entré est dans l'ancien format N_1234_0
         affaire_id2 = re.split('(\d+)', affaire_id)
-        affaire_id2 = affaire_id2[0] + "_" + affaire_id2[1] + "_0"
+        if len(affaire_id2) == 2 or (len(affaire_id2) == 3 and affaire_id2[2] == ''):
+            affaire_id2 = affaire_id2[0] + "_" + affaire_id2[1] + "_0"
 
-        affaire = request.dbsession.query(VAffaire).filter(
-            VAffaire.no_access == affaire_id2
-        ).first()
+            affaire = request.dbsession.query(VAffaire).filter(
+                func.lower(VAffaire.no_access) == func.lower(affaire_id2)
+            ).first()
+    
 
-    if affaire is None:
-        raise exc.HTTPServerError(detail="Aucune affaire trouvée avec la référence donnée : infolica_affaire_id = " + affaire_id)
+    if affaire is None :
+        result = {
+            'search_term': affaire_id,
+            'infolica_affaire_id': None,
+            'infolica_affaire_nom': None,
+            'plan_date': None,
+            'status': 'error',
+            'detail': "Aucune affaire trouvée avec la référence donnée : infolica_affaire_id = " + affaire_id
+        }
 
-    data_pm = {
-        'infolica_affaire_id': affaire.id,
-        'plan_date': datetime.strftime(affaire.date_envoi, "%d.%m.%Y")
-    }
+    else:
+        result = {
+            'search_term': affaire_id,
+            'infolica_affaire_id': affaire.id,
+            'infolica_affaire_nom': affaire.no_access,
+            'plan_date': datetime.strftime(affaire.date_envoi, "%d.%m.%Y"),
+            'status': 'success',
+            'detail': 'Affaire trouvée'
+        }
 
-    return data_pm
+    return result
