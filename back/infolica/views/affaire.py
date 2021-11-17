@@ -588,7 +588,7 @@ def affaire_spatial(request):
     return affaires
 
 
-@view_config(route_name="guichet_rf_saisie_pm", request_method="GET", renderer='json')
+@view_config(route_name="guichet_rf_saisie_pm", request_method="GET", renderer='jsonp')
 def guichet_rf_saisie_pm_view(request):
     """
     Get date_envoi for guichet_rf saisie_pm
