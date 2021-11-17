@@ -19,7 +19,7 @@
             <md-card-expand-content>
                 <md-card-content v-bind:class="{ disabledElement: !permission.editAffaireAllowed }">
                     
-                    <p v-if="controleMutation.date" style="margin-top: 0px;">Dernier contrôle effectué le {{controleMutation.date}} par {{controleMutation.visa.nom}}</p>
+                    <p v-if="controleMutation.date" style="margin-top: 0px;">Dernier contrôle effectué le {{controleMutation.date}} par {{controleMutation.operateur_prenom_nom}}</p>
                     
                     <div v-if="controleMutation.id">
                         <div class="controleMutationFormParent">

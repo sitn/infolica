@@ -4,7 +4,7 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {logAffaireEtape} from '@/services/helper';
+import {logAffaireEtape, stringifyAutocomplete2, getOperateurs} from '@/services/helper';
 
 const moment = require("moment");
 
@@ -19,7 +19,6 @@ export default {
     confirmDialogActive: false,
     confirmUpdateAffaireDateValidation: false,
     needToCreateSuiviMandat: false,
-    operateurs_liste: [],
     showModifiedSuiviMandat: false,
     showNewSuiviMandatBtn: false,
     suiviMandat: {}
@@ -74,23 +73,10 @@ export default {
      */
     async searchOperateurs() {
       return new Promise((resolve, reject) => {
-        this.$http
-          .get(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
-            {
-              withCredentials: true,
-              headers: { Accept: "application/json" }
-            }
-          )
+        getOperateurs()
           .then(response => {
             if (response.data) {
-              this.operateurs_liste = response.data;
-              this.chefsProjetMO_liste = response.data.map(x => ({
-                id: x.id,
-                nom: [x.prenom, x.nom].join(" "),
-                toLowerCase: () => [x.nom, x.prenom].join(" ").toLowerCase(),
-                toString: () => [x.nom, x.prenom].join(" ")
-              }));
+              this.chefsProjetMO_liste = stringifyAutocomplete2(response.data, "prenom_nom", null, "prenom_nom");
               
               resolve(response);
             }

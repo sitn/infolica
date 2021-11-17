@@ -8,7 +8,9 @@ import {stringifyAutocomplete,
         getClients,
         filterList,
         getDocument,
-        getCurrentUserRoleId} from '@/services/helper';
+        getCurrentUserRoleId,
+        getOperateurs,
+        stringifyAutocomplete2} from '@/services/helper';
 
 const moment = require("moment");
 
@@ -182,27 +184,12 @@ export default {
      * Initialiser la liste des opérateurs
      */
     async initOperateursListe() {
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
-        {
-          withCredentials: true,
-          headers: {Accept: "application/json"}
-        }
-      ).then(response => {
+      getOperateurs()
+      .then(response => {
         if (response && response.data) {
-          this.operateursListe = response.data
-          .map(x => ({
-            id: x.id,
-            nom: [x.prenom, x.nom].filter(Boolean).join(" ")
-          }))
-          .map(x => ({
-            id: x.id,
-            nom: x.nom,
-            toLowerCase: () => x.nom.toLowerCase(),
-            toString: () => x.nom.toString()
-          }));
+          this.operateursListe = stringifyAutocomplete2(response.data, "prenom_nom", null, "prenom_nom");
         }
-      }).catch(err => handleException(err, this))
+      }).catch(err => handleException(err, this));
     },
 
     /**

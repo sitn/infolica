@@ -13,7 +13,7 @@
                         <label for="operateur">Opérateur·rice</label>
                         <md-select v-model="selectedOperateur_id" name="operateur" id="operateur" @md-selected="getNumerosDifferes()" md-dense>
                             <md-option :value="-1">Tous</md-option>
-                            <md-option v-for="item in operateurs" :value="item.id">{{ item.nom }}</md-option>
+                            <md-option v-for="item in operateurs" :value="item.id">{{ item.prenom_nom }}</md-option>
                         </md-select>
                     </md-field>
                 </div>
