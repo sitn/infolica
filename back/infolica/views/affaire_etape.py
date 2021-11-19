@@ -6,7 +6,8 @@ from sqlalchemy import and_
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffaires, VAffaire, EtapeMailer, Operateur, Affaire
+from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffaires, VAffaire
+from infolica.models.models import EtapeMailer, Operateur, Affaire, Facture, Client
 from infolica.scripts.utils import Utils
 from infolica.scripts.mailer import send_mail
 from infolica.scripts.authentication import check_connected
@@ -133,6 +134,46 @@ def etapes_new_view(request):
         Affaire.id == affaire_id
     ).first()
     affaire.attribution = None
+
+
+    # If last step was treatment & client_facture is outside of canton and has no SAP number, send mail to secretariat
+    # get list of done steps
+    lastSteps = request.dbsession.query(VEtapesAffaires).filter(
+        and_(
+            VEtapesAffaires.affaire_id == affaire_id,
+            VEtapesAffaires.etape_priorite == int(request.registry.settings['affaire_etape_priorite_1_id'])
+        )
+    ).order_by(VEtapesAffaires.next_datetime.desc()).all()
+
+    affaire = request.dbsession.query(VAffaire).filter(VAffaire.id == model.affaire_id).first()
+    affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
+
+    etape_traitement_id = int(request.registry.settings['affaire_etape_traitement_id'])
+
+    if (len(lastSteps) > 1 and lastSteps[1].etape_id == etape_traitement_id):
+        # get clients_facture
+        clients_factures_id = request.dbsession.query(Facture.client_id).filter(Facture.affaire_id == affaire_id).all()
+        clients_factures_id = [cl_id[0] for cl_id in clients_factures_id]
+        clients_factures = request.dbsession.query(Client).filter(Client.id.in_(clients_factures_id)).all()
+
+        # get npa from canton de Neuchâtel
+        parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        with open(os.path.join(parent_dir, "static", "npa_NE.txt"), "r") as f:
+            lines = f.readlines()
+            npa_NE = [int(line.rstrip()) for line in lines]
+
+        for cl in clients_factures:
+            if cl.no_sap is None and cl.npa not in npa_NE:
+                operateur_secretariat = request.registry.settings["operateur_secretariat"].split(",")
+                mail_list = request.dbsession.query(Operateur.mail).filter(Operateur.id.in_(operateur_secretariat)).all()
+                mail_list = [mail[0] for mail in mail_list]
+
+                html = "<h3>Vérification de client</h3>"
+                html += "<p>Un client hors canton et sans numéro SAP a été référencé dans la facturation de l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire.id)) + "'>" + str(affaire.id) + affaire_nom + "</a></b>.</p>"
+                html += "<ul><li>" + ", ".join([" ".join([cl.titre, cl.prenom, cl.nom]), cl.adresse, " ".join([cl.npa, cl.localite])]) + "</li></ul>"
+                html += "<p>Merci d'entreprendre les démarches nécessaires pour corriger le client ou pour demande sa création dans SAP.</p>"
+                send_mail(request, mail_list, "", "Infolica - Client hors canton à vérifier", html=html)
+
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireEtape.__tablename__))
 
