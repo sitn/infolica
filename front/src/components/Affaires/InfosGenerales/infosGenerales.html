@@ -25,7 +25,7 @@
             <div class="md-layout md-gutter ">
                 <div class="md-layout-item md-size-50 md-small-size-100">
                     <md-field>
-                        <label>Opérateur</label>
+                        <label>Opérateur·rice</label>
                         <md-input v-model="affaire.technicien" readonly>
                         </md-input>
                     </md-field>
@@ -61,7 +61,22 @@
                     </md-field>
                 </div>
             </div>
-
+            
+            <div class="md-layout md-gutter" style="border: 2px dotted red; margin: 0px 0px 15px 0px;" v-if="!infoGenReadonly && !affaireUrgente.disabled">
+                <div class="md-layout-item md-medium-size-100 md-size-25">
+                    <md-checkbox v-model="affaireUrgente.urgent" style="margin-top: 21px;" :disabled="infoGenReadonly">Affaire urgente</md-checkbox>
+                </div>
+                <div class="md-layout-item md-medium-size-100 md-size-25" v-if="!infoGenReadonly">
+                    <md-datepicker v-if="affaireUrgente.urgent" md-immediately style="margin: 0px;" v-model="affaireUrgente.urgent_echeance" @md-closed="onSetUrgentEcheance">
+                        <label>Échéance</label>
+                    </md-datepicker>
+                </div>
+                <div v-if="!infoGenReadonly && affaireUrgente.urgent" class="md-layout-item md-medium-size-100 md-size-50">
+                    <p style="margin: 5px;">
+                        <em>En cliquant sur "Enregistrer", un e-mail automatique sera envoyé au·à la chef·fe de projet, au·à la préposé·e aux servitudes et au·à la coordinateur·rice de projets.</em>
+                    </p>
+                </div>
+            </div>
             
             <div id="clients" v-if="affaire.type_id !== typesAffaires_conf.cadastration">
                 <div  v-if="infoGenReadonly">
@@ -142,10 +157,9 @@
                                 </md-autocomplete>
                             </div>
                             <div class="md-layout-item md-size-50 md-small-size-100"  v-if="form.client_commande.type_id === clientTypes_conf.moral">
-                                <md-field>
+                                <md-autocomplete v-model="form.client_commande_complement" :md-options="clientContactsListe" @md-opened="getClientContact(form.client_commande)" md-dense>
                                     <label>Personne de contact</label>
-                                    <md-input v-model="form.client_commande_complement"></md-input>
-                                </md-field>
+                                </md-autocomplete>
                             </div>
                         </md-card-content>
                     </md-card>
@@ -164,10 +178,9 @@
                                 </md-autocomplete>
                             </div>
                             <div class="md-layout-item md-size-50 md-small-size-100" v-if="form.client_envoi.type_id === clientTypes_conf.moral">
-                                <md-field>
+                                <md-autocomplete v-model="form.client_envoi_complement" :md-options="clientContactsListe" @md-opened="getClientContact(form.client_envoi)" md-dense>
                                     <label>À l'attention de...</label>
-                                    <md-input v-model="form.client_envoi_complement"></md-input>
-                                </md-field>
+                                </md-autocomplete>
                             </div>
                         </md-card-content>
                     </md-card>

@@ -12,8 +12,9 @@ export default {
   name: "Matdiff_secr",
   data: () => {
     return {
-      numerosDifferes: [{}],
+      numerosDifferes: [],
       selectedItem: [],
+      plural: "",
       showConfirmationDialog: false,
     }
   },
@@ -31,9 +32,15 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-          let tmp = JSON.parse(response.data);
+          let tmp = response.data;
           tmp.forEach(x => x.numero = x.numero.join(', '));
           this.numerosDifferes = tmp;
+
+          if (tmp.length > 1) {
+            this.plural = "s";
+          } else {
+            this.plural = "";
+          }
         }
       }).catch(err => handleException(err, this));
     },
@@ -64,7 +71,8 @@ export default {
         "ANNEE": new Date().getFullYear(),
         "CADASTRE": this.selectedItem.cadastre,
         "BIENS_FONDS": this.selectedItem.numero,
-        "DATE": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT)
+        "DATE": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+        "REFERENCE_REQUISITION": this.selectedItem.diff_req_ref,
       }));
 
       getDocument(formData).then(response => {

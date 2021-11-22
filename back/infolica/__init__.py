@@ -2,11 +2,7 @@ from pyramid.config import Configurator
 from pyramid.events import NewRequest
 from papyrus.renderers import GeoJSON
 
-#Authentification
-from pyramid_ldap3 import (
-    get_ldap_connector,
-    groupfinder,
-)
+from pyramid.renderers import JSONP
 
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -21,7 +17,7 @@ def main(global_config, **settings):
         config.include('pyramid_ldap3')
         config.scan()
         config.add_subscriber(add_cors_headers_response_callback, NewRequest)
-
+        config.add_renderer('jsonp', JSONP(param_name='callback'))
         # Add the "geojson" renderer
         config.add_renderer("geojson", GeoJSON())
 
@@ -29,7 +25,6 @@ def main(global_config, **settings):
             AuthTktAuthenticationPolicy(
                 settings["authtkt_secret"],
                 cookie_name=settings["authtkt_cookie_name"],
-                callback=groupfinder,
                 samesite=settings["authtk_samesite"],
                 secure=settings["authtk_secure"]
             )
@@ -72,11 +67,3 @@ def add_cors_headers_response_callback(event):
         'Access-Control-Max-Age': '1728000',
         })
     event.request.add_response_callback(cors_headers)
-
-
-def groupfinder(dn, request):
-    connector = get_ldap_connector(request)
-    group_list = connector.user_groups(dn)
-    if group_list is None:
-        return None
-    return [dn for dn, attrs in group_list]

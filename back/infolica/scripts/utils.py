@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*--
 from datetime import date, datetime
 from sqlalchemy import func, and_, desc
-from infolica.models.models import Numero, AffaireNumero, Fonction, Role, FonctionRole, ReservationNumerosMO
-from infolica.models.models import SuiviMandat, ControleGeometre, ControleMutation, ControlePPE
-from infolica.models.models import AffaireEtape
-from infolica.scripts.ldap_query import LDAPQuery
+from sqlalchemy import String
+from sqlalchemy.sql.expression import cast
+from infolica.models.models import Numero, AffaireNumero, Role, ReservationNumerosMO, Cadastre, Operateur
+from infolica.scripts.mailer import send_mail
+
+from infolica.scripts.authentication import get_user_functions, check_connected
+
 from shutil import copytree, ignore_patterns
 import json
 import os
@@ -104,7 +107,7 @@ class Utils(object):
                     val = True
                 if val == 'false':
                     val = False
-                if val == "null":
+                if val == "null" or val == "":
                     val = None
 
                 setattr(record, att, val)
@@ -124,18 +127,18 @@ class Utils(object):
         Get search conditions
         """
         conditions = list()
-        condition_not_in = False  # pour les conditions NOT IN, p. ex. référencement numéros à affaire
 
         for param in params:
             if param == 'matDiff':
                 continue
             if param.startswith('_'):
+                # pour les conditions NOT IN, p. ex. référencement numéros à affaire
                 param = param[1:]
-                condition_not_in = True
-            
-            if condition_not_in:
                 conditions.append(~getattr(model, param).in_(json.loads(params["_"+param])))
-                condition_not_in = False
+            elif param.startswith('%'):
+                # pour les conditions numérique qui contiennent un sous ensemble (p.ex. 101 est contenu dans 2101)
+                param = param[1:]
+                conditions.append(cast(getattr(model, param), String).like("%" + params["%"+param] + "%"))
             else:
                 if params[param].isdigit() and not param == 'npa' and not param == 'no_access':
                     tmp = int(params[param])
@@ -230,58 +233,29 @@ class Utils(object):
         """
         results = []
 
-        query = request.dbsession.query(Fonction, Role, FonctionRole).filter(
-            Role.id == role_id).filter(Role.id == FonctionRole.role_id).filter(
-            Fonction.id == FonctionRole.fonction_id).all()
+        role = request.dbsession.query(Role).get(role_id)
 
-        for f, r, fr in query:
-            one_item = {}
-            one_item["id"] = f.id
-            one_item["nom"] = f.nom
+        functions = role.fonctions
 
-            results.append(one_item)
-
-        return results
-
-    @classmethod
-    def get_fonctions_roles_by_name(cls, request, role_name):
-        results = []
-
-        query = request.dbsession.query(Fonction, Role, FonctionRole).filter(
-            Role.nom == role_name).filter(Role.id == FonctionRole.role_id).filter(
-            Fonction.id == FonctionRole.fonction_id).all()
-
-        for f, r, fr in query:
-            one_item = {}
-            one_item["id"] = f.id
-            one_item["nom"] = f.nom
-
-            results.append(one_item)
+        for function in functions:
+             results.append({
+                'id': function.id,
+                'nom': function.nom
+            })
 
         return results
 
     @classmethod
     def has_permission(cls, request, fonction_name):
-        if not cls.check_connected(request):
+        if not check_connected(request):
             return False
+        
+        user_functions = get_user_functions(request)
 
-        user_dn = request.authenticated_userid
+        if fonction_name in user_functions['fonctions']:
+            return True
 
-        role_name = LDAPQuery.get_user_group_by_dn(request, user_dn)
-
-        fonctions = cls.get_fonctions_roles_by_name(request, role_name)
-        fonctions_names = [x for x in fonctions if x["nom"] == fonction_name]
-        return len(fonctions_names) > 0
-
-    @classmethod
-    def check_connected(cls, request):
-
-        user = request.authenticated_userid
-
-        if user is None:
-            return False
-
-        return True
+        return False
 
     @classmethod
     def get_role_id_by_name(cls, request, role_name):
@@ -292,10 +266,6 @@ class Utils(object):
             return query.id
 
         return None
-
-    @classmethod
-    def get_nouveaux_operateurs_ad(cls, request):
-        return LDAPQuery.get_infolica_users(request)
 
     @classmethod
     def create_affaire_folder(cls, request, affaire_folder):
@@ -320,3 +290,35 @@ class Utils(object):
         request.dbsession.flush()
         return record
 
+
+    @classmethod
+    def sendMailAffaireUrgente(cls, request, model):
+        mail_list = []
+        operateur_affaire_urgente = request.registry.settings['operateur_affaire_urgente'].split(',')
+        for op_id in operateur_affaire_urgente:
+            op_mail = request.dbsession.query(Operateur).filter(Operateur.id == op_id).first().mail
+            if op_mail is not None:
+                mail_list.append(op_mail)
+        # Add technicien + creator of affaire
+        technicien = request.dbsession.query(Operateur).filter(Operateur.id == model.technicien_id).first()
+        if technicien.mail is not None:
+            mail_list.append(technicien.mail)
+
+        if len(mail_list) == 0:
+            return
+
+        subject = "Infolica - Affaire urgente"
+        cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == model.cadastre_id).first().nom
+        affaire_nom = " (" + model.no_access + ")" if model.no_access is not None else ""
+        text = "La mention 'URGENTE' a été attribuée à l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(model.id)) + "'>" + str(model.id) + affaire_nom + "</a></b>.<br>"
+        echeance = "non défini"
+        if not model.urgent_echeance is None:
+            echeance = datetime.strptime(model.urgent_echeance, '%Y-%m-%d').strftime("%d.%m.%Y")
+        text += "Échéance: " + echeance + "<br><br>"
+        text += "Merci de traiter cette affaire en priorité."
+        text += "<br><br><br>Données de l'affaire:<br> \
+                <ul><li>Chef de projet: " + str(technicien.initiales) + "</li>\
+                <li>Cadastre: " + str(cadastre) + "</li>\
+                <li>Description: " + str(model.nom) + "</li></ul>"
+        send_mail(request, mail_list, "", subject, html=text)
+        return

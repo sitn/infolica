@@ -11,9 +11,13 @@ import { getCurrentDate,
          getClients,
          filterList,
          stringifyAutocomplete,
+         stringifyAutocomplete2,
          checkPermission,
-         getCurrentUserRoleId } from "@/services/helper";
+         getCurrentUserRoleId,
+         getOperateurs } from "@/services/helper";
 import Autocomplete from "vuejs-auto-complete";
+import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
+
 const moment = require("moment");
 
 export default {
@@ -21,8 +25,9 @@ export default {
   mixins: [validationMixin],
   props: {},
   components: {
+    Autocomplete,
     MapHandler,
-    Autocomplete
+    ReferenceNumeros
   },
   data: () => {
     return {
@@ -30,7 +35,6 @@ export default {
       affaire_numeros_nouveaux: [],
       cadastres_list: [],
       client_facture: null,
-      client_facture_complement: null,
       client_facture_premiere_ligne: null,
       clients_list: [],
       clients_liste_type: [],
@@ -48,7 +52,12 @@ export default {
         affaire_base: null,
         affaire_base_id: null,
         affaire_modif_type: null,
-        cadastre: null,
+        cadastre: {
+            id: null,
+            nom: "",
+            toString: () => "",
+            toLowerCase: () => ""
+          },
         client_commande: null,
         client_commande_complement: null,
         client_envoi: null,
@@ -64,9 +73,11 @@ export default {
         information: null,
         technicien_id: JSON.parse(localStorage.getItem("infolica_user")).id,
         type: null,
-        vref: null
+        urgent: false,
+        urgent_echeance: null,
       },
       lastRecord: null,
+      numerosReferences: [],
       operateurs_list: [],
       permission: {
         editClientAllowed: false
@@ -79,6 +90,7 @@ export default {
       selectedNouveauxNumeros: [],
       sending: false,
       showClientsForm: true,
+      showReferenceNumeros: false,
       sitn_search_categories: null,
       types_affaires_list_bk: [],
       types_affaires_list: [],
@@ -92,6 +104,8 @@ export default {
         ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_PPE),
         pcop: Number(process.env.VUE_APP_TYPE_AFFAIRE_PCOP),
         mpd: Number(process.env.VUE_APP_TYPE_AFFAIRE_MPD),
+        art35: Number(process.env.VUE_APP_TYPE_AFFAIRE_ART35),
+        mat_diff: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAT_DIFF),
         modification: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION),
         revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
         remaniement_parcellaire: Number(process.env.VUE_APP_TYPE_AFFAIRE_REMANIEMENT_PARCELLAIRE),
@@ -107,8 +121,11 @@ export default {
       role_conf: {
         ppe_user_id: Number(process.env.VUE_APP_PPE_ROLE_ID),
         mo_user_id: Number(process.env.VUE_APP_MO_ROLE_ID),
-        secretariat_user_id: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)
-      }
+        secretariat_user_id: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID),
+        responsable_user_id: Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID),
+        admin_user_id: Number(process.env.VUE_APP_ADMIN_ROLE_ID)
+      },
+      showUrgentCB: false,
     };
   },
   // Validations
@@ -134,6 +151,10 @@ export default {
         };
       }
 
+      if (this.form.urgent) {
+        form.technicien_id = {required};
+      }
+
     } else {
       form = {
         type: {required},
@@ -153,6 +174,30 @@ export default {
   },
 
   methods: {
+    /**
+     * Init mask (what is shown or not)
+     */
+    initMask() {
+      // empty numerosReferences array
+      this.numerosReferences = [];
+
+      if (this.form.type && this.form.type.id) {
+        this.showReferenceNumeros = [
+          this.typesAffaires_conf.cadastration,
+          this.typesAffaires_conf.ppe,
+          this.typesAffaires_conf.pcop,
+          this.typesAffaires_conf.mat_diff,
+          this.typesAffaires_conf.revision_abornement,
+          this.typesAffaires_conf.autre,
+          this.typesAffaires_conf.servitude,
+          this.typesAffaires_conf.mpd,
+          this.typesAffaires_conf.modification_abandon_partiel
+        ].includes(this.form.type.id)
+      } else {
+        this.showReferenceNumeros = false;
+      }
+    },
+
     /**
      * Get validation class par fieldname pour objet form
      */
@@ -269,6 +314,11 @@ export default {
               }
               
             }
+
+            if (userRoleID && [this.role_conf.responsable_user_id, this.role_conf.admin_user_id].includes(userRoleID)) {
+              this.showUrgentCB = true;
+            }
+
             this.types_affaires_list_bk = tmp;
             this.types_affaires_list = stringifyAutocomplete(tmp);
           }
@@ -305,28 +355,18 @@ export default {
      * Init operateurs list
      */
     async initOperateursList() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/json" }
-          }
-        )
-        .then(response => {
-          if (response && response.data) {
-            let tmp = response.data.filter(x => x.chef_equipe).map(x => ({
-              id: x.id,
-              nom: [x.prenom, x.nom].filter(Boolean).join(" "),
-            }));
-            tmp.sort((a,b) => (a.nom > b.nom) ? 1 : ((b.nom > a.nom) ? -1 : 0));
-            this.operateurs_list = tmp;
-          }
-        })
-        //Error
-        .catch(err => {
-          handleException(err, this);
-        });
+      getOperateurs()
+      .then(response => {
+        if (response && response.data) {
+          let tmp = response.data.filter(x => x.chef_equipe)
+          tmp = stringifyAutocomplete2(tmp, "prenom_nom", null, "prenom_nom");
+          this.operateurs_list = tmp;
+        }
+      })
+      //Error
+      .catch(err => {
+        handleException(err, this);
+      });
     },
 
     /*
@@ -394,6 +434,12 @@ export default {
                 promises.push(this.abandonPartiel(id_new_affaire));
               }
             }
+
+            // Si des numéros sont référencés à l'affaire
+            if (this.numerosReferences.length>0) {
+              promises.push(this.saveReferenceNumeros(id_new_affaire));
+            }
+
             Promise.all(promises)
             .then(() => {
               this.handleSaveDataSuccess(_response);
@@ -483,8 +529,13 @@ export default {
       if (this.form.localisation_N) {
         formData.append("localisation_N", this.form.localisation_N);
       }
-      if (this.form.vref) {
-        formData.append("vref", this.form.vref);
+      if (this.form.urgent) {
+        formData.append("urgent", this.form.urgent);
+      }
+      if (this.form.urgent && this.form.urgent_echeance) {
+        formData.append("urgent_echeance", 
+          moment(this.form.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)
+        );
       }
       if (this.form.date_ouverture) {
         formData.append("date_ouverture",
@@ -509,9 +560,6 @@ export default {
       if (this.client_facture && this.client_facture.id &&
           this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop){
         formData.append("facture_client_id", this.client_facture.id);
-        if (this.client_facture_complement !== null) {
-          formData.append("facture_client_complement", this.client_facture_complement);
-        }
         if (this.client_facture_premiere_ligne !== null) {
           formData.append("facture_client_premiere_ligne", this.client_facture_premiere_ligne);
         }
@@ -757,7 +805,7 @@ export default {
      * Cancel edit
      */
     cancelEdit() {
-      this.$router.push({ name: "Affaires" });
+      this.$router.push({ name: "Cockpit" });
     },
 
     /**
@@ -783,12 +831,10 @@ export default {
     searchSITNEndpoint(input) {
       let cadastre_ = null;
       if (this.form.cadastre && this.form.cadastre.id !== null) {
-        cadastre_ = this.cadastres_list.filter(
-          x => x.id === this.form.cadastre.id
-        )[0].nom;
+        cadastre_ = this.form.cadastre.nom.slice(0, -1);
         
         // only keep first part of cadastre name (problems with '-' and '/')
-        cadastre_ = cadastre_.split(/[-/ ]/)[0];
+        cadastre_ = cadastre_.split(/[-/ ]/).filter(Boolean).join(" ");
       }
 
       return (
@@ -831,7 +877,6 @@ export default {
         if ((this.client_facture === null || this.client_facture === "") && 
              this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop) {
           this.client_facture = client;
-          this.client_moral_personnes.facture = this.client_moral_personnes.commande;
         }
       });
     },
@@ -861,7 +906,6 @@ export default {
         this.form.client_envoi = defaultClient;
         this.form.client_envoi_complement = null;
         this.client_facture = null;
-        this.client_facture_complement = null;
         this.client_facture_premiere_ligne = null;
         this.form.nom = "Cadastration sur "
       } else if (this.form.type.id === this.typesAffaires_conf.mpd) {
@@ -871,7 +915,6 @@ export default {
         this.form.client_envoi_complement = null;
         this.client_facture_premiere_ligne = null;
         this.client_facture = defaultClient;
-        this.client_facture_complement = null;
         this.client_facture_premiere_ligne = null;
         this.form.nom = "Mise à jour périodique"
       } else {
@@ -881,9 +924,10 @@ export default {
         this.form.client_envoi = null;
         this.form.client_envoi_complement = null;
         this.client_facture = null;
-        this.client_facture_complement = null;
         this.client_facture_premiere_ligne = null;
       }
+
+      this.initMask();
     },
 
     /**
@@ -929,16 +973,30 @@ export default {
         )
         .then(response => {
         if (response && response.data) {
-          _this.selectedModificationAffaire = response.data;
+          let tmp = response.data;
+          if (tmp.date_envoi) {
+            // L'affaire a bien une date d'envoi
+            if (!tmp.date_cloture) {
+              // L'affaire n'est pas clôturée
 
-          //Fill values
-          this.fillValuesFromModificationAffaire();
+              _this.selectedModificationAffaire = response.data;
 
-          //Expand numéros card
-          this.$refs.expandCollapseBtn.$el.click();
+              //Fill values
+              this.fillValuesFromModificationAffaire();
 
-          //Search numéros immeubles
-          _this.setModificationAffaireNuméros();
+              //Expand numéros card
+              this.$refs.expandCollapseBtn.$el.click();
+
+              //Search numéros immeubles
+              _this.setModificationAffaireNuméros();
+            } else {
+              this.$root.$emit("ShowError", "L'affaire de base est déjà été clôturée. Contrôler le numéro de l'affaire") 
+            }
+
+          } else {
+            this.$root.$emit("ShowError", "L'affaire de base n'a pas encore été envoyée. Contrôler le numéro de l'affaire") 
+          }
+
         }
         else{
           handleException({msg : "Affaire non trouvée"}, this);
@@ -963,7 +1021,6 @@ export default {
         this.form.cadastre = this.cadastres_list.filter(x => x.id === this.selectedModificationAffaire.cadastre_id)[0];
         this.form.nom = modif_type + this.selectedModificationAffaire.nom;
         this.form.nom_ = this.selectedModificationAffaire.nom; // garder le nom pas modifié en mémoire
-        this.form.vref = this.selectedModificationAffaire.vref;
         this.form.client_commande = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_commande_id)[0];
         this.form.client_commande_complement = this.selectedModificationAffaire.client_commande_complement;
         this.form.client_envoi = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_envoi_id)[0];
@@ -1140,7 +1197,58 @@ export default {
       if (this.form.cadastre && this.form.cadastre.id) {
         this.plansMOListe_cadastre = stringifyAutocomplete(this.plansMOListe.filter(x => x.cadastre_id === this.form.cadastre.id), "planno", "idobj");
       }
-    }
+    },
+
+    /**
+     * Ouvrir la boîte de dialogue de référence de numéros
+     */
+    callOpenReferenceDialog() {
+      this.$refs.formReference.openReferenceDialog();
+    },
+
+    /**
+     * Numéros référencés (pour les affaires qui le nécessitent)
+     */
+    referenceNumeros(items) {
+      this.numerosReferences = items;
+      return new Promise((resolve, reject) => {
+        resolve(null);
+        reject(null);
+      })
+    },
+
+    /**
+     * Remove entree from referenced numbers
+     */
+    deleteNumeroReference(item){
+      this.numerosReferences = this.numerosReferences.filter(x => x !== item);
+    },
+
+    /**
+     * Enregistrer les numéros référencés à l'affaire 
+     */
+    async saveReferenceNumeros(affaire_id) {
+      let numeros_ = this.numerosReferences.map(x => ({
+        numero_id: x.id,
+        etat_id: x.etat_id
+      }));
+
+      let formData = new FormData();
+      formData.append("affaire_id", affaire_id);
+      formData.append("numeros_liste", JSON.stringify(numeros_));
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          )
+          .then(response => resolve(response))
+          .catch(err => reject(err));
+      });
+    },
 
   },
 
@@ -1158,6 +1266,7 @@ export default {
     this.initCadastresList();
     this.initTypesModficiationAffaire();
     this.getPlansMO();
+    this.initMask();
 
     //permissions
     this.permission.editClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION);

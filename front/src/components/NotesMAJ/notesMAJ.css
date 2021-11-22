@@ -1,0 +1,21 @@
+.notesMAJ {
+    background-color: lightblue;
+    border-radius: 10px;
+    width: 98%;
+    margin-left: 1%;
+    margin-right: 1%;
+    margin-bottom: 15px;
+}
+
+.container {
+    padding-left: 5px;
+    padding-right: 5px;
+    max-height: 450px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    overflow-y: auto !important;
+}
+
+.notesmaj p {
+    margin: 6px 0px 6px 0px;
+}

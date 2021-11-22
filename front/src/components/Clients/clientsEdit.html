@@ -37,7 +37,6 @@
             <md-select v-model="form.titre" :disabled="sending || !permission.client_edit || !editMode">
               <md-option value="Monsieur" selected>Monsieur</md-option>
               <md-option value="Madame">Madame</md-option>
-              <md-option value="Monsieur et Madame">Monsieur et Madame</md-option>
               <md-option value="Maître">Maître</md-option>
             </md-select>
           </md-field>
@@ -64,7 +63,7 @@
       <div class="md-layout md-gutter">
         <div class="md-layout-item">
           <md-field>
-            <label>Complément (co ou autre...)</label>
+            <label>c/o</label>
             <md-input v-model="form.co" :disabled="sending || !permission.client_edit || !editMode" ></md-input>
           </md-field>
         </div>
@@ -80,17 +79,21 @@
         </div>
 
         <div class="md-layout-item md-small-size-100 md-size-15">
-          <md-field>
-            <label for="npa">Npa</label>
-            <md-input name="npa" id="npa" v-model="form.npa" :disabled="sending || !permission.client_edit || !editMode"  />
-          </md-field>
+          <md-autocomplete v-model="form.npa" :md-options="npa_localite_list" @md-changed="searchNPA" @md-selected="setNPALocalite" md-dense>
+            <label>NPA</label>
+            <template slot="md-autocomplete-item" slot-scope="{ item, term }">
+              <md-highlight-text :md-term="term">{{ item.id }} {{ item.nom }}</md-highlight-text>
+            </template>
+          </md-autocomplete>
         </div>
-
+        
         <div class="md-layout-item md-small-size-100 md-size-35">
-          <md-field>
-            <label for="localite">Localité</label>
-            <md-input name="localite" id="localite" v-model="form.localite" :disabled="sending || !permission.client_edit || !editMode"  />
-          </md-field>
+          <md-autocomplete v-model="form.localite" :md-options="npa_localite_list" @md-changed="searchLocalite" @md-selected="setNPALocalite" md-dense>
+            <label>Localité</label>
+            <template slot="md-autocomplete-item" slot-scope="{ item, term }">
+              <md-highlight-text :md-term="term">{{ item.id }} {{ item.nom }}</md-highlight-text>
+            </template>
+          </md-autocomplete>
         </div>
       </div>
 
@@ -150,6 +153,13 @@
           </md-field>
         </div>
       </div>
+      
+      <!-- Need v-ref facture -->
+      <div class="md-layout md-gutter">
+        <div class="md-layout-item md-small-size-100 md-size-50">
+          <md-checkbox class="md-primary" v-model="form.besoin_vref_facture">Le client demande une référence dans la facture</md-checkbox>
+        </div>
+      </div>
 
     </md-card-content>
 
@@ -173,7 +183,7 @@
     </md-card-header>
     
     <md-card-content>
-      <md-table md-height="40vh" v-model="client_moral_personnes" md-sort="nom" md-sort-order="asc" md-fixed-header v-if="client_moral_personnes.length > 0">
+      <md-table v-model="client_moral_personnes" md-sort="nom" md-sort-order="asc" md-fixed-header v-if="client_moral_personnes.length > 0">
         <md-table-row slot="md-table-row" slot-scope="{ item }">
           <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
           <md-table-cell md-label="Titre" md-sort-by="titre">{{ item.titre }}</md-table-cell>

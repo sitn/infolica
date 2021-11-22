@@ -3,6 +3,7 @@
 
 
 <script>
+import { handleException } from "@/services/exceptionsHandler";
 
 export default {
   name: "DDP",
@@ -44,11 +45,13 @@ export default {
       promises.push(this.postAffaireNumero(this.form.numeroBase.id, process.env.VUE_APP_AFFAIRE_NUMERO_TYPE_ANCIEN_ID));
 
       Promise.all(promises).then(() => {
+        this.$root.$emit("removeCurrentDDPpotential", this.numero);
+        
         this.$root.$emit("showMessage", "Le DDP " + this.numero.numero + " a bien été enregistré sur le bien-fonds: " + this.form.numeroBase.nom);
         this.$root.$emit("searchAffaireNumeros");
 
         this.onCancelDDP();
-      })
+      }).catch(err => handleException(err, this));
     },
 
     /**
@@ -122,7 +125,14 @@ export default {
      * Filter BF
      */
     filterBF() {
-      let tmp = this.numeroBaseListe.filter(x => x.nom === String(this.searchBFBase));
+      let regExp = new RegExp("[0-9]{1,}");
+      let tmp = this.numeroBaseListe.filter(x => {
+
+        if (regExp.test(x.nom)) {
+          return regExp.exec(x.nom)[0] === String(this.searchBFBase);
+        }
+        return false 
+      });
       
       if (!tmp.length > 0) {
         alert("Aucun numéro ne correspond à la recherche.");

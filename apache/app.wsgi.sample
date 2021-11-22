@@ -1,14 +1,9 @@
-import os, sys
+import os, site
 
 # replace path here with the root path of your app
 root="/path/to/your/api/back"
 
-sys.path = [
-    root + "/infolica_api",
-    root + "/.venv/Scripts",
-    root + "/.venv/Lib",
-    root + "/.venv/Lib/site-packages",
-    ] + sys.path
+site.addsitedir(root + "/env/Lib/site-packages") 
 
 from pyramid.paster import get_app, setup_logging
 

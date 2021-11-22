@@ -49,24 +49,37 @@ export default {
   data() {
     return {
       affaire: {},
+      affaireAttribution: {
+        checked: false,
+        show: false,
+        text: ""
+      },
       affaireLoaded: false,
+      chefs_equipe_list: [],
       duplicationAffaireForm: null,
       mapLoaded: false,
-      chefs_equipe_list: [],
+      numerosReserves: [],
       parentAffaireReadOnly: false,
       permission: {
         abandonAffaireEnabled: false,
+        admin_permissions: false,
         cloreAffaireEnabled: false,
+        cloreEmolumentEnabled: false,
         editAffaireAllowed: false,
         editClientAllowed: false,
         editControleGeometreAllowed: false,
+        editEmolumentAllowed: false,
         editFactureAllowed: false,
         editNumerosReferencesAllowed: false,
         editNumerosAllowed: false,
         editNumerosMOAllowed: false,
         editSuiviMandatAllowed: false,
+        editEmolumentIndiceApplication: false,
+        editEmolumentTva: false,
+        showEmolumentRepartition_saveToFactures_btn: false,
       },
       showConfirmAbandonAffaireDialog: false,
+      showConfirmAbandonErrorAffaireDialog: false,
       typesAffaires: [],
       typesAffaires_conf: {
         mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_DIVISION),
@@ -74,6 +87,7 @@ export default {
         ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_PPE),
         pcop: Number(process.env.VUE_APP_TYPE_AFFAIRE_PCOP),
         mpd: Number(process.env.VUE_APP_TYPE_AFFAIRE_MPD),
+        art35: Number(process.env.VUE_APP_TYPE_AFFAIRE_ART35),
         mat_diff: Number(process.env.VUE_APP_TYPE_AFFAIRE_MAT_DIFF),
         modification: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION),
         revision_abornement: Number(process.env.VUE_APP_TYPE_AFFAIRE_REVISION_ABORNEMENT),
@@ -92,8 +106,10 @@ export default {
         travaux_chef_equipe: Number(process.env.VUE_APP_ETAPE_TRAVAUX_CHEF_EQUIPE_ID),
         validation: Number(process.env.VUE_APP_ETAPE_VALIDATION_ID),
         envoi: Number(process.env.VUE_APP_ETAPE_ENVOI_ID),
+        envoi_cadastration: Number(process.env.VUE_APP_ETAPE_ENVOI_CADASTRATION_ID),
         envoi_pcop: Number(process.env.VUE_APP_ETAPE_ENVOI_PCOP_ID),
-        fin_processus: Number(process.env.VUE_APP_FIN_PROCESSUS_ID)
+        signature_art35: Number(process.env.VUE_APP_ETAPE_SIGNATURE_ART35_ID),
+        fin_processus: Number(process.env.VUE_APP_FIN_PROCESSUS_ID),
       },
       clientTypes_conf: {
         physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID),
@@ -161,10 +177,15 @@ export default {
 
               Object.keys(obj).forEach(function(key) {
                 // Formater la date en DD.MM.YYYY
-                if (key.includes("date") && obj[key] !== null && obj[key] !== "") {
+                if ((key.includes("date") || key.includes("echeance")) && obj[key] !== null && obj[key] !== "") {
                   obj[key] = moment(obj[key], process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
                 }
               });
+
+              obj.urgent_echeance_reste = null;
+              if (obj.urgent_echeance !== null) {
+                obj.urgent_echeance_reste = Math.ceil(Math.max(0, moment(obj.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT)-new Date())/1000/3600/24)+1;
+              }
               resolve(obj);
             }
           })
@@ -182,12 +203,14 @@ export default {
           _this.affaireLoaded = true;
 
           _this.parentAffaireReadOnly = ((_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined) || (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined));
+          _this.permission.admin_permissions = false;
           _this.permission.abandonAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined);
           _this.permission.cloreAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
           _this.permission.editNumerosAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editNumerosMOAllowed = checkPermission(process.env.VUE_APP_NUMERO_MO_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editControleGeometreAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_CONTROLE_GEOMETRE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editSuiviMandatAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_SUIVI_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.editEmolumentAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editFactureAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.affaireCloture = checkPermission(process.env.VUE_APP_AFFAIRE_CLOTURE);
           _this.permission.affaireReactivation = checkPermission(process.env.VUE_APP_AFFAIRE_REACTIVATION);
@@ -218,7 +241,11 @@ export default {
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)) {
             _this.permission.editAffaireAllowed = true;
             _this.permission.editFactureAllowed = true;
+            _this.permission.editEmolumentAllowed = true;
             _this.permission.editClientAllowed = true;
+            _this.permission.cloreEmolumentEnabled = true;
+            _this.permission.editEmolumentTva = true;
+            _this.permission.showEmolumentRepartition_saveToFactures_btn = true;
             _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.affaireCloture = _this.affaire.type_id === _this.typesAffaires_conf.pcop;
           }
@@ -234,16 +261,19 @@ export default {
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_PPE_ROLE_ID)) {
             _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
+            _this.permission.affaireCloture = [ _this.typesAffaires_conf.ppe, _this.typesAffaires_conf.modification_ppe].includes(_this.affaire.type_id);
           }
           
           // Opérateur responsable peut référencer des numéros
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)) {
+            _this.permission.editEmolumentIndiceApplication = true;
+            _this.permission.editEmolumentTva = true;
             _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
 
           // Si l'opérateur de l'affaire est l'utilisateur connecté, il doit pouvoir réserver/référencer et modifier le contenu de l'affaire
-          if(_this.affaire.technicien_id === JSON.parse(localStorage.getItem("infolica_user")).id){
+          if(_this.affaire.technicien_id === JSON.parse(localStorage.getItem("infolica_user")).id) {
             _this.permission.editNumerosAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editNumerosMOAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
@@ -256,6 +286,18 @@ export default {
             }
             _this.parentAffaireReadOnly = false;
           }
+
+          // Set affaire attribution
+          if (_this.affaire.attribution) {
+            _this.affaireAttribution.checked = true;
+            _this.affaireAttribution.text = "Étape attribuée à " + _this.affaire.attribution;
+          } else {
+            _this.affaireAttribution.checked = false;
+            _this.affaireAttribution.text = "Cliquer pour s'attribuer l'étape";
+          }
+
+          // init params attribution affaire
+          _this.initParams();
       });
     },
 
@@ -327,7 +369,7 @@ export default {
     /**
      * Abandon affaire
      */
-    async callAbandonAffaire() {
+    async callAbandonAffaireAndNumeros() {
       let formData = new FormData();
       formData.append("id_affaire", this.affaire.id);
       formData.append("abandon", true);
@@ -416,11 +458,13 @@ export default {
      * Open Theme SITN
      */
     openSitnTheme(theme) {
-      var route;
-      if (theme === "environnement") {
-        route = process.env.VUE_APP_SITN_ENVIRONNEMENT_URL;
-      } else if (theme === "amenagement_territoire") {
+      let route;
+      if (theme === "amenagement_territoire") {
           route = process.env.VUE_APP_SITN_AMENAGEMENT_TERRITOIRE_URL;
+      } else if (theme === "cadastre") {
+          route = process.env.VUE_APP_SITN_CADASTRE_URL;
+      } else if (theme === "sites_pollues") {
+          route = process.env.VUE_APP_SITN_SITES_POLLUES_URL;
       } else {
         return null;
       }
@@ -534,11 +578,94 @@ export default {
     
     },
 
+    /**
+     * open Abandon menu
+     */
+    openAbandonMenu() {
+      this.numerosReserves = this.$refs.numeros.affaire_numeros_nouveaux;
+
+      this.showConfirmAbandonErrorAffaireDialog = [
+        this.typesAffaires_conf.modification_visa,
+        this.typesAffaires_conf.modification_duplicata,
+        this.typesAffaires_conf.modification_mutation,
+        this.typesAffaires_conf.modification_ppe
+      ].includes(this.affaire.type_id);
+
+      this.showConfirmAbandonAffaireDialog = true;
+    },
+
+    /**
+     * abandon affaire and reactivate parent-affaire
+     */
+    async callAbandonAffaireAndReactivateParentAffaire() {
+      let formData = new FormData();
+      formData.append('affaire_id', this.affaire.id);
+      formData.append('operateur_id', JSON.parse(localStorage.getItem("infolica_user")).id);
+
+      this.$http.post(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_ABANDON_AFFAIRE_REOUVERTURE_AFFAIRE_PARENT_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(() => this.$router.go(0))
+      .catch(err => handleException(err));
+    },
+
+
+    /**
+     * Affaire Attribution Change State
+     */
+    async affaireAttributionChangeState() {
+      let formData = new FormData();
+      if (this.affaireAttribution.checked) {
+        formData.append("id_affaire", this.affaire.id);
+        formData.append("attribution", JSON.parse(localStorage.getItem("infolica_user")).initiales);
+      } else {
+        formData.append("id_affaire", this.affaire.id);
+        formData.append("attribution", null);
+      }
+      this.$http.put(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(() => this.setAffaire())
+      .catch(err => handleException(err));
+    },
+
+
+    /**
+     * initialize parameters
+     */
+    initParams() {
+      this.affaireAttribution.show = true;
+
+      let etapesAtributionAffaire = [
+        Number(process.env.VUE_APP_CONTROLE_TECHNIQUE_ID),
+        Number(process.env.VUE_APP_REPORT_SERVITUDES_ID),
+        Number(process.env.VUE_APP_CONTROLE_JURIDIQUE_ID),
+        Number(process.env.VUE_APP_PREPARATION_ADMINISTRATIVE_ID),
+        Number(process.env.VUE_APP_SIGNATURE_ID),
+        Number(process.env.VUE_APP_VALIDATION_ID)
+      ];
+
+      if (etapesAtributionAffaire.includes(this.affaire.etape_id)) {
+        this.affaireAttribution.show = true;
+      } else {
+        this.affaireAttribution.show = false;
+      }
+    }
+
   },
 
   mounted: function() {
     this.setAffaire();
     this.getChefsEquipe();
+
     this.$root.$on('mapHandlerReady', () => this.showMap() );
     this.$root.$on('setAffaire', () => this.setAffaire() );
 

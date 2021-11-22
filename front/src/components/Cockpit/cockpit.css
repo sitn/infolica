@@ -8,3 +8,7 @@
 .md-table-cell-container {
   padding: 0px !important;
 }
+
+.urgent {
+  background-color: lightcoral !important;
+}

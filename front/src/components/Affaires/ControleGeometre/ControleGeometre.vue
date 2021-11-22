@@ -16,12 +16,11 @@ export default {
     permission: Object
   },
   data: () => ({
-    operateurs_liste: [],
-    controleGeometre: {},
-    operateur: {
-      id: null,
-      nom: null
+    checkAll: {
+      ctrl_jur: false,
+      sign: false
     },
+    controleGeometre: {},
     showNewControleGeometreBtn: false,
   }),
 
@@ -30,7 +29,6 @@ export default {
      * SEARCH AFFAIRE-ControleMutation
      */
     async searchControleGeometre() {
-      await this.searchOperateurs();
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
@@ -45,13 +43,6 @@ export default {
           if (response && response.data) {
             this.controleGeometre = response.data;
 
-            // Lier l'id du visa à son nom
-            if (this.controleGeometre.operateur_id === null) {
-              this.operateur = {id: null, nom: null};
-            } else {
-              this.operateur = this.operateurs_liste.filter(x => x.id === this.controleGeometre.operateur_id)[0];
-            }
-            
             if (this.controleGeometre.date) {
               this.controleGeometre.date = moment(this.controleGeometre.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
             } else {
@@ -62,35 +53,6 @@ export default {
         .catch(err =>  handleException(err, this));
     },
 
-    /**
-     * Cherche les opérateurs
-     */
-    async searchOperateurs() {
-      return new Promise((resolve, reject) => {
-        this.$http
-          .get(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
-            {
-              withCredentials: true,
-              headers: {"Accept": "application/json"}
-            }
-          )
-          .then(response => {
-            if (response.data) {
-              this.operateurs_liste = response.data
-                .filter(x => x.responsable)
-                .map(x => ({
-                  id: x.id,
-                  nom: [x.prenom, x.nom].join(" "),
-                  toLowerCase: () => [x.nom, x.prenom].join(" ").toLowerCase(),
-                  toString: () => [x.nom, x.prenom].join(" ")
-                }));
-                resolve(response);
-            }
-          })
-          .catch(() => reject);
-      })
-    },
 
     /**
      * update controle
@@ -149,6 +111,25 @@ export default {
       formData.append("check_45", this.controleGeometre.check_45);
       formData.append("check_46", this.controleGeometre.check_46);
       formData.append("check_47", this.controleGeometre.check_47);
+      formData.append("check_48", this.controleGeometre.check_48);
+      formData.append("check_49", this.controleGeometre.check_49);
+      formData.append("check_50", this.controleGeometre.check_50);
+      formData.append("check_51", this.controleGeometre.check_51);
+      formData.append("check_52", this.controleGeometre.check_52);
+      formData.append("check_53", this.controleGeometre.check_53);
+      formData.append("check_54", this.controleGeometre.check_54);
+      formData.append("check_55", this.controleGeometre.check_55);
+      formData.append("check_56", this.controleGeometre.check_56);
+      formData.append("check_57", this.controleGeometre.check_57);
+      formData.append("check_58", this.controleGeometre.check_58);
+      formData.append("check_59", this.controleGeometre.check_59);
+      formData.append("check_60", this.controleGeometre.check_60);
+      formData.append("check_61", this.controleGeometre.check_61);
+      formData.append("check_62", this.controleGeometre.check_62);
+      formData.append("check_63", this.controleGeometre.check_63);
+      formData.append("check_64", this.controleGeometre.check_64);
+      formData.append("check_65", this.controleGeometre.check_65);
+      formData.append("check_66", this.controleGeometre.check_66);
 
       this.$http
         .put(
@@ -196,14 +177,59 @@ export default {
         }
       })
       .catch(err => handleException(err, this));
+    },
+
+    /**
+     * Select all
+     */
+    selectAll(type_ctrl) {
+      let items = [];
+
+      if (type_ctrl === "ctrl_jur" && [this.typesAffaires_conf.mutation,
+                                       this.typesAffaires_conf.modification,
+                                       this.typesAffaires_conf.modification_duplicata,
+                                       this.typesAffaires_conf.modification_mutation,
+                                       this.typesAffaires_conf.modification_visa].includes(this.affaire.type_id)) {
+        items = [48, 49, 12, 2, 50, 14, 3, 51, 10, 1, 52, 5, 6, 53, 9, 8, 54, 4, 55, 56];
+        for (const item of items) {
+          this.controleGeometre["check_" + String(item)] = this.checkAll.ctrl_jur;
+        }
+      }
+
+      if (type_ctrl === "sign") {
+        if (![this.typesAffaires_conf.cadastration, this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe].includes(this.affaire.type_id)) {
+          if (this.affaire.type_id === this.typesAffaires_conf.revision_abornement) {
+            items = [57, 26, 27, 23, 25, 44, 45, 15, 18, 19, 17, 58, 59, 21, 22];
+          } else if (this.affaire.type_id === this.typesAffaires_conf.retablissement_pfp3) {
+            items = [57, 26, 27, 23, 25, 46, 47, 15, 18, 19, 17, 58, 59, 21, 22];
+          } else if (this.affaire.type_id === this.typesAffaires_conf.modification_duplicata) {
+            items = [57, 26, 27, 23, 25, 15, 18, 19, 17, 58, 59, 40, 21, 22, 39];
+          } else if ([this.typesAffaires_conf.modification_visa, this.typesAffaires_conf.modification_mutation, this.typesAffaires_conf.modification].includes(this.affaire.type_id)) {
+            items = [57, 26, 27, 23, 25, 15, 18, 19, 17, 58, 59, 42, 21, 22, 41];
+          } else if (this.affaire.type_id === this.typesAffaires_conf.art35) {
+            items = [57, 26, 27, 23, 25, 15, 18, 19, 17, 58, 59, 20, 21, 22];
+          } else if (this.affaire.type_id === this.typesAffaires_conf.servitude) {
+            items = [57, 26, 27, 23, 25, 15, 18, 19, 17, 58, 59, 21, 22, 43];
+          } else  {
+            items = [57, 26, 27, 23, 25, 15, 18, 19, 17, 58, 59, 21, 22];
+          }
+        } else if(this.affaire.type_id === this.typesAffaires_conf.cadastration) {
+          items = [60, 29, 31, 28, 32, 61, 57, 23, 25, 1, 37, 18, 19, 20, 34, 17, 35, 36, 38, 21, 22];
+        } else {
+          items = [48, 49, 62, 57, 26, 27, 23, 25, 61, 62, 63, 50, 64, 65, 66];
+        }
+
+        for (const item of items) {
+          this.controleGeometre["check_" + String(item)] = this.checkAll.sign;
+        }
+      }
+
     }
 
   },
 
   mounted: function() {
     this.searchControleGeometre();
-    this.searchOperateurs();
-
   }
 };
 </script>

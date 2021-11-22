@@ -4,18 +4,18 @@
 
 <script>
 import AffairesChezClient from "@/components/Cockpit/AffairesChezClient/AffairesChezClient.vue";
-import Matdiff_secr from "@/components/Cockpit/Matdiff_secr/Matdiff_secr.vue";
-import Matdiff_mo from "@/components/Cockpit/Matdiff_mo/Matdiff_mo.vue";
+import Matdiff from "@/components/Cockpit/Matdiff/Matdiff.vue";
 
-import { handleException } from '@/services/exceptionsHandler'
-import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper'
+import { handleException } from '@/services/exceptionsHandler';
+import { checkPermission, getOperateurs, stringifyAutocomplete, stringifyAutocomplete2, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper';
+
+import moment from "moment";
 
 export default {
   name: "Cockpit",
   components: {
       AffairesChezClient,
-      Matdiff_secr,
-      Matdiff_mo,
+      Matdiff,
   },
   data: () => {
     return {
@@ -23,9 +23,12 @@ export default {
         affaires_bk: [],
         affaireEtapes: [],
         affaireTypes: [],
+        current_sort: "id",
+        current_sort_order: "desc",
         loadingAffaires: true,
         newAffaireAllowed: false,
         operateurs: [],
+        plural: '',
         refreshAffaire: null,
         searchAffaire: null,
         selectedOperateur_id: -1,
@@ -33,6 +36,8 @@ export default {
         showFinProcessus: false,
         showMatdiff_secr: false,
         showMatdiff_mo: false,
+        showMatdiff_ctrl: false,
+        showOnlyAffairesUrgentes: false,
         showPPE: false,
         role: {
             secretaire: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID),
@@ -69,8 +74,9 @@ export default {
 
             //Check if role responsable
             if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.responsable  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
-                this.showMatdiff_secr = true;
+                // this.showMatdiff_secr = true;
                 this.showMatdiff_mo = true;
+                this.showMatdiff_ctrl = true;
             } 
             
         }, 500);
@@ -100,14 +106,35 @@ export default {
                 // Filtrer les affaires qui ne sont pas chez le client
                 tmp = tmp.filter(x => x.etape_id !== Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID) && x.etape_id !== Number(process.env.VUE_APP_ETAPE_DEVIS_ID));
 
+                let nom_affaire = null;
+                let elapsedTime = "";
                 tmp.forEach(x => {
+                    // set time for urgent_echeance
+                    x.urgent_echeance = x.urgent_echeance? moment(x.urgent_echeance, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null;
+                        
                     for (let i=0; i<this.affaireEtapes.length; i++) {
-                        x["dashboard_" + i.toString()] = i === x.etape_ordre-1? (x.no_access? x.no_access: String(x.id)): null;
+                        nom_affaire = null;
+                        if (i === x.etape_ordre-1) {
+                            nom_affaire = x.no_access? x.no_access: String(x.id);
+                            nom_affaire += x.urgent_echeance === null? "": " / "+ x.urgent_echeance;
+                            nom_affaire += x.attribution === null? "": " / " + x.attribution;
+                        }
+                        x["dashboard_" + i.toString()] = nom_affaire;
                     }
 
                     // set title to show on cockpit
-                    x.title = (x.no_access? 'Affaire ' + x.id + ' - ': '') + x.cadastre + ' - ' + x.description 
+                    if (x.etape_days_elapsed === 0) {
+                        elapsedTime = "aujourd'hui";
+                    } else if (x.etape_days_elapsed === 1) {
+                        elapsedTime = "hier";
+                    } else {
+                        elapsedTime = x.etape_days_elapsed + " jours";
+                    }
+                    x.title = (x.no_access? 'Affaire ' + x.id + ' — ': '') + x.cadastre + ' — ' + x.description  + " — Dans cette étape depuis " + elapsedTime;
                 });
+
+                tmp = this.customSort(tmp);
+
                 this.affaires_bk = tmp;
                 if (!this.affaires.length > 0) {
                     this.affaires = tmp;
@@ -157,9 +184,14 @@ export default {
     /**
      * open affaire
      */
-    openAffaire(data) {
+    openAffaire(data, mode=0) {
         let id = data.id;
-        this.$router.push({ name: "AffairesDashboard", params: {id}});
+        if (mode===0) {
+            this.$router.push({ name: "AffairesDashboard", params: {id}});
+        } else if (mode===1) {
+            let routedata = this.$router.resolve({name: "AffairesDashboard", params: {id}});
+            window.open(routedata.href, "_blank");
+        }
     },
 
     /**
@@ -192,7 +224,18 @@ export default {
         if (this.selectedAffaireTypes_id && this.selectedAffaireTypes_id > 0) {
             this.affaires = this.affaires.filter(x => x.affaire_type_id === this.selectedAffaireTypes_id);
         }
+
+        // filter affaire urgente
+        if (this.showOnlyAffairesUrgentes) {
+            this.affaires = this.affaires.filter(x => x.urgent);
+        }
         
+        // set plural or not
+        this.plural = '';
+        if (this.affaires.length > 1){
+            this.plural = 's';
+        }
+
         this.loadingAffaires = false;
     },
 
@@ -205,7 +248,6 @@ export default {
             if (response && response.data) {
                 let tmp = response.data;
                 tmp = tmp.filter(x => x.chef_equipe);
-                tmp.forEach(x => x['nom_'] = [x.prenom, x.nom].filter(Boolean).join(' '));
 
                 // set operateur by default if he is chef_equipe
                 let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
@@ -214,12 +256,45 @@ export default {
                     this.selectedOperateur_id = Number(currentUserID);
                 }
 
-                tmp = stringifyAutocomplete(tmp, "nom_");
-                tmp.sort((a,b) => (a.nom > b.nom) ? 1 : ((b.nom > a.nom) ? -1 : 0));
+                tmp = stringifyAutocomplete2(tmp, "prenom_nom", null, "prenom_nom");
 
                 this.operateurs = tmp;
             }
         }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * custom sort
+     */
+    customSort (value) {
+        return value.sort((a, b) => {
+            const sortBy = this.current_sort;
+
+            let c = a[sortBy];
+            let d = b[sortBy];
+
+            if (!c) {
+                return 1;
+            }
+
+            if (!d) {
+                return -1;
+            }
+
+            if (this.current_sort_order === 'asc') {
+                if (isNaN(c) || isNaN(d)) {
+                    return String(c).localeCompare(String(d));
+                } else {
+                    return (c > d)? 1: -1;
+                }
+            } else {
+                if (isNaN(c) || isNaN(d)) {
+                    return String(d).localeCompare(String(c));
+                } else {
+                    return (c > d)? -1: 1;
+                }
+            }
+        });
     }
   },
 

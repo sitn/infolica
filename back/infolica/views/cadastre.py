@@ -15,9 +15,6 @@ def cadastre_view(request):
     """
     GET cadastre
     """
-    # Check connected
-    # if not Utils.check_connected(request):
-    # raise exc.HTTPForbidden()
 
     records = request.dbsession.query(Cadastre).filter(Cadastre.id != request.registry.settings['cadastre_cantonal_id']).order_by(Cadastre.nom).all()
 

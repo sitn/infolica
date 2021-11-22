@@ -17,8 +17,17 @@ export default {
   data: () => ({
     showNewControleMutationBtn: false,
     needToCreateControleMutation: false,
-    chefsProjetMO_liste: [],
-    controleMutation: {}
+    controleMutation: {},
+    checkAll: {
+      suivi_: false,
+      bf_: false,
+      cs_: false,
+      od_: false,
+      bat_: false,
+      serv_: false,
+      suiv_mut_: false,
+      div_: false,
+    }
   }),
 
   methods: {
@@ -26,7 +35,6 @@ export default {
      * SEARCH AFFAIRE-ControleMutation
      */
     async searchControleMutation() {
-      await this.searchOperateurs();
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
@@ -40,10 +48,6 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.controleMutation = response.data;
-            // Lier l'id du visa à son nom
-            if (this.controleMutation.visa) {
-              this.controleMutation.visa = this.chefsProjetMO_liste.filter(x => x.id == this.controleMutation.visa)[0];
-            }
             
             // set dates to client format
             this.controleMutation = setDateFormatClient(this.controleMutation);
@@ -56,35 +60,6 @@ export default {
         .catch(err => {
           handleException(err, this);
         });
-    },
-
-    /**
-     * Cherche les opérateurs
-     */
-    async searchOperateurs() {
-      return new Promise((resolve, reject) => {
-        this.$http
-          .get(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
-            {
-              withCredentials: true,
-              headers: {"Accept": "application/json"}
-            }
-          )
-          .then(response => {
-            if (response.data) {
-              this.chefsProjetMO_liste = response.data
-                .map(x => ({
-                  id: x.id,
-                  nom: [x.nom, x.prenom].join(" "),
-                  toLowerCase: () => [x.nom, x.prenom].join(" ").toLowerCase(),
-                  toString: () => [x.nom, x.prenom].join(" ")
-                }));
-                resolve(this.chefsProjetMO_liste);
-            }
-          })
-          .catch(() => reject);
-      })
     },
 
     /**
@@ -209,11 +184,34 @@ export default {
           handleException(err, this);
         });
     },
+
+    /**
+     * Select all checkbox (subdomain)
+     */
+    selectAll(key_) {
+      for (let key in this.controleMutation) {
+        if (["suivi_", ].includes(key_)) {
+          if (key.startsWith(key_)) {
+            if (this.checkAll[key_]) {
+              // Case desactivée
+              this.controleMutation[key] = moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            } else {
+              // Case activée
+              this.controleMutation[key] = null;
+            }
+          }
+        } else {
+          if (key.startsWith(key_)) {  
+            this.controleMutation[key] = this.checkAll[key_];
+          }
+        }
+      }
+
+    }
   },
 
   mounted: function() {
     this.searchControleMutation();
-    this.searchOperateurs();
   }
 };
 </script>

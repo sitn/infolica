@@ -17,6 +17,7 @@ export default {
   },
   props: {
     affaire: { type: Object },
+    etatNumeros_conf: { type: Object },
     numeros_nouveaux_bk: { type: Array },
     numeros_anciens_bk: { type: Array },
     numerosBaseListe: { type: Array },
@@ -31,6 +32,7 @@ export default {
         content: '',
       },
       balanceContainsDP: false,
+      balanceFiles: [],
       cadastres_liste: [],
       checkBFBalance: {
         show: false,
@@ -38,6 +40,7 @@ export default {
         content: ""
       },
       currentNumeroDDP: {},
+      DDPpotential: [],
       editionBalance: false,
       etapeSetBalance: Number(process.env.VUE_APP_ETAPE_SET_BALANCE_ID),
       mutation_names: [],
@@ -47,7 +50,6 @@ export default {
       numeros_ddp_new: [],
       numeros_ddp_old: [],
       numeros_relations: [],
-      numeros_relations_bk: [],
       numeros_relations_matrice: [],
       numeros_types_liste: [],
       selectedMutation: {
@@ -55,6 +57,7 @@ export default {
         numeros: []
       },
       tableau_balance: [],
+      selectedBalanceFiles: [],
       showAskDDPCreation: false,
       showBalanceMenu: false,
     };
@@ -186,40 +189,94 @@ export default {
     },
 
     /**
-     * Get balance from mutation name (DES)
+     * Get balance files
      */
-    async getBalanceFromDes() {
-      this.showBalanceMenu = false;
-      
+    async getBalanceFiles() {
       this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_FROM_FILE_ENDPOINT + "?affaire_id=" + this.affaire.id,
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_FILES_ENDPOINT + "?affaire_id=" + this.affaire.id,
         {
           withCredentials: true,
           headers: {Accept: "application/json"}
         }
       ).then(response => {
         if (response && response.data) {
-          let tmp = JSON.parse(response.data);
-          let relation = [];
+          this.balanceFiles = response.data;
 
-          tmp.forEach(x => {
-            // prepare relation array
-            x.relation_old = [this.affaire.cadastre_id, x.old].join("_");
-            if (String(x.old).toLowerCase().includes("dp")) {
-              x.relation_old = "DP";
-            }
-            
-            x.relation_new = [this.affaire.cadastre_id, x.new].join("_");
-            if (String(x.new).toLowerCase().includes("dp")) {
-              x.relation_new = "DP";
-            }
-            // keep relation
-            relation.push([x.relation_old, x.relation_new]);
-          });
-
-          this.tableau_balance = this.constructTableauBalance(relation);
         }
       }).catch(err => handleException(err, this));
+
+    },
+
+    /**
+     * updload Balance
+     */
+    async uploadBalance(file=null) {
+      let promises = [];
+
+      if (file && file.filepath) {
+        promises.push(this.uploadIndividualBalance(file));
+      } else {
+        this.selectedBalanceFiles.forEach(file => {
+          promises.push(this.uploadIndividualBalance(file));
+        });
+      }
+
+      Promise.all(promises)
+      .then(response => {
+        if (response) {
+          let response_data = [];
+          response.forEach(response_i => {
+            response_data.push(...response_i.data)
+          })
+
+          let relation = this.initRelationArray(response_data);
+          this.tableau_balance = this.constructTableauBalance(relation);
+
+          this.showBalanceMenu = false;
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+    /**
+     * upload individual balance
+     */
+    async uploadIndividualBalance(file) {
+      return new Promise((resolve, reject) => {
+        let formData = new FormData();
+        formData.append("filepath", file.filepath);
+  
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_FROM_FILE_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
+
+    /**
+     * init relation array
+     */
+    initRelationArray(data) {
+      let relation = [];
+      data.forEach(x => {
+        // prepare relation array
+        x.relation_old = [this.affaire.cadastre_id, x.old].join("_");
+        if (String(x.old).toLowerCase().includes("dp")) {
+          x.relation_old = "DP";
+        }
+        
+        x.relation_new = [this.affaire.cadastre_id, x.new].join("_");
+        if (String(x.new).toLowerCase().includes("dp")) {
+          x.relation_new = "DP";
+        }
+        // keep relation
+        relation.push([x.relation_old, x.relation_new]);
+      });
+      return relation;
     },
 
     /**
@@ -329,6 +386,7 @@ export default {
       // Ask what to do with supplementary reserved numbers
       if (checkBF.ddp.length > 0){
         this.showAskDDPCreation = true;
+        this.DDPpotential = this.convertCadNumToNumObj(checkBF.ddp);
       }
 
 
@@ -536,6 +594,101 @@ export default {
       this.$refs.formReference.openReferenceDialog(searchTerms);
     },
 
+    /**
+     * Abandonner un numéro
+     */
+    async abandonNumber(numero) {
+      let formData = new FormData();
+      formData.append('id', numero.numero_id);
+      formData.append('etat_id', this.etatNumeros_conf.abandonne);
+
+      this.$http.put(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.$root.$emit("searchAffaireNumeros");
+          this.initBFArrays();
+          
+          this.removeCurrentDDPpotential(numero);
+
+          this.$root.$emit("ShowMessage", "Le numéro " + numero.numero + " du cadastre de " + numero.numero_cadastre + " a bien été abandonné.");
+        }
+      }).catch(err => handleException(err, this));
+
+    },
+
+    /**
+     * Remove current DDP potential number
+     */
+    removeCurrentDDPpotential(numero) {
+      //remove current entry from array
+      let index = this.DDPpotential.indexOf(numero);
+      if (index > -1) {
+        this.DDPpotential.splice(index, 1);
+      }
+    },
+
+    /**
+     * Convert <cadastre_id>_<numero> to number object
+     */
+    convertCadNumToNumObj(numbersCadNum) {
+      let numbersObj = [];
+      numbersCadNum.forEach(x => {
+        let [cadastre_id, numero] = x.split("_");
+        numbersObj.push(this.numeros_nouveaux.filter(y => y.numero_cadastre_id === Number(cadastre_id) && y.numero === Number(numero))[0]);
+      })
+      return numbersObj;
+    },
+
+    /**
+     * open Balance Menu
+     */
+    openBalanceMenu() {
+      this.getBalanceFiles();
+      this.showBalanceMenu = true;
+    },
+
+    /**
+     * Save reference numeros
+     */
+    async saveReferenceNumeros(numeros) {
+      let numeros_ = numeros.map(x => ({
+        numero_id: x.id,
+        etat_id: x.etat_id
+      }));
+
+      let formData = new FormData();
+      formData.append("affaire_id", this.affaire.id);
+      formData.append("numeros_liste", JSON.stringify(numeros_));
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_REFERENCE_NUMEROS_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          )
+          .then(response => {
+            this.$root.$emit("searchAffaireNumeros");
+            this.$root.$emit("ShowMessage", "Le(s) numéro(s) sélectionné(s) ont été correctement ajouté(s) à l'affaire");
+            resolve(response);
+          }).catch(err => reject(err));
+      });
+    },
+
+    /**
+     * Update balance files selection
+     */
+    onSelectBalanceFile(files) {
+      this.selectedBalanceFiles = files;
+    }
+
   },
   mounted: function() {
     this.getNumerosRelations();
@@ -544,6 +697,7 @@ export default {
     this.getMutationNames();
     setTimeout(() => { this.initBFArrays(); }, 1000);
     this.$root.$on("searchAffaireNumeros", () => { setTimeout(() => { this.initBFArrays(); }, 1000); });
+    this.$root.$on("removeCurrentDDPpotential", numero => { this.removeCurrentDDPpotential(numero) })
   }
 };
 </script>

@@ -6,17 +6,19 @@ from pyramid.response import FileResponse
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Affaire, AffaireType, ModificationAffaireType
-from infolica.models.models import ModificationAffaire, VAffaire, Facture
+from infolica.models.models import ModificationAffaire, VAffaire, Facture, Client
 from infolica.models.models import ControleGeometre, ControleMutation, ControlePPE, SuiviMandat
 from infolica.models.models import AffaireEtape
 from infolica.scripts.utils import Utils
+from infolica.scripts.authentication import check_connected
 
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, func
 
 import os
 import json
 from datetime import datetime, timedelta
 from docxtpl import DocxTemplate, RichText
+import re
 
 ###########################################################
 # AFFAIRE
@@ -30,8 +32,10 @@ def affaires_view(request):
     Return all affaires
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
+
+
 
     query = request.dbsession.query(VAffaire).order_by(VAffaire.id.desc()).all()
     return Utils.serialize_many(query)
@@ -43,7 +47,7 @@ def affaire_by_id_view(request):
     Return affaires by id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     id = request.matchdict['id']
@@ -58,16 +62,20 @@ def affaire_cockpit_view(request):
     Return active affaires (id, no_access, id_current_step)
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     type_id = request.params['type_id'] if 'type_id' in request.params else None
     etape_id = request.params['etape_id'].split(',') if 'etape_id' in request.params else None
+    etape_finProcessus_id = request.registry.settings["affaire_etape_fin_processus_id"]
 
     affaire_show_timedelta = int(request.registry.settings['affaire_show_timedelta'])
     since = datetime.now() - timedelta(days=affaire_show_timedelta)
     
     query = request.dbsession.query(VAffaire)
+
+    # Filtrer les affaires abandonnées
+    query = query.filter(VAffaire.abandon == False)
     
     if type_id is not None:
         query = query.filter(VAffaire.type_id == type_id)
@@ -77,7 +85,13 @@ def affaire_cockpit_view(request):
     if etape_id is not None:
         query = query.filter(VAffaire.etape_id.in_(etape_id))
     else:
-        query = query.filter(VAffaire.etape_datetime >= since)
+        query = query.filter(or_(
+            VAffaire.etape_id != etape_finProcessus_id,
+            and_(
+                VAffaire.etape_id == etape_finProcessus_id,
+                VAffaire.etape_datetime >= since
+            )
+        ))
     
     query = query.all()
 
@@ -92,10 +106,14 @@ def affaire_cockpit_view(request):
             'etape_id': affaire.etape_id,
             'etape_ordre': affaire.etape_ordre,
             'etape_datetime': datetime.strftime(affaire.etape_datetime, '%Y-%m-%d %H:%M:%S'),
+            'etape_days_elapsed': (datetime.now().date() - affaire.etape_datetime.date()).days,
             'operateur_id': affaire.technicien_id,
             'operateur_initiales': affaire.technicien_initiales,
             'cadastre': affaire.cadastre,
-            'description': affaire.nom
+            'description': affaire.nom,
+            'urgent': affaire.urgent,
+            'urgent_echeance': datetime.strftime(affaire.urgent_echeance, '%Y-%m-%d') if not affaire.urgent_echeance is None else None,
+            'attribution': affaire.attribution
         })
     
     return affaires
@@ -108,31 +126,36 @@ def affaires_search_view(request):
     Search affaires
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     settings = request.registry.settings
     search_limit = int(settings['search_limit'])
     
     params_affaires = {}
-    client = None
-    client_in_params = False
+    client_id = None
+    date_from = None
+    date_to = None
+    limitNbResults = True
     for key in request.params.keys():
         if "client" in key:
-            client = request.params[key]
-            client_in_params = True
-            params_affaires["client_commande_id"] = request.params[key]
-            params_affaires["client_envoi_id"] = request.params[key]
+            client_id = request.params[key]
+        elif "date_from" in key:
+            date_from = datetime.strptime(request.params[key], '%Y-%m-%d')
+        elif "date_to" in key:
+            date_to = datetime.strptime(request.params[key], '%Y-%m-%d')
+        elif "limitNbResults" in key:
+            if request.params[key] == "true":
+                limitNbResults = True
+            else:
+                limitNbResults = False
         else:
             params_affaires[key] = request.params[key]
     
     # Chercher les affaires par les clients de facture
     affaires_id_by_clients_facture = []
-    if client_in_params:
-        query_facture = request.dbsession.query(Facture).filter(or_(
-            Facture.client_id == client,
-            Facture.client_co_id == client,
-        )).all()
+    if client_id is not None:
+        query_facture = request.dbsession.query(Facture).filter(Facture.client_id == client_id).all()
 
         # Récupérer la liste des id des affaires retenues
         for facture in query_facture:
@@ -140,19 +163,45 @@ def affaires_search_view(request):
     
     # Chercher les affaires par les conditions (sauf client_facture)
     conditions = Utils.get_search_conditions(VAffaire, params_affaires)
-    query = request.dbsession.query(VAffaire)
-    if client_in_params:
-        query = query.filter(and_(
-            *conditions,
+    query = request.dbsession.query(VAffaire).filter(*conditions)
+
+    if client_id is not None:
+        query = query.filter(or_(
+            VAffaire.client_commande_id == client_id,
+            VAffaire.client_envoi_id == client_id,
             VAffaire.id.in_(affaires_id_by_clients_facture)
         ))
-    else:
-        query = query.filter(*conditions)
 
+    # filtrer les affaires par critères temporels
+    if not date_from is None:
+        query = query.filter(VAffaire.date_ouverture >= date_from)
+    
+    if not date_to is None:
+        query = query.filter(VAffaire.date_ouverture <= date_to)
+    
+    
+    if limitNbResults:
+        query = query.limit(search_limit)
 
+    query = query.all()
 
-    query = query.limit(search_limit).all()
-    return Utils.serialize_many(query)
+    results = Utils.serialize_many(query)
+
+    for i, result in enumerate(results):
+        clients_facture = request.dbsession.query(
+            Client.entreprise,
+            Client.titre,
+            Client.prenom,
+            Client.nom
+        ).filter(
+            Facture.affaire_id == result['id']
+        ).filter(
+            Facture.client_id == Client.id
+        ).all()
+
+        results[i]["client_facture"] = [{'entreprise': x[0], 'titre': x[1], 'nom': x[2], 'prenom': x[3]} for x in clients_facture]
+
+    return results
 
 
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
@@ -263,6 +312,9 @@ def affaires_new_view(request):
     params['datetime'] = datetime.now()
     Utils.addNewRecord(request, AffaireEtape, params)
 
+    # Envoyer e-mail si l'affaire est urgente (sauf si c'est une PPE ou modif de PPE)
+    if model.urgent and (model.type_id != int(request.registry.settings['affaire_type_ppe_id']) or model.type_id != int(request.registry.settings['affaire_type_modification_ppe_id'])):
+        Utils.sendMailAffaireUrgente(request, model)
 
     # Add facture
     if 'facture_client_id' in request.params:
@@ -304,28 +356,39 @@ def affaires_update_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(Affaire.__tablename__, id_affaire))
 
+    # stock affaire_urgence info before update
+    affaire_urgence = record.urgent is True
+
     # Get role depending on affaire type
     affaire_type = params['type_id'] if 'type_id' in params else record.type_id
 
     # Permission (fonction) par défaut
     permission = request.registry.settings['affaire_edition']
-
-    # Affaire de cadastration
-    if affaire_type == request.registry.settings['affaire_type_cadastration_id']:
-        permission = request.registry.settings['affaire_cadastration_edition']
-    # Affaire de PPE
-    elif affaire_type == request.registry.settings['affaire_type_ppe_id']:
-        permission = request.registry.settings['affaire_ppe_edition']
-    # Affaire de révision d'abornement
-    elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
-        permission = request.registry.settings['affaire_revision_abornement_edition']
-    # Affaire de rétablissement de PFP3
-    elif affaire_type == request.registry.settings['affaire_type_retablissement_pfp3_id']:
-        permission = request.registry.settings['affaire_retablissement_pfp3_edition']
-
     # Check authorization
     if not Utils.has_permission(request, permission):
-        raise exc.HTTPForbidden()
+        # Affaire de cadastration
+        if affaire_type == request.registry.settings['affaire_type_cadastration_id']:
+            permission = request.registry.settings['affaire_cadastration_edition']
+        # Affaire de PPE
+        elif affaire_type == request.registry.settings['affaire_type_ppe_id']:
+            permission = request.registry.settings['affaire_ppe_edition']
+        # Affaire de révision d'abornement
+        elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
+            permission = request.registry.settings['affaire_revision_abornement_edition']
+        # Affaire de rétablissement de PFP3
+        elif affaire_type == request.registry.settings['affaire_type_retablissement_pfp3_id']:
+            permission = request.registry.settings['affaire_retablissement_pfp3_edition']
+        # Affaire pcop
+        elif affaire_type == request.registry.settings['affaire_type_part_copropriete_id']:
+            permission = request.registry.settings['affaire_pcop_edition']
+        # Affaire mpd
+        elif affaire_type == request.registry.settings['affaire_type_mpd_id']:
+            permission = request.registry.settings['affaire_mpd_edition']
+        # Affaire autre
+        elif affaire_type == request.registry.settings['affaire_type_autre_id']:
+            permission = request.registry.settings['affaire_autre_edition']
+        else:
+            raise exc.HTTPForbidden()
 
     # check if path exists or not
     if "chemin" in params:
@@ -342,8 +405,11 @@ def affaires_update_view(request):
             else:
                 raise CustomError(CustomError.DIRECTORY_NOT_FOUND.format(chemin_affaire))
 
-
     record = Utils.set_model_record(record, params)
+
+    # If urgence defined after affaire creation, send e-mail
+    if not affaire_urgence and "urgent" in params and (record.type_id != int(request.registry.settings['affaire_type_ppe_id']) or record.type_id != int(request.registry.settings['affaire_type_modification_ppe_id'])):
+        Utils.sendMailAffaireUrgente(request, record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
 
@@ -450,7 +516,7 @@ def modification_affaire_by_affaire_mere_view(request):
     Get modification affaire by affaire_mère
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_mere_id = request.matchdict["id"]
@@ -468,7 +534,7 @@ def modification_affaire_by_affaire_fille_view(request):
     Get modification affaire by affaire_fille
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_fille_id = request.matchdict["id"]
@@ -486,7 +552,7 @@ def affaire_spatial(request):
     Get modification affaire by affaire_fille
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     results = request.dbsession.query(VAffaire).filter(
@@ -520,3 +586,61 @@ def affaire_spatial(request):
         counter += 1
 
     return affaires
+
+
+@view_config(route_name="guichet_rf_saisie_pm", request_method="GET", renderer='jsonp')
+def guichet_rf_saisie_pm_view(request):
+    """
+    Get date_envoi for guichet_rf saisie_pm
+    """
+    affaire_id = request.params['infolica_affaire_id'] if "infolica_affaire_id" in request.params else None
+
+    if affaire_id is None:
+        result = {
+            'search_term': None,
+            'infolica_affaire_id': None,
+            'infolica_affaire_nom': None,
+            'plan_date': None,
+            'status': 'error',
+            'detail': "Le numéro/nom de l'affaire est manquant dans la requête"
+        }
+        return result
+
+    affaire = None
+    # recherche de l'affaire
+    if affaire_id.isnumeric():
+        affaire = request.dbsession.query(VAffaire).filter(
+            VAffaire.id == affaire_id
+        ).first()
+    else:
+        # tester si le nom entré est dans l'ancien format N_1234_0
+        affaire_id2 = re.split('(\d+)', affaire_id)
+        if len(affaire_id2) == 2 or (len(affaire_id2) == 3 and affaire_id2[2] == ''):
+            affaire_id2 = affaire_id2[0] + "_" + affaire_id2[1] + "_0"
+
+            affaire = request.dbsession.query(VAffaire).filter(
+                func.lower(VAffaire.no_access) == func.lower(affaire_id2)
+            ).first()
+    
+
+    if affaire is None :
+        result = {
+            'search_term': affaire_id,
+            'infolica_affaire_id': None,
+            'infolica_affaire_nom': None,
+            'plan_date': None,
+            'status': 'error',
+            'detail': "Aucune affaire trouvée avec la référence donnée : infolica_affaire_id = " + affaire_id
+        }
+
+    else:
+        result = {
+            'search_term': affaire_id,
+            'infolica_affaire_id': affaire.id,
+            'infolica_affaire_nom': affaire.no_access,
+            'plan_date': datetime.strftime(affaire.date_envoi, "%d.%m.%Y"),
+            'status': 'success',
+            'detail': 'Affaire trouvée'
+        }
+
+    return result

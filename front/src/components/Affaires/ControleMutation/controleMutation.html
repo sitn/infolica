@@ -8,7 +8,7 @@
                         <md-icon>keyboard_arrow_down</md-icon>
                     </md-button>
                 </md-card-expand-trigger>
-                Contrôle du chef(fe) de projets
+                Contrôle du·de la chef·fe de projets
             </div>
             
             <md-button class="md-primary" v-on:click="newControleMutation()"
@@ -19,7 +19,7 @@
             <md-card-expand-content>
                 <md-card-content v-bind:class="{ disabledElement: !permission.editAffaireAllowed }">
                     
-                    <p v-if="controleMutation.date" style="margin-top: 0px;">Dernier contrôle effectué le {{controleMutation.date}} par {{controleMutation.visa.nom}}</p>
+                    <p v-if="controleMutation.date" style="margin-top: 0px;">Dernier contrôle effectué le {{controleMutation.date}} par {{controleMutation.operateur_prenom_nom}}</p>
                     
                     <div v-if="controleMutation.id">
                         <div class="controleMutationFormParent">
@@ -27,6 +27,7 @@
                             <md-card-content>
                                 <div class="md-title">PRODUCTION</div>
 
+                                <md-checkbox style="padding-left: 30px;" v-model="checkAll.suivi_" @change="selectAll('suivi_')">Tout cocher</md-checkbox>
                                 <md-checkbox class="md-primary" v-model="controleMutation.suivi_1" :value="setTrueValue('suivi_1')">Création de la mutation dans la BD</md-checkbox>
                                 <md-checkbox class="md-primary" v-model="controleMutation.suivi_2" :value="setTrueValue('suivi_2')">Contrôles de cohérences e.o.</md-checkbox>
                                 <md-checkbox class="md-primary" v-model="controleMutation.suivi_3" :value="setTrueValue('suivi_3')">Production des désignations</md-checkbox>
@@ -44,6 +45,7 @@
                             <md-card-content>
                                 <div class="md-title">BIENS-FONDS</div>
 
+                                <md-checkbox style="padding-left: 30px;" v-model="checkAll.bf_" @change="selectAll('bf_')">Tout cocher</md-checkbox>
                                 <md-checkbox class="md-primary" v-model="controleMutation.bf_1">
                                     Contrôler les numéros des points limites ainsi que la valeur, la précision et la
                                     fiabilité des points sont en adéquations avec le niveau de tolérance de la zone de
@@ -74,6 +76,7 @@
                             <md-card-content>
                                 <div class="md-title">COUVERTURE DU SOL</div>
 
+                                <md-checkbox style="padding-left: 30px;" v-model="checkAll.cs_" @change="selectAll('cs_')">Tout cocher</md-checkbox>
                                 <md-checkbox class="md-primary" v-model="controleMutation.cs_1">
                                     Contrôler les numéros des points particuliers "660" ainsi que la valeur, la
                                     précision et la fiabilité des points sont en adéquations avec le niveau de tolérance
@@ -109,6 +112,7 @@
                             <md-card-content>
                                 <div class="md-title">OBJETS DIVERS</div>
 
+                                <md-checkbox style="padding-left: 30px;" v-model="checkAll.od_" @change="selectAll('od_')">Tout cocher</md-checkbox>
                                 <md-checkbox class="md-primary" v-model="controleMutation.od_1">
                                     Tous les points de constructions "760" sont supprimés.
                                 </md-checkbox>
@@ -140,6 +144,7 @@
                             <md-card-content>
                                 <div class="md-title">ADRESSES DES BATIMENTS</div>
 
+                                <md-checkbox style="padding-left: 30px;" v-model="checkAll.bat_" @change="selectAll('bat_')">Tout cocher</md-checkbox>
                                 <md-checkbox class="md-primary" v-model="controleMutation.bat_1">
                                     Contrôler dans la table « Adresses_des_batiments => Mise_a_jourBAT » qu’il y a bien
                                     que les nouveaux éléments que vous avez créés dans votre affaire.
@@ -164,6 +169,7 @@
                             <md-card-content>
                                 <div class="md-title">SERVITUDES</div>
 
+                                <md-checkbox style="padding-left: 30px;" v-model="checkAll.serv_" @change="selectAll('serv_')">Tout cocher</md-checkbox>
                                 <md-checkbox class="md-primary" v-model="controleMutation.serv_1">
                                     Contrôler dans la table « Servitudes => Mise_a_jourSE » qu’il y a bien que les
                                     nouveaux éléments que vous avez créés dans votre affaire.
@@ -202,6 +208,7 @@
                             <md-card-content>
                                 <div class="md-title">STATUT MUTATION</div>
 
+                                <md-checkbox style="padding-left: 30px;" v-model="checkAll.suiv_mut_" @change="selectAll('suiv_mut_')">Tout cocher</md-checkbox>
                                 <md-checkbox class="md-primary" v-model="controleMutation.suiv_mut_1">
                                     Supprimer dans la gestion des mutations les « Topic » qui ne sont pas utilisés.
                                 </md-checkbox>
@@ -219,6 +226,7 @@
                             <md-card-content>
                                 <div class="md-title">DIVERS</div>
 
+                                <md-checkbox style="padding-left: 30px;" v-model="checkAll.div_" @change="selectAll('div_')">Tout cocher</md-checkbox>
                                 <md-checkbox class="md-primary" v-model="controleMutation.div_1">
                                     Épurations des fichiers dans le répertoire de l’affaire.
                                 </md-checkbox>

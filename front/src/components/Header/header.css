@@ -1,7 +1,9 @@
 .header{
-    height: 40px;
+    height: 45px;
     width: 100%;
-    float: left;    
+    float: left;
+    margin-top: -4px;
+    margin-bottom: 10px;  
 }
 
 .header .md-card.md-theme-default{
@@ -57,4 +59,13 @@
 
 .header  .user em {
     cursor: pointer;
+}
+
+.header .versionBtn {
+    width: auto !important;
+    min-width: auto !important;
+    margin: -5px 25px 0px 10px;
+    font-weight: normal;
+    font-size: 13px;
+    color: white;
 }

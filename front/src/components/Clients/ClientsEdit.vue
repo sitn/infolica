@@ -4,12 +4,12 @@
 
 <script>
 import { handleException } from '@/services/exceptionsHandler'
-import { checkPermission } from '@/services/helper'
+import { checkPermission, stringifyAutocomplete2 } from '@/services/helper'
 
 import { validationMixin } from 'vuelidate'
 import { required, email } from 'vuelidate/lib/validators'
 
-
+const postalCodes = require('switzerland-postal-codes');
 const moment = require('moment')
 
 export default {
@@ -47,7 +47,8 @@ export default {
       mail: null,
       no_sap: null,
       no_bdp_bdee: null,
-      co: null
+      co: null,
+      besoin_vref_facture: false,
     },
     lastRecord: null,
     permission: {
@@ -56,6 +57,7 @@ export default {
     sending: false,
     showDialogAddNewContact: false,
     types_clients_list: [],
+    npa_localite_list: [],
   }),
 
   // Validations
@@ -103,6 +105,7 @@ export default {
       this.form.no_sap = null;
       this.form.no_bdp_bdee = null;
       this.form.co = null;
+      this.form.besoin_vref_facture = false;
     },
 
     /*
@@ -188,8 +191,12 @@ export default {
     * Handle save data success
     */
     initPostData () {
-      if (this.form.co !== null && !this.form.co.startsWith("c/o ")) {
-        this.form.co = "c/o " + this.form.co;
+      if (this.form.co === null || this.form.co === "") {
+        this.form.co = null;
+      } else {
+        if (!this.form.co.startsWith("c/o ")) {
+          this.form.co = "c/o " + this.form.co;
+        }
       }
 
       let formData = new FormData();
@@ -216,6 +223,7 @@ export default {
       formData.append("mail", this.form.mail || null);
       formData.append("no_sap", this.form.no_sap || null);
       formData.append("no_bdp_bdee", this.form.no_bdp_bdee || null);
+      formData.append("besoin_vref_facture", this.form.besoin_vref_facture);
 
       return formData;
     },
@@ -407,8 +415,51 @@ export default {
      */
     initPermissions() {
       this.permission.client_edit = checkPermission(process.env.VUE_APP_CLIENT_EDITION);
-    }
+    },
 
+    /**
+     * Search NPA
+     */
+    searchNPA(searchTerm) {
+      if (searchTerm.length > 0) {
+        let tmp = Object.keys(postalCodes)
+        .filter(x => x.startsWith(searchTerm));
+        tmp = tmp.splice(0,10);
+
+        let tmp2 = [];
+        tmp.forEach(x => tmp2.push({"id": x, "nom": postalCodes[x]}));
+
+        this.npa_localite_list = stringifyAutocomplete2(tmp2, "id");
+      } else {
+        this.npa_localite_list = [];
+      }
+    },
+
+    /**
+     * Search Localité
+     */
+    searchLocalite(searchTerm) {
+      if (searchTerm.length > 0) {
+        let tmp = [];
+        Object.keys(postalCodes).forEach(x => {
+          if (postalCodes[x].toLowerCase().includes(searchTerm.toLowerCase())){
+            tmp.push({id: x, nom: postalCodes[x]});
+          }
+        });
+        tmp = tmp.splice(0,10);
+        
+        this.npa_localite_list = stringifyAutocomplete2(tmp, "nom");
+      } else {
+        this.npa_localite_list = [];
+      }
+    },
+    
+    setNPALocalite(data){
+      setTimeout(() => {
+        this.form.npa = data.id;
+        this.form.localite = data.nom;
+      }, 100);
+    },
 
   },
 

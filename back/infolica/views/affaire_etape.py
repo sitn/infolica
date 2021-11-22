@@ -9,7 +9,7 @@ from infolica.models.constant import Constant
 from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffaires, VAffaire, EtapeMailer, Operateur, Affaire
 from infolica.scripts.utils import Utils
 from infolica.scripts.mailer import send_mail
-
+from infolica.scripts.authentication import check_connected
 import os
 
 ###########################################################
@@ -22,7 +22,7 @@ def etapes_index_view(request):
     GET etapes index
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     records = request.dbsession.query(AffaireEtapeIndex).filter(
@@ -37,13 +37,15 @@ def affaires_etapes_view(request):
     GET etapes affaire
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.matchdict['id']
 
     records = request.dbsession.query(VEtapesAffaires).filter(
         VEtapesAffaires.affaire_id == affaire_id
+    ).order_by(
+        VEtapesAffaires.next_datetime.desc()
     ).all()
 
     return Utils.serialize_many(records)
@@ -56,10 +58,11 @@ def etapes_new_view(request):
     POST etapes affaire
     """
     # Check authorization
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     chef_equipe_id = request.params['chef_equipe_id'] if 'chef_equipe_id' in request.params else None
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     
     # Add new step
     model = Utils.addNewRecord(request, AffaireEtape)
@@ -72,7 +75,9 @@ def etapes_new_view(request):
 
     # only when chef_equipe is specified
     if chef_equipe_id:
-        mail_list.append( request.dbsession.query(Operateur).filter(Operateur.id == chef_equipe_id).first().mail )
+        chef_equipe_mail = request.dbsession.query(Operateur).filter(Operateur.id == chef_equipe_id).first().mail
+        if chef_equipe_mail is not None:
+            mail_list.append( chef_equipe_mail )
         # update chef d'équipe in affaire
         affaire = request.dbsession.query(Affaire).filter(Affaire.id == model.affaire_id).first()
         affaire.technicien_id = chef_equipe_id
@@ -94,20 +99,40 @@ def etapes_new_view(request):
                 VEtapesAffaires.affaire_id == model.affaire_id,
                 VEtapesAffaires.etape_priorite == int(request.registry.settings['affaire_etape_priorite_1_id'])
             )
-        ).order_by(VEtapesAffaires.id.desc()).all()
+        ).order_by(VEtapesAffaires.next_datetime.desc()).all()
         lastSteps = "".join(["<tr><td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
                               <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{} {}</td>\
                               <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
                               <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
-                              </tr>".format(i.datetime, i.operateur_prenom, i.operateur_nom, i.etape, i.remarque if i.remarque else "") for i in lastSteps])
+                              </tr>".format(
+                                  i.etape, 
+                                  i.next_operateur_prenom if i.next_operateur_prenom else "", 
+                                  i.next_operateur_nom if i.next_operateur_nom else "", 
+                                  i.next_datetime.strftime("%d.%m.%Y - %H:%M") if i.next_datetime else "", 
+                                  i.next_remarque if i.next_remarque else ""
+                                ) for i in lastSteps])
         
         affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
-        text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire.id)) + "'>" + str(affaire.id) + affaire_nom + "</a></b> est en attente pour l'étape <b>"+ affaire_etape_index.nom +"</b>."
+        text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire.id)) + "'>" + str(affaire.id) + affaire_nom + "</a></b>" + (" (avec mention urgente)" if affaire.urgent else "") + " est en attente pour l'étape <b>"+ affaire_etape_index.nom +"</b>."
         text += "<br><br>Cadastre: " + str(affaire.cadastre)
         text += "<br>Description: " + str(affaire.nom)
-        text += ("<br><br><br><h4>Historique de l'affaire</h4><table style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'><tr><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Horodateur</th><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Opérateur</th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'><th>Etape</th><th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Remarque</th></tr>" + lastSteps + "</table>") if lastSteps != "" else ""
-        subject = "Infolica - affaire " + str(affaire.id)
+        text += ("<br><br><br><h4>Historique de l'affaire</h4>\
+            <table style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>\
+                <tr>\
+                    <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Étape</th>\
+                    <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Réalisée par</th>\
+                    <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Réalisée le</th>\
+                    <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Remarque</th>\
+                </tr>" + lastSteps + "</table>") if lastSteps != "" else ""
+        subject = "Infolica - affaire " + str(affaire.id) + (" - URGENT" if affaire.urgent else "")
         send_mail(request, mail_list, "", subject, html=text)
+
+    # Finally erase attribution on affaire
+    affaire = None
+    affaire = request.dbsession.query(Affaire).filter(
+        Affaire.id == affaire_id
+    ).first()
+    affaire.attribution = None
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireEtape.__tablename__))
 

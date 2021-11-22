@@ -1,6 +1,5 @@
 from sqlalchemy import (
     Column,
-    Index,
     Integer,
     BigInteger,
     Float,
@@ -12,7 +11,10 @@ from sqlalchemy import (
     ARRAY,
     ForeignKey,
     UniqueConstraint,
+    Table
 )
+
+from sqlalchemy.orm import relationship
 
 from geoalchemy2 import Geometry
 
@@ -20,6 +22,24 @@ import datetime
 from .constant import Constant
 from .meta import Base
 
+association_fonction_role = Table('fonction_role', Base.metadata,
+    Column('id', primary_key=True),
+    Column('role_id', ForeignKey('role.id')),
+    Column('fonction_id', ForeignKey('fonction.id'))
+)
+
+class Role(Base):
+    __tablename__ = 'role'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
+    fonctions = relationship("Fonction", secondary=association_fonction_role)
+
+class Fonction(Base):
+    __tablename__ = 'fonction'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
 
 class Operateur(Base):
     __tablename__ = 'operateur'
@@ -34,7 +54,9 @@ class Operateur(Base):
     entree = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     sortie = Column(Date)
     mail = Column(Text)
-
+    last_notemaj_id = Column(BigInteger)
+    role_id = Column(BigInteger, ForeignKey(Role.id))
+    role = relationship("Role", uselist=False)
 
 class Cadastre(Base):
     __tablename__ = 'cadastre'
@@ -74,6 +96,7 @@ class Client(Base):
     no_sap = Column(Text)
     no_bdp_bdee = Column(Text)
     no_access = Column(Text)
+    besoin_vref_facture = Column(Boolean)
 
 
 class ClientMoralPersonne(Base):
@@ -135,8 +158,11 @@ class Affaire(Base):
     localisation_N = Column(Float, nullable=False)
     vref = Column(Text)
     chemin = Column(Text)
-    abandon = Column(Boolean)
+    abandon = Column(Boolean, nullable=False, default=False)
     resume = Column(Text)
+    urgent = Column(Boolean)
+    urgent_echeance = Column(Date)
+    attribution = Column(Text)
 
 
 class AffaireEtapeIndex(Base):
@@ -221,17 +247,42 @@ class TableauEmoluments(Base):
     montant = Column(Float, default=0.0, nullable=False)
 
 
-class EmolumentFacture(Base):
-    __tablename__ = 'emolument_facture'
+class EmolumentAffaire(Base):
+    __tablename__ = 'emolument_affaire'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    facture_id = Column(BigInteger, ForeignKey(Facture.id), nullable=False)
-    emolument_id = Column(BigInteger, ForeignKey(
-        TableauEmoluments.id), nullable=False)
-    nombre = Column(Integer, nullable=False)
-    facteur_correctif = Column(Float, default=1.0, nullable=False)
-    batiment = Column(Text)
-    montant = Column(Float, default=0.0, nullable=False)
+    affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
+    pente_pc = Column(Integer)
+    diff_visibilite_pc = Column(Integer)
+    trafic_pc = Column(Integer)
+    zi = Column(Float)
+    indice_application = Column(Float)
+    tva_pc = Column(Float)
+    remarque = Column(Text)
+    numeros_id = Column(ARRAY(BigInteger))
+    facture_type_id = Column(BigInteger)
+    utilise = Column(Boolean)
+
+
+class EmolumentAffaireRepartition(Base):
+    __tablename__ = 'emolument_affaire_repartition'
+    __table_args__ = {'schema': 'infolica'}
+    emolument_affaire_id = Column(BigInteger, ForeignKey(EmolumentAffaire.id), primary_key=True, nullable=False)
+    facture_id = Column(BigInteger, ForeignKey(Facture.id), primary_key=True, nullable=False)
+    repartition = Column(Float, nullable=False)
+
+
+class Emolument(Base):
+    __tablename__ = 'emolument'
+    __table_args__ = {'schema': 'infolica'}
+    emolument_affaire_id = Column(BigInteger, primary_key=True)
+    tableau_emolument_id = Column(BigInteger, primary_key=True)
+    position = Column(Text, primary_key=True)
+    prix_unitaire = Column(Float)
+    nombre = Column(Float)
+    batiment = Column(Integer, primary_key=True)
+    batiment_f = Column(Float)
+    montant = Column(Float)
 
 
 class SuiviMandat(Base):
@@ -537,6 +588,25 @@ class ControleGeometre(Base):
     check_45 = Column(Boolean)  # Le montant est correct (~300.- par PL)
     check_46 = Column(Boolean)  # Le nombre de points est le même que sur le plan
     check_47 = Column(Boolean)  # Le montant est correct (~ 380.- par PFP)
+    check_48 = Column(Boolean)  # Adresses (commande, envoi, facturation)
+    check_49 = Column(Boolean)  # Référencement géographique
+    check_50 = Column(Boolean)  # N° de biens-fonds réservés = n° de biens-fonds utilisés
+    check_51 = Column(Boolean)  # Si plusieurs destinataires, la répartition est indiquée (devis et factures)
+    check_52 = Column(Boolean)  # Indication sur l'avancement de la saisie des servitudes
+    check_53 = Column(Boolean)  # Surface du bien-fonds de base ne change pas lors de la création d'un DDP
+    check_54 = Column(Boolean)  # Surface totale de chaque bien-fonds
+    check_55 = Column(Boolean)  # Nom de rue pour un bien-fonds non construit en zone à bâtir
+    check_56 = Column(Boolean)  # Informations concernant la Mat. Diff. (immeuble, facture, désignation)
+    check_57 = Column(Boolean)  # N° d'affaire
+    check_58 = Column(Boolean)  # Surface totale de chaque bien-fonds
+    check_59 = Column(Boolean)  # Sommes des surfaces des natures pour chaque bien-fonds
+    check_60 = Column(Boolean)  # Référencement géographique de l'affaire
+    check_61 = Column(Boolean)  # Remarque(s) de la rubrique "Devis et factures"
+    check_62 = Column(Boolean)  # Dossier complet (formule de légende, plan de situation, plans d'étage, coupes, plans de façade)
+    check_63 = Column(Boolean)  # N° et état juridique du BF de base
+    check_64 = Column(Boolean)  # Informations cohérentes entre plan de situation et plans d'étage
+    check_65 = Column(Boolean)  # Nombres de documents indiqués sur la formule de légende
+    check_66 = Column(Boolean)  # Contenu de la facture
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
     date = Column(Date)
     remarque = Column(Text)
@@ -608,6 +678,8 @@ class NumeroDiffere(Base):
     date_sortie = Column(Date)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
     req_radiation = Column(Boolean)
+    req_ref = Column(Text)
+    date_controle = Column(Date)
 
 
 class NumeroRelationType(Base):
@@ -626,6 +698,8 @@ class NumeroRelation(Base):
     relation_type_id = Column(BigInteger, ForeignKey(
         NumeroRelationType.id), nullable=False)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
+
+    UniqueConstraint(numero_id_base, numero_id_associe, relation_type_id, affaire_id)
 
 
 class AffaireNumeroType(Base):
@@ -694,28 +768,6 @@ class Preavis(Base):
 #     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
-class Fonction(Base):
-    __tablename__ = 'fonction'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-
-
-class Role(Base):
-    __tablename__ = 'role'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    nom = Column(Text, nullable=False)
-
-
-class FonctionRole(Base):
-    __tablename__ = 'fonction_role'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    fonction_id = Column(BigInteger, ForeignKey(Fonction.id), nullable=False)
-    role_id = Column(BigInteger, ForeignKey(Role.id), nullable=False)
-
-
 class GeosBalance(Base):
     __tablename__ = 'geos_balance'
     __table_args__ = {'schema': 'infolica'}
@@ -750,6 +802,18 @@ class EtapeMailer(Base):
     sendmail = Column(Boolean)
 
 
+class NotesMAJ(Base):
+    __tablename__ = 'notes_maj'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
+    version = Column(Text, nullable=False)
+    titre = Column(Text, nullable=False)
+    message = Column(Text, nullable=False)
+    date = Column(Date, nullable=False)
+    delai = Column(Date, nullable=False)
+
+
 # ======================== VUES ========================
 # Ajouter l'information 'info': dict(is_view=True) aux vues 
 # pour qu'elles ne soient pas prises en compte dans les migrations par Alembic
@@ -772,8 +836,14 @@ class VNumeros(Base):
     diff_id = Column(Date)
     diff_entree = Column(Date)
     diff_sortie = Column(Date)
+    diff_controle = Column(Date)
     diff_affaire_id = Column(BigInteger)
     diff_req_radiation = Column(Boolean)
+    diff_operateur_id = Column(BigInteger)
+    diff_operateur_nom = Column(Text)
+    diff_operateur_prenom = Column(Text)
+    diff_operateur_initiales = Column(Text)
+    diff_req_ref = Column(Text)
 
 
 class VNumerosAffaires(Base):
@@ -788,7 +858,10 @@ class VNumerosAffaires(Base):
     affaire_destination_id = Column(BigInteger)
     affaire_nom = Column(Text)
     affaire_type = Column(Text)
-    affaire_date = Column(Date)
+    affaire_date_ouverture = Column(Date)
+    affaire_date_envoi = Column(Date)
+    affaire_date_validation = Column(Date)
+    affaire_date_cloture = Column(Date)
     affaire_information = Column(Text)
     numero_cadastre = Column(Text)
     numero_cadastre_id = Column(BigInteger)
@@ -801,12 +874,14 @@ class VNumerosAffaires(Base):
     numero_diff_id = Column(Date)
     numero_diff_entree = Column(Date)
     numero_diff_sortie = Column(Date)
+    numero_diff_controle = Column(Date)
     numero_base_id = Column(BigInteger)
     numero_base_type = Column(Text)
     numero_base = Column(BigInteger)
     numero_base_suffixe = Column(Text)
     numero_base_etat = Column(Text)
     numero_base_etat_id = Column(Text)
+    numero_base_sitn = Column(Text)
     affaire_numero_type = Column(Text)
     numero_sitn = Column(Text)
 
@@ -894,6 +969,9 @@ class VAffaire(Base):
     etape_priorite = Column(Integer)
     etape_ordre = Column(BigInteger)
     abandon = Column(Boolean)
+    urgent = Column(Boolean)
+    urgent_echeance = Column(Date)
+    attribution = Column(Text)
 
 
 class VEnvois(Base):
@@ -920,15 +998,22 @@ class VEtapesAffaires(Base):
                       'info': dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger)
-    etape_id = Column(BigInteger)
+    etape_id = Column(BigInteger, primary_key=True)
     etape = Column(Text)
     remarque = Column(Text)
     datetime = Column(DateTime)
     operateur_id = Column(BigInteger)
     operateur_nom = Column(Text)
     operateur_prenom = Column(Text)
+    operateur_initiales = Column(Text)
     etape_ordre = Column(BigInteger)
     etape_priorite = Column(Integer)
+    next_operateur_id = Column(BigInteger)
+    next_operateur_nom = Column(Text)
+    next_operateur_prenom = Column(Text)
+    next_operateur_initiales = Column(Text)
+    next_remarque = Column(Text)
+    next_datetime = Column(DateTime)
 
 
 class VAffairesPreavis(Base):
@@ -1063,6 +1148,7 @@ class VFactures(Base):
     date = Column(Date)
     remarque = Column(Text)
     numeros = Column(ARRAY(BigInteger))
+    emolument_affaire_id = Column(BigInteger)
 
 
 class VReservationNumerosMO(Base):
@@ -1110,8 +1196,8 @@ class VPlan(Base):
     idrepplan = Column(Text)
     base = Column(Text)
 
-class VNextNumeroMOAvilable(Base):
-    __tablename__ = 'v_next_numero_mo_available'
+class VProchainNumeroDisponible(Base):
+    __tablename__ = 'v_prochain_numero_disponible'
     __table_args__ = {'schema': 'infolica',
                       'info': dict(is_view=True)}
     cadastre_id = Column(BigInteger, primary_key=True)

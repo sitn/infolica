@@ -4,8 +4,9 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models import Constant
-from infolica.models.models import ControlePPE
+from infolica.models.models import ControlePPE, Operateur
 from infolica.scripts.utils import Utils
+from infolica.scripts.authentication import check_connected
 
 
 @view_config(route_name='controles_ppe', request_method='GET', renderer='json')
@@ -15,7 +16,7 @@ def controles_ppe_view(request):
     Return all controles_ppe
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     query = request.dbsession.query(ControlePPE).all()
@@ -28,7 +29,7 @@ def controles_ppe_by_id_view(request):
     Return controles_ppe by id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id
@@ -44,7 +45,7 @@ def controles_ppe_by_affaire_id_view(request):
     Return controles_ppe by affaire_id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     # Get controle mutation id
@@ -55,8 +56,25 @@ def controles_ppe_by_affaire_id_view(request):
     if query is None:
         return None
 
-    return Utils.serialize_many(query)
+    ctrls = Utils.serialize_many(query)
 
+    # search operateurs
+    if len(ctrls) > 0:
+        for ctrl in ctrls:
+            operateur_id = ctrl['operateur_id']
+
+            if operateur_id is not None:
+                operateur = request.dbsession.query(
+                    Operateur
+                ).filter(
+                    Operateur.id == operateur_id
+                ).first()
+
+                ctrl['operateur_prenom_nom'] = ' '.join([operateur.prenom, operateur.nom])
+            else:
+                ctrl['operateur_prenom_nom'] = None
+
+    return ctrls
 
 @view_config(route_name='controles_ppe', request_method='POST', renderer='json')
 @view_config(route_name='controles_ppe_s', request_method='POST', renderer='json')

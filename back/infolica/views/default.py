@@ -68,6 +68,11 @@ def test_error(exc, request):
 @view_config(route_name='controle_geometre', request_method='OPTIONS', renderer='json')
 @view_config(route_name='controle_geometre_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='save_document', request_method='OPTIONS', renderer='json')
+@view_config(route_name='operateur_notes_maj', request_method='OPTIONS', renderer='json')
+@view_config(route_name='emolument_affaire', request_method='OPTIONS', renderer='json')
+@view_config(route_name='emolument', request_method='OPTIONS', renderer='json')
+@view_config(route_name='emolument_affaire_freeze', request_method='OPTIONS', renderer='json')
+@view_config(route_name='emolument_affaire_repartiton', request_method='OPTIONS', renderer='json')
 def options_response_view(request):
     """
     Common OPTION RESPONSE

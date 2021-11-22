@@ -3,17 +3,18 @@
 
 
 <script>
-var numeral = require("numeral");
 import { getCurrentDate,
          getClients,
          filterList,
-        //  stringifyAutocomplete,
+         stringifyAutocomplete2,
          getDocument,
          logAffaireEtape } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
+import Emoluments from "@/components/Affaires/Facturation/Emoluments/Emoluments.vue";
 
+const numeral = require("numeral");
 const moment = require('moment')
 
 export default {
@@ -25,6 +26,9 @@ export default {
     permission: Object,
     clientTypes_conf: Object
     },
+  components: {
+    Emoluments
+  },
   data: () => {
     return {
       affaire_devis: [],
@@ -43,6 +47,7 @@ export default {
       deleteFactureActive: false,
       deleteFactureId: null,
       deleteFactureMessage: "",
+      factureTypes: [],
       lastRecordSAP: null,
       selectedFacture: {
         id: null,
@@ -174,6 +179,7 @@ export default {
               id: x.id,
               nom: x.adresse_,
               type_id: x.type_client,
+              besoin_vref_facture: x.besoin_vref_facture,
               toLowerCase: () => x.adresse_.toLowerCase(),
               toString: () => x.adresse_
             }));
@@ -229,7 +235,7 @@ export default {
     /**
      * Edit facture
      */
-    openFactureEdition(data, type) {
+    openFactureEdition(data, type, newMontants=false) {
       let tmp = {};
       if (type === 'devis') {
         tmp = this.affaire_devis.filter(x => x.id === data.id)[0];
@@ -239,20 +245,38 @@ export default {
         this.$root.$emit('ShowError', 'Une erreur est survenue, contacter le développeur.')
       }
 
-      this.selectedFacture = {
-        id: tmp.id,
-        sap: tmp.sap,
-        date: tmp.date !== null? tmp.date: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
-        client_premiere_ligne: tmp.client_premiere_ligne,
-        montant_mo: numeral(tmp.montant_mo).format('0.00'),
-        montant_mat_diff: numeral(tmp.montant_mat_diff).format('0.00'),
-        montant_rf: numeral(tmp.montant_rf).format('0.00'),
-        montant_tva: numeral(tmp.montant_tva).format('0.00'),
-        montant_total: numeral(tmp.montant_total).format('0.00'),
-        numeros: tmp.numeros,
-        numeros_obj: [],
-        remarque: tmp.remarque,
-        type_id: tmp.type_id,
+      if (newMontants) {
+        this.selectedFacture = {
+          id: tmp.id,
+          sap: tmp.sap,
+          date: tmp.date !== null? tmp.date: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+          client_premiere_ligne: tmp.client_premiere_ligne,
+          montant_mo: numeral(data.montant_mo).format('0.00'),
+          montant_mat_diff: numeral(data.montant_mat_diff).format('0.00'),
+          montant_rf: numeral(data.montant_rf).format('0.00'),
+          montant_tva: numeral(data.montant_tva).format('0.00'),
+          montant_total: numeral(data.montant_total).format('0.00'),
+          numeros: tmp.numeros,
+          numeros_obj: [],
+          remarque: tmp.remarque,
+          type_id: tmp.type_id,
+        }
+      } else {
+        this.selectedFacture = {
+          id: tmp.id,
+          sap: tmp.sap,
+          date: tmp.date !== null? tmp.date: moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
+          client_premiere_ligne: tmp.client_premiere_ligne,
+          montant_mo: numeral(tmp.montant_mo).format('0.00'),
+          montant_mat_diff: numeral(tmp.montant_mat_diff).format('0.00'),
+          montant_rf: numeral(tmp.montant_rf).format('0.00'),
+          montant_tva: numeral(tmp.montant_tva).format('0.00'),
+          montant_total: numeral(tmp.montant_total).format('0.00'),
+          numeros: tmp.numeros,
+          numeros_obj: [],
+          remarque: tmp.remarque,
+          type_id: tmp.type_id,
+        }
       }
 
       // récupère le client de la facture
@@ -605,17 +629,49 @@ export default {
      */
     setSelectedClientObject(client) {
       this.selectedFacture.client = {...client};
+    },
+
+    /**
+     * open emolument dialog
+     */
+    openEmolumentsDialog() {
+      this.$refs.emoluments.initForm();
+      this.$refs.emoluments.initFactureRepartition([]);
+      this.$refs.emoluments.showEmolumentsDialog = true;
+    },
+
+
+    /**
+     * get facture_types
+     */
+    getFactureTypes() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_TYPE_ENDPOINT,
+        {
+          withCredentials: true,
+          Headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.factureTypes = stringifyAutocomplete2(response.data);
+        }
+      }).catch(err => handleException(err, this));
     }
 
   },
 
   mounted: function() {
+    this.getFactureTypes();
     this.searchClients();
     this.searchAffaireNumeros().then(() => {
       this.searchAffaireFactures();
     });
 
     this.$root.$on("updateNumerosFactureList", () => this.searchAffaireNumeros());
+    this.$root.$on("searchAffaireFactures", () => {
+      setTimeout(() => {  this.searchAffaireFactures() }, 500);
+    });
+    this.$root.$on("openFacture", (data) => this.openFactureEdition(data, "facture", true));
   }
 };
 </script>

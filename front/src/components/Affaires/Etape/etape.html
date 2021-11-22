@@ -35,16 +35,15 @@
 
                 <div class="md-layout-item md-size-45">
                     <!-- Nom de la prochaine étape -->
-                    <md-autocomplete v-model="etapeAffaire.prochaine" :md-options="affaireEtapes" md-dense required>
+                    <md-autocomplete v-model="etapeAffaire.prochaine" :md-options="affaireEtapes" md-dense required @md-selected="onSelectNextStep">
                         <label>Prochaine étape</label>
                     </md-autocomplete>
                 </div>
 
-                <!-- <div class="md-layout-item md-size-45" v-if="showOperateursSelect"> -->
                 <div class="md-layout-item md-size-45" v-if="etapeAffaire.prochaine && etapeAffaire.prochaine.id && etapeAffaire.prochaine.id === etapes_affaire_conf.travaux_chef_equipe">
                     <!-- Sélection de l'opérateur -->
                     <md-field>
-                        <label>Opérateur</label>
+                        <label>Opérateur·rice</label>
                         <md-select md-dense required v-model="etapeAffaire.chef_equipe_id">
                             <md-option v-for="item in chefs_equipe_list" v-bind:key="item.id" v-bind:value="item.id" >{{ item.nom }}</md-option>
                         </md-select>
@@ -58,7 +57,15 @@
                     </md-field>
                 </div>
 
-                <div class="md-layout md-alignment-center-center" v-if="([etapes_affaire_conf.envoi, etapes_affaire_conf.validation].includes(affaire.etape_id) && affaire.type_id !== typesAffaires_conf.pcop) || (etapes_affaire_conf.envoi_pcop === affaire.etape_id && affaire.type_id === typesAffaires_conf.pcop)">
+                <div class="md-layout-item"
+                    v-if="affaire.type_id === typesAffaires_conf.art35 && affaire.etape_id === etapes_affaire_conf.travaux_chef_equipe">
+                    <h3>Sélectionner le type d'article 35</h3>
+                    <md-radio v-model="art35Radio" value="Affaire avec changement de surface de biens-fonds">Affaire avec changement de surface de biens-fonds</md-radio>
+                    <md-radio v-model="art35Radio" value="Affaire avec changement de surface dans ses natures">Affaire avec changement de surface dans ses natures</md-radio>
+                    <md-radio v-model="art35Radio" value="Affaire sans changement de l’état descriptif">Affaire sans changement de l’état descriptif</md-radio>
+                </div>
+
+                <div class="md-layout md-alignment-center-center" v-if="updateAffaireDate.show">
                     <md-checkbox v-model="updateAffaireDate.value">{{ updateAffaireDate.text }}</md-checkbox>
                 </div>
             </div>

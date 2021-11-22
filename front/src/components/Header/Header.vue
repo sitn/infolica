@@ -3,17 +3,22 @@
 
 
 <script>
-import { checkPermission } from '@/services/helper'
+import { checkPermission } from '@/services/helper';
 
 
 export default {
   name: 'Header',
-
+  props: {
+    instance: {type: Object}
+  },
   data: function () {
       return {
           loggedUserName: String,
           isAdmin: false,
-          isProd: false,
+          versionBtn: {
+            version: null,
+            showBadge: false
+          }
       }
   },
 
@@ -53,7 +58,30 @@ export default {
 
     checkIsAdmin() {
       this.isAdmin = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
-    }
+    },
+
+    /**
+     * set version and badge if new
+     */
+    checkVersion(version, isNew=false) {
+      this.versionBtn.version = version;
+      this.versionBtn.showBadge = isNew;
+    },
+
+    /**
+     * Open link in new tab
+     */
+    openInNewTab(data) {
+      let routedata = this.$router.resolve({ name: data });
+      window.open(routedata.href, "_blank");
+    },
+
+    /**
+     * Open notes MAJ
+     */
+    openNotesMAJ() {
+      this.$root.$emit("openNotesMAJ");
+    },
   },
 
   mounted: function(){
@@ -71,7 +99,8 @@ export default {
       this.setUserName(session_user);
 
       this.checkIsAdmin();
-      this.isProd = process.env.VUE_APP_STATUS === 'production';
+      
+      this.$root.$on("checkVersion", (version, isNew) => this.checkVersion(version, isNew));
   }
 }
 </script>

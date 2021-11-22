@@ -7,10 +7,10 @@
 use = egg:infolica
 
 infolica_url_base = http://127.0.0.1:8080/infolica
-infolica_mail = 
-admin_mail =
-infolica_smtp = 
-infolica_balance_mail = 
+infolica_mail = /*TO COMPLETE*/
+admin_mail = /*TO COMPLETE*/
+infolica_smtp = /*TO COMPLETE*/
+infolica_balance_mail = /*TO COMPLETE*/
 
 pyramid.reload_templates = true
 pyramid.debug_authorization = false
@@ -53,16 +53,6 @@ ldap_login_query_attributes= uid, givenName, sn, mail, telephoneNumber, mobile
 
 # Le scope de la recherche (LEVEL, SUBTREE)
 ldap_login_query_scope= SUBTREE
-
-# L'attribut qui correspond au login d'un utilisateur LDAP
-ldap_user_attribute_login= uid
-
-# Les autres attributs d'un utilisateur LDAP
-ldap_user_attribute_firstname= givenName
-ldap_user_attribute_lastname= sn
-ldap_user_attribute_telephone= telephoneNumber
-ldap_user_attribute_mail= mail
-ldap_user_attribute_mobile= mobile
 
 
 ###########################################################
@@ -139,6 +129,7 @@ affaire_type_mpd_id = 8
 affaire_type_retablissement_pfp3_id = 12
 affaire_type_autre_id = 7
 affaire_type_part_copropriete_id = 10
+affaire_type_modification_ppe_id = 20
 affaire_type_modification_ordre_separation = 100
 
 # ID Numéros-types biens-fonds
@@ -186,10 +177,19 @@ affaire_show_timedelta = 30
 
 # Affaire etape
 affaire_etape_priorite_1_id = 1
+affaire_etape_abandon_id = 12
+affaire_etape_fin_processus_id = 16
+affaire_etape_reactivation_id = 28
 affaire_premiere_etape_defaut_id = 13
 
 # Facture type
 facture_type_facture_id = 1
+
+# Client cadastration
+client_cadastration_id = 2896
+
+# Opérateurs à contacter pour les affaires urgentes
+operateur_affaire_urgente = 15,57,59,60
 
 ######################################################################################
 # Accès dossiers

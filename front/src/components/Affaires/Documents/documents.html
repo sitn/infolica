@@ -44,12 +44,11 @@
                             <md-button class="md-primary" style="min-width: min-content;" title="Recharger la table" @click="searchAffaireDocuments">
                                 <md-icon>refresh</md-icon> Recharger la table
                             </md-button>
-                            <!-- <md-button class="md-primary md-dense md-center-left" style="min-width: min-content;"  @click="openFolder" :title="dossier_affaire" ><md-icon>folder_open</md-icon> Ouvrir le dossier</md-button> -->
                         </div>
                     </div>
 
                     <div v-if="documents[0]">
-                        <md-table md-height="40vh" v-model="documents" md-sort="relpath" md-sort-order="asc" md-fixed-header md-card>
+                        <md-table v-model="documents" md-sort="relpath" md-sort-order="asc" md-fixed-header md-card>
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                 <md-table-cell md-label="Dossier" md-sort-by="relpath">{{ item.relpath }}</md-table-cell>
                                 <md-table-cell md-label="Fichier" md-sort-by="filename">{{ item.filename }}</md-table-cell>

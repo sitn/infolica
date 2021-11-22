@@ -30,11 +30,18 @@ def includeme(config):
     config.add_route('modification_affaire_by_affaire_mere', '/infolica/api/modification_affaire_by_affaire_mere/{id}')
     config.add_route('modification_affaire_by_affaire_fille', '/infolica/api/modification_affaire_by_affaire_fille/{id}')
     config.add_route('affaires_cockpit', '/infolica/api/affaires_cockpit')
+    config.add_route('abandon_affaire_reopen_parent_affaire', '/infolica/api/abandon_affaire_reopen_parent_affaire')
     #Factures
     config.add_route('factures', '/infolica/api/factures')
     config.add_route('factures_s', '/infolica/api/factures/')
     config.add_route('facture_by_id', '/infolica/api/factures/{id}')
+    config.add_route('facture_type', '/infolica/api/facture_type')
     config.add_route('affaires_factures_by_affaire_id', '/infolica/api/affaires_factures/{id}')
+    config.add_route('emoluments', '/infolica/api/emoluments')
+    config.add_route('tableau_emoluments', '/infolica/api/tableau_emoluments')
+    config.add_route('emolument_affaire', '/infolica/api/emolument_affaire')
+    config.add_route('emolument', '/infolica/api/emolument')
+    config.add_route('emolument_affaire_repartiton', '/infolica/api/emolument_affaire_repartiton')
     #Login
     config.add_route('login', '/infolica/api/login')
     config.add_route('login_s', '/infolica/api/login/')
@@ -45,8 +52,6 @@ def includeme(config):
     config.add_route('operateur_by_id', '/infolica/api/operateurs/{id}')
     config.add_route('recherche_operateurs', '/infolica/api/recherche_operateurs')
     config.add_route('recherche_operateurs_s', '/infolica/api/recherche_operateurs/')
-    config.add_route('add_operateurs_ad', '/infolica/api/add_operateurs_ad')
-    config.add_route('add_operateurs_ad_s', '/infolica/api/add_operateurs_ad/')
     #Test (temp endpoint)
     config.add_route('test_client', '/infolica/api/test_client')
     #Controle_mutation
@@ -130,6 +135,7 @@ def includeme(config):
     config.add_route('emolument_facture','/infolica/api/emolument_facture')
     config.add_route('emolument_facture_s','/infolica/api/emolument_facture/')
     config.add_route('facture_emoluments_by_facture_id','/infolica/api/facture_emoluments/{id}')
+    config.add_route('emolument_affaire_freeze','/infolica/api/emolument_affaire_freeze')
     #Envois
     config.add_route('envois_by_id','/infolica/api/envois/{id}')
     config.add_route('envois','/infolica/api/envois')
@@ -161,7 +167,8 @@ def includeme(config):
     config.add_route('balance_mutation_names', '/infolica/api/balance_mutation_names')
     config.add_route('balance_by_affaire_id', '/infolica/api/balance')
     config.add_route('balance_check_existing_oldBF', '/infolica/api/balance_check_existing_oldbf')
-    config.add_route('balance_from_file_by_affaire_id', '/infolica/api/balance_from_file')
+    config.add_route('balance_files_by_affaire_id', '/infolica/api/balance_files')
+    config.add_route('balance_from_file', '/infolica/api/balance_from_file')
     #Reservation_numeros_mo
     config.add_route('reservation_numeros_mo_by_affaire_id', '/infolica/api/reservation_numeros_mo/{id}')
     config.add_route('reservation_numeros_mo', '/infolica/api/reservation_numeros_mo')
@@ -172,4 +179,9 @@ def includeme(config):
     config.add_route('types_numeros_mo', '/infolica/api/types_numeros_mo')
     #Open Folder
     config.add_route('open_folder', '/infolica/api/open_folder')
-
+    #Notes de mise à jour
+    config.add_route('notes_maj', '/infolica/api/notes_maj')
+    config.add_route('version', '/infolica/api/version')
+    config.add_route('operateur_notes_maj', '/infolica/api/operateur_notes_maj')
+    #External ressources
+    config.add_route('guichet_rf_saisie_pm', '/infolica/api/guichet_rf_saisie_pm')

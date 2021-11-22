@@ -1,41 +1,51 @@
 <div class="header">
-    <md-card>  
-        <md-card-content>          
-            <img class="logo" alt="ne.ch" src="@/assets/logo.png">
-            <h2>Infolica</h2>
-            <h2 style="color: rgb(255, 51, 0);" v-if="!isProd"><md-icon class="md-accent">warning</md-icon> INSTANCE DE TEST <md-icon class="md-accent">warning</md-icon></h2>
+  <md-card>
+    <md-card-content>
+      <img class="logo" alt="ne.ch" src="@/assets/logo.png">
+      <h2>Infolica
+        <template v-if="versionBtn.showBadge">
+          <md-badge md-content="New" class="md-square">
+            <md-button class="md-dense versionBtn" @click="openNotesMAJ"> v {{ versionBtn.version }} </md-button>
+          </md-badge>
+        </template>
+        <template v-else>
+          <md-button class="md-dense versionBtn" @click="openNotesMAJ"> v {{ versionBtn.version }} </md-button>
+        </template>
 
-            <nav class="menu" v-if="$route.name !== 'Login'">
-              <md-menu md-align-trigger>
-                  <md-button md-menu-trigger v-on:click="goTo('Cockpit')">Cockpit</md-button>
-              </md-menu>
-
-              <md-menu md-align-trigger>
-                  <md-button md-menu-trigger v-on:click="goTo('Affaires')">Affaires</md-button>
-              </md-menu>
-            
-              <md-menu md-align-trigger>
-                <md-button md-menu-trigger v-on:click="goTo('Numeros')">Numéros</md-button>
-              </md-menu>
-            
-              <md-menu md-align-trigger>
-                <md-button md-menu-trigger v-on:click="goTo('Clients')">Clients</md-button>
-              </md-menu>
-
-              <md-menu md-align-trigger v-if="isAdmin">
-                <md-button md-menu-trigger v-on:click="goTo('Operateurs')">Opérateurs</md-button>
-              </md-menu>
-            
-              <md-menu md-align-trigger>
-                <md-button md-menu-trigger v-on:click="goTo('About')">à propos</md-button>
-              </md-menu>              
-            </nav>           
-
-            <div class="user" v-if="$route.name !== 'Login'">
-              <em class="material-icons md-light">account_circle</em>
-              <span class="userName">{{loggedUserName}}</span>
-              <em class="material-icons md-light" v-on:click="callLogout" title="Déconnexion">exit_to_app</em>
-            </div>
-        </md-card-content>
-      </md-card>
+      </h2>
+      <h2 style="color: rgb(255, 51, 0);" v-if="!instance.isProd"><md-icon class="md-accent">warning</md-icon> {{ instance.name }} <md-icon class="md-accent">warning</md-icon></h2>
+      
+      <nav class="menu" v-if="$route.name !== 'Login'">
+        <md-menu md-align-trigger>
+          <md-button md-menu-trigger v-on:click="goTo('Cockpit')" v-on:click.middle="openInNewTab('Cockpit')">Cockpit</md-button>
+        </md-menu>
+        
+        <md-menu md-align-trigger>
+          <md-button md-menu-trigger v-on:click="goTo('Affaires')" v-on:click.middle="openInNewTab('Affaires')">Affaires</md-button>
+        </md-menu>
+        
+        <md-menu md-align-trigger>
+          <md-button md-menu-trigger v-on:click="goTo('Numeros')" v-on:click.middle="openInNewTab('Numeros')">Numéros</md-button>
+        </md-menu>
+        
+        <md-menu md-align-trigger>
+          <md-button md-menu-trigger v-on:click="goTo('Clients')" v-on:click.middle="openInNewTab('Clients')">Clients</md-button>
+        </md-menu>
+        
+        <md-menu md-align-trigger v-if="isAdmin">
+          <md-button md-menu-trigger v-on:click="goTo('Operateurs')" v-on:click.middle="openInNewTab('Operateurs')">Opérateurs</md-button>
+        </md-menu>
+        
+        <md-menu md-align-trigger>
+          <md-button md-menu-trigger v-on:click="goTo('About')" v-on:click.middle="openInNewTab('About')">à propos</md-button>
+        </md-menu>
+      </nav>
+      
+      <div class="user" v-if="$route.name !== 'Login'">
+        <em class="material-icons md-light">account_circle</em>
+        <span class="userName">{{loggedUserName}}</span>
+        <em class="material-icons md-light" v-on:click="callLogout" title="Déconnexion">exit_to_app</em>
+      </div>
+    </md-card-content>
+  </md-card>
 </div>

@@ -7,3 +7,8 @@
     font-size: 18px;
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+
+.md-radio {
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+}

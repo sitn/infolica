@@ -1,31 +1,36 @@
-<style src="./matdiff_mo.css" scoped></style>
-<template src="./matdiff_mo.html"></template>
+<style src="./matdiff_ctrl.css" scoped></style>
+<template src="./matdiff_ctrl.html"></template>
 
 
 <script>
 import { handleException } from '@/services/exceptionsHandler'
-import { checkPermission } from '@/services/helper'
 
 const moment = require('moment')
 
 export default {
-  name: "Matdiff_mo",
+  name: "Matdiff_ctrl",
+  props: {
+    operateurs: {type: Array},
+  },
   data: () => {
     return {
-      numerosDifferes: [{}],
+      affaires: [],
+      loading: false,
+      plural: "",
+      selectedOperateur_id: -1,
     }
   },
 
   methods: {
     /**
-     * Get numeros differes for MO users
+     * Get numeros differes for coordinateurs users
      */
     async getNumerosDifferes() {
-      let user_id = JSON.parse(localStorage.getItem("infolica_user")).id;
-      
-      let params =  "?role=mo&user_id=" + user_id
-      if (checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {
-        params =  "?role=mo"
+      this.loading = true;
+
+      let params =  "?role=coord";
+      if (this.selectedOperateur_id >= 0) {
+        params += "&user_id=" + this.selectedOperateur_id;
       }
 
       this.$http.get(
@@ -36,15 +41,28 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-          let tmp = JSON.parse(response.data);
+          let tmp = response.data;
           tmp.forEach(x => {
             x.numero = x.numero.join(', '),
             x.diff_entree = Number(moment(x.diff_entree, process.env.VUE_APP_DATEFORMAT_WS))
           });
-          this.numerosDifferes = tmp;
+          this.affaires = tmp;
+
+          // set plural
+          if (tmp.length > 1) {
+            this.plural = "s";
+          } else {
+            this.plural = "";
+          }
+
+          this.loading = false;
         }
-      }).catch(err => handleException(err, this));
+      }).catch(err => {
+        handleException(err, this);
+        this.loading = false;
+      });
     },
+
 
     /**
      * openAffaire

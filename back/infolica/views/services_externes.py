@@ -6,7 +6,7 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Service
 from infolica.scripts.utils import Utils
-
+from infolica.scripts.authentication import check_connected
 ###########################################################
 # SERVICES EXTERNES
 ###########################################################
@@ -18,7 +18,7 @@ def service_by_id_view(request):
     GET service by id
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     service_id = request.matchdict['id']
@@ -37,7 +37,7 @@ def services_view(request):
     GET services
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     records = request.dbsession.query(Service).order_by(Service.ordre.asc()).all()

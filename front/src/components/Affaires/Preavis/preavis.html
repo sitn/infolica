@@ -19,14 +19,14 @@
 
                 <md-card-content>
                     <div v-if="affaire_preavis[0]">
-                        <md-table md-height="40vh" v-model="affaire_preavis" md-sort="id" md-sort-order="desc" md-dense md-card style="width: fit-content;">
+                        <md-table v-model="affaire_preavis" md-sort="id" md-sort-order="desc" md-dense md-card style="width: fit-content;">
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                 <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                                 <md-table-cell md-label="Service" md-sort-by="service" style="min-width: 100px;">{{ item.service }}</md-table-cell>
                                 <md-table-cell md-label="Demande" md-sort-by="date_demande" style="min-width: 100px;">{{ item.date_demande | formatDate }}</md-table-cell>
                                 <md-table-cell md-label="Réponse" md-sort-by="date_reponse" style="min-width: 100px;">{{ item.date_reponse | formatDate }}</md-table-cell>
                                 <md-table-cell md-label="Préavis" md-sort-by="preavis" style="min-width: 100px;">{{ item.preavis }}</md-table-cell>
-                                <md-table-cell md-label="Remarque" md-sort-by="remarque"  style="min-width: 20%;">{{ item.remarque }}</md-table-cell>
+                                <md-table-cell md-label="Remarque" md-sort-by="remarque"  style="min-width: 500px;">{{ item.remarque }}</md-table-cell>
                                 <md-table-cell md-label="Actions" v-if="!affaireReadonly"  style="min-width: 100px;">
                                     <md-button class="md-icon-button md-primary md-dense"
                                         v-on:click="onModifyPreavis(item)"  
@@ -34,11 +34,6 @@
                                         v-if="!affaireReadonly">
                                         <md-icon class="md-edit">edit</md-icon>
                                     </md-button>
-                                    <!-- <md-button class="md-icon-button md-primary md-dense" 
-                                        title="Générer la demande de préavis"
-                                        @click="downloadModel(item.service_id)">
-                                        <md-icon>save_alt</md-icon>
-                                    </md-button> -->
                                 </md-table-cell>
                             </md-table-row>
                         </md-table>

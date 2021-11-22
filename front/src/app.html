@@ -1,5 +1,6 @@
-<div id="app">
-    <Header id="header"/>
+<div id="app" :class="{ devMode: !instance.isProd }">
+    <Header id="header" :instance="instance" />
+    <NotesMAJ/>
     <Main/>
     <Notifications/>
 </div>
