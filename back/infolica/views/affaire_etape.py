@@ -62,8 +62,9 @@ def etapes_new_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    chef_equipe_id = request.params['chef_equipe_id'] if 'chef_equipe_id' in request.params else None
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    chef_equipe_id = request.params['chef_equipe_id'] if 'chef_equipe_id' in request.params else None
+    operateur_id = request.params['operateur_id'] if 'operateur_id' in request.params else None
     
     # Add new step
     model = Utils.addNewRecord(request, AffaireEtape)
@@ -71,14 +72,28 @@ def etapes_new_view(request):
     # send mail
     affaire_etape_index = request.dbsession.query(AffaireEtapeIndex).filter(AffaireEtapeIndex.id == model.etape_id).first()
     etape_mailer = request.dbsession.query(EtapeMailer).filter(model.etape_id == EtapeMailer.etape_id).all()
+    v_affaire = request.dbsession.query(VAffaire).filter(VAffaire.id == model.affaire_id).first()
+    affaire = request.dbsession.query(Affaire).filter(Affaire.id == model.affaire_id).first()
     operateur = request.dbsession.query(Operateur).all()
-    mail_list = []
 
-    # only when chef_equipe is specified
-    if chef_equipe_id:
+    # get list of done steps
+    lastSteps = request.dbsession.query(VEtapesAffaires).filter(
+        and_(
+            VEtapesAffaires.affaire_id == model.affaire_id,
+            VEtapesAffaires.etape_priorite == int(request.registry.settings['affaire_etape_priorite_1_id'])
+        )
+    ).order_by(VEtapesAffaires.next_datetime.desc()).all()
+    
+    # set affaire_nom
+    affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
+
+    # only when chef_equipe is specified and chef equipe is not the initiator of new step
+    mail_list = []
+    if chef_equipe_id and (not chef_equipe_id == operateur_id):
         chef_equipe_mail = request.dbsession.query(Operateur).filter(Operateur.id == chef_equipe_id).first().mail
         if chef_equipe_mail is not None:
             mail_list.append( chef_equipe_mail )
+        
         # update chef d'équipe in affaire
         affaire = request.dbsession.query(Affaire).filter(Affaire.id == model.affaire_id).first()
         affaire.technicien_id = chef_equipe_id
@@ -92,16 +107,7 @@ def etapes_new_view(request):
     
     # Send mail only if step prio is 1 and if mail_list not empty
     if affaire_etape_index.priorite == int(request.registry.settings['affaire_etape_priorite_1_id']) and len(mail_list)>0:
-        # get affaire informations
-        affaire = request.dbsession.query(VAffaire).filter(VAffaire.id == model.affaire_id).first()
-        # get list of done steps
-        lastSteps = request.dbsession.query(VEtapesAffaires).filter(
-            and_(
-                VEtapesAffaires.affaire_id == model.affaire_id,
-                VEtapesAffaires.etape_priorite == int(request.registry.settings['affaire_etape_priorite_1_id'])
-            )
-        ).order_by(VEtapesAffaires.next_datetime.desc()).all()
-        lastSteps = "".join(["<tr><td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
+        lastSteps_html = "".join(["<tr><td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
                               <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{} {}</td>\
                               <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
                               <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
@@ -113,10 +119,9 @@ def etapes_new_view(request):
                                   i.next_remarque if i.next_remarque else ""
                                 ) for i in lastSteps])
         
-        affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
-        text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire.id)) + "'>" + str(affaire.id) + affaire_nom + "</a></b>" + (" (avec mention urgente)" if affaire.urgent else "") + " est en attente pour l'étape <b>"+ affaire_etape_index.nom +"</b>."
-        text += "<br><br>Cadastre: " + str(affaire.cadastre)
-        text += "<br>Description: " + str(affaire.nom)
+        text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(v_affaire.id)) + "'>" + str(v_affaire.id) + affaire_nom + "</a></b>" + (" (avec mention urgente)" if v_affaire.urgent else "") + " est en attente pour l'étape <b>"+ affaire_etape_index.nom +"</b>."
+        text += "<br><br>Cadastre: " + str(v_affaire.cadastre)
+        text += "<br>Description: " + str(v_affaire.nom)
         text += ("<br><br><br><h4>Historique de l'affaire</h4>\
             <table style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>\
                 <tr>\
@@ -124,30 +129,14 @@ def etapes_new_view(request):
                     <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Réalisée par</th>\
                     <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Réalisée le</th>\
                     <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Remarque</th>\
-                </tr>" + lastSteps + "</table>") if lastSteps != "" else ""
-        subject = "Infolica - affaire " + str(affaire.id) + (" - URGENT" if affaire.urgent else "")
+                </tr>" + lastSteps_html + "</table>") if lastSteps_html != "" else ""
+        subject = "Infolica - affaire " + str(v_affaire.id) + (" - URGENT" if v_affaire.urgent else "")
         send_mail(request, mail_list, "", subject, html=text)
 
     # Finally erase attribution on affaire
-    affaire = None
-    affaire = request.dbsession.query(Affaire).filter(
-        Affaire.id == affaire_id
-    ).first()
     affaire.attribution = None
 
-
     # If last step was treatment & client_facture is outside of canton and has no SAP number, send mail to secretariat
-    # get list of done steps
-    lastSteps = request.dbsession.query(VEtapesAffaires).filter(
-        and_(
-            VEtapesAffaires.affaire_id == affaire_id,
-            VEtapesAffaires.etape_priorite == int(request.registry.settings['affaire_etape_priorite_1_id'])
-        )
-    ).order_by(VEtapesAffaires.next_datetime.desc()).all()
-
-    affaire = request.dbsession.query(VAffaire).filter(VAffaire.id == model.affaire_id).first()
-    affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
-
     etape_traitement_id = int(request.registry.settings['affaire_etape_traitement_id'])
 
     if (len(lastSteps) > 1 and lastSteps[1].etape_id == etape_traitement_id):
@@ -181,10 +170,9 @@ def etapes_new_view(request):
                             cl.npa if cl.npa is not None else "", 
                             cl.localite if cl.localite is not None else ""
                         ])
-                    ]) + " => <a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'clients/edit', str(cl.id)) + "'>Lien sur la fiche du client</a>"+ "</li></ul>"
+                    ]) + " &#8594; <a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'clients/edit', str(cl.id)) + "'>Lien sur la fiche du client</a>"+ "</li></ul>"
                 html += "<p>Merci d'entreprendre les démarches nécessaires pour corriger le client ou pour demander sa création dans SAP.</p>"
                 send_mail(request, mail_list, "", "Infolica - Client hors canton à vérifier", html=html)
-
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireEtape.__tablename__))
 
