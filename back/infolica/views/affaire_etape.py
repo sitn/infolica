@@ -170,8 +170,19 @@ def etapes_new_view(request):
 
                 html = "<h3>Vérification de client</h3>"
                 html += "<p>Un client hors canton et sans numéro SAP a été référencé dans la facturation de l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire.id)) + "'>" + str(affaire.id) + affaire_nom + "</a></b>.</p>"
-                html += "<ul><li>" + ", ".join([" ".join([cl.titre, cl.prenom, cl.nom]), cl.adresse, " ".join([cl.npa, cl.localite])]) + "</li></ul>"
-                html += "<p>Merci d'entreprendre les démarches nécessaires pour corriger le client ou pour demande sa création dans SAP.</p>"
+                html += "<ul><li>" + ", ".join([
+                    cl.entreprise if cl.entreprise is not None else " ".join([
+                        cl.titre if cl.titre is not None else "", 
+                        cl.prenom if cl.prenom is not None else "", 
+                        cl.nom if cl.nom is not None else ""
+                    ]), 
+                    cl.adresse if cl.adresse is not None else "", 
+                    " ".join([
+                            cl.npa if cl.npa is not None else "", 
+                            cl.localite if cl.localite is not None else ""
+                        ])
+                    ]) + " => <a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'clients/edit', str(cl.id)) + "'>Lien sur la fiche du client</a>"+ "</li></ul>"
+                html += "<p>Merci d'entreprendre les démarches nécessaires pour corriger le client ou pour demander sa création dans SAP.</p>"
                 send_mail(request, mail_list, "", "Infolica - Client hors canton à vérifier", html=html)
 
 
