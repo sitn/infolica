@@ -11,8 +11,10 @@ import { getCurrentDate,
          getClients,
          filterList,
          stringifyAutocomplete,
+         stringifyAutocomplete2,
          checkPermission,
-         getCurrentUserRoleId } from "@/services/helper";
+         getCurrentUserRoleId,
+         getOperateurs } from "@/services/helper";
 import Autocomplete from "vuejs-auto-complete";
 import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
 
@@ -353,28 +355,18 @@ export default {
      * Init operateurs list
      */
     async initOperateursList() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/json" }
-          }
-        )
-        .then(response => {
-          if (response && response.data) {
-            let tmp = response.data.filter(x => x.chef_equipe).map(x => ({
-              id: x.id,
-              nom: [x.prenom, x.nom].filter(Boolean).join(" "),
-            }));
-            tmp.sort((a,b) => (a.nom > b.nom) ? 1 : ((b.nom > a.nom) ? -1 : 0));
-            this.operateurs_list = tmp;
-          }
-        })
-        //Error
-        .catch(err => {
-          handleException(err, this);
-        });
+      getOperateurs()
+      .then(response => {
+        if (response && response.data) {
+          let tmp = response.data.filter(x => x.chef_equipe)
+          tmp = stringifyAutocomplete2(tmp, "prenom_nom", null, "prenom_nom");
+          this.operateurs_list = tmp;
+        }
+      })
+      //Error
+      .catch(err => {
+        handleException(err, this);
+      });
     },
 
     /*

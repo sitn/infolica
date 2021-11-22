@@ -18,7 +18,7 @@
 
                 <md-card-content v-bind:class="{ disabledElement: !permission.editControleGeometreAllowed }">
 
-                    <p v-if="controleGeometre.date" style="margin-top: 0px;">Dernier contrôle effectué le {{controleGeometre.date}} par {{operateur.nom}}</p>
+                    <p v-if="controleGeometre.date" style="margin-top: 0px;">Dernier contrôle effectué le {{controleGeometre.date}} par {{controleGeometre.operateur_prenom_nom}}</p>
                     
                     <div v-if="controleGeometre.id">
                         <div class="md-gutter md-layout">

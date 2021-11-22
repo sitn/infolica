@@ -21,7 +21,6 @@ export default {
     controlePPE_all: [],
     controlePPE_dates_liste: [],
     currentControle: null,
-    operateurs_liste: [],
     showCancelSaveBtn: true,
     showCreatedControlePPE: false,
     showNewControlePPEBtn: false,
@@ -32,7 +31,6 @@ export default {
      * SEARCH AFFAIRE-ControlePPE
      */
     async searchControlePPE() {
-      await this.searchOperateurs();
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
@@ -49,14 +47,11 @@ export default {
 
             if (tmp.length > 0) {
               tmp.forEach(x => {
-                if (x.operateur_id) {
-                  x.operateur = this.operateurs_liste.filter(y => y.id === x.operateur_id)[0];
-                }
                 if (x.date) {
                   x.date = moment(x.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
                 }
 
-                x.nom_ = [x.date, x.operateur.nom].join(" - ")
+                x.nom_ = [x.date, x.operateur_prenom_nom].join(" - ")
               });
   
               this.controlePPE_all = tmp; // keep in memory all controles PPE
@@ -72,30 +67,6 @@ export default {
         });
     },
 
-    /**
-     * Cherche les opérateurs
-     */
-    async searchOperateurs() {
-      return new Promise((resolve, reject) => {
-        this.$http
-          .get(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
-            {
-              withCredentials: true,
-              headers: {"Accept": "application/json"}
-            }
-          )
-          .then(response => {
-            if (response.data) {
-              let tmp = response.data;
-              tmp.forEach(x => x.nom_ = [x.prenom, x.nom].filter(Boolean).join(" "));
-              this.operateurs_liste = stringifyAutocomplete(tmp, "nom_");
-              resolve();
-            }
-          })
-          .catch(() => reject);
-      })
-    },
 
     /**
      * Création d'un nouveau suivi
@@ -320,15 +291,6 @@ export default {
     },
 
     /**
-     * get formular operateur
-     */
-    getFormOperateur() {
-      if (typeof this.controlePPE.operateur === "string") {
-        this.controlePPE.operateur = this.operateurs_liste.filter(x => x.nom === this.controlePPE.operateur)[0];
-      }
-    },
-
-    /**
      * Update view controle formulaire by date
      */
     updateControleByDate(controle_id) {
@@ -521,7 +483,6 @@ export default {
   mounted: function() {
     this.initForm();
     this.searchControlePPE();
-    this.searchOperateurs();
   }
 };
 </script>

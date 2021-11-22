@@ -4,7 +4,7 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models import Constant
-from infolica.models.models import ControleMutation
+from infolica.models.models import ControleMutation, Operateur
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 
@@ -55,7 +55,23 @@ def controles_mutations_by_affaire_id_view(request):
     if query is None:
         return None
 
-    return Utils.serialize_one(query)
+    ctrl = Utils.serialize_one(query)
+
+    # get operateur
+    operateur_id = ctrl['visa']
+
+    if operateur_id is not None:
+        operateur = request.dbsession.query(
+            Operateur
+        ).filter(
+            Operateur.id == operateur_id
+        ).first()
+
+        ctrl['operateur_prenom_nom'] = ' '.join([operateur.prenom, operateur.prenom])
+    else:
+        ctrl['operateur_prenom_nom'] = None
+
+    return ctrl
 
 
 @view_config(route_name='controles_mutations', request_method='POST', renderer='json')

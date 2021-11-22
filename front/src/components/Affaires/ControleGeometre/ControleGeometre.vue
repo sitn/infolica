@@ -16,16 +16,11 @@ export default {
     permission: Object
   },
   data: () => ({
-    operateurs_liste: [],
     checkAll: {
       ctrl_jur: false,
       sign: false
     },
     controleGeometre: {},
-    operateur: {
-      id: null,
-      nom: null
-    },
     showNewControleGeometreBtn: false,
   }),
 
@@ -34,7 +29,6 @@ export default {
      * SEARCH AFFAIRE-ControleMutation
      */
     async searchControleGeometre() {
-      await this.searchOperateurs();
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
@@ -49,13 +43,6 @@ export default {
           if (response && response.data) {
             this.controleGeometre = response.data;
 
-            // Lier l'id du visa à son nom
-            if (this.controleGeometre.operateur_id === null) {
-              this.operateur = {id: null, nom: null};
-            } else {
-              this.operateur = this.operateurs_liste.filter(x => x.id === this.controleGeometre.operateur_id)[0];
-            }
-            
             if (this.controleGeometre.date) {
               this.controleGeometre.date = moment(this.controleGeometre.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
             } else {
@@ -66,35 +53,6 @@ export default {
         .catch(err =>  handleException(err, this));
     },
 
-    /**
-     * Cherche les opérateurs
-     */
-    async searchOperateurs() {
-      return new Promise((resolve, reject) => {
-        this.$http
-          .get(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
-            {
-              withCredentials: true,
-              headers: {"Accept": "application/json"}
-            }
-          )
-          .then(response => {
-            if (response.data) {
-              this.operateurs_liste = response.data
-                .filter(x => x.responsable)
-                .map(x => ({
-                  id: x.id,
-                  nom: [x.prenom, x.nom].join(" "),
-                  toLowerCase: () => [x.nom, x.prenom].join(" ").toLowerCase(),
-                  toString: () => [x.nom, x.prenom].join(" ")
-                }));
-                resolve(response);
-            }
-          })
-          .catch(() => reject);
-      })
-    },
 
     /**
      * update controle
@@ -272,8 +230,6 @@ export default {
 
   mounted: function() {
     this.searchControleGeometre();
-    this.searchOperateurs();
-
   }
 };
 </script>

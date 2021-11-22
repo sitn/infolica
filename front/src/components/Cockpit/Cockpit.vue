@@ -7,7 +7,7 @@ import AffairesChezClient from "@/components/Cockpit/AffairesChezClient/Affaires
 import Matdiff from "@/components/Cockpit/Matdiff/Matdiff.vue";
 
 import { handleException } from '@/services/exceptionsHandler';
-import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper';
+import { checkPermission, getOperateurs, stringifyAutocomplete, stringifyAutocomplete2, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper';
 
 import moment from "moment";
 
@@ -248,7 +248,6 @@ export default {
             if (response && response.data) {
                 let tmp = response.data;
                 tmp = tmp.filter(x => x.chef_equipe);
-                tmp.forEach(x => x['nom_'] = [x.prenom, x.nom].filter(Boolean).join(' '));
 
                 // set operateur by default if he is chef_equipe
                 let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
@@ -257,8 +256,7 @@ export default {
                     this.selectedOperateur_id = Number(currentUserID);
                 }
 
-                tmp = stringifyAutocomplete(tmp, "nom_");
-                tmp.sort((a,b) => (a.nom > b.nom) ? 1 : ((b.nom > a.nom) ? -1 : 0));
+                tmp = stringifyAutocomplete2(tmp, "prenom_nom", null, "prenom_nom");
 
                 this.operateurs = tmp;
             }

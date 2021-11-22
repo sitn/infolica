@@ -4,7 +4,7 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models import Constant
-from infolica.models.models import ControleGeometre
+from infolica.models.models import ControleGeometre, Operateur
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 
@@ -26,7 +26,23 @@ def controle_geometre_by_affaire_id_view(request):
     if query is None:
         return None
 
-    return Utils.serialize_one(query)
+    ctrl = Utils.serialize_one(query)
+
+    # get operateur
+    operateur_id = ctrl['operateur_id']
+
+    if operateur_id is not None:
+        operateur = request.dbsession.query(
+            Operateur
+        ).filter(
+            Operateur.id == operateur_id
+        ).first()
+
+        ctrl['operateur_prenom_nom'] = ' '.join([operateur.prenom, operateur.nom])
+    else:
+        ctrl['operateur_prenom_nom'] = None
+
+    return ctrl
 
 
 @view_config(route_name='controle_geometre', request_method='POST', renderer='json')

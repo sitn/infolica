@@ -22,8 +22,20 @@ def operateurs_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(Operateur).filter(Operateur.sortie == None).all()
-    return Utils.serialize_many(query)
+    query = request.dbsession.query(
+        Operateur
+    ).filter(
+        Operateur.sortie == None
+    ).order_by(
+        Operateur.prenom
+    ).all()
+
+    operateurs = Utils.serialize_many(query)
+
+    for op in operateurs:
+        op['prenom_nom'] = ' '.join([op['prenom'], op['nom']])
+    
+    return operateurs
 
 
 @view_config(route_name='operateur_by_id', request_method='GET', renderer='json')

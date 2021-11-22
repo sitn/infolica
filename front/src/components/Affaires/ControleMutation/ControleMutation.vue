@@ -17,7 +17,6 @@ export default {
   data: () => ({
     showNewControleMutationBtn: false,
     needToCreateControleMutation: false,
-    chefsProjetMO_liste: [],
     controleMutation: {},
     checkAll: {
       suivi_: false,
@@ -36,7 +35,6 @@ export default {
      * SEARCH AFFAIRE-ControleMutation
      */
     async searchControleMutation() {
-      await this.searchOperateurs();
       this.$http
         .get(
           process.env.VUE_APP_API_URL +
@@ -50,10 +48,6 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.controleMutation = response.data;
-            // Lier l'id du visa à son nom
-            if (this.controleMutation.visa) {
-              this.controleMutation.visa = this.chefsProjetMO_liste.filter(x => x.id == this.controleMutation.visa)[0];
-            }
             
             // set dates to client format
             this.controleMutation = setDateFormatClient(this.controleMutation);
@@ -66,35 +60,6 @@ export default {
         .catch(err => {
           handleException(err, this);
         });
-    },
-
-    /**
-     * Cherche les opérateurs
-     */
-    async searchOperateurs() {
-      return new Promise((resolve, reject) => {
-        this.$http
-          .get(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT,
-            {
-              withCredentials: true,
-              headers: {"Accept": "application/json"}
-            }
-          )
-          .then(response => {
-            if (response.data) {
-              this.chefsProjetMO_liste = response.data
-                .map(x => ({
-                  id: x.id,
-                  nom: [x.nom, x.prenom].join(" "),
-                  toLowerCase: () => [x.nom, x.prenom].join(" ").toLowerCase(),
-                  toString: () => [x.nom, x.prenom].join(" ")
-                }));
-                resolve(this.chefsProjetMO_liste);
-            }
-          })
-          .catch(() => reject);
-      })
     },
 
     /**
@@ -247,7 +212,6 @@ export default {
 
   mounted: function() {
     this.searchControleMutation();
-    this.searchOperateurs();
   }
 };
 </script>
