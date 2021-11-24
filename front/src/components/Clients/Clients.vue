@@ -37,7 +37,9 @@ export default {
          * Search clients
         */
         async searchClients () {
-          var formData = new FormData();
+          this.searchTerm = null;
+
+          let formData = new FormData();
 
           if(this.search.nom) {
             formData.append("nom", this.search.nom);
@@ -191,6 +193,8 @@ export default {
      * search Client by term
      */
     async searchClientsByTerm() {
+      this.clearForm();
+
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_ENDPOINT + "?searchterm=" + this.searchTerm,
         {
@@ -199,9 +203,9 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-          this.clients = this.response.data;
+          this.clients = response.data;
         }
-      })
+      }).catch(err => handleException(err));
     },
 
 

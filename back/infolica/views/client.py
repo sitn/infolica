@@ -8,6 +8,7 @@ from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 import json
 from datetime import datetime
+from sqlalchemy import cast, or_, String
 
 
 @view_config(route_name='types_clients', request_method='GET', renderer='json')
@@ -75,12 +76,12 @@ def clients_search_view(request):
 
 
 @view_config(route_name='recherche_clients', request_method='GET', renderer='json')
-def clients_search_view(request):
+def clients_search_by_term_view(request):
     """
     Search clients
     """
     # Check connected
-    if not Utils.check_connected(request):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     settings = request.registry.settings
@@ -89,19 +90,36 @@ def clients_search_view(request):
 
     searchTerms = searchTerm.split(" ")
 
+    query = request.dbsession.query(Client).filter(Client.sortie == None)
 
-    query = request.dbsession.query(Client)
-
-    cols = Client.__table__.columns.keys()
-    for term in searchTerms:
-        for col in cols:
-            query = quer
-            break
-
-
-    # query = request.dbsession.query(Client).filter()
-    # query = query.filter(Client.sortie == None).order_by(Client.nom, Client.prenom).limit(search_limit).all()
-    # return Utils.serialize_many(query)
+    if len(searchTerms) > 0:
+        for term in searchTerms:
+            term = '%' + str(term) + '%'
+            query = query.filter(
+                or_(
+                    Client.entreprise.ilike(term),
+                    Client.titre.ilike(term),
+                    Client.nom.ilike(term),
+                    Client.prenom.ilike(term),
+                    Client.co.ilike(term),
+                    Client.adresse.ilike(term),
+                    cast(Client.npa, String).ilike(term),
+                    Client.localite.ilike(term),
+                    cast(Client.case_postale, String).ilike(term),
+                    cast(Client.tel_fixe, String).ilike(term),
+                    cast(Client.fax, String).ilike(term),
+                    cast(Client.tel_portable, String).ilike(term),
+                    Client.mail.ilike(term),
+                    cast(Client.no_sap, String).ilike(term),
+                    cast(Client.no_bdp_bdee, String).ilike(term),
+                    cast(Client.no_access, String).ilike(term),
+                )
+            )
+        
+    
+    query = query.limit(search_limit).all()
+    
+    return Utils.serialize_many(query)
 
 
 @view_config(route_name='clients', request_method='POST', renderer='json')
