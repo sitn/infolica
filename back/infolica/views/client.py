@@ -8,6 +8,7 @@ from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 import json
 from datetime import datetime
+from sqlalchemy import cast, or_, String
 
 
 @view_config(route_name='types_clients', request_method='GET', renderer='json')
@@ -71,6 +72,53 @@ def clients_search_view(request):
 
     query = request.dbsession.query(Client).order_by(Client.nom, Client.prenom).filter(*conditions)
     query = query.filter(Client.sortie == None).limit(search_limit).all()
+    return Utils.serialize_many(query)
+
+
+@view_config(route_name='recherche_clients', request_method='GET', renderer='json')
+def clients_search_by_term_view(request):
+    """
+    Search clients
+    """
+    # Check connected
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+
+    settings = request.registry.settings
+    search_limit = int(settings['search_limit'])
+    searchTerm = request.params["searchterm"] if "searchterm" in request.params else None
+
+    searchTerms = searchTerm.split(" ")
+
+    query = request.dbsession.query(Client).filter(Client.sortie == None)
+
+    if len(searchTerms) > 0:
+        for term in searchTerms:
+            term = '%' + str(term) + '%'
+            query = query.filter(
+                or_(
+                    Client.entreprise.ilike(term),
+                    Client.titre.ilike(term),
+                    Client.nom.ilike(term),
+                    Client.prenom.ilike(term),
+                    Client.co.ilike(term),
+                    Client.adresse.ilike(term),
+                    cast(Client.npa, String).ilike(term),
+                    Client.localite.ilike(term),
+                    cast(Client.case_postale, String).ilike(term),
+                    cast(Client.tel_fixe, String).ilike(term),
+                    cast(Client.fax, String).ilike(term),
+                    cast(Client.tel_portable, String).ilike(term),
+                    Client.mail.ilike(term),
+                    cast(Client.no_sap, String).ilike(term),
+                    cast(Client.no_bdp_bdee, String).ilike(term),
+                    cast(Client.no_access, String).ilike(term),
+                )
+            )
+        
+    
+    query = query.limit(search_limit).all()
+    
     return Utils.serialize_many(query)
 
 
@@ -187,7 +235,7 @@ def clients_moral_personne_update_view(request):
         raise exc.HTTPForbidden()
 
     client_moral_personne_id = request.params["id"] if "id" in request.params else None
-    
+
     model = request.dbsession.query(ClientMoralPersonne).filter(
         ClientMoralPersonne.id == client_moral_personne_id).first()
 
