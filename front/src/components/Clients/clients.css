@@ -14,3 +14,11 @@
     top: 22px;
 }
 
+.md-table .md-table-cell.md-numeric .md-table-cell-container {
+    display: inline;
+  }
+  .md-table .md-table-cell[width] .md-table-cell-container {
+    width: inherit;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }

@@ -127,20 +127,13 @@
             <md-card-content>
                 <md-table md-height="100%" v-model="clients" md-sort="name" md-sort-order="asc" md-fixed-header>
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
-                        <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
-                        <md-table-cell md-label="Entreprise" md-sort-by="entreprise">{{ item.entreprise }}</md-table-cell>
-                        <md-table-cell md-label="Titre" md-sort-by="titre">{{ item.titre }}</md-table-cell>
-                        <md-table-cell md-label="Prénom" md-sort-by="prenom">{{ item.prenom }}</md-table-cell>
-                        <md-table-cell md-label="Nom" md-sort-by="nom">{{ item.nom }}</md-table-cell>
-                        <md-table-cell md-label="Adresse">{{ item.adresse }}</md-table-cell>
-                        <!-- <md-table-cell md-label="Case postale">{{ item.case_postale }}</md-table-cell>
-                       <md-table-cell md-label="NPA">{{ item.npa }}</md-table-cell> -->
-                        <md-table-cell md-label="Localité" md-sort-by="">{{ item.npa }} {{ item.localite }}</md-table-cell>
-                        <!-- <md-table-cell md-label="Tél.Fixe">{{ item.tel_fixe }}</md-table-cell>
-                       <md-table-cell md-label="Fax">{{ item.fax }}</md-table-cell>
-                       <md-table-cell md-label="Tél.Portable">{{ item.tel_portable }}</md-table-cell>
-                       <md-table-cell md-label="Email">{{ item.mail }}</md-table-cell> -->
-                        <md-table-cell md-label="Actions" class="actionsColumn">
+                        <md-table-cell width="100px" md-label="Entreprise" md-sort-by="entreprise">{{ item.entreprise }}</md-table-cell>
+                        <md-table-cell width="50px" md-label="Titre" md-sort-by="titre">{{ item.titre }}</md-table-cell>
+                        <md-table-cell width="100px" md-label="Prénom" md-sort-by="prenom">{{ item.prenom }}</md-table-cell>
+                        <md-table-cell width="100px" md-label="Nom" md-sort-by="nom">{{ item.nom }}</md-table-cell>
+                        <md-table-cell width="150px" md-label="Adresse">{{ item.adresse }}</md-table-cell>
+                        <md-table-cell width="50px" md-label="Localité" md-sort-by="">{{ item.npa }} {{ item.localite }}</md-table-cell>
+                        <md-table-cell width="50px" md-label="Actions" class="actionsColumn">
                             <md-button class="md-icon-button md-primary" v-on:click="callEditClient(item.id)">
                                 <md-icon>open_in_new</md-icon>
                             </md-button>
