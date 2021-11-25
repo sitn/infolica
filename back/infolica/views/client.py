@@ -62,6 +62,7 @@ def clients_search_view(request):
 
     settings = request.registry.settings
     search_limit = int(settings['search_limit'])
+    old_clients = request.params['old_clients'] == 'true' if 'old_clients' in request.params else False
     conditions = Utils.get_search_conditions(Client, request.params)
 
     # Check date_sortie is null
@@ -70,8 +71,19 @@ def clients_search_view(request):
 
     conditions.append(Client.sortie == None)
 
-    query = request.dbsession.query(Client).order_by(Client.nom, Client.prenom).filter(*conditions)
-    query = query.filter(Client.sortie == None).limit(search_limit).all()
+    query = request.dbsession.query(
+        Client
+    ).order_by(
+        Client.nom, 
+        Client.prenom
+    ).filter(
+        *conditions
+    )
+
+    if not old_clients:
+        query = query.filter(Client.sortie == None)
+    
+    query = query.limit(search_limit).all()
     return Utils.serialize_many(query)
 
 
@@ -86,11 +98,14 @@ def clients_search_by_term_view(request):
 
     settings = request.registry.settings
     search_limit = int(settings['search_limit'])
-    searchTerm = request.params["searchterm"] if "searchterm" in request.params else None
+    searchTerm = request.params["searchTerm"] if "searchTerm" in request.params else None
+    old_clients = request.params['old_clients'] == 'true' if 'old_clients' in request.params else False
 
     searchTerms = searchTerm.split(" ")
 
-    query = request.dbsession.query(Client).filter(Client.sortie == None)
+    query = request.dbsession.query(Client)
+    if not old_clients:
+        query = query.filter(Client.sortie == None)
 
     if len(searchTerms) > 0:
         for term in searchTerms:
