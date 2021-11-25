@@ -152,7 +152,7 @@ def etapes_new_view(request):
             npa_NE = [int(line.rstrip()) for line in lines]
 
         for cl in clients_factures:
-            if cl.no_sap is None and cl.npa not in npa_NE:
+            if cl.no_sap is None and int(cl.npa) not in npa_NE:
                 operateur_secretariat = request.registry.settings["operateur_secretariat"].split(",")
                 mail_list = request.dbsession.query(Operateur.mail).filter(Operateur.id.in_(operateur_secretariat)).all()
                 mail_list = [mail[0] for mail in mail_list]

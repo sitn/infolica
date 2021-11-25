@@ -256,7 +256,12 @@ export default {
      */
     cancelEdit () {
       this.editMode = false;
-      // this.$router.push({name: "Clients"});
+
+      if (this.$route.params && this.$route.params.id) {
+        this.initEditData(this.$route.params.id);
+      } else {
+        this.$router.push({name: "Clients"});
+      }
     },
     
     /**
@@ -290,6 +295,7 @@ export default {
           this.form.mail = response.data.mail;
           this.form.no_sap = response.data.no_sap;
           this.form.no_bdp_bdee = response.data.no_bdp_bdee;
+          this.form.besoin_vref_facture = response.data.besoin_vref_facture;
         }
       })
       //Error
