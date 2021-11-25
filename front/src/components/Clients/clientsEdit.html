@@ -79,7 +79,7 @@
         </div>
 
         <div class="md-layout-item md-small-size-100 md-size-15">
-          <md-autocomplete v-model="form.npa" :md-options="npa_localite_list" @md-changed="searchNPA" @md-selected="setNPALocalite" md-dense>
+          <md-autocomplete v-model="form.npa" :md-options="npa_localite_list" @md-changed="searchNPA" @md-selected="setNPALocalite" md-dense :disabled="sending || !permission.client_edit || !editMode">
             <label>NPA</label>
             <template slot="md-autocomplete-item" slot-scope="{ item, term }">
               <md-highlight-text :md-term="term">{{ item.id }} {{ item.nom }}</md-highlight-text>
@@ -88,7 +88,7 @@
         </div>
         
         <div class="md-layout-item md-small-size-100 md-size-35">
-          <md-autocomplete v-model="form.localite" :md-options="npa_localite_list" @md-changed="searchLocalite" @md-selected="setNPALocalite" md-dense>
+          <md-autocomplete v-model="form.localite" :md-options="npa_localite_list" @md-changed="searchLocalite" @md-selected="setNPALocalite" md-dense :disabled="sending || !permission.client_edit || !editMode">
             <label>Localité</label>
             <template slot="md-autocomplete-item" slot-scope="{ item, term }">
               <md-highlight-text :md-term="term">{{ item.id }} {{ item.nom }}</md-highlight-text>
@@ -157,7 +157,7 @@
       <!-- Need v-ref facture -->
       <div class="md-layout md-gutter">
         <div class="md-layout-item md-small-size-100 md-size-50">
-          <md-checkbox class="md-primary" v-model="form.besoin_vref_facture">Le client demande une référence dans la facture</md-checkbox>
+          <md-checkbox class="md-primary" v-model="form.besoin_vref_facture" :disabled="sending || !permission.client_edit || !editMode">Le client demande une référence dans la facture</md-checkbox>
         </div>
       </div>
 
