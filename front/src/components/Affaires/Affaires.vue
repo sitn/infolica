@@ -100,7 +100,13 @@ export default {
       getClientsByTerm(conditions)
       .then(response => {
         if (response && response.data) {
-          this.clients = stringifyAutocomplete(setClientsAdresse_(response.data), "adresse_");
+          let tmp = setClientsAdresse_(response.data);
+          tmp.forEach(x => {
+            if (x.sortie) {
+              x.adresse_ = "(ancien client) " + x.adresse_;
+            }
+          });
+          this.clients = stringifyAutocomplete(tmp, "adresse_");
         }
       }).catch(err => handleException(err, this));
     },
