@@ -7,7 +7,8 @@ import {handleException} from '@/services/exceptionsHandler';
 import {checkPermission,
         getClients,
         filterList,
-        adjustColumnWidths } from '@/services/helper';
+        adjustColumnWidths,
+        getClientsByTerm } from '@/services/helper';
 
 export default {
   name: 'Clients',
@@ -195,13 +196,12 @@ export default {
     async searchClientsByTerm() {
       this.clearForm();
 
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_ENDPOINT + "?searchterm=" + this.searchTerm,
-        {
-          withCredentials: true,
-          headers: {"accept": "application/json"}
-        }
-      ).then(response => {
+      let conditions = {
+        "searchTerm": this.searchTerm
+      };
+
+      getClientsByTerm(conditions)
+      .then(response => {
         if (response && response.data) {
           this.clients = response.data;
         }

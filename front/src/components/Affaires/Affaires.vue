@@ -6,14 +6,14 @@
 import {
   getCadastres,
   getTypesAffaires,
-  getClients,
   getEtapesAffaire,
   getOperateurs,
-  filterList,
   stringifyAutocomplete,
   stringifyAutocomplete2,
   checkPermission,
-  adjustColumnWidths
+  adjustColumnWidths,
+  getClientsByTerm,
+  setClientsAdresse_
 } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler';
 
@@ -89,13 +89,24 @@ export default {
     },
    
     /**
-     * init clients liste
+     * searchClient
      */
-    async initClientsListe() {
-      getClients()
+    async searchClient(searchTerm) {
+      let conditions = {
+        'searchTerm': searchTerm,
+        'old_clients': true
+      };
+
+      getClientsByTerm(conditions)
       .then(response => {
         if (response && response.data) {
-          this.clients = stringifyAutocomplete(response.data, "adresse_");
+          let tmp = setClientsAdresse_(response.data);
+          tmp.forEach(x => {
+            if (x.sortie) {
+              x.adresse_ = "(ancien client) " + x.adresse_;
+            }
+          });
+          this.clients = stringifyAutocomplete(tmp, "adresse_");
         }
       }).catch(err => handleException(err, this));
     },
@@ -124,16 +135,6 @@ export default {
       }).catch(err => handleException(err, this));
     },
 
-    /**
-     * filter clients liste by search term
-     */
-    filterClients(searchTerm) {
-      if (searchTerm && typeof searchTerm === "string") {
-        this.searchClientsListe = filterList(this.clients, searchTerm, 3).slice(0,20);
-      } else {
-        this.searchClientsListe = [null];
-      }
-    },
 
     /**
      * Clear the form
@@ -277,7 +278,6 @@ export default {
     this.initCadastresList();
     this.initTypesAffairesList();
     this.searchAffaires();
-    this.initClientsListe();
     this.initOperateursListe();
     this.initEtapesListe();
     this.setPermissions();
