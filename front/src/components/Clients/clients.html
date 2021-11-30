@@ -134,7 +134,7 @@
                         <md-table-cell width="150px" md-label="Adresse">{{ item.adresse }}</md-table-cell>
                         <md-table-cell width="50px" md-label="Localité" md-sort-by="">{{ item.npa }} {{ item.localite }}</md-table-cell>
                         <md-table-cell width="50px" md-label="Actions" class="actionsColumn">
-                            <md-button class="md-icon-button md-primary" v-on:click="callEditClient(item.id)">
+                            <md-button class="md-icon-button md-primary" :to="{ name: 'ClientsEdit', params: { id: item.id } }">
                                 <md-icon>open_in_new</md-icon>
                             </md-button>
 
