@@ -182,19 +182,6 @@ export default {
     },
 
     /**
-     * open affaire
-     */
-    openAffaire(data, mode=0) {
-        let id = data.id;
-        if (mode===0) {
-            this.$router.push({ name: "AffairesDashboard", params: {id}});
-        } else if (mode===1) {
-            let routedata = this.$router.resolve({name: "AffairesDashboard", params: {id}});
-            window.open(routedata.href, "_blank");
-        }
-    },
-
-    /**
      * Update table and content to show or not FinProcessus step
      */
     updateTable() {
