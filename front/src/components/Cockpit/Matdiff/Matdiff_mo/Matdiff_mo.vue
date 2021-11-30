@@ -74,16 +74,7 @@ export default {
         handleException(err, this);
         this.loading = false;
       });
-    },
-
-
-    /**
-     * openAffaire
-     */
-    async openAffaire(affaire_id) {
-      this.$router.push({ name: "AffairesDashboard", params: {id: affaire_id}});
     }
-
   },
 
   mounted: function() {

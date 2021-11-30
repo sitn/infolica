@@ -66,15 +66,7 @@ export default {
       if (this.selectedTypeAffaire_id > 0) {
         this.affaires = this.affaires.filter(x => x.affaire_type_id === this.selectedTypeAffaire_id);
       }
-    },
-
-    /**
-     * openAffaire
-     */
-    async openAffaire(affaire_id) {
-      this.$router.push({ name: "AffairesDashboard", params: {id: affaire_id}});
     }
-
   },
 
   mounted: function() {
