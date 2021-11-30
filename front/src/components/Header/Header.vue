@@ -48,14 +48,6 @@ export default {
       
     },
 
-     /**
-     * Go to route
-     */
-    goTo(route){
-      if(this.$router && this.$router.currentRoute && this.$router.currentRoute.name != route)
-        this.$router.push({ name: route});
-    },
-
     checkIsAdmin() {
       this.isAdmin = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
     },
@@ -66,14 +58,6 @@ export default {
     checkVersion(version, isNew=false) {
       this.versionBtn.version = version;
       this.versionBtn.showBadge = isNew;
-    },
-
-    /**
-     * Open link in new tab
-     */
-    openInNewTab(data) {
-      let routedata = this.$router.resolve({ name: data });
-      window.open(routedata.href, "_blank");
     },
 
     /**
