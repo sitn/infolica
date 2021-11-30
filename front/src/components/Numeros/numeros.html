@@ -89,7 +89,7 @@
                                     <md-table-cell md-label="Immeuble" md-sort-by="numero">{{ item.numero }}<span v-if="item.suffixe"> / {{ item.suffixe }}</span></md-table-cell>
                                     <md-table-cell md-label="Etat" md-sort-by="etat">{{ item.etat }}</md-table-cell>
                                     <md-table-cell md-label="Consulter" class="actionsColumn">
-                                        <md-button class="md-icon-button md-primary" v-on:click="doOpenNumero(item.id)">
+                                        <md-button class="md-icon-button md-primary" :to="{ name: 'NumerosHistory', params: { id: item.id } }">
                                             <md-icon>open_in_new</md-icon>
                                         </md-button>
                                     </md-table-cell>

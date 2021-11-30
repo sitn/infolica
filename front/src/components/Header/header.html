@@ -17,27 +17,27 @@
       
       <nav class="menu" v-if="$route.name !== 'Login'">
         <md-menu md-align-trigger>
-          <md-button md-menu-trigger v-on:click="goTo('Cockpit')" v-on:click.middle="openInNewTab('Cockpit')">Cockpit</md-button>
+          <md-button md-menu-trigger :to="{ name: 'Cockpit' }">Cockpit</md-button>
         </md-menu>
         
         <md-menu md-align-trigger>
-          <md-button md-menu-trigger v-on:click="goTo('Affaires')" v-on:click.middle="openInNewTab('Affaires')">Affaires</md-button>
+          <md-button md-menu-trigger :to="{ name: 'Affaires' }">Affaires</md-button>
         </md-menu>
         
         <md-menu md-align-trigger>
-          <md-button md-menu-trigger v-on:click="goTo('Numeros')" v-on:click.middle="openInNewTab('Numeros')">Numéros</md-button>
+          <md-button md-menu-trigger :to="{ name: 'Numeros' }">Numéros</md-button>
         </md-menu>
         
         <md-menu md-align-trigger>
-          <md-button md-menu-trigger v-on:click="goTo('Clients')" v-on:click.middle="openInNewTab('Clients')">Clients</md-button>
+          <md-button md-menu-trigger :to="{ name: 'Clients' }">Clients</md-button>
         </md-menu>
         
         <md-menu md-align-trigger v-if="isAdmin">
-          <md-button md-menu-trigger v-on:click="goTo('Operateurs')" v-on:click.middle="openInNewTab('Operateurs')">Opérateurs</md-button>
+          <md-button md-menu-trigger :to="{ name: 'Operateurs' }">Opérateurs</md-button>
         </md-menu>
         
         <md-menu md-align-trigger>
-          <md-button md-menu-trigger v-on:click="goTo('About')" v-on:click.middle="openInNewTab('About')">à propos</md-button>
+          <md-button md-menu-trigger :to="{ name: 'About' }">à propos</md-button>
         </md-menu>
       </nav>
       

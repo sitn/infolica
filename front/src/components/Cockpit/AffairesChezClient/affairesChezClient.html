@@ -53,7 +53,7 @@
                                 <md-table-cell md-label="Etape" md-sort-by="etape">{{ item.etape }} </md-table-cell>
                                 <md-table-cell md-label="Chez le client depuis" md-sort-by="etape_datetime">{{ new Date(item.etape_datetime) | formatDate }} </md-table-cell>
                                 <md-table-cell md-label="Consultation">
-                                    <md-button class="md-primary md-icon-button" @click="openAffaire(item.id)" title="Consulter/modifier l'affaire">
+                                    <md-button class="md-primary md-icon-button" :to="{ name: 'AffairesDashboard', params: { id: item.id } }" title="Consulter/modifier l'affaire">
                                         <md-icon>open_in_new</md-icon>
                                     </md-button>
                                 </md-table-cell>

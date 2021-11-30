@@ -235,13 +235,6 @@ export default {
         });
     },
 
-    /*
-     * Open numéro in new tab
-     */
-    doOpenAffaire(id) {
-      this.$router.push({ name: "AffairesDashboard", params: {id}});
-    },
-
     /**
      * Set permissions
      */

@@ -178,13 +178,6 @@ export default {
         }).catch(err => handleException(err, this));
     },
 
-    /*
-     * Open numéro in new tab
-     */
-    doOpenAffaire(id) {
-      this.$router.push({ name: "AffairesDashboard", params: {id}});
-    },
-
     /**
      * Ouvrir le md-dialog pour éditer un numéro
      */
