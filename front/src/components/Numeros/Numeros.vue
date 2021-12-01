@@ -158,13 +158,6 @@ export default {
       this.numeros = [];
     },
 
-    /*
-     * Open numéro in new tab
-     */
-    doOpenNumero(id) {
-      this.$router.push({ name: "NumerosHistory", params: {id}});
-    },
-
     // ------------------ NUMEROS MO ------------------
 
     /**

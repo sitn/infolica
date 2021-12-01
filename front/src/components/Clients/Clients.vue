@@ -98,14 +98,6 @@ export default {
           this.search.mail = null;
         },
 
-
-        /**
-         * Call edit client
-         */
-        callEditClient (id) { 
-         this.$router.push({ name: "ClientsEdit", params: { id: id } }) ;
-        },
-        
         /**
          * Call delete client
          */

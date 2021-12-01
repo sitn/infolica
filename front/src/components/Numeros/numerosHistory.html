@@ -205,7 +205,7 @@
                     <md-table-cell md-label="Date d'ouverture" md-sort-by="affaire_date_ouverture" style="width: 10%;">{{ item.affaire_date_ouverture | formatDate }}</md-table-cell>
                     <md-table-cell md-label="Date d'envoi" md-sort-by="affaire_date_envoi" style="width: 10%;">{{ item.affaire_date_envoi | formatDate }}</md-table-cell>
                     <md-table-cell md-label="Consulter" class="actionsColumn" style="width: 15%;">
-                        <md-button class="md-icon-button md-primary" v-on:click="doOpenAffaire(item.affaire_id)">
+                        <md-button class="md-icon-button md-primary" :to="{ name: 'AffairesDashboard', params: { id: item.affaire_id } }">
                             <md-icon>open_in_new</md-icon>
                         </md-button>
                     </md-table-cell>
