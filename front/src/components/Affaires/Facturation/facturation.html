@@ -200,11 +200,6 @@
                         <div class="md-layout-item md-size-50">
                             <md-subheader>Adresse de la facture</md-subheader>
                         </div>
-                        <div class="md-layout-item md-size-50">
-                            <div style="text-align: right;">
-                                <md-button class="md-primary md-dense md-elevation-3" @click="searchClients">Recharger la liste des clients <md-icon>replay</md-icon></md-button>
-                            </div>
-                        </div>
                     </div>
                     <md-divider></md-divider>
         
@@ -285,7 +280,13 @@
 
     <!-- Dialogue confirmation suppression facture -->
     <div>
-        <md-dialog-confirm :md-active.sync="deleteFactureActive" md-title="Supprimer la facture" :md-content="deleteFactureMessage" md-confirm-text="Confirmer" md-cancel-text="Annuler" @md-confirm="onConfirmDelete" @md-cancel="onCancelDelete" />
+        <md-dialog-confirm :md-active.sync="deleteFactureActive"
+            md-title="Supprimer la facture"
+            :md-content="deleteFactureMessage"
+            md-confirm-text="Confirmer"
+            md-cancel-text="Annuler"
+            @md-confirm="onConfirmDelete"
+            @md-cancel="onCancelDelete" />
     </div>
 
     <Emoluments ref="emoluments"

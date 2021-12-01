@@ -5,10 +5,11 @@
 <script>
 import { getCurrentDate,
          getClients,
-         filterList,
          stringifyAutocomplete2,
          getDocument,
-         logAffaireEtape } from "@/services/helper";
+         logAffaireEtape,
+         setClientsAdresse_,
+         getClientsByTerm } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -36,7 +37,6 @@ export default {
       numeros_references: [],
       numeros_references_bk: [],
       numeros_references_restant: [],
-      clients_liste: [],
       clients_liste_select: [],
       createFacture: false,
       configFactureTypeID: {
@@ -86,7 +86,7 @@ export default {
 
     return { selectedFacture };
   },
-  
+
   methods: {
     /**
      * Validation of objects
@@ -154,9 +154,9 @@ export default {
                   [x.client_npa, x.client_localite].filter(Boolean).join(" ")
                 ].filter(Boolean);
               }
-              
+
               x.adresse_facturation_ = adresse_.join(", ");
-              
+
             });
 
             this.affaire_devis = tmp.filter(x => x.type_id === this.configFactureTypeID.devis);
@@ -169,29 +169,19 @@ export default {
     },
 
     /**
-     * Liste des clients
+     * getClientSearch by searchTerm
      */
-    async searchClients() {
-      getClients()
-        .then(response => {
-          if (response && response.data) {
-            this.clients_liste = response.data.map(x => ({
-              id: x.id,
-              nom: x.adresse_,
-              type_id: x.type_client,
-              besoin_vref_facture: x.besoin_vref_facture,
-              toLowerCase: () => x.adresse_.toLowerCase(),
-              toString: () => x.adresse_
-            }));
-          }
-        }).catch(err => handleException(err, this));
-    },
+    async getClientSearch(searchTerm) {
+      let conditions = {
+        'searchTerm': searchTerm,
+      };
 
-    /**
-     * Crée la liste de sélection du client lors de la création de facture
-     */
-    getClientSearch(term) {
-      this.clients_liste_select = filterList(this.clients_liste, term, 3);
+      getClientsByTerm(conditions)
+      .then(response => {
+        if (response && response.data) {
+          this.clients_liste_select = stringifyAutocomplete2( setClientsAdresse_(response.data), "adresse_" );
+        }
+      }).catch(err => handleException(err, this));
     },
 
     /*
@@ -280,7 +270,10 @@ export default {
       }
 
       // récupère le client de la facture
-      let client_facture_tmp = this.clients_liste.filter(x => x.id === data.client_id);
+      let client_facture_tmp = {};
+      getClients(data.client_id)
+      .then(response => client_facture_tmp = stringifyAutocomplete2(response.data, "adresse_" ))
+      .catch(err => handleException(err));
       if (client_facture_tmp && client_facture_tmp.length > 0) {
         this.selectedFacture.client = client_facture_tmp[0];
       } else {
@@ -309,7 +302,6 @@ export default {
      * Créer une nouvelle facture
      */
     newFacture(facture_type) {
-      // set automatically date facture only if affaire etape is in edition facture 
       let dateFacture = null;
       if (this.affaire.etape_id === Number(process.env.VUE_APP_ETAPE_FACTURE_ID)) {
         dateFacture = getCurrentDate();
@@ -332,18 +324,22 @@ export default {
 
       // Set default client if affaire type is cadastration
       if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
-        this.selectedFacture.client = this.clients_liste.filter(x => x.id === Number(process.env.VUE_APP_CLIENT_CADASTRATION_ID))[0];
+        this.selectedFacture.client = {};
+        getClients(process.env.VUE_APP_CLIENT_CADASTRATION_ID)
+        .then(response => this.selectedFacture.client = stringifyAutocomplete2(response.data, "adresse_" )[0])
+        .catch(err => handleException(err));
       }
-      
+
       if (facture_type === 'devis') {
         this.selectedFacture.type_id = this.configFactureTypeID.devis;
       } else if (facture_type === 'facture') {
         this.selectedFacture.type_id = this.configFactureTypeID.facture;
       }
-      
+
       this.showReferenceNumeroFacture = true;
       this.showFactureDialog = true;
       this.createFacture = true;
+      this.selectedClient = null;
     },
 
     /**
@@ -380,7 +376,7 @@ export default {
       formData.append("sap", this.selectedFacture.sap || null);
       formData.append("remarque", this.selectedFacture.remarque || null);
       formData.append("client_premiere_ligne", this.selectedFacture.client_premiere_ligne || null);
-      
+
       if (this.selectedFacture.type_id) {
         formData.append("type_id", this.selectedFacture.type_id);
       }
@@ -390,7 +386,7 @@ export default {
       if (this.selectedFacture.client && this.selectedFacture.client.id) {
         formData.append("client_id", this.selectedFacture.client.id);
       }
-      
+
       if (this.selectedFacture.montant_mo) {
         formData.append("montant_mo", this.selectedFacture.montant_mo);
       }
@@ -468,6 +464,7 @@ export default {
     onCancelEditFacture: function() {
       this.createFacture = false;
       this.showFactureDialog = false;
+      this.selectedClient = null;
       this.$v.$reset();
     },
 
@@ -493,7 +490,7 @@ export default {
       this.$http
         .delete(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_ENDPOINT,
-          { 
+          {
             data: formData,
             withCredentials: true,
             headers: {"Accept": "application/json"}
@@ -501,7 +498,7 @@ export default {
         )
         .then(response => {
           if (response.data) {
-            
+
             //Log edition facture
             logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_SECONDAIRE_ID), "Suppression");
 
@@ -544,7 +541,7 @@ export default {
       let numeros = [];
       if (facture.numeros.length > 0) {
         facture.numeros.forEach(facture_numero => numeros.push(facture_numero));
-        
+
         if (numeros.length > 1) {
           numeros = numeros.sort((a, b) => {a-b});
         }
@@ -584,7 +581,7 @@ export default {
       let numeros = [];
       if (facture.numeros.length > 0) {
         facture.numeros.forEach(facture_numero => numeros.push(facture_numero));
-        
+
         if (numeros.length > 1) {
           numeros = numeros.sort((a, b) => {a-b});
         }
@@ -662,7 +659,6 @@ export default {
 
   mounted: function() {
     this.getFactureTypes();
-    this.searchClients();
     this.searchAffaireNumeros().then(() => {
       this.searchAffaireFactures();
     });
