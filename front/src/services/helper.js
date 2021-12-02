@@ -142,9 +142,14 @@ export const getEtapesAffaire = async function () {
 /*
  * Get clients
  */
-export const getClients = async function () {
+export const getClients = async function (id) {
+    let params = "";
+    if (id) {
+        params = "?id=" + id;
+    }
+
     return new Promise((resolve, reject) => {
-        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT + params,
             {
               withCredentials: true,
               headers: {"Accept": "application/json"}

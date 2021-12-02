@@ -9,12 +9,13 @@ import { handleException } from "@/services/exceptionsHandler";
 import { required } from "vuelidate/lib/validators";
 import { getCurrentDate,
          getClients,
-         filterList,
          stringifyAutocomplete,
          stringifyAutocomplete2,
          checkPermission,
          getCurrentUserRoleId,
-         getOperateurs } from "@/services/helper";
+         getOperateurs,
+         getClientsByTerm,
+         setClientsAdresse_ } from "@/services/helper";
 import Autocomplete from "vuejs-auto-complete";
 import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
 
@@ -36,8 +37,6 @@ export default {
       cadastres_list: [],
       client_facture: null,
       client_facture_premiere_ligne: null,
-      clients_list: [],
-      clients_liste_type: [],
       client_moral_personnes: {
         commande: [],
         envoi: [],
@@ -330,28 +329,6 @@ export default {
     },
 
     /*
-     * Init clients list
-     */
-    async initClientsList() {
-      getClients()
-      .then(response => {
-        if (response && response.data) {
-          this.clients_list = stringifyAutocomplete(response.data, "adresse_");
-          this.clients_liste_type = response.data.map(x => ({
-            id: x.id,
-            type_id: x.type_client
-          }));
-          
-          this.updateContact();
-        }
-      })
-      //Error
-      .catch(err => {
-        handleException(err, this);
-      });
-    },
-
-    /*
      * Init operateurs list
      */
     async initOperateursList() {
@@ -390,13 +367,6 @@ export default {
         .catch(err => {
           handleException(err, this);
         });
-    },
-
-    /**
-     * Search Client after 3 letters
-     */
-    searchClients(value) {
-      this.search_clients_list = filterList(this.clients_list, value, 3);
     },
 
     /**
@@ -508,13 +478,13 @@ export default {
       if (this.form.client_commande && this.form.client_commande.id) {
         formData.append("client_commande_id", this.form.client_commande.id);
       }
-      if (this.form.client_commande_complement && this.showClientComplement(this.form.client_commande)) {
+      if (this.form.client_commande_complement && this.form.client_commande.type_id === this.clients_types_config.personne_morale) {
         formData.append("client_commande_complement", this.form.client_commande_complement);
       }
       if (this.form.client_envoi && this.form.client_envoi.id) {
         formData.append("client_envoi_id", this.form.client_envoi.id);
       }
-      if (this.form.client_envoi_complement && this.showClientComplement(this.form.client_envoi)) {
+      if (this.form.client_envoi_complement && this.form.client_envoi.type_id === this.clients_types_config.personne_morale) {
         formData.append("client_envoi_complement", this.form.client_envoi_complement);
       }
       if (this.form.technicien_id) {
@@ -898,10 +868,14 @@ export default {
       } else {
         this.type_modification_bool = false;
       }
-      // this.showClientsForm = this.form.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_CADASTRATION)? false: true;
+
+      let defaultClient = "";
+      getClients(process.env.VUE_APP_CLIENT_CADASTRATION_ID)
+      .then(response => defaultClient = response.data[0])
+      .catch(err => handleException(err));
+
       if (this.form.type.id === this.typesAffaires_conf.cadastration) {
         this.showClientsForm = false;
-        let defaultClient = this.clients_list.filter(x => x.id === Number(process.env.VUE_APP_CLIENT_CADASTRATION_ID))[0];
         this.form.client_commande = defaultClient;
         this.form.client_envoi = defaultClient;
         this.form.client_envoi_complement = null;
@@ -909,7 +883,6 @@ export default {
         this.client_facture_premiere_ligne = null;
         this.form.nom = "Cadastration sur "
       } else if (this.form.type.id === this.typesAffaires_conf.mpd) {
-        let defaultClient = this.clients_list.filter(x => x.id === Number(process.env.VUE_APP_CLIENT_CADASTRATION_ID))[0];
         this.form.client_commande = defaultClient;
         this.form.client_envoi = defaultClient;
         this.form.client_envoi_complement = null;
@@ -1021,9 +994,15 @@ export default {
         this.form.cadastre = this.cadastres_list.filter(x => x.id === this.selectedModificationAffaire.cadastre_id)[0];
         this.form.nom = modif_type + this.selectedModificationAffaire.nom;
         this.form.nom_ = this.selectedModificationAffaire.nom; // garder le nom pas modifié en mémoire
-        this.form.client_commande = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_commande_id)[0];
+        this.form.client_commande = {};
+        getClients(this.selectedModificationAffaire.client_commande_id)
+        .then(response => this.form.client_commande = stringifyAutocomplete2(response.data, "adresse_")[0])
+        .catch(err => handleException(err));
         this.form.client_commande_complement = this.selectedModificationAffaire.client_commande_complement;
-        this.form.client_envoi = this.clients_list.filter(x => x.id === this.selectedModificationAffaire.client_envoi_id)[0];
+        this.form.client_envoi = {};
+        getClients(this.selectedModificationAffaire.client_envoi_id)
+        .then(response => this.form.client_envoi = stringifyAutocomplete2(response.data, "adresse_")[0])
+        .catch(err => handleException(err));
         this.form.client_envoi_complement = this.selectedModificationAffaire.client_envoi_complement;
         this.form.date_ouverture =  moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
         this.form.localisation_E = this.selectedModificationAffaire.localisation_e;
@@ -1086,7 +1065,10 @@ export default {
           }).then(response => {
             if(response && response.data)
               var affaire_factures = response.data;
-              this.client_facture = this.clients_list.filter(x => x.id === affaire_factures[0].client_id)[0];
+              this.client_facture = {};
+              getClients(affaire_factures[0].client_id)
+              .then(response => this.client_facture = stringifyAutocomplete2(response.data, "adresse_")[0])
+              .catch(err => handleException(err));
           }).catch(err => handleException(err, this));
         }
       })
@@ -1107,19 +1089,6 @@ export default {
      */
     onSelectNumsNouveux(items) {
       this.selectedNouveauxNumeros = items;
-    },
-
-    /**
-     * Affiche le complément client si le client est une entreprise
-     */
-    showClientComplement(client) {
-      if (client && client.id) {
-        let tmp = this.clients_liste_type.filter(x => x.id === client.id).pop();
-        if (tmp.type_id === this.clients_types_config.personne_morale) {
-          return true;
-        }
-      }
-      return false;
     },
 
     /**
@@ -1250,6 +1219,22 @@ export default {
       });
     },
 
+    /**
+     * searchClient
+     */
+    async searchClients(searchTerm) {
+      let conditions = {
+        'searchTerm': searchTerm,
+      };
+
+      getClientsByTerm(conditions)
+      .then(response => {
+        if (response && response.data) {
+          this.search_clients_list = stringifyAutocomplete2( setClientsAdresse_(response.data), "adresse_" );
+        }
+      }).catch(err => handleException(err, this));
+    },
+
   },
 
   mounted: function() {
@@ -1261,7 +1246,6 @@ export default {
     this.callInitMap();
     //Init lists
     this.initTypesAffairesList();
-    this.initClientsList();
     this.initOperateursList();
     this.initCadastresList();
     this.initTypesModficiationAffaire();

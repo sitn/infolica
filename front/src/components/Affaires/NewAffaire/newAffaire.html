@@ -219,10 +219,6 @@
             </div>
             
             <div v-if="showClientsForm">
-                <div style="text-align: right;">
-                    <md-button class="md-primary md-dense md-elevation-3" @click="initClientsList">Recharger la liste des clients <md-icon>replay</md-icon></md-button>
-                </div>
-
                 <!-- Client DEMANDEUR et ligne complément -->
                 <div class="md-layout md-gutter md-alignment-center-left">
                     <div class="md-layout-item md-small-size-100 md-size-100">
@@ -241,7 +237,7 @@
                         </md-autocomplete>
                     </div>
 
-                    <div class="md-layout-item md-size-50 md-small-size-100" v-if="showClientComplement(form.client_commande)">
+                    <div class="md-layout-item md-size-50 md-small-size-100" v-if="form.client_commande && form.client_commande.type_client === clients_types_config.personne_morale">
                         <md-autocomplete v-model="form.client_commande_complement"
                             :md-options="client_moral_personnes.commande"
                             md-dense>
@@ -275,7 +271,7 @@
                         </md-autocomplete>
                     </div>
                     
-                    <div class="md-layout-item md-small-size-100 md-size-50" v-if="showClientComplement(form.client_envoi)">
+                    <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.client_envoi && form.client_envoi.type_client === clients_types_config.personne_morale">
                         <md-autocomplete v-model="form.client_envoi_complement"
                             :md-options="client_moral_personnes.envoi"
                             md-dense>
