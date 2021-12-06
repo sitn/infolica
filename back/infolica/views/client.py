@@ -101,7 +101,7 @@ def clients_search_by_term_view(request):
     searchTerm = request.params["searchTerm"] if "searchTerm" in request.params else None
     old_clients = request.params['old_clients'] == 'true' if 'old_clients' in request.params else False
 
-    searchTerms = searchTerm.split(" ")
+    searchTerms = searchTerm.strip().split(" ")
 
     query = request.dbsession.query(Client)
     if not old_clients:
@@ -130,7 +130,6 @@ def clients_search_by_term_view(request):
                     cast(Client.no_access, String).ilike(term),
                 )
             )
-        
     
     query = query.limit(search_limit).all()
     

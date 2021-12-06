@@ -19,8 +19,9 @@
                 </div>
 
                 <div class="md-layout-item">
-                    <div style="float: right; width: 500px;">
-                        <md-field>
+                    <div style="float: right; display: flex;">
+                        <md-checkbox v-model="searchOldClientMode" @change="searchClientsByTerm" style="width: 370px; margin-top: 30px;">Rechercher également dans les anciens clients</md-checkbox>
+                        <md-field style="width: 400px;">
                             <label>Client</label>
                             <md-input id="client" v-model="searchTerm" @keyup="searchClientsByTerm"></md-input>
                             <md-icon>search</md-icon>
@@ -126,13 +127,19 @@
             <!-- Results Content -->
             <md-card-content>
                 <md-table md-height="100%" v-model="clients" md-sort="name" md-sort-order="asc" md-fixed-header>
+                    <md-table-empty-state
+                        md-label="Aucun client trouvé"
+                        :md-description="`Aucun client ne correspond à la recherche. Entrer un nouveau terme de recherche ou créer le client.`">
+                    </md-table-empty-state>
+
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell width="100px" md-label="Entreprise" md-sort-by="entreprise">{{ item.entreprise }}</md-table-cell>
                         <md-table-cell width="50px" md-label="Titre" md-sort-by="titre">{{ item.titre }}</md-table-cell>
                         <md-table-cell width="100px" md-label="Prénom" md-sort-by="prenom">{{ item.prenom }}</md-table-cell>
                         <md-table-cell width="100px" md-label="Nom" md-sort-by="nom">{{ item.nom }}</md-table-cell>
                         <md-table-cell width="150px" md-label="Adresse">{{ item.adresse }}</md-table-cell>
-                        <md-table-cell width="50px" md-label="Localité" md-sort-by="">{{ item.npa }} {{ item.localite }}</md-table-cell>
+                        <md-table-cell width="50px" md-label="Localité">{{ item.npa }} {{ item.localite }}</md-table-cell>
+                        <md-table-cell width="80px" md-label="Client supprimé le" md-sort-by="sortie_sort">{{ item.sortie }}</md-table-cell>
                         <md-table-cell width="50px" md-label="Actions" class="actionsColumn">
                             <md-button class="md-icon-button md-primary" :to="{ name: 'ClientsEdit', params: { id: item.id } }">
                                 <md-icon>open_in_new</md-icon>

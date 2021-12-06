@@ -10,6 +10,8 @@ import {checkPermission,
         adjustColumnWidths,
         getClientsByTerm } from '@/services/helper';
 
+import moment from "moment";
+
 export default {
   name: 'Clients',
   props: {},
@@ -32,6 +34,7 @@ export default {
       },
       search_clients_list: [],
       searchTerm: "",
+      searchOldClientMode: false,
   }),
   methods: {
         /**
@@ -77,7 +80,7 @@ export default {
           )
           .then(response =>{
             if(response && response.data){
-              this.clients = response.data;
+              this.clients = this.setDateformat(response.data);
             }
           })
           //Error 
@@ -189,17 +192,32 @@ export default {
       this.clearForm();
 
       let conditions = {
-        "searchTerm": this.searchTerm
+        "searchTerm": this.searchTerm? this.searchTerm: "",
+        "old_clients": this.searchOldClientMode,
       };
 
       getClientsByTerm(conditions)
       .then(response => {
         if (response && response.data) {
-          this.clients = response.data;
+          this.clients = this.setDateformat(response.data);
         }
       }).catch(err => handleException(err));
     },
 
+    /**
+     * set dateformat
+     */
+    setDateformat(list) {
+      list.forEach(x => {
+        if (x.sortie !== null) {
+          x.sortie = moment(x.sortie, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+          x.sortie_sort = new Date(moment(x.sortie, process.env.VUE_APP_DATEFORMAT_WS)).getTime();
+        } else {
+          x.sortie_sort = -1;
+        }
+      });
+      return list;
+    },
 
   },
 
