@@ -1,4 +1,3 @@
-import { handleException } from "@/services/exceptionsHandler";
 import axios from 'axios';
 const moment = require('moment')
 
@@ -438,7 +437,7 @@ export const logAffaireEtape = async function(affaire_id, etape_id, remarque=nul
               headers: {"Accept": "application/json"}
             }
         ).then(response => resolve(response))
-        .catch(err => handleException(err));
+        .catch(err => alert(err));
     });
 }
 

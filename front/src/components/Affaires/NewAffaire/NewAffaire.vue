@@ -116,6 +116,7 @@ export default {
         modification_abandon_partiel: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_ABANDON_PARTIEL),
         modification_mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_MUTATION),
         modification_ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_PPE),
+        modification_retablissement_etat_juridique: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_RETABLISSEMENT_ETAT_JURIDIQUE),
       },
       role_conf: {
         ppe_user_id: Number(process.env.VUE_APP_PPE_ROLE_ID),
@@ -190,7 +191,8 @@ export default {
           this.typesAffaires_conf.autre,
           this.typesAffaires_conf.servitude,
           this.typesAffaires_conf.mpd,
-          this.typesAffaires_conf.modification_abandon_partiel
+          this.typesAffaires_conf.modification_abandon_partiel,
+          this.typesAffaires_conf.modification_retablissement_etat_juridique
         ].includes(this.form.type.id)
       } else {
         this.showReferenceNumeros = false;
@@ -679,38 +681,21 @@ export default {
       });
     },
 
-  /**
-   * Get numeros relations in affaire mere
-   */
-  async getNumerosRelationInAffaire(affaire_id) {
-    return new Promise((resolve, reject) => {
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_RELATIONS_BY_AFFAIREID_ENDPOINT + affaire_id,
-        {
-          withCredentials: true,
-          headers: {Accept: "application/json"}
-        }
-      ).then(response => resolve(response))
-      .catch(err => reject(err));
-    });
-  },
-
-  // /**
-  //  * Supprimer la relation numéro-affaire pour une affaire modif suppression partielle
-  //  */
-    // async deleteNumeroAffaire(numero_id, affaire_id) {
-    //   return new Promise((resolve, reject) => {
-    //     this.$http.delete(
-    //       process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT +
-    //       "?numero_id=" + numero_id + "&affaire_id=" + affaire_id,
-    //       {
-    //         withCredentials: true,
-    //         headers: {Accept: "application/json"}
-    //       }
-    //     ).then(response => resolve(response))
-    //     .catch(err => reject(err));
-    //   });
-    // },
+    /**
+     * Get numeros relations in affaire mere
+     */
+    async getNumerosRelationInAffaire(affaire_id) {
+      return new Promise((resolve, reject) => {
+        this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_RELATIONS_BY_AFFAIREID_ENDPOINT + affaire_id,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => resolve(response))
+        .catch(err => reject(err));
+      });
+    },
 
     /**
      * Delete numero relation in case of affaire modif suppression partielle
@@ -963,7 +948,7 @@ export default {
               //Search numéros immeubles
               _this.setModificationAffaireNuméros();
             } else {
-              this.$root.$emit("ShowError", "L'affaire de base est déjà été clôturée. Contrôler le numéro de l'affaire") 
+              this.$root.$emit("ShowError", "L'affaire de base est déjà clôturée. Contrôler le numéro de l'affaire") 
             }
 
           } else {
@@ -988,11 +973,20 @@ export default {
       if(this.selectedModificationAffaire){
         let modif_type = "";
         if (this.form.affaire_modif_type !== null && this.form.affaire_modif_type.nom) {
-          modif_type = this.form.affaire_modif_type.nom + " : ";
+          if (this.form.affaire_modif_type.id === Number(process.env.VUE_APP_TYPE_MODIFICATION_RETABLISSEMENT_ETAT_JURIDIQUE_ID)) {
+            modif_type = this.form.affaire_modif_type.nom;
+          } else {
+            modif_type = this.form.affaire_modif_type.nom + " : ";
+          }
         }
 
         this.form.cadastre = this.cadastres_list.filter(x => x.id === this.selectedModificationAffaire.cadastre_id)[0];
-        this.form.nom = modif_type + this.selectedModificationAffaire.nom;
+        this.form.nom = modif_type;
+        if (this.form.affaire_modif_type && this.form.affaire_modif_type.id === Number(process.env.VUE_APP_TYPE_MODIFICATION_RETABLISSEMENT_ETAT_JURIDIQUE_ID)) {
+          this.form.nom = modif_type;
+          } else {
+          this.form.nom = modif_type + this.selectedModificationAffaire.nom;
+        }
         this.form.nom_ = this.selectedModificationAffaire.nom; // garder le nom pas modifié en mémoire
         this.form.client_commande = {};
         getClients(this.selectedModificationAffaire.client_commande_id)
@@ -1022,7 +1016,12 @@ export default {
      */
     typeModifSelected() {
       this.form.nom = (this.form.affaire_modif_type.id?
-                       this.typesModficiationAffaire_list.filter(x => x.id === this.form.affaire_modif_type.id) + " : " : null) + this.form.nom_;
+                       this.typesModficiationAffaire_list.filter(x => x.id === this.form.affaire_modif_type.id) :
+                       null)
+
+      if (this.form.nom_) {
+       this.form.nom += " : " + this.form.nom_;
+      }
     },
 
     /**
@@ -1055,6 +1054,13 @@ export default {
               element.active = true;
             }
           });
+
+          // Présélection de tous les numéros dans la liste de récupération des BF dans la nouvelle affaire
+          if ((this.form.type.id === this.typesAffaires_conf.modification) &&
+              (this.form.affaire_modif_type.id === Number(process.env.VUE_APP_TYPE_MODIFICATION_RETABLISSEMENT_ETAT_JURIDIQUE_ID))) {
+            this.selectedAnciensNumeros = this.affaire_numeros_anciens;
+            this.selectedNouveauxNumeros = this.affaire_numeros_nouveaux;
+          }
 
           // get client_affaire
           const url = process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_FACTURES_ENDPOINT + this.form.affaire_base_id;

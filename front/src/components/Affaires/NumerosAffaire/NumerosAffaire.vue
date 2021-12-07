@@ -482,7 +482,8 @@ export default {
         this.typesAffaires_conf.modification_duplicata,
         this.typesAffaires_conf.modification_abandon_partiel,
         this.typesAffaires_conf.modification_mutation,
-        this.typesAffaires_conf.modification_ppe
+        this.typesAffaires_conf.modification_ppe,
+        this.typesAffaires_conf.modification_retour_etat_juridique,
       ];
       
       this.show = {

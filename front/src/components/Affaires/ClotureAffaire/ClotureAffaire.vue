@@ -9,7 +9,8 @@ import moment from "moment";
 export default {
   name: "ClotureAffaire",
   props: {
-    affaire: Object
+    affaire: Object,
+    typesAffaires_conf: Object
   },
   component: {},
   data: () => {
@@ -81,8 +82,20 @@ export default {
       let num_etat = {
         projet_id: Number(process.env.VUE_APP_NUMERO_PROJET_ID),
         vigueur_id: Number(process.env.VUE_APP_NUMERO_VIGUEUR_ID),
-        supprime_id: Number(process.env.VUE_APP_NUMERO_SUPPRIME_ID)
+        supprime_id: Number(process.env.VUE_APP_NUMERO_SUPPRIME_ID),
+        abandonne_id: Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)
       };
+
+      // Si le type d'affaire nécessite la suppression des biens-fonds de base (mutation ou modif de mutation)
+      if (![
+          this.typesAffaires_conf.mutation, 
+          this.typesAffaires_conf.modification_mutation, 
+          this.typesAffaires_conf.modification_visa, 
+          this.typesAffaires_conf.modification_duplicata, 
+          this.typesAffaires_conf.modification_retour_etat_juridique
+        ].includes(this.affaire.type_id)) {
+        data = data.filter(x => x.affaire_numero_type_id !== num_type.ancien_id);
+      }
 
       data.forEach(element => {
         element.numero_etatFutur_id = element.numero_etat_id;
@@ -90,10 +103,17 @@ export default {
         // Cas des numéros projetés, non mat-diff, à passer de projet à validé
         if (element.affaire_numero_type_id === num_type.nouveau_id && 
             element.numero_etat_id === num_etat.projet_id) {
-          element.numero_etatFutur_id = num_etat.vigueur_id;
+          
+          // if retablissement etat juridique, reserved numbers must be abandouned
+          if (this.affaire.type_id === this.typesAffaires_conf.modification_retour_etat_juridique) {
+            element.numero_etatFutur_id = num_etat.abandonne_id;
+          } else {
+            element.numero_etatFutur_id = num_etat.vigueur_id;
+          }
         } 
-        // Cas des numéros référencés à supprimer
-        else if (element.affaire_numero_type_id === num_type.ancien_id) {
+        // Cas des numéros référencés à supprimer, si le bf de base doit être supprimé
+        else if (element.affaire_numero_type_id === num_type.ancien_id
+                 && this.affaire.type_id !== this.typesAffaires_conf.modification_retour_etat_juridique) {
           if (~base.includes(element.numero_id)) {
             element.numero_etatFutur_id = num_etat.supprime_id;
           }
@@ -148,12 +168,15 @@ export default {
           if (response) {
             this.AjoutDateClotureAffaire()
             .then(() => {
-              this.$router.go(0);
               this.$parent.setAffaire();
               this.$root.$emit("ShowMessage", "L'affaire " + this.$route.params.id + " a été clôturées avec succès");
   
               //Log cloture affaire
               logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CLOTURE_ID));
+
+              setTimeout(()=> {
+                this.$router.go(0);
+              }, 1000);
             })
             .catch(err => handleException(err, this));
           }
