@@ -395,9 +395,8 @@ export default {
           Promise.all(promises)
           .then(() => {
             //Log edition facture
-            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_ABANDON_ID));
-
-            this.$router.go();
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_FIN_PROCESSUS_ID), "Abandon de l'affaire")
+            .then(() => this.$router.go());
           })
           .catch(err => handleException(err, this));
         }
