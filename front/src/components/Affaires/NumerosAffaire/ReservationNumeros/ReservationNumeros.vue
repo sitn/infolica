@@ -98,7 +98,7 @@ export default {
       formData.append("nombre", this.form.nombre);
       formData.append("cadastre_id", this.form.cadastre.id);
       formData.append("etat_id", Number(process.env.VUE_APP_NUMERO_PROJET_ID));
-      if ((this.affaire.type_id === this.typesAffaires_conf.ppe || this.affaire.type_id === this.typesAffaires_conf.pcop)) {
+      if ((this.affaire.type_id === this.typesAffaires_conf.ppe || this.affaire.type_id === this.typesAffaires_conf.modification_ppe || this.affaire.type_id === this.typesAffaires_conf.pcop)) {
         if (this.form.numeroBase && this.form.numeroBase.numero_id) {
           formData.append("numero_base_id", this.form.numeroBase.numero_id);
         } else {

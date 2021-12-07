@@ -502,6 +502,7 @@ export default {
           this.typesAffaires_conf.autre,
           this.typesAffaires_conf.servitude,
           this.typesAffaires_conf.mpd,
+          this.typesAffaires_conf.modification_ppe,
           this.typesAffaires_conf.modification_abandon_partiel
         ].includes(this.affaire.type_id),
 
