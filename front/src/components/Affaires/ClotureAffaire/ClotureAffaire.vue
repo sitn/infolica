@@ -172,11 +172,8 @@ export default {
               this.$root.$emit("ShowMessage", "L'affaire " + this.$route.params.id + " a été clôturées avec succès");
   
               //Log cloture affaire
-              logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CLOTURE_ID));
-
-              setTimeout(()=> {
-                this.$router.go(0);
-              }, 1000);
+              logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CLOTURE_ID))
+              .then(() => this.$router.go(0));
             })
             .catch(err => handleException(err, this));
           }
