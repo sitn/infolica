@@ -100,6 +100,7 @@ export default {
         modification_abandon_partiel: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_ABANDON_PARTIEL),
         modification_mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_MUTATION),
         modification_ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_PPE),
+        modification_retour_etat_juridique: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_RETABLISSEMENT_ETAT_JURIDIQUE),
       },
       etapes_affaire_conf: {
         chez_client: Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID),

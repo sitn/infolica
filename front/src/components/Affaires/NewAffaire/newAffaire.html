@@ -78,47 +78,47 @@
                             <md-input v-model="form.affaire_base_id" required />
                             
                             <md-button class="md-primary md-icon-button modifAffaireActionBtn" title="Sélectionner cette affaire"
-                            v-if="type_modification_bool && this.form.affaire_base_id"
-                            @click="doSelectAffaireModification()">
-                            <md-icon>remove_red_eye</md-icon>
+                                v-if="type_modification_bool && this.form.affaire_base_id"
+                                @click="doSelectAffaireModification()">
+                            <md-icon>file_download</md-icon>
                         </md-button>
                         
                         <md-button class="md-primary md-icon-button modifAffaireActionBtn" title="Afficher cette affaire"
-                        v-if="type_modification_bool && this.form.affaire_base_id"
-                        @click="doOpenAffaireModification()">
-                        <md-icon>open_in_new</md-icon>
-                    </md-button>
-                </md-field>
+                            v-if="type_modification_bool && this.form.affaire_base_id"
+                            @click="doOpenAffaireModification()">
+                            <md-icon>open_in_new</md-icon>
+                        </md-button>
+                    </md-field>
+                </div>
             </div>
-        </div>
-        
-        <!-- No_access de l'affaire -->
-        <div class="md-gutter md-layout" v-if="form.type && (form.type.id === typesAffaires_conf.mpd)">
-            <div class="md-layout-item md-size-50">
-                <md-field>
-                    <label>Plan</label>
-                    <md-select v-model="form.plan" md-dense>
-                        <md-option v-for="item in plansMOListe_cadastre" :value="item.nom">{{ item.nom }}</md-option>
-                    </md-select>
-                </md-field>
+            
+            <!-- No_access de l'affaire -->
+            <div class="md-gutter md-layout" v-if="form.type && (form.type.id === typesAffaires_conf.mpd)">
+                <div class="md-layout-item md-size-50">
+                    <md-field>
+                        <label>Plan</label>
+                        <md-select v-model="form.plan" md-dense>
+                            <md-option v-for="item in plansMOListe_cadastre" :value="item.nom">{{ item.nom }}</md-option>
+                        </md-select>
+                    </md-field>
+                </div>
             </div>
-        </div>
 
-        <!-- Description de l'affaire -->
-        <div class="md-gutter md-layout">
-            <div class="md-layout-item md-size-100">
-                <md-field :class="getValidationClass($v.form.nom)">
-                    <label>Description</label>
-                    <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending" required />
-                    <span class="md-error" v-if="!$v.form.nom.required">La description de l'affaire est obligatoire</span>
-                </md-field>
+            <!-- Description de l'affaire -->
+            <div class="md-gutter md-layout">
+                <div class="md-layout-item md-size-100">
+                    <md-field :class="getValidationClass($v.form.nom)">
+                        <label>Description</label>
+                        <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending" required />
+                        <span class="md-error" v-if="!$v.form.nom.required">La description de l'affaire est obligatoire</span>
+                    </md-field>
+                </div>
             </div>
-        </div>
-        
-        <!-- Si type d'affaire est "modification, afficher la zone de de sélection des biens-fonds" -->
-        <div class="md-layout md-gutter" v-if="type_modification_bool">
-            <md-card class="immeublesSelectDiv">
-                <!-- Search Header -->
+            
+            <!-- Si type d'affaire est "modification, afficher la zone de de sélection des biens-fonds" -->
+            <div class="md-layout md-gutter" v-if="type_modification_bool">
+                <md-card class="immeublesSelectDiv">
+                    <!-- Search Header -->
                     <md-card-header>
                         <div class="md-title">Sélection d'immeubles</div>
                     </md-card-header>
@@ -138,10 +138,10 @@
 
                                 <!-- Tableau des numéros concernés par l'affaire -->
                                 <br/>
-                                <strong>1 - Immeubles mutée / biens-fonds de base</strong>
+                                <strong>1 - Immeubles mutés / biens-fonds de base</strong>
                                 <br/><br/>
                                 <div v-if="affaire_numeros_anciens[0]">
-                                    <md-table v-model="affaire_numeros_anciens" md-sort="numero" md-sort-order="desc" @md-selected="onSelectNumsAnciens" md-fixed-header md-card>
+                                    <md-table v-model="affaire_numeros_anciens" md-sort="numero" md-sort-order="desc" @md-selected="onSelectNumsAnciens" md-fixed-header md-card :md-selected-value.sync="selectedAnciensNumeros">
                                         <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple">
                                             <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}
                                                 <span v-if="item.numero_suffixe !== null"> / {{ item.numero_suffixe }}</span>
@@ -164,7 +164,7 @@
                                 <strong>2 - Immeubles réservés</strong>
                                 <br/><br>
                                 <div v-if="affaire_numeros_nouveaux[0]">
-                                    <md-table v-model="affaire_numeros_nouveaux" md-sort="numero" md-sort-order="desc" @md-selected="onSelectNumsNouveux" md-fixed-header md-card>
+                                    <md-table v-model="affaire_numeros_nouveaux" md-sort="numero" md-sort-order="desc" @md-selected="onSelectNumsNouveux" md-fixed-header md-card :md-selected-value.sync="selectedNouveauxNumeros">
                                         <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple">
                                             <md-table-cell md-label="Numéro" md-sort-by="numero">{{ item.numero }}
                                                 <span v-if="item.numero_suffixe !== null"> / {{ item.numero_suffixe }}</span>
@@ -316,7 +316,7 @@
                     <md-divider style="background-color: blue;"></md-divider>
                     <br />
                 </div>
-                </div>
+            </div>
             
             <!-- Dates -->
             <div class="md-layout md-gutter">
