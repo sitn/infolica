@@ -523,7 +523,18 @@ export default {
         );
       }
       if (this.form.plan && this.form.type && this.form.type.id && this.form.type.id === this.typesAffaires_conf.mpd) {
-        formData.append("no_access", "MPD_" + this.form.cadastre.id + "_" + this.form.plan + "_" + new Date().getFullYear());
+        let cadastre_2digits = this.form.cadastre.id.toLocaleString("en-US", {
+          minimumIntegerDigits: 2,
+          useGrouping: false,
+        });
+
+        let plan_3digits = Number(this.form.plan).toLocaleString("en-US", {
+          minimumIntegerDigits: 3,
+          useGrouping: false,
+        });
+        console.log(plan_3digits)
+
+        formData.append("no_access", "MPD" + cadastre_2digits + " " + plan_3digits + " " + new Date().getFullYear().toString().substr(-2));
       }
 
       // FACTURE
@@ -881,7 +892,7 @@ export default {
         this.form.client_envoi_complement = null;
         this.client_facture = null;
         this.client_facture_premiere_ligne = null;
-        this.form.nom = "Cadastration sur "
+        this.form.nom = "Cadastration sur ";
       } else if (this.form.type.id === this.typesAffaires_conf.mpd) {
         this.form.client_commande = defaultClient;
         this.form.client_envoi = defaultClient;
@@ -889,7 +900,7 @@ export default {
         this.client_facture_premiere_ligne = null;
         this.client_facture = defaultClient;
         this.client_facture_premiere_ligne = null;
-        this.form.nom = "Mise à jour périodique"
+        this.form.nom = "Mise à jour périodique";
       } else {
         this.showClientsForm = true;
         this.form.nom = "";
