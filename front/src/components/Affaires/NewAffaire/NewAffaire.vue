@@ -943,6 +943,16 @@ export default {
         .then(response => {
         if (response && response.data) {
           let tmp = response.data;
+
+          // Impossible de faire un visa de PPE
+          if ([this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe].includes(tmp.type_id)
+               && this.form.affaire_modif_type !== null && this.form.affaire_modif_type.id === Number(process.env.VUE_APP_TYPE_MODIFICATION_VISA_ID)) {
+            this.$root.$emit("ShowError", "L'affaire référencée est une affaire de PPE. Elle ne peut pas être visée.");
+            this.form.affaire_base_id = null;
+            return;
+          }
+
+
           if (tmp.date_envoi) {
             // L'affaire a bien une date d'envoi
             if (!tmp.date_cloture) {
@@ -959,11 +969,15 @@ export default {
               //Search numéros immeubles
               _this.setModificationAffaireNuméros();
             } else {
-              this.$root.$emit("ShowError", "L'affaire de base est déjà clôturée. Contrôler le numéro de l'affaire") 
+              this.$root.$emit("ShowError", "L'affaire de base est déjà clôturée. Contrôler le numéro de l'affaire");
+              this.form.affaire_base_id = null;
+              return;
             }
 
           } else {
-            this.$root.$emit("ShowError", "L'affaire de base n'a pas encore été envoyée. Contrôler le numéro de l'affaire") 
+            this.$root.$emit("ShowError", "L'affaire de base n'a pas encore été envoyée. Contrôler le numéro de l'affaire");
+            this.form.affaire_base_id = null;
+            return
           }
 
         }
