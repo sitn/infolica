@@ -814,6 +814,22 @@ class NotesMAJ(Base):
     delai = Column(Date, nullable=False)
 
 
+class ControleEtape(Base):
+    __tablename__ = 'controle_etape'
+    __table_args__ = {'schema': 'infolica'}
+    nom = Column(String(40), primary_key=True)
+    etape_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id))
+    force = Column(String(15))
+    detail = Column(Text)
+
+
+class ControleEtapeTypeAffaire(Base):
+    __tablename__ = 'controle_etape_type_affaire'
+    __table_args__ = {'schema': 'infolica'}
+    affaire_type_id = Column(BigInteger, ForeignKey(AffaireType.id), primary_key=True)
+    controle_etape_nom = Column(String(40), ForeignKey(ControleEtape.nom), primary_key=True)
+
+
 # ======================== VUES ========================
 # Ajouter l'information 'info': dict(is_view=True) aux vues 
 # pour qu'elles ne soient pas prises en compte dans les migrations par Alembic
