@@ -1,9 +1,12 @@
 import logging
-from infolica.models import AffaireNumero, ControleEtape, ControleEtapeTypeAffaire, ControleMutation
-from infolica.models import EmolumentAffaire, Emolument, Facture, Preavis
+from infolica.models import AffaireNumero, ControleEtape, ControleEtapeTypeAffaire, ControleGeometre, ControleMutation
+from infolica.models import Emolument, EmolumentAffaire, EmolumentAffaireRepartition, Facture, NumeroRelation
+from infolica.models import Preavis, SuiviMandat
 
 from infolica.scripts.utils import Utils
 from sqlalchemy import func
+
+from datetime import datetime
 
 LOGGER = logging.getLogger(__name__)
 
@@ -167,6 +170,56 @@ class ControleEtapeChecker():
     
 
     @staticmethod
+    def _get_controle_coordinateur_projets_mo_controle(**kwargs):
+        request = kwargs.get('request')
+        affaire_id = kwargs.get('affaire_id')
+
+        ctrl = request.dbsession.query(
+            SuiviMandat
+        ).filter(
+            SuiviMandat.affaire_id == affaire_id
+        ).first()
+
+        ctrl = Utils.serialize_one(ctrl)
+
+        if ctrl is None:
+            return False
+        
+        result = False
+        for attr in ctrl:
+            if ctrl[attr] is True:
+                result = True
+                break
+
+        return result
+    
+
+    @staticmethod
+    def _get_controle_geometre_cantonal_controle(**kwargs):
+        request = kwargs.get('request')
+        affaire_id = kwargs.get('affaire_id')
+
+        ctrl = request.dbsession.query(
+            ControleGeometre
+        ).filter(
+            ControleGeometre.affaire_id == affaire_id
+        ).first()
+
+        ctrl = Utils.serialize_one(ctrl)
+
+        if ctrl is None:
+            return False
+        
+        result = False
+        for attr in ctrl:
+            if ctrl[attr] is True:
+                result = True
+                break
+
+        return result
+    
+
+    @staticmethod
     def _get_numero_reference_cadastration_controle(**kwargs):
         request = kwargs.get('request')
         affaire_id = kwargs.get('affaire_id')
@@ -207,3 +260,148 @@ class ControleEtapeChecker():
             somme += emol.montant
 
         return somme > 0
+    
+
+    @staticmethod
+    def _get_emoluments_factures_repartition_controle(**kwargs):
+        request = kwargs.get('request')
+        affaire_id = kwargs.get('affaire_id')
+
+        nb_emoluments = request.dbsession.query(
+            func.count(Emolument.tableau_emolument_id)
+        ).join(
+            EmolumentAffaire, Emolument.emolument_affaire_id == EmolumentAffaire.id
+        ).filter(
+            EmolumentAffaire.affaire_id == affaire_id
+        ).scalar()
+
+        # Si les émoluments n'existent pas pour l'affaire, ne pas bloquer
+        if nb_emoluments is None or nb_emoluments == 0:
+            return True
+
+        unlinked_factures = request.dbsession.query(
+            func.count(Facture.id)
+        ).outerjoin(
+            EmolumentAffaireRepartition, Facture.id == EmolumentAffaireRepartition.facture_id
+        ).filter(
+            Facture.affaire_id == affaire_id
+        ).filter(
+            EmolumentAffaireRepartition.facture_id == None
+        ).scalar()
+
+        unlinked_emoluments = request.dbsession.query(
+            func.count(EmolumentAffaire.id)
+        ).outerjoin(
+            EmolumentAffaireRepartition, EmolumentAffaire.id == EmolumentAffaireRepartition.emolument_affaire_id
+        ).filter(
+            EmolumentAffaire.affaire_id == affaire_id
+        ).filter(
+            EmolumentAffaireRepartition.emolument_affaire_id == None
+        ).scalar()
+
+        return unlinked_factures == 0 and unlinked_emoluments == 0
+    
+    
+    @staticmethod
+    def _get_emoluments_rf_controle(**kwargs):
+        request = kwargs.get('request')
+        affaire_id = kwargs.get('affaire_id')
+
+        montant_rf = request.dbsession.query(
+            func.sum(Emolument.montant)
+        ).join(
+            EmolumentAffaire, Emolument.emolument_affaire_id == EmolumentAffaire.id
+        ).filter(
+            EmolumentAffaire.affaire_id == affaire_id
+        ).filter(
+            Emolument.tableau_emolument_id.in_([96, 97, 98, 103])
+        ).scalar()
+
+        if montant_rf is None:
+            return False
+
+        return montant_rf > 0
+    
+    
+    @staticmethod
+    def _get_facture_no_sap_controle(**kwargs):
+        request = kwargs.get('request')
+        affaire_id = kwargs.get('affaire_id')
+
+        factures = request.dbsession.query(
+            Facture
+        ).filter(
+            Facture.affaire_id == affaire_id
+        ).all()
+
+        if factures is None:
+            return True
+
+        test = True
+        for facture in factures:
+            if facture.sap is None or facture.sap == "":
+                test = False
+                break
+
+        return test
+    
+    
+    @staticmethod
+    def _get_facture_no_sap_controle(**kwargs):
+        request = kwargs.get('request')
+        affaire_id = kwargs.get('affaire_id')
+
+        factures = request.dbsession.query(
+            Facture
+        ).filter(
+            Facture.affaire_id == affaire_id
+        ).all()
+
+        if factures is None:
+            return False
+
+        test = True
+        for facture in factures:
+            if facture.sap is None or facture.sap == "":
+                test = False
+                break
+
+        return test
+    
+    
+    @staticmethod
+    def _get_presence_balance_controle(**kwargs):
+        request = kwargs.get('request')
+        affaire_id = kwargs.get('affaire_id')
+
+        test = request.dbsession.query(
+            func.count(NumeroRelation.id)
+        ).filter(
+            NumeroRelation.affaire_id == affaire_id
+        ).scalar()
+
+        return test > 0
+    
+    
+    @staticmethod
+    def _get_facture_date_du_jour_controle(**kwargs):
+        request = kwargs.get('request')
+        affaire_id = kwargs.get('affaire_id')
+
+        factures = request.dbsession.query(
+            Facture
+        ).filter(
+            Facture.affaire_id == affaire_id
+        ).all()
+
+        if factures is None:
+            return None
+
+        test = True
+        today = datetime.now().date()
+        for facture in factures:
+            if facture.date is None or abs((today-facture.date).days):
+                test = False
+                break
+
+        return test
