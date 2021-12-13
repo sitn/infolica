@@ -275,8 +275,8 @@ class EmolumentAffaireRepartition(Base):
 class Emolument(Base):
     __tablename__ = 'emolument'
     __table_args__ = {'schema': 'infolica'}
-    emolument_affaire_id = Column(BigInteger, primary_key=True)
-    tableau_emolument_id = Column(BigInteger, primary_key=True)
+    emolument_affaire_id = Column(BigInteger, ForeignKey(EmolumentAffaire.id), primary_key=True)
+    tableau_emolument_id = Column(BigInteger, ForeignKey(TableauEmoluments.id), primary_key=True)
     position = Column(Text, primary_key=True)
     prix_unitaire = Column(Float)
     nombre = Column(Float)
