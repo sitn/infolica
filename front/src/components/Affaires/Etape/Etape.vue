@@ -24,8 +24,10 @@ export default {
   data() {
     return {
       affaireEtapes: [],
+      allowSaveNewStep: false,
       art35Radio: "",
       cloreAffaire: false,
+      controleEtape : [],
       etapeAffaire: {
         prochaine: null,
         remarque: null,
@@ -91,6 +93,9 @@ export default {
 
       // Update affaire dates
       this.saveDatesDiv();
+
+      // Controles-étape en cours
+      this.getControleEtape();
 
       this.etapeAffaire.showDialog = true;
     },
@@ -286,6 +291,41 @@ export default {
         };
         this.cloreAffaire = false;
       }
+    },
+
+    /**
+     * Controle étape
+     */
+    getControleEtape() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_CONTROLE_ETAPE_ENDPOINT + "?affaire_id=" + this.affaire.id,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      ).then(response => {
+        if (response && response.data) {
+          let tmp = response.data.detail;
+          tmp.forEach(x => {
+            if (x.result === true) {
+              x.icon = "check_circle";
+              x.icon_color = "green";
+            } else {
+              if (x.force === 'NOGO') {
+                x.icon = "cancel";
+                x.icon_color = "red";
+              } else if (x.force === 'WARNING'){
+                x.icon = "warning";
+                x.icon_color = "orange";
+              }
+            }
+          });
+          this.controleEtape = tmp;
+
+
+          this.allowSaveNewStep = response.data.final_decision.result;
+        }
+      }).catch(err => handleException(err, this));
     }
 
   },

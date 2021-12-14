@@ -69,11 +69,27 @@
                     <md-checkbox v-model="updateAffaireDate.value">{{ updateAffaireDate.text }}</md-checkbox>
                 </div>
             </div>
+
+            <div v-if="controleEtape.length > 0" >
+                <md-divider/></md-divider>
+
+                <md-table v-model="controleEtape">
+                    <md-table-toolbar>
+                        <h1 class="md-title">Contrôles</h1>
+                    </md-table-toolbar>
+
+                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                        <md-table-cell md-label="Force"><md-icon class="md-size-1x" :style="'color: ' + item.icon_color + ' ;'">{{ item.icon }}</md-icon></md-table-cell>
+                        <md-table-cell md-label="Description" >{{ item.detail }}</md-table-cell>
+                    </md-table-row>
+                </md-table>
+            </div>
+
         </md-dialog-content>
 
         <md-dialog-actions>
             <md-button class="md-accent" @click="etapeAffaire.showDialog = false">Annuler</md-button>
-            <md-button class="md-primary" @click="updateAffaireEtape">Enregistrer</md-button>
+            <md-button class="md-primary" @click="updateAffaireEtape" :disabled="!allowSaveNewStep">Enregistrer</md-button>
         </md-dialog-actions>
     </md-dialog>
 

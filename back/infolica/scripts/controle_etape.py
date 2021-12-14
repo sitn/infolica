@@ -47,9 +47,13 @@ class ControleEtapeChecker():
             'force': None,
             'result': final_decision
         }
-        results.append(final_decision)
 
-        return results
+        result = {
+            'detail': results,
+            'final_decision': final_decision
+        }
+
+        return result
 
     @classmethod
     def _get_undefined_controle(cls, **kwargs):
