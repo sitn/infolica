@@ -164,13 +164,10 @@ class ControleEtapeChecker():
         if ctrl is None:
             return False
         
-        result = False
-        for attr in ctrl:
-            if ctrl[attr] is True:
-                result = True
-                break
-
-        return result
+        if ctrl['visa'] is None:
+            return False
+        else:
+            return True
     
 
     @staticmethod
@@ -189,14 +186,11 @@ class ControleEtapeChecker():
         if ctrl is None:
             return False
         
-        result = False
-        for attr in ctrl:
-            if ctrl[attr] is True:
-                result = True
-                break
+        if ctrl['visa'] is None:
+            return False
+        else:
+            return True
 
-        return result
-    
 
     @staticmethod
     def _get_controle_geometre_cantonal_controle(**kwargs):
@@ -214,13 +208,10 @@ class ControleEtapeChecker():
         if ctrl is None:
             return False
         
-        result = False
-        for attr in ctrl:
-            if ctrl[attr] is True:
-                result = True
-                break
-
-        return result
+        if ctrl['operateur_id'] is None:
+            return False
+        else:
+            return True
     
 
     @staticmethod

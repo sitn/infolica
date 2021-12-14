@@ -79,8 +79,8 @@
                     </md-table-toolbar>
 
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
-                        <md-table-cell md-label="Force"><md-icon class="md-size-1x" :style="'color: ' + item.icon_color + ' ;'">{{ item.icon }}</md-icon></md-table-cell>
-                        <md-table-cell md-label="Description" >{{ item.detail }}</md-table-cell>
+                        <md-table-cell md-label="Intitulé" >{{ item.detail }}</md-table-cell>
+                        <md-table-cell md-label="Statut"><md-icon class="md-size-1x" :style="'color: ' + item.icon_color + ' ;'" :title="item.icon_title">{{ item.icon }}</md-icon></md-table-cell>
                     </md-table-row>
                 </md-table>
             </div>

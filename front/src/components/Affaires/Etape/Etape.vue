@@ -6,7 +6,7 @@
 import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { getTypesAffaires, stringifyAutocomplete, logAffaireEtape, checkPermission } from '@/services/helper'
+import { getTypesAffaires, stringifyAutocomplete2, logAffaireEtape, checkPermission } from '@/services/helper'
 
 const moment = require('moment')
 
@@ -33,6 +33,7 @@ export default {
         remarque: null,
         showDialog: false,
       },
+      final_decision: false,
       isAdmin: false,
       numerosReserves: [],
       suiviAffaireTheorique: [],
@@ -57,7 +58,7 @@ export default {
           headers: { Accept: "application/json" }
         }
       ).then(response => {
-        this.affaireEtapes = stringifyAutocomplete(response.data.filter(x => x.ordre !== null));
+        this.affaireEtapes = stringifyAutocomplete2(response.data.filter(x => x.ordre !== null));
         // get suivi d'affaire théorique
         this.typesAffaires = getTypesAffaires().then(response => {
           if (response && response.data) {
@@ -76,7 +77,7 @@ export default {
     /**
      * open New state dialog
      */
-    openNewStateDialog(){
+    async openNewStateDialog(){
       // set next step prediction
       this.etapeAffaire.prochaine = null;
       this.etapeAffaire.chef_equipe_id = this.affaire.technicien_id || null;
@@ -95,7 +96,7 @@ export default {
       this.saveDatesDiv();
 
       // Controles-étape en cours
-      this.getControleEtape();
+      await this.getControleEtape();
 
       this.etapeAffaire.showDialog = true;
     },
@@ -220,6 +221,13 @@ export default {
         }
       }
 
+      // Il est possible de passer l'affaire à une étape inférieure ou chez le client même si les contrôles ne sont pas tous OK
+      if ( (this.affaire.etape_ordre > etape.ordre) || ([Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID), Number(process.env.VUE_APP_ETAPE_DEVIS_ID)].includes(etape.id)) ) {
+        this.allowSaveNewStep = true;
+      } else {
+        this.allowSaveNewStep = this.final_decision;
+      }
+
       this.saveDatesDiv();
     },
 
@@ -296,7 +304,7 @@ export default {
     /**
      * Controle étape
      */
-    getControleEtape() {
+    async getControleEtape() {
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_CONTROLE_ETAPE_ENDPOINT + "?affaire_id=" + this.affaire.id,
         {
@@ -310,19 +318,22 @@ export default {
             if (x.result === true) {
               x.icon = "check_circle";
               x.icon_color = "green";
+              x.icon_title = "Cette condition est vérifiée.";
             } else {
               if (x.force === 'NOGO') {
                 x.icon = "cancel";
                 x.icon_color = "red";
+                x.icon_title = "Cette condition n'est pas vérifiée et bloque le passage pour la prochaine étape.";
               } else if (x.force === 'WARNING'){
                 x.icon = "warning";
                 x.icon_color = "orange";
+                x.icon_title = "Cette condition n'est pas vérifiée mais ne bloque pas le passage pour la prochaine étape.";
               }
             }
           });
           this.controleEtape = tmp;
 
-
+          this.final_decision = response.data.final_decision.result;
           this.allowSaveNewStep = response.data.final_decision.result;
         }
       }).catch(err => handleException(err, this));
