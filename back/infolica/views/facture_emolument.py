@@ -26,7 +26,7 @@ def tableau_emoluments_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(TableauEmoluments).all()
+    query = request.dbsession.query(TableauEmoluments).order_by(TableauEmoluments.id).all()
     return Utils.serialize_many(query)
 
 
@@ -147,7 +147,7 @@ def emolument_view(request):
 
     for ea in emolumentsAffaire:
         for te in tableauEmoluments:
-            if ea['tableau_emolument_id'] == te['id'] and not emolumentAffaireUsed:
+            if ea['tableau_emolument_id'] == te['id'] and not emolumentAffaireUsed and not te['montant'] == 0:
                 ea['prix_unitaire'] = te['montant']
                 ea['montant'] = ea['nombre'] * ea['prix_unitaire'] * ea['batiment_f']
 
