@@ -39,6 +39,7 @@ export default {
         showMatdiff_ctrl: false,
         showOnlyAffairesUrgentes: false,
         showPPE: false,
+        letItSnow: false,
         role: {
             secretaire: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID),
             mo: Number(process.env.VUE_APP_MO_ROLE_ID),
