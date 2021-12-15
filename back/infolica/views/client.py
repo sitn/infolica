@@ -31,7 +31,14 @@ def clients_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(Client).filter(Client.sortie == None).all()
+    client_id = request.params['id'] if 'id' in request.params else None
+
+    query = request.dbsession.query(Client)
+
+    if client_id:
+        query = query.filter(Client.id == client_id)
+    
+    query = query.filter(Client.sortie == None).all()
     return Utils.serialize_many(query)
 
 
