@@ -793,7 +793,7 @@
                   <td class="tg-0lax code"></td>
                   <td class="tg-0lax position">Points</td>
                   <td class="tg-0lax alignCenter unite">{{ form_detail.travauxMaterialisation14.unite }}</td>
-                  <td class="tg-0lax alignCenter prix_unitaire">Voir ci-dessous</td>
+                  <td class="tg-0lax alignCenter prix_unitaire">cf. Memento</td>
                   <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="pointsMatDiff_nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(pointsMatDiff_nombre)>0, hideNulls: Number(pointsMatDiff_nombre)==0}" @keyup="updateMatDiff()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                   <td class="tg-0lax montant alignRight"><span v-if="Number(total.montant_34_matdiff)>0">{{ total.montant_34_matdiff }} CHF</span></td>
                   <template v-for="i in form_general.nb_batiments">
