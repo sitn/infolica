@@ -858,7 +858,7 @@ export default {
     /**
      * On Select Type affaire
      */
-    onSelectType() {
+    async onSelectType() {
       if (this.form.type.id === Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION)){
         this.type_modification_bool = true;
       } else {
@@ -866,8 +866,8 @@ export default {
       }
 
       let defaultClient = "";
-      getClients(process.env.VUE_APP_CLIENT_CADASTRATION_ID)
-      .then(response => defaultClient = response.data[0])
+      await getClients(process.env.VUE_APP_CLIENT_CADASTRATION_ID)
+      .then(response => defaultClient = stringifyAutocomplete2(setClientsAdresse_(response.data), 'adresse_')[0])
       .catch(err => handleException(err));
 
       if (this.form.type.id === this.typesAffaires_conf.cadastration) {

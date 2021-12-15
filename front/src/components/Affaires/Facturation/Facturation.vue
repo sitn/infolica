@@ -301,7 +301,7 @@ export default {
     /**
      * Créer une nouvelle facture
      */
-    newFacture(facture_type) {
+    async newFacture(facture_type) {
       let dateFacture = null;
       if (this.affaire.etape_id === Number(process.env.VUE_APP_ETAPE_FACTURE_ID)) {
         dateFacture = getCurrentDate();
@@ -325,8 +325,8 @@ export default {
       // Set default client if affaire type is cadastration
       if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
         this.selectedFacture.client = {};
-        getClients(process.env.VUE_APP_CLIENT_CADASTRATION_ID)
-        .then(response => this.selectedFacture.client = stringifyAutocomplete2(response.data, "adresse_" )[0])
+        await getClients(process.env.VUE_APP_CLIENT_CADASTRATION_ID)
+        .then(response => this.selectedFacture.client = stringifyAutocomplete2(setClientsAdresse_(response.data), "adresse_" )[0])
         .catch(err => handleException(err));
       }
 
