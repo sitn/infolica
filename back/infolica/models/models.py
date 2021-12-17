@@ -245,6 +245,10 @@ class TableauEmoluments(Base):
     nom = Column(Text, nullable=False)
     unite = Column(Text, nullable=False)
     montant = Column(Float, default=0.0, nullable=False)
+    date_entree = Column(Date)
+    date_sortie = Column(Date)
+    remplace = Column(BigInteger)
+    priorite = Column(Integer)
 
 
 class EmolumentAffaire(Base):

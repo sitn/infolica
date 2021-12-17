@@ -26,7 +26,7 @@ def tableau_emoluments_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(TableauEmoluments).all()
+    query = request.dbsession.query(TableauEmoluments).order_by(TableauEmoluments.id).all()
     return Utils.serialize_many(query)
 
 
@@ -118,13 +118,40 @@ def emolument_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
+    # get TableauEmoluments
+    tableauEmoluments = request.dbsession.query(
+        TableauEmoluments
+    ).filter(
+        TableauEmoluments.date_sortie == None
+    ).all()
+
+    tableauEmoluments = Utils.serialize_many(tableauEmoluments)
+
+    # get emolumentsAffaire saved with emolument_affaire_id
     emolument_affaire_id = request.params['emolument_affaire_id'] if 'emolument_affaire_id' in request.params else None
 
-    query = request.dbsession.query(Emolument).filter(
+    emolumentsAffaire = request.dbsession.query(
+        Emolument
+    ).filter(
         Emolument.emolument_affaire_id == emolument_affaire_id
     ).all()
 
-    return Utils.serialize_many(query)
+    emolumentsAffaire = Utils.serialize_many(emolumentsAffaire)
+
+    # check if emolumentAffaire is used
+    emolumentAffaireUsed = request.dbsession.query(
+        EmolumentAffaire.utilise
+    ).filter(
+        EmolumentAffaire.id == emolument_affaire_id
+    ).scalar()
+
+    for ea in emolumentsAffaire:
+        for te in tableauEmoluments:
+            if ea['tableau_emolument_id'] == te['id'] and not emolumentAffaireUsed and not te['montant'] == 0:
+                ea['prix_unitaire'] = te['montant']
+                ea['montant'] = ea['nombre'] * ea['prix_unitaire'] * ea['batiment_f']
+
+    return emolumentsAffaire
 
 
 @view_config(route_name='emolument_affaire', request_method='POST', renderer='json')

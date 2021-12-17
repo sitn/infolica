@@ -1178,9 +1178,9 @@ export default {
     /**
      * fix emolument definitively
      */
-    async fixEmolumentDefinitively() {
+    async fixEmolumentDefinitively(emolument_affaire_id) {
       let formData = new FormData();
-      formData.append("emolument_affaire_id", this.form_general.id);
+      formData.append("emolument_affaire_id", emolument_affaire_id);
       formData.append("utilise", true);
 
       this.$http.put(
@@ -1402,7 +1402,7 @@ export default {
   
         Promise.all(promises).then(() => {
           this.showEmolumentsDialog = false;
-          this.fixEmolumentDefinitively();
+          this.fixEmolumentDefinitively(response_id);
           this.$root.$emit("searchAffaireFactures");
           this.$root.$emit("ShowMessage", successMessage);
           if (c === 1) {
