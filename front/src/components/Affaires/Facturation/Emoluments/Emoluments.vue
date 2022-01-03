@@ -243,7 +243,7 @@ export default {
           trafic_pc: 0,
           zi: 1,
           nb_batiments: 0,
-          indice_application: 1.22,
+          indice_application: 1.23,
           tva_pc: 7.7, // %
           remarque: "",
           facture_type_id: 1,
