@@ -110,6 +110,7 @@ def includeme(config):
     config.add_route('etapes_index','/infolica/api/etapes_index')
     config.add_route('etapes_index_s','/infolica/api/etapes_index/')
     config.add_route('affaire_etapes_by_affaire_id','/infolica/api/affaire_etapes/{id}')
+    config.add_route('controle_etape','/infolica/api/controle_etape')
     #Numeros affaires
     config.add_route('numero_affaires_by_numero_id','/infolica/api/numero_affaires/{id}')
     #Preavis affaire

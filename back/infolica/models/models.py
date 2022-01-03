@@ -279,8 +279,8 @@ class EmolumentAffaireRepartition(Base):
 class Emolument(Base):
     __tablename__ = 'emolument'
     __table_args__ = {'schema': 'infolica'}
-    emolument_affaire_id = Column(BigInteger, primary_key=True)
-    tableau_emolument_id = Column(BigInteger, primary_key=True)
+    emolument_affaire_id = Column(BigInteger, ForeignKey(EmolumentAffaire.id), primary_key=True)
+    tableau_emolument_id = Column(BigInteger, ForeignKey(TableauEmoluments.id), primary_key=True)
     position = Column(Text, primary_key=True)
     prix_unitaire = Column(Float)
     nombre = Column(Float)
@@ -816,6 +816,22 @@ class NotesMAJ(Base):
     message = Column(Text, nullable=False)
     date = Column(Date, nullable=False)
     delai = Column(Date, nullable=False)
+
+
+class ControleEtape(Base):
+    __tablename__ = 'controle_etape'
+    __table_args__ = {'schema': 'infolica'}
+    nom = Column(String(40), primary_key=True)
+    etape_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id))
+    force = Column(String(15))
+    detail = Column(Text)
+
+
+class ControleEtapeTypeAffaire(Base):
+    __tablename__ = 'controle_etape_type_affaire'
+    __table_args__ = {'schema': 'infolica'}
+    affaire_type_id = Column(BigInteger, ForeignKey(AffaireType.id), primary_key=True)
+    controle_etape_nom = Column(String(40), ForeignKey(ControleEtape.nom), primary_key=True)
 
 
 # ======================== VUES ========================

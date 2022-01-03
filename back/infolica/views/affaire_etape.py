@@ -4,6 +4,8 @@ import pyramid.httpexceptions as exc
 
 from sqlalchemy import and_
 
+from infolica.scripts.controle_etape import ControleEtapeChecker
+
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffaires, VAffaire
@@ -207,3 +209,29 @@ def etapes_delete_view(request):
     request.dbsession.delete(record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(AffaireEtape.__tablename__))
+
+
+@view_config(route_name='controle_etape', request_method='GET', renderer='json')
+def controle_etape_view(request):
+    """
+    Controles - étape
+    """
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+
+    affaire = request.dbsession.query(
+        VAffaire
+    ).filter(
+        VAffaire.id == affaire_id
+    ).first()
+
+    results = ControleEtapeChecker.controleEtape(
+        request=request,
+        affaire_id=affaire_id,
+        affaire_type_id=affaire.type_id,
+        etape_id=affaire.etape_id
+    )
+
+    return results
