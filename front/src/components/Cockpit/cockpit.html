@@ -1,45 +1,6 @@
 <div id="cockpit">
-    <div class="snowflakes" aria-hidden="true" v-if="letItSnow">
-        <div class="snowflake">
-        ❅
-        </div>
-        <div class="snowflake">
-        ❆
-        </div>
-        <div class="snowflake">
-        ❅
-        </div>
-        <div class="snowflake">
-        ❆
-        </div>
-        <div class="snowflake">
-        ❅
-        </div>
-        <div class="snowflake">
-        ❆
-        </div>
-        <div class="snowflake">
-          ❅
-        </div>
-        <div class="snowflake">
-          ❆
-        </div>
-        <div class="snowflake">
-          ❅
-        </div>
-        <div class="snowflake">
-          ❆
-        </div>
-        <div class="snowflake">
-          ❅
-        </div>
-        <div class="snowflake">
-          ❆
-        </div>
-      </div>
     <md-toolbar class="justifyTitleBtn">
         <h1>Cockpit</h1>
-        <md-button class="md-raised" @click="letItSnow = !letItSnow"><b>* * * Joyeux Noël et bonne année 2022 ! * * *</b></md-button>
         <md-button class="md-raised md-accent" v-if="newAffaireAllowed" @click="$router.push({name: 'NewAffaire'})">Nouvelle affaire</md-button>
     </md-toolbar>
 
