@@ -222,7 +222,7 @@ export default {
       }
 
       // Il est possible de passer l'affaire à une étape inférieure ou chez le client même si les contrôles ne sont pas tous OK
-      if ( (this.affaire.etape_ordre > etape.ordre) || ([Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID), Number(process.env.VUE_APP_ETAPE_DEVIS_ID)].includes(etape.id)) ) {
+      if ( (this.affaire.etape_ordre >= etape.ordre) || ([Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID), Number(process.env.VUE_APP_ETAPE_DEVIS_ID)].includes(etape.id)) ) {
         this.allowSaveNewStep = true;
       } else {
         this.allowSaveNewStep = this.final_decision;
