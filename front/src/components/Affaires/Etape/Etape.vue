@@ -207,11 +207,10 @@ export default {
       if (etape.id === this.etapes_affaire_conf.fin_processus) {
         if (this.affaire.type_id === this.typesAffaires_conf.modification_visa) {
           this.updateAffaireDate = {
-            text: "Mettre à jour la date de clôture de l'affaire",
+            text: "Mettre à jour la date d'envoi de l'affaire",
             value: true,
-            date_type: "date_cloture"
+            date_type: "date_envoi"
           };
-          this.cloreAffaire = true;
         } else {
           this.updateAffaireDate = {
             text: "Mettre à jour la date de validation de l'affaire",
@@ -285,12 +284,12 @@ export default {
           this.cloreAffaire = true;
         } else if (this.affaire.type_id === this.typesAffaires_conf.modification_visa) {
           this.updateAffaireDate = {
-            text: "Mettre à jour la date de clôture de l'affaire",
+            text: "Mettre à jour la date d'envoi de l'affaire",
             value: true,
-            date_type: "date_cloture",
+            date_type: "date_envoi",
             show: true
           };
-          this.cloreAffaire = true;
+          this.cloreAffaire = false;
         } else {
           this.updateAffaireDate = {
             text: "Mettre à jour la date de validation de l'affaire",
