@@ -79,9 +79,7 @@ def affaire_cockpit_view(request):
     
     if type_id is not None:
         query = query.filter(VAffaire.type_id == type_id)
-    else:
-        query = query.filter(VAffaire.etape_id != None)
-    
+
     if etape_id is not None:
         query = query.filter(VAffaire.etape_id.in_(etape_id))
     else:
