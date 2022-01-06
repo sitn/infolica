@@ -135,8 +135,22 @@ def etapes_new_view(request):
         subject = "Infolica - affaire " + str(v_affaire.id) + (" - URGENT" if v_affaire.urgent else "")
         send_mail(request, mail_list, "", subject, html=text)
 
-    # Finally erase attribution on affaire
-    affaire.attribution = None
+    # Finally erase attribution on affaire if etape_priority == 1 and if last etape was different
+    if affaire_etape_index.priorite == 1:
+        last2Steps = request.dbsession.query(
+            AffaireEtape
+        ).join(
+            AffaireEtapeIndex, AffaireEtapeIndex.id == AffaireEtape.etape_id
+        ).filter(
+            and_(
+                AffaireEtape.affaire_id == affaire_id,
+                AffaireEtapeIndex.priorite == 1
+            )
+        ).order_by(AffaireEtape.datetime.desc()).limit(2).all()
+
+        if not int(last2Steps[0].etape_id) == int(last2Steps[1].etape_id):
+            affaire.attribution = None
+
 
     # If last step was treatment & client_facture is outside of canton and has no SAP number, send mail to secretariat
     etape_traitement_id = int(request.registry.settings['affaire_etape_traitement_id'])
