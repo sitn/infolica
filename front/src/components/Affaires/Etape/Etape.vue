@@ -205,11 +205,20 @@ export default {
      */
     onSelectNextStep(etape) {
       if (etape.id === this.etapes_affaire_conf.fin_processus) {
-        this.updateAffaireDate = {
-          text: "Mettre à jour la date de validation de l'affaire",
-          value: true,
-          date_type: "date_validation"
-        };
+        if (this.affaire.type_id === this.typesAffaires_conf.modification_visa) {
+          this.updateAffaireDate = {
+            text: "Mettre à jour la date de clôture de l'affaire",
+            value: true,
+            date_type: "date_cloture"
+          };
+          this.cloreAffaire = true;
+        } else {
+          this.updateAffaireDate = {
+            text: "Mettre à jour la date de validation de l'affaire",
+            value: true,
+            date_type: "date_validation"
+          };
+        }
 
         // Si aucun numéro n'est réservé dans l'affaire, clôre l'affaire
         if ((this.etapeAffaire.prochaine && this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.fin_processus) &&
@@ -260,7 +269,7 @@ export default {
         (this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.fin_processus) &&
         ![this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe, this.typesAffaires_conf.pcop].includes(this.affaire.type_id)
       ) {
-        // update date_validation if next step is "fin de processus"
+        // update date_validation or date_cloture if next step is "fin de processus"
         if (
           (this.etapeAffaire.prochaine && this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.fin_processus) &&
           (![this.typesAffaires_conf.mutation, this.typesAffaires_conf.modification, this.typesAffaires_conf.remaniement_parcellaire,
@@ -271,6 +280,14 @@ export default {
             text: "Mettre à jour les dates de validation et de clôture de l'affaire",
             value: true,
             date_type: "date_validation",
+            show: true
+          };
+          this.cloreAffaire = true;
+        } else if (this.affaire.type_id === this.typesAffaires_conf.modification_visa) {
+          this.updateAffaireDate = {
+            text: "Mettre à jour la date de clôture de l'affaire",
+            value: true,
+            date_type: "date_cloture",
             show: true
           };
           this.cloreAffaire = true;
