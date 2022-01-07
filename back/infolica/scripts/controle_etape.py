@@ -105,10 +105,14 @@ class ControleEtapeChecker():
         request = kwargs.get('request')
         affaire_id = kwargs.get('affaire_id')
         
+        facture_type_facture_id = int(request.registry.settings['facture_type_facture_id'])
+
         test = request.dbsession.query(
             func.count(Facture.affaire_id)
         ).filter(
             Facture.affaire_id == affaire_id
+        ).filter(
+            Facture.type_id == facture_type_facture_id
         ).scalar()
 
         return test > 0
@@ -262,6 +266,8 @@ class ControleEtapeChecker():
         request = kwargs.get('request')
         affaire_id = kwargs.get('affaire_id')
 
+        facture_type_facture_id = int(request.registry.settings['facture_type_facture_id'])
+
         nb_emoluments = request.dbsession.query(
             func.count(Emolument.tableau_emolument_id)
         ).join(
@@ -281,6 +287,8 @@ class ControleEtapeChecker():
         ).filter(
             Facture.affaire_id == affaire_id
         ).filter(
+            Facture.type_id == facture_type_facture_id
+        ).filter(
             EmolumentAffaireRepartition.facture_id == None
         ).scalar()
 
@@ -290,6 +298,8 @@ class ControleEtapeChecker():
             EmolumentAffaireRepartition, EmolumentAffaire.id == EmolumentAffaireRepartition.emolument_affaire_id
         ).filter(
             EmolumentAffaire.affaire_id == affaire_id
+        ).filter(
+            EmolumentAffaire.facture_type_id == facture_type_facture_id
         ).filter(
             EmolumentAffaireRepartition.emolument_affaire_id == None
         ).scalar()
@@ -322,11 +332,15 @@ class ControleEtapeChecker():
     def _get_facture_no_sap_controle(**kwargs):
         request = kwargs.get('request')
         affaire_id = kwargs.get('affaire_id')
+        
+        facture_type_facture_id = int(request.registry.settings['facture_type_facture_id'])
 
         factures = request.dbsession.query(
             Facture
         ).filter(
             Facture.affaire_id == affaire_id
+        ).filter(
+            Facture.type_id == facture_type_facture_id
         ).all()
 
         if factures is None:
@@ -340,30 +354,7 @@ class ControleEtapeChecker():
 
         return test
     
-    
-    @staticmethod
-    def _get_facture_no_sap_controle(**kwargs):
-        request = kwargs.get('request')
-        affaire_id = kwargs.get('affaire_id')
 
-        factures = request.dbsession.query(
-            Facture
-        ).filter(
-            Facture.affaire_id == affaire_id
-        ).all()
-
-        if factures is None:
-            return False
-
-        test = True
-        for facture in factures:
-            if facture.sap is None or facture.sap == "":
-                test = False
-                break
-
-        return test
-    
-    
     @staticmethod
     def _get_presence_balance_controle(**kwargs):
         request = kwargs.get('request')
@@ -383,10 +374,14 @@ class ControleEtapeChecker():
         request = kwargs.get('request')
         affaire_id = kwargs.get('affaire_id')
 
+        facture_type_facture_id = int(request.registry.settings['facture_type_facture_id'])
+
         factures = request.dbsession.query(
             Facture
         ).filter(
             Facture.affaire_id == affaire_id
+        ).filter(
+            Facture.type_id == facture_type_facture_id
         ).all()
 
         if factures is None:
