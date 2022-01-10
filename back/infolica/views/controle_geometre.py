@@ -24,23 +24,31 @@ def controle_geometre_by_affaire_id_view(request):
         ControleGeometre.affaire_id == affaire_id).first()
 
     if query is None:
-        return None
-
+        raise CustomError(
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(ControleGeometre.__tablename__, affaire_id))
+    
     ctrl = Utils.serialize_one(query)
 
-    # get operateur
-    operateur_id = ctrl['operateur_id']
+    ctrl['ctrl_juridique_operateur_prenom_nom'] = None
+    ctrl['signature_operateur_prenom_nom'] = None
 
-    if operateur_id is not None:
-        operateur = request.dbsession.query(
+    # get ctrl_juridique_operateur
+    if not ctrl.ctrl_juridique_operateur_id is None:
+        ctrl_juridique_operateur = request.dbsession.query(
             Operateur
         ).filter(
-            Operateur.id == operateur_id
+            Operateur.id == ctrl.ctrl_juridique_operateur_id
         ).first()
-
-        ctrl['operateur_prenom_nom'] = ' '.join([operateur.prenom, operateur.nom])
-    else:
-        ctrl['operateur_prenom_nom'] = None
+        ctrl['ctrl_juridique_operateur_prenom_nom'] = ' '.join([ctrl_juridique_operateur.prenom, ctrl_juridique_operateur.nom])
+    
+    # get signature_operateur
+    if not ctrl.signature_operateur_id is None:
+        signature_operateur = request.dbsession.query(
+            Operateur
+        ).filter(
+            Operateur.id == ctrl.signature_operateur_id
+        ).first()
+        ctrl['signature_operateur_prenom_nom'] = ' '.join([signature_operateur.prenom, signature_operateur.nom])
 
     return ctrl
 
