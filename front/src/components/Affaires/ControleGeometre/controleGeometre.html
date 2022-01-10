@@ -36,8 +36,167 @@
                                     
                                     <md-card-content>
                                         <md-checkbox style="padding-left: 30px;" v-model="checkAll.ctrl_jur" @change="selectAll('ctrl_jur')">Tout cocher</md-checkbox>
+                                        <table>
+                                            <thead>
+                                                <th class="ctrl_label">Intitulé</th>
+                                                <th class="ctrl_radiobtn">Oui</th>
+                                                <th class="ctrl_radiobtn">Non</th>
+                                                <th class="ctrl_radiobtn">Pas concerné</th>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="4" class="ctrl_title">Informations générales</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Adresses (commande, envoi, facturation)</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_48" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_48" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_48" :value="3"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Référencement géographique</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_49" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_49" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_49" :value="3"></md-radio></td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td colspan="4" class="ctrl_title">Aspects juridiques</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Respect du(des) préavis</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_12" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_12" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_12" :value="3"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Les biens-fonds concernés existent au RF (sinon, ajouter une observation concernant l'ordre de dépôt des dossiers au RF)</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_2" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_2" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_2" :value="3"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">N° de biens-fonds réservés = n° de biens-fonds utilisés</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_50" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_50" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_50" :value="3"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Accès au DP pour chaque bien-fonds</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_14" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_14" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_14" :value="3"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Bien-fondé et faisabilité des servitudes</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_3" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_3" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_3" :value="3"></md-radio></td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td colspan="4" class="ctrl_title">Factures</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Si plusieurs destinataires, la répartition est indiquée (devis et factures)</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_51" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_51" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_51" :value="3"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Montant pour le report des servitudes présent</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_10" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_10" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_10" :value="3"></md-radio></td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="4" class="ctrl_title">Cohérences entre documents</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Nom du cadastre, n° de biens-fonds, titre</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_1" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_1" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_1" :value="3"></md-radio></td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="4" class="ctrl_title">Balance</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Indication sur l'avancement de la saisie des servitudes</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_52" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_52" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_52" :value="3"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Surfaces « ancien état » de la balance = surfaces RF (sinon, vérifier que l'observation est présente et cohérente)</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_5" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_5" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_5" :value="3"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Somme des surfaces</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_6" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_6" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_6" :value="3"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Surface du bien-fonds de base ne change pas lors de la création d'un DDP</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_53" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_53" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_53" :value="3"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Surface des DDP ne change pas (sinon, mettre un commentaire concernant le changement de surface du DDP)</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_9" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_9" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_9" :value="3"></md-radio></td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="4" class="ctrl_title">État descriptif</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Provenances</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_8" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_8" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_8" :value="3"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Surface totale de chaque bien-fonds</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_54" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_54" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_54" :value="3"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Sommes des surfaces</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_4" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_4" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_4" :value="3"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Nom de rue pour un bien-fonds non construit en zone à bâtir</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_55" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_55" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_55" :value="3"></md-radio></td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="4" class="ctrl_title">Matérialisation différée</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Informations concernant la Mat. Diff. (immeuble, facture, désignation)</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_56" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_56" :value="2"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.check_56" :value="3"></md-radio></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
 
                                         <div class="md-subhead">Informations générales</div>
+
                                         <md-checkbox class="md-primary" v-model="controleGeometre.check_48">Adresses (commande, envoi, facturation)</md-checkbox>
                                         <md-checkbox class="md-primary" v-model="controleGeometre.check_49">Référencement géographique</md-checkbox>
                                         
