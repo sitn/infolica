@@ -43,10 +43,11 @@ export default {
           if (response && response.data) {
             this.controleGeometre = response.data;
 
-            if (this.controleGeometre.date) {
-              this.controleGeometre.date = moment(this.controleGeometre.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
-            } else {
-              this.controleGeometre.date = null;
+            if (this.controleGeometre.ctrl_juridique_date) {
+              this.controleGeometre.ctrl_juridique_date = moment(this.controleGeometre.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            }
+            if (this.controleGeometre.signature_date) {
+              this.controleGeometre.signature_date = moment(this.controleGeometre.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
             }
           } 
         })

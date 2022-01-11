@@ -27,28 +27,32 @@ def controle_geometre_by_affaire_id_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(ControleGeometre.__tablename__, affaire_id))
     
-    ctrl = Utils.serialize_one(query)
-
-    ctrl['ctrl_juridique_operateur_prenom_nom'] = None
-    ctrl['signature_operateur_prenom_nom'] = None
+    ctrl_juridique_operateur_prenom_nom = None
+    signature_operateur_prenom_nom = None
 
     # get ctrl_juridique_operateur
-    if not ctrl.ctrl_juridique_operateur_id is None:
+    if not query.ctrl_juridique_operateur_id is None:
         ctrl_juridique_operateur = request.dbsession.query(
             Operateur
         ).filter(
-            Operateur.id == ctrl.ctrl_juridique_operateur_id
+            Operateur.id == query.ctrl_juridique_operateur_id
         ).first()
-        ctrl['ctrl_juridique_operateur_prenom_nom'] = ' '.join([ctrl_juridique_operateur.prenom, ctrl_juridique_operateur.nom])
+        ctrl_juridique_operateur_prenom_nom = ' '.join([ctrl_juridique_operateur.prenom, ctrl_juridique_operateur.nom])
     
     # get signature_operateur
-    if not ctrl.signature_operateur_id is None:
+    if not query.signature_operateur_id is None:
         signature_operateur = request.dbsession.query(
             Operateur
         ).filter(
-            Operateur.id == ctrl.signature_operateur_id
+            Operateur.id == query.signature_operateur_id
         ).first()
-        ctrl['signature_operateur_prenom_nom'] = ' '.join([signature_operateur.prenom, signature_operateur.nom])
+        signature_operateur_prenom_nom = ' '.join([signature_operateur.prenom, signature_operateur.nom])
+
+
+    ctrl = Utils.serialize_one(query)
+
+    ctrl['ctrl_juridique_operateur_prenom_nom'] = ctrl_juridique_operateur_prenom_nom
+    ctrl['signature_operateur_prenom_nom'] = signature_operateur_prenom_nom
 
     return ctrl
 
