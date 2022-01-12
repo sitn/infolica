@@ -27,32 +27,22 @@ def controle_geometre_by_affaire_id_view(request):
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(ControleGeometre.__tablename__, affaire_id))
     
-    ctrl_juridique_operateur_prenom_nom = None
-    signature_operateur_prenom_nom = None
+    operateur_prenom_nom = None
 
-    # get ctrl_juridique_operateur
-    if not query.ctrl_juridique_operateur_id is None:
-        ctrl_juridique_operateur = request.dbsession.query(
-            Operateur
-        ).filter(
-            Operateur.id == query.ctrl_juridique_operateur_id
-        ).first()
-        ctrl_juridique_operateur_prenom_nom = ' '.join([ctrl_juridique_operateur.prenom, ctrl_juridique_operateur.nom])
     
     # get signature_operateur
-    if not query.signature_operateur_id is None:
-        signature_operateur = request.dbsession.query(
+    if not query.operateur_id is None:
+        operateur = request.dbsession.query(
             Operateur
         ).filter(
-            Operateur.id == query.signature_operateur_id
+            Operateur.id == query.operateur_id
         ).first()
-        signature_operateur_prenom_nom = ' '.join([signature_operateur.prenom, signature_operateur.nom])
+        operateur_prenom_nom = ' '.join([operateur.prenom, operateur.nom])
 
 
     ctrl = Utils.serialize_one(query)
 
-    ctrl['ctrl_juridique_operateur_prenom_nom'] = ctrl_juridique_operateur_prenom_nom
-    ctrl['signature_operateur_prenom_nom'] = signature_operateur_prenom_nom
+    ctrl['operateur_prenom_nom'] = operateur_prenom_nom
 
     return ctrl
 
@@ -92,7 +82,7 @@ def controle_geometre_update_view(request):
     if not record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(ControleGeometre.__tablename__, id))
-
+    
     record = Utils.set_model_record(record, request.params)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControleGeometre.__tablename__))

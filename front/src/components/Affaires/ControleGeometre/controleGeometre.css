@@ -31,9 +31,11 @@ td {
 }
 .ctrl_label {
     text-align: left;
+    width: 700px;
 }
 .ctrl_radiobtn {
     text-align: center;
+    width: 32px;
 }
 .md-radio {
     margin: 0px;

@@ -43,11 +43,8 @@ export default {
           if (response && response.data) {
             this.controleGeometre = response.data;
 
-            if (this.controleGeometre.ctrl_juridique_date) {
-              this.controleGeometre.ctrl_juridique_date = moment(this.controleGeometre.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
-            }
-            if (this.controleGeometre.signature_date) {
-              this.controleGeometre.signature_date = moment(this.controleGeometre.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            if (this.controleGeometre.date) {
+              this.controleGeometre.date = moment(this.controleGeometre.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
             }
           } 
         })
@@ -59,79 +56,18 @@ export default {
      * update controle
      */
     updateControleGeometre() {
-      var formData = new FormData();
+      let formData = new FormData();
       formData.append("id", this.controleGeometre.id);
-      formData.append("affaire_id", this.controleGeometre.affaire_id);
-      formData.append("remarque", this.controleGeometre.remarque || null);
-      formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
-      formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
-      formData.append("check_1", this.controleGeometre.check_1);
-      formData.append("check_2", this.controleGeometre.check_2);
-      formData.append("check_3", this.controleGeometre.check_3);
-      formData.append("check_4", this.controleGeometre.check_4);
-      formData.append("check_5", this.controleGeometre.check_5);
-      formData.append("check_6", this.controleGeometre.check_6);
-      formData.append("check_7", this.controleGeometre.check_7);
-      formData.append("check_8", this.controleGeometre.check_8);
-      formData.append("check_9", this.controleGeometre.check_9);
-      formData.append("check_10", this.controleGeometre.check_10);
-      formData.append("check_11", this.controleGeometre.check_11);
-      formData.append("check_12", this.controleGeometre.check_12);
-      formData.append("check_13", this.controleGeometre.check_13);
-      formData.append("check_14", this.controleGeometre.check_14);
-      formData.append("check_15", this.controleGeometre.check_15);
-      formData.append("check_16", this.controleGeometre.check_16);
-      formData.append("check_17", this.controleGeometre.check_17);
-      formData.append("check_18", this.controleGeometre.check_18);
-      formData.append("check_19", this.controleGeometre.check_19);
-      formData.append("check_20", this.controleGeometre.check_20);
-      formData.append("check_21", this.controleGeometre.check_21);
-      formData.append("check_22", this.controleGeometre.check_22);
-      formData.append("check_23", this.controleGeometre.check_23);
-      formData.append("check_24", this.controleGeometre.check_24);
-      formData.append("check_25", this.controleGeometre.check_25);
-      formData.append("check_26", this.controleGeometre.check_26);
-      formData.append("check_27", this.controleGeometre.check_27);
-      formData.append("check_28", this.controleGeometre.check_28);
-      formData.append("check_29", this.controleGeometre.check_29);
-      formData.append("check_30", this.controleGeometre.check_30);
-      formData.append("check_31", this.controleGeometre.check_31);
-      formData.append("check_32", this.controleGeometre.check_32);
-      formData.append("check_33", this.controleGeometre.check_33);
-      formData.append("check_34", this.controleGeometre.check_34);
-      formData.append("check_35", this.controleGeometre.check_35);
-      formData.append("check_36", this.controleGeometre.check_36);
-      formData.append("check_37", this.controleGeometre.check_37);
-      formData.append("check_38", this.controleGeometre.check_38);
-      formData.append("check_39", this.controleGeometre.check_39);
-      formData.append("check_40", this.controleGeometre.check_40);
-      formData.append("check_41", this.controleGeometre.check_41);
-      formData.append("check_42", this.controleGeometre.check_42);
-      formData.append("check_43", this.controleGeometre.check_43);
-      formData.append("check_44", this.controleGeometre.check_44);
-      formData.append("check_45", this.controleGeometre.check_45);
-      formData.append("check_46", this.controleGeometre.check_46);
-      formData.append("check_47", this.controleGeometre.check_47);
-      formData.append("check_48", this.controleGeometre.check_48);
-      formData.append("check_49", this.controleGeometre.check_49);
-      formData.append("check_50", this.controleGeometre.check_50);
-      formData.append("check_51", this.controleGeometre.check_51);
-      formData.append("check_52", this.controleGeometre.check_52);
-      formData.append("check_53", this.controleGeometre.check_53);
-      formData.append("check_54", this.controleGeometre.check_54);
-      formData.append("check_55", this.controleGeometre.check_55);
-      formData.append("check_56", this.controleGeometre.check_56);
-      formData.append("check_57", this.controleGeometre.check_57);
-      formData.append("check_58", this.controleGeometre.check_58);
-      formData.append("check_59", this.controleGeometre.check_59);
-      formData.append("check_60", this.controleGeometre.check_60);
-      formData.append("check_61", this.controleGeometre.check_61);
-      formData.append("check_62", this.controleGeometre.check_62);
-      formData.append("check_63", this.controleGeometre.check_63);
-      formData.append("check_64", this.controleGeometre.check_64);
-      formData.append("check_65", this.controleGeometre.check_65);
-      formData.append("check_66", this.controleGeometre.check_66);
-
+      for (let elem in this.controleGeometre) {
+        if (elem === 'date') {
+          formData.append(elem, moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
+        } else if (elem === 'operateur_id') {
+          formData.append(elem, JSON.parse(localStorage.getItem("infolica_user")).id);
+        } else {
+          formData.append(elem, this.controleGeometre[elem]);
+        }
+      }
+      
       this.$http
         .put(
           process.env.VUE_APP_API_URL +
