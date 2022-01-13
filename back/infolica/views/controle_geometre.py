@@ -24,8 +24,7 @@ def controle_geometre_by_affaire_id_view(request):
         ControleGeometre.affaire_id == affaire_id).first()
 
     if query is None:
-        raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(ControleGeometre.__tablename__, affaire_id))
+        return None
     
     operateur_prenom_nom = None
 
