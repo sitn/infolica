@@ -4,7 +4,7 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import NumeroRelation, VNumerosRelations
+from infolica.models.models import Numero, NumeroRelation, VNumerosRelations
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 from sqlalchemy import and_
@@ -80,6 +80,16 @@ def numeros_relations_new_view(request, params=None):
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
 
+    # check that relation does not exist yet
+    conditions = []
+    conditions.append(NumeroRelation.numero_id_base == params['numero_id_base'])
+    conditions.append(NumeroRelation.numero_id_associe == params['numero_id_associe'])
+    conditions.append(NumeroRelation.relation_type_id == params['relation_type_id'])
+    conditions.append(NumeroRelation.affaire_id == params['affaire_id'])
+    rel = request.dbsession.query(NumeroRelation).filter(*conditions).first()
+    if not rel is None:
+        return None
+    
     # Get numeros_relations instance
     model = Utils.set_model_record(NumeroRelation(), params)
 
