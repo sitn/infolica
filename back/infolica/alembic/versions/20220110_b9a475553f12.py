@@ -114,4 +114,8 @@ def downgrade():
     op.drop_table('controle_geometre', schema='infolica')
 
     op.rename_table('controle_geometre_old', 'controle_geometre', schema='infolica')
+
+    op.execute("ALTER TABLE controle_geometre RENAME CONSTRAINT fk_controle_geometre_old_affaire_id_affaire TO fk_controle_geometre_affaire_id_affaire;")
+    op.execute("ALTER TABLE controle_geometre RENAME CONSTRAINT fk_controle_geometre_old_operateur_id_operateur TO fk_controle_geometre_operateur_id_operateur;")
+    op.execute("ALTER TABLE controle_geometre RENAME CONSTRAINT pk_controle_geometre_old TO pk_controle_geometre;")
     # ### end Alembic commands ###
