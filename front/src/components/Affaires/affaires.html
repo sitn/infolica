@@ -9,14 +9,29 @@
     <md-card>
         <!-- Search Header -->
         <md-card-header>
-            <div class="md-title">Recherche</div>
-        </md-card-header>
+            <div class="md-layout md-gutter md-alignment-center-space-between">
+                <div class="md-layout-item md-title">
+                    <md-card-expand-trigger>
+                        <md-button class="md-icon-button">
+                            <md-button @click="extandSearchPanel" class="md-icon-button" style="color: transparent;" :md-ripple="false">
+                                <md-icon>keyboard_arrow_down</md-icon>
+                            </md-button>
+                        </md-button>
+                    </md-card-expand-trigger>
+                    Recherche avancée
+                </div>
 
-        <md-card-expand-trigger>
-            <md-button class="md-icon-button expandCollapseBtn">
-                <md-icon>keyboard_arrow_down</md-icon>
-            </md-button>
-        </md-card-expand-trigger>
+                <div class="md-layout-item" v-if="!searchPanel_expanded">
+                    <div style="float: right; display: flex;">
+                        <md-field style="width: 400px;">
+                            <label>ID affaire</label>
+                            <md-input id="affaire_id" v-model="search.id" @keyup="searchAffaires"></md-input>
+                            <md-icon>search</md-icon>
+                        </md-field>
+                    </div>
+                </div>
+            </div>
+        </md-card-header>
 
         <!-- Search Content -->
         <md-card-expand>
@@ -26,7 +41,7 @@
                         <!-- id -->
                         <div class="md-layout-item md-size-25 md-small-size-50">
                             <md-field>
-                                <label>ID</label>
+                                <label>ID affaire</label>
                                 <md-input type="number" v-model="search.id"></md-input>
                             </md-field>
                         </div>

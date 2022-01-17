@@ -25,6 +25,7 @@ export default {
   data: () => ({
     affaires: [],
     clients: [],
+    searchPanel_expanded: false,
     operateurs_liste: [],
     cadastre_liste: [],
     etapes_liste: [],
@@ -264,6 +265,13 @@ export default {
       }
       return false;
     },
+
+    /**
+     * extand search panel
+     */
+    extandSearchPanel() {
+      this.searchPanel_expanded = !this.searchPanel_expanded;
+    }
 
   },
 
