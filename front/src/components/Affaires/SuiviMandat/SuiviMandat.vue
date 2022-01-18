@@ -12,13 +12,21 @@ export default {
   name: "SuiviMandat",
   props: {
     affaire: Object,
-    permission: Object
+    permission: Object,
+    typesAffaires_conf: Object
   },
   data: () => ({
     chefsProjetMO_liste: [],
     confirmDialogActive: false,
     confirmUpdateAffaireDateValidation: false,
     needToCreateSuiviMandat: false,
+    selectAll_val: {
+      plan_: false,
+      desbal_: false,
+      geos_: false,
+      emol_: false,
+      preavis_: false,
+    },
     showModifiedSuiviMandat: false,
     showNewSuiviMandatBtn: false,
     suiviMandat: {}
@@ -187,6 +195,17 @@ export default {
       ).then(() => this.$parent.setAffaire())
       .catch(err => handleException(err, this));
     },
+
+    /**
+     * select all in form
+     */
+    selectAll(term) {
+      for (const x in this.suiviMandat) {
+        if (x.startsWith(term) && !x.endsWith('remarque')) {
+          this.suiviMandat[x] = this.selectAll_val[term];
+        }
+      }
+    }
 
   },
 
