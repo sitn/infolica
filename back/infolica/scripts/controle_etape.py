@@ -280,18 +280,6 @@ class ControleEtapeChecker():
         if nb_emoluments is None or nb_emoluments == 0:
             return True
 
-        unlinked_factures = request.dbsession.query(
-            func.count(Facture.id)
-        ).outerjoin(
-            EmolumentAffaireRepartition, Facture.id == EmolumentAffaireRepartition.facture_id
-        ).filter(
-            Facture.affaire_id == affaire_id
-        ).filter(
-            Facture.type_id == facture_type_facture_id
-        ).filter(
-            EmolumentAffaireRepartition.facture_id == None
-        ).scalar()
-
         unlinked_emoluments = request.dbsession.query(
             func.count(EmolumentAffaire.id)
         ).outerjoin(
@@ -304,7 +292,7 @@ class ControleEtapeChecker():
             EmolumentAffaireRepartition.emolument_affaire_id == None
         ).scalar()
 
-        return unlinked_factures == 0 and unlinked_emoluments == 0
+        return unlinked_emoluments == 0
     
     
     @staticmethod
