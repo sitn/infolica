@@ -555,7 +555,7 @@ class ControleGeometre(Base):
     asp_jur_respect_preavis = Column(Integer, default=-1)
     asp_jur_bf_existent_rf = Column(Integer, default=-1)
     asp_jur_no_reserves_no_utilises = Column(Integer, default=-1)
-    asp_jur_acces_DP = Column(Integer, default=-1)
+    asp_jur_acces_dp = Column(Integer, default=-1)
     asp_jur_servitudes = Column(Integer, default=-1)
     asp_jur_no_etat_juridique_bf_base = Column(Integer, default=-1)
     asp_jur_plan_sit_plan_etage = Column(Integer, default=-1)

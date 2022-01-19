@@ -35,7 +35,7 @@ def upgrade():
     sa.Column('asp_jur_respect_preavis', sa.Integer(), nullable=True),
     sa.Column('asp_jur_bf_existent_rf', sa.Integer(), nullable=True),
     sa.Column('asp_jur_no_reserves_no_utilises', sa.Integer(), nullable=True),
-    sa.Column('asp_jur_acces_DP', sa.Integer(), nullable=True),
+    sa.Column('asp_jur_acces_dp', sa.Integer(), nullable=True),
     sa.Column('asp_jur_servitudes', sa.Integer(), nullable=True),
     sa.Column('asp_jur_no_etat_juridique_bf_base', sa.Integer(), nullable=True),
     sa.Column('asp_jur_plan_sit_plan_etage', sa.Integer(), nullable=True),
