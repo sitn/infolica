@@ -6,3 +6,39 @@
 .controleGeometre .label {
     display: block;
 }
+
+table, th, td {
+    border: 1px solid lightgray;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+}
+th {
+    vertical-align: bottom;
+}
+th.ctrl_radiobtn {
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    vertical-align: top;
+}
+td {
+    vertical-align: middle;
+}
+.ctrl_title {
+    font-style: italic;
+    background-color: lightgray;
+}
+.ctrl_label {
+    text-align: left;
+    width: 700px;
+}
+.ctrl_radiobtn {
+    text-align: center;
+    width: 32px;
+}
+.md-radio {
+    margin: 0px;
+    padding: 0px;
+    vertical-align: middle;
+}

@@ -25,22 +25,23 @@ def controle_geometre_by_affaire_id_view(request):
 
     if query is None:
         return None
+    
+    operateur_prenom_nom = None
 
-    ctrl = Utils.serialize_one(query)
-
-    # get operateur
-    operateur_id = ctrl['operateur_id']
-
-    if operateur_id is not None:
+    
+    # get signature_operateur
+    if not query.operateur_id is None:
         operateur = request.dbsession.query(
             Operateur
         ).filter(
-            Operateur.id == operateur_id
+            Operateur.id == query.operateur_id
         ).first()
+        operateur_prenom_nom = ' '.join([operateur.prenom, operateur.nom])
 
-        ctrl['operateur_prenom_nom'] = ' '.join([operateur.prenom, operateur.nom])
-    else:
-        ctrl['operateur_prenom_nom'] = None
+
+    ctrl = Utils.serialize_one(query)
+
+    ctrl['operateur_prenom_nom'] = operateur_prenom_nom
 
     return ctrl
 
@@ -80,7 +81,7 @@ def controle_geometre_update_view(request):
     if not record:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(ControleGeometre.__tablename__, id))
-
+    
     record = Utils.set_model_record(record, request.params)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(ControleGeometre.__tablename__))

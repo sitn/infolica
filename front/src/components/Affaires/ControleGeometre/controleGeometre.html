@@ -25,9 +25,7 @@
                             <div class="md-layout-item md-size-50 md-size-medium-100" 
                                 v-if="[typesAffaires_conf.mutation,
                                        typesAffaires_conf.modification,
-                                       typesAffaires_conf.modification_duplicata,
-                                       typesAffaires_conf.modification_mutation,
-                                       typesAffaires_conf.modification_visa].includes(affaire.type_id)">
+                                       typesAffaires_conf.modification_mutation].includes(affaire.type_id)">
                                 
                                 <md-card>
                                     <md-card-header>
@@ -35,42 +33,142 @@
                                     </md-card-header>
                                     
                                     <md-card-content>
-                                        <md-checkbox style="padding-left: 30px;" v-model="checkAll.ctrl_jur" @change="selectAll('ctrl_jur')">Tout cocher</md-checkbox>
+                                        <table>
+                                            <thead>
+                                                <th class="ctrl_label">Intitulé</th>
+                                                <th class="ctrl_radiobtn">Correct</th>
+                                                <th class="ctrl_radiobtn">Pas concerné</th>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="3" class="ctrl_title">Informations générales</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Adresses (commande, envoi, facturation)</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="2"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Référencement géographique</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="2"></md-radio></td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td colspan="3" class="ctrl_title">Aspects juridiques</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Respect du(des) préavis</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_respect_preavis" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_respect_preavis" :value="2"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Les biens-fonds concernés existent au RF (sinon, ajouter une observation concernant l'ordre de dépôt des dossiers au RF)</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_bf_existent_rf" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_bf_existent_rf" :value="2"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">N° de biens-fonds réservés = n° de biens-fonds utilisés</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_no_reserves_no_utilises" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_no_reserves_no_utilises" :value="2"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Accès au DP pour chaque nouveau bien-fonds</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_acces_dp" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_acces_dp" :value="2"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Bien-fondé et faisabilité des servitudes</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_servitudes" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_servitudes" :value="2"></md-radio></td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td colspan="3" class="ctrl_title">Factures</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Si plusieurs destinataires, la répartition est indiquée (devis et factures)</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_repartition_destinataires" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_repartition_destinataires" :value="2"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Montant pour le report des servitudes présent (Excel)</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_montant_servitudes" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_montant_servitudes" :value="2"></md-radio></td>
+                                                </tr>
 
-                                        <div class="md-subhead">Informations générales</div>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_48">Adresses (commande, envoi, facturation)</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_49">Référencement géographique</md-checkbox>
-                                        
-                                        <div class="md-subhead">Aspects juridiques</div>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_12">Respect du(des) préavis</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_2">Les biens-fonds concernés existent au RF (sinon, ajouter une observation concernant l'ordre de dépôt des dossiers au RF)</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_50">N° de biens-fonds réservés = n° de biens-fonds utilisés</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_14">Accès au DP pour chaque bien-fonds</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_3">Bien-fondé et faisabilité des servitudes</md-checkbox>
-                                        
-                                        <div class="md-subhead">Facture</div>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_51">Si plusieurs destinataires, la répartition est indiquée (devis et factures)</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_10">Montant pour le report des servitudes présent</md-checkbox>
-                                        
-                                        <div class="md-subhead">Cohérence entre documents</div>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_1">Nom du cadastre, n° de biens-fonds, titre</md-checkbox>
-                                        
-                                        <div class="md-subhead">Balance</div>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_52">Indication sur l'avancement de la saisie des servitudes</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_5">Surfaces « ancien état » de la balance = surfaces RF (sinon, vérifier que l'observation est présente et cohérente)</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_6">Somme des surfaces</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_53">Surface du bien-fonds de base ne change pas lors de la création d'un DDP</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_9">Surface des DDP ne change pas (sinon, mettre un commentaire concernant le changement de surface du DDP)</md-checkbox>
-                                        
-                                        <div class="md-subhead">Etat descriptif</div>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_8">Provenances</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_54">Surface totale de chaque bien-fonds</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_4">Sommes des surfaces</md-checkbox>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_55">Nom de rue pour un bien-fonds non construit en zone à bâtir</md-checkbox>
-                                        
-                                        <div class="md-subhead">Matérialisation différée</div>
-                                        <md-checkbox class="md-primary" v-model="controleGeometre.check_56">Informations concernant la Mat. Diff. (immeuble, facture, désignation)</md-checkbox>
-                                        
+                                                <tr>
+                                                    <td colspan="3" class="ctrl_title">Cohérences entre documents</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Nom du cadastre, n° de biens-fonds, titre</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.ctrl_juridique_coherence_doc_cadastre_bf_titre" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.ctrl_juridique_coherence_doc_cadastre_bf_titre" :value="2"></md-radio></td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="3" class="ctrl_title">Balance</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Indication sur l'avancement de la saisie des servitudes</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.balance_avancement_saisie_servitudes" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.balance_avancement_saisie_servitudes" :value="2"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Surfaces "ancien état" de la balance = surfaces RF (sinon, vérifier que l'observation est présente et cohérente)</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.balance_surfaces_ancien_rf" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.balance_surfaces_ancien_rf" :value="2"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Somme des surfaces</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.balance_somme_surfaces" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.balance_somme_surfaces" :value="2"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Surface du bien-fonds de base ne change pas lors de la création d'un DDP</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.balance_surface_bf_base_creation_ddp" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.balance_surface_bf_base_creation_ddp" :value="2"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Surface des DDP ne change pas (sinon, mettre un commentaire concernant le changement de surface du DDP)</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.balance_surface_ddp" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.balance_surface_ddp" :value="2"></md-radio></td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="3" class="ctrl_title">État descriptif</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Provenances</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.etat_desc_provenances" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.etat_desc_provenances" :value="2"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Surface totale de chaque bien-fonds</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.etat_desc_surface_totale_bf" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.etat_desc_surface_totale_bf" :value="2"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Sommes des surfaces des natures pour chaque bien-fonds</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.etat_desc_somme_surfaces_natures" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.etat_desc_somme_surfaces_natures" :value="2"></md-radio></td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Nom de rue pour un bien-fonds non construit en zone à bâtir</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.etat_desc_nom_rue" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.etat_desc_nom_rue" :value="2"></md-radio></td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="3" class="ctrl_title">Matérialisation différée</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="ctrl_label">Informations concernant la Mat. Diff. (immeuble, "numéros", facture, désignation)</td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.mat_diff_infos" :value="1"></md-radio></td>
+                                                    <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.mat_diff_infos" :value="2"></md-radio></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </md-card-content>
                                 </md-card>
                             </div>
@@ -82,100 +180,931 @@
                                     </md-card-header>
                                     
                                     <md-card-content>
-                                        <md-checkbox style="padding-left: 30px;" v-model="checkAll.sign" @change="selectAll('sign')">Tout cocher</md-checkbox>
+                                        <div v-if="typesAffaires_conf.mutation === affaire.type_id">
+                                            <table>
+                                                <thead>
+                                                    <th class="ctrl_label">Intitulé</th>
+                                                    <th class="ctrl_radiobtn">Correct</th>
+                                                    <th class="ctrl_radiobtn">Pas concerné</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Courrier</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Destinataires et enveloppes cohérentes</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_destinataires_enveloppes_coherents" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_destinataires_enveloppes_coherents" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Lettre A</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_lettre_a" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_lettre_a" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Facture</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">N° d'affaire</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Libellés (titre facture, articles facturés)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Prix unitaires et prix total</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Cohérence entre les documents</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nom du cadastre, n° de BF, titre</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_cadastre_bf_titre" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_cadastre_bf_titre" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">En cas de réunion de bâtiments, vérifier les EGID attribués et contacter la commune si besoin</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_reunion_bat_egid" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_reunion_bat_egid" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Désignation</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Provenances</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_provenances" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_provenances" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Surface totale de chaque BF</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_surface_totale_bf" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_surface_totale_bf" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Sommes des surfaces des natures pour chaque BF</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_somme_surfaces_natures" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_somme_surfaces_natures" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nombre de documents: "fait en x plans, x désignations et x formules de report des servitudes"</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_nb_documents" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_nb_documents" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Géomètre cantonal" et date du jour</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_geom_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_geom_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Plan</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">N° de BF bien visible(s)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_no_bf" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_no_bf" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Géomètre cantonal" et date du jour</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_geom_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_geom_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
 
-                                        <div v-if="![typesAffaires_conf.cadastration, typesAffaires_conf.ppe, typesAffaires_conf.modification_ppe].includes(affaire.type_id)">
-                                            <div class="md-subhead">Facture</div>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_57">N° d'affaire</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_26">Destinataires (facture, dossier) + enveloppes cohérentes</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_27">Lettre A (courrier pour acte notarié)</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_23">Libellés (titre facture, articles facturés)</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_25">Prix unitaires et prix total</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_44" v-if="affaire.type_id === typesAffaires_conf.revision_abornement">Nombre de points facturés (égal au nombre de points nouveaux sur le plan)</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_45" v-if="affaire.type_id === typesAffaires_conf.revision_abornement">Montant de la facture (~300.- par PL)</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_46" v-if="affaire.type_id === typesAffaires_conf.retablissement_pfp3">Nombre de points facturés (égal au nombre de points nouveaux sur le plan)</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_47" v-if="affaire.type_id === typesAffaires_conf.retablissement_pfp3">Montant de la facture (~ 380.- par PFP)</md-checkbox>
-                                            
-                                            <div class="md-subhead">Cohérence entre les documents</div>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_15">Nom du cadastre, n° de bien-fonds, titre</md-checkbox>
-                                            
-                                            <div class="md-subhead">Désignation</div>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_18">Nombre de documents: « fait en x plans, x désignations et x formules de report des servitude »</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_19">Tampon et date sur la dernière feuille</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_17">Provenances</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_58">Surface totale de chaque bien-fonds</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_59">Sommes des surfaces des natures pour chaque bien-fonds</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_40" v-if="affaire.type_id === typesAffaires_conf.modification_duplicata">Inscription « DUPLICATA du plan du … »</md-checkbox>    
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_42" v-if="[typesAffaires_conf.modification_visa, typesAffaires_conf.modification_mutation, typesAffaires_conf.modification].includes(affaire.type_id)">Inscription « Visa » ou « Modification »</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_20" v-if="affaire.type_id === typesAffaires_conf.art35">Mention « sans frais » indiquée (uniquement s'il s'agit d'une correction d'erreur du SGRF)</md-checkbox>
-                                            
-                                            <div class="md-subhead">Plan</div>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_21">N° des bien(s)-fonds bien visible(s))</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_22">Tampon et date</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_39" v-if="affaire.type_id === typesAffaires_conf.modification_duplicata">Inscription « DUPLICATA du plan du … »</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_41" v-if="[typesAffaires_conf.modification_visa, typesAffaires_conf.modification_mutation, typesAffaires_conf.modification].includes(affaire.type_id)">Inscription « Visa » ou « Modification »</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_43" v-if="affaire.type_id === typesAffaires_conf.servitude">Bien-fondé et faisabilité des servitudes</md-checkbox>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.modification_mutation">
+                                            <table>
+                                                <thead>
+                                                    <th class="ctrl_label">Intitulé</th>
+                                                    <th class="ctrl_radiobtn">Correct</th>
+                                                    <th class="ctrl_radiobtn">Pas concerné</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Courrier</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Destinataires et enveloppes cohérentes</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_destinataires_enveloppes_coherents" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_destinataires_enveloppes_coherents" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Lettre A</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_lettre_a" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_lettre_a" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Facture</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">N° d'affaire</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Libellés (titre facture, articles facturés)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Prix unitaires et prix total</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Cohérence entre les documents</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nom du cadastre, n° de BF, titre</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_cadastre_bf_titre" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_cadastre_bf_titre" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Désignation</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Provenances</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_provenances" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_provenances" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Surface totale de chaque BF</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_surface_totale_bf" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_surface_totale_bf" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Sommes des surfaces des natures pour chaque BF</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_somme_surfaces_natures" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_somme_surfaces_natures" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nombre de documents: "fait en x plans, x désignations et x formules de report des servitudes"</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_nb_documents" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_nb_documents" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Géomètre cantonal" et date initiale</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_geom_date_initiale" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_geom_date_initiale" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Modifié le" et date du jour</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_modifie_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_modifie_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Plan</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Géomètre cantonal" et date initiale</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_geom_date_initiale" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_geom_date_initiale" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Modifié le" et date du jour</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_modifie_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_modifie_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div v-if="affaire.type_id === typesAffaires_conf.modification_visa">
+                                            <table>
+                                                <thead>
+                                                    <th class="ctrl_label">Intitulé</th>
+                                                    <th class="ctrl_radiobtn">Correct</th>
+                                                    <th class="ctrl_radiobtn">Pas concerné</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Informations générales</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Adresses (commande, envoi, facturation)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Référencement géographique</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Courrier</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Destinataires et enveloppes cohérentes</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_destinataires_enveloppes_coherents" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_destinataires_enveloppes_coherents" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Lettre A</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_lettre_a" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_lettre_a" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Facture</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">N° d'affaire</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Libellés (titre facture, articles facturés)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Prix unitaires et prix total</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Désignation</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nombre de documents: "fait en x plans, x désignations et x formules de report des servitudes"</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_nb_documents" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_nb_documents" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Géomètre cantonal" et date initiale</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_geom_date_initiale" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_geom_date_initiale" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Visé le" et date du jour</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_vise_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_vise_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Plan</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Géomètre cantonal" et date initiale</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_geom_date_initiale" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_geom_date_initiale" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Visé le" et date du jour</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_vise_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_vise_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
                                         
-                                        <div v-else-if="affaire.type_id === typesAffaires_conf.cadastration">
-                                            <!-- cadastration -->
-                                            <div class="md-subhead">Informations générales</div>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_60">Référencement géographique de l'affaire</md-checkbox>
-                                            
-                                            <div class="md-subhead">Lettres</div>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_29">Eléments saisis manuellement</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_31">Paragraphe spécifique en cas de PPE</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_28">Lettre à propos de la cadastration d’office</md-checkbox>
-                                            
-                                            <div class="md-subhead">Réquisition</div>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_32">Eléments saisis manuellement</md-checkbox>
-                                            
-                                            <div class="md-subhead">Facture</div>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_61">Remarque(s) de la rubrique "Devis et factures"</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_57">N° d'affaire</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_23">Libellés (titre facture, articles facturés)</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_25">Prix unitaires et prix total</md-checkbox>
-                                            
-                                            <div class="md-subhead">Cohérence entre documents</div>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_1">Nom du cadastre, n° de biens-fonds, titre</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_37">Chaque bâtiment a un numéro</md-checkbox>
-                                            
-                                            <div class="md-subhead">Désignation</div>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_18">Nombre de documents: « fait en x plans, x désignations »</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_19">Tampon et date sur la dernière feuille</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_20">Mention « sans frais » indiquée le cas échéant (changement dans ses natures)</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_34">Nom du propriétaire entier</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_17">Provenances</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_35">Surface du bien-fonds = surface RF</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_36">Sommes des surfaces (état descriptif)</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_38">Désignation des bâtiments</md-checkbox>
-                                            
-                                            <div class="md-subhead">Plan</div>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_21">N° de bien-fonds visible</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_22">Tampon et date</md-checkbox>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.modification_duplicata">
+                                            <table>
+                                                <thead>
+                                                    <th class="ctrl_label">Intitulé</th>
+                                                    <th class="ctrl_radiobtn">Correct</th>
+                                                    <th class="ctrl_radiobtn">Pas concerné</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Informations générales</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Adresses (commande, envoi, facturation)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Référencement géographique</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Courrier</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Destinataires et enveloppes cohérentes</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_destinataires_enveloppes_coherents" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_destinataires_enveloppes_coherents" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Lettre A</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_lettre_a" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_lettre_a" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Facture</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">N° d'affaire</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Libellés (titre facture, articles facturés)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Prix unitaires et prix total</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Cohérence entre les documents</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nom du cadastre, n° de BF, titre</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_cadastre_bf_titre" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_cadastre_bf_titre" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Désignation</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Provenances</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_provenances" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_provenances" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Surface totale de chaque BF</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_surface_totale_bf" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_surface_totale_bf" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Sommes des surfaces des natures pour chaque BF</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_somme_surfaces_natures" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_somme_surfaces_natures" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nombre de documents: "fait en x plans, x désignations et x formules de report des servitudes"</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_nb_documents" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_nb_documents" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Géomètre cantonal" et date du jour</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_geom_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_geom_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Duplicata du plan du" et date initiale</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_duplicata_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_duplicata_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Plan</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Géomètre cantonal" et date du jour</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_geom_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_geom_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Duplicata du plan du" et date initiale</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_duplicata_dates" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_duplicata_dates" :value="2"></md-radio></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
                                         
-                                        <div v-else>
-                                            <!-- PPE -->
-                                            <div class="md-subhead">Informations générales</div>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_48">Adresses (commande, envoi, facturation)</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_49">Référencement géographique</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_62">Dossier complet (formule de légende, plan de situation, plans d'étage, coupes, plans de façade)</md-checkbox>
-                                            
-                                            <div class="md-subhead">Facture</div>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_57">N° d'affaire</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_26">Destinataires (facture, dossier) + enveloppes cohérentes</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_27">Lettre A (courrier pour acte notarié)</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_23">Libellés (titre facture, articles facturés)</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_25">Prix unitaires et prix total</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_61">Remarque(s) de la rubrique "Devis et factures"</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_66">Contenu de la facture</md-checkbox>
-                                            
-                                            <div class="md-subhead">Aspects juridiques</div>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_63">N° et état juridique du BF de base</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_50">N° de biens-fonds réservés = n° de biens-fonds utilisés</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_64">Informations cohérentes entre plan de situation et plans d'étage</md-checkbox>
-                                            <md-checkbox class="md-primary" v-model="controleGeometre.check_65">Nombre de documents indiqués sur la formule de légende</md-checkbox>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.servitudes">
+                                            <table>
+                                                <thead>
+                                                    <th class="ctrl_label">Intitulé</th>
+                                                    <th class="ctrl_radiobtn">Correct</th>
+                                                    <th class="ctrl_radiobtn">Pas concerné</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Informations générales</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Adresses (commande, envoi, facturation)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Référencement géographique</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Courrier</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Destinataires et enveloppes cohérentes</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_destinataires_enveloppes_coherents" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_destinataires_enveloppes_coherents" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Lettre A</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_lettre_a" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_lettre_a" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Facture</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">N° d'affaire</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Libellés (titre facture, articles facturés)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Prix unitaires et prix total</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Cohérence entre les documents</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nom du cadastre, n° de BF, titre</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_cadastre_bf_titre" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_cadastre_bf_titre" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Plan</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Géomètre cantonal" et date du jour</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_geom_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_geom_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Bien fondé et faisabilité des servitudes</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_servitudes" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_servitudes" :value="2"></md-radio></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <div v-if="affaire.type_id === typesAffaires_conf.art35">
+                                            <table>
+                                                <thead>
+                                                    <th class="ctrl_label">Intitulé</th>
+                                                    <th class="ctrl_radiobtn">Correct</th>
+                                                    <th class="ctrl_radiobtn">Pas concerné</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Informations générales</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Adresses (commande, envoi, facturation)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Référencement géographique</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Aspects juridiques</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Les BF concernés existent au RF</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_bf_existent_rf" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_bf_existent_rf" :value="2"></md-radio></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <div v-if="affaire.type_id === typesAffaires_conf.retablissement_pfp3">
+                                            <table>
+                                                <thead>
+                                                    <th class="ctrl_label">Intitulé</th>
+                                                    <th class="ctrl_radiobtn">Correct</th>
+                                                    <th class="ctrl_radiobtn">Pas concerné</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Informations générales</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Adresses (commande, envoi, facturation)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Référencement géographique</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Courrier</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Destinataires et enveloppes cohérentes</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_destinataires_enveloppes_coherents" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_destinataires_enveloppes_coherents" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Facture</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">N° d'affaire</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Libellés (titre facture, articles facturés)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Prix unitaires et prix total</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Prix total ~380.- par PFP</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_pfp" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_pfp" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Cohérence entre les documents</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nom du cadastre, n° de BF, titre</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_cadastre_bf_titre" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_cadastre_bf_titre" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nombre de points facturés (plan vs facture)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_nb_pts_factues" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_nb_pts_factues" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Plan</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Géomètre cantonal" et date du jour</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_geom_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_geom_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <div v-if="affaire.type_id === typesAffaires_conf.revision_abornement">
+                                            <table>
+                                                <thead>
+                                                    <th class="ctrl_label">Intitulé</th>
+                                                    <th class="ctrl_radiobtn">Correct</th>
+                                                    <th class="ctrl_radiobtn">Pas concerné</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Informations générales</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Adresses (commande, envoi, facturation)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Référencement géographique</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Courrier</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Destinataires et enveloppes cohérentes</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_destinataires_enveloppes_coherents" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.courrier_destinataires_enveloppes_coherents" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Facture</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">N° d'affaire</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Libellés (titre facture, articles facturés)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Prix unitaires et prix total</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Prix total ~300.- par PL</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_pl" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_pl" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Cohérence entre les documents</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nom du cadastre, n° de BF, titre</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_cadastre_bf_titre" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_cadastre_bf_titre" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nombre de points facturés (plan vs facture)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_nb_pts_factues" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_nb_pts_factues" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Plan</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Géomètre cantonal" et date du jour</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_geom_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_geom_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <div v-if="affaire.type_id === typesAffaires_conf.cadastration">
+                                            <table>
+                                                <thead>
+                                                    <th class="ctrl_label">Intitulé</th>
+                                                    <th class="ctrl_radiobtn">Correct</th>
+                                                    <th class="ctrl_radiobtn">Pas concerné</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Informations générales</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Référencement géographique</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Lettres</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">n° d'affaire</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.lettres_no_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.lettres_no_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Eléments saisis manuellement</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.lettres_saisie_manuelle" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.lettres_saisie_manuelle" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Paragraphe spécifique en cas de PPE</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.lettres_paragraphe_ppe" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.lettres_paragraphe_ppe" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Lettre à propos de la cadastration d'office</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.lettres_lettre_cad_office" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.lettres_lettre_cad_office" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Réquisition</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Eléments saisis manuellement</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.req_saisie_manuelle" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.req_saisie_manuelle" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Rubrique "Devis et factures"</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Remarques</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.devis_fact_remarques" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.devis_fact_remarques" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">N° d'émolument</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.devis_fact_no_emolument" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.devis_fact_no_emolument" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Montant RF</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.devis_fact_montant_rf" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.devis_fact_montant_rf" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Facture papier</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">N° d'affaire</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Libellés (titre facture, articles facturés)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Prix unitaires et prix total</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Cohérence entre les documents</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Date</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nom du cadastre, n° de BF, titre</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_cadastre_bf_titre" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_cadastre_bf_titre" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Chaque bâtiment a un n°</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_bat_num" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_bat_num" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">En cas de réunion de bâtiments, vérifier le nombre d'EGID et contacter la commune si besoin</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_reunion_bat_egid" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.coherence_doc_reunion_bat_egid" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Désignation</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nombre de documents: "fait en x plans, x désignations"</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_nb_documents" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_nb_documents" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Copie", Tampon "Géomètre cantonal" et date du jour</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_copie_geom_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_tampon_copie_geom_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Mention "sans frais" indiquée le cas échéant (changement dans ses natures)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_mention_sans_frais" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_mention_sans_frais" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nom du propriétaire entier</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_nom_proprietaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_nom_proprietaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Provenances</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_provenances" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_provenances" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Surface du BF = surface RF</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_surface_bf_mo_rf" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_surface_bf_mo_rf" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Somme des surfaces (état descriptif)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_somme_surfaces_ed" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_somme_surfaces_ed" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Désignation des bâtiments</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_designation_bat" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.des_designation_bat" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Plan</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">n° de BF bien visible(s)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_no_bf" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_no_bf" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampon "Copie", Tampon "Géomètre cantonal" et date du jour</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_copie_geom_date" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.plan_tampon_copie_geom_date" :value="2"></md-radio></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        <div v-if="[typesAffaires_conf.ppe, typesAffaires_conf.modification_ppe].includes(affaire.type_id)">
+                                            <table>
+                                                <thead>
+                                                    <th class="ctrl_label">Intitulé</th>
+                                                    <th class="ctrl_radiobtn">Correct</th>
+                                                    <th class="ctrl_radiobtn">Pas concerné</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Informations générales</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Adresses (commande, envoi, facturation)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_adresses" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Référencement géographique</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Dossier complet (formule de légende, plan de situation, plans d'étage, coupes, plans de façade)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_dossier_complet" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_dossier_complet" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">En cas de Modification, les bons n° de BF sont récupérés par l'affaire courante</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_numeros_recuperes" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_numeros_recuperes" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Facture</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">N° d'affaire</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_no_affaire" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Destinataires et enveloppes cohérentes</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_destinataires_enveloppes_coherents" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_destinataires_enveloppes_coherents" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Lettre A</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_lettre_a" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_lettre_a" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Libellés (titre facture, articles facturés)</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_libelles" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Prix unitaires et prix total</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Remarque(s) de la rubrique "Devis et factures"</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_remarque_devis_facture" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_remarque_devis_facture" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Contenu de l'émolument</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_contenu_emolument" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_contenu_emolument" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3" class="ctrl_title">Aspects juridiques</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">N° et état juridique du BF de base</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_no_etat_juridique_bf_base" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_no_etat_juridique_bf_base" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">N° de BF réservés = n° de BF utilisés</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_no_reserves_no_utilises" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_no_reserves_no_utilises" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Informations cohérentes entre plan de situation et plans d'étage</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_plan_sit_plan_etage" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_plan_sit_plan_etage" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">En cas de révision, les plans présentant des trames pour éléments inchangés ont bien le mot "partiellement"</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_plan_mention_partiellement" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_plan_mention_partiellement" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Nombres de documents indiqués sur la formule de légende</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_nb_doc_legende" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_nb_doc_legende" :value="2"></md-radio></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="ctrl_label">Tampons corrects sur les divers documents</td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_tampons_corrects" :value="1"></md-radio></td>
+                                                        <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_tampons_corrects" :value="2"></md-radio></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </md-card-content>
                                 </md-card>
@@ -183,6 +1112,7 @@
                         </div>
                         
                         <br>
+
                         
                         <div class="md-layout md-gutter  md-alignment-bottom-right">
                             <div class="md-layout-item md-size-75 md-small-size-100">
@@ -191,7 +1121,6 @@
                                     <md-textarea v-model="controleGeometre.remarque"></md-textarea>
                                 </md-field>
                             </div>
-                            
                             <div class="md-layout-item md-size-25 md-small-size-100" v-if="permission.editControleGeometreAllowed">
                                 <div style="float: right;">
                                     <md-button class="md-raised md-accent" @click="searchControleGeometre()">Annuler</md-button>
