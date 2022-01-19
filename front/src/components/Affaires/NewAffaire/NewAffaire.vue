@@ -386,7 +386,8 @@ export default {
         })
         .then(response => {
           const _response = response;
-          const id_new_affaire = response.data;
+          const id_new_affaire = response.data.affaire_id;
+          const id_type_new_affaire = response.data.affaire_type_id;
           if (response && response.data) {
             let promises = [];
             
@@ -395,7 +396,7 @@ export default {
               promises.push(this.postAffaireRelation(id_new_affaire));
               if ((this.selectedAnciensNumeros.length + this.selectedNouveauxNumeros.length) > 0 ) {
                 //désactiver la relation numéro-affaire, créer une liaison sur la nouvelle affaire et mise à jour de la relation des numéros dans la nouvelle affaire
-                promises.push(this.updateNumerosAffaire(id_new_affaire));
+                promises.push(this.updateNumerosAffaire(id_new_affaire, id_type_new_affaire));
               }
               if (this.selectedAnciensNumeros.length === this.affaire_numeros_anciens.length && this.selectedNouveauxNumeros.length === this.affaire_numeros_nouveaux.length) {
                 // Si tous les numéros sont sélectionnés, clôre l'affaire de base !
@@ -554,7 +555,7 @@ export default {
     /**
      * Update numeros_affaire
      */
-    updateNumerosAffaire(affaire_destination_id) {
+    updateNumerosAffaire(affaire_destination_id, affaire_destination_type_id) {
       let promises = [];
       this.selectedAnciensNumeros.forEach(x => {
         promises.push(this.deactivateNumeroAffaires(x, affaire_destination_id));
@@ -563,7 +564,9 @@ export default {
       this.selectedNouveauxNumeros.forEach(x => {
         promises.push(this.deactivateNumeroAffaires(x, affaire_destination_id));
         promises.push(this.postAffaireNumero(x, affaire_destination_id));
-        promises.push(this.updateNumeroRelation(x.numero_base_id, x.numero_id, x.affaire_id, affaire_destination_id));
+        if (Number(affaire_destination_type_id) !== this.typesAffaires_conf.modification_mutation) {
+          promises.push(this.updateNumeroRelation(x.numero_base_id, x.numero_id, x.affaire_id, affaire_destination_id));
+        }
       });
 
       Promise.all(promises)

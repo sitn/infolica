@@ -331,7 +331,7 @@ def affaires_new_view(request):
         }
         Utils.addNewRecord(request, Facture, params)
 
-    return model.id
+    return {'affaire_id': model.id, 'affaire_type_id': model.type_id}
 
 
 @view_config(route_name='affaires', request_method='PUT', renderer='json')
