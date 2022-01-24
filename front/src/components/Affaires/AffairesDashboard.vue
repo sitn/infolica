@@ -66,6 +66,7 @@ export default {
         cloreAffaireEnabled: false,
         cloreEmolumentEnabled: false,
         editAffaireAllowed: false,
+        editAffaireTypeAllowed: false,
         editClientAllowed: false,
         editControleGeometreAllowed: false,
         editEmolumentAllowed: false,
@@ -103,6 +104,8 @@ export default {
         modification_retour_etat_juridique: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_RETABLISSEMENT_ETAT_JURIDIQUE),
       },
       etapes_affaire_conf: {
+        coordination: Number(process.env.VUE_APP_ETAPE_COORDINATION_ID),
+        controle_technique: Number(process.env.VUE_APP_CONTROLE_TECHNIQUE_ID),
         chez_client: Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID),
         travaux_chef_equipe: Number(process.env.VUE_APP_ETAPE_TRAVAUX_CHEF_EQUIPE_ID),
         validation: Number(process.env.VUE_APP_ETAPE_VALIDATION_ID),
@@ -271,6 +274,7 @@ export default {
             _this.permission.editEmolumentTva = true;
             _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
+            _this.permission.editAffaireTypeAllowed = !_this.parentAffaireReadOnly;
           }
 
           // Si l'opérateur de l'affaire est l'utilisateur connecté, il doit pouvoir réserver/référencer et modifier le contenu de l'affaire

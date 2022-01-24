@@ -20,14 +20,16 @@ export default {
     typesAffaires_conf: {type: Object},
     affaire: {type: Object},
     clientTypes_conf: {type: Object},
-    permission: {type: Object}
-    },
+    permission: {type: Object},
+    etapes_affaire_conf: {type: Object},
+  },
   components: {},
   data() {
     return {
       affaire_backup: {},
       infoGenReadonly: true,
       affaireReadonly: true,
+      typeAffaireReadonly: true,
       affaireUrgente: {
         disabled: true,
         urgent: false,
@@ -478,6 +480,18 @@ export default {
         Number(process.env.VUE_APP_ADMIN_ROLE_ID),
         Number(process.env.VUE_APP_PPE_ROLE_ID),
       ].includes(role_id);
+    },
+
+    /**
+     * Set permissions
+     */
+    setPermissions() {
+      this.affaireReadonly = !this.permission.editAffaireAllowed;
+      this.typeAffaireReadonly = !(
+        this.permission.editAffaireTypeAllowed
+        && this.affaire.modif_affaire_type_id_vers !== null
+        && [this.etapes_affaire_conf.coordination, this.etapes_affaire_conf.travaux_chef_equipe, this.etapes_affaire_conf.controle_technique].includes(this.affaire.etape_id)
+      );
     }
 
   },
@@ -491,8 +505,8 @@ export default {
     this.initClientsListe();
     this.searchClientsFacture();
     this.setAffaireUrgente();
+    this.setPermissions();
     this.$root.$on('reloadClientFactureInfosGen', () => this.searchClientsFacture());
-    this.affaireReadonly = !this.permission.editAffaireAllowed;
     this.show.clientFacture = this.affaire.type_id !== this.typesAffaires_conf.pcop;
     this.enableAffaireUrgente();
   }
