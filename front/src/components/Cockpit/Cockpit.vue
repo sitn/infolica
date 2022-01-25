@@ -123,6 +123,11 @@ export default {
 
                 this.affaires = tmp;
 
+                this.plural = '';
+                if (tmp.length > 1) {
+                    this.plural = 's';
+                }
+
                 // hide progress bar
                 this.loadingAffaires = false;
             }
