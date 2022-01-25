@@ -53,7 +53,7 @@ router.beforeEach((to, from, next) => {
     next({name: 'Login'});
   } else {
     if (to.name === 'Login') {
-      localStorage.setItem('redirectPath', from.path);
+      localStorage.setItem('infolica_redirectPath', from.path);
       next();
     } else {
       next();

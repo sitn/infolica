@@ -37,10 +37,10 @@ export default {
           if(response && response.data && response.data.id){
             this.processLogin(response.data);
 
-            const redirectPath = localStorage.getItem('redirectPath');
+            const redirectPath = localStorage.getItem('infolica_redirectPath');
             if (redirectPath) {
               this.$router.replace(redirectPath);
-              localStorage.removeItem('redirectPath');
+              localStorage.removeItem('infolica_redirectPath');
             } else {
               this.$router.push({ name: "Cockpit"});
             }
