@@ -15,7 +15,7 @@
     
     <!-- Panneau de suivi des affaires chez le client de l'opérateur PPE -->
     <div>
-        <AffairesChezClient :operateurs="operateurs" :affaireTypes="affaireTypes" :selectedOperateur_id_parent="selectedOperateur_id" />
+        <AffairesChezClient :operateurs="operateurs" :affaireTypes="affaireTypes" :selectedOperateur_id_parent="search.operateur_id" />
     </div>
 
     <md-card>
@@ -24,13 +24,14 @@
                 <div class="md-layout-item md-size-80" style="display: flex;">
                     <md-field style="width: 250px !important;">
                         <label>Rechercher</label>
-                        <md-input v-model="searchAffaire" placeholder="Nom d'affaire" v-on:keyup="updateTable"></md-input>
+                        <md-input v-model="search.searchTerm" placeholder="Nom d'affaire" v-on:keyup.enter="getAffaire"></md-input>
                         <md-icon>search</md-icon>
+                        <span class="md-helper-text" v-if="search.searchTerm">Appuyer sur Enter pour chercher</span>
                     </md-field>
     
                     <md-field style="margin-left: 50px; width: 250px !important;">
                         <label for="operateur">Opérateur·rice</label>
-                        <md-select v-model="selectedOperateur_id" name="operateur" id="operateur" @md-selected="updateTable" md-dense>
+                        <md-select v-model="search.operateur_id" name="operateur" id="operateur" @md-selected="getAffaire" md-dense>
                           <md-option :value="-1">Tous</md-option>
                           <md-option v-for="item in operateurs" :value="item.id">{{ item.prenom_nom }}</md-option>
                         </md-select>
@@ -38,14 +39,14 @@
                     
                     <md-field style="margin-left: 50px; width: 250px !important;">
                         <label>Type(s) d'affaire</label>
-                        <md-select v-model="selectedAffaireTypes_id" @md-selected="updateTable" md-dense>
+                        <md-select v-model="search.type_id" @md-selected="getAffaire" md-dense>
                             <md-option :value="-1">Tous</md-option>
                             <md-option v-for="item in affaireTypes" :value="item.id">{{ item.nom }}</md-option>
                         </md-select>
                     </md-field>
     
-                    <md-checkbox v-model="showFinProcessus" @change="updateTable" style="margin-left: 50px; margin-top:25px;">Afficher l'étape fin de processus</md-checkbox>
-                    <md-checkbox v-model="showOnlyAffairesUrgentes" @change="updateTable" style="margin-left: 50px; margin-top:25px;">Afficher les affaires urgentes</md-checkbox>
+                    <md-checkbox v-model="search.showFinProcessus" @change="getAffaire" style="margin-left: 50px; margin-top:25px;">Afficher l'étape fin de processus</md-checkbox>
+                    <md-checkbox v-model="search.showOnlyAffairesUrgentes" @change="getAffaire" style="margin-left: 50px; margin-top:25px;">N'afficher que les affaires urgentes</md-checkbox>
                 </div>
 
                 <div class="md-layout-item" style="text-align: right;">
@@ -54,7 +55,7 @@
             </div>
 
             <md-progress-bar md-mode="indeterminate" v-if="loadingAffaires"></md-progress-bar>
-            <md-table v-model="affaires" :md-sort.sync="current_sort" :md-sort-order.sync="current_sort_order" :md-sort-fn="customSort" md-card>
+            <md-table v-model="affaires" :md-sort.sync="search.current_sort" :md-sort-order.sync="search.current_sort_order" :md-sort-fn="customSort" md-card>
 
                 <md-table-empty-state
                     md-label="Aucune affaire">
@@ -72,7 +73,7 @@
                     <md-table-cell md-sort-by="dashboard_7" md-label="Expédition"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" :to="{ name: 'AffairesDashboard', params: { id: item.id } }" v-if="item.dashboard_7">{{ item.dashboard_7 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_8" md-label="Validation BD"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" :to="{ name: 'AffairesDashboard', params: { id: item.id } }" v-if="item.dashboard_8">{{ item.dashboard_8 }}</md-button></md-table-cell>
                     <md-table-cell md-sort-by="dashboard_9" md-label="Signature Art.35"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" :to="{ name: 'AffairesDashboard', params: { id: item.id } }" v-if="item.dashboard_9">{{ item.dashboard_9 }}</md-button></md-table-cell>
-                    <md-table-cell md-sort-by="dashboard_10" md-label="Fin de processus  (<30 j>)" v-if="showFinProcessus"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" :to="{ name: 'AffairesDashboard', params: { id: item.id } }" v-if="item.dashboard_10">{{ item.dashboard_10 }}</md-button></md-table-cell>
+                    <md-table-cell md-sort-by="dashboard_10" md-label="Fin de processus  (<30 j)" v-if="search.showFinProcessus"><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent }" :title="item.title" :to="{ name: 'AffairesDashboard', params: { id: item.id } }" v-if="item.dashboard_10">{{ item.dashboard_10 }}</md-button></md-table-cell>
                 </md-table-row>
             </md-table>
 

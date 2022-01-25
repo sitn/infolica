@@ -20,24 +20,16 @@ export default {
   data: () => {
     return {
         affaires: [{}],
-        affaires_bk: [],
         affaireEtapes: [],
         affaireTypes: [],
-        current_sort: "id",
-        current_sort_order: "desc",
-        loadingAffaires: true,
+        loadingAffaires: false,
         newAffaireAllowed: false,
         operateurs: [],
         plural: '',
         refreshAffaire: null,
-        searchAffaire: null,
-        selectedOperateur_id: -1,
-        selectedAffaireTypes_id: -1,
-        showFinProcessus: false,
         showMatdiff_secr: false,
         showMatdiff_mo: false,
         showMatdiff_ctrl: false,
-        showOnlyAffairesUrgentes: false,
         showPPE: false,
         role: {
             secretaire: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID),
@@ -45,6 +37,15 @@ export default {
             ppe: Number(process.env.VUE_APP_PPE_ROLE_ID),
             responsable: Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)
         },
+        search: {
+            searchTerm: null,
+            operateur_id: -1,
+            type_id: -1,
+            showFinProcessus: false,
+            showOnlyAffairesUrgentes: false,
+            current_sort: "id",
+            current_sort_order: "desc",
+        }
     };
   },
 
@@ -86,15 +87,14 @@ export default {
      * get Affaires
      */
     async getAffaire() {
-        if (this.affaireEtapes.length === 0) {
-            await this.getAffaireEtapes();
-        }
-        if (this.affaireTypes.length === 0) {
-            await this.getAffaireTypes();
-        }
+        // show progress bar
+        this.loadingAffaires = true;
+
+        // set query for get request
+        const query = this.setSearchParamsQuery();
 
         this.$http.get(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_COCKPIT_ENDPOINT,
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_COCKPIT_ENDPOINT + query,
             {
                 withCredentials: true,
                 headers: {Accept: "application/json"}
@@ -106,43 +106,30 @@ export default {
                 // Filtrer les affaires qui ne sont pas chez le client
                 tmp = tmp.filter(x => x.etape_id !== Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID) && x.etape_id !== Number(process.env.VUE_APP_ETAPE_DEVIS_ID));
 
-                let nom_affaire = null;
-                let elapsedTime = "";
                 tmp.forEach(x => {
                     // set time for urgent_echeance
                     x.urgent_echeance = x.urgent_echeance? moment(x.urgent_echeance, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null;
                         
                     for (let i=0; i<this.affaireEtapes.length; i++) {
-                        nom_affaire = null;
                         if (i === x.etape_ordre-1) {
-                            nom_affaire = x.no_access? x.no_access: String(x.id);
-                            nom_affaire += x.urgent_echeance === null? "": " / "+ x.urgent_echeance;
-                            nom_affaire += x.attribution === null? "": " / " + x.attribution;
+                            x["dashboard_" + i.toString()] = x.nom_affaire;
+                        } else {
+                            x["dashboard_" + i.toString()] = null;
                         }
-                        x["dashboard_" + i.toString()] = nom_affaire;
                     }
-
-                    // set title to show on cockpit
-                    if (x.etape_days_elapsed === 0) {
-                        elapsedTime = "aujourd'hui";
-                    } else if (x.etape_days_elapsed === 1) {
-                        elapsedTime = "hier";
-                    } else {
-                        elapsedTime = x.etape_days_elapsed + " jours";
-                    }
-                    x.title = (x.no_access? 'Affaire ' + x.id + ' — ': '') + x.cadastre + ' — ' + x.description  + " — Dans cette étape depuis " + elapsedTime;
                 });
 
                 tmp = this.customSort(tmp);
 
-                this.affaires_bk = tmp;
-                if (!this.affaires.length > 0) {
-                    this.affaires = tmp;
-                }
+                this.affaires = tmp;
 
-                this.updateTable();
+                // hide progress bar
+                this.loadingAffaires = false;
             }
-        }).catch(err => handleException(err, this));
+        }).catch(err => {
+            handleException(err, this);
+            this.loadingAffaires = false;
+        });
     },
 
     /**
@@ -184,46 +171,23 @@ export default {
     /**
      * Update table and content to show or not FinProcessus step
      */
-    updateTable() {
-        this.loadingAffaires = true;
-
-        // filter affaires by showing or not Fin Processus
-        if (this.showFinProcessus) {
-            this.affaires = this.affaires_bk;
-        } else {
-            this.affaires = this.affaires_bk.filter(x => x.etape_id !== Number(process.env.VUE_APP_FIN_PROCESSUS_ID));
+    setSearchParamsQuery() {
+        let query = [];
+        if (this.search.searchTerm) {
+            query.push("searchTerm=" + this.search.searchTerm);
         }
+        if (this.search.operateur_id > 0) {
+            query.push("operateur_id=" + this.search.operateur_id);
+        }
+        if (this.search.type_id > 0) {
+            query.push("type_id=" + this.search.type_id);
+        }
+        query.push("showFinProcessus=" + this.search.showFinProcessus);
+        query.push("showOnlyAffairesUrgentes=" + this.search.showOnlyAffairesUrgentes);
         
-        // filter affaires by name if specified
-        if (this.searchAffaire) {
-            this.affaires = this.affaires.filter(x => {
-                let text = [x.no_access + x.id].filter(Boolean).join(' - ');
-                return text.toLowerCase().includes(this.searchAffaire.toLowerCase());
-            });
-        }
+        query = "?" + query.join('&');
 
-        // filter affaire by operateur if specified
-        if (this.selectedOperateur_id && this.selectedOperateur_id > 0) {
-            this.affaires = this.affaires.filter(x => x.operateur_id === this.selectedOperateur_id);
-        }
-        
-        // filter affaire type
-        if (this.selectedAffaireTypes_id && this.selectedAffaireTypes_id > 0) {
-            this.affaires = this.affaires.filter(x => x.affaire_type_id === this.selectedAffaireTypes_id);
-        }
-
-        // filter affaire urgente
-        if (this.showOnlyAffairesUrgentes) {
-            this.affaires = this.affaires.filter(x => x.urgent);
-        }
-        
-        // set plural or not
-        this.plural = '';
-        if (this.affaires.length > 1){
-            this.plural = 's';
-        }
-
-        this.loadingAffaires = false;
+        return query;
     },
 
     /**
@@ -240,7 +204,7 @@ export default {
                 let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
                 let currentUserRoleID = getCurrentUserRoleId();
                 if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe) && (currentUserRoleID && [this.role.mo, this.role.ppe].includes(currentUserRoleID))) {
-                    this.selectedOperateur_id = Number(currentUserID);
+                    this.search.operateur_id = Number(currentUserID);
                 }
 
                 tmp = stringifyAutocomplete2(tmp, "prenom_nom", null, "prenom_nom");
@@ -255,7 +219,7 @@ export default {
      */
     customSort (value) {
         return value.sort((a, b) => {
-            const sortBy = this.current_sort;
+            const sortBy = this.search.current_sort;
 
             let c = a[sortBy];
             let d = b[sortBy];
@@ -268,7 +232,7 @@ export default {
                 return -1;
             }
 
-            if (this.current_sort_order === 'asc') {
+            if (this.search.current_sort_order === 'asc') {
                 if (isNaN(c) || isNaN(d)) {
                     return String(c).localeCompare(String(d));
                 } else {
@@ -282,10 +246,23 @@ export default {
                 }
             }
         });
+    },
+
+    /**
+     * get search params from localstorage
+     */
+    getSearchParams() {
+        const searchParams = localStorage.getItem('infolica_cockpit_searchParams');
+        if (searchParams) {
+            this.search = JSON.parse(searchParams);
+        }
     }
+
   },
 
   mounted: function() {
+    this.getAffaireEtapes()
+    this.getAffaireTypes()
     this.getAffaire();
     this.getOperateursList();
     this.getPermissions();
@@ -293,10 +270,12 @@ export default {
   },
   
   created() {
-    this.refreshAffaire = setInterval(this.getAffaire, 60000); // Recharge le tableau toutes les minutes  
+    this.refreshAffaire = setInterval(this.getAffaire, 60000); // Recharge le tableau toutes les minutes
+    this.getSearchParams()
   },
 
   beforeDestroy() {
+    localStorage.setItem("infolica_cockpit_searchParams", JSON.stringify(this.search));
     clearInterval(this.refreshAffaire);
   }
 };

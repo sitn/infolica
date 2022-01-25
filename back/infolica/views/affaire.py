@@ -12,7 +12,8 @@ from infolica.models.models import AffaireEtape
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 
-from sqlalchemy import and_, or_, func
+from sqlalchemy import and_, or_, func, Text
+from sqlalchemy.sql.expression import cast
 
 import os
 import json
@@ -67,22 +68,35 @@ def affaire_cockpit_view(request):
 
     type_id = request.params['type_id'] if 'type_id' in request.params else None
     etape_id = request.params['etape_id'].split(',') if 'etape_id' in request.params else None
-    etape_finProcessus_id = request.registry.settings["affaire_etape_fin_processus_id"]
+    searchTerm = request.params['searchTerm'] if 'searchTerm' in request.params else None
+    operateur_id = request.params['operateur_id'] if 'operateur_id' in request.params else None
+    showFinProcessus = True if 'showFinProcessus' in request.params and request.params['showFinProcessus'] == 'true' else False
+    showOnlyAffairesUrgentes = True if 'showOnlyAffairesUrgentes' in request.params and request.params['showOnlyAffairesUrgentes'] == 'true' else False
 
-    affaire_show_timedelta = int(request.registry.settings['affaire_show_timedelta'])
-    since = datetime.now() - timedelta(days=affaire_show_timedelta)
+    etape_finProcessus_id = request.registry.settings["affaire_etape_fin_processus_id"]
     
     query = request.dbsession.query(VAffaire)
 
     # Filtrer les affaires abandonnées
     query = query.filter(VAffaire.abandon == False)
-    
-    if type_id is not None:
-        query = query.filter(VAffaire.type_id == type_id)
-
+    # Filtrer les affaires par étapes
     if etape_id is not None:
         query = query.filter(VAffaire.etape_id.in_(etape_id))
+    # recherche par type
+    if type_id is not None:
+        query = query.filter(VAffaire.type_id == type_id)
+    # recherche par opérateur
+    if operateur_id is not None:
+        query = query.filter(VAffaire.technicien_id == operateur_id)
+    # ne sélectionner que les affaires urgentes
+    if showOnlyAffairesUrgentes:
+        query = query.filter(VAffaire.urgent == showOnlyAffairesUrgentes)
+    # récupérer ou non les affaires en fin de processus
+    if showFinProcessus == False:
+        query = query.filter(VAffaire.etape_id != etape_finProcessus_id)
     else:
+        affaire_show_timedelta = int(request.registry.settings['affaire_show_timedelta'])
+        since = datetime.now() - timedelta(days=affaire_show_timedelta)
         query = query.filter(or_(
             VAffaire.etape_id != etape_finProcessus_id,
             and_(
@@ -90,11 +104,26 @@ def affaire_cockpit_view(request):
                 VAffaire.etape_datetime >= since
             )
         ))
+    # recherche par id ou no_access
+    if searchTerm is not None:
+        query = query.filter(
+            or_(
+                cast(VAffaire.id, Text).ilike("%" + searchTerm + "%"),
+                VAffaire.no_access.ilike("%" + searchTerm + "%")
+            )
+        )
     
     query = query.all()
 
     affaires = []
     for affaire in query:
+        urgent_echeance = datetime.strftime(affaire.urgent_echeance, '%Y-%m-%d') if not affaire.urgent_echeance is None else None
+        nom_affaire = (affaire.no_access if affaire.no_access else str(affaire.id)) + (" / " + urgent_echeance if urgent_echeance else "") + (" / " + affaire.attribution if affaire.attribution else "")
+        etape_datetime = datetime.strftime(affaire.etape_datetime, '%Y-%m-%d %H:%M:%S')
+        etape_days_elapsed = (datetime.now().date() - affaire.etape_datetime.date()).days
+        etape_days_elapsed_text = "aujourd'hui" if etape_days_elapsed == 0 else ("hier" if etape_days_elapsed == 1 else str(etape_days_elapsed) + " jours")
+        title = affaire.technicien_initiales + " — Affaire " + str(affaire.id) + " — " + affaire.cadastre + " — " + affaire.nom + " — Dans cette étape depuis " + etape_days_elapsed_text
+        
         affaires.append({
             'id': affaire.id,
             'affaire_type': affaire.type_affaire,
@@ -103,15 +132,17 @@ def affaire_cockpit_view(request):
             'etape': affaire.etape,
             'etape_id': affaire.etape_id,
             'etape_ordre': affaire.etape_ordre,
-            'etape_datetime': datetime.strftime(affaire.etape_datetime, '%Y-%m-%d %H:%M:%S'),
-            'etape_days_elapsed': (datetime.now().date() - affaire.etape_datetime.date()).days,
+            'etape_datetime': etape_datetime,
+            'etape_days_elapsed': etape_days_elapsed,
             'operateur_id': affaire.technicien_id,
             'operateur_initiales': affaire.technicien_initiales,
             'cadastre': affaire.cadastre,
             'description': affaire.nom,
             'urgent': affaire.urgent,
-            'urgent_echeance': datetime.strftime(affaire.urgent_echeance, '%Y-%m-%d') if not affaire.urgent_echeance is None else None,
-            'attribution': affaire.attribution
+            'urgent_echeance': urgent_echeance,
+            'attribution': affaire.attribution,
+            'nom_affaire': nom_affaire,
+            'title': title
         })
     
     return affaires
