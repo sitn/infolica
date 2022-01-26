@@ -45,7 +45,9 @@ export default {
             showOnlyAffairesUrgentes: false,
             current_sort: "id",
             current_sort_order: "desc",
-        }
+        },
+        current_sort: "id",
+        current_sort_order: "desc",
     };
   },
 
@@ -224,7 +226,7 @@ export default {
      */
     customSort (value) {
         return value.sort((a, b) => {
-            const sortBy = this.search.current_sort;
+            const sortBy = this.current_sort;
 
             let c = a[sortBy];
             let d = b[sortBy];
@@ -237,7 +239,7 @@ export default {
                 return -1;
             }
 
-            if (this.search.current_sort_order === 'asc') {
+            if (this.current_sort_order === 'asc') {
                 if (isNaN(c) || isNaN(d)) {
                     return String(c).localeCompare(String(d));
                 } else {
@@ -260,7 +262,16 @@ export default {
         const searchParams = localStorage.getItem('infolica_cockpit_searchParams');
         if (searchParams) {
             this.search = JSON.parse(searchParams);
+            this.current_sort = this.search.current_sort;
+            this.current_sort_order = this.search.current_sort_order;
+            this.customSort(this.affaires);
         }
+    },
+
+    setSearchParams() {
+        this.search.current_sort = this.current_sort;
+        this.search.current_sort_order = this.current_sort_order;
+        localStorage.setItem("infolica_cockpit_searchParams", JSON.stringify(this.search));
     }
 
   },
@@ -280,7 +291,7 @@ export default {
   },
 
   beforeDestroy() {
-    localStorage.setItem("infolica_cockpit_searchParams", JSON.stringify(this.search));
+    this.setSearchParams();
     clearInterval(this.refreshAffaire);
   }
 };

@@ -55,7 +55,7 @@
             </div>
 
             <md-progress-bar md-mode="indeterminate" v-if="loadingAffaires"></md-progress-bar>
-            <md-table v-model="affaires" :md-sort.sync="search.current_sort" :md-sort-order.sync="search.current_sort_order" :md-sort-fn="customSort" md-card>
+            <md-table v-model="affaires" :md-sort.sync="current_sort" :md-sort-order.sync="current_sort_order" :md-sort-fn="customSort" md-card>
 
                 <md-table-empty-state
                     md-label="Aucune affaire">
