@@ -108,7 +108,7 @@
         <!-- SUIVI DU MANDAT -->
         <div class="affairesDashboard" v-if="![typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.mpd].includes(affaire.type_id) &&
                                              !(affaire.type_id===typesAffaires_conf.modification_ppe)">
-            <SuiviMandat :affaire="affaire" :permission="permission" />
+            <SuiviMandat :affaire="affaire" :permission="permission" :typesAffaires_conf="typesAffaires_conf" />
         </div>
 
         <!-- CONTROLE TECHNIQUE PPE (Technicien)-->

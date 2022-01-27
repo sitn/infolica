@@ -61,60 +61,277 @@
                                     <md-card-content>
                                         <div class="md-title">Mensuration officielle approuvée</div>
                                         
-                                        <div class="md-layout md-gutter">
-                                            <div class="md-layout-item md-size-50">
-                                                <md-checkbox class="md-primary" v-model="suiviMandat.ap_11">
-                                                    Respect des directives du SCAT, SAGR ou service urbanisme
-                                                </md-checkbox>
-
-                                                <md-field>
-                                                    <label>Remarques</label>
-                                                    <md-textarea v-model="suiviMandat.ap_12"></md-textarea>
-                                                </md-field>  
+                                        <!-- Autre types d'affaires que cadastration et division/réunion -->
+                                        <div v-if="![typesAffaires_conf.cadastration, typesAffaires_conf.mutation, typesAffaires_conf.modification_mutation].includes(affaire.type_id)">
+                                            <div class="md-layout md-gutter">
+                                                <div class="md-layout-item md-size-50">
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.ap_11">
+                                                        Respect des directives du SCAT, SAGR ou service urbanisme
+                                                    </md-checkbox>
+    
+                                                    <md-field>
+                                                        <label>Remarques</label>
+                                                        <md-textarea v-model="suiviMandat.ap_12"></md-textarea>
+                                                    </md-field>  
+                                                </div>
+    
+                                                <div class="md-layout-item md-size-50">
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.pdt_21">
+                                                        Contrôle du tableau des émoluments
+                                                    </md-checkbox>
+                    
+                                                    <md-field>
+                                                        <label>Remarques</label>
+                                                        <md-textarea v-model="suiviMandat.pdt_22"></md-textarea>
+                                                    </md-field>
+                                                </div>
+    
+                                                <div class="md-layout-item md-size-50">
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.pdt_11">
+                                                        Contrôle des désignations et de la balance
+                                                    </md-checkbox>    
+                    
+                                                    <md-field>
+                                                        <label>Remarques</label>
+                                                        <md-textarea v-model="suiviMandat.pdt_12"></md-textarea>
+                                                    </md-field>    
+                                                </div>
+    
+                                                <div class="md-layout-item md-size-50">
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.pdt_41">
+                                                        Contrôle de l'enregistrement de tous les documents (courriel, courrier, préavis, plan, etc.)
+                                                    </md-checkbox>
+                                                    
+                                                    <md-field>
+                                                        <label>Remarques</label>
+                                                        <md-textarea v-model="suiviMandat.pdt_42"></md-textarea>
+                                                    </md-field>
+                                                </div>
+    
+                                                <div class="md-layout-item md-size-50">
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.ap_41">
+                                                        Contrôle de la base de données
+                                                    </md-checkbox>
+                    
+                                                    <md-field>
+                                                        <label>Remarques</label>
+                                                        <md-textarea v-model="suiviMandat.ap_42"></md-textarea>
+                                                    </md-field>        
+                                                </div>
                                             </div>
-
-                                            <div class="md-layout-item md-size-50">
-                                                <md-checkbox class="md-primary" v-model="suiviMandat.pdt_21">
-                                                    Contrôle du tableau des émoluments
-                                                </md-checkbox>
-                
-                                                <md-field>
-                                                    <label>Remarques</label>
-                                                    <md-textarea v-model="suiviMandat.pdt_22"></md-textarea>
-                                                </md-field>
-                                            </div>
-
-                                            <div class="md-layout-item md-size-50">
-                                                <md-checkbox class="md-primary" v-model="suiviMandat.pdt_11">
-                                                    Contrôle des désignations et de la balance
-                                                </md-checkbox>    
-                
-                                                <md-field>
-                                                    <label>Remarques</label>
-                                                    <md-textarea v-model="suiviMandat.pdt_12"></md-textarea>
-                                                </md-field>    
-                                            </div>
-
-                                            <div class="md-layout-item md-size-50">
-                                                <md-checkbox class="md-primary" v-model="suiviMandat.pdt_41">
-                                                    Contrôle de l'enregistrement de tous les documents (courriel, courrier, préavis, plan, etc.)
-                                                </md-checkbox>
+                                        </div>
+                                        
+                                        <!-- Affaire_type cadastration -->
+                                        <div v-if="this.typesAffaires_conf.cadastration === affaire.type_id">
+                                            <div class="md-layout md-gutter">
+                                                <div id="plan" class="md-layout-item md-size-50" v-if="affaire.type_id === typesAffaires_conf.cadastration">
+                                                    <div class="md-subhead">Contrôles du plan</div>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('plan_')">Tout cocher</md-button>
+                                                    <div id="plan_">
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.plan_cadastre">Nom du cadastre</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.plan_titre">Titre</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.plan_echelle">Echelle</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.plan_police_bat">Numéro de police de bâtiment bien présent</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.plan_agrandissement_reduction">Agrandissement ou réduction du plan</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.plan_no_affaire">N° de l'affaire</md-checkbox>
+                                                    </div>
                                                 
-                                                <md-field>
-                                                    <label>Remarques</label>
-                                                    <md-textarea v-model="suiviMandat.pdt_42"></md-textarea>
-                                                </md-field>
-                                            </div>
+                                                    <md-divider></md-divider>
+                                                    <br>
+                                                    
+                                                    <div class="md-subhead">Contrôles de la base de données</div>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('geos_')">Tout cocher</md-button>
+                                                    <div id="geos_">
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_couvsol_numerotation_pt_particuliers">Contrôler que la numérotation des nouveaux points particulier "660" ont été reservés dans l'affaire</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_couvsol_numerotation_bat">Contrôler que la numérotation des nouveaux numéros de bâtiments ont été reservés dans l'affaire</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_couvsol_des_bat">Contrôler désignation bâtiment</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_objdiv_pt_constr_supprimes">Tous les points de constructions "760" sont supprimés.</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_objdiv_geometrie">Contrôler les nouveaux éléments créés dans votre affaire et qu'il n'y a pas d'objets divers sans géométrie.</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_objdiv_bat_sout">Contrôler désignation bâtiment souterrain</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_bf_rad_mat_diff">Radiation matérialisation différée ( contrôle nature et valeur points limites)</md-checkbox>
+                                                    </div>
+                                                    
+                                                    <md-divider></md-divider>
+                                                </div>
+    
+                                                <div class="md-layout-item md-size-50" v-if="affaire.type_id === typesAffaires_conf.cadastration">
+                                                    <div class="md-subhead">Contrôles des désignations</div>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('desbal_')">Tout cocher</md-button>
+                                                    <div id="desbal_">
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_cadastre">Nom du cadastre</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_titre">Titre</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_no_bf">N° du BF (correspondance au plan)</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_no_folio">N° du Folio</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_nom_local">Nom local</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_nom_rue">Nom du rue (si pas de bâtiment avec une adresse)</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_surf_tot">Surface totale correspond avec la surface inscrite au RF</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_surf_nat">Contrôle des surfaces natures (Sommes = Surface totale)</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_bat_nat">Contrôle des désignations de bâtiments et natures</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_adresse_bat">Contrôle adresse bâtiment</md-checkbox>
+                                                        <div style="display: flex; vertical-align: middle; margin-top: 16px; margin-bottom: 16px;">
+                                                            <md-checkbox style="margin: 0px;" class="md-primary" v-model="suiviMandat.desbal_libel_prov">Contrôle libellé provenance</md-checkbox>
+                                                            <a style="margin-left: 10px;" href="https://sitnintra.ne.ch/bookstack_sgrf/books/mo-libellé-standard/page/libellé-des-provenances">lien bookstack</a>
+                                                        </div>
+                                                        <div style="display: flex; vertical-align: middle; margin-top: 16px; margin-bottom: 16px;">
+                                                            <md-checkbox style="margin: 0px;" class="md-primary" v-model="suiviMandat.desbal_libel_remarques_rf">Contrôle libellé remarques RF</md-checkbox>
+                                                            <a style="margin-left: 10px;" href="https://sitnintra.ne.ch/bookstack_sgrf/books/mo-libellé-standard/page/libellé-des-remarques-rf">lien bookstack</a>
+                                                        </div>
+                                                        <div style="display: flex; vertical-align: middle; margin-top: 16px; margin-bottom: 16px;">
+                                                            <md-checkbox style="margin: 0px;" class="md-primary" v-model="suiviMandat.desbal_libel_obs">Contrôle libellé observation</md-checkbox>
+                                                            <a style="margin-left: 10px;" href="https://sitnintra.ne.ch/bookstack_sgrf/books/mo-libellé-standard/page/libellé-des-observations">lien bookstack</a>
+                                                        </div>
+                                                    </div>
 
-                                            <div class="md-layout-item md-size-50">
-                                                <md-checkbox class="md-primary" v-model="suiviMandat.ap_41">
-                                                    Contrôle de la base de données
-                                                </md-checkbox>
-                
-                                                <md-field>
-                                                    <label>Remarques</label>
-                                                    <md-textarea v-model="suiviMandat.ap_42"></md-textarea>
-                                                </md-field>        
+                                                    <md-divider></md-divider>
+                                                    <br>
+
+                                                    <div class="md-subhead">Contrôles du tableau des émoluments</div>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('emol_')">Tout cocher</md-button>
+                                                    <div id="emol_">
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.emol_frais_cad">Frais cadastration (1 seul bâtiment)</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.emol_frais_rf">Frais RF</md-checkbox>
+                                                    </div>
+                                                </div>
+    
+                                                <div class="md-layout-item md-size-50">
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.pdt_41">
+                                                        Contrôle de l'enregistrement de tous les documents (courriel, courrier, préavis, plan, etc.)
+                                                    </md-checkbox>
+                                                    
+                                                    <md-field>
+                                                        <label>Remarques</label>
+                                                        <md-textarea v-model="suiviMandat.pdt_42"></md-textarea>
+                                                    </md-field>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Affaire_type mutation et modification -->
+                                        <div v-if="[typesAffaires_conf.mutation, typesAffaires_conf.modification_mutation].includes(affaire.type_id)">
+                                            <div class="md-layout md-gutter">
+                                                <div class="md-layout-item md-size-50">
+                                                    <div class="md-subhead">Respect des directives du SCAT, SAGR ou service de l'urbanisme</div>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('preavis_')">Tout cocher</md-button>
+                                                    <div id="preavis_">
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.preavis_exhaustivite_demandes">Toutes les autorisations on été demandées</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.preavis_respect_sat_sagr">Remarques de SAT et SAGR respectées</md-checkbox>
+                                                    </div>
+                                                    <md-field>
+                                                        <label>Remarques</label>
+                                                        <md-textarea v-model="suiviMandat.preavis_remarque"></md-textarea>
+                                                    </md-field>
+                                                    <md-divider></md-divider>
+                                                </div>
+
+                                                <div class="md-layout-item md-size-50">
+                                                    <div class="md-subhead">Contrôle du plan</div>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('plan_')">Tout cocher</md-button>
+                                                    <div id="plan_">
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.plan_cadastre">Nom du cadastre</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.plan_titre">Titre</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.plan_echelle">Contrôle des numéros de BF sont réservés sur Infolica</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.plan_agrandissement_reduction">Echelle</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.plan_no_affaire">Agrandissement et réduction</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.plan_servitude">N° de l'affaire</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.plan_num_bf_infolica">Servitude</md-checkbox>
+                                                    </div>
+                                                    <md-divider></md-divider>
+                                                    <br>
+                                                </div>
+
+                                                <div class="md-layout-item md-size-50">
+                                                    <div class="md-subhead">Contrôle des désignations et de la balance</div>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('desbal_')">Tout cocher</md-button>
+                                                    <div id="desbal_">
+                                                        <div class="md-subhead"> - Désignations</div>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_cadastre">Nom du cadastre</md-checkbox>
+                                                        <div style="display: flex; vertical-align: middle; margin-top: 16px; margin-bottom: 16px;">
+                                                            <md-checkbox style="margin: 0px;" class="md-primary" v-model="suiviMandat.desbal_titre">Titre</md-checkbox>
+                                                            <a style="margin-left: 10px;" href="https://sitnintra.ne.ch/bookstack_sgrf/books/mo-libellé-standard/page/libellé-des-titres">lien bookstack</a>
+                                                        </div>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_no_bf">N° du BF (correspondance au plan)</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_no_folio">N° du Folio</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_nom_local">Nom local</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_nom_rue">Nom du rue (si pas de bâtiment avec une adresse)</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_surf_tot">Surface totale correspond avec la surface inscrite au RF</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_surf_nat">Contrôle des surfaces natures (Sommes = Surface totale)</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_bat_nat">Contrôle des désignations de bâtiments et natures</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_adresse_bat">Contrôle adresse bâtiment</md-checkbox>
+                                                        <div style="display: flex; vertical-align: middle; margin-top: 16px; margin-bottom: 16px;">
+                                                            <md-checkbox style="margin: 0px;" class="md-primary" v-model="suiviMandat.desbal_libel_prov">Contrôle libellé provenance</md-checkbox>
+                                                            <a style="margin-left: 10px;" href="https://sitnintra.ne.ch/bookstack_sgrf/books/mo-libellé-standard/page/libellé-des-provenances">lien bookstack</a>
+                                                        </div>
+                                                        <div style="display: flex; vertical-align: middle; margin-top: 16px; margin-bottom: 16px;">
+                                                            <md-checkbox style="margin: 0px;" class="md-primary" v-model="suiviMandat.desbal_libel_remarques_rf">Contrôle libellé remarques RF</md-checkbox>
+                                                            <a style="margin-left: 10px;" href="https://sitnintra.ne.ch/bookstack_sgrf/books/mo-libellé-standard/page/libellé-des-remarques-rf">lien bookstack</a>
+                                                        </div>
+                                                        <div style="display: flex; vertical-align: middle; margin-top: 16px; margin-bottom: 16px;">
+                                                            <md-checkbox style="margin: 0px;" class="md-primary" v-model="suiviMandat.desbal_libel_obs">Contrôle libellé observation</md-checkbox>
+                                                            <a style="margin-left: 10px;" href="https://sitnintra.ne.ch/bookstack_sgrf/books/mo-libellé-standard/page/libellé-des-observations">lien bookstack</a>
+                                                        </div>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_mat_diff">Observation matérialisation différée</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_obs_sat">Observation du SAT</md-checkbox>
+                                                        
+                                                        <md-divider class="md-inset"></md-divider>
+                                                        <br>
+    
+                                                        <div class="md-subhead"> - Balance</div>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_num_bf_anciens_nouveaux">Contrôle des n° de BF nouveaux + anciens</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_surf_ancien">Contrôle des surfaces ancien état)</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_surf_nouveau">Contrôle des surfaces nouvel état, y compris correspondance avec les surfaces se trouvant sur les désignations</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.desbal_ctrl_totaux">Contrôle des totaux</md-checkbox>
+                                                        <div style="display: flex; vertical-align: middle; margin-top: 16px; margin-bottom: 16px;">
+                                                            <md-checkbox style="margin: 0px;" class="md-primary" v-model="suiviMandat.desbal_libel_obs">Contrôle libellé observation</md-checkbox>
+                                                            <a style="margin-left: 10px;" href="https://sitnintra.ne.ch/bookstack_sgrf/books/mo-libellé-standard/page/libellé-des-observations">lien bookstack</a>
+                                                        </div>
+                                                    </div>
+
+                                                    <md-divider></md-divider>
+                                                    <br>
+
+                                                    <div class="md-subhead">Contrôle du tableau des émoluments</div>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('emol_')">Tout cocher</md-button>
+                                                    <div id="emol_">
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.emol_frais_division">Frais division de base saisie</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.emol_frais_materialisation">Frais de matérialisation</md-checkbox>
+                                                    </div>
+                                                </div>
+
+                                                <div class="md-layout-item md-size-50">
+                                                    <div class="md-subhead">Contrôle de la base de données</div>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('geos_')">Tout cocher</md-button>
+                                                    <div id="geos_">
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_bf_val_pt">Contrôler la valeurs des points.</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_bf_egris_egrid">Contrôler que l'attribut "EGRIS_EGRID" dans la table "Immeuble" a bien été effacé pour les nouveaux biens-fonds et les nouveaux domaines pulics.</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_bf_statut_valid_juridique">Contrôler dans la table « Bien_fonds » que l’attribut « Validation_juridique » est non pour les nouveaux biens-fonds sauf pour les nouveaux DP.</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_bf_statut_posimmeuble">Contrôler dans la table « Biens_fonds.PosImmeuble » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.petite).</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_bf_geometrie">Contrôler dans la table « Bien_fonds => Mise_a_jourBF » qu’il y que les nouveaux biens-fonds créés dans votre affaire et qu'il n'y a pas de biens-fonds sans géométrie.</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_bf_pt_alignes_lim_nat">Exclure les points alignés dans une limite de nature 5</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_couvsol_numerotation_pt_particuliers">Contrôler que la numérotation des nouveaux points particulier "660" ont été reservés dans l'affaire</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_couvsol_numerotation_bat">Contrôler que la numérotation des nouveaux numéros de bâtiments ont été reservés dans l'affaire</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_couvsol_des_bat">Contrôler désignation bâtiment</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_objdiv_pt_constr_supprimes">Tous les points de constructions "760" sont supprimés.</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_objdiv_geometrie">Contrôler les nouveaux éléments créés dans votre affaire et qu'il n'y a pas d'objets divers sans géométrie.</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_servitude_statut_validite">Contrôler dans la table « Servitudes => Servitude_surface » ou « Servitudes => Servitude_ligne » ou « Servitudes => Servitude_point » que l’attribut « Validite » .est en_projet pour les nouvelles servitudes.</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_servitude_libelle">Contrôler le libellé des servitudes.</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_servitude_no_rs">Contrôler que l'attribut "Numero_RS" dans la table "Servitudes" est bien saisi (exemple:"0ProjetA").</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_servitude_libelle_classe">Contrôler que l'attribut "Libelle" ainsi que "Classe" dans la table "Servitudes" sont bien corrects et conformes.</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_servitude_droit_jouissance">Effacer les droits de jouissance car ils ne doivent pas figurés dans la base de données (a effacer lors de la validation).</md-checkbox>
+                                                    </div>
+                                                
+                                                    <md-divider></md-divider>
+                                                    <br>
+                                                
+                                                    <div class="md-subhead">Documents</div>
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.pdt_41">
+                                                        Contrôle de l'enregistrement de tous les documents (courriel, courrier, préavis, plan, etc.)
+                                                    </md-checkbox>
+                                                    
+                                                    <md-field>
+                                                        <label>Remarques</label>
+                                                        <md-textarea v-model="suiviMandat.pdt_42"></md-textarea>
+                                                    </md-field>
+                                                </div>
                                             </div>
                                         </div>
                                     </md-card-content>

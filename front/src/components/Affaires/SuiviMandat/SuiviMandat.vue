@@ -12,13 +12,21 @@ export default {
   name: "SuiviMandat",
   props: {
     affaire: Object,
-    permission: Object
+    permission: Object,
+    typesAffaires_conf: Object
   },
   data: () => ({
     chefsProjetMO_liste: [],
     confirmDialogActive: false,
     confirmUpdateAffaireDateValidation: false,
     needToCreateSuiviMandat: false,
+    selectAll_val: {
+      plan_: false,
+      desbal_: false,
+      geos_: false,
+      emol_: false,
+      preavis_: false,
+    },
     showModifiedSuiviMandat: false,
     showNewSuiviMandatBtn: false,
     suiviMandat: {}
@@ -118,26 +126,14 @@ export default {
     },
 
     onConfirmEditSuiviMandat() {
-      var formData = new FormData();
-      formData.append("id", this.suiviMandat.id);
-      formData.append("affaire_id", this.suiviMandat.affaire_id);
-      formData.append("av_31", this.suiviMandat.av_31);
+      let formData = new FormData();
+      for (const elem in this.suiviMandat) {
+        if (!["av_32", "av_33", "visa", "date"].includes(elem)) {
+          formData.append(elem, this.suiviMandat[elem]);
+        }
+      }
       if (this.suiviMandat.av_32 && this.suiviMandat.av_32.id) { formData.append("av_32", this.suiviMandat.av_32.id) }
       if (this.suiviMandat.av_33) { formData.append("av_33", moment(this.suiviMandat.av_33, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)) }
-      formData.append("av_41", this.suiviMandat.av_41)
-      if (this.suiviMandat.av_51) { formData.append("av_51", this.suiviMandat.av_51) }
-      formData.append("pdt_11", this.suiviMandat.pdt_11);
-      if (this.suiviMandat.pdt_12) { formData.append("pdt_12", this.suiviMandat.pdt_12) }
-      formData.append("pdt_21", this.suiviMandat.pdt_21);
-      if (this.suiviMandat.pdt_22) { formData.append("pdt_22", this.suiviMandat.pdt_22) }
-      formData.append("pdt_41", this.suiviMandat.pdt_41);
-      if (this.suiviMandat.pdt_42) { formData.append("pdt_42", this.suiviMandat.pdt_42) }
-      formData.append("ap_11", this.suiviMandat.ap_11);
-      if (this.suiviMandat.ap_12) { formData.append("ap_12", this.suiviMandat.ap_12) }
-      formData.append("ap_21", this.suiviMandat.ap_21);
-      if (this.suiviMandat.ap_22) { formData.append("ap_22", this.suiviMandat.ap_22) }
-      formData.append("ap_41", this.suiviMandat.ap_41);
-      if (this.suiviMandat.ap_42) { formData.append("ap_42", this.suiviMandat.ap_42) }
       formData.append("visa", JSON.parse(localStorage.getItem("infolica_user")).id);
       formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
 
@@ -188,6 +184,23 @@ export default {
       .catch(err => handleException(err, this));
     },
 
+    /**
+     * select all in form
+     */
+    selectAll(term) {
+      let fields = document.getElementById(term).getElementsByClassName('md-checkbox');
+
+      fields.forEach(x => {
+        if (!x.classList.contains('md-checked')) {
+          for (const elem of x.children) {
+            if (elem.className === 'md-checkbox-container') {
+              elem.click();
+              break
+            }
+          }
+        }
+      });
+    }
   },
 
   mounted: function() {
