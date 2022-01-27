@@ -7,7 +7,6 @@ import {handleException} from '@/services/exceptionsHandler';
 import {checkPermission,
         getClients,
         filterList,
-        adjustColumnWidths,
         getClientsByTerm } from '@/services/helper';
 
 import moment from "moment";
@@ -225,7 +224,6 @@ export default {
     this.editClientClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION);
     this.initClientsSearchList();
     this.searchClients();
-    adjustColumnWidths();
   }
 }
 </script>

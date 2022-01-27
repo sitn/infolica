@@ -21,7 +21,7 @@ import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.
 import ActivationAffaire from "@/components/Affaires/ActivationAffaire/ActivationAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { getOperateurs, checkPermission, getDocument, logAffaireEtape, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper'
+import { getOperateurs, checkPermission, getDocument, logAffaireEtape, getCurrentUserRoleId } from '@/services/helper'
 
 import moment from "moment";
 
@@ -672,8 +672,6 @@ export default {
 
     this.$root.$on('mapHandlerReady', () => this.showMap() );
     this.$root.$on('setAffaire', () => this.setAffaire() );
-
-    adjustColumnWidths();
   }
 };
 </script>
