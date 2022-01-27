@@ -51,9 +51,13 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.name !== 'Login' && !checkLogged()) {
     next({name: 'Login'});
-  } 
-  else{
-    next();
+  } else {
+    if (to.name === 'Login') {
+      localStorage.setItem('infolica_redirectPath', from.path);
+      next();
+    } else {
+      next();
+    }
   }      
 });
 

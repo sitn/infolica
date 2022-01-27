@@ -36,7 +36,14 @@ export default {
         .then(response =>{
           if(response && response.data && response.data.id){
             this.processLogin(response.data);
-            this.$router.push({ name: "Cockpit"});
+
+            const redirectPath = localStorage.getItem('infolica_redirectPath');
+            if (redirectPath) {
+              this.$router.replace(redirectPath);
+              localStorage.removeItem('infolica_redirectPath');
+            } else {
+              this.$router.push({ name: "Cockpit"});
+            }
           } else {
             this.showProgess = false;
             this.$refs.userpass.value = "";
