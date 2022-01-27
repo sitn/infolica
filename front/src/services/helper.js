@@ -441,36 +441,6 @@ export const logAffaireEtape = async function(affaire_id, etape_id, remarque=nul
     });
 }
 
-export const adjustColumnWidths = function() {
-    // since md-table fixed-header is not correctly updating table > thead > th widths after searching or filtrating the table,
-    // we have to adjust the table widths programmatically. They are now set 1000 ms after table-re-render, based on tbody > tr > td widths.
-    let c = 0
-    const interval = setInterval(() => {
-        const tables = document.getElementsByClassName('md-table');
-        tables.forEach(table => {
-            const rows = table.getElementsByClassName('md-table-row');
-            if (rows.length > 0) {
-                const firstRow = rows[0];
-                // find correct widths from tbody > tr > td
-                const correctWidths = [];
-                firstRow.children.forEach(td => {
-                    correctWidths.push(td.offsetWidth);
-                });
-                // set new widths on thead > tr > th
-                const theads = table.getElementsByClassName( 'md-table-head')
-                for (let x = 0; x < theads.length; x++) {
-                    theads[x].style.width = correctWidths[x] + 'px';
-                    theads[x].style.maxWidth = correctWidths[x] + 'px';
-                }
-            }
-        })
-    
-        c += 1;
-        if (c >= 10) {
-            clearInterval(interval);
-        }
-    }, 1000);
-}
 
 export const disabledDates_fct = function(date) {
     const day = date.getDay();

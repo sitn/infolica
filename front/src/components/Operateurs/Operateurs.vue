@@ -4,7 +4,7 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission, adjustColumnWidths} from '@/services/helper';
+import {checkPermission} from '@/services/helper';
 const moment = require('moment');
 
 export default {
@@ -262,7 +262,6 @@ export default {
   mounted: function(){
     this.searchOperateurs();
     this.editionOperateursAllowed = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
-    adjustColumnWidths();
   }
 }
 </script>

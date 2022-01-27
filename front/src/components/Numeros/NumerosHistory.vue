@@ -3,7 +3,7 @@
 
 
 <script>
-import { checkPermission, getCadastres, getEtatsNumeros, stringifyAutocomplete, adjustColumnWidths } from "@/services/helper";
+import { checkPermission, getCadastres, getEtatsNumeros, stringifyAutocomplete } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import moment from "moment";
 
@@ -331,7 +331,6 @@ export default {
     this.getNumeroProvenance();
     this.getNumeroDestination();
     this.initPermissions();
-    adjustColumnWidths();
   }
 };
 </script>

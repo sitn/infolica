@@ -11,7 +11,6 @@ import {
   stringifyAutocomplete,
   stringifyAutocomplete2,
   checkPermission,
-  adjustColumnWidths,
   getClientsByTerm,
   setClientsAdresse_
 } from "@/services/helper";
@@ -282,7 +281,6 @@ export default {
     this.initOperateursListe();
     this.initEtapesListe();
     this.setPermissions();
-    adjustColumnWidths();
   }
 };
 </script>

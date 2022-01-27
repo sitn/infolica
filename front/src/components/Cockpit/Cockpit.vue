@@ -7,7 +7,7 @@ import AffairesChezClient from "@/components/Cockpit/AffairesChezClient/Affaires
 import Matdiff from "@/components/Cockpit/Matdiff/Matdiff.vue";
 
 import { handleException } from '@/services/exceptionsHandler';
-import { checkPermission, getOperateurs, stringifyAutocomplete, stringifyAutocomplete2, getCurrentUserRoleId, adjustColumnWidths } from '@/services/helper';
+import { checkPermission, getOperateurs, stringifyAutocomplete, stringifyAutocomplete2, getCurrentUserRoleId } from '@/services/helper';
 
 import moment from "moment";
 
@@ -282,7 +282,6 @@ export default {
     this.getAffaire();
     this.getOperateursList();
     this.getPermissions();
-    adjustColumnWidths();
   },
   
   created() {
