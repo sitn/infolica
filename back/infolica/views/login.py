@@ -21,6 +21,8 @@ def login_view(request):
     """
     Login
     """
+    settings = request.registry.settings
+
     login = None
     password = None
 
@@ -37,14 +39,20 @@ def login_view(request):
         Operateur.login) == login).first()
 
     if not operateur:
-        return exc.HTTPNotFound('Username {} was not found'.format(login))
+        return exc.HTTPForbidden('Username {} was not found'.format(login))
 
-    try:
-        resp_json = LDAPQuery.do_login(request, login, password)
+    if 'ldap_login_skip_authentication_login' in settings and  login in settings['ldap_login_skip_authentication_login'].split(','):
+        if password == settings['ldap_login_skip_authentication_password']:
+            resp_json = {'dn': login}
+        else:
+            return exc.HTTPForbidden('Mot de passe incorrect !')
+    else:
+        try:
+            resp_json = LDAPQuery.do_login(request, login, password)
 
-    except Exception as error:
-        log.error(str(error))
-        return {'error': 'true', 'code': 403, 'message': str(error)}
+        except Exception as error:
+            log.error(str(error))
+            return exc.HTTPForbidden(error)
 
     operateur_json = None
 
