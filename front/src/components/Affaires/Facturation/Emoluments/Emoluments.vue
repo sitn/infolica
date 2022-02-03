@@ -1460,6 +1460,8 @@ export default {
     this.getEmolumentsUnit().then(() => {
       this.getEmolumentsGeneral();
     });
+
+    this.$root.$on("getEmolumentsGeneral", () => this.getEmolumentsGeneral());
   }
 }
 </script>
