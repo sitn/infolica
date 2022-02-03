@@ -5,6 +5,7 @@ import pyramid.httpexceptions as exc
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import AffaireEtape
+from infolica.models.models import EmolumentAffaire, EmolumentAffaireRepartition
 from infolica.models.models import Facture, FactureType, VFactures
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
@@ -99,10 +100,6 @@ def factures_update_view(request):
     """
     Update facture
     """
-    # # Check authorization
-    # if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
-    #     raise exc.HTTPForbidden()
-
     # Check connected
     if not check_connected(request):
         raise exc.HTTPForbidden()
@@ -155,13 +152,35 @@ def factures_delete_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise exc.HTTPForbidden()
 
-    id = request.params['id'] if 'id' in request.params else None
+    facture_id = request.params['id'] if 'id' in request.params else None
 
-    facture = request.dbsession.query(Facture).filter(Facture.id == id).first()
+    # Check if emolument_facture_repartition exists and delete it before
+    results = request.dbsession.query(
+        EmolumentAffaireRepartition
+    ).filter(
+        EmolumentAffaireRepartition.facture_id == facture_id
+    ).all()
+
+    if results and len(results) > 0:
+        for result in results:
+            # set emolument to "unused" if this is not the case so it is set back to editable mode
+            emol = request.dbsession.query(
+                EmolumentAffaire
+            ).filter(
+                EmolumentAffaire.id == result.emolument_affaire_id
+            ).first()
+
+            emol.utilise = False
+
+            # Remove emolument_facture_repartition
+            request.dbsession.delete(result)
+
+    # remove facture
+    facture = request.dbsession.query(Facture).filter(Facture.id == facture_id).first()
 
     if not facture:
         raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(Facture.__tablename__, id))
+            CustomError.RECORD_WITH_ID_NOT_FOUND.format(Facture.__tablename__, facture_id))
 
     request.dbsession.delete(facture)
 

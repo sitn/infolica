@@ -501,6 +501,7 @@ export default {
 
             //Log edition facture
             logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_FACTURE_SECONDAIRE_ID), "Suppression");
+            this.$root.$emit("getEmolumentsGeneral");
 
             this.searchAffaireFactures();
           }
