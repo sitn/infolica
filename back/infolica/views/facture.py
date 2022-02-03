@@ -136,7 +136,7 @@ def factures_delete_view(request):
         EmolumentAffaireRepartition.facture_id == facture_id
     ).all()
 
-    if len(results) > 0:
+    if results and len(results) > 0:
         for result in results:
             # set emolument to "unused" if this is not the case so it is set back to editable mode
             emol = request.dbsession.query(
