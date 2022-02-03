@@ -28,63 +28,15 @@ sqlalchemy.url = postgresql://users:password@host/infolica
 #############################################
 # Les informations de connexion au LDAP
 #############################################
-# L'URL de LDAP et le numéro de port
-ldap_url = ldap://host:port
+ldap_url = /*TO COMPLETE*/
+ldap_login_base_dn = /*TO COMPLETE*/
+ldap_login_domain = /*TO COMPLETE*/
+ldap_login_attributes= /*TO COMPLETE*/
+ldap_login_filter_tmpl = /*TO COMPLETE*/
+ldap_login_scope = /*TO COMPLETE*/
+ldap_login_skip_authentication_login = /*TO COMPLETE*/
+ldap_login_skip_authentication_password = /*TO COMPLETE*/
 
-# Le bind utilisé par la connexion
-ldap_bind= cn=Manager,dc=maxcrc,dc=com
-
-# Le mot de passe du bind utilisé par la connexion
-ldap_passwd= password
-
-
-###########################################################
-# La configuration de la recherche des logins dans LDAP
-###########################################################
-
-# Le DN de base de la recherche des logins
-ldap_login_query_base_dn= ou=infolicaUsers,ou=People,dc=maxcrc,dc=com
-
-# Le filtre de la recherche des logins
-ldap_login_query_filter_tmpl= (uid=%%(login)s)
-
-# Les attributs à retourner
-ldap_login_query_attributes= uid, givenName, sn, mail, telephoneNumber, mobile
-
-# Le scope de la recherche (LEVEL, SUBTREE)
-ldap_login_query_scope= SUBTREE
-
-
-###########################################################
-# La configuration de la recherche des groupes dans LDAP
-###########################################################
-
-# Le DN de base de la recherche des groupes
-ldap_group_query_base_dn= ou=infolicaGroups,ou=People,dc=maxcrc,dc=com
-
-# Le filtre de la recherche des groupes
-ldap_group_query_filter_tmpl= (&(objectClass=groupOfNames)(cn=INFOLICA*)(member=%%(userdn)s))
-
-# Le nombre de secondes du cache de la recherche des groupes
-ldap_group_query_cache_period=600
-
-# Le scope de la recherche (LEVEL, SUBTREE)
-ldap_group_query_scope=SUBTREE
-
-# Les attributs à retourner
-ldap_group_attributes=cn, ou,member
-
-# L'attribut qui correspond à l'identifiant d'un groupe LDAP
-ldap_group_attribute_id= cn
-
-# Les informations de recherche d'un utilisateur LDAP
-ldap_search_user_filter=(objectClass=person)
-
-# Le préfixe des groupes infolica
-infolica_groups_prefix= INFOLICA_
-
-# Le préfixe des groupes infolica
-infolica_group_to_avoid= /*TO COMPLETE*/
 
 ######################################################################################
 # Le nombre max des résultats retournés par la recherche

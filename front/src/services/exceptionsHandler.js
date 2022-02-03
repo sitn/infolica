@@ -12,9 +12,12 @@ export const handleException = function (error, component) {
     }
     //Not authorized
     else if(code === 403){
-        component.$root.$emit("ShowError", "Veuillez vous connecter pour continuer"); 
-        if(component.$router && component.$router.currentRoute && component.$router.currentRoute.name != 'Login')
+        if(component.$router && component.$router.currentRoute && component.$router.currentRoute.name != 'Login') {
             component.$router.push({name: "Login"});
+            component.$root.$emit("ShowError", "Veuillez vous connecter pour continuer"); 
+        } else {
+            component.$root.$emit("ShowError", "Le nom d'utilisateur ou le mot de passe est incorrect");
+        }
     }
     //Custom error
     else if(error && error.msg){
