@@ -3,7 +3,9 @@ from datetime import date, datetime
 from sqlalchemy import func, and_, desc
 from sqlalchemy import String
 from sqlalchemy.sql.expression import cast
-from infolica.models.models import Numero, AffaireNumero, Role, ReservationNumerosMO, Cadastre, Operateur
+from infolica.models.models import Affaire
+from infolica.models.models import Numero, AffaireNumero, Client
+from infolica.models.models import Role, ReservationNumerosMO, Cadastre, Operateur
 from infolica.scripts.mailer import send_mail
 
 from infolica.scripts.authentication import get_user_functions, check_connected
@@ -322,3 +324,32 @@ class Utils(object):
                 <li>Description: " + str(model.nom) + "</li></ul>"
         send_mail(request, mail_list, "", subject, html=text)
         return
+
+
+    @classmethod
+    def sendMailClientHorsCanton(cls, request, client_id, affaire_id):
+        affaire = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
+        affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
+        cl = request.dbsession.query(Client).filter(Client.id == client_id).first()
+        #Contrôle que le client habite hors canton et que son numéros SAP est null
+        if cl.no_sap is None and int(cl.npa) not in request.registry.settings['npa_NE']:
+            operateur_secretariat = request.registry.settings["operateur_secretariat"].split(",")
+            mail_list = request.dbsession.query(Operateur.mail).filter(Operateur.id.in_(operateur_secretariat)).all()
+            mail_list = [mail[0] for mail in mail_list]
+
+            html = "<h3>Vérification de client</h3>"
+            html += "<p>Un client hors canton et sans numéro SAP a été référencé dans la facturation de l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire_id)) + "'>" + str(affaire_id) + affaire_nom + "</a></b>.</p>"
+            html += "<ul><li>" + ", ".join([
+                cl.entreprise if cl.entreprise is not None else " ".join([
+                    cl.titre if cl.titre is not None else "", 
+                    cl.prenom if cl.prenom is not None else "", 
+                    cl.nom if cl.nom is not None else ""
+                ]), 
+                cl.adresse if cl.adresse is not None else "", 
+                " ".join([
+                        cl.npa if cl.npa is not None else "", 
+                        cl.localite if cl.localite is not None else ""
+                    ])
+                ]) + " &#8594; <a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'clients/edit', str(cl.id)) + "'>Lien sur la fiche du client</a>"+ "</li></ul>"
+            html += "<p>Merci d'entreprendre les démarches nécessaires pour corriger le client ou pour demander sa création dans SAP.</p>"
+            send_mail(request, mail_list, "", "Infolica - Client hors canton à vérifier", html=html)
