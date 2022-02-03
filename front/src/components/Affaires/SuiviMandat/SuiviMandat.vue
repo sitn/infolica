@@ -190,16 +190,16 @@ export default {
     selectAll(term) {
       let fields = document.getElementById(term).getElementsByClassName('md-checkbox');
 
-      fields.forEach(x => {
-        if (!x.classList.contains('md-checked')) {
-          for (const elem of x.children) {
+      for (const x in fields) {
+        if (typeof fields[x] === 'object' && !fields[x].classList.contains('md-checked')) {
+          for (const elem of fields[x].children) {
             if (elem.className === 'md-checkbox-container') {
               elem.click();
               break
             }
           }
         }
-      });
+      }
     }
   },
 

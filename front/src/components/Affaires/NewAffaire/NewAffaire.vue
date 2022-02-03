@@ -535,7 +535,6 @@ export default {
           minimumIntegerDigits: 3,
           useGrouping: false,
         });
-        console.log(plan_3digits)
 
         formData.append("no_access", "MPD" + cadastre_2digits + " " + plan_3digits + " " + new Date().getFullYear().toString().substr(-2));
       }
