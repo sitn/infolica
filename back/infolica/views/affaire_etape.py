@@ -168,36 +168,8 @@ def etapes_new_view(request):
         # get clients_facture
         clients_factures_id = request.dbsession.query(Facture.client_id).filter(Facture.affaire_id == affaire_id).all()
         clients_factures_id = [cl_id[0] for cl_id in clients_factures_id]
-        clients_factures = request.dbsession.query(Client).filter(Client.id.in_(clients_factures_id)).all()
-
-        # get npa from canton de Neuchâtel
-        parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(os.path.join(parent_dir, "static", "npa_NE.txt"), "r") as f:
-            lines = f.readlines()
-            npa_NE = [int(line.rstrip()) for line in lines]
-
-        for cl in clients_factures:
-            if cl.no_sap is None and int(cl.npa) not in npa_NE:
-                operateur_secretariat = request.registry.settings["operateur_secretariat"].split(",")
-                mail_list = request.dbsession.query(Operateur.mail).filter(Operateur.id.in_(operateur_secretariat)).all()
-                mail_list = [mail[0] for mail in mail_list]
-
-                html = "<h3>Vérification de client</h3>"
-                html += "<p>Un client hors canton et sans numéro SAP a été référencé dans la facturation de l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire.id)) + "'>" + str(affaire.id) + affaire_nom + "</a></b>.</p>"
-                html += "<ul><li>" + ", ".join([
-                    cl.entreprise if cl.entreprise is not None else " ".join([
-                        cl.titre if cl.titre is not None else "", 
-                        cl.prenom if cl.prenom is not None else "", 
-                        cl.nom if cl.nom is not None else ""
-                    ]), 
-                    cl.adresse if cl.adresse is not None else "", 
-                    " ".join([
-                            cl.npa if cl.npa is not None else "", 
-                            cl.localite if cl.localite is not None else ""
-                        ])
-                    ]) + " &#8594; <a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'clients/edit', str(cl.id)) + "'>Lien sur la fiche du client</a>"+ "</li></ul>"
-                html += "<p>Merci d'entreprendre les démarches nécessaires pour corriger le client ou pour demander sa création dans SAP.</p>"
-                send_mail(request, mail_list, "", "Infolica - Client hors canton à vérifier", html=html)
+        for cl_id in clients_factures_id:
+            Utils.sendMailClientHorsCanton(request, cl_id, affaire.id)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireEtape.__tablename__))
 
