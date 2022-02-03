@@ -47,7 +47,7 @@ export default {
           } else {
             this.showProgess = false;
             this.$refs.userpass.value = "";
-            this.$root.$emit("ShowError", "Le nom d'utilisateur ou le mot de passe est incorrect")
+            this.$root.$emit("ShowError", "Le nom d'utilisateur ou le mot de passe est incorrect");
           }
         })
         //Error 

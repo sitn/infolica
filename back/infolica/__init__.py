@@ -16,7 +16,6 @@ def main(global_config, **settings):
         config.include('.models')
         config.include('pyramid_mako')
         config.include('.routes')
-        config.include('pyramid_ldap3')
         config.scan()
         config.add_subscriber(add_cors_headers_response_callback, NewRequest)
         config.add_renderer('jsonp', JSONP(param_name='callback'))
@@ -34,27 +33,6 @@ def main(global_config, **settings):
         config.set_authorization_policy(
             ACLAuthorizationPolicy()
         )
-
-        config.ldap_setup(
-            settings['ldap_url'],
-            bind=settings['ldap_bind'],
-            passwd=settings['ldap_passwd'])
-
-        config.ldap_set_login_query(
-            base_dn=settings['ldap_login_query_base_dn'],
-            filter_tmpl=settings['ldap_login_query_filter_tmpl'],
-            attributes=settings['ldap_login_query_attributes'].replace(', ', ',').replace(' , ', ',').replace(' ,',
-                                                                                                              ',').split(
-                ','),
-            scope=settings['ldap_login_query_scope'])
-
-        config.ldap_set_groups_query(
-            base_dn=settings['ldap_group_query_base_dn'],
-            filter_tmpl=settings['ldap_group_query_filter_tmpl'],
-            scope=settings['ldap_group_query_scope'],
-            cache_period=int(settings['ldap_group_query_cache_period']),
-            attributes=settings['ldap_group_attributes'].replace(', ', ',').replace(' , ', ',').replace(' ,',
-                                                                                                        ',').split(','))
 
         # store postal codes of canton de Neuchâtel
         config.add_settings({'npa_NE': getPostalCodesNeuchatel()})
