@@ -9,9 +9,6 @@
                     </md-button>
                 </md-card-expand-trigger>
                 Documents
-                <md-button class="md-primary uploadDocBtn" v-on:click="showUploadDocsDialog = true" v-if="showUploadDocBtn && false">
-                    Charger des documents
-                </md-button>
             </div>
         </md-card-header>
 
@@ -47,8 +44,8 @@
                         </div>
                     </div>
 
-                    <div v-if="documents[0]">
-                        <md-table v-model="documents" md-sort="relpath" md-sort-order="asc" md-fixed-header md-card>
+                    <div v-if="documents && documents.length > 0">
+                        <md-table v-model="documents" :md-sort.sync="tableSort_by" :md-sort-order.sync="tableSort_order" :md-sort-fn="sortAffaireDocuments" md-fixed-header md-card>
                             <md-table-row slot="md-table-row" slot-scope="{ item }">
                                 <md-table-cell md-label="Dossier" md-sort-by="relpath">{{ item.relpath }}</md-table-cell>
                                 <md-table-cell md-label="Fichier" md-sort-by="filename">{{ item.filename }}</md-table-cell>

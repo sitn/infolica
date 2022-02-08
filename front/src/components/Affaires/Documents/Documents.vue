@@ -31,7 +31,8 @@ export default {
     types_documents_list: null,
     showEditAffairePathBtn: false,
     showUploadDocBtn: false,
-    showUploadDocsDialog: false,
+    tableSort_by: 'relpath',
+    tableSort_order: 'desc'
   }),
 
   methods: {
@@ -58,28 +59,21 @@ export default {
      * SEARCH AFFAIRE DOCUMENTS
      */
     async searchAffaireDocuments() {
-      this.$http
-        .get(
+      this.$http.get(
           process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_DOCUMENTS_ENDPOINT +
-            this.$route.params.id,
+          process.env.VUE_APP_AFFAIRE_DOCUMENTS_ENDPOINT +
+          "?affaire_id=" + this.affaire.id,
           {
             withCredentials: true,
             headers: { Accept: "application/json" }
           }
-        )
-        .then(response => {
-          if (response.data) {
-            let tmp = response.data;
-            tmp.forEach(x => x.modification_sort = new Date(x.modification).getTime());
-            this.documents = tmp;
+        ).then(response => {
+          if (response && response.data) {
+            this.documents = response.data;
           }
-        })
-        .catch(err => {
+        }).catch(err => {
           handleException(err, this);
         });
-
-        this.showUploadDocsDialog = false;
     },
 
     /**
@@ -186,18 +180,28 @@ export default {
       this.searchAffaireDossier();
     },
 
+    sortAffaireDocuments(value) {
+      return value.sort((a, b) => {
+          const sortBy = this.tableSort_by;
 
+          if (this.tableSort_order === 'desc') {
+            return String(a[sortBy]).localeCompare(b[sortBy]);
+          }
+
+          return String(b[sortBy]).localeCompare(a[sortBy]);
+        })
+    }
 
   },
 
   mounted: function() {
-    this.searchAffaireDocuments();
     this.searchAffaireDossier();
+    this.searchAffaireDocuments();
 
     this.$root.$on("searchAffaireDocuments", () => {
-      this.searchAffaireDossier()
-      this.searchAffaireDocuments()
-    })
+      this.searchAffaireDossier();
+      this.searchAffaireDocuments();
+    });
 
     // show edit affaire path
     if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {

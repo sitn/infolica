@@ -121,7 +121,7 @@ def includeme(config):
     config.add_route('affaire_preavis_by_affaire_id','/infolica/api/affaire_preavis/{id}')
     #Documents affaire
     config.add_route('affaire_dossier_by_affaire_id', '/infolica/api/affaire_dossier/{id}')
-    config.add_route('affaire_documents_by_affaire_id','/infolica/api/affaire_documents/{id}')
+    config.add_route('affaire_documents_by_affaire_id','/infolica/api/affaire_documents')
     config.add_route('types_documents', '/infolica/api/types_documents')
     config.add_route('types_documents_s', '/infolica/api/types_documents/')
     config.add_route('upload_affaire_document', '/infolica/api/upload_affaire_document')
@@ -178,8 +178,6 @@ def includeme(config):
     #Numéro MO next available
     config.add_route('numero_mo_next', '/infolica/api/numero_mo_next')
     config.add_route('types_numeros_mo', '/infolica/api/types_numeros_mo')
-    #Open Folder
-    config.add_route('open_folder', '/infolica/api/open_folder')
     #Notes de mise à jour
     config.add_route('notes_maj', '/infolica/api/notes_maj')
     config.add_route('version', '/infolica/api/version')
