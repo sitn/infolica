@@ -31,6 +31,7 @@ def includeme(config):
     config.add_route('modification_affaire_by_affaire_fille', '/infolica/api/modification_affaire_by_affaire_fille/{id}')
     config.add_route('affaires_cockpit', '/infolica/api/affaires_cockpit')
     config.add_route('abandon_affaire_reopen_parent_affaire', '/infolica/api/abandon_affaire_reopen_parent_affaire')
+    config.add_route('affaire_attribution_change_state', '/infolica/api/affaire_attribution_change_state')
     #Factures
     config.add_route('factures', '/infolica/api/factures')
     config.add_route('factures_s', '/infolica/api/factures/')

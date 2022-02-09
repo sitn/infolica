@@ -617,6 +617,30 @@ def affaire_spatial(request):
     return affaires
 
 
+@view_config(route_name="affaire_attribution_change_state", request_method="PUT", renderer='json')
+def affaire_attribution_change_state_update_view(request):
+    """
+    Update attribution of affaire
+    """
+    # Check connected
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+
+    affaire_id = request.params['affaire_id'] if "affaire_id" in request.params else None
+    attribution = request.params['attribution'] if ("attribution" in request.params and request.params['attribution'] != "null") else None
+
+    if affaire_id is None:
+        raise CustomError(CustomError.INCOMPLETE_REQUEST)
+
+    affaire = request.dbsession.query(Affaire).filter(
+        Affaire.id == affaire_id
+    ).first()
+
+    affaire.attribution = attribution
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
+
+
 @view_config(route_name="guichet_rf_saisie_pm", request_method="GET", renderer='jsonp')
 def guichet_rf_saisie_pm_view(request):
     """
