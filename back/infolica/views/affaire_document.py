@@ -47,7 +47,7 @@ def affaire_documents_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    affaire_id = request.matchdict['id']
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     affaire_chemin = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
 
     documents = []
@@ -63,10 +63,12 @@ def affaire_documents_view(request):
             file_i = {}
             file_i['relpath'] = os.path.relpath(root, affaire_path).replace('\\', '/')
             file_i['filename'] = name
-            file_i['creation'] = datetime.fromtimestamp(os.path.getctime(os.path.join(root, name))).strftime("%d.%m.%Y")
-            file_i['modification'] = datetime.fromtimestamp(os.path.getmtime(os.path.join(root, name))).strftime("%d.%m.%Y")
+            file_i['creation_sort'] = os.path.getctime(os.path.join(root, name))
+            file_i['modification_sort'] = os.path.getmtime(os.path.join(root, name))
+            file_i['creation'] = datetime.fromtimestamp(file_i['creation_sort']).strftime("%d.%m.%Y")
+            file_i['modification'] = datetime.fromtimestamp(file_i['modification_sort']).strftime("%d.%m.%Y")
             documents.append(file_i)
-
+    
     return documents
 
 
@@ -99,22 +101,3 @@ def download_affaire_document_view(request):
     headers['Accept-Ranges'] = 'bite'
     headers['Content-Disposition'] = 'attachment;filename=' + urllib.parse.quote(filename)
     return response
-
-
-@view_config(route_name='open_folder', request_method='GET', renderer='json')
-def save_document_view(request):
-    """
-    open folder (affaire)
-    """
-    basepath = request.registry.settings['affaires_directory_full_path']
-
-    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
-    relpath = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
-    
-    path = os.path.join(basepath, relpath)
-
-    if os.path.exists(path):
-    #     subprocess.Popen('explorer ' + path)
-        return {'affaire_path': path.replace('\\', '/')}
-    
-    return {'affaire_path': basepath.replace('\\', '/')}

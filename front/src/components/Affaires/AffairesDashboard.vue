@@ -624,14 +624,14 @@ export default {
     async affaireAttributionChangeState() {
       let formData = new FormData();
       if (this.affaireAttribution.checked) {
-        formData.append("id_affaire", this.affaire.id);
+        formData.append("affaire_id", this.affaire.id);
         formData.append("attribution", JSON.parse(localStorage.getItem("infolica_user")).initiales);
       } else {
-        formData.append("id_affaire", this.affaire.id);
+        formData.append("affaire_id", this.affaire.id);
         formData.append("attribution", null);
       }
       this.$http.put(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_ATTRIBUTION_CHANGE_STATE_ENDPOINT,
         formData,
         {
           withCredentials: true,
