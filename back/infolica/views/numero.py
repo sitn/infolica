@@ -477,11 +477,13 @@ def numero_differe_view(request):
     
     if role == "mo":
         user_id = request.params['user_id'] if 'user_id' in request.params else None
-        
+        numero_etat_vigueur_id = request.registry.settings['numero_vigueur_id']
+
         if user_id is not None:
             query = query.filter(VNumeros.diff_operateur_id == user_id)
 
         query = query.filter(and_(
+            VNumeros.etat_id == numero_etat_vigueur_id,
             VNumeros.diff_entree.isnot(None),
             VNumeros.diff_sortie == None
         ))
