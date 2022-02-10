@@ -228,6 +228,7 @@ def numeros_by_id_delete_view(request):
         elif query.etat_id == abandonne_id:
             query.etat_id = projet_id
 
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Numero.__tablename__))
 
 ###########################################################
 # NUMERO ETAT HISTO
@@ -573,3 +574,26 @@ def numero_differe_update_view(request):
     # update numero_differe
     record = Utils.set_model_record(record, request.params)
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroDiffere.__tablename__))
+
+
+@view_config(route_name='numeros_differes', request_method='DELETE', renderer='json')
+def numero_differe_delete_view(request):
+    """
+    DELETE numero_differe
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+
+    numero_id = request.params["numero_id"] if "numero_id" in request.params else None
+
+    if numero_id is None:
+        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(Numero.__tablename__, numero_id))
+
+    record = request.dbsession.query(NumeroDiffere).filter(NumeroDiffere.numero_id == numero_id).first()
+
+    print(record)
+    # delete numero_differe
+    request.dbsession.delete(record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(NumeroDiffere.__tablename__))

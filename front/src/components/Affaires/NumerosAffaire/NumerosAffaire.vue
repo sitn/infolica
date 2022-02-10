@@ -57,7 +57,6 @@ export default {
         reservation_numeros_mo: false
       },
       showNumerosMO: true,
-      showAlertMatDiffDialog: false,
       showQuittancePCOPDialog: false,
       types_numeros: {
         bf: Number(process.env.VUE_APP_NUMERO_TYPE_BF),
@@ -285,7 +284,12 @@ export default {
             onConfirm: () => this.doUpdateDiffererNumero(numero, "date_sortie")
           };
         } else {
-          this.showAlertMatDiffDialog = true;
+          this.confirmDialog = {
+            title: "Matérialisation différée",
+            content: "La mention 'mat diff' du numéro " + numero.numero + " doit être supprimée. Aucune requisition ne sera produite.",
+            show: true,
+            onConfirm: () => this.doDeleteDiffererNumero(numero)
+          };
         }
       } else if (etat === "controle") {
         if (this.affaire.date_envoi !== null) {
@@ -358,6 +362,28 @@ export default {
         });
     },
 
+    /**
+     * Supprimer la mat diff
+     */
+    async doDeleteDiffererNumero(numero) {
+      this.$http.delete(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_DIFFERES_ENDPOINT + "?numero_id=" + numero.numero_id,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        )
+        .then(response => {
+          if (response && response.data) {
+            this.searchAffaireNumeros();
+            this.$root.$emit("ShowMessage", "Le numéro " + numero.numero + " a été mis à jour avec succès.");
+          }
+        })
+        .catch(err => {
+          handleException(err, this);
+        });
+    },
+
     // /**
     //  * Get immeubles associes
     //  */
@@ -383,29 +409,6 @@ export default {
     //   });
     // },
 
-    // /**
-    //  * Génère une quittance des numéros réservés dans l'affaire
-    //  */
-    // async doQuittanceNumerosReserves() {
-    //   let tmp = this.getCadastresNumerosNumerosBases(this.affaire_numeros_nouveaux);
-    //   let cadastres = tmp[0];
-    //   let numeros = tmp[1];
-    //   let numeros_bases = tmp[2];
-
-    //   let formData = new FormData();
-    //   formData.append("template", "NumerosReserves");
-    //   formData.append("values", JSON.stringify({
-    //     "affaire_id": this.affaire.id,
-    //     "date": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
-    //     "cadastre": cadastres,
-    //     "numero": numeros,
-    //     "numero_base": numeros_bases
-    //   }));
-
-    //   getDocument(formData).then(response => {
-    //     this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'");
-    //   }).catch(err => handleException(err, this));
-    // },
 
     /**
      * Génère une quittance des numéros réservés dans l'affaire
