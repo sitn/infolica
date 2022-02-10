@@ -19,10 +19,10 @@
                 <md-button class="md-primary md-raised" v-if="permission.editAffaireAllowed && false" v-on:click="duplicateAffaire">Modification / Visa</md-button>
                 <md-button class="md-accent md-raised" v-if="permission.affaireReactivation && affaire.date_cloture !== null" @click="callActivationAffaire">Réactiver l'affaire</md-button>
 
-                <md-speed-dial style="align-items: flex-end;" v-if="permission.affaireCloture && affaire.date_cloture === null" md-direction="bottom" class="md-fixed">
-                    <md-button class="md-accent md-raised">
+                <md-speed-dial style="align-items: flex-end;" v-if="permission.affaireCloture && affaire.date_cloture === null" md-direction="bottom" class="md-fixed" md-event="click">
+                    <md-speed-dial-target id="closeAffaireBtn" class="md-raised md-accent" style="margin: 6px !important;">
                         <md-icon>block</md-icon>
-                    </md-button>
+                    </md-speed-dial-target>
 
                     <md-speed-dial-content style="align-items: flex-end;">
                         <md-button class="md-accent" @click="callClotureAffaire" v-if="permission.cloreAffaireEnabled" md-dense>Cloturer</md-button>
