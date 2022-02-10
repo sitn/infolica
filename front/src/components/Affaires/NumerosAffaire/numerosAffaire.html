@@ -181,4 +181,10 @@
         @md-cancel="confirmDialog.show=false"
         @md-confirm="confirmDialog.onConfirm" />
 
+    <md-dialog-alert
+        :md-active.sync="alertDialog.show"
+        :md-title="alertDialog.title"
+        :md-content="alertDialog.content"
+        md-confirm-text="Ok" />
+
 </div>

@@ -38,6 +38,11 @@ export default {
       affaire_numeros_mo: [],
       affaire_numeros_nouveaux: [],
       affaire_numeros_nouveaux_mo: [],
+      alertDialog: {
+        show: false,
+        title: "",
+        content: ""
+      },
       confirmDialog: {
         show: false,
         title: '',
@@ -277,12 +282,21 @@ export default {
         };
       } else if (etat === "sortie") {
         if (this.affaire.date_envoi !== null) {
-          this.confirmDialog = {
-            title: "Matérialisation différée",
-            content: "Le numéro " + numero.numero + " a été matérialisé et la mention 'mat diff' va être supprimée.",
-            show: true,
-            onConfirm: () => this.doUpdateDiffererNumero(numero, "date_sortie")
-          };
+          // si numéro est en projet, on ne peut pas radier la mat diff !
+          if (numero.numero_etat_id === this.etatNumeros_conf.projet) {
+            this.alertDialog = {
+              show: true,
+              title: "Radiation impossible",
+              content: "La mat diff ne peut pas être radiée sur un bien-fonds en projet !"
+            };
+          } else {
+            this.confirmDialog = {
+              title: "Matérialisation différée",
+              content: "Le numéro " + numero.numero + " a été matérialisé et la mention 'mat diff' va être supprimée.",
+              show: true,
+              onConfirm: () => this.doUpdateDiffererNumero(numero, "date_sortie")
+            };
+          }
         } else {
           this.confirmDialog = {
             title: "Matérialisation différée",
