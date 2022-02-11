@@ -23,7 +23,7 @@
                     <p v-if="suiviMandat.date" style="margin-top: 0px;">Dernier contrôle effectué le {{suiviMandat.date}} par {{suiviMandat.visa.nom}}</p>
 
                     <div v-if="suiviMandat.id">
-                        <div class="md-layout md-gutter md-alignment-top-space-between">
+                        <div class="md-layout md-gutter md-alignment-top-space-between" v-if="affaire.type_id !== typesAffaires_conf.mpd">
                             <div class="md-layout-item md-size-35">
                                 <!-- Mensuration officielle en cours -->
                                 <md-card>
@@ -62,7 +62,9 @@
                                         <div class="md-title">Mensuration officielle approuvée</div>
                                         
                                         <!-- Autre types d'affaires que cadastration et division/réunion -->
-                                        <div v-if="![typesAffaires_conf.cadastration, typesAffaires_conf.mutation, typesAffaires_conf.modification_mutation].includes(affaire.type_id)">
+                                        <div v-if="![typesAffaires_conf.cadastration,
+                                                     typesAffaires_conf.mutation,
+                                                     typesAffaires_conf.modification_mutation].includes(affaire.type_id)">
                                             <div class="md-layout md-gutter">
                                                 <div class="md-layout-item md-size-50">
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.ap_11">
@@ -337,7 +339,54 @@
                                     </md-card-content>
                                 </md-card>
                             </div>
-                        </div>    
+                        </div>
+
+                        <!-- Affaire_type mpd -->
+                        <div class="md-layout md-gutter md-alignment-top-space-between" v-if="affaire.type_id === typesAffaires_conf.mpd">
+                            <div class="md-layout-item">
+                                <md-card>
+                                    <md-card-content>
+                                        <div v-if="affaire.type_id === typesAffaires_conf.mpd">
+                                            <div class="md-layout md-gutter">
+                                                <div class="md-layout-item md-size-30">
+                                                    <div class="md-subhead">Général</div>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('gen_')">Tout cocher</md-button>
+                                                    <div id="gen_">
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.ap_21">Répertoire de travail (bon endroit, bonne structure)</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.gen_pdf_travaux">Fichier PDF après MPD figurant les travaux en couleur</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.gen_scan_croquis">Scan du croquis terrain</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.gen_geoportail_attributs">Attributs corrects dans le suivi (géoportail) : type, statut, personne pré-analyse, personne mesure, remarque</md-checkbox>
+                                                    </div>
+                                                  
+                                                </div>
+          
+                                                <div class="md-layout-item md-size-30">
+                                                    <div class="md-subhead">Base de données</div>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('geos_')">Tout cocher</md-button>
+                                                    <div id="geos_">
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_couleur_pastilles">Toutes les pastilles sont vertes ou grises</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_couvsol_numerotation_pt_particuliers">Réservation des numéros de points particuliers (660)</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_couvsol_numerotation_bat">Réservation des numéros de bâtiments</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_objdiv_bat_sout">Désignation des bâtiments et bâtiments souterrains</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_objdiv_pt_constr_supprimes">Points 760 supprimés</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_objdiv_geometrie">Pas d'OD sans géométrie</md-checkbox>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="md-layout-item md-size-30">
+                                                    <div class="md-subhead">Normes</div>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('normes_')">Tout cocher</md-button>
+                                                    <div id="normes_">
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.normes_respect_petits_objects">Les objets du type : balcons, petits bâtiments, petites surfaces de nature respectent les normes (ne pas en saisir trop)</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.normes_bat_couv_digitalises">Pas de bâtiments ni de couverts digitalisés</md-checkbox>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+                        </div>
 
                         <!-- Visa et date -->
                         <div class="md-layout md-gutter">
