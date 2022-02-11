@@ -594,7 +594,6 @@ def numero_differe_delete_view(request):
 
     record = request.dbsession.query(NumeroDiffere).filter(NumeroDiffere.numero_id == numero_id).first()
 
-    print(record)
     # delete numero_differe
     request.dbsession.delete(record)
 
