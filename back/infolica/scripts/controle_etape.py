@@ -356,30 +356,3 @@ class ControleEtapeChecker():
 
         return test > 0
     
-    
-    @staticmethod
-    def _get_facture_date_du_jour_controle(**kwargs):
-        request = kwargs.get('request')
-        affaire_id = kwargs.get('affaire_id')
-
-        facture_type_facture_id = int(request.registry.settings['facture_type_facture_id'])
-
-        factures = request.dbsession.query(
-            Facture
-        ).filter(
-            Facture.affaire_id == affaire_id
-        ).filter(
-            Facture.type_id == facture_type_facture_id
-        ).all()
-
-        if factures is None:
-            return None
-
-        test = True
-        today = datetime.now().date()
-        for facture in factures:
-            if facture.date is None or abs((today-facture.date).days):
-                test = False
-                break
-
-        return test
