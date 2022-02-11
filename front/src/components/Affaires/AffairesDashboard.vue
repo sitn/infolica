@@ -10,9 +10,7 @@ import NumerosAffaire from "@/components/Affaires/NumerosAffaire/NumerosAffaire.
 import Documents from "@/components/Affaires/Documents/Documents.vue";
 import Suivi from "@/components/Affaires/Suivi/Suivi.vue";
 import Preavis from "@/components/Affaires/Preavis/Preavis.vue";
-import DuplicationAffaire from "@/components/Affaires/DuplicationAffaire/DuplicationAffaire.vue";
 import Facturation from "@/components/Affaires/Facturation/Facturation.vue";
-import Remarques from "@/components/Affaires/Remarques/Remarques.vue";
 import ControleMutation from "@/components/Affaires/ControleMutation/ControleMutation.vue";
 import ControleGeometre from "@/components/Affaires/ControleGeometre/ControleGeometre.vue";
 import ControlePPE from "@/components/Affaires/ControlePPE/ControlePPE.vue";
@@ -37,12 +35,10 @@ export default {
     Suivi,
     Preavis,
     Facturation,
-    Remarques,
     ControleMutation,
     ControleGeometre,
     ControlePPE,
     SuiviMandat,
-    DuplicationAffaire,
     ClotureAffaire,
     ActivationAffaire
   },
@@ -56,7 +52,6 @@ export default {
       },
       affaireLoaded: false,
       chefs_equipe_list: [],
-      duplicationAffaireForm: null,
       mapLoaded: false,
       numerosReserves: [],
       parentAffaireReadOnly: false,
@@ -451,13 +446,6 @@ export default {
       });
     },
     
-    // /**
-    //  * Duplicate affaire
-    //  */
-    // duplicateAffaire(){
-    //   this.$refs.duplicationAffaireForm.openDuplicationAffaireDialog();
-    // },
-
     /**
      * Open Theme SITN
      */

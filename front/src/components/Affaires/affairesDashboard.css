@@ -44,3 +44,9 @@
     position: relative;
     top: 120px;
 }
+
+#closeAffaireBtn.md-fab {
+    width: 88px;
+    height: 36px;
+    border-radius: 2px;
+}

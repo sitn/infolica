@@ -38,6 +38,11 @@ export default {
       affaire_numeros_mo: [],
       affaire_numeros_nouveaux: [],
       affaire_numeros_nouveaux_mo: [],
+      alertDialog: {
+        show: false,
+        title: "",
+        content: ""
+      },
       confirmDialog: {
         show: false,
         title: '',
@@ -57,7 +62,6 @@ export default {
         reservation_numeros_mo: false
       },
       showNumerosMO: true,
-      showAlertMatDiffDialog: false,
       showQuittancePCOPDialog: false,
       types_numeros: {
         bf: Number(process.env.VUE_APP_NUMERO_TYPE_BF),
@@ -278,14 +282,28 @@ export default {
         };
       } else if (etat === "sortie") {
         if (this.affaire.date_envoi !== null) {
+          // si numéro est en projet, on ne peut pas radier la mat diff !
+          if (numero.numero_etat_id === this.etatNumeros_conf.projet) {
+            this.alertDialog = {
+              show: true,
+              title: "Radiation impossible",
+              content: "La mat diff ne peut pas être radiée sur un bien-fonds en projet !"
+            };
+          } else {
+            this.confirmDialog = {
+              title: "Matérialisation différée",
+              content: "Le numéro " + numero.numero + " a été matérialisé et la mention 'mat diff' va être supprimée.",
+              show: true,
+              onConfirm: () => this.doUpdateDiffererNumero(numero, "date_sortie")
+            };
+          }
+        } else {
           this.confirmDialog = {
             title: "Matérialisation différée",
-            content: "Le numéro " + numero.numero + " a été matérialisé et la mention 'mat diff' va être supprimée.",
+            content: "La mention 'mat diff' du numéro " + numero.numero + " doit être supprimée. Aucune requisition ne sera produite.",
             show: true,
-            onConfirm: () => this.doUpdateDiffererNumero(numero, "date_sortie")
+            onConfirm: () => this.doDeleteDiffererNumero(numero)
           };
-        } else {
-          this.showAlertMatDiffDialog = true;
         }
       } else if (etat === "controle") {
         if (this.affaire.date_envoi !== null) {
@@ -358,6 +376,28 @@ export default {
         });
     },
 
+    /**
+     * Supprimer la mat diff
+     */
+    async doDeleteDiffererNumero(numero) {
+      this.$http.delete(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_DIFFERES_ENDPOINT + "?numero_id=" + numero.numero_id,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        )
+        .then(response => {
+          if (response && response.data) {
+            this.searchAffaireNumeros();
+            this.$root.$emit("ShowMessage", "Le numéro " + numero.numero + " a été mis à jour avec succès.");
+          }
+        })
+        .catch(err => {
+          handleException(err, this);
+        });
+    },
+
     // /**
     //  * Get immeubles associes
     //  */
@@ -383,29 +423,6 @@ export default {
     //   });
     // },
 
-    // /**
-    //  * Génère une quittance des numéros réservés dans l'affaire
-    //  */
-    // async doQuittanceNumerosReserves() {
-    //   let tmp = this.getCadastresNumerosNumerosBases(this.affaire_numeros_nouveaux);
-    //   let cadastres = tmp[0];
-    //   let numeros = tmp[1];
-    //   let numeros_bases = tmp[2];
-
-    //   let formData = new FormData();
-    //   formData.append("template", "NumerosReserves");
-    //   formData.append("values", JSON.stringify({
-    //     "affaire_id": this.affaire.id,
-    //     "date": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
-    //     "cadastre": cadastres,
-    //     "numero": numeros,
-    //     "numero_base": numeros_bases
-    //   }));
-
-    //   getDocument(formData).then(response => {
-    //     this.$root.$emit("ShowMessage", "Le fichier '" + response + " se trouve dans le dossier 'Téléchargement'");
-    //   }).catch(err => handleException(err, this));
-    // },
 
     /**
      * Génère une quittance des numéros réservés dans l'affaire
