@@ -3,7 +3,10 @@
     <md-dialog :md-active.sync="showEmolumentsDialog">
       <md-dialog-title class="justifyTitleBtn">
         <div class="md-title">Émoluments <span v-if="form_general && form_general.id"> (id: {{ form_general.id }})</span></div>
-        <md-button class="md-accent md-raised" v-if="!disabled && form_general.id" @click="onRemoveEmolumentAffaire(form_general.id)">Supprimer</md-button>
+        <div>
+          <md-button class="md-primary md-raised" @click="onPrintEmoluments()" title="Imprime le tableau des émoluments"><md-icon>print</md-icon></md-button>
+          <md-button class="md-accent md-raised" v-if="!disabled && form_general.id" @click="onRemoveEmolumentAffaire(form_general.id)" title="Supprime définitivement l'émolument">Supprimer</md-button>
+        </div>
       </md-dialog-title>
       <md-dialog-content>
         <md-progress-bar md-mode="indeterminate" v-if="showProgressBar"></md-progress-bar>
@@ -161,7 +164,7 @@
 
 
           
-          <md-tab md-label="Tableau des émoluments" ref="tabRecapitulatif">
+          <md-tab md-label="Tableau des émoluments" ref="tabRecapitulatif" id="tableauEmoluments">
             <table class="tg customTable">
               <thead class="customTableHead">
                 <template v-if="form_general.nb_batiments > 0">

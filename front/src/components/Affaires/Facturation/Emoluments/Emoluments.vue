@@ -1453,6 +1453,222 @@ export default {
       this.confirmationRemoveDialog.onCancel = () => this.confirmationRemoveDialog.show = false;
       this.confirmationRemoveDialog.onConfirm = () => this.saveToFactures();
       this.confirmationRemoveDialog.show = true;
+    },
+
+
+    /**
+     * Print emoluments
+     */
+    onPrintEmoluments() {
+      let tabEmol = document.getElementById('tableauEmoluments');
+
+      let inputs = [...tabEmol.innerHTML.matchAll(/(md-input-)\w+/g)];
+      for (const input of inputs) {
+        document.getElementById(input[0]).outerHTML = '<div class="alignCenter">' + document.getElementById(input[0]).value + '</div>';
+      }
+
+      let w = window.open('127.0.0.1:8080/_blank', '_blank');
+      w.document.write(`
+        <html><head><style>
+        .formField {
+          width: 250px;
+        }
+
+        .md-input {
+          text-align: right;
+          height: 20px !important
+        }
+
+        .nbField {
+          margin: 0px;
+          margin-bottom: 2px;
+          min-height: 23px !important;
+          padding: 3px 0px 0px 0px !important;
+        }
+
+        .nbInput {
+          width: 50px;
+          text-align: center;
+        }
+
+        .nbSelect{
+          width: 100px !important;
+          text-align: center;
+          height: 20px;
+        }
+
+        .md-field .md-input, .md-field .md-textarea {
+          height: 32px;
+        }
+
+        .inputMontant {
+          width: 70px;
+          text-align: Right;
+          margin-right: 5px;
+        }
+
+        .inputText {
+          width: 200px;
+          text-align: Left;
+        }
+
+        .md-select {
+          text-align: right;
+        }
+
+        .tg {
+          border-collapse: collapse;
+          border-spacing: 0;
+        }
+
+        .tg td {
+          border-color: black;
+          border-style: solid;
+          border-width: 1px;
+          font-family: Arial, sans-serif;
+          font-size: 14px;
+          overflow: hidden;
+          padding: 0px 5px;
+          word-break: normal;
+        }
+
+        .tg th {
+          border-color: black;
+          border-style: solid;
+          border-width: 1px;
+          font-family: Arial, sans-serif;
+          font-size: 14px;
+          font-weight: bold;
+          overflow: hidden;
+          padding: 0px 5px;
+          word-break: normal;
+        }
+
+        .tg .tg-0lax {
+          text-align: left;
+          vertical-align: center
+        }
+
+        .subtitle {
+          background-color: lightgray;
+        }
+
+        .alignRight {
+          text-align: right !important;
+        }
+
+        .alignCenter {
+          text-align: center !important;
+        }
+
+        .notEditable {
+          background-color: lightgray;
+        }
+
+        .montantTotal {
+          font-weight: bold;
+        }
+
+        .tabulation {
+          padding-left: 15px !important;
+          font-style: italic;
+        }
+
+        .tabulation-2 {
+          padding-left: 30px !important;
+          font-style: italic;
+        }
+
+        .batiment-separator {
+          border-left: 3px solid black !important;
+        }
+
+        .overHead {
+          line-break: normal !important;
+          font-weight: normal !important;
+          font-style: italic;
+          text-align: left;
+          border-top: 0px !important;
+          border-left: 0px !important;
+          border-right: 0px !important;
+          padding-bottom: 10px !important;
+        }
+
+        .highlightEmolument {
+          background-color: lightgreen;
+        }
+
+        .hideNulls {
+          font-size: 0px !important;
+        }
+
+        .customTable .customTableHead {
+          width: calc(100%);
+        }
+
+        .customTable .customTableBody, .customTable .customTableHead {
+          display: block;
+        }
+
+        .customTable .customTableBody {
+          max-height: 610px;
+        }
+
+        th, td {
+          width: 150px !important;
+        }
+
+        .code {
+          width: 50px !important;
+        }
+
+        .position {
+          width: 250px !important;
+        }
+
+        .position_divers {
+          width: 250px !important;
+        }
+
+        .position_recapitulatif {
+          width: 400px !important;
+        }
+
+        .unite {
+          width: 100px !important;
+        }
+
+        .prix_unitaire {
+          width: 120px !important;
+        }
+
+        .nombre {
+          width: 70px !important;
+        }
+
+        .montant {
+          width: 80px;
+        }
+
+        .repartitionFaux {
+          background-color: lightcoral;
+        }
+
+        .repartitionJuste {
+          background-color: lightgreen;
+        }
+
+        .chapter {
+          width: 35px !important;
+          writing-mode: vertical-rl;
+          text-orientation: mixed;
+          transform: rotate(180deg);
+        }
+
+        .rowChapterDistinction {
+          border-top: 3px solid;
+        }
+        </style></head><body><h1>` + tabEmol.innerHTML + '</h1></body></html>');
     }
   },
 
