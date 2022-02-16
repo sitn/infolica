@@ -456,11 +456,14 @@ def numero_differe_view(request):
     numero_projet_id = int(request.registry.settings['numero_projet_id'])
     numero_vigueur_id = int(request.registry.settings['numero_vigueur_id'])
 
+    numero_etat_vigueur_id = request.registry.settings['numero_vigueur_id']
+
     role = request.params['role'] if 'role' in request.params else None
 
     num_agg = func.array_agg(VNumeros.numero, type_=ARRAY(Integer))
     num_id_agg = func.array_agg(VNumeros.id, type_=ARRAY(Integer))
     diff_id_agg = func.array_agg(VNumeros.diff_id, type_=ARRAY(Integer))
+    numeros_vigueur_check = func.bool_and(VNumeros.etat_id == numero_etat_vigueur_id)
     query = request.dbsession.query(
         VNumeros.diff_affaire_id,
         VNumeros.cadastre,
@@ -472,18 +475,17 @@ def numero_differe_view(request):
         VNumeros.diff_operateur_nom,
         VNumeros.diff_operateur_prenom,
         VNumeros.diff_operateur_initiales,
-        VNumeros.diff_req_ref
+        VNumeros.diff_req_ref,
+        numeros_vigueur_check
     )
     
     if role == "mo":
         user_id = request.params['user_id'] if 'user_id' in request.params else None
-        numero_etat_vigueur_id = request.registry.settings['numero_vigueur_id']
 
         if user_id is not None:
             query = query.filter(VNumeros.diff_operateur_id == user_id)
 
         query = query.filter(and_(
-            VNumeros.etat_id == numero_etat_vigueur_id,
             VNumeros.diff_entree.isnot(None),
             VNumeros.diff_sortie == None
         ))
@@ -506,7 +508,6 @@ def numero_differe_view(request):
             VNumeros.diff_controle == None 
         ))
 
-        
     result = query.group_by(
         VNumeros.diff_affaire_id,
         VNumeros.cadastre,
@@ -517,21 +518,42 @@ def numero_differe_view(request):
         VNumeros.diff_req_ref
     ).having(func.array_length(num_agg, 1) > 0).all()
 
+    affaire_ready = True if ('affaire_ready' in request.params and request.params['affaire_ready'] == "true") else False
+
     numeros = []
     for num in result:
-        numeros.append({
-            'diff_affaire_id': num[0],
-            'cadastre': num[1],
-            'numero': num[2],
-            'numero_id': num[3],
-            'diff_id': num[4],
-            'diff_entree': datetime.strftime(num[5], '%Y-%m-%d'),
-            'diff_operateur_id': num[6],
-            'diff_operateur_nom': num[7],
-            'diff_operateur_prenom': num[8],
-            'diff_operateur_initiales': num[9],
-            'diff_req_ref': num[10],
-        })
+        if affaire_ready is True:
+            if num[11] is True:
+                numeros.append({
+                    'diff_affaire_id': num[0],
+                    'cadastre': num[1],
+                    'numero': num[2],
+                    'numero_id': num[3],
+                    'diff_id': num[4],
+                    'diff_entree': datetime.strftime(num[5], '%Y-%m-%d'),
+                    'diff_operateur_id': num[6],
+                    'diff_operateur_nom': num[7],
+                    'diff_operateur_prenom': num[8],
+                    'diff_operateur_initiales': num[9],
+                    'diff_req_ref': num[10],
+                    'numeros_vigueur_check': num[11]
+                })
+        else:
+            numeros.append({
+                'diff_affaire_id': num[0],
+                'cadastre': num[1],
+                'numero': num[2],
+                'numero_id': num[3],
+                'diff_id': num[4],
+                'diff_entree': datetime.strftime(num[5], '%Y-%m-%d'),
+                'diff_operateur_id': num[6],
+                'diff_operateur_nom': num[7],
+                'diff_operateur_prenom': num[8],
+                'diff_operateur_initiales': num[9],
+                'diff_req_ref': num[10],
+                'numeros_vigueur_check': num[11]
+            })
+
 
     return numeros
 

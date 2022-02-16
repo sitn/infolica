@@ -8,6 +8,7 @@
                 </div>
 
                 <div class="md-toolbar-section-end">
+                    <md-checkbox v-model="showBFProjet" class="md-primary" @change="getNumerosDifferes">Afficher les bf non déposés</md-checkbox>
                     <md-field style="margin-left: 50px; width: 250px">
                         <label for="operateur">Opérateur·rice</label>
                         <md-select v-model="selectedOperateur_id" name="operateur" id="operateur" @md-selected="getNumerosDifferes()" md-dense>
@@ -22,12 +23,13 @@
             </md-table-empty-state>
 
             <md-table-row slot="md-table-row" slot-scope="{ item }">
-                <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
-                <md-table-cell md-label="Affaire" md-sort-by="diff_affaire_id" md-numeric>{{ item.diff_affaire_id }}</md-table-cell>
-                <md-table-cell md-label="Opérateur·rice" md-sort-by="diff_operateur_initiales" md-numeric>{{ item.diff_operateur_initiales }}</md-table-cell>
-                <md-table-cell md-label="Bien-fonds" md-numeric>{{ item.numero }}</md-table-cell>
-                <md-table-cell md-label="Date" md-sort-by="diff_entree">{{ new Date(item.diff_entree) | formatDate }} </md-table-cell>
-                <md-table-cell md-label="Réquisition">Réq. no {{ item.diff_req_ref? item.diff_req_ref: '??' }}</md-table-cell>
+                <md-table-cell :class="{ disabledElement: !item.numeros_vigueur_check }" md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
+                <md-table-cell :class="{ disabledElement: !item.numeros_vigueur_check }" md-label="Affaire" md-sort-by="diff_affaire_id" md-numeric>{{ item.diff_affaire_id }}</md-table-cell>
+                <md-table-cell :class="{ disabledElement: !item.numeros_vigueur_check }" md-label="Opérateur·rice" md-sort-by="diff_operateur_initiales" md-numeric>{{ item.diff_operateur_initiales }}</md-table-cell>
+                <md-table-cell :class="{ disabledElement: !item.numeros_vigueur_check }" md-label="Bien-fonds" md-numeric>{{ item.numero }}</md-table-cell>
+                <md-table-cell :class="{ disabledElement: !item.numeros_vigueur_check }" md-label="BF déposés" md-sort-by="numeros_vigueur_check_str">{{ item.numeros_vigueur_check_str }}</md-table-cell>
+                <md-table-cell :class="{ disabledElement: !item.numeros_vigueur_check }" md-label="Date" md-sort-by="diff_entree">{{ new Date(item.diff_entree) | formatDate }} </md-table-cell>
+                <md-table-cell :class="{ disabledElement: !item.numeros_vigueur_check }" md-label="Réquisition">Réq. no {{ item.diff_req_ref? item.diff_req_ref: '??' }}</md-table-cell>
                 <md-table-cell md-label="Consultation">
                     <md-button class="md-primary md-icon-button" :to="{ name: 'AffairesDashboard', params: { id: item.diff_affaire_id } }" title="Consulter/modifier l'affaire">
                         <md-icon>open_in_new</md-icon>
