@@ -4,8 +4,8 @@
       <md-dialog-title class="justifyTitleBtn">
         <div class="md-title">Émoluments <span v-if="form_general && form_general.id"> (id: {{ form_general.id }})</span></div>
         <div>
-          <md-button class="md-primary md-icon-button" v-if="form_general.id" @click="downloadEmoluments()"><md-icon>file_download</md-icon></md-button>
-          <md-button class="md-accent md-raised" v-if="!disabled && form_general.id" @click="onRemoveEmolumentAffaire(form_general.id)">Supprimer</md-button>
+          <md-button class="md-primary md-icon-button" v-if="form_general.id" @click="downloadEmoluments()" title="Génère le tableau des émoluments en PDF"><md-icon>file_download</md-icon></md-button>
+          <md-button class="md-accent md-raised" v-if="!disabled && form_general.id" @click="onRemoveEmolumentAffaire(form_general.id)" title="Supprime définitivement l'émolument">Supprimer</md-button>
         </div>
       </md-dialog-title>
       <md-dialog-content>
@@ -166,7 +166,7 @@
           
           <md-tab md-label="Tableau des émoluments" ref="tabRecapitulatif">
             <div id="tableau_emoluments">
-              <table class="tg customTable">
+              <table class="tg customTable" id="tableau_emoluments_form">
                 <thead class="customTableHead">
                   <template v-if="form_general.nb_batiments > 0">
                     <tr>
@@ -346,7 +346,7 @@
                   </tr>
                   <tr>
                     <td class="tg-0lax code">.16</em></td>
-                    <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form_general.nb_batiments)"><em>Contrôles lors de visées pério.</em></td>
+                    <td class="tg-0lax subtitle" :colspan="5 + 2*Number(form_general.nb_batiments)"><em>Contrôles lors de visées pério.</em></td>
                   </tr>
                   <tr>
                     <td class="tg-0lax code"></td>

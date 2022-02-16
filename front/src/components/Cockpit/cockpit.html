@@ -24,9 +24,8 @@
                 <div class="md-layout-item md-size-80" style="display: flex;">
                     <md-field style="width: 250px !important;">
                         <label>Rechercher</label>
-                        <md-input v-model="search.searchTerm" placeholder="Nom d'affaire" v-on:keyup.enter="getAffaire"></md-input>
+                        <md-input v-model="searchTerm" placeholder="Numéro d'affaire" v-on:keyup="getAffaire"></md-input>
                         <md-icon>search</md-icon>
-                        <span class="md-helper-text" v-if="search.searchTerm">Appuyer sur Enter pour chercher</span>
                     </md-field>
     
                     <md-field style="margin-left: 50px; width: 250px !important;">
