@@ -19,6 +19,7 @@ export default {
       loading: false,
       plural: "",
       selectedOperateur_id: JSON.parse(localStorage.getItem("infolica_user")).id,
+      showBFProjet: false,
     }
   },
 
@@ -45,6 +46,9 @@ export default {
       if (this.selectedOperateur_id >= 0) {
         params += "&user_id=" + this.selectedOperateur_id;
       }
+      if (this.showBFProjet === false) {
+        params += "&affaire_ready=true";
+      }
 
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_NUMEROS_DIFFERES_ENDPOINT + params,
@@ -57,7 +61,8 @@ export default {
           let tmp = response.data;
           tmp.forEach(x => {
             x.numero = x.numero.join(', '),
-            x.diff_entree = Number(moment(x.diff_entree, process.env.VUE_APP_DATEFORMAT_WS))
+            x.diff_entree = Number(moment(x.diff_entree, process.env.VUE_APP_DATEFORMAT_WS)),
+            x.numeros_vigueur_check_str = x.numeros_vigueur_check? "oui": "non"
           });
           this.affaires = tmp;
 

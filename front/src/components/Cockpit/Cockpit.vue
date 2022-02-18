@@ -38,7 +38,6 @@ export default {
             responsable: Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)
         },
         search: {
-            searchTerm: null,
             operateur_id: -1,
             type_id: -1,
             showFinProcessus: false,
@@ -46,6 +45,7 @@ export default {
             current_sort: "id",
             current_sort_order: "desc",
         },
+        searchTerm: null,
         current_sort: "id",
         current_sort_order: "desc",
     };
@@ -180,8 +180,8 @@ export default {
      */
     setSearchParamsQuery() {
         let query = [];
-        if (this.search.searchTerm) {
-            query.push("searchTerm=" + this.search.searchTerm);
+        if (this.searchTerm) {
+            query.push("searchTerm=" + this.searchTerm);
         }
         if (this.search.operateur_id > 0) {
             query.push("operateur_id=" + this.search.operateur_id);
