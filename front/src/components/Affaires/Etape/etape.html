@@ -57,6 +57,13 @@
                     </md-field>
                 </div>
 
+                <div v-if="affaire.etape_id !== etapes_affaire_conf.chez_client" class="md-layout-item md-size-50">
+                    <md-field>
+                        <label>Temps passé hors service [jours]</label>
+                        <md-input></md-input>
+                    </md-field>
+                </div>
+
                 <div class="md-layout-item"
                     v-if="affaire.type_id === typesAffaires_conf.art35 && affaire.etape_id === etapes_affaire_conf.travaux_chef_equipe">
                     <h3>Sélectionner le type d'article 35</h3>
