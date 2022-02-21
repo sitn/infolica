@@ -57,10 +57,10 @@
                     </md-field>
                 </div>
 
-                <div v-if="affaire.etape_id !== etapes_affaire_conf.chez_client" class="md-layout-item md-size-50">
+                <div v-if="joursHorsSGRF.show" class="md-layout-item md-size-50">
                     <md-field>
-                        <label>Temps passé hors service [jours]</label>
-                        <md-input></md-input>
+                        <label>Temps passé hors SGRF [jours]</label>
+                        <md-input v-model="joursHorsSGRF.nb_jours" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>
                     </md-field>
                 </div>
 

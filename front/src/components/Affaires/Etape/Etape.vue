@@ -43,6 +43,10 @@ export default {
         date_type: "",
         show: false,
       },
+      joursHorsSGRF: {
+        nb_jours: null,
+        show: false
+      }
     };
   },
 
@@ -90,6 +94,36 @@ export default {
       // if step "chez le client" next step is "operateur_travail"
       if (this.affaire.etape_id === this.etapes_affaire_conf.chez_client) {
         this.etapeAffaire.prochaine = this.affaireEtapes.filter(x => x.id === this.etapes_affaire_conf.travaux_chef_equipe)[0];
+      } 
+      
+      const etapes_jours_clients = [
+        this.etapes_affaire_conf.coordination,
+        this.etapes_affaire_conf.controle_technique,
+        this.etapes_affaire_conf.travaux_chef_equipe,
+        this.etapes_affaire_conf.servitudes,
+        this.etapes_affaire_conf.controle_juridique
+      ];
+
+      const types_affaires_jours_clients = [
+        this.typesAffaires_conf.mutation,
+        this.typesAffaires_conf.cadastration,
+        this.typesAffaires_conf.pcop,
+        this.typesAffaires_conf.mpd,
+        this.typesAffaires_conf.art35,
+        this.typesAffaires_conf.revision_abornement,
+        this.typesAffaires_conf.remaniement_parcellaire,
+        this.typesAffaires_conf.servitude,
+        this.typesAffaires_conf.retablissement_pfp3,
+        this.typesAffaires_conf.modification_visa,
+        this.typesAffaires_conf.modification_duplicata,
+        this.typesAffaires_conf.modification_mutation
+      ];
+
+      this.joursHorsSGRF.nb_jours = 0;
+      if (etapes_jours_clients.includes(this.affaire.etape_id) && types_affaires_jours_clients.includes(this.affaire.type_id)) {
+        this.joursHorsSGRF.show = true;
+      } else {
+        this.joursHorsSGRF.show = false;
       }
 
       // Update affaire dates
@@ -126,14 +160,14 @@ export default {
       // fix value of this.etapeAffaire.chef_equipe_id to null if another step is selected
       this.etapeAffaire.chef_equipe_id = this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.travaux_chef_equipe? this.etapeAffaire.chef_equipe_id: null;
 
-      logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine.id, this.etapeAffaire.remarque, this.etapeAffaire.chef_equipe_id)
+      logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine.id, this.etapeAffaire.remarque, this.etapeAffaire.chef_equipe_id, this.joursHorsSGRF.nb_jours)
       .then(() => {
         this.$root.$emit("ShowMessage", "L'étape a bien été mise à jour");
         this.etapeAffaire.showDialog = false;
 
         // art35: set type in specificite.
         if (this.affaire.etape_id === this.etapes_affaire_conf.travaux_chef_equipe && this.affaire.type_id === this.typesAffaires_conf.art35) {
-          this.updateAffaierSpecificite_art35();
+          this.updateAffaireSpecificite_art35();
         }
 
 
@@ -152,7 +186,7 @@ export default {
     /**
      * update affaire specificite art 35
      */
-    async updateAffaierSpecificite_art35() {
+    async updateAffaireSpecificite_art35() {
       let formData = new FormData();
       formData.append('id_affaire', this.affaire.id);
       formData.append("information", this.art35Radio + ". " + this.affaire.information);
