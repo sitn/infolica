@@ -60,7 +60,7 @@
                 <div v-if="joursHorsSGRF.show" class="md-layout-item md-size-50">
                     <md-field>
                         <label>Temps passé hors SGRF [jours]</label>
-                        <md-input v-model="joursHorsSGRF.nb_jours" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>
+                        <md-input v-model="joursHorsSGRF.nb_jours" style="text-align: center;" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>
                     </md-field>
                 </div>
 

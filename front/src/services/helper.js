@@ -415,7 +415,7 @@ export const setDateFormatClient = function(obj) {
 /**
  * Log new step
  */
-export const logAffaireEtape = async function(affaire_id, etape_id, remarque=null, chef_equipe_id=null, nb_jours_hors_sgrf) {
+export const logAffaireEtape = async function(affaire_id, etape_id, remarque=null, chef_equipe_id=null, nb_jours_hors_sgrf=0) {
     let formData = new FormData();
     formData.append("affaire_id", affaire_id);
     formData.append("etape_id", etape_id);

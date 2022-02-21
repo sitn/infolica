@@ -1178,7 +1178,8 @@ class VEtapesAffaires(Base):
     next_operateur_initiales = Column(Text)
     next_remarque = Column(Text)
     next_datetime = Column(DateTime)
-    next_etape_id = Column(DateTime)
+    next_etape_id = Column(BigInteger)
+    next_nb_jours_hors_sgrf = Column(Integer)
 
 
 class VAffairesPreavis(Base):
