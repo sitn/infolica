@@ -57,7 +57,7 @@ export default {
     return {
       joursHorsSGRF: {
         nb_jours: {
-          maxValue: maxValue(this.etapeAffaire.nb_jours_etape)
+          maxValue: maxValue(this.etapeAffaire.nb_jours_etape -1)
         }
       }
     };
@@ -178,9 +178,6 @@ export default {
       // fix value of this.etapeAffaire.chef_equipe_id to null if another step is selected
       this.etapeAffaire.chef_equipe_id = this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.travaux_chef_equipe? this.etapeAffaire.chef_equipe_id: null;
 
-      if (this.joursHorsSGRF.nb_jours === 0) {
-        this.joursHorsSGRF.nb_jours = 1;
-      }
       logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine.id, this.etapeAffaire.remarque, this.etapeAffaire.chef_equipe_id, this.joursHorsSGRF.nb_jours)
       .then(() => {
         this.$root.$emit("ShowMessage", "L'étape a bien été mise à jour");
