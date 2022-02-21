@@ -6,12 +6,16 @@
 import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { getTypesAffaires, stringifyAutocomplete2, logAffaireEtape, checkPermission } from '@/services/helper'
+import { getTypesAffaires, stringifyAutocomplete2, logAffaireEtape, checkPermission } from '@/services/helper';
+import { validationMixin } from "vuelidate";
+import { maxValue } from 'vuelidate/lib/validators';
 
-const moment = require('moment')
+
+const moment = require('moment');
 
 export default {
   name: "Etape",
+  mixins: [validationMixin],
   components: {
     ClotureAffaire
   },
@@ -21,31 +25,40 @@ export default {
     etapes_affaire_conf: Object,
     typesAffaires_conf: Object
   },
-  data() {
+  data: () => ({
+    affaireEtapes: [],
+    allowSaveNewStep: false,
+    art35Radio: "",
+    cloreAffaire: false,
+    controleEtape : [],
+    etapeAffaire: {
+      nb_jours_etape: 0,
+      prochaine: null,
+      remarque: null,
+      showDialog: false,
+    },
+    final_decision: false,
+    isAdmin: false,
+    numerosReserves: [],
+    suiviAffaireTheorique: [],
+    updateAffaireDate: {
+      text: "",
+      value: false,
+      date_type: "",
+      show: false,
+    },
+    joursHorsSGRF: {
+      nb_jours: null,
+      show: false
+    }
+  }),
+
+  validations() {
     return {
-      affaireEtapes: [],
-      allowSaveNewStep: false,
-      art35Radio: "",
-      cloreAffaire: false,
-      controleEtape : [],
-      etapeAffaire: {
-        prochaine: null,
-        remarque: null,
-        showDialog: false,
-      },
-      final_decision: false,
-      isAdmin: false,
-      numerosReserves: [],
-      suiviAffaireTheorique: [],
-      updateAffaireDate: {
-        text: "",
-        value: false,
-        date_type: "",
-        show: false,
-      },
       joursHorsSGRF: {
-        nb_jours: null,
-        show: false
+        nb_jours: {
+          maxValue: maxValue(this.etapeAffaire.nb_jours_etape)
+        }
       }
     };
   },
@@ -86,6 +99,11 @@ export default {
       this.etapeAffaire.prochaine = null;
       this.etapeAffaire.chef_equipe_id = this.affaire.technicien_id || null;
       this.etapeAffaire.remarque = null;
+
+      let now_datetime = (new Date()).getTime();
+      let etape_datetime = (new Date(moment(this.affaire.etape_datetime, process.env.VUE_APP_DATEFORMAT_CLIENT))).getTime();
+      
+      this.etapeAffaire.nb_jours_etape = Math.floor((now_datetime - etape_datetime)/3600000/24) + 1;
       
       if (this.suiviAffaireTheorique.includes(this.affaire.etape_id)) {
         this.etapeAffaire.prochaine = this.affaireEtapes.filter(x => x.id === this.suiviAffaireTheorique[this.suiviAffaireTheorique.indexOf(this.affaire.etape_id)+1])[0];
@@ -160,6 +178,9 @@ export default {
       // fix value of this.etapeAffaire.chef_equipe_id to null if another step is selected
       this.etapeAffaire.chef_equipe_id = this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.travaux_chef_equipe? this.etapeAffaire.chef_equipe_id: null;
 
+      if (this.joursHorsSGRF.nb_jours === 0) {
+        this.joursHorsSGRF.nb_jours = 1;
+      }
       logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine.id, this.etapeAffaire.remarque, this.etapeAffaire.chef_equipe_id, this.joursHorsSGRF.nb_jours)
       .then(() => {
         this.$root.$emit("ShowMessage", "L'étape a bien été mise à jour");
@@ -386,7 +407,28 @@ export default {
           this.allowSaveNewStep = response.data.final_decision.result;
         }
       }).catch(err => handleException(err, this));
-    }
+    },
+
+    /**
+     * Validation
+     */
+    getValidationClass(fieldName) {
+      const field = this.$v.joursHorsSGRF[fieldName];
+
+      if (field) {
+        return {
+          "md-invalid": field.$invalid && field.$dirty
+        };
+      }
+    },
+
+    validateForm () {
+      this.$v.$touch()
+
+      if (!this.$v.$invalid) {
+        this.updateAffaireEtape()
+      }
+    },
 
   },
 
