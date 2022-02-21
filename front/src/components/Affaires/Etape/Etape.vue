@@ -172,8 +172,7 @@ export default {
 
 
         // event emitter
-        this.$emit('setAffaire');
-        this.$root.$emit('getAffaireSuivi');
+        this.$router.push({ name: "Cockpit" });
       });
 
       this.updateAffaireDate = {
