@@ -503,19 +503,19 @@ def export_emoluments_pdf_view(request):
             width: 3.68cm;
             image-resolution: 300dpi
         }}
-        .the_table {{
+        table {{
         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
         border-collapse: collapse;
         width: 100%;
         }}
-        .the_table td, .the_table th {{
+        td, th {{
         border: 1px solid #ddd;
-        padding: 8px;
+        padding: 2px;
         }}
-        .the_table tr:nth-child(even){{background-color: #f2f2f2;}}
-        .the_table th {{
-        padding-top: 12px;
-        padding-bottom: 12px;
+        tr:nth-child(even){{background-color: #f2f2f2;}}
+        th {{
+        padding-top: 4px;
+        padding-bottom: 4px;
         text-align: left;
         background-color: #499c6c;
         color: white;
@@ -535,10 +535,103 @@ def export_emoluments_pdf_view(request):
                 font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 9px;
             }}
         }}
-        h1 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 24px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 36px; }}
-        p {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 21px; }}
-        th {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: bold; line-height: 21px; border-color: black; border-style: solid; border-width: 1px; }}
-        td {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 21px; border-color: black; border-style: solid; border-width: 1px; }}
+        h1 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 20px; }}
+        p {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 11px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 15px; }}
+        th {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 11px; font-style: normal; font-variant: normal; font-weight: bold; line-height: 15px; border-color: black; border-style: solid; border-width: 1px; }}
+        td {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 11px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 15px; border-color: black; border-style: solid; border-width: 1px; }}
+        
+        .nbInput {{
+            width: 50px;
+            text-align: center;
+        }}
+
+        .nbField {{
+            margin: 0px;
+            margin-bottom: 2px;
+            min-height: 15px !important;
+            padding: 3px 0px 0px 0px !important;
+        }}
+
+        .subtitle {{
+            background-color: lightgray;
+        }}
+
+        .alignRight {{
+            text-align: right !important;
+        }}
+
+        .alignCenter {{
+            text-align: center !important;
+        }}
+
+        .notEditable {{
+            background-color: lightgray;
+        }}
+
+        .montantTotal {{
+            font-weight: bold;
+        }}
+
+        .tabulation {{
+            padding-left: 15px !important;
+            font-style: italic;
+        }}
+
+        .tabulation-2 {{
+            padding-left: 30px !important;
+            font-style: italic;
+        }}
+
+        .batiment-separator {{
+            border-left: 3px solid black !important;
+        }}
+
+        .code {{
+            max-width: 50px !important;
+        }}
+
+        .position {{
+            max-width: 250px !important;
+        }}
+
+        .position_divers {{
+            max-width: 250px !important;
+        }}
+
+        .position_recapitulatif {{
+            max-width: 400px !important;
+        }}
+
+        .unite {{
+            max-width: 100px !important;
+        }}
+
+        .prix_unitaire {{
+            max-width: 120px !important;
+        }}
+
+        .nombre {{
+            max-width: 70px !important;
+        }}
+
+        .montant {{
+            max-width: 80px;
+        }}
+
+        .overHead {{
+            line-break: normal !important;
+            font-weight: normal !important;
+            font-style: italic;
+            text-align: left;
+            border-top: 0px !important;
+            border-left: 0px !important;
+            border-right: 0px !important;
+            padding-bottom: 10px !important;
+        }}
+
+        .rowChapterDistinction {{
+            border-top: 3px solid;
+        }}
         """ 
 
     header_str += ppp.format(**d)

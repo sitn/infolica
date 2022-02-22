@@ -1459,19 +1459,20 @@ export default {
      * Download emoluments pdf
      */
     async downloadEmoluments() {
-      let tableau_emoluments_html = document.getElementById("tableau_emoluments").innerHTML;
-      let inputs = [...tableau_emoluments_html.matchAll(/(md-input-)\w+/g)];
+      let tableau_emoluments_innerHTML = JSON.parse(JSON.stringify(document.getElementById("tableau_emoluments").innerHTML));
+      let inputs = tableau_emoluments_innerHTML.matchAll(/(md-input-)\w+/g);
       for (const input of inputs) {
-        document.getElementById(input[0]).outerHTML = '<div class="alignCenter">' + document.getElementById(input[0]).value + '</div>';
+        tableau_emoluments_innerHTML = tableau_emoluments_innerHTML.replaceAll(new RegExp(`<input.*(${input[0]}).*?>`, 'g'), '<div class="alignCenter">' + document.getElementById(input[0]).value + '</div>');
       }
-      tableau_emoluments_html = String(tableau_emoluments_html);
-
-      tableau_emoluments_html = tableau_emoluments_html.replaceAll(/<(t[dh][^<>]+?chapter.*?)>*<\/t[dh]>/g, "");
+      // remove 1st column with chapter name, adapt colspan of headers and correct display when 'CHF' is located after end of div
+      tableau_emoluments_innerHTML = tableau_emoluments_innerHTML.replaceAll(/<(t[dh][^<>]+?chapter.*?)>*<\/t[dh]>/g, "");
+      tableau_emoluments_innerHTML = tableau_emoluments_innerHTML.replaceAll('colspan="7"', 'colspan="6"');
+      tableau_emoluments_innerHTML = tableau_emoluments_innerHTML.replaceAll(/<\/div>CHF/g, "CHF</div>");
 
       let formData = new FormData();
       formData.append('tableau_emoluments_id', this.form_general.id);
       formData.append('affaire_id', this.affaire.id);
-      formData.append('tableau_emoluments_html', tableau_emoluments_html);
+      formData.append('tableau_emoluments_html', tableau_emoluments_innerHTML);
 
       this.$http.post(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_EXPORT_EMOLUMENTS_PDF_ENDPOINT,
