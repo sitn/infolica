@@ -1459,20 +1459,31 @@ export default {
      * Download emoluments pdf
      */
     async downloadEmoluments() {
-      let tableau_emoluments_innerHTML = JSON.parse(JSON.stringify(document.getElementById("tableau_emoluments").innerHTML));
-      let inputs = tableau_emoluments_innerHTML.matchAll(/(md-input-)\w+/g);
+      // tableau emoluments
+      let tableau_emoluments_html = JSON.parse(JSON.stringify(document.getElementById("tableau_emoluments").outerHTML));
+      let inputs = tableau_emoluments_html.matchAll(/(md-input-)\w+/g);
       for (const input of inputs) {
-        tableau_emoluments_innerHTML = tableau_emoluments_innerHTML.replaceAll(new RegExp(`<input.*(${input[0]}).*?>`, 'g'), '<div class="alignCenter">' + document.getElementById(input[0]).value + '</div>');
+        tableau_emoluments_html = tableau_emoluments_html.replaceAll(new RegExp(`<input.*(${input[0]}).*?>`, 'g'), '<div class="alignCenter">' + document.getElementById(input[0]).value + '</div>');
       }
       // remove 1st column with chapter name, adapt colspan of headers and correct display when 'CHF' is located after end of div
-      tableau_emoluments_innerHTML = tableau_emoluments_innerHTML.replaceAll(/<(t[dh][^<>]+?chapter.*?)>*<\/t[dh]>/g, "");
-      tableau_emoluments_innerHTML = tableau_emoluments_innerHTML.replaceAll('colspan="7"', 'colspan="6"');
-      tableau_emoluments_innerHTML = tableau_emoluments_innerHTML.replaceAll(/<\/div>CHF/g, "CHF</div>");
+      tableau_emoluments_html = tableau_emoluments_html.replaceAll(/<(t[dh][^<>]+?chapter.*?)>*<\/t[dh]>/g, "");
+      tableau_emoluments_html = tableau_emoluments_html.replaceAll('colspan="7"', 'colspan="6"');
+      tableau_emoluments_html = tableau_emoluments_html.replaceAll(/<\/div>CHF/g, "CHF</div>");
+      
+      
+      // tableau recapitulatif
+      let tableau_recapitulatif_html = JSON.parse(JSON.stringify(document.getElementById("tableau_recapitulatif_form").outerHTML));
+      inputs = tableau_recapitulatif_html.matchAll(/(md-input-)\w+/g);
+      for (const input of inputs) {
+        tableau_recapitulatif_html = tableau_recapitulatif_html.replaceAll(new RegExp(`<input.*(${input[0]}).*?>`, 'g'), '<div class="alignCenter">' + document.getElementById(input[0]).value + '</div>');
+      }
+      tableau_recapitulatif_html = tableau_recapitulatif_html.replaceAll(/<\/div>%/g, " %</div>");
 
       let formData = new FormData();
       formData.append('tableau_emoluments_id', this.form_general.id);
       formData.append('affaire_id', this.affaire.id);
-      formData.append('tableau_emoluments_html', tableau_emoluments_innerHTML);
+      formData.append('tableau_emoluments_html', tableau_emoluments_html);
+      formData.append('tableau_recapitulatif_html', tableau_recapitulatif_html);
 
       this.$http.post(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_EXPORT_EMOLUMENTS_PDF_ENDPOINT,

@@ -497,6 +497,7 @@ def export_emoluments_pdf_view(request):
     tableau_emoluments_id = request.params['tableau_emoluments_id'] if 'tableau_emoluments_id' in request.params else None
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     tableau_emoluments_html = request.params['tableau_emoluments_html'] if 'tableau_emoluments_html' in request.params else None
+    tableau_recapitulatif_html = request.params['tableau_recapitulatif_html'] if 'tableau_recapitulatif_html' in request.params else None
 
     # get facture_id
     factures = request.dbsession.query(
@@ -585,11 +586,13 @@ def export_emoluments_pdf_view(request):
 
     header_str += "<h1>Tableau des émoluments de la mensuration officielle</h1>"
     header_str += "<p>Affaire N° " + str(affaire_id) + "</p>"
-    header_str += "<p>Facture(s) N° " + ", ".join([str(facture.sap) + "(" + datetime.datetime.strftime(facture.date, "%d.%m.%Y") + ")" for facture in factures]) + "</p>"
+    header_str += "<p>Facture(s) N° " + ", ".join([(str(facture.sap) if facture.sap is not None else "N° SAP inconnu") + " (" + datetime.datetime.strftime(facture.date, "%d.%m.%Y") + ")" for facture in factures]) + "</p>"
     header_str += "<p>Emolument N° " + str(tableau_emoluments_id) + "</p>"
 
 
-    tableau_emoluments_html = header_str + tableau_emoluments_html + "</body></html>"
+    tableau_emoluments_html = header_str + tableau_emoluments_html
+    tableau_emoluments_html += '<br><p style="font-size:20px;"><b>Récapitulatif</b></p>'
+    tableau_emoluments_html += tableau_recapitulatif_html + "</body></html>"
 
     filename = "Tableau_émoluments_" + str(tableau_emoluments_id) + "_Affaire_" + str(affaire_id) + ".pdf"
 
