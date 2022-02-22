@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*--
 from sqlalchemy.sql.elements import and_
-from sqlalchemy.sql.sqltypes import Float
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import TableauEmoluments, VNumerosAffaires
+from infolica.models.models import Facture, TableauEmoluments, VNumerosAffaires
 from infolica.models.models import EmolumentAffaire, Emolument, EmolumentAffaireRepartition
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
@@ -494,6 +493,20 @@ def export_emoluments_pdf_view(request):
 
     now = datetime.datetime.now()
 
+    # get request params
+    tableau_emoluments_id = request.params['tableau_emoluments_id'] if 'tableau_emoluments_id' in request.params else None
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    tableau_emoluments_html = request.params['tableau_emoluments_html'] if 'tableau_emoluments_html' in request.params else None
+
+    # get facture_id
+    factures = request.dbsession.query(
+        Facture
+    ).join(
+        EmolumentAffaireRepartition
+    ).filter(
+        EmolumentAffaireRepartition.emolument_affaire_id == tableau_emoluments_id
+    ).all()
+
     d = {"now": now.strftime("%d.%m.%Y, %H:%M:%S")}
 
     header_str = "<html><head><style>"
@@ -535,112 +548,47 @@ def export_emoluments_pdf_view(request):
                 font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 9px;
             }}
         }}
-        h1 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 16px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 20px; }}
+        h1 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 20px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 20px; }}
         p {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 11px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 15px; }}
         th {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 11px; font-style: normal; font-variant: normal; font-weight: bold; line-height: 15px; border-color: black; border-style: solid; border-width: 1px; }}
         td {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 11px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 15px; border-color: black; border-style: solid; border-width: 1px; }}
         
-        .nbInput {{
-            width: 50px;
-            text-align: center;
-        }}
-
-        .nbField {{
-            margin: 0px;
-            margin-bottom: 2px;
-            min-height: 15px !important;
-            padding: 3px 0px 0px 0px !important;
-        }}
-
-        .subtitle {{
-            background-color: lightgray;
-        }}
-
-        .alignRight {{
-            text-align: right !important;
-        }}
-
-        .alignCenter {{
-            text-align: center !important;
-        }}
-
-        .notEditable {{
-            background-color: lightgray;
-        }}
-
-        .montantTotal {{
-            font-weight: bold;
-        }}
-
-        .tabulation {{
-            padding-left: 15px !important;
-            font-style: italic;
-        }}
-
-        .tabulation-2 {{
-            padding-left: 30px !important;
-            font-style: italic;
-        }}
-
-        .batiment-separator {{
-            border-left: 3px solid black !important;
-        }}
-
-        .code {{
-            max-width: 50px !important;
-        }}
-
-        .position {{
-            max-width: 250px !important;
-        }}
-
-        .position_divers {{
-            max-width: 250px !important;
-        }}
-
-        .position_recapitulatif {{
-            max-width: 400px !important;
-        }}
-
-        .unite {{
-            max-width: 100px !important;
-        }}
-
-        .prix_unitaire {{
-            max-width: 120px !important;
-        }}
-
-        .nombre {{
-            max-width: 70px !important;
-        }}
-
-        .montant {{
-            max-width: 80px;
-        }}
-
-        .overHead {{
-            line-break: normal !important;
-            font-weight: normal !important;
-            font-style: italic;
-            text-align: left;
-            border-top: 0px !important;
-            border-left: 0px !important;
-            border-right: 0px !important;
-            padding-bottom: 10px !important;
-        }}
-
-        .rowChapterDistinction {{
-            border-top: 3px solid;
-        }}
+        .nbInput {{ width: 50px; text-align: center; }}
+        .nbField {{ margin: 0px; margin-bottom: 2px; min-height: 15px !important; padding: 3px 0px 0px 0px !important; }}
+        .subtitle {{ background-color: lightgray; }}
+        .alignRight {{ text-align: right !important; }}
+        .alignCenter {{ text-align: center !important; }}
+        .notEditable {{ background-color: lightgray; }}
+        .montantTotal {{ font-weight: bold; }}
+        .tabulation {{ padding-left: 15px !important; font-style: italic; }}
+        .tabulation-2 {{ padding-left: 30px !important; font-style: italic; }}
+        .batiment-separator {{ border-left: 3px solid black !important; }}
+        .code {{ max-width: 50px !important; }}
+        .position {{ max-width: 250px !important; }}
+        .position_divers {{ max-width: 250px !important; }}
+        .position_recapitulatif {{ max-width: 400px !important; }}
+        .unite {{ max-width: 100px !important; }}
+        .prix_unitaire {{ max-width: 120px !important; }}
+        .nombre {{ max-width: 70px !important; }}
+        .montant {{ max-width: 80px; }}
+        .overHead {{ line-break: normal !important; font-weight: normal !important; font-style: italic; text-align: left; border-top: 0px !important; border-left: 0px !important; border-right: 0px !important; padding-bottom: 10px !important; }}
+        .rowChapterDistinction {{ border-top: 3px solid; }}
         """ 
 
     header_str += ppp.format(**d)
     header_str += "</style></head><body>"
-    # header_str += "<img class='logo' src='https://sitn.ne.ch/web/images/06ne.ch_RVB.png' alt='Logo'>"
+    header_str += "<img class='logo' src='https://sitn.ne.ch/web/images/06ne.ch_RVB.png' alt='Logo'>"
+    header_str += '<p style="font-size: 10px; line-height: 12px; margin-top: 0px; padding-top: 4px; margin-left: 0px; padding-left: 0px;"><b>DÉPARTEMENT DU DÉVELOPPEMENT<br> \
+                    TERRITORIAL ET DE L\'ENVIRONNEMENT</b><br> \
+                    SERVICE DE LA GÉOMATIQUE ET<br> \
+                    DU REGISTRE FONCIER</p>'
 
-    tableau_emoluments_id = request.params['tableau_emoluments_id'] if 'tableau_emoluments_id' in request.params else None
-    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
-    tableau_emoluments_html = request.params['tableau_emoluments_html'] if 'tableau_emoluments_html' in request.params else None
+    header_str += "<h1>Tableau des émoluments de la mensuration officielle</h1>"
+    header_str += "<p>Affaire N° " + str(affaire_id) + "</p>"
+    header_str += "<p>Facture(s) N° " + ", ".join([str(facture.sap) + "(" + datetime.datetime.strftime(facture.date, "%d.%m.%Y") + ")" for facture in factures]) + "</p>"
+    header_str += "<p>Emolument N° " + str(tableau_emoluments_id) + "</p>"
+
+
     tableau_emoluments_html = header_str + tableau_emoluments_html + "</body></html>"
 
     filename = "Tableau_émoluments_" + str(tableau_emoluments_id) + "_Affaire_" + str(affaire_id) + ".pdf"
