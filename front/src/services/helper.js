@@ -415,10 +415,11 @@ export const setDateFormatClient = function(obj) {
 /**
  * Log new step
  */
-export const logAffaireEtape = async function(affaire_id, etape_id, remarque=null, chef_equipe_id=null) {
+export const logAffaireEtape = async function(affaire_id, etape_id, remarque=null, chef_equipe_id=null, nb_jours_hors_sgrf=0) {
     let formData = new FormData();
     formData.append("affaire_id", affaire_id);
     formData.append("etape_id", etape_id);
+    formData.append("nb_jours_hors_sgrf", nb_jours_hors_sgrf);
     formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
     formData.append("datetime", moment(new Date()).format(process.env.VUE_APP_DATETIMEFORMAT_WS));
     if (remarque) {
