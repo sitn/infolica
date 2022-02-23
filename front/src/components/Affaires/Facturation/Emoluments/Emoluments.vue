@@ -1462,8 +1462,14 @@ export default {
       // tableau emoluments
       let tableau_emoluments_html = JSON.parse(JSON.stringify(document.getElementById("tableau_emoluments").outerHTML));
       let inputs = tableau_emoluments_html.matchAll(/(md-input-)\w+/g);
+      let value = 0;
       for (const input of inputs) {
-        tableau_emoluments_html = tableau_emoluments_html.replaceAll(new RegExp(`<input.*(${input[0]}).*?>`, 'g'), '<div class="alignCenter">' + document.getElementById(input[0]).value + '</div>');
+        value = document.getElementById(input[0]).value;
+        if (Number(value) === 0) {
+          tableau_emoluments_html = tableau_emoluments_html.replaceAll(new RegExp(`<input.*(${input[0]}).*?>`, 'g'), '<div class="alignCenter"></div>');
+        } else {
+          tableau_emoluments_html = tableau_emoluments_html.replaceAll(new RegExp(`<input.*(${input[0]}).*?>`, 'g'), '<div class="alignCenter">' + value + '</div>');
+        }
       }
       // remove 1st column with chapter name, adapt colspan of headers and correct display when 'CHF' is located after end of div
       tableau_emoluments_html = tableau_emoluments_html.replaceAll(/<(t[dh][^<>]+?chapter.*?)>*<\/t[dh]>/g, "");
