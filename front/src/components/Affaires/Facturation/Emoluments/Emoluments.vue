@@ -1515,10 +1515,7 @@ export default {
         }
         fileLink.setAttribute('download', filename);
         document.body.appendChild(fileLink);
-   
-     fileLink.click();
-
-        this.$root.$emit("ShowMessage", "Le tableau des émoluments a bien été exporté et se trouve dans le fichier des téléchargements")
+        fileLink.click();
       }).catch(err => handleException(err, this));
     }
 

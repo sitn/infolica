@@ -4,8 +4,8 @@
       <md-dialog-title class="justifyTitleBtn">
         <div class="md-title">Émoluments <span v-if="form_general && form_general.id"> (id: {{ form_general.id }})</span></div>
         <div>
-          <md-button class="md-primary md-icon-button" v-if="form_general.id" @click="downloadEmoluments()" title="Génère le tableau des émoluments en PDF"><md-icon>file_download</md-icon></md-button>
-          <md-button class="md-accent md-raised" v-if="!disabled && form_general.id" @click="onRemoveEmolumentAffaire(form_general.id)" title="Supprime définitivement l'émolument">Supprimer</md-button>
+          <md-button class="md-primary md-elevation-2" v-if="form_general.id" @click="downloadEmoluments()" title="Génère le tableau des émoluments en PDF"><md-icon>file_download</md-icon> Télécharger le PDF</md-button>
+          <md-button class="md-accent md-raised" v-if="!disabled && form_general.id" @click="onRemoveEmolumentAffaire(form_general.id)" title="Supprime définitivement l'émolument"><md-icon>delete</md-icon> Supprimer</md-button>
         </div>
       </md-dialog-title>
       <md-dialog-content>
