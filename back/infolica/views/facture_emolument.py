@@ -2,6 +2,8 @@
 from sqlalchemy.sql.elements import and_
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
+from pyramid.response import Response
+
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
@@ -10,7 +12,6 @@ from infolica.models.models import EmolumentAffaire, Emolument, EmolumentAffaire
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 import json
-import os
 import datetime
 import requests
 
@@ -482,7 +483,7 @@ def emolument_affaire_repartiton_delete_view(request):
         request.dbsession.delete(record)
 
 
-@view_config(route_name='export_emoluments_pdf', request_method='POST', renderer='json')
+@view_config(route_name='export_emoluments_pdf', request_method='POST')
 def export_emoluments_pdf_view(request):
     """
     Create PDF of emoluments
@@ -598,7 +599,9 @@ def export_emoluments_pdf_view(request):
 
     result = requests.post("https://sitnintra.ne.ch/weasy/pdf?filename=" + filename, data=tableau_emoluments_html)
 
-    with open(os.path.join(r"C:\Users\rufenerm\Desktop", filename), "wb") as f:
-        f.write(result.content)
-
-    return "ok"
+    response = Response(result.content)
+    params = response.content_type_params
+    params['filename'] = filename
+    response.content_type = 'application/pdf'
+    response.content_type_params = params
+    return response

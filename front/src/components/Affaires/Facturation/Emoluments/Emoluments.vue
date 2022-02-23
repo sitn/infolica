@@ -1490,11 +1490,30 @@ export default {
         formData,
         {
           withCredentials: true,
-          headers: {"Accept": "application/json"}
+          headers: {"Accept": "application/json"},
+          responseType: "blob"
         }
-      ).then(() => this.$root.$emit("ShowMessage", "Le tableau des émoluments a bien été exporté et se trouve dans le fichier des téléchargements"))
-      .catch(err => handleException(err, this));
+      ).then((response) => {
+        let fileURL = window.URL.createObjectURL(new Blob([response.data]));
+        let fileLink = document.createElement('a');
+      
+        fileLink.href = fileURL;
+        let header_content_type = response.headers['content-type'];
+        let filename = undefined;
+        for (let item of header_content_type.split(';')){
+          item = item.trim(); 
+          if (item.startsWith('filename=')) {
+            filename = item.replace('filename=', '').replaceAll('"', '');
+            break
+          }
+        }
+        fileLink.setAttribute('download', filename);
+        document.body.appendChild(fileLink);
+   
+     fileLink.click();
 
+        this.$root.$emit("ShowMessage", "Le tableau des émoluments a bien été exporté et se trouve dans le fichier des téléchargements")
+      }).catch(err => handleException(err, this));
     }
 
 
