@@ -1,5 +1,5 @@
 .md-dialog {
-  min-width: 2000px;
+  max-width: 1600px !important;
   margin: auto;
 }
 

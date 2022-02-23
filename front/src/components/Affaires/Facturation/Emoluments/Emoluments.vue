@@ -1476,6 +1476,7 @@ export default {
       tableau_emoluments_html = tableau_emoluments_html.replaceAll('colspan="7"', 'colspan="6"');
       tableau_emoluments_html = tableau_emoluments_html.replaceAll(/<\/div>CHF/g, "CHF</div>");
       tableau_emoluments_html = tableau_emoluments_html.replaceAll('<div class="alignCenter">CHF</div>', '<div class="alignCenter"></div>');
+      tableau_emoluments_html = tableau_emoluments_html.replaceAll('Nombre', 'Qté');
       
       
       // tableau recapitulatif
