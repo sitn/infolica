@@ -585,10 +585,10 @@ def export_emoluments_pdf_view(request):
         .position {{ max-width: 250px !important; }}
         .position_divers {{ max-width: 250px !important; }}
         .position_recapitulatif {{ max-width: 400px !important; }}
-        .unite {{ max-width: 100px !important; }}
-        .prix_unitaire {{ max-width: 120px !important; }}
-        .nombre {{ max-width: 70px !important; }}
-        .montant {{ max-width: 80px; }}
+        .unite {{ width: 60px !important; }}
+        .prix_unitaire {{ width: 70px !important; }}
+        .nombre {{ width: 40px !important; }}
+        .montant {{ width: 70px !important;; }}
         .overHead {{ line-break: normal !important; font-weight: normal !important; font-style: italic; text-align: left; border-top: 0px !important; border-left: 0px !important; border-right: 0px !important; padding-bottom: 10px !important; }}
         .rowChapterDistinction {{ border-top: 3px solid; }}
         """ 
