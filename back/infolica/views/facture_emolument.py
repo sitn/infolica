@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*--
 from sqlalchemy.sql.elements import and_
-from sqlalchemy.sql.sqltypes import Float
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
+from pyramid.response import Response
+
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import TableauEmoluments, VNumerosAffaires
+from infolica.models.models import Facture, Numero, TableauEmoluments, VAffaire, VNumerosAffaires
 from infolica.models.models import EmolumentAffaire, Emolument, EmolumentAffaireRepartition
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 import json
+import datetime
+import requests
 
 ###########################################################
 # EMOLUMENTS
@@ -478,3 +481,160 @@ def emolument_affaire_repartiton_delete_view(request):
 
     for record in records:
         request.dbsession.delete(record)
+
+
+@view_config(route_name='export_emoluments_pdf', request_method='POST')
+def export_emoluments_pdf_view(request):
+    """
+    Create PDF of emoluments
+    """
+    # Check authorization
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+
+    now = datetime.datetime.now()
+
+    # get request params
+    tableau_emoluments_id = request.params['tableau_emoluments_id'] if 'tableau_emoluments_id' in request.params else None
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    tableau_emoluments_html = request.params['tableau_emoluments_html'] if 'tableau_emoluments_html' in request.params else None
+    tableau_recapitulatif_html = request.params['tableau_recapitulatif_html'] if 'tableau_recapitulatif_html' in request.params else None
+
+    # get facture_id
+    factures = request.dbsession.query(
+        Facture
+    ).join(
+        EmolumentAffaireRepartition
+    ).filter(
+        EmolumentAffaireRepartition.emolument_affaire_id == tableau_emoluments_id
+    ).all()
+
+    #get affaire
+    affaire = request.dbsession.query(VAffaire).filter(VAffaire.id == affaire_id).first()
+
+    # get bf_emolument
+    numeros_id = request.dbsession.query(EmolumentAffaire).filter(EmolumentAffaire.id == tableau_emoluments_id).first().numeros_id
+    emolument_bf_html = None
+    if numeros_id is not None:
+        emolument_bf_html = []
+        for num_id in numeros_id:
+            emolument_bf_html.append(
+                str(request.dbsession.query(Numero).filter(Numero.id == num_id).first().numero)
+            )
+
+        emolument_bf_html = ", ".join(emolument_bf_html)
+
+
+    d = {"now": now.strftime("%d.%m.%Y, %H:%M:%S")}
+
+    header_str = "<html><head><style>"
+
+    ppp = """
+        .logo {{
+            width: 3.68cm;
+            image-resolution: 300dpi
+        }}
+        table {{
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        }}
+        td, th {{
+        border: 1px solid #ddd;
+        padding: 2px;
+        }}
+        tr:nth-child(even){{background-color: #f2f2f2;}}
+        th {{
+        padding-top: 4px;
+        padding-bottom: 4px;
+        text-align: left;
+        background-color: #499c6c;
+        color: white;
+        }}
+        @page {{
+            size: A4 portrait;
+            margin: 2cm;
+            counter-increment: page;
+            @bottom-center {{
+                content: "Page " counter(page) " de " counter(pages) ", impression du {now}";
+                font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 9px;
+                border-top: .25pt solid #666;
+                width: 75%;
+            }}
+            @bottom-right {{
+                content: "SERVICE DE LA GEOMATIQUE ET DU REGISTRE FONCIER";
+                font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 9px;
+            }}
+        }}
+        h1 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 20px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 20px; }}
+        p {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 11px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 15px; }}
+        th {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 11px; font-style: normal; font-variant: normal; font-weight: bold; line-height: 15px; border-color: black; border-style: solid; border-width: 1px; }}
+        td {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 11px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 15px; border-color: black; border-style: solid; border-width: 1px; }}
+        
+        .nbInput {{ width: 50px; text-align: center; }}
+        .nbField {{ margin: 0px; margin-bottom: 2px; min-height: 15px !important; padding: 3px 0px 0px 0px !important; }}
+        .subtitle {{ background-color: lightgray; }}
+        .alignRight {{ text-align: right !important; }}
+        .alignCenter {{ text-align: center !important; }}
+        .notEditable {{ background-color: lightgray; }}
+        .montantTotal {{ font-weight: bold; }}
+        .tabulation {{ padding-left: 15px !important; font-style: italic; }}
+        .tabulation-2 {{ padding-left: 30px !important; font-style: italic; }}
+        .batiment-separator {{ border-left: 3px solid black !important; }}
+        .code {{ max-width: 50px !important; }}
+        .position {{ max-width: 250px !important; }}
+        .position_divers {{ max-width: 250px !important; }}
+        .position_recapitulatif {{ max-width: 400px !important; }}
+        .unite {{ width: 60px !important; }}
+        .prix_unitaire {{ width: 70px !important; }}
+        .nombre {{ width: 40px !important; }}
+        .montant {{ width: 70px !important;; }}
+        .overHead {{ line-break: normal !important; font-weight: normal !important; font-style: italic; text-align: left; border-top: 0px !important; border-left: 0px !important; border-right: 0px !important; padding-bottom: 10px !important; }}
+        .rowChapterDistinction {{ border-top: 3px solid; }}
+        """ 
+
+    header_str += ppp.format(**d)
+    header_str += "</style></head><body>"
+    header_str += "<img class='logo' src='https://sitn.ne.ch/web/images/06ne.ch_RVB.png' alt='Logo'>"
+    header_str += '<p style="font-size: 10px; line-height: 12px; margin-top: 0px; padding-top: 4px; margin-left: 0px; padding-left: 0px;"><b>DÉPARTEMENT DU DÉVELOPPEMENT<br> \
+                    TERRITORIAL ET DE L\'ENVIRONNEMENT</b><br> \
+                    SERVICE DE LA GÉOMATIQUE ET<br> \
+                    DU REGISTRE FONCIER</p>'
+
+    header_str += "<h1>Tableau des émoluments de la mensuration officielle</h1>"
+    header_str += "<p>Affaire n° " + str(affaire_id) + " sur le cadastre: " + affaire.cadastre + "</p>"
+    
+    # numéros de BF s'ils sont rattachés
+    if emolument_bf_html is not None and emolument_bf_html is not "":
+        header_str += "<p>Bien(s)-fonds n° " + emolument_bf_html + "</p>"
+    header_str += "<p>Emolument n° " + str(tableau_emoluments_id) + "</p>"
+    
+    # edit facture_html
+    if len(factures) == 0:
+        factures_html = "Aucune facture rattachée à l'émolument"
+    else:
+        factures_html = []
+        for facture in factures:
+            if facture.sap is not None and facture.date is not None:
+                factures_html.append("n°" + str(facture.sap) + " du " + datetime.datetime.strftime(facture.date, "%d.%m.%Y"))
+        factures_html = " / ".join(factures_html)
+    if factures_html == "" or factures_html == []:
+        factures_html = "La facture n'a pas encore été envoyée"
+
+    header_str += '<p>Facture(s): ' + factures_html + "</p>"
+
+
+    tableau_emoluments_html = header_str + tableau_emoluments_html
+    tableau_emoluments_html += '<br><p style="font-size:20px;"><b>Récapitulatif</b></p>'
+    tableau_emoluments_html += tableau_recapitulatif_html + "</body></html>"
+
+    filename = "Tableau_émoluments_" + str(tableau_emoluments_id) + "_Affaire_" + str(affaire_id) + ".pdf"
+
+    result = requests.post("https://sitnintra.ne.ch/weasy/pdf?filename=" + filename, data=tableau_emoluments_html)
+
+    response = Response(result.content)
+    params = response.content_type_params
+    params['filename'] = filename
+    response.content_type = 'application/pdf'
+    response.content_type_params = params
+    return response

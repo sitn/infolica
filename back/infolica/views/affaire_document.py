@@ -9,6 +9,7 @@ from infolica.scripts.authentication import check_connected
 import os
 
 from datetime import datetime
+import urllib
 
 
 ###########################################################
@@ -94,7 +95,6 @@ def download_affaire_document_view(request):
     if not folder_path:
         Utils.create_affaire_folder(request, folder_path)
 
-    import urllib
     response = FileResponse(file_path, request=request, cache_max_age=86400)
     headers = response.headers
     headers['Content-Type'] = 'application/download'

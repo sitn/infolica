@@ -1453,7 +1453,75 @@ export default {
       this.confirmationRemoveDialog.onCancel = () => this.confirmationRemoveDialog.show = false;
       this.confirmationRemoveDialog.onConfirm = () => this.saveToFactures();
       this.confirmationRemoveDialog.show = true;
+    },
+
+    /**
+     * Download emoluments pdf
+     */
+    async downloadEmoluments() {
+      // tableau emoluments
+      let tableau_emoluments_html = JSON.parse(JSON.stringify(document.getElementById("tableau_emoluments").outerHTML));
+      let inputs = tableau_emoluments_html.matchAll(/(md-input-)\w+/g);
+      let value = 0;
+      for (const input of inputs) {
+        value = document.getElementById(input[0]).value;
+        if (Number(value) === 0) {
+          tableau_emoluments_html = tableau_emoluments_html.replaceAll(new RegExp(`<input.*(${input[0]}).*?>`, 'g'), '<div class="alignCenter"></div>');
+        } else {
+          tableau_emoluments_html = tableau_emoluments_html.replaceAll(new RegExp(`<input.*(${input[0]}).*?>`, 'g'), '<div class="alignCenter">' + value + '</div>');
+        }
+      }
+      // remove 1st column with chapter name, adapt colspan of headers and correct display when 'CHF' is located after end of div
+      tableau_emoluments_html = tableau_emoluments_html.replaceAll(/<(t[dh][^<>]+?chapter.*?)>*<\/t[dh]>/g, "");
+      tableau_emoluments_html = tableau_emoluments_html.replaceAll('colspan="7"', 'colspan="6"');
+      tableau_emoluments_html = tableau_emoluments_html.replaceAll(/<\/div>CHF/g, "CHF</div>");
+      tableau_emoluments_html = tableau_emoluments_html.replaceAll('<div class="alignCenter">CHF</div>', '<div class="alignCenter"></div>');
+      tableau_emoluments_html = tableau_emoluments_html.replaceAll('Nombre', 'Qté');
+      
+      
+      // tableau recapitulatif
+      let tableau_recapitulatif_html = JSON.parse(JSON.stringify(document.getElementById("tableau_recapitulatif_form").outerHTML));
+      inputs = tableau_recapitulatif_html.matchAll(/(md-input-)\w+/g);
+      for (const input of inputs) {
+        tableau_recapitulatif_html = tableau_recapitulatif_html.replaceAll(new RegExp(`<input.*(${input[0]}).*?>`, 'g'), '<div class="alignCenter">' + document.getElementById(input[0]).value + '</div>');
+      }
+      tableau_recapitulatif_html = tableau_recapitulatif_html.replaceAll(/<\/div>%/g, " %</div>");
+
+      let formData = new FormData();
+      formData.append('tableau_emoluments_id', this.form_general.id);
+      formData.append('affaire_id', this.affaire.id);
+      formData.append('tableau_emoluments_html', tableau_emoluments_html);
+      formData.append('tableau_recapitulatif_html', tableau_recapitulatif_html);
+
+      this.$http.post(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_EXPORT_EMOLUMENTS_PDF_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"},
+          responseType: "blob"
+        }
+      ).then((response) => {
+        let fileURL = window.URL.createObjectURL(new Blob([response.data]));
+        let fileLink = document.createElement('a');
+      
+        fileLink.href = fileURL;
+        let header_content_type = response.headers['content-type'];
+        let filename = undefined;
+        for (let item of header_content_type.split(';')){
+          item = item.trim(); 
+          if (item.startsWith('filename=')) {
+            filename = item.replace('filename=', '').replaceAll('"', '');
+            break
+          }
+        }
+        fileLink.setAttribute('download', filename);
+        document.body.appendChild(fileLink);
+        fileLink.click();
+      }).catch(err => handleException(err, this));
     }
+
+
   },
 
   mounted: function(){
