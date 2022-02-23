@@ -7,7 +7,7 @@ from pyramid.response import Response
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import Facture, TableauEmoluments, VNumerosAffaires
+from infolica.models.models import Facture, Numero, TableauEmoluments, VAffaire, VNumerosAffaires
 from infolica.models.models import EmolumentAffaire, Emolument, EmolumentAffaireRepartition
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
@@ -509,6 +509,22 @@ def export_emoluments_pdf_view(request):
         EmolumentAffaireRepartition.emolument_affaire_id == tableau_emoluments_id
     ).all()
 
+    #get affaire
+    affaire = request.dbsession.query(VAffaire).filter(VAffaire.id == affaire_id).first()
+
+    # get bf_emolument
+    numeros_id = request.dbsession.query(EmolumentAffaire).filter(EmolumentAffaire.id == tableau_emoluments_id).first().numeros_id
+    emolument_bf_html = None
+    if numeros_id is not None:
+        emolument_bf_html = []
+        for num_id in numeros_id:
+            emolument_bf_html.append(
+                str(request.dbsession.query(Numero).filter(Numero.id == num_id).first().numero)
+            )
+
+        emolument_bf_html = ", ".join(emolument_bf_html)
+
+
     d = {"now": now.strftime("%d.%m.%Y, %H:%M:%S")}
 
     header_str = "<html><head><style>"
@@ -586,9 +602,26 @@ def export_emoluments_pdf_view(request):
                     DU REGISTRE FONCIER</p>'
 
     header_str += "<h1>Tableau des émoluments de la mensuration officielle</h1>"
-    header_str += "<p>Affaire N° " + str(affaire_id) + "</p>"
-    header_str += "<p>Facture(s) N° " + ", ".join([(str(facture.sap) if facture.sap is not None else "N° SAP inconnu") + " (" + datetime.datetime.strftime(facture.date, "%d.%m.%Y") + ")" for facture in factures]) + "</p>"
-    header_str += "<p>Emolument N° " + str(tableau_emoluments_id) + "</p>"
+    header_str += "<p>Affaire n° " + str(affaire_id) + " sur le cadastre: " + affaire.cadastre + "</p>"
+    
+    # numéros de BF s'ils sont rattachés
+    if emolument_bf_html is not None and emolument_bf_html is not "":
+        header_str += "<p>Bien(s)-fonds n° " + emolument_bf_html + "</p>"
+    header_str += "<p>Emolument n° " + str(tableau_emoluments_id) + "</p>"
+    
+    # edit facture_html
+    if len(factures) == 0:
+        factures_html = "Aucune facture rattachée à l'émolument"
+    else:
+        factures_html = []
+        for facture in factures:
+            if facture.sap is not None and facture.date is not None:
+                factures_html.append("n°" + str(facture.sap) + " du " + datetime.datetime.strftime(facture.date, "%d.%m.%Y"))
+        factures_html = " / ".join(factures_html)
+    if factures_html == "" or factures_html == []:
+        factures_html = "La facture n'a pas encore été envoyée"
+
+    header_str += '<p>Facture(s): ' + factures_html + "</p>"
 
 
     tableau_emoluments_html = header_str + tableau_emoluments_html
