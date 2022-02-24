@@ -630,7 +630,7 @@ def export_emoluments_pdf_view(request):
 
     filename = "Tableau_émoluments_" + str(tableau_emoluments_id) + "_Affaire_" + str(affaire_id) + ".pdf"
 
-    result = requests.post("https://sitnintra.ne.ch/weasy/pdf?filename=" + filename, data=tableau_emoluments_html)
+    result = requests.post(request.registry.settings['weasyprint_baseurl'] + filename, data=tableau_emoluments_html)
 
     response = Response(result.content)
     params = response.content_type_params
