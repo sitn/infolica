@@ -36,7 +36,17 @@ Vue.use(VueMoment, {
   moment,
 });
 
-// Vue.material.locale.dateFormat = 'DD.MM.YYYY'
+Vue.material.locale.dateFormat = "dd.MM.yyyy";
+Vue.material.locale.months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+Vue.material.locale.shortMonths = ['Jan', 'Fév', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
+Vue.material.locale.shorterMonths = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+Vue.material.locale.days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+Vue.material.locale.shortDays = ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'];
+Vue.material.locale.shorterDays = ['Di', 'Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa'];
+Vue.material.locale.firstDayOfAWeek = 1;
+Vue.material.locale.cancel = 'Annuler';
+Vue.material.locale.confirm = 'Ok';
+
 Vue.filter('formatDate', function(value) {
   if (value) {
     return moment(String(value)).format(process.env.VUE_APP_DATEFORMAT_CLIENT)
