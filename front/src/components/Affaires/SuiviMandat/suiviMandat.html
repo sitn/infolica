@@ -20,7 +20,7 @@
 
                 <md-card-content v-bind:class="{ disabledElement: !permission.editSuiviMandatAllowed }">
 
-                    <p v-if="suiviMandat.date" style="margin-top: 0px;">Dernier contrôle effectué le {{suiviMandat.date}} par {{suiviMandat.visa.nom}}</p>
+                    <p v-if="suiviMandat.date" style="margin-top: 0px;">Dernier contrôle effectué le {{suiviMandat.date}} par {{suiviMandat.visa.prenom}} {{suiviMandat.visa.nom}}</p>
 
                     <div v-if="suiviMandat.id">
                         <div class="md-layout md-gutter md-alignment-top-space-between" v-if="affaire.type_id !== typesAffaires_conf.mpd">

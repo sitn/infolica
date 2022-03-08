@@ -67,7 +67,7 @@ def controles_mutations_by_affaire_id_view(request):
             Operateur.id == operateur_id
         ).first()
 
-        ctrl['operateur_prenom_nom'] = ' '.join([operateur.prenom, operateur.prenom])
+        ctrl['operateur_prenom_nom'] = ' '.join([operateur.prenom, operateur.nom])
     else:
         ctrl['operateur_prenom_nom'] = None
 
