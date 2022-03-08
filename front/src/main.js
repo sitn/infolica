@@ -18,6 +18,7 @@ import proj4 from 'proj4';
 import {register} from 'ol/proj/proj4';
 import {checkLogged} from '@/services/helper'
 import Clipboard from 'v-clipboard'
+import { MdField } from 'vue-material/dist/components'
 
 proj4.defs('EPSG:2056',
 '+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333'
@@ -27,15 +28,23 @@ register(proj4);
 
 Vue.config.productionTip = false;
 
-Vue.use(VueMaterial);
-Vue.use(VueRouter);
-Vue.use(VueAxios, axios);
 Vue.use(Clipboard);
+Vue.use(MdField)
+Vue.use(VueAxios, axios);
+Vue.use(VueMaterial);
+Vue.use(VueMoment, moment);
+Vue.use(VueRouter);
 
-Vue.use(VueMoment, {
-  moment,
-});
+// patch vuematerial issue 2285
+Vue.component('MdSelect', Vue.options.components.MdSelect.extend({
+    methods: {
+        isInvalidValue: function isInvalidValue () {
+            return this.$el.validity ? this.$el.validity.badInput : this.$el.querySelector('input').validity.badInput
+        }
+    }
+}))
 
+// local date formats
 Vue.material.locale.dateFormat = "dd.MM.yyyy";
 Vue.material.locale.months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 Vue.material.locale.shortMonths = ['Jan', 'Fév', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'];
