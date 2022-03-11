@@ -105,3 +105,29 @@ def preavis_delete_view(request):
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Preavis.__tablename__))
 
+
+
+# ====================================================================
+#    ROUTES POUR LES SERVICES EXTERNES
+# ====================================================================
+
+
+@view_config(route_name='service_externe_preavis', request_method='GET', renderer='json')
+def service_externe_preavis_view(request):
+    """
+    GET preavis for service externe
+    """
+    # Check connected
+    if not check_connected(request, ["SAT"]):
+        raise exc.HTTPForbidden()
+
+    service_id = request.params['service_id'] if 'service_id' in request.params else None
+
+    records = request.dbsession.query(Preavis).filter(
+        Preavis.date_reponse is None
+    ).filter(
+        Preavis.service_id == service_id
+    ).order_by(Preavis.date_demande.desc()).all()
+
+    return Utils.serialize_many(records)
+
