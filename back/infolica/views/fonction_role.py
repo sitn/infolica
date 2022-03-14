@@ -16,8 +16,10 @@ def fonctions_roles_current_user_view(request):
     """
     Return fonctions of current user
     """
+    authorized_services = ['SGRF', 'SAT']
+
     # Check connected
-    if not check_connected(request):
+    if not check_connected(request, services=authorized_services):
         raise exc.HTTPForbidden()
 
     return get_user_functions(request)

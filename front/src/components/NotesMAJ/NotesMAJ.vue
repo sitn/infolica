@@ -187,8 +187,16 @@ export default {
       promises.push(this.getVersion());
 
       let operateur_lastMajNote = null;
+      let operateur_service = null;
       Promise.all(promises).then(response => {
         operateur_lastMajNote = response[0].data.last_notemaj_id;
+        operateur_service = response[0].data.service;
+
+        // if user is not from SGRF, don't load version notes
+        if (operateur_service !== 'SGRF') {
+          return
+        }
+
         this.currentVersion = response[1].data;
         if (operateur_lastMajNote !== this.currentVersion.lastId) {
           this.$root.$emit("checkVersion", this.currentVersion.version, this.currentVersion.isNew);

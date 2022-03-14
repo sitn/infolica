@@ -15,6 +15,7 @@ export default {
       return {
           loggedUserName: String,
           isAdmin: false,
+          session_user: {},
           versionBtn: {
             version: null,
             showBadge: false
@@ -79,8 +80,8 @@ export default {
         this.setUserName(null);
       });
 
-      var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
-      this.setUserName(session_user);
+      this.session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+      this.setUserName(this.session_user);
 
       this.checkIsAdmin();
       

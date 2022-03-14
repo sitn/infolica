@@ -43,8 +43,10 @@ def operateur_by_id_view(request):
     """
     Return operateur by id
     """
+    authorized_services = ['SGRF', 'SAT']
+
     # Check connected
-    if not check_connected(request):
+    if not check_connected(request, services=authorized_services):
         raise exc.HTTPForbidden()
 
     id = request.matchdict['id']

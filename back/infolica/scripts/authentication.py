@@ -17,7 +17,7 @@ def do_logout(request):
     return response
 
 
-def check_connected(request, service=["SGRF"]):
+def check_connected(request, services=["SGRF"]):
     """
     check connection
     """
@@ -30,7 +30,7 @@ def check_connected(request, service=["SGRF"]):
         func.lower(Operateur.login) == user
     ).first()
 
-    if operateur.service in service:
+    if operateur.service in services:
         return True
     else:
         return False
