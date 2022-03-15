@@ -819,7 +819,6 @@ export default {
             if (response && response.data) {
               this.putEmolumentsDetail(this.form_general.id).then(response => {
                 if (response && response.data) {
-                  this.showEmolumentsDialog = false;
                   this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
 
                   //Log edition facture
@@ -845,7 +844,6 @@ export default {
               let emolument_affaire_id = response.data.emolument_affaire_id;
               this.postEmolumentsDetail(emolument_affaire_id).then(response => {
                 if (response && response.data) {
-                  this.showEmolumentsDialog = false;
   
                   this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
 
