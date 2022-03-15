@@ -590,7 +590,7 @@ export default {
         Number(this.total.montant_22pl);
 
       this.total.montant_travauxTerrain_total_zi =
-        Number(this.total.montant_travauxTerrain_total) * Number(this.form_general.zi);
+        this.round(Number(this.total.montant_travauxTerrain_total) * Number(this.form_general.zi));
 
       this.total.montant_travauxTerrain_batiment_total_f_somme =
         this.form_general.nb_batiments>0? this.round(Number(this.total.montant_travauxTerrain_batiment_total_f.reduce((a, b) => Number(a) + Number(b)))): 0;
@@ -826,7 +826,6 @@ export default {
 
                   this.postEmolumentAffaireRepartition(this.form_general.id);
                   // refresh emoluments_general_list
-                  this.getEmolumentsGeneral();
                   this.$root.$emit("searchAffaireFactures");
                   resolve(this.form_general.id);
 
@@ -852,7 +851,7 @@ export default {
                   
                   this.postEmolumentAffaireRepartition(emolument_affaire_id);
                   // refresh emoluments_general_list
-                  this.getEmolumentsGeneral();
+                  this.form_general.id = emolument_affaire_id;
                   this.$root.$emit("searchAffaireFactures");
                   resolve(emolument_affaire_id);
 
