@@ -264,7 +264,7 @@ export default {
                          Number(this.form.pfp3) > 0? this.form.pfp3 + " PFP3": null,
                          Number(this.form.paux) > 0? this.form.paux + " point(s) auxiliaire(s)": null,
                          Number(this.form.bat) > 0? this.form.bat + " bâtiment(s)": null,
-                         Number(this.form.pdet) > 0? this.form.pdet + " point(s) de détail sur plan" + plan: null,
+                         Number(this.form.pdet) > 0? this.form.pdet + " point(s) de détail sur plan " + plan: null,
                          Number(this.form.dp) > 0? this.form.dp + " domaine(s) public(s)": null].filter(Boolean).join(", ");
           logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_RESERVATION_NUMEROS_MO_ID), comment);
         }

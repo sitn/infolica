@@ -143,6 +143,9 @@ client_cadastration_id = 2896
 operateur_affaire_urgente = 15,57,59,60
 operateur_secretariat = 9,39
 
+# WeasyPrint webservice
+weasyprint_baseurl = /*TO COMPLETE*/
+
 ######################################################################################
 # Accès dossiers
 ######################################################################################
