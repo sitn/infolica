@@ -8,6 +8,7 @@ from infolica.models.models import NotesMAJ, Operateur
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 from datetime import date, datetime
+import math
 
 
 @view_config(route_name='notes_maj', request_method='GET', renderer='json')
@@ -18,19 +19,66 @@ def notes_maj_view(request):
     # Check connected
     if not check_connected(request):
         raise exc.HTTPForbidden()
-    
-    lastNoteMaj_id = request.params ["lastNoteMaj_id"] if "lastNoteMaj_id" in request.params else None
+
+    result = {}
 
     query = request.dbsession.query(NotesMAJ)
     
-    if not lastNoteMaj_id is None:
-        if lastNoteMaj_id == 'null':
-            lastNoteMaj_id = 0
-        query = query.filter(NotesMAJ.id > lastNoteMaj_id)
+    
+    total = query.count()
+    
+    if 'sort' in request.params and '|' in request.params['sort']:
+        sort, sort_order = request.params['sort'].split('|')
+        if sort_order == 'asc':
+            query = query.order_by(getattr(NotesMAJ, sort).asc())
+        else:
+            query = query.order_by(getattr(NotesMAJ, sort).desc())
 
-    query = query.order_by(NotesMAJ.id.desc()).all()
+    page = int(request.params['page']) if 'page' in request.params else 1
+    per_page = int(request.params['per_page']) if 'per_page' in request.params else total
 
-    return Utils.serialize_many(query)
+    query = query.offset((page-1)*per_page).limit(per_page)
+
+    result['per_page'] = total
+    if 'per_page' in request.params:
+        per_page = int(request.params['per_page'])
+        result['per_page'] = per_page
+
+
+    result['total'] = total
+    result['current_page'] = page
+    result['from'] = (page-1)*per_page + 1
+    result['to'] = min(page*per_page, total)
+    result['last_page'] = math.ceil(total/per_page)
+    result['next_page_url'] = None
+    result['prev_page_url'] = None
+    result['data'] = Utils.serialize_many(query.all())
+    
+
+    return result
+
+
+# @view_config(route_name='notes_maj', request_method='GET', renderer='json')
+# def notes_maj_view(request):
+#     """
+#     Return all notes_maj
+#     """
+#     # Check connected
+#     if not check_connected(request):
+#         raise exc.HTTPForbidden()
+    
+#     lastNoteMaj_id = request.params ["lastNoteMaj_id"] if "lastNoteMaj_id" in request.params else None
+
+#     query = request.dbsession.query(NotesMAJ)
+    
+#     if not lastNoteMaj_id is None:
+#         if lastNoteMaj_id == 'null':
+#             lastNoteMaj_id = 0
+#         query = query.filter(NotesMAJ.id > lastNoteMaj_id)
+
+#     query = query.order_by(NotesMAJ.id.desc()).all()
+
+#     return Utils.serialize_many(query)
 
 
 @view_config(route_name='version', request_method='GET', renderer='json')

@@ -8,14 +8,38 @@
             <div class="md-title"><b>Listing des améliorations apportées d'une version à une autre</b></div>
         </md-card-header>
         <md-card-content>
-            <md-table v-model="notes" md-card>
+
+            <div class="ui container">
+                <vuetable ref="vuetable"
+                    :http-fetch="getNotesMAJ"
+                    :http-options="{params: {sort: 'date|desc', page:'1', perPage: '10'}}"
+                    :css="css.table"
+                    data-path="data"
+                    :fields="fields"
+                    pagination-path=""
+                    :sortOrder="sortOrder"
+                    @vuetable:pagination-data="onPaginationData"
+                ></vuetable>
+                <!-- <vuetable-pagination-info
+                ref="paginationInfo"
+                info-class="pagination-info"
+            ></vuetable-pagination-info> -->
+                <vuetable-pagination ref="pagination"
+                    :css="css.pagination"
+                    @vuetable-pagination:change-page="onChangePage"
+                ></vuetable-pagination>
+            </div>
+                
+
+
+            <!-- <md-table v-model="notes" md-card>
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell md-label="Date">{{ item.date_client }}</md-table-cell>
                     <md-table-cell md-label="version">{{ item.version }}</md-table-cell>
                     <md-table-cell md-label="Titre">{{ item.titre }}</md-table-cell>
                     <md-table-cell md-label="Descrption">{{ item.message }}</md-table-cell>
                 </md-table-row>
-            </md-table>
+            </md-table> -->
 
             <p v-if="!expandNotes"><a @click="expandNotes=true">Montrer plus</a></p>
 
