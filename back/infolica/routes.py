@@ -188,3 +188,4 @@ def includeme(config):
     config.add_route('guichet_rf_saisie_pm', '/infolica/api/guichet_rf_saisie_pm')
     #External services
     config.add_route('service_externe_preavis', '/infolica/api/service_externe_preavis')
+    config.add_route('service_externe_affaire', '/infolica/api/service_externe_affaire')

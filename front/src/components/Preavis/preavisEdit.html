@@ -1,0 +1,174 @@
+<div class="affairesDashboard" v-if="affaireLoaded">
+
+    <!-- TITRE -->
+    <md-toolbar class="affaireDashboardTitle">
+        <div style="width: 96% " class="md-layout md-gutter md-alignment-center-space-between">
+            <div class="md-layout-item md-size-70">
+                <h1 style="margin-bottom: 0px;">
+                    Affaire {{ affaire.id }}
+                    <span v-if="affaire.no_access !== null">[{{ affaire.no_access }}]</span>
+                    <span v-if="affaire.urgent && affaire.date_envoi === null && !affaire.abandon" style="padding-left: 30px; padding-right: 30px; color:red">!!! AFFAIRE URGENTE !!! <span style="font-size: 20px;" v-if="affaire.urgent_echeance">Échéance: {{ affaire.urgent_echeance }}, il reste {{ affaire.urgent_echeance_reste }} jour(s)</span></span>
+                    <span v-if="affaire.abandon"> - ABANDONNE</span>
+                </h1>
+            </div>
+
+            <div class="md-layout-item" style="text-align: right;">
+                <md-button class="md-primary md-raised" v-if="permission.editAffaireAllowed" v-on:click="generateBordereauAffaire" title="Générer la page de demande de l'affaire">
+                    <md-icon md-dense>text_snippet</md-icon> Bordereau de l'affaire
+                </md-button>
+                <md-button class="md-accent md-raised" v-if="permission.affaireReactivation && affaire.date_cloture !== null" @click="callActivationAffaire">Réactiver l'affaire</md-button>
+
+                <md-speed-dial style="align-items: flex-end; z-index: 1;" v-if="permission.affaireCloture && affaire.date_cloture === null" md-direction="bottom" class="md-fixed" md-event="click">
+                    <md-speed-dial-target id="closeAffaireBtn" class="md-raised md-accent" style="margin: 6px !important;">
+                        <md-icon>block</md-icon>
+                    </md-speed-dial-target>
+
+                    <md-speed-dial-content style="align-items: flex-end;">
+                        <md-button class="md-accent" @click="callClotureAffaire" v-if="permission.cloreAffaireEnabled" md-dense>Cloturer</md-button>
+                        <md-button class="md-accent" @click="openAbandonMenu" v-if="permission.abandonAffaireEnabled" md-dense>Abandonner</md-button>
+                    </md-speed-dial-content>
+                </md-speed-dial>
+            </div>
+        </div>
+
+        <div class="md-layout-item">
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item">
+                    <Etape :affaire="affaire" :chefs_equipe_list="chefs_equipe_list" :etapes_affaire_conf="etapes_affaire_conf" @setAffaire="setAffaire()" :typesAffaires_conf="typesAffaires_conf" />
+                </div>
+                <div class="md-layout-item" style="max-width: 350px;" v-if="affaireAttribution.show">
+                    <md-checkbox @change="affaireAttributionChangeState" v-model="affaireAttribution.checked">{{ affaireAttribution.text }}</md-checkbox>
+                </div>
+            </div>
+        </div>
+
+    </md-toolbar>
+
+    <div class="affaireDashboardContent">
+        <!-- INFORMATIONS GENERALES -->
+        <div class="leftColumn">
+            <InfosGenerales @modify-off="modifyOff" :affaire="affaire" :typesAffaires_conf="typesAffaires_conf" :clientTypes_conf="clientTypes_conf" :permission="permission" :etapes_affaire_conf="etapes_affaire_conf" />
+        </div>
+
+        <!-- MAP -->
+        <div class="rightColumn">
+            <md-card class="mapHeight">
+                <md-card-content>
+                    <!-- Afficher les coordonnées -->
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-size-30">
+                            <md-field>
+                                <label>Coordonnées</label>
+                                <md-input v-model="[affaire.localisation_e | 0, affaire.localisation_n | 0].join(' / ')" readonly></md-input>
+                            </md-field>
+                        </div>
+                        <div style="text-align: right;" class="md-layout-item">
+                            <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('cadastre')">Cadastre</md-button>
+                            <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('sites_pollues')">Sites Pollués</md-button>
+                            <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('amenagement_territoire')">Aménagement du territoire</md-button>
+                        </div>
+                        <div class="md-layout-item md-size-100" v-if="showMovePointComment">
+                            <p style="color: blue; margin-top: 0px;">Pour modifier les coordonnées, déplacer la pastille sur la carte.</p>
+                        </div>
+                        <div id="mapContainer">
+                            <MapHandler ref="mapHandler" />
+                        </div>
+                    </div>
+                </md-card-content>
+            </md-card>
+        </div>
+
+        <!-- SUIVI D'AFFAIRE -->
+        <div class="affairesDashboard">
+            <suivi />
+        </div>
+
+        <!-- PREAVIS -->
+        <div class="affairesDashboard" v-if="[typesAffaires_conf.mutation, typesAffaires_conf.modification_mutation].includes(affaire.type_id)">
+            <preavis :affaire="affaire" />
+        </div>
+
+        <!-- NUMEROS -->
+        <div class="affairesDashboard">
+            <numerosAffaire :affaire="affaire" :typesAffaires_conf="typesAffaires_conf" :permission="permission" ref="numeros" />
+        </div>
+
+        <!-- FACTURATION -->
+        <div class="affairesDashboard" v-if="affaire.type_id!==typesAffaires_conf.pcop">
+            <Facturation ref="facturation" :typesAffaires_conf="typesAffaires_conf" :affaire="affaire" :permission="permission" :clientTypes_conf="clientTypes_conf" />
+        </div>
+
+        <!-- CONTROLE TECHNIQUE MUTATION -->
+        <div class="affairesDashboard" v-if="![typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.mpd].includes(affaire.type_id) &&
+                                             !(affaire.type_id===typesAffaires_conf.modification_ppe)">
+            <ControleMutation :affaire="affaire" :permission="permission" />
+        </div>
+
+        <!-- SUIVI DU MANDAT -->
+        <div class="affairesDashboard" v-if="![typesAffaires_conf.ppe, typesAffaires_conf.pcop].includes(affaire.type_id) &&
+                                             !(affaire.type_id===typesAffaires_conf.modification_ppe)">
+            <SuiviMandat :affaire="affaire" :permission="permission" :typesAffaires_conf="typesAffaires_conf" />
+        </div>
+
+        <!-- CONTROLE TECHNIQUE PPE (Technicien)-->
+        <div class="affairesDashboard" v-if="affaire.type_id===typesAffaires_conf.ppe ||
+                                            (affaire.type_id===typesAffaires_conf.modification_ppe)">
+            <ControlePPE :affaire="affaire" :permission="permission" />
+        </div>
+
+        <!-- CONTROLE DU GEOMETRE CANTONAL -->
+        <div class="affairesDashboard" v-if="![typesAffaires_conf.pcop, typesAffaires_conf.mpd].includes(affaire.type_id)">
+            <ControleGeometre :typesAffaires_conf="typesAffaires_conf" :affaire="affaire" :permission="permission" />
+        </div>
+        <!-- DOCUMENTS -->
+        <div class="affairesDashboard">
+            <Documents :affaire="affaire" />
+        </div>
+
+        <!-- Cloture Affaire -->
+        <div>
+            <ClotureAffaire ref="clotureAffaireForm" :affaire="affaire" :typesAffaires_conf="typesAffaires_conf" />
+        </div>
+
+        <!-- Réactivation Affaire -->
+        <div>
+            <ActivationAffaire ref="activationAffaire" :affaire="affaire" />
+        </div>
+
+
+        <!-- Dialog de confirmation de l'abandon d'une affaire -->
+        <md-dialog :md-active.sync="showConfirmAbandonAffaireDialog"
+            style="width: 800px; margin: auto;">
+            <md-dialog-title>Abandon de l'affaire</md-dialog-title>
+
+            <md-dialog-content>
+                <div>
+                    <div class="md-subheader">Abandon de l'affaire</div>
+                    <div style="margin-left: 17px;">
+                        <p>L'affaire sera clôturée avec la mention "abandon" <span v-if="numerosReserves.length > 0"> et tous les numéros réservés seront abandonnés</span>.</p>
+                        <div style="text-align: right;">
+                            <md-button class="md-raised md-primary" @click="callAbandonAffaireAndNumeros">Abandonner</md-button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div v-if="showConfirmAbandonErrorAffaireDialog">
+                    <br>
+                    <md-divider></md-divider>
+                    
+                    <div class="md-subheader">Affaire ouverte par erreur</div>
+                    <div style="margin-left: 17px;">
+                        <p>L'affaire sera clôturée avec la mention "abandon", l'affaire mère sera réactivée et les numéros seront à nouveau actifs dans l'affaire mère.</p>
+                        <div style="text-align: right;">
+                            <md-button class="md-raised md-primary" @click="callAbandonAffaireAndReactivateParentAffaire">Abandonner</md-button>
+                        </div>
+                    </div>
+                </div>
+            </md-dialog-content>
+
+            <md-dialog-actions>
+                <md-button @click="showConfirmAbandonAffaireDialog = false">Annuler</md-button>
+            </md-dialog-actions>
+        </md-dialog>
+    </div>
+</div>

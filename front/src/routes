@@ -11,6 +11,7 @@ import About from './components/About/About.vue'
 import Login from './components/Login/Login.vue'
 import Cockpit from './components/Cockpit/Cockpit.vue'
 import Preavis from './components/Preavis/Preavis.vue'
+import PreavisEdit from './components/Preavis/PreavisEdit.vue'
 
 const routes = [
     { path: '/', component: Cockpit, redirect:'/cockpit', name: 'Home' },    
@@ -26,7 +27,8 @@ const routes = [
     { path: '/numeros/:id', component: NumerosHistory, name: 'NumerosHistory' },
     { path: '/apropos', component: About, name: 'About' },
     { path: '/cockpit', component: Cockpit, name: 'Cockpit' },
-    { path: '/preavis', component: Preavis, name: 'Preavis' }
+    { path: '/preavis', component: Preavis, name: 'Preavis' },
+    { path: '/preavis/edit/:id', component: PreavisEdit, name: 'PreavisEdit' }
 ];
 
 export default routes;
