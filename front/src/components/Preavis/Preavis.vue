@@ -5,7 +5,6 @@
 <script>
 
 import { handleException } from '@/services/exceptionsHandler';
-// import { checkPermission, getOperateurs, stringifyAutocomplete, stringifyAutocomplete2, getCurrentUserRoleId } from '@/services/helper';
 
 // import moment from "moment";
 

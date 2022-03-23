@@ -1,0 +1,39 @@
+.preavisEdit {
+    width: 90%;
+    margin: auto;
+}
+
+.title {
+    font-weight: bold;
+    width: 160px;
+}
+
+.content {
+    width: 400px;
+}
+
+.tg {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.tg tr {
+    height: 45px;
+}
+
+.tg td {
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+    padding: 10px;
+}
+
+#mapContainer {
+    width: 95%;
+    margin: auto;
+    height: 370px; /*valeur empirique*/
+    border: 1px;
+    border-width: 1px;
+    border-color: black;
+    border-style: solid;
+}

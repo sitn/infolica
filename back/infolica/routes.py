@@ -189,3 +189,4 @@ def includeme(config):
     #External services
     config.add_route('service_externe_preavis', '/infolica/api/service_externe_preavis')
     config.add_route('service_externe_affaire', '/infolica/api/service_externe_affaire')
+    config.add_route('service_externe_documents', '/infolica/api/service_externe_documents')

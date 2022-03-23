@@ -4,13 +4,14 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import Affaire, VAffaire, Operateur
+from infolica.models.models import Affaire, VAffaire, Operateur, Service
 from infolica.models.models import Preavis, PreavisType, VAffairesPreavis
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 
 from datetime import datetime
 import time
+import os
 
 from sqlalchemy import func
 
@@ -216,7 +217,9 @@ def service_externe_affaire_view(request):
         VAffaire.client_commande_mail,
         VAffaire.type_affaire,
         VAffaire.cadastre,
-        VAffaire.date_ouverture
+        VAffaire.date_ouverture,
+        VAffaire.localisation_e,
+        VAffaire.localisation_n,
     ).filter(
         VAffaire.id == affaire_id
     ).first()
@@ -225,6 +228,7 @@ def service_externe_affaire_view(request):
         record[3],
         record[7],
         " ".join(filter(None, [record[4], record[6],  record[5]])),
+        record[8],
         " ".join(filter(None, [record[10], record[11]])),
         record[12],
         record[13],
@@ -237,8 +241,67 @@ def service_externe_affaire_view(request):
         'client': client,
         'type_affaire': record[15],
         'cadastre': record[16],
-        'date_ouverture': datetime.strftime(record[17], "%d.%M.%Y")
+        'date_ouverture': datetime.strftime(record[17], "%d.%m.%Y"),
+        'coord_e': record[18],
+        'coord_n': record[19]
     }
 
     return result
+
+
+@view_config(route_name='service_externe_documents', request_method='GET', renderer='json')
+def service_externe_documents_view(request):
+    """
+    GET documents of affaire_id for service externe
+    """
+    # Check connected
+    if not check_connected(request, ["SAT"]):
+        raise exc.HTTPForbidden()
+
+    # get service from user
+    operateur = getOperateurFromUser(request)
+
+    if operateur.service_id is None:
+        exc.HTTPForbidden(detail="Opérateur non autorisé à accéder à ce contenu")
+    
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+
+    if affaire_id is None:
+        exc.HTTPInternalServerError(detail="L'identidifiant de l'affaire est manquant")
+
+    testPreavis = request.dbsession.query(Affaire).join(
+        Preavis, Preavis.affaire_id == Affaire.id
+    ).filter(
+        Preavis.service_id == operateur.service_id
+    ).first()
+
+    if testPreavis is None:
+        exc.HTTPForbidden(detail="Opérateur non autorisé à accéder à ce contenu")
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    affaire_chemin = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
+
+    # get rel path of service
+    service_relpath = request.dbsession.query(Service).filter(Service.id == operateur.service_id).first().relpath
+    affaire_chemin = os.path.join(affaire_chemin, service_relpath)
+
+    affaire_path = os.path.join(request.registry.settings['affaires_directory'], affaire_chemin)
+
+    documents = []
+    if not os.path.exists(affaire_path):
+        return documents
+
+
+    for root, _, files in os.walk(affaire_path, topdown=False):
+        for name in files:
+            if name.startswith(".") or name.startswith("~"):
+                continue
+            file_i = {}
+            file_i['filename'] = name
+            file_i['creation_sort'] = os.path.getctime(os.path.join(root, name))
+            file_i['modification_sort'] = os.path.getmtime(os.path.join(root, name))
+            file_i['creation'] = datetime.fromtimestamp(file_i['creation_sort']).strftime("%d.%m.%Y")
+            file_i['modification'] = datetime.fromtimestamp(file_i['modification_sort']).strftime("%d.%m.%Y")
+            documents.append(file_i)
+    
+    return documents
 
