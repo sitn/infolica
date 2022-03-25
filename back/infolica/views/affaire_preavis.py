@@ -5,6 +5,7 @@ import pyramid.httpexceptions as exc
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Affaire, VAffaire, Operateur, Service
+from infolica.models.models import RemarquePreavis
 from infolica.models.models import Preavis, PreavisType, VAffairesPreavis
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
@@ -126,6 +127,32 @@ def getOperateurFromUser(request):
     ).first()
     return operateur
 
+def strongAuthentication(request, affaire_id):
+    # Check connected
+    if not check_connected(request, ["SAT"]):
+        raise exc.HTTPForbidden()
+
+    # get service from user
+    operateur = getOperateurFromUser(request)
+    if operateur.service_id is None:
+        exc.HTTPForbidden(detail="Opérateur non autorisé à accéder à ce contenu")
+    
+    if affaire_id is None:
+        exc.HTTPInternalServerError(detail="L'identidifiant de l'affaire est manquant")
+
+    testPreavis = request.dbsession.query(Affaire).join(
+        Preavis, Preavis.affaire_id == Affaire.id
+    ).filter(
+        Preavis.service_id == operateur.service_id
+    ).first()
+
+    if testPreavis is None:
+        exc.HTTPForbidden(detail="Aucune demande de préavis pour ce service")
+
+    return operateur
+
+
+
 @view_config(route_name='service_externe_preavis', request_method='GET', renderer='json')
 def service_externe_preavis_view(request):
     """
@@ -176,27 +203,8 @@ def service_externe_affaire_view(request):
     """
     GET affaire for service externe
     """
-    # Check connected
-    if not check_connected(request, ["SAT"]):
-        raise exc.HTTPForbidden()
-
-    # get service from user
-    operateur = getOperateurFromUser(request)
-    if operateur.service_id is None:
-        exc.HTTPForbidden(detail="Opérateur non autorisé à accéder à ce contenu")
-    
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
-    if affaire_id is None:
-        exc.HTTPInternalServerError(detail="L'identidifiant de l'affaire est manquant")
-
-    testPreavis = request.dbsession.query(Affaire).join(
-        Preavis, Preavis.affaire_id == Affaire.id
-    ).filter(
-        Preavis.service_id == operateur.service_id
-    ).first()
-
-    if testPreavis is None:
-        exc.HTTPForbidden(detail="Opérateur non autorisé à accéder à ce contenu")
+    strongAuthentication(request, affaire_id)
 
 
     record = request.dbsession.query(
@@ -253,31 +261,10 @@ def service_externe_affaire_view(request):
 def service_externe_documents_view(request):
     """
     GET documents of affaire_id for service externe
-    """
-    # Check connected
-    if not check_connected(request, ["SAT"]):
-        raise exc.HTTPForbidden()
-
-    # get service from user
-    operateur = getOperateurFromUser(request)
-
-    if operateur.service_id is None:
-        exc.HTTPForbidden(detail="Opérateur non autorisé à accéder à ce contenu")
-    
+    """ 
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    operateur = strongAuthentication(request, affaire_id)
 
-    if affaire_id is None:
-        exc.HTTPInternalServerError(detail="L'identidifiant de l'affaire est manquant")
-
-    testPreavis = request.dbsession.query(Affaire).join(
-        Preavis, Preavis.affaire_id == Affaire.id
-    ).filter(
-        Preavis.service_id == operateur.service_id
-    ).first()
-
-    if testPreavis is None:
-        exc.HTTPForbidden(detail="Opérateur non autorisé à accéder à ce contenu")
-    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     affaire_chemin = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
 
     # get rel path of service
@@ -305,3 +292,68 @@ def service_externe_documents_view(request):
     
     return documents
 
+
+@view_config(route_name='service_externe_conversation', request_method='GET', renderer='json')
+def service_externe_conversation_view(request):
+    """
+    GET conversation of affaire_id for service externe
+    """
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    operateur = strongAuthentication(request, affaire_id)
+    
+    results = []
+
+    query = request.dbsession.query(
+        Operateur.nom,
+        Operateur.prenom,
+        RemarquePreavis.date,
+        RemarquePreavis.remarque
+    ).join(
+        Operateur, RemarquePreavis.operateur_id == Operateur.id
+    ).join(
+        Preavis, RemarquePreavis.preavis_id == Preavis.id
+    ).filter(
+        Preavis.affaire_id == affaire_id
+    ).filter(
+        Preavis.service_id == operateur.service_id
+    ).order_by(RemarquePreavis.id.desc()).all()
+
+    
+    for res in query:
+        results.append({
+            "operateur": ' '.join([res[1], res[0]]),
+            "date": datetime.strftime(res[2], "%d.%m.%Y"),
+            "message": res[3]
+        })
+
+    return results
+
+
+@view_config(route_name='service_externe_conversation', request_method='POST', renderer='json')
+def service_externe_conversation_new_view(request):
+    """
+    GET conversation of affaire_id for service externe
+    """
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    commentaire = request.params['commentaire'] if 'commentaire' in request.params else None
+    operateur = strongAuthentication(request, affaire_id)
+    
+    preavis = request.dbsession.query(Preavis).filter(
+        Preavis.affaire_id == affaire_id
+    ).filter(
+        Preavis.service_id == operateur.service_id
+    ).first()
+
+    rp = RemarquePreavis()
+    
+    params = {
+        'preavis_id': preavis.id,
+        'remarque': commentaire,
+        'operateur_id': operateur.id,
+        'date': datetime.strftime(datetime.now(), "%Y-%m-%d")
+    }
+
+    model = Utils.set_model_record(rp, params)
+    request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(RemarquePreavis.__tablename__))

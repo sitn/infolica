@@ -20,7 +20,9 @@ export default {
       affaire: {},
       affaireLoaded: false,
       documents: [{}],
+      conversation: [{}],
       mapLoaded: false,
+      commentaire: null,
     };
   },
 
@@ -102,6 +104,45 @@ export default {
       }).catch(err => handleException(err));
     },
 
+    /**
+     * Get conversation
+     */
+    async getConversation() {
+      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_CONVERSATION_BY_AFFAIRE_ID_ENDPOINT + "?affaire_id=" + this.$route.params.id,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.conversation = response.data;
+        }
+      }).catch(err => handleException(err));
+    },
+
+    async saveMessage() {
+      let formData = new FormData();
+      formData.append('affaire_id', this.$route.params.id);
+      formData.append('commentaire', this.commentaire);
+
+      this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_CONVERSATION_BY_AFFAIRE_ID_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.$root.$emit('showMessage', 'Le commentaire a bien été enregistré');
+          this.commentaire = null;
+          this.getConversation();
+        }
+      }).catch(err => handleException(err));
+
+
+    }
+    
+
     // /**
     //  * Open Theme SITN
     //  */
@@ -131,7 +172,7 @@ export default {
     });
 
     this.getDocuments();
-    
+    this.getConversation();
   }
 };
 </script>

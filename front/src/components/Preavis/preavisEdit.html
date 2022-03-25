@@ -1,4 +1,4 @@
-<div class="preavisEdit">
+<div id="preavisEdit" class="preavisEdit">
 
     <!-- TITRE -->
     <md-toolbar>
@@ -57,52 +57,68 @@
             <div class="md-title">Documents</div>
         </md-card-header>
         <md-card-content>
-            <div class="md-layout md-gutter">
-                <div class="md-layout-item md-size-50">
-                    <md-card>
-                        <md-card-header>
-                            <div class="md-title">Préavis</div>
-                        </md-card-header>
-                        <md-card-content>
-                            <md-radio>Préavis positif</md-radio>
-                            <md-radio>Préavis négatif</md-radio>
-                            <md-radio>Pas concerné</md-radio>
-                            
-                            <md-field>
-                                <label>Remarque</label>
-                                <md-textarea></md-textarea>
-                            </md-field>
-                        </md-card-content>
-                    </md-card>
-                </div>
-
-                <div class="md-layout-item md-size-50">
-                    <md-table v-model="documents" md-sort="filename" md-sort-order="asc" md-fixed-header md-card>
-                        <md-table-empty-state md-label="Aucun document"></md-table-empty-state>
-                        
-                        <md-table-row slot="md-table-row" slot-scope="{ item }">
-                            <md-table-cell style="width: 50%;" md-label="Fichier" md-sort-by="filename">{{ item.filename }}</md-table-cell>
-                            <md-table-cell style="width: 30%;" md-label="Modification" md-sort-by="modification_sort">{{ item.modification }}</md-table-cell>
-                            <md-table-cell style="width: 20%;" md-label="Actions">
-                                <md-button class="md-icon-button md-dense md-primary" @click="downloadFile(item)">
-                                    <md-icon>save_alt</md-icon>
-                                </md-button>
-                            </md-table-cell>
-                        </md-table-row>
-                    </md-table>
-                </div>
-            </div>
-
-            
+            <md-table v-model="documents" md-sort="filename" md-sort-order="asc" md-fixed-header md-card>
+                <md-table-empty-state md-label="Aucun document"></md-table-empty-state>
+                
+                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                    <md-table-cell style="width: 50%;" md-label="Fichier" md-sort-by="filename">{{ item.filename }}</md-table-cell>
+                    <md-table-cell style="width: 30%;" md-label="Modification" md-sort-by="modification_sort">{{ item.modification }}</md-table-cell>
+                    <md-table-cell style="width: 20%;" md-label="Actions">
+                        <md-button class="md-icon-button md-dense md-primary" @click="downloadFile(item)">
+                            <md-icon>save_alt</md-icon>
+                        </md-button>
+                    </md-table-cell>
+                </md-table-row>
+            </md-table>
         </md-card-content>
     </md-card>
 
     <md-card>
         <md-card-header>
-            <div class="md-title">Préavis</div>
+            <div class="md-title">Conversation</div>
         </md-card-header>
         <md-card-content>
-            
+            <div class="md-layout md-gutter md-alignment-top-space-between">
+                <div class="md-layout-item md-size-50">
+                    <md-field>
+                        <label>Commentaire</label>
+                        <md-textarea v-model="commentaire"></md-textarea>
+                    </md-field>
+                    
+                    <div class="md-layout-item" style="float: right;">
+                        <md-button class="md-raised md-primary" @click="saveMessage">Ajouter le commentaire</md-button>
+                    </div>
+                </div>
+                <div class="md-layout-item md-size-50">
+                    <md-table v-model="conversation" md-card>
+                        <md-table-empty-state md-label="Aucun commentaire"></md-table-empty-state>
+                        
+                        <md-table-row slot="md-table-row" slot-scope="{ item }">
+                            <md-table-cell style="width: 15%;" md-label="Date">{{ item.date }}</md-table-cell>
+                            <md-table-cell style="width: 15%;" md-label="Operateur">{{ item.operateur }}</md-table-cell>
+                            <md-table-cell style="width: 70%;" md-label="Message">{{ item.message }}</md-table-cell>
+                        </md-table-row>
+                    </md-table>
+                </div>
+            </div>
+
+        </md-card-content>
+    </md-card>
+
+    <md-card>
+        <md-card-header>
+            <div class="md-title">Décision</div>
+        </md-card-header>
+        <md-card-content>
+            <md-radio>Préavis positif sans condition</md-radio>
+            <md-radio>Préavis positif sous condition</md-radio>
+            <md-radio>Préavis négatif</md-radio>
+            <md-radio>Pas concerné</md-radio>
+            <md-field>
+                <label>Remarque</label>
+                <md-input></md-input>
+            </md-field>
+            <md-button class="md-raised md-primary" style="float: right; margin-bottom: 20px;">Enregistrer</md-button>
         </md-card-content>
     </md-card>
 
