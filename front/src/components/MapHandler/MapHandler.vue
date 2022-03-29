@@ -40,7 +40,7 @@ export default {
     vectorSource: null,
     graphicsLayer: null,
     graphicsLayerSource: null,
-    markerStyle: null
+    markerStyle: null,
   }),
 
   methods: {
@@ -345,6 +345,9 @@ export default {
     async addFeatures() {
       getFeatures()
       .then(response => {
+        if (this.geojsonFormat === undefined) {
+          this.geojsonFormat = new GeoJSON();
+        }
         const features = this.geojsonFormat.readFeatures(response.data);
         this.featureSource.addFeatures(features);
       }).catch(err => handleException(err, this))
