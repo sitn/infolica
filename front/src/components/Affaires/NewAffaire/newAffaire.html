@@ -12,6 +12,7 @@
                     <md-autocomplete v-model="form.cadastre"
                                         md-dense required
                                         @md-selected="setPlanMoCadastre()"
+                                        @md-changed="updateAffaireName()"
                                         :md-options="cadastres_list"
                                         :class="getValidationClass($v.form.cadastre)">
                         <label>Cadastre</label>
@@ -42,7 +43,7 @@
                     <md-autocomplete v-model="form.type"
                         md-dense required
                         @md-selected="onSelectType"
-                        @md-changed="initMask"
+                        @md-changed="initMask; updateAffaireName()"
                         :md-options="types_affaires_list"
                         :class="getValidationClass($v.form.type)">
                         <label>Type d'affaire</label>
@@ -97,7 +98,9 @@
                 <div class="md-layout-item md-size-50">
                     <md-field>
                         <label>Plan</label>
-                        <md-select v-model="form.plan" md-dense>
+                        <md-select v-model="form.plan" md-dense 
+                            :disabled="!(form.cadastre && form.cadastre.id) || sending"
+                            @md-selected="updateAffaireName">
                             <md-option v-for="item in plansMOListe_cadastre" :value="item.nom">{{ item.nom }}</md-option>
                         </md-select>
                     </md-field>
