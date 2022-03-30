@@ -138,9 +138,7 @@ export default {
           this.getConversation();
         }
       }).catch(err => handleException(err));
-
-
-    }
+    },
     
 
     // /**
@@ -160,6 +158,19 @@ export default {
     //   window.open(route + "&map_x=" + this.affaire.localisation_e + "&map_y=" + this.affaire.localisation_n, "_blank");
     // },
 
+    /**
+     * Download file from table
+     */
+    async downloadFile(item) {
+      let requestParams = [
+        'affaire_id=' + this.affaire.id,
+        'relpath=' + item.rel_path,
+        'filename=' + item.filename,
+        '&time=' + new Date().getTime()
+      ].join("&");
+
+      window.open(process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_DOWNLOAD_DOCUMENT_ENDPOINT + '?' + requestParams)
+    }
 
 
 

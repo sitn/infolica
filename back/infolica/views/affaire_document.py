@@ -80,7 +80,7 @@ def download_affaire_document_view(request):
     Download document
     """
     # Check connected
-    if not check_connected(request):
+    if not check_connected(request, ['SGRF','SAT']):
         raise exc.HTTPForbidden()
 
     affaires_directory = request.registry.settings['affaires_directory']

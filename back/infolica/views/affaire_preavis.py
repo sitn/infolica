@@ -284,6 +284,7 @@ def service_externe_documents_view(request):
                 continue
             file_i = {}
             file_i['filename'] = name
+            file_i['rel_path'] = service_relpath
             file_i['creation_sort'] = os.path.getctime(os.path.join(root, name))
             file_i['modification_sort'] = os.path.getmtime(os.path.join(root, name))
             file_i['creation'] = datetime.fromtimestamp(file_i['creation_sort']).strftime("%d.%m.%Y")
