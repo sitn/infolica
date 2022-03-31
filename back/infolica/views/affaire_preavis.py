@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*--
+from math import ceil
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import Affaire, VAffaire, Operateur, Service
-from infolica.models.models import RemarquePreavis
+from infolica.models.models import Affaire, PreavisDecision, VAffaire, Operateur, Service
+from infolica.models.models import PreavisRemarque
 from infolica.models.models import Preavis, PreavisType, VAffairesPreavis
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
@@ -187,9 +188,9 @@ def service_externe_preavis_view(request):
     for rec in records:
         results.append({
             'preavis_id': rec[0],
-            'preavis_date_demande': datetime.strftime(rec[1], "%d.%M.%Y"),
+            'preavis_date_demande': datetime.strftime(rec[1], "%d.%m.%Y"),
             'preavis_date_demande_int': time.mktime(rec[1].timetuple()),
-            'preavis_date_reponse': datetime.strftime(rec[2], "%d.%M.%Y") if rec[2] is not None else None,
+            'preavis_date_reponse': datetime.strftime(rec[2], "%d.%m.%Y") if rec[2] is not None else None,
             'preavis_date_reponse_int': time.mktime(rec[2].timetuple()) if rec[2] is not None else None,
             'preavis_affaire_id': rec[3],
             'affaire_cadastre': rec[4],
@@ -285,6 +286,7 @@ def service_externe_documents_view(request):
             file_i = {}
             file_i['filename'] = name
             file_i['rel_path'] = service_relpath
+            file_i['size'] = str(ceil(os.path.getsize(os.path.join(root, name))/1000)) + ' ko' # ko
             file_i['creation_sort'] = os.path.getctime(os.path.join(root, name))
             file_i['modification_sort'] = os.path.getmtime(os.path.join(root, name))
             file_i['creation'] = datetime.fromtimestamp(file_i['creation_sort']).strftime("%d.%m.%Y")
@@ -307,17 +309,17 @@ def service_externe_conversation_view(request):
     query = request.dbsession.query(
         Operateur.nom,
         Operateur.prenom,
-        RemarquePreavis.date,
-        RemarquePreavis.remarque
+        PreavisRemarque.date,
+        PreavisRemarque.remarque
     ).join(
-        Operateur, RemarquePreavis.operateur_id == Operateur.id
+        Operateur, PreavisRemarque.operateur_id == Operateur.id
     ).join(
-        Preavis, RemarquePreavis.preavis_id == Preavis.id
+        Preavis, PreavisRemarque.preavis_id == Preavis.id
     ).filter(
         Preavis.affaire_id == affaire_id
     ).filter(
         Preavis.service_id == operateur.service_id
-    ).order_by(RemarquePreavis.id.desc()).all()
+    ).order_by(PreavisRemarque.id.desc()).all()
 
     
     for res in query:
@@ -333,7 +335,7 @@ def service_externe_conversation_view(request):
 @view_config(route_name='service_externe_conversation', request_method='POST', renderer='json')
 def service_externe_conversation_new_view(request):
     """
-    GET conversation of affaire_id for service externe
+    POST conversation of affaire_id for service externe
     """
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     commentaire = request.params['commentaire'] if 'commentaire' in request.params else None
@@ -345,7 +347,7 @@ def service_externe_conversation_new_view(request):
         Preavis.service_id == operateur.service_id
     ).first()
 
-    rp = RemarquePreavis()
+    rp = PreavisRemarque()
     
     params = {
         'preavis_id': preavis.id,
@@ -357,4 +359,100 @@ def service_externe_conversation_new_view(request):
     model = Utils.set_model_record(rp, params)
     request.dbsession.add(model)
 
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(RemarquePreavis.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisRemarque.__tablename__))
+
+
+@view_config(route_name='service_externe_liste_decisions', request_method='GET', renderer='json')
+def service_externe_liste_decision_view(request):
+    """
+    GET list of decisions of affaire_id for service externe
+    """
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    operateur = strongAuthentication(request, affaire_id)
+    
+    result = request.dbsession.query(
+        PreavisDecision.id,
+        PreavisDecision.date
+    ).join(
+        Preavis, Preavis.id == PreavisDecision.preavis_id
+    ).filter(
+        Preavis.affaire_id == affaire_id
+    ).filter(
+        Preavis.service_id == operateur.service_id
+    ).order_by(PreavisDecision.id.desc()).all()
+
+    liste_decisions = []
+    for res in result:
+        liste_decisions.append(
+            {   
+                'preavisDecision_id': res[0],
+                'date': datetime.strftime(res[1], "%d.%m.%Y")
+            }
+        )
+
+    return liste_decisions
+
+
+@view_config(route_name='service_externe_decision', request_method='GET', renderer='json')
+def service_externe_decision_view(request):
+    """
+    GET decision of affaire_id for service externe
+    """
+    preavisDecision_id = request.params['preavisDecision_id'] if 'preavisDecision_id' in request.params else None
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+
+    strongAuthentication(request, affaire_id)
+    
+    res = request.dbsession.query(
+        PreavisDecision.preavis_type_id,
+        PreavisDecision.remarque,
+        PreavisDecision.date,
+        Operateur.prenom,
+        Operateur.nom,
+
+    ).join(
+        Operateur, Operateur.id == PreavisDecision.operateur_service_id
+    ).filter(
+        PreavisDecision.id == preavisDecision_id
+    ).first()
+
+    result = {   
+        'preavis_type_id': res[0],
+        'remarque': res[1],
+        'date': datetime.strftime(res[2], "%d.%m.%Y"),
+        "operateur": ' '.join([res[3], res[4]])
+    }
+
+    return result
+
+
+@view_config(route_name='service_externe_decision', request_method='POST', renderer='json')
+def service_externe_decision_new_view(request):
+    """
+    POST decision of affaire_id for service externe
+    """
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    preavis_type_id = request.params['preavis_type_id'] if 'preavis_type_id' in request.params else None
+    remarque = request.params['remarque'] if 'remarque' in request.params else None
+    operateur = strongAuthentication(request, affaire_id)
+    
+    preavis = request.dbsession.query(Preavis).filter(
+        Preavis.affaire_id == affaire_id
+    ).filter(
+        Preavis.service_id == operateur.service_id
+    ).first()
+
+    rp = PreavisDecision()
+    
+    params = {
+        'preavis_id': preavis.id,
+        'preavis_type_id': preavis_type_id,
+        'operateur_service_id': operateur.id,
+        'remarque': remarque,
+        'date': datetime.strftime(datetime.now(), "%Y-%m-%d")
+    }
+
+    model = Utils.set_model_record(rp, params)
+    request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisDecision.__tablename__))

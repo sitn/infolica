@@ -1,13 +1,14 @@
 <div id="preavisEdit" class="preavisEdit">
 
     <!-- TITRE -->
-    <md-toolbar>
+    <md-toolbar class="justifyTitleBtn">
         <h1>Saisie de préavis pour l'affaire {{ affaire.id }}</h1>
+        <md-button class="md-raised md-primary" @click="$router.push({name: 'Preavis'})">Retour</md-button>
     </md-toolbar>
 
     <md-card>
         <md-card-content>
-            <div class="md-layout md-gutter md-alignment-bottom-space-between">
+            <div class="md-layout md-gutter md-alignment-top-space-between">
                 <div class="md-layout-item md-size-50">
                     <div class="md-title">Informations générales</div>
                     <br>
@@ -44,7 +45,7 @@
                 <div class="md-layout-item md-size-50">
                     <!-- MAP -->
                     <div id="mapContainer">
-                        <MapHandler ref="mapHandler" />
+                        <!-- <MapHandler ref="mapHandler" /> -->
                     </div>
                 </div>
             </div>
@@ -61,8 +62,9 @@
                 <md-table-empty-state md-label="Aucun document"></md-table-empty-state>
                 
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
-                    <md-table-cell style="width: 50%;" md-label="Fichier" md-sort-by="filename">{{ item.filename }}</md-table-cell>
-                    <md-table-cell style="width: 30%;" md-label="Modification" md-sort-by="modification_sort">{{ item.modification }}</md-table-cell>
+                    <md-table-cell style="width: 40%;" md-label="Fichier" md-sort-by="filename">{{ item.filename }}</md-table-cell>
+                    <md-table-cell style="width: 15%;" md-label="Taille" md-sort-by="size" md-numeric>{{ item.size }}</md-table-cell>
+                    <md-table-cell style="width: 25%;" md-label="Modification" md-sort-by="modification_sort">{{ item.modification }}</md-table-cell>
                     <md-table-cell style="width: 20%;" md-label="Actions">
                         <md-button class="md-icon-button md-dense md-primary" @click="downloadFile(item)">
                             <md-icon>save_alt</md-icon>
@@ -110,15 +112,34 @@
             <div class="md-title">Décision</div>
         </md-card-header>
         <md-card-content>
-            <md-radio>Préavis positif sans condition</md-radio>
-            <md-radio>Préavis positif sous condition</md-radio>
-            <md-radio>Préavis négatif</md-radio>
-            <md-radio>Pas concerné</md-radio>
-            <md-field>
-                <label>Remarque</label>
-                <md-input></md-input>
-            </md-field>
-            <md-button class="md-raised md-primary" style="float: right; margin-bottom: 20px;">Enregistrer</md-button>
+            <div style="display: flex;">
+                <div style="width: 200px;">
+                    <div v-if="decisions_liste.length === 0"><em>Aucune décision</em></div>
+                    <div v-else>
+                        <ul>
+                            <li v-for="item in decisions_liste"><a @click="getDecision(item.preavisDecision_id)">{{ item.date }}</a></li>
+                        </ul>
+                    </div>
+                    <md-button class="md-primary md-raised" @click="openNewDecision">Nouveau</md-button>
+                </div>
+                <div style="width: 100%;" v-if="decision.show">
+                <md-card>
+                    <md-card-content>
+                        <div class="md-title" v-if="decision.operateur">Décision du {{ decision.date }} enregistrée par {{ decision.operateur }}</div>
+                        <md-radio v-model="decision.preavis_type_id" :value="1" :disabled="decision.disabled" :class="{highlightDecision: decision.preavis_type_id === 1}">Préavis positif sans condition</md-radio>
+                        <md-radio v-model="decision.preavis_type_id" :value="4" :disabled="decision.disabled" :class="{highlightDecision: decision.preavis_type_id === 4}">Préavis positif avec condition</md-radio>
+                        <md-radio v-model="decision.preavis_type_id" :value="2" :disabled="decision.disabled" :class="{highlightDecision: decision.preavis_type_id === 2}">Préavis négatif</md-radio>
+                        <md-radio v-model="decision.preavis_type_id" :value="3" :disabled="decision.disabled" :class="{highlightDecision: decision.preavis_type_id === 3}">Pas concerné</md-radio>
+                        <md-field>
+                            <label>Remarque</label>
+                            <md-textarea v-model="decision.remarque" :disabled="decision.disabled" style="max-height: 70vh; height: 70vh;"></md-textarea>
+                        </md-field>
+                        <md-button @click="saveDecision" class="md-raised md-primary" style="float: right; margin-bottom: 20px;" :disabled="decision.preavis_type_id == null || decision.remarque == null || decision.remarque === ''" v-if="!decision.operateur">Enregistrer</md-button>
+                    </md-card-content>
+                </md-card>
+                </div>
+            </div>
+
         </md-card-content>
     </md-card>
 

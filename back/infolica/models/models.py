@@ -909,26 +909,25 @@ class Preavis(Base):
     remarque = Column(Text)
 
 
-class RemarquePreavis(Base):  # currently not used, replaced by attribute Remarque in table Preavis
-    __tablename__ = 'remarque_preavis'
+class PreavisDecision(Base):
+    __tablename__ = 'preavis_decision'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
+    preavis_type_id = Column(BigInteger, ForeignKey(PreavisType.id))
+    operateur_service_id = Column(BigInteger, ForeignKey(Operateur.id))
+    remarque = Column(Text)
+    date = Column(Date)
+
+
+class PreavisRemarque(Base):  # currently not used, replaced by attribute Remarque in table Preavis
+    __tablename__ = 'preavis_remarque'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
     remarque = Column(Text, nullable=False)
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
-
-
-class PreavisDocument(Base):
-    __tablename__ = 'preavis_documents'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
-    filename = Column(Text, nullable=False)
-    filepath = Column(Text, nullable=False)
-    filetype = Column(Text, nullable=False)
-    filesize_ko = Column(BigInteger, nullable=False)
-    description = Column(Text)
 
 
 class GeosBalance(Base):

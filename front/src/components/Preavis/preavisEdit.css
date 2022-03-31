@@ -37,3 +37,7 @@
     border-color: black;
     border-style: solid;
 }
+
+.highlightDecision {
+    background-color: yellow;
+}
