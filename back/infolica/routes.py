@@ -193,3 +193,4 @@ def includeme(config):
     config.add_route('service_externe_conversation', '/infolica/api/service_externe_conversation')
     config.add_route('service_externe_liste_decisions', '/infolica/api/service_externe_liste_decisions')
     config.add_route('service_externe_decision', '/infolica/api/service_externe_decision')
+    config.add_route('service_externe_save_documents', '/infolica/api/service_externe_save_documents')

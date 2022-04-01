@@ -7,12 +7,15 @@ import MapHandler from "@/components/MapHandler/MapHandler.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
 
+import { Drag, Drop } from 'vue-drag-drop';
 // import moment from "moment";
 
 export default {
   name: "PreavisAffaire",
   props: {},
   components: {
+    Drag,
+    Drop,
     MapHandler,
   },
   data() {
@@ -23,6 +26,7 @@ export default {
       conversation: [{}],
       mapLoaded: false,
       commentaire: null,
+      droppedFiles: [],
       decisions_liste: [],
       decision: {
         preavis_type_id: null,
@@ -254,8 +258,49 @@ export default {
         this.resetDecision();
         this.decision.show = false;
         this.$root.$emit('ShowMessage', 'La décision a bien été enregistrée');
-      }).catch(err => handleException(err));
+      }).catch(err => handleException(err, this));
     },
+
+    // handleDrop
+    handleDrop(data, event) {
+      event.preventDefault();
+      this.droppedFiles.push(...event.dataTransfer.files);
+    },
+
+    // save files on back-end
+    async saveFiles() {
+      let formData = new FormData();
+      formData.append('affaire_id', this.$route.params.id);
+      
+      for( let i = 0; i < this.droppedFiles.length; i++ ){
+        formData.append('files[' + i + ']', this.droppedFiles[i]);
+      }
+      
+      this.$http.post(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_POST_FILE_BY_AFFAIRE_ID_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            'Accept': "application/json",
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      ).then(() => {
+        this.getDocuments();
+        this.droppedFiles = [];
+      })
+      .catch(err => handleException(err, this));
+    },
+
+    // remove item from fileupload list
+    removeItem(item) {
+      let index = this.droppedFiles.indexOf(item);
+      if (index !== -1) {
+        this.droppedFiles.splice(index, 1);
+      }
+    },
+
   },
 
   mounted: function() {

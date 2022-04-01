@@ -14,6 +14,7 @@ from infolica.scripts.authentication import check_connected
 from datetime import datetime
 import time
 import os
+import shutil
 
 from sqlalchemy import func
 
@@ -456,3 +457,47 @@ def service_externe_decision_new_view(request):
     request.dbsession.add(model)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisDecision.__tablename__))
+
+
+@view_config(route_name='service_externe_save_documents', request_method='POST', renderer='json')
+def service_externe_save_documents_new_view(request):
+    """
+    POST preavis documents in affaire_id for service externe
+    """
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    operateur = strongAuthentication(request, affaire_id)
+    
+    service = request.dbsession.query(Service).filter(
+        Service.id == operateur.service_id
+    ).first()
+
+    output_path = os.path.join(
+        request.registry.settings['affaires_directory'],
+        affaire_id,
+        service.relpath
+    )
+
+    file_i = 0
+    while 'files[' + str(file_i) + ']' in request.params:
+        file = request.params['files[' + str(file_i) + ']']
+
+        filename = file.filename
+        input_file = file.file
+
+        file_path = os.path.join(output_path, filename)
+        file_path_tentative = file_path
+        if os.path.exists(file_path_tentative):
+            c = 1
+            file_path_tentative = file_path.rsplit('.', 1)[0] + '_' + str(c) + '.' + file_path.rsplit('.', 1)[1]
+            while os.path.exists(file_path_tentative):
+                c += 1
+                file_path_tentative = file_path.rsplit('.', 1)[0] + '_' + str(c) + '.' + file_path.rsplit('.', 1)[1]
+
+        file_path = file_path_tentative
+        with open(file_path, 'wb') as output_file:
+            shutil.copyfileobj(input_file, output_file)
+
+        # increment file_i
+        file_i += 1
+
+    return exc.HTTPOk(detail="Les fichiers ont bien été enregistrés")

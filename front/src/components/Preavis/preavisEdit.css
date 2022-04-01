@@ -41,3 +41,14 @@
 .highlightDecision {
     background-color: yellow;
 }
+
+.dragdrop {
+    height: 200px; /*valeur empirique*/
+    border: 1px;
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: black;
+    border-style: dashed;
+    text-align: center;
+    background-color: lightgray;
+}
