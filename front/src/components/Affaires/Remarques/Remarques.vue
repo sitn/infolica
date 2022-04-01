@@ -34,7 +34,7 @@ export default {
         .get(
           process.env.VUE_APP_API_URL +
           process.env.VUE_APP_AFFAIRE_REMARQUES_ENDPOINT +
-          this.$route.params.id,
+          this.affaire.id,
           {
             withCredentials: true,
             headers: {"Accept": "application/json"}
@@ -68,7 +68,7 @@ export default {
         }
         formData.append("date", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
         formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
-        formData.append("affaire_id", this.$route.params.id);
+        formData.append("affaire_id", this.affaire.id);
 
         this.$http
           .post(

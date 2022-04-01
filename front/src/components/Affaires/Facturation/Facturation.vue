@@ -100,7 +100,7 @@ export default {
         .get(
           process.env.VUE_APP_API_URL +
           process.env.VUE_APP_AFFAIRE_FACTURES_ENDPOINT +
-          this.$route.params.id,
+          this.affaire.id,
           {
             withCredentials: true,
             headers: {"Accept": "application/json"}
@@ -190,7 +190,7 @@ export default {
     async searchAffaireNumeros() {
       return new Promise((resolve, reject) => {
         this.$http.get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT + "/" + this.$route.params.id,
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT + "/" + this.affaire.id,
           {
             withCredentials: true,
             headers: { Accept: "application/json" }
@@ -371,7 +371,7 @@ export default {
      */
     saveData() {
       let formData = new FormData();
-      formData.append("affaire_id", this.$route.params.id);
+      formData.append("affaire_id", this.affaire.id);
       formData.append("id", this.selectedFacture.id);
       formData.append("sap", this.selectedFacture.sap || null);
       formData.append("remarque", this.selectedFacture.remarque || null);

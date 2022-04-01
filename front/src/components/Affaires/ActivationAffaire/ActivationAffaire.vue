@@ -334,7 +334,7 @@ export default {
           .then(() => {
             this.$router.go(0);
             this.$parent.setAffaire();
-            this.$root.$emit("ShowMessage", "L'affaire " + this.$route.params.id + " a été clôturées avec succès");
+            this.$root.$emit("ShowMessage", "L'affaire " + this.affaire_id + " a été clôturées avec succès");
 
             //Log edition facture
             logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CLOTURE_ID));
@@ -353,7 +353,7 @@ export default {
     async AjoutDateClotureAffaire(){
       return new Promise((resolve, reject) => {
         var formData = new FormData();
-        formData.append("id_affaire", this.$route.params.id);
+        formData.append("id_affaire", this.affaire.id);
         formData.append("date_cloture",  moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
 
         this.$http

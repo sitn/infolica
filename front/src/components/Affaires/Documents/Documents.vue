@@ -43,7 +43,7 @@ export default {
       this.$http.get(
         process.env.VUE_APP_API_URL + 
         process.env.VUE_APP_AFFAIRE_DOSSIER_ENDPOINT +
-        this.$route.params.id,
+        this.affaire.id,
         {
           withCredentials: true,
           headers: {Accept: "application/json"}
@@ -130,7 +130,7 @@ export default {
      * Download file
     */
     downloadFile(item) {
-      const affaire_id = this.$route.params.id;
+      const affaire_id = this.affaire.id;
       window.open(process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_DOWNLOAD_DOCUMENT_ENDPOINT + '?affaire_id=' + affaire_id + '&relpath=' + item.relpath + '&filename=' + item.filename + '&time=' + new Date().getTime());
     },
 

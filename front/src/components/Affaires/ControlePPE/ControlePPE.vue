@@ -35,7 +35,7 @@ export default {
         .get(
           process.env.VUE_APP_API_URL +
           process.env.VUE_APP_AFFAIRE_CONTROLE_PPE_ENDPOINT +
-          this.$route.params.id,
+          this.affaire.id,
           {
             withCredentials: true,
             headers: {"Accept": "application/json"}
@@ -73,7 +73,7 @@ export default {
      */
     newControlePPE() {
       var formData = new FormData();
-      formData.append("affaire_id", this.$route.params.id);
+      formData.append("affaire_id", this.affaire.id);
       formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
       formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
 

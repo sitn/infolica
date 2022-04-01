@@ -274,7 +274,7 @@ export default {
       this.$http.get(
         process.env.VUE_APP_API_URL +
         process.env.VUE_APP_MODIFICATION_AFFAIRE_BY_AFFAIRE_MERE_ENDPOINT +
-        this.$route.params.id,
+        this.affaire.id,
         {
           withCredentials: true,
           headers: {Accept: "application/json"}
@@ -297,7 +297,7 @@ export default {
       this.$http.get(
         process.env.VUE_APP_API_URL +
         process.env.VUE_APP_MODIFICATION_AFFAIRE_BY_AFFAIRE_FILLE_ENDPOINT +
-        this.$route.params.id,
+        this.affaire.id,
         {
           withCredentials: true,
           headers: {Accept: "application/json"}

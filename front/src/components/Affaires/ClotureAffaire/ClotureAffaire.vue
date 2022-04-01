@@ -37,7 +37,7 @@ export default {
         .get(
           process.env.VUE_APP_API_URL +
           process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT + "/" +
-          this.$route.params.id,
+          this.affaire.id,
           {
             withCredentials: true,
             headers: { Accept: "application/json" }
@@ -169,7 +169,7 @@ export default {
             this.AjoutDateClotureAffaire()
             .then(() => {
               this.$parent.setAffaire();
-              this.$root.$emit("ShowMessage", "L'affaire " + this.$route.params.id + " a été clôturées avec succès");
+              this.$root.$emit("ShowMessage", "L'affaire " + this.affaire.id + " a été clôturées avec succès");
   
               //Log cloture affaire
               logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CLOTURE_ID))
@@ -187,7 +187,7 @@ export default {
         this.AjoutDateClotureAffaire().then(() => {
           this.$router.go(0);
           this.$root.$emit("setAffaire");
-          this.$root.$emit("ShowMessage", "L'affaire " + this.$route.params.id + " a été clôturées avec succès");
+          this.$root.$emit("ShowMessage", "L'affaire " + this.affaire.id + " a été clôturées avec succès");
 
           //Log cloture affaire
           logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CLOTURE_ID));
@@ -203,7 +203,7 @@ export default {
     async AjoutDateClotureAffaire(){
       return new Promise((resolve, reject) => {
         var formData = new FormData();
-        formData.append("id_affaire", this.$route.params.id);
+        formData.append("id_affaire", this.affaire.id);
         formData.append("date_cloture",  moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
 
         this.$http
