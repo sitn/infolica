@@ -1,6 +1,7 @@
 .preavisEdit {
     width: 90%;
     margin: auto;
+    height: calc(100vh - 80px);
 }
 
 .title {

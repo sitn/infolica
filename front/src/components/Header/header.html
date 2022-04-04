@@ -5,11 +5,11 @@
       <h2>Infolica
         <template v-if="versionBtn.showBadge">
           <md-badge md-content="New" class="md-square">
-            <md-button class="md-dense versionBtn" @click="openNotesMAJ"> v {{ versionBtn.version }} </md-button>
+            <md-button class="md-dense versionBtn" @click="openNotesMAJ" :disabled="session_user && session_user.service !== 'SGRF'"> v {{ versionBtn.version }} </md-button>
           </md-badge>
         </template>
         <template v-else>
-          <md-button class="md-dense versionBtn" @click="openNotesMAJ"> v {{ versionBtn.version }} </md-button>
+          <md-button class="md-dense versionBtn" @click="openNotesMAJ" :disabled="session_user && session_user.service !== 'SGRF'"> v {{ versionBtn.version }} </md-button>
         </template>
 
       </h2>
