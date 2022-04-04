@@ -16,7 +16,7 @@ import time
 import os
 import shutil
 
-from sqlalchemy import func
+from sqlalchemy import func, cast, Text, or_
 
 ###########################################################
 # PREAVIS AFFAIRE
@@ -170,20 +170,39 @@ def service_externe_preavis_view(request):
     if operateur.service_id is None:
         exc.HTTPForbidden(detail="Opérateur non autorisé à accéder à ce contenu")
 
-    records = request.dbsession.query(
+    search = request.params['search'] if 'search' in request.params else None
+
+    query = request.dbsession.query(
         Preavis.id,
         Preavis.date_demande,
         Preavis.date_reponse,
         Preavis.affaire_id,
         VAffaire.cadastre,
-        VAffaire.nom
+        VAffaire.nom,
+        Operateur.prenom,
+        Operateur.nom
     ).join(
         VAffaire, Preavis.affaire_id == VAffaire.id
+    ).join(
+        Operateur, Preavis.operateur_service_id == Operateur.id, isouter=True
     ).filter(
         Preavis.date_reponse == None
     ).filter(
         Preavis.service_id == operateur.service_id
-    ).order_by(Preavis.date_demande.desc()).all()
+    )
+    
+    if search is not None:
+        search = search.split(' ')
+        for s in search:
+            query = query.filter(
+                or_(
+                    cast(VAffaire.id, Text).ilike("%" + s + "%"),
+                    VAffaire.nom.ilike("%" + s + "%"),
+                    VAffaire.cadastre.ilike("%" + s + "%")
+                )
+            )
+
+    records = query.order_by(Preavis.date_demande.desc()).all()
 
     results = []
     for rec in records:
@@ -196,6 +215,7 @@ def service_externe_preavis_view(request):
             'preavis_affaire_id': rec[3],
             'affaire_cadastre': rec[4],
             'affaire_description': rec[5],
+            'preavis_attribution': ' '.join(filter(None, [rec[6], rec[7]])),
         })
 
     return results
@@ -457,6 +477,25 @@ def service_externe_decision_new_view(request):
     request.dbsession.add(model)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisDecision.__tablename__))
+
+
+@view_config(route_name='service_externe_preavis_attribution', request_method='POST', renderer='json')
+def service_externe_decision_new_view(request):
+    """
+    POST attribution of preavis_id for service externe
+    """
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    operateur = strongAuthentication(request, affaire_id)
+    
+    preavis = request.dbsession.query(Preavis).filter(
+        Preavis.affaire_id == affaire_id
+    ).filter(
+        Preavis.service_id == operateur.service_id
+    ).first()
+
+    preavis.operateur_service_id = operateur.id
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Preavis.__tablename__))
 
 
 @view_config(route_name='service_externe_save_documents', request_method='POST', renderer='json')

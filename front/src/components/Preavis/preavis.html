@@ -11,9 +11,9 @@
                         <h1 class="md-title">Demandes en cours</h1>
                     </div>
           
-                    <!-- <md-field md-clearable class="md-toolbar-section-end">
-                        <md-input placeholder="Search by name..." v-model="search" @input="searchOnTable" />
-                    </md-field> -->
+                    <md-field md-clearable style="width: 350px;">
+                        <md-input placeholder="Rechercher" v-model="searchTerm" @input="getOpenedPreavis" />
+                    </md-field>
                 </md-table-toolbar>
           
                 <md-table-empty-state
@@ -25,6 +25,10 @@
                     <md-table-cell md-label="Affaire_id" md-sort-by="preavis_affaire_id" md-numeric>{{ item.preavis_affaire_id }}</md-table-cell>
                     <md-table-cell md-label="Cadastre" md-sort-by="affaire_cadastre">{{ item.affaire_cadastre }}</md-table-cell>
                     <md-table-cell md-label="Description">{{ item.affaire_description }}</md-table-cell> 
+                    <md-table-cell md-label="Attribution">
+                        <div v-if="item.preavis_attribution">{{ item.preavis_attribution }}</div>
+                        <div v-else><md-button class="md-dense md-raised md-primary" @click="preavisAttribution(item)">attribution</md-button></div>
+                    </md-table-cell> 
                     <md-table-cell md-label="Consultation"><md-button class="md-icon-button md-primary" :to="{ name: 'PreavisEdit', params: { id: item.preavis_affaire_id } }"><md-icon>open_in_new</md-icon></md-button></md-table-cell>
                 </md-table-row>
             </md-table>
