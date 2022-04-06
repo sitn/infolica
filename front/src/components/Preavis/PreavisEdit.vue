@@ -4,6 +4,8 @@
 
 <script>
 import MapHandler from "@/components/MapHandler/MapHandler.vue";
+import PreavisEditComments from "@/components/Preavis/PreavisEditComments.vue";
+import PreavisEditDecision from "@/components/Preavis/PreavisEditDecision.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
 
@@ -17,23 +19,16 @@ export default {
     Drag,
     Drop,
     MapHandler,
+    PreavisEditComments,
+    PreavisEditDecision,
   },
   data() {
     return {
       affaire: {},
       affaireLoaded: false,
       documents: [{}],
-      conversation: [{}],
-      mapLoaded: false,
-      commentaire: null,
       droppedFiles: [],
-      decisions_liste: [],
-      decision: {
-        preavis_type_id: null,
-        remarque: null,
-        desabled: true,
-        show: false,
-      },
+      mapLoaded: false,
     };
   },
 
@@ -43,7 +38,7 @@ export default {
      */
     async getAffaire() {
       return new Promise((resolve, reject) => {
-        this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_AFFAIRE_BY_ID_ENDPOINT + "?affaire_id=" + this.$route.params.id,
+        this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_AFFAIRE_BY_ID_ENDPOINT + "?preavis_id=" + this.$route.params.id,
           {
             withCredentials: true,
             headers: { Accept: "application/json" }
@@ -51,31 +46,16 @@ export default {
         ).then(response => {
           if (response && response.data) {
             this.affaire = response.data;
-            resolve(response.data)
+            resolve(response.data);
+            this.affaireLoaded = true;
           }
         })
         .catch((err) => {
           handleException(err, this);
-          reject(err)
+          reject(err);
         });
       })
     },
-
-
-
-    // async searchAffaire() {
-    //   this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_AFFAIRE_BY_ID_ENDPOINT + "?affaire_id=" + this.$route.params.id,
-    //     {
-    //       withCredentials: true,
-    //       headers: { Accept: "application/json" }
-    //     }
-    //   ).then(response => {
-    //     if (response && response.data) {
-    //       this.affaire = response.data;
-    //     }
-    //   })
-    //   .catch((err) => handleException(err, this));
-    // },
 
     /**
      * Show map
@@ -97,13 +77,11 @@ export default {
       }
     },
 
-
-
     /**
      * Documents
      */
     async getDocuments() {
-      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DOCUMENTS_BY_AFFAIRE_ID_ENDPOINT + "?affaire_id=" + this.$route.params.id,
+      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DOCUMENTS_BY_AFFAIRE_ID_ENDPOINT + "?affaire_id=" + this.affaire.id,
         {
           withCredentials: true,
           headers: { Accept: "application/json" }
@@ -114,43 +92,6 @@ export default {
         }
       }).catch(err => handleException(err));
     },
-
-    /**
-     * Get conversation
-     */
-    async getConversation() {
-      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_CONVERSATION_BY_AFFAIRE_ID_ENDPOINT + "?affaire_id=" + this.$route.params.id,
-        {
-          withCredentials: true,
-          headers: { Accept: "application/json" }
-        }
-      ).then(response => {
-        if (response && response.data) {
-          this.conversation = response.data;
-        }
-      }).catch(err => handleException(err));
-    },
-
-    async saveMessage() {
-      let formData = new FormData();
-      formData.append('affaire_id', this.$route.params.id);
-      formData.append('commentaire', this.commentaire);
-
-      this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_CONVERSATION_BY_AFFAIRE_ID_ENDPOINT,
-        formData,
-        {
-          withCredentials: true,
-          headers: { Accept: "application/json" }
-        }
-      ).then(response => {
-        if (response && response.data) {
-          this.$root.$emit('ShowMessage', 'Le commentaire a bien été enregistré');
-          this.commentaire = null;
-          this.getConversation();
-        }
-      }).catch(err => handleException(err));
-    },
-    
 
     // /**
     //  * Open Theme SITN
@@ -183,84 +124,6 @@ export default {
       window.open(process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_DOWNLOAD_DOCUMENT_ENDPOINT + '?' + requestParams)
     },
 
-
-    /**
-     * open new decision
-     */
-    openNewDecision() {
-      this.resetDecision();
-      this.decision.disabled = null;
-      this.decision.show = true;
-
-    },
-
-
-    // reset decision
-    resetDecision() {
-      this.decision.preavis_type_id = null;
-      this.decision.remarque = null;
-      this.decision.operateur = null;
-      this.decision.date = null;
-    },
-
-
-    // get Decision List for menu
-    async getDecisionList() {
-      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DECISION_LIST_BY_AFFAIRE_ID_ENDPOINT + "?affaire_id=" + this.$route.params.id,
-        {
-          withCredentials: true,
-          headers: { Accept: "application/json" }
-        }
-      ).then(response => {
-        if (response && response.data) {
-          this.decisions_liste = response.data;
-        }
-      }
-      ).catch(err => handleException(err));
-    },
-
-
-    // get Decision
-    async getDecision(preavisDecision_id) {
-      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DECISION_BY_AFFAIRE_ID_ENDPOINT + "?affaire_id=" + this.$route.params.id + "&preavisDecision_id=" + preavisDecision_id,
-        {
-          withCredentials: true,
-          headers: { Accept: "application/json" }
-        }
-      ).then(response => {
-        if (response && response.data) {
-          this.decision = response.data;
-          this.decision.disabled = true;
-          this.decision.show = true;
-        }
-      }
-      ).catch(err => handleException(err));
-    },
-    
-    
-    // saveDecision
-    async saveDecision() {
-      this.decision.disabled = true;
-
-      let formData = new FormData();
-      formData.append('affaire_id', this.$route.params.id);
-      formData.append('preavis_type_id', this.decision.preavis_type_id);
-      formData.append('remarque', this.decision.remarque);
-
-      this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DECISION_BY_AFFAIRE_ID_ENDPOINT,
-        formData,
-        {
-          withCredentials: true,
-          headers: { Accept: "application/json" }
-        }
-      ).then(() => {
-        this.getDecisionList();
-        this.resetDecision();
-        this.decision.show = false;
-        this.$root.$emit('ShowMessage', 'La décision a bien été enregistrée');
-      }).catch(err => handleException(err, this));
-    },
-
     // handleDrop
     handleDrop(data, event) {
       event.preventDefault();
@@ -270,7 +133,7 @@ export default {
     // save files on back-end
     async saveFiles() {
       let formData = new FormData();
-      formData.append('affaire_id', this.$route.params.id);
+      formData.append('affaire_id', this.affaire.id);
       
       for( let i = 0; i < this.droppedFiles.length; i++ ){
         formData.append('files[' + i + ']', this.droppedFiles[i]);
@@ -306,11 +169,8 @@ export default {
   mounted: function() {
     this.getAffaire().then(() => {
       this.showMap();
+      this.getDocuments();
     });
-
-    this.getDocuments();
-    this.getConversation();
-    this.getDecisionList();
   }
 };
 </script>

@@ -44,7 +44,7 @@ export default {
     // preavis attribution
     async preavisAttribution(item) {
       let formData = new FormData();
-      formData.append('affaire_id', item.preavis_affaire_id);
+      formData.append('preavis_id', item.preavis_id);
 
       this.$http.post(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_SERVICE_EXTERNE_PREAVIS_ATTRIBUTION_ENDPOINT,
@@ -70,7 +70,7 @@ export default {
   created: function() {
     this.reloadData = setInterval(
       () => this.getOpenedPreavis(),
-      30000
+      30000 // recharge le tableau toutes les 30 secondes
     );
   },
 
