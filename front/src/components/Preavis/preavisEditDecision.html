@@ -12,7 +12,7 @@
                             <li v-for="item in decisions_liste"><a @click="getDecision(item.preavisDecision_id)">{{ item.date }}</a></li>
                         </ul>
                     </div>
-                    <md-button class="md-primary md-raised" @click="openNewDecision">Nouveau</md-button>
+                    <md-button class="md-primary md-raised" @click="openNewDecision" v-if="hasRightAddDecision">Nouveau</md-button>
                 </div>
                 <div style="width: 100%;" v-if="decision.show">
                 <md-card>

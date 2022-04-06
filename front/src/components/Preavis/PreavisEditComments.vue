@@ -9,7 +9,7 @@ import { handleException } from "@/services/exceptionsHandler";
 export default {
   name: "PreavisEditComments",
   props: {
-    affaire: Object
+    preavis_id: Number
   },
   components: {},
   data() {
@@ -24,7 +24,7 @@ export default {
      * Get conversation
      */
     async getConversation() {
-      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_CONVERSATION_BY_AFFAIRE_ID_ENDPOINT + "?preavis_id=" + this.affaire.preavis_id,
+      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_CONVERSATION_BY_PREAVIS_ID_ENDPOINT + "?preavis_id=" + this.preavis_id,
         {
           withCredentials: true,
           headers: { Accept: "application/json" }
@@ -38,10 +38,10 @@ export default {
 
     async saveMessage() {
       let formData = new FormData();
-      formData.append('preavis_id', this.affaire.preavis_id);
+      formData.append('preavis_id', this.preavis_id);
       formData.append('commentaire', this.commentaire);
 
-      this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_CONVERSATION_BY_AFFAIRE_ID_ENDPOINT,
+      this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_CONVERSATION_BY_PREAVIS_ID_ENDPOINT,
         formData,
         {
           withCredentials: true,

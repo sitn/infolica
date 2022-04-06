@@ -18,9 +18,9 @@
             <md-card-expand-content>
 
                 <md-card-content>
-                    <div v-if="affaire_preavis[0]">
-                        <md-table v-model="affaire_preavis" md-sort="id" md-sort-order="desc" md-dense md-card style="width: fit-content;">
-                            <md-table-row slot="md-table-row" slot-scope="{ item }">
+                    <div v-if="affaire_preavis[0]" class="md-layout-item md-size-60">
+                        <md-table v-model="affaire_preavis" md-sort="id" md-sort-order="desc" md-dense md-card style="width: fit-content;" @md-selected="onSelectTableItem">
+                            <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="single">
                                 <md-table-cell md-label="id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                                 <md-table-cell md-label="Service" md-sort-by="service" style="min-width: 100px;">{{ item.service }}</md-table-cell>
                                 <md-table-cell md-label="Demande" md-sort-by="date_demande" style="min-width: 100px;">{{ item.date_demande | formatDate }}</md-table-cell>
@@ -41,6 +41,18 @@
                     <div v-else>
                         <em>Aucun préavis</em>
                     </div>
+
+                    <md-card style="width: 90%; background-color: lightgray;" v-if="selectedPreavis">
+                        <md-card-header>
+                            <div class="md-title">En provenance du service externe - {{ selectedPreavis.service }}</div>
+                        </md-card-header>
+                        <md-card-content>
+                            <PreavisEditComments :preavis_id="selectedPreavis.id"/>
+                            <PreavisEditDecision :preavis_id="selectedPreavis.id"/>
+                        </md-card-content>
+                    </md-card>
+
+
                 </md-card-content>
             </md-card-expand-content>
         </md-card-expand>

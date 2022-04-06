@@ -8,7 +8,7 @@ import { handleException } from "@/services/exceptionsHandler";
 export default {
   name: "PreavisEditDecision",
   props: {
-    affaire: Object
+    preavis_id: Number
   },
   components: {},
   data() {
@@ -20,6 +20,7 @@ export default {
         desabled: true,
         show: false,
       },
+      hasRightAddDecision: false,
     };
   },
 
@@ -46,7 +47,7 @@ export default {
 
     // get Decision List for menu
     async getDecisionList() {
-      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DECISION_LIST_BY_AFFAIRE_ID_ENDPOINT + "?preavis_id=" + this.affaire.preavis_id,
+      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DECISION_LIST_BY_PREAVIS_ID_ENDPOINT + "?preavis_id=" + this.preavis_id,
         {
           withCredentials: true,
           headers: { Accept: "application/json" }
@@ -62,7 +63,7 @@ export default {
 
     // get Decision
     async getDecision(preavisDecision_id) {
-      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DECISION_BY_AFFAIRE_ID_ENDPOINT + "?preavis_id=" + this.affaire.preavis_id + "&preavisDecision_id=" + preavisDecision_id,
+      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DECISION_BY_PREAVIS_ID_ENDPOINT + "?preavis_id=" + this.preavis_id + "&preavisDecision_id=" + preavisDecision_id,
         {
           withCredentials: true,
           headers: { Accept: "application/json" }
@@ -83,11 +84,11 @@ export default {
       this.decision.disabled = true;
 
       let formData = new FormData();
-      formData.append('preavis_id', this.affaire.preavis_id);
+      formData.append('preavis_id', this.preavis_id);
       formData.append('preavis_type_id', this.decision.preavis_type_id);
       formData.append('remarque', this.decision.remarque);
 
-      this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DECISION_BY_AFFAIRE_ID_ENDPOINT,
+      this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DECISION_BY_PREAVIS_ID_ENDPOINT,
         formData,
         {
           withCredentials: true,
@@ -99,11 +100,20 @@ export default {
         this.decision.show = false;
         this.$root.$emit('ShowMessage', 'La décision a bien été enregistrée');
       }).catch(err => handleException(err, this));
+    },
+
+    // get permissions
+    getPermissions() {
+      let session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+      if (session_user && session_user.service_id) {
+        this.hasRightAddDecision = true;
+      }
     }
   },
 
   mounted: function() {
     this.getDecisionList();
+    this.getPermissions();
   }
 };
 </script>

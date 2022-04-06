@@ -131,13 +131,17 @@ def getOperateurFromUser(request):
 
 def strongAuthentication(request, preavis_id):
     # Check connected
+    if check_connected(request, ["SGRF"]):
+        operateur = getOperateurFromUser(request)
+        return operateur
+    
     if not check_connected(request, ["SAT"]):
         raise exc.HTTPForbidden()
 
     # get service from user
     operateur = getOperateurFromUser(request)
     if operateur.service_id is None:
-        exc.HTTPForbidden(detail="Opérateur non autorisé à accéder à ce contenu")
+         exc.HTTPForbidden(detail="Opérateur non autorisé à accéder à ce contenu")
     
     if preavis_id is None:
         exc.HTTPInternalServerError(detail="L'identidifiant du préavis est manquant")
@@ -225,7 +229,7 @@ def service_externe_affaire_view(request):
     """
     # affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
-    operateur = strongAuthentication(request, preavis_id)
+    strongAuthentication(request, preavis_id)
 
     record = request.dbsession.query(
         VAffaire.id,

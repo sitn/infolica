@@ -4,6 +4,8 @@
 
 <script>
 import { getCurrentDate, checkPermission, saveDocument, logAffaireEtape } from "@/services/helper";
+import PreavisEditComments from "@/components/Preavis/PreavisEditComments.vue";
+import PreavisEditDecision from "@/components/Preavis/PreavisEditDecision.vue";
 import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -15,18 +17,18 @@ export default {
   props: {
     affaire: {}
   },
-  components: {},
+  components: {
+    PreavisEditComments,
+    PreavisEditDecision
+  },
   data: () => {
     return {
       affaire_preavis: [],
-      preavis_type_liste: [],
-      services_liste: [],
-      services_liste_bk: [],
-      lastRecord: null,
-      showNewPreavisBtn: false,
-      showPreavisDialog: false,
-      modifyPreavis: false,
       affaireReadonly: true,
+      communeFusion: {},
+      lastRecord: null,
+      preavis_type_liste: [],
+      modifyPreavis: false,
       new_preavis: {
         id: null,
         service: null,
@@ -35,7 +37,11 @@ export default {
         date_reponse: null,
         remarque: null
       },
-      communeFusion: {},
+      selectedPreavis: null,
+      services_liste: [],
+      services_liste_bk: [],
+      showNewPreavisBtn: false,
+      showPreavisDialog: false,
     };
   },
 
@@ -418,6 +424,12 @@ export default {
         this.searchAffairePreavis();
         this.$root.$emit("showMessage", "Le prévais a bien été supprimé");
       }).catch(err => handleException(err, this));
+    },
+
+
+    // on select table item
+    onSelectTableItem(item) {
+      this.selectedPreavis = item;
     }
   },
 
