@@ -305,16 +305,15 @@ def affaires_new_view(request):
     request.dbsession.flush()
 
     # Créer le chemin du dossier de l'affaire
-    if model.type_id != request.registry.settings['affaire_type_mpd_id']:
-        affaire_chemin_full_path = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
-        model.chemin = str(model.id) # chemin relatif
-    else:
-        affaire_chemin_full_path = None
+    affaire_chemin_full_path = os.path.join(request.registry.settings['affaires_directory'], str(model.id))
+    model.chemin = str(model.id) # chemin relatif
 
     # Copier le dossier __template pour une nouvelle affaire
     if not affaire_chemin_full_path is None:
-        Utils.create_affaire_folder(request, affaire_chemin_full_path)
-
+        if model.type_id == request.registry.settings['affaire_type_mpd_id']:
+            Utils.create_affaire_folder(request.registry.settings['affaireTemplateDir_mpd'], affaire_chemin_full_path)
+        else:
+            Utils.create_affaire_folder(request.registry.settings['affaireTemplateDir'], affaire_chemin_full_path)
 
     # Créer les formulaires de contrôle
     params = {'affaire_id': model.id}

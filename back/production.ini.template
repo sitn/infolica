@@ -152,6 +152,7 @@ weasyprint_baseurl = /*TO COMPLETE*/
 affaires_directory = /*TO COMPLETE*/
 affaires_directory_full_path = /*TO COMPLETE*/
 affaireTemplateDir = /*TO COMPLETE*/
+affaireTemplateDir_mpd = /*TO COMPLETE*/
 mails_templates_directory = /*TO COMPLETE*/
 temporary_directory = /*TO COMPLETE*/
 balance_file_rel_path = /*TO COMPLETE*/
