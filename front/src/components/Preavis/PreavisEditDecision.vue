@@ -8,16 +8,18 @@ import { handleException } from "@/services/exceptionsHandler";
 export default {
   name: "PreavisEditDecision",
   props: {
-    preavis_id: Number
+    preavis_id: Number,
+    showAddDecision: Boolean
   },
   components: {},
   data() {
     return {
       decisions_liste: [],
       decision: {
+        id: null,
         preavis_type_id: null,
         remarque: null,
-        desabled: true,
+        disabled: true,
         show: false,
       },
       hasRightAddDecision: false,
@@ -61,9 +63,10 @@ export default {
     },
 
 
-    // get Decision
-    async getDecision(preavisDecision_id) {
-      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DECISION_BY_PREAVIS_ID_ENDPOINT + "?preavis_id=" + this.preavis_id + "&preavisDecision_id=" + preavisDecision_id,
+    
+    // get Decision draft
+    async getDecisionDraft() {
+      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DECISION_BY_PREAVIS_ID_ENDPOINT + "?preavis_id=" + this.preavis_id,
         {
           withCredentials: true,
           headers: { Accept: "application/json" }
@@ -71,7 +74,6 @@ export default {
       ).then(response => {
         if (response && response.data) {
           this.decision = response.data;
-          this.decision.disabled = true;
           this.decision.show = true;
         }
       }
@@ -80,25 +82,44 @@ export default {
     
     
     // saveDecision
-    async saveDecision() {
-      this.decision.disabled = true;
-
+    async saveDecision(definitif=false) {
       let formData = new FormData();
       formData.append('preavis_id', this.preavis_id);
       formData.append('preavis_type_id', this.decision.preavis_type_id);
       formData.append('remarque', this.decision.remarque);
+      formData.append('definitif', definitif);
 
-      this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DECISION_BY_PREAVIS_ID_ENDPOINT,
-        formData,
-        {
-          withCredentials: true,
-          headers: { Accept: "application/json" }
+      return new Promise((resolve, reject) => {
+        let req = this.$http
+        if (this.decision.id) {
+          formData.append('preavis_decision_id', this.decision.id)
+          req = req.put(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DECISION_BY_PREAVIS_ID_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          )
+        } else {
+          req = req.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_DECISION_BY_PREAVIS_ID_ENDPOINT,
+            formData,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          )
         }
-      ).then(() => {
-        this.getDecisionList();
-        this.resetDecision();
-        this.decision.show = false;
-        this.$root.$emit('ShowMessage', 'La décision a bien été enregistrée');
+  
+        req.then((response) => resolve(response)
+        ).catch(err => reject(err));
+      });
+    },
+
+    // save data provisoires
+    async saveDecisionProvisoire() {
+      this.saveDecision(false).then(() => {
+        this.getDecisionDraft();
+        this.$root.$emit('ShowMessage', 'La décision provisoire a bien été enregistrée');
       }).catch(err => handleException(err, this));
     },
 
@@ -113,6 +134,7 @@ export default {
 
   mounted: function() {
     this.getDecisionList();
+    this.getDecisionDraft();
     this.getPermissions();
   }
 };

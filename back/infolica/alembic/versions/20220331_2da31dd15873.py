@@ -24,6 +24,8 @@ def upgrade():
     sa.Column('operateur_service_id', sa.BigInteger(), nullable=True),
     sa.Column('remarque', sa.Text(), nullable=True),
     sa.Column('date', sa.Date(), nullable=True),
+    sa.Column('definitif', sa.Boolean(), nullable=True),
+    sa.Column('version', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['operateur_service_id'], ['infolica.operateur.id'], name=op.f('fk_preavis_decision_operateur_service_id_operateur')),
     sa.ForeignKeyConstraint(['preavis_id'], ['infolica.preavis.id'], name=op.f('fk_preavis_decision_preavis_id_preavis')),
     sa.ForeignKeyConstraint(['preavis_type_id'], ['infolica.preavis_type.id'], name=op.f('fk_preavis_decision_preavis_type_id_preavis_type')),

@@ -164,6 +164,18 @@ export default {
       }
     },
 
+    // save preavis devinitively and submit it to SGRF
+    async savePreavisDefinitively() {
+      let ped = this.$refs.ped;
+      if (ped.decision.show === true) {
+        ped.saveDecision(true).then(() => {
+          this.$router.push({name: 'Preavis'});
+        }).catch(err => handleException(err));
+      } else {
+        this.$router.push({name: 'Preavis'});
+      }
+    }
+
   },
 
   mounted: function() {

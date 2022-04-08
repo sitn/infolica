@@ -3,7 +3,10 @@
     <!-- TITRE -->
     <md-toolbar class="justifyTitleBtn">
         <h1>Saisie de préavis pour l'affaire {{ affaire.id }}</h1>
-        <md-button class="md-raised md-primary" @click="$router.push({name: 'Preavis'})">Retour</md-button>
+        <div>
+            <md-button class="md-raised md-primary" @click="savePreavisDefinitively"><md-icon>save</md-icon> Enregistrer définitivement</md-button>
+            <md-button class="md-raised md-primary" @click="$router.push({name: 'Preavis'})"><md-icon>arrow_back</md-icon> Retour au tableau de préavis</md-button>
+        </div>
     </md-toolbar>
 
     <md-card>
@@ -108,34 +111,6 @@
         </md-card-content>
     </md-card>
 
-    <!-- <preavisEditComments :preavis_id="affaire.preavis_id" /> -->
-    
-    <preavisEditDecision :preavis_id="affaire.preavis_id" />
-
-    <!-- <div class="rightColumn">
-            <md-card class="mapHeight">
-                <md-card-content>
-                    <div class="md-layout md-gutter">
-                        <div class="md-layout-item md-size-30">
-                            <md-field>
-                                <label>Coordonnées</label>
-                                <md-input v-model="[affaire.localisation_e | 0, affaire.localisation_n | 0].join(' / ')" readonly></md-input>
-                            </md-field>
-                        </div>
-                        <div style="text-align: right;" class="md-layout-item">
-                            <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('cadastre')">Cadastre</md-button>
-                            <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('sites_pollues')">Sites Pollués</md-button>
-                            <md-button style="background-color: lightgray;" class="md-raised" @click="openSitnTheme('amenagement_territoire')">Aménagement du territoire</md-button>
-                        </div>
-                        <div class="md-layout-item md-size-100" v-if="showMovePointComment">
-                            <p style="color: blue; margin-top: 0px;">Pour modifier les coordonnées, déplacer la pastille sur la carte.</p>
-                        </div>
-                        <div id="mapContainer">
-                            <MapHandler ref="mapHandler" />
-                        </div>
-                    </div>
-                </md-card-content>
-            </md-card>
-        </div> -->
+    <preavisEditDecision ref="ped" :preavis_id="affaire.preavis_id" :showAddDecision="true" />
 
 </div>

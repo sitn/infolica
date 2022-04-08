@@ -322,66 +322,66 @@ def service_externe_documents_view(request):
     return documents
 
 
-@view_config(route_name='service_externe_conversation', request_method='GET', renderer='json')
-def service_externe_conversation_view(request):
-    """
-    GET conversation of preavis_id for service externe
-    """
-    preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
-    strongAuthentication(request, preavis_id)
+# @view_config(route_name='service_externe_conversation', request_method='GET', renderer='json')
+# def service_externe_conversation_view(request):
+#     """
+#     GET conversation of preavis_id for service externe
+#     """
+#     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
+#     strongAuthentication(request, preavis_id)
     
-    results = []
+#     results = []
 
-    query = request.dbsession.query(
-        Operateur.nom,
-        Operateur.prenom,
-        PreavisRemarque.date,
-        PreavisRemarque.remarque
-    ).join(
-        Operateur, PreavisRemarque.operateur_id == Operateur.id
-    ).join(
-        Preavis, PreavisRemarque.preavis_id == Preavis.id
-    ).filter(
-        Preavis.id == preavis_id
-    ).order_by(PreavisRemarque.id.desc()).all()
+#     query = request.dbsession.query(
+#         Operateur.nom,
+#         Operateur.prenom,
+#         PreavisRemarque.date,
+#         PreavisRemarque.remarque
+#     ).join(
+#         Operateur, PreavisRemarque.operateur_id == Operateur.id
+#     ).join(
+#         Preavis, PreavisRemarque.preavis_id == Preavis.id
+#     ).filter(
+#         Preavis.id == preavis_id
+#     ).order_by(PreavisRemarque.id.desc()).all()
 
     
-    for res in query:
-        results.append({
-            "operateur": ' '.join([res[1], res[0]]),
-            "date": datetime.strftime(res[2], "%d.%m.%Y"),
-            "message": res[3]
-        })
+#     for res in query:
+#         results.append({
+#             "operateur": ' '.join([res[1], res[0]]),
+#             "date": datetime.strftime(res[2], "%d.%m.%Y"),
+#             "message": res[3]
+#         })
 
-    return results
+#     return results
 
 
-@view_config(route_name='service_externe_conversation', request_method='POST', renderer='json')
-def service_externe_conversation_new_view(request):
-    """
-    POST conversation of preavis_id for service externe
-    """
-    preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
-    commentaire = request.params['commentaire'] if 'commentaire' in request.params else None
-    operateur = strongAuthentication(request, preavis_id)
+# @view_config(route_name='service_externe_conversation', request_method='POST', renderer='json')
+# def service_externe_conversation_new_view(request):
+#     """
+#     POST conversation of preavis_id for service externe
+#     """
+#     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
+#     commentaire = request.params['commentaire'] if 'commentaire' in request.params else None
+#     operateur = strongAuthentication(request, preavis_id)
     
-    preavis = request.dbsession.query(Preavis).filter(
-        Preavis.id == preavis_id
-    ).first()
+#     preavis = request.dbsession.query(Preavis).filter(
+#         Preavis.id == preavis_id
+#     ).first()
 
-    rp = PreavisRemarque()
+#     rp = PreavisRemarque()
     
-    params = {
-        'preavis_id': preavis.id,
-        'remarque': commentaire,
-        'operateur_id': operateur.id,
-        'date': datetime.strftime(datetime.now(), "%Y-%m-%d")
-    }
+#     params = {
+#         'preavis_id': preavis.id,
+#         'remarque': commentaire,
+#         'operateur_id': operateur.id,
+#         'date': datetime.strftime(datetime.now(), "%Y-%m-%d")
+#     }
 
-    model = Utils.set_model_record(rp, params)
-    request.dbsession.add(model)
+#     model = Utils.set_model_record(rp, params)
+#     request.dbsession.add(model)
 
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisRemarque.__tablename__))
+#     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisRemarque.__tablename__))
 
 
 @view_config(route_name='service_externe_liste_decisions', request_method='GET', renderer='json')
@@ -394,31 +394,45 @@ def service_externe_liste_decision_view(request):
     
     result = request.dbsession.query(
         PreavisDecision.id,
-        PreavisDecision.date
+        PreavisDecision.date,
+        PreavisDecision.version,
+        PreavisDecision.remarque,
+        PreavisType.nom,
+        Operateur.prenom,
+        Operateur.nom
     ).join(
-        Preavis, Preavis.id == PreavisDecision.preavis_id
+        PreavisType, PreavisType.id == PreavisDecision.preavis_type_id
+    ).join(
+        Operateur, Operateur.id == PreavisDecision.operateur_service_id
     ).filter(
-        Preavis.id == preavis_id
-    ).order_by(PreavisDecision.id.desc()).all()
+        PreavisDecision.preavis_id == preavis_id,
+        PreavisDecision.definitif == True
+    ).order_by(PreavisDecision.id.asc()).all()
 
     liste_decisions = []
+    c = 0
     for res in result:
+        c += 1
         liste_decisions.append(
             {   
                 'preavisDecision_id': res[0],
-                'date': datetime.strftime(res[1], "%d.%m.%Y")
+                'date': datetime.strftime(res[1], "%d.%m.%Y"),
+                'version': res[2],
+                'remarque': res[3],
+                'decision': res[4],
+                'operateur': ' '.join([res[5], res[6]])
             }
         )
 
     return liste_decisions
 
 
+    # version 2
 @view_config(route_name='service_externe_decision', request_method='GET', renderer='json')
 def service_externe_decision_view(request):
     """
     GET decision of preavis_id for service externe
     """
-    preavisDecision_id = request.params['preavisDecision_id'] if 'preavisDecision_id' in request.params else None
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
 
     strongAuthentication(request, preavis_id)
@@ -429,20 +443,67 @@ def service_externe_decision_view(request):
         PreavisDecision.date,
         Operateur.prenom,
         Operateur.nom,
+        PreavisDecision.id,
+        PreavisDecision.version,
     ).join(
         Operateur, Operateur.id == PreavisDecision.operateur_service_id
     ).filter(
-        PreavisDecision.id == preavisDecision_id
+        PreavisDecision.preavis_id == preavis_id,
+        PreavisDecision.definitif.is_not(True)
     ).first()
 
-    result = {   
-        'preavis_type_id': res[0],
-        'remarque': res[1],
-        'date': datetime.strftime(res[2], "%d.%m.%Y"),
-        "operateur": ' '.join([res[3], res[4]])
-    }
+    if res is not None:
+        result = { 
+            'preavis_type_id': res[0],
+            'remarque': res[1],
+            'date': datetime.strftime(res[2], "%d.%m.%Y"),
+            "operateur": ' '.join([res[3], res[4]]),
+            "definitif": False,
+            "id": res[5],
+            "version": res[6],
+        }
+    else:
+       result = None
 
     return result
+
+    # version 1
+# @view_config(route_name='service_externe_decision', request_method='GET', renderer='json')
+# def service_externe_decision_view(request):
+#     """
+#     GET decision of preavis_id for service externe
+#     """
+#     preavisDecision_id = request.params['preavisDecision_id'] if 'preavisDecision_id' in request.params else None
+#     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
+
+#     strongAuthentication(request, preavis_id)
+    
+#     res = request.dbsession.query(
+#         PreavisDecision.preavis_type_id,
+#         PreavisDecision.remarque,
+#         PreavisDecision.date,
+#         Operateur.prenom,
+#         Operateur.nom,
+#         PreavisDecision.definitif,
+#         PreavisDecision.id,
+#         PreavisDecision.version
+#     ).join(
+#         Operateur, Operateur.id == PreavisDecision.operateur_service_id
+#     ).filter(
+#         PreavisDecision.id == preavisDecision_id
+#     ).first()
+
+#     result = { 
+#         'preavis_type_id': res[0],
+#         'remarque': res[1],
+#         'date': datetime.strftime(res[2], "%d.%m.%Y"),
+#         "operateur": ' '.join([res[3], res[4]]),
+#         "definitif": res[5] is True,
+#         "id": res[6],
+#         "version": res[7]
+#     }
+
+#     return result
 
 
 @view_config(route_name='service_externe_decision', request_method='POST', renderer='json')
@@ -453,20 +514,48 @@ def service_externe_decision_new_view(request):
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
     preavis_type_id = request.params['preavis_type_id'] if 'preavis_type_id' in request.params else None
     remarque = request.params['remarque'] if 'remarque' in request.params else None
+    definitif = request.params['definitif'] == 'true' if 'definitif' in request.params else False
     operateur = strongAuthentication(request, preavis_id)
     
     rp = PreavisDecision()
-    
+    max_version = request.dbsession.query(func.max(PreavisDecision.version)).filter(PreavisDecision.preavis_id == preavis_id).scalar()
+    max_version = 0 if max_version is None else max_version
+
     params = {
         'preavis_id': preavis_id,
         'preavis_type_id': preavis_type_id,
         'operateur_service_id': operateur.id,
         'remarque': remarque,
-        'date': datetime.strftime(datetime.now(), "%Y-%m-%d")
+        'date': datetime.strftime(datetime.now(), "%Y-%m-%d"),
+        'version': max_version + 1,
+        'definitif': definitif
     }
 
     model = Utils.set_model_record(rp, params)
     request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisDecision.__tablename__))
+
+
+@view_config(route_name='service_externe_decision', request_method='PUT', renderer='json')
+def service_externe_decision_update_view(request):
+    """
+    PUT decision of preavis_id for service externe
+    """
+    preavis_decision_id = request.params['preavis_decision_id'] if 'preavis_decision_id' in request.params else None
+    preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
+    preavis_type_id = request.params['preavis_type_id'] if 'preavis_type_id' in request.params else None
+    remarque = request.params['remarque'] if 'remarque' in request.params else None
+    definitif = request.params['definitif'] == 'true' if 'definitif' in request.params else False
+    operateur = strongAuthentication(request, preavis_id)
+    
+    result = request.dbsession.query(PreavisDecision).filter(PreavisDecision.id == preavis_decision_id).first()
+    
+    result.preavis_type_id = preavis_type_id
+    result.operateur_id = operateur.id
+    result.remarque = remarque
+    result.date = datetime.strftime(datetime.now(), "%Y-%m-%d")
+    result.definitif = definitif
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisDecision.__tablename__))
 

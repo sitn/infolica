@@ -918,6 +918,8 @@ class PreavisDecision(Base):
     operateur_service_id = Column(BigInteger, ForeignKey(Operateur.id))
     remarque = Column(Text)
     date = Column(Date)
+    definitif = Column(Boolean)
+    version = Column(Integer)
 
 
 class PreavisRemarque(Base):  # currently not used, replaced by attribute Remarque in table Preavis
