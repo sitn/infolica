@@ -24,3 +24,6 @@ yarn-error.log*
 
 # sitnlayers (for dev)
 src/assets/sitnlayers-master/
+
+# package-lock.json
+package-lock.json
