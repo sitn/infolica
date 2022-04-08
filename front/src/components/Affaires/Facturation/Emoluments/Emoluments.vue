@@ -6,6 +6,7 @@
 import { handleException } from '@/services/exceptionsHandler';
 import { logAffaireEtape } from '@/services/helper';
 const numeral = require("numeral");
+const moment = require('moment');
 
 export default {
   name: 'Emoluments',
@@ -590,7 +591,7 @@ export default {
         Number(this.total.montant_22pl);
 
       this.total.montant_travauxTerrain_total_zi =
-        Number(this.total.montant_travauxTerrain_total) * Number(this.form_general.zi);
+        this.round(Number(this.total.montant_travauxTerrain_total) * Number(this.form_general.zi));
 
       this.total.montant_travauxTerrain_batiment_total_f_somme =
         this.form_general.nb_batiments>0? this.round(Number(this.total.montant_travauxTerrain_batiment_total_f.reduce((a, b) => Number(a) + Number(b)))): 0;
@@ -819,7 +820,6 @@ export default {
             if (response && response.data) {
               this.putEmolumentsDetail(this.form_general.id).then(response => {
                 if (response && response.data) {
-                  this.showEmolumentsDialog = false;
                   this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
 
                   //Log edition facture
@@ -827,7 +827,6 @@ export default {
 
                   this.postEmolumentAffaireRepartition(this.form_general.id);
                   // refresh emoluments_general_list
-                  this.getEmolumentsGeneral();
                   this.$root.$emit("searchAffaireFactures");
                   resolve(this.form_general.id);
 
@@ -845,7 +844,6 @@ export default {
               let emolument_affaire_id = response.data.emolument_affaire_id;
               this.postEmolumentsDetail(emolument_affaire_id).then(response => {
                 if (response && response.data) {
-                  this.showEmolumentsDialog = false;
   
                   this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
 
@@ -854,7 +852,7 @@ export default {
                   
                   this.postEmolumentAffaireRepartition(emolument_affaire_id);
                   // refresh emoluments_general_list
-                  this.getEmolumentsGeneral();
+                  this.form_general.id = emolument_affaire_id;
                   this.$root.$emit("searchAffaireFactures");
                   resolve(emolument_affaire_id);
 
@@ -998,7 +996,7 @@ export default {
     async getEmolumentsDetail(emolument_affaire_id) {
       // set form_general
       this.form_general = this.emolumentsGeneral_list.filter(x => x.id === emolument_affaire_id)[0];
-      this.disabled = this.form_general.utilise && !this.permission.admin_permissions;
+      this.disabled = this.form_general.utilise;
 
       this.setFormDetail();
 
@@ -1178,10 +1176,10 @@ export default {
     /**
      * fix emolument definitively
      */
-    async fixEmolumentDefinitively(emolument_affaire_id) {
+    async fixEmolumentDefinitively(emolument_affaire_id, status=true) {
       let formData = new FormData();
       formData.append("emolument_affaire_id", emolument_affaire_id);
-      formData.append("utilise", true);
+      formData.append("utilise", status);
 
       this.$http.put(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_FREEZE_ENDPOINT,
@@ -1190,11 +1188,8 @@ export default {
           withCredentials: true,
           headers: {"Accept": "application/json"}
         }
-      ).then(response => {
-        if (response && response.data) {
-          this.getEmolumentsGeneral();
-        }
-      }).catch(err => handleException(err, this));
+      ).then(() => {})
+      .catch(err => handleException(err, this));
     },
     
     
@@ -1382,16 +1377,9 @@ export default {
         this.form_general.id = response_id;
 
         let promises = [];
-        let c = 0;
-        let facture_;
         this.factures_repartition.forEach(x => {
           if (Number(x.emolument_repartition) > 0) {
             promises.push(this.putFacture(x));
-            
-            if (c === 0) {
-              facture_ = x;
-            }
-            c += 1;
           }
         });
         
@@ -1402,12 +1390,10 @@ export default {
   
         Promise.all(promises).then(() => {
           this.showEmolumentsDialog = false;
-          this.fixEmolumentDefinitively(response_id);
+          this.fixEmolumentDefinitively(response_id, true);
           this.$root.$emit("searchAffaireFactures");
           this.$root.$emit("ShowMessage", successMessage);
-          if (c === 1) {
-            this.$root.$emit("openFacture", facture_);
-          }
+          this.getEmolumentsGeneral();
         }).catch(err => handleException(err, this));
       });
     },
@@ -1423,6 +1409,7 @@ export default {
 
         let formData = new FormData();
         formData.append("id", facture_data.id);
+        formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
         formData.append("montant_mo", facture_data.montant_mo);
         formData.append("montant_mat_diff", facture_data.montant_mat_diff);
         formData.append("montant_rf", facture_data.montant_rf);
@@ -1519,8 +1506,15 @@ export default {
         document.body.appendChild(fileLink);
         fileLink.click();
       }).catch(err => handleException(err, this));
-    }
+    },
 
+    /**
+     * update emolument_affaire used
+     */
+    updateUsed() {
+      this.fixEmolumentDefinitively(this.form_general.id, this.form_general.utilise);
+      this.disabled = this.form_general.utilise;
+    }
 
   },
 

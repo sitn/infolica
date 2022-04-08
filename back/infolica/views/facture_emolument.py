@@ -348,6 +348,16 @@ def emolument_affaire_delete_view(request):
     emolument_affaire_id = request.params['emolument_affaire_id'] if "emolument_affaire_id" in request.params else None
     affaire_id = request.params['affaire_id'] if "affaire_id" in request.params else None
 
+
+    # Remove from Emolument
+    records = request.dbsession.query(Emolument).filter(
+        Emolument.emolument_affaire_id == emolument_affaire_id
+    ).all()
+
+    for record in records:
+        request.dbsession.delete(record)
+
+
     # Remove from EmolumentAffaire
     record = request.dbsession.query(EmolumentAffaire).filter(
         EmolumentAffaire.id == emolument_affaire_id
@@ -360,15 +370,6 @@ def emolument_affaire_delete_view(request):
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(EmolumentAffaire.__tablename__, emolument_affaire_id))
 
     request.dbsession.delete(record)
-
-    # Remove from Emolument
-    records = request.dbsession.query(Emolument).filter(
-        Emolument.emolument_affaire_id == emolument_affaire_id
-    ).all()
-
-    for record in records:
-        request.dbsession.delete(record)
-
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Emolument.__tablename__))
 
@@ -630,7 +631,7 @@ def export_emoluments_pdf_view(request):
 
     filename = "Tableau_émoluments_" + str(tableau_emoluments_id) + "_Affaire_" + str(affaire_id) + ".pdf"
 
-    result = requests.post("https://sitnintra.ne.ch/weasy/pdf?filename=" + filename, data=tableau_emoluments_html)
+    result = requests.post(request.registry.settings['weasyprint_baseurl'] + filename, data=tableau_emoluments_html)
 
     response = Response(result.content)
     params = response.content_type_params

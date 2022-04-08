@@ -525,19 +525,6 @@ export default {
           moment(this.form.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS)
         );
       }
-      if (this.form.plan && this.form.type && this.form.type.id && this.form.type.id === this.typesAffaires_conf.mpd) {
-        let cadastre_2digits = this.form.cadastre.id.toLocaleString("en-US", {
-          minimumIntegerDigits: 2,
-          useGrouping: false,
-        });
-
-        let plan_3digits = Number(this.form.plan).toLocaleString("en-US", {
-          minimumIntegerDigits: 3,
-          useGrouping: false,
-        });
-
-        formData.append("no_access", "MPD" + cadastre_2digits + " " + plan_3digits + " " + new Date().getFullYear().toString().substr(-2));
-      }
 
       // FACTURE
       if (this.client_facture && this.client_facture.id &&
@@ -1198,6 +1185,7 @@ export default {
     setPlanMoCadastre(){
       if (this.form.cadastre && this.form.cadastre.id) {
         this.plansMOListe_cadastre = stringifyAutocomplete(this.plansMOListe.filter(x => x.cadastre_id === this.form.cadastre.id), "planno", "idobj");
+        this.form.plan = null;
       }
     },
 
@@ -1267,6 +1255,20 @@ export default {
         }
       }).catch(err => handleException(err, this));
     },
+
+    updateAffaireName(val) {
+      if (this.form.type && this.form.type.id == this.typesAffaires_conf.mpd) {
+        if (val) {
+          this.form.nom = "Mise à jour périodique - Plan " + val; 
+        } else {
+          this.form.nom = "Mise à jour périodique"; 
+        }
+      } else {
+        this.form.nom = null;
+      }
+    }
+
+
 
   },
 

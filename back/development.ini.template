@@ -145,12 +145,16 @@ client_cadastration_id = 2896
 operateur_affaire_urgente = 15,57,59,60
 operateur_secretariat = 9,39
 
+# WeasyPrint webservice
+weasyprint_baseurl = /*TO COMPLETE*/
+
 ######################################################################################
 # Accès dossiers
 ######################################################################################
 affaires_directory = C:/infolica_project/affaire_technique/travail
 affaires_directory_full_path = C:/infolica_project/affaire_technique/travail
 affaireTemplateDir = C:/infolica_project/affaire_technique/__template
+affaireTemplateDir_mpd = C:/infolica_project/affaire_technique/mpd_template
 mails_templates_directory = C:/infolica_project/affaire_technique/mail_template
 temporary_directory = C:/infolica_project/back/tmp
 balance_file_rel_path = A_Administratif/Désignations

@@ -1,11 +1,12 @@
 <div class="emoluments" v-if="emolumentsUnits.length > 0 && Object.keys(form_detail).length > 0">
 
-    <md-dialog :md-active.sync="showEmolumentsDialog">
+    <md-dialog :md-active.sync="showEmolumentsDialog" :md-click-outside-to-close="false" :md-close-on-esc="false">
       <md-dialog-title class="justifyTitleBtn">
         <div class="md-title">Émoluments <span v-if="form_general && form_general.id"> (id: {{ form_general.id }})</span></div>
         <div>
+          <md-switch v-model="form_general.utilise" @change="updateUsed" class="md-accent" title="Bloquer l'émolument" :disabled="!permission.editEmolumentFreeze" v-if="form_general && form_general.id"><md-icon class="material-icons-outlined md-accent">{{ form_general.utilise===true? 'lock': 'lock_open' }}</md-icon></md-switch>
           <md-button class="md-primary md-elevation-2" v-if="form_general.id" @click="downloadEmoluments()" title="Génère le tableau des émoluments en PDF"><md-icon>file_download</md-icon> Télécharger le PDF</md-button>
-          <md-button class="md-accent md-raised" v-if="!disabled && form_general.id" @click="onRemoveEmolumentAffaire(form_general.id)" title="Supprime définitivement l'émolument"><md-icon>delete</md-icon> Supprimer</md-button>
+          <md-button class="md-accent md-raised" :disabled="disabled || !form_general.id" @click="onRemoveEmolumentAffaire(form_general.id)" title="Supprime définitivement l'émolument"><md-icon>delete</md-icon> Supprimer</md-button>
         </div>
       </md-dialog-title>
       <md-dialog-content>
@@ -345,7 +346,7 @@
                 </tr>
                 <tr>
                   <td class="tg-0lax code">.16</em></td>
-                  <td class="tg-0lax subtitle" :colspan="6 + 2*Number(form_general.nb_batiments)"><em>Contrôles lors de visées pério.</em></td>
+                  <td class="tg-0lax subtitle" :colspan="5 + 2*Number(form_general.nb_batiments)"><em>Contrôles lors de visées pério.</em></td>
                 </tr>
                 <tr>
                   <td class="tg-0lax code"></td>
@@ -1749,7 +1750,7 @@
 
       <md-dialog-actions>
         <md-button class="md-elevation-3 md-accent" @click="onCancel">Fermer</md-button>
-        <md-button class="md-elevation-3 md-primary" @click="postEmolument" v-if="!disabled">Enregistrer</md-button>
+        <md-button class="md-elevation-3 md-primary" @click="postEmolument" :disabled="disabled">Enregistrer</md-button>
       </md-dialog-actions>
     </md-dialog>
 

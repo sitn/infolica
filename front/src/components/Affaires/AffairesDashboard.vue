@@ -72,6 +72,7 @@ export default {
         editSuiviMandatAllowed: false,
         editEmolumentIndiceApplication: false,
         editEmolumentTva: false,
+        editEmolumentFreeze: false,
         showEmolumentRepartition_saveToFactures_btn: false,
       },
       showConfirmAbandonAffaireDialog: false,

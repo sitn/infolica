@@ -270,11 +270,11 @@ class Utils(object):
         return None
 
     @classmethod
-    def create_affaire_folder(cls, request, affaire_folder):
-        if not os.path.isdir(affaire_folder):
-            copytree(request.registry.settings['affaireTemplateDir'], affaire_folder, ignore=ignore_patterns('Thumbs.db'))
+    def create_affaire_folder(cls, template_path, affaire_path):
+        if not os.path.isdir(affaire_path):
+            copytree(template_path, affaire_path, ignore=ignore_patterns('Thumbs.db'))
             settime = time.time()
-            os.utime(affaire_folder, times=(settime, settime))
+            os.utime(affaire_path, times=(settime, settime))
     
     @classmethod
     def addNewRecord(cls, request, Model, params=None):

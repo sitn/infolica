@@ -668,7 +668,6 @@ export default {
     this.$root.$on("searchAffaireFactures", () => {
       setTimeout(() => {  this.searchAffaireFactures() }, 500);
     });
-    this.$root.$on("openFacture", (data) => this.openFactureEdition(data, "facture", true));
   }
 };
 </script>
