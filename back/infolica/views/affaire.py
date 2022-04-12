@@ -8,7 +8,7 @@ from infolica.models.constant import Constant
 from infolica.models.models import Affaire, AffaireType, ModificationAffaireType
 from infolica.models.models import ModificationAffaire, VAffaire, Facture, Client
 from infolica.models.models import ControleGeometre, ControleMutation, ControlePPE, SuiviMandat
-from infolica.models.models import AffaireEtape
+from infolica.models.models import AffaireEtape, Preavis
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 
@@ -124,6 +124,15 @@ def affaire_cockpit_view(request):
         etape_days_elapsed_text = "aujourd'hui" if etape_days_elapsed == 0 else ("hier" if etape_days_elapsed == 1 else str(etape_days_elapsed) + " jours")
         title = affaire.technicien_initiales + " — Affaire " + str(affaire.id) + " — " + affaire.cadastre + " — " + affaire.nom + " — Dans cette étape depuis " + etape_days_elapsed_text
         
+        nb_preavis = request.dbsession.query(func.count(Preavis.affaire_id)).filter(Preavis.affaire_id == affaire.id).scalar()
+        nb_closed_preavis = request.dbsession.query(func.count(Preavis.affaire_id)).filter(Preavis.affaire_id == affaire.id, Preavis.date_reponse.is_not(None)).scalar()
+        preavis_status = None
+        if nb_preavis > 0:
+            if nb_preavis == nb_closed_preavis:
+                preavis_status = 'ok'
+            else:
+                preavis_status = 'pending'
+
         affaires.append({
             'id': affaire.id,
             'affaire_type': affaire.type_affaire,
@@ -142,7 +151,8 @@ def affaire_cockpit_view(request):
             'urgent_echeance': urgent_echeance,
             'attribution': affaire.attribution,
             'nom_affaire': nom_affaire,
-            'title': title
+            'title': title,
+            'preavis_status': preavis_status
         })
     
     return affaires
