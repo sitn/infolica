@@ -172,6 +172,7 @@ def service_externe_preavis_view(request):
     if operateur.service_id is None:
         exc.HTTPForbidden(detail="Opérateur non autorisé à accéder à ce contenu")
 
+    status = request.params['status'] if 'status' in request.params else None
     search = request.params['search'] if 'search' in request.params else None
 
     query = request.dbsession.query(
@@ -188,10 +189,17 @@ def service_externe_preavis_view(request):
     ).join(
         Operateur, Preavis.operateur_service_id == Operateur.id, isouter=True
     ).filter(
-        Preavis.date_reponse == None
-    ).filter(
-        Preavis.service_id == operateur.service_id
+        Preavis.service_id == operateur.service_id,
     )
+
+    if status is not None:
+        if status == "open":
+            query = query.filter(
+                Preavis.date_reponse == None,
+                Preavis.etape == 'externe',
+            )
+        elif status == "closed":
+            query = query.filter(Preavis.etape == 'interne')
     
     if search is not None:
         search = search.split(' ')
@@ -532,6 +540,12 @@ def service_externe_decision_new_view(request):
     }
 
     model = Utils.set_model_record(rp, params)
+
+    if definitif is True:
+        # update preavis etape
+        preavis = request.dbsession.query(Preavis).filter(Preavis.id == preavis_id).first()
+        preavis.etape = 'interne'
+
     request.dbsession.add(model)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisDecision.__tablename__))

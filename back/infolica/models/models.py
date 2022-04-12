@@ -907,6 +907,7 @@ class Preavis(Base):
     date_demande = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     date_reponse = Column(Date)
     remarque = Column(Text)
+    etape = Column(Text)
 
 
 class PreavisDecision(Base):

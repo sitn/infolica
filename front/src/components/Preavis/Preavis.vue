@@ -14,32 +14,56 @@ export default {
   data: () => {
     return {
       liste_preavis_attente: [],
-      reloadData: null,
       searchTerm: null,
+      liste_preavis_old: [],
+      searchTerm_old: null,
+      reloadData: null,
     };
   },
 
   methods: {
     // get opened preavis
     async getOpenedPreavis() {
-      let params = '';
+      let params = '?status=open';
       if (this.searchTerm) {
-        params = "?search=" + String(this.searchTerm);
+        params += "&search=" + String(this.searchTerm);
       }
 
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_SERVICE_EXTERNE_PREAVIS_ENDPOINT + params,
-        {
-          withCredentials: true,
-          headers: {'accept': 'application/json'}
-        }
-      )
-      .then(response => {
+      this.getPreavis(params).then(response => {
         if (response && response.data) {
           this.liste_preavis_attente = response.data;
         }
       }).catch(err => handleException(err, this));
     },
+
+    // get closed preavis
+    async getClosedPreavis() {
+      let params = '?status=closed';
+      if (this.searchTerm_old) {
+        params += "&search=" + String(this.searchTerm_old);
+      }
+
+      this.getPreavis(params).then(response => {
+        if (response && response.data) {
+          this.liste_preavis_old = response.data;
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+
+    async getPreavis(params='') {
+      return new Promise ((resolve, reject) => {
+        this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_SERVICE_EXTERNE_PREAVIS_ENDPOINT + params,
+        {
+          withCredentials: true,
+          headers: {'accept': 'application/json'}
+        }
+      ).then(response => resolve(response))
+      .catch(err => reject(err));
+      });
+    },
+
 
     // preavis attribution
     async preavisAttribution(item) {
@@ -64,12 +88,16 @@ export default {
 
   mounted: function() {
     this.getOpenedPreavis();
+    this.getClosedPreavis();
 
   },
 
   created: function() {
     this.reloadData = setInterval(
-      () => this.getOpenedPreavis(),
+      () => {
+        this.getOpenedPreavis(),
+        this.getClosedPreavis()
+      },
       30000 // recharge le tableau toutes les 30 secondes
     );
   },
