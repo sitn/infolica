@@ -6,8 +6,6 @@ from infolica.models import Preavis, SuiviMandat
 from infolica.scripts.utils import Utils
 from sqlalchemy import func
 
-from datetime import datetime
-
 LOGGER = logging.getLogger(__name__)
 
 class ControleEtapeChecker():
@@ -91,13 +89,16 @@ class ControleEtapeChecker():
         request = kwargs.get('request')
         affaire_id = kwargs.get('affaire_id')
         
-        test = request.dbsession.query(
+        query = request.dbsession.query(
             func.count(Preavis.affaire_id)
         ).filter(
             Preavis.affaire_id == affaire_id
-        ).scalar()
+        )
 
-        return test > 0
+        nb_demandes = query.scalar() 
+        nb_reponses = query.filter(Preavis.date_reponse.is_not(None)).scalar()
+
+        return nb_demandes == nb_reponses
     
     
     @staticmethod
