@@ -4,6 +4,16 @@
     height: calc(100vh - 80px);
 }
 
+.preavisHeader {
+    position: fixed;
+    margin-top: 0px;
+    width: calc(90% - 33px);
+}
+
+.preavisContent {
+    position: relative; top: 70px;
+}
+
 .title {
     font-weight: bold;
     width: 180px;
