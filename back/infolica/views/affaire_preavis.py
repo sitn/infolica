@@ -418,9 +418,7 @@ def service_externe_liste_decision_view(request):
     ).order_by(PreavisDecision.id.asc()).all()
 
     liste_decisions = []
-    c = 0
     for res in result:
-        c += 1
         liste_decisions.append(
             {   
                 'preavisDecision_id': res[0],
@@ -528,7 +526,7 @@ def service_externe_decision_new_view(request):
     rp = PreavisDecision()
     max_version = request.dbsession.query(func.max(PreavisDecision.version)).filter(PreavisDecision.preavis_id == preavis_id).scalar()
     max_version = 0 if max_version is None else max_version
-
+    
     params = {
         'preavis_id': preavis_id,
         'preavis_type_id': preavis_type_id,
@@ -541,10 +539,15 @@ def service_externe_decision_new_view(request):
 
     model = Utils.set_model_record(rp, params)
 
+    preavis = request.dbsession.query(Preavis).filter(Preavis.id == preavis_id).first()
+    preavis.operateur_service_id = operateur.id
+
     if definitif is True:
-        # update preavis etape
-        preavis = request.dbsession.query(Preavis).filter(Preavis.id == preavis_id).first()
+        # update preavis etape and other infos
         preavis.etape = 'interne'
+        preavis.date_reponse = datetime.strftime(datetime.now(), "%Y-%m-%d")
+        preavis.preavis_type_id = preavis_type_id
+        preavis.remarque = remarque
 
     request.dbsession.add(model)
 
@@ -570,6 +573,16 @@ def service_externe_decision_update_view(request):
     result.remarque = remarque
     result.date = datetime.strftime(datetime.now(), "%Y-%m-%d")
     result.definitif = definitif
+
+    preavis = request.dbsession.query(Preavis).filter(Preavis.id == preavis_id).first()
+    preavis.operateur_service_id = operateur.id
+
+    if definitif is True:
+        # update preavis etape and other infos
+        preavis.etape = 'interne'
+        preavis.date_reponse = datetime.strftime(datetime.now(), "%Y-%m-%d")
+        preavis.preavis_type_id = preavis_type_id
+        preavis.remarque = remarque
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisDecision.__tablename__))
 
