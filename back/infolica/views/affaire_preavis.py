@@ -473,44 +473,6 @@ def service_externe_decision_view(request):
 
     return result
 
-    # version 1
-# @view_config(route_name='service_externe_decision', request_method='GET', renderer='json')
-# def service_externe_decision_view(request):
-#     """
-#     GET decision of preavis_id for service externe
-#     """
-#     preavisDecision_id = request.params['preavisDecision_id'] if 'preavisDecision_id' in request.params else None
-#     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
-
-#     strongAuthentication(request, preavis_id)
-    
-#     res = request.dbsession.query(
-#         PreavisDecision.preavis_type_id,
-#         PreavisDecision.remarque,
-#         PreavisDecision.date,
-#         Operateur.prenom,
-#         Operateur.nom,
-#         PreavisDecision.definitif,
-#         PreavisDecision.id,
-#         PreavisDecision.version
-#     ).join(
-#         Operateur, Operateur.id == PreavisDecision.operateur_service_id
-#     ).filter(
-#         PreavisDecision.id == preavisDecision_id
-#     ).first()
-
-#     result = { 
-#         'preavis_type_id': res[0],
-#         'remarque': res[1],
-#         'date': datetime.strftime(res[2], "%d.%m.%Y"),
-#         "operateur": ' '.join([res[3], res[4]]),
-#         "definitif": res[5] is True,
-#         "id": res[6],
-#         "version": res[7]
-#     }
-
-#     return result
-
 
 @view_config(route_name='service_externe_decision', request_method='POST', renderer='json')
 def service_externe_decision_new_view(request):
