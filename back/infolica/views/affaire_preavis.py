@@ -260,13 +260,14 @@ def service_externe_affaire_view(request):
         VAffaire.date_ouverture,
         VAffaire.localisation_e,
         VAffaire.localisation_n,
-        Preavis.id
+        Preavis.id,
+        Preavis.date_demande
     ).filter(
         Preavis.id == preavis_id,
         VAffaire.id == Preavis.affaire_id,
     ).first()
 
-    client = ", ".join(filter(None, [
+    client = "\n".join(filter(None, [
         record[3],
         record[7],
         " ".join(filter(None, [record[4], record[6],  record[5]])),
@@ -286,7 +287,8 @@ def service_externe_affaire_view(request):
         'date_ouverture': datetime.strftime(record[17], "%d.%m.%Y"),
         'coord_e': record[18],
         'coord_n': record[19],
-        'preavis_id': record[20]
+        'preavis_id': record[20],
+        'preavis_date_demande': datetime.strftime(record[21], "%d.%m.%Y")
     }
 
     return result
@@ -407,7 +409,8 @@ def service_externe_liste_decision_view(request):
         PreavisDecision.remarque,
         PreavisType.nom,
         Operateur.prenom,
-        Operateur.nom
+        Operateur.nom,
+        PreavisDecision.preavis_type_id
     ).join(
         PreavisType, PreavisType.id == PreavisDecision.preavis_type_id
     ).join(
@@ -426,7 +429,8 @@ def service_externe_liste_decision_view(request):
                 'version': res[2],
                 'remarque': res[3],
                 'decision': res[4],
-                'operateur': ' '.join([res[5], res[6]])
+                'operateur': ' '.join([res[5], res[6]]),
+                'preavis_type_id': res[7]
             }
         )
 

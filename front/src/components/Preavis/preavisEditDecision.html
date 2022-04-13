@@ -18,11 +18,14 @@
                         <tr v-for="item in decisions_liste">
                             <td style="width: 100px; vertical-align: top; text-align: center;">{{ item.version }}</td>
                             <td style="width: 140px; vertical-align: top;">{{ item.operateur }}</td>
-                            <td style="width: 140px; vertical-align: top;">{{ item.decision }}</td>
+                            <td style="width: 140px; vertical-align: top;"><md-icon :style="'color: ' + item.icon_status_color">{{ item.icon_status }}</md-icon> {{ item.decision }}</td>
                             <td style="width: 1000px; white-space: pre-wrap;">{{ item.remarque }}</td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div v-else>
+                <em>Aucun préavis n'a été saisi pour le moment.</em>
             </div>
 
             <div v-if="showAddDecision">

@@ -57,6 +57,21 @@ export default {
       ).then(response => {
         if (response && response.data) {
           this.decisions_liste = response.data;
+          this.decisions_liste.forEach(x => {
+            if (x.preavis_type_id === 1) {
+              x.icon_status = 'check_circle_outline';
+              x.icon_status_color = 'green';
+            } else if (x.preavis_type_id === 2) {
+              x.icon_status = 'highlight_off';
+              x.icon_status_color = 'red';
+            } else if (x.preavis_type_id === 3) {
+              x.icon_status = 'remove_circle_outline';
+              x.icon_status_color = 'grey';
+            } else if (x.preavis_type_id === 5) {
+              x.icon_status = 'error_outline';
+              x.icon_status_color = 'orange';
+            }
+          });
         }
       }
       ).catch(err => handleException(err));

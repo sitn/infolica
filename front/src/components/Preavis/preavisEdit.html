@@ -35,18 +35,24 @@
                                     <td class="content">{{ affaire.nom }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="title">Date de la demande</td>
-                                    <td class="content">{{ affaire.date_ouverture }}</td>
+                                    <td class="title">Demande du préavis</td>
+                                    <td class="content">{{ affaire.preavis_date_demande }}</td>
                                 </tr>
                                 <tr>
                                     <td class="title">Client</td>
-                                    <td class="content">{{ affaire.client }}</td>
+                                    <td class="content" style="white-space: pre-wrap;">{{ affaire.client }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
     
                     <div class="md-layout-item md-size-50">
+                        <div style="text-align: right;">
+                            Raccourcis sur le SITN:
+                            <md-button @click="openSitnTheme('amenagement_territoire')" class="md-dense md-raised" style="background-color: lightgray;" title="Aménagement du territoire">Amén. Ter.</md-button>
+                            <md-button @click="openSitnTheme('cadastre')" class="md-dense md-raised" style="background-color: lightgray;" title="Cadastre">cadastre</md-button>
+                            <md-button @click="openSitnTheme('sites_pollues')" class="md-dense md-raised" style="background-color: lightgray;" title="Sites pollués">sites pollués</md-button>
+                        </div>
                         <!-- MAP -->
                         <div id="mapContainer">
                             <div id="mapDiv" class="map"></div>

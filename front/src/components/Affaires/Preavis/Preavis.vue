@@ -430,6 +430,9 @@ export default {
     // on select table item
     onSelectTableItem(item) {
       this.selectedPreavis = item;
+      setTimeout(() => {
+        this.$refs.preavisExtDecision.getDecisionList();
+      }, 100); // set timeout so preavisEditDecision has enough time to load
     }
   },
 

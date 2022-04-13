@@ -100,22 +100,22 @@ export default {
       }).catch(err => handleException(err));
     },
 
-    // /**
-    //  * Open Theme SITN
-    //  */
-    // openSitnTheme(theme) {
-    //   let route;
-    //   if (theme === "amenagement_territoire") {
-      //       route = process.env.VUE_APP_SITN_AMENAGEMENT_TERRITOIRE_URL;
-    //   } else if (theme === "cadastre") {
-      //       route = process.env.VUE_APP_SITN_CADASTRE_URL;
-    //   } else if (theme === "sites_pollues") {
-      //       route = process.env.VUE_APP_SITN_SITES_POLLUES_URL;
-    //   } else {
-      //     return null;
-    //   }
-    //   window.open(route + "&map_x=" + this.affaire.localisation_e + "&map_y=" + this.affaire.localisation_n, "_blank");
-    // },
+    /**
+     * Open Theme SITN
+     */
+    openSitnTheme(theme) {
+      let route;
+      if (theme === "amenagement_territoire") {
+            route = process.env.VUE_APP_SITN_AMENAGEMENT_TERRITOIRE_URL;
+      } else if (theme === "cadastre") {
+            route = process.env.VUE_APP_SITN_CADASTRE_URL;
+      } else if (theme === "sites_pollues") {
+            route = process.env.VUE_APP_SITN_SITES_POLLUES_URL;
+      } else {
+          return null;
+      }
+      window.open(route + "&map_x=" + this.affaire.coord_e + "&map_y=" + this.affaire.coord_n, "_blank");
+    },
 
     /**
      * Download file from table
