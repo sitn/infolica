@@ -96,7 +96,7 @@ class ControleEtapeChecker():
         )
 
         nb_demandes = query.scalar() 
-        nb_reponses = query.filter(Preavis.date_reponse.is_not(None)).scalar()
+        nb_reponses = query.filter(Preavis.date_reponse != None).scalar()
 
         return nb_demandes == nb_reponses
     
