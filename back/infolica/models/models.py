@@ -1212,6 +1212,13 @@ class VAffairesPreavis(Base):
     date_demande = Column(Date)
     date_reponse = Column(Date)
     remarque = Column(Text)
+    etape = Column(Text)
+    operateur_sgrf_id = Column(BigInteger)
+    operateur_sgrf_prenom = Column(Text)
+    operateur_sgrf_nom = Column(Text)
+    operateur_service_id = Column(BigInteger)
+    operateur_service_prenom = Column(Text)
+    operateur_service_nom = Column(Text)
     
 
 class VTableauBord(Base):

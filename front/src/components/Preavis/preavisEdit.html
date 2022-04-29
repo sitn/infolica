@@ -118,7 +118,7 @@
             </md-card-content>
         </md-card>
     
-        <preavisEditDecision ref="ped" :preavis_id="affaire.preavis_id" :showAddDecision="true" />
+        <preavisEditDecision ref="ped" :preavis_id="affaire.preavis_id" :showAddDecision="affaire.preavis_etape === 'externe'" />
     </div>
 
 </div>

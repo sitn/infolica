@@ -6,7 +6,7 @@ import pyramid.httpexceptions as exc
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Affaire, PreavisDecision, VAffaire, Operateur, Service
-from infolica.models.models import PreavisRemarque
+# from infolica.models.models import PreavisRemarque
 from infolica.models.models import Preavis, PreavisType, VAffairesPreavis
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
@@ -46,7 +46,7 @@ def affaire_preavis_view(request):
 
     records = request.dbsession.query(VAffairesPreavis).filter(
         VAffairesPreavis.affaire_id == affaire_id
-        ).all()
+    ).all()
 
     return Utils.serialize_many(records)
 
@@ -261,7 +261,9 @@ def service_externe_affaire_view(request):
         VAffaire.localisation_e,
         VAffaire.localisation_n,
         Preavis.id,
-        Preavis.date_demande
+        Preavis.date_demande,
+        Preavis.date_reponse,
+        Preavis.etape,
     ).filter(
         Preavis.id == preavis_id,
         VAffaire.id == Preavis.affaire_id,
@@ -288,7 +290,9 @@ def service_externe_affaire_view(request):
         'coord_e': record[18],
         'coord_n': record[19],
         'preavis_id': record[20],
-        'preavis_date_demande': datetime.strftime(record[21], "%d.%m.%Y")
+        'preavis_date_demande': datetime.strftime(record[21], "%d.%m.%Y"),
+        'preavis_date_reponse': datetime.strftime(record[22], "%d.%m.%Y") if record[22] is not None else None,
+        'preavis_etape': record[23]
     }
 
     return result
@@ -459,7 +463,7 @@ def service_externe_decision_view(request):
         Operateur, Operateur.id == PreavisDecision.operateur_service_id
     ).filter(
         PreavisDecision.preavis_id == preavis_id,
-        PreavisDecision.definitif.is_not(True)
+        PreavisDecision.definitif.isnot(True)
     ).first()
 
     if res is not None:

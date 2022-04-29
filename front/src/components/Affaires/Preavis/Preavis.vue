@@ -172,6 +172,7 @@ export default {
             toString: () => x.nom
           }))[0];
       }
+      this.new_preavis.etape = curr_preavis.etape;
       this.modifyPreavis = true;
       this.showPreavisDialog = true;
     },
@@ -422,7 +423,7 @@ export default {
       ).then(() => {
         this.showPreavisDialog = false;
         this.searchAffairePreavis();
-        this.$root.$emit("showMessage", "Le prévais a bien été supprimé");
+        this.$root.$emit("ShowMessage", "Le prévais a bien été supprimé");
       }).catch(err => handleException(err, this));
     },
 
@@ -433,6 +434,30 @@ export default {
       setTimeout(() => {
         this.$refs.preavisExtDecision.getDecisionList();
       }, 100); // set timeout so preavisEditDecision has enough time to load
+    },
+
+
+    // reopen preavis for service externe
+    async reopenPreavis(){
+      let formData = new FormData();
+      formData.append('id', this.new_preavis.id);
+      formData.append('etape', 'externe');
+      formData.append('preavis_type_id', null);
+      formData.append('remarque', null);
+      formData.append('date_reponse', null);
+
+      this.$http.put(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      ).then(() => {
+        this.showPreavisDialog = false;
+        this.searchAffairePreavis();
+        this.$root.$emit("ShowMessage", "La demande de modification du préavis a bien été enregistrée");
+      }).catch(err => handleException(err, this));
     }
   },
 
