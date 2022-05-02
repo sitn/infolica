@@ -273,6 +273,8 @@ export default {
       if (this.new_preavis.id){
         formData.append("id", this.new_preavis.id);
       }
+      
+      formData.append("etape", 'externe');
 
       return formData;
     },
