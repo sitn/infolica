@@ -40,8 +40,8 @@
                     <md-card-content>
                         <div style="margin-top: 10px; margin-bottom: 10px;" v-if="decision.version"><em>Version provisoire n° {{ decision.version }} du {{ decision.date }} enregistrée par {{ decision.operateur }}</em></div>
 
-                        <md-radio v-model="decision.preavis_type_id" :value="1" :disabled="decision.definitif">Préavis positif sans condition</md-radio>
-                        <md-radio v-model="decision.preavis_type_id" :value="5" :disabled="decision.definitif">Préavis positif avec condition</md-radio>
+                        <md-radio v-model="decision.preavis_type_id" :value="1" :disabled="decision.definitif">Préavis positif</md-radio>
+                        <md-radio v-model="decision.preavis_type_id" :value="5" :disabled="decision.definitif">Préavis positif avec conditions</md-radio>
                         <md-radio v-model="decision.preavis_type_id" :value="2" :disabled="decision.definitif">Préavis négatif</md-radio>
                         <md-radio v-model="decision.preavis_type_id" :value="3" :disabled="decision.definitif">Pas concerné</md-radio>
                         <md-field>
