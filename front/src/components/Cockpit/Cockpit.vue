@@ -9,8 +9,6 @@ import Matdiff from "@/components/Cockpit/Matdiff/Matdiff.vue";
 import { handleException } from '@/services/exceptionsHandler';
 import { checkPermission, getOperateurs, stringifyAutocomplete, stringifyAutocomplete2, getCurrentUserRoleId } from '@/services/helper';
 
-import moment from "moment";
-
 export default {
   name: "Cockpit",
   components: {
@@ -105,22 +103,6 @@ export default {
             if (response && response.data) {
                 let tmp = response.data;
 
-                // Filtrer les affaires qui ne sont pas chez le client
-                tmp = tmp.filter(x => x.etape_id !== Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID) && x.etape_id !== Number(process.env.VUE_APP_ETAPE_DEVIS_ID));
-
-                tmp.forEach(x => {
-                    // set time for urgent_echeance
-                    x.urgent_echeance = x.urgent_echeance? moment(x.urgent_echeance, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null;
-                        
-                    for (let i=0; i<this.affaireEtapes.length; i++) {
-                        if (i === x.etape_ordre-1) {
-                            x["dashboard_" + i.toString()] = x.nom_affaire;
-                        } else {
-                            x["dashboard_" + i.toString()] = null;
-                        }
-                    }
-                });
-
                 tmp = this.customSort(tmp);
 
                 this.affaires = tmp;
@@ -191,6 +173,8 @@ export default {
         }
         query.push("showFinProcessus=" + this.search.showFinProcessus);
         query.push("showOnlyAffairesUrgentes=" + this.search.showOnlyAffairesUrgentes);
+        // query.push("sort_by=" + this.current_sort);
+        // query.push("sort_order=" + this.current_sort_order);
         
         query = "?" + query.join('&');
 
