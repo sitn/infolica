@@ -72,6 +72,8 @@ def affaire_cockpit_view(request):
     operateur_id = request.params['operateur_id'] if 'operateur_id' in request.params else None
     showFinProcessus = True if 'showFinProcessus' in request.params and request.params['showFinProcessus'] == 'true' else False
     showOnlyAffairesUrgentes = True if 'showOnlyAffairesUrgentes' in request.params and request.params['showOnlyAffairesUrgentes'] == 'true' else False
+    affaire_etape_devis_id = int(request.registry.settings['affaire_etape_devis_id'])
+    affaire_etape_client_id = int(request.registry.settings['affaire_etape_client_id'])
 
     etape_finProcessus_id = request.registry.settings["affaire_etape_fin_processus_id"]
     
@@ -79,8 +81,6 @@ def affaire_cockpit_view(request):
 
     # Filtrer les affaires abandonnées
     query = query.filter(VAffaire.abandon == False)
-    # Filtrer les affaires dans l'étape "devis"
-    query = query.filter(VAffaire.etape_id != int(request.registry.settings['affaire_etape_devis_id']))
     # Filtrer les affaires par étapes
     if etape_id is not None:
         query = query.filter(VAffaire.etape_id.in_(etape_id))
@@ -150,8 +150,13 @@ def affaire_cockpit_view(request):
             'title': title
         }
 
-        for etape in ae:
-            tmp['dashboard_' + str(etape.id)] = nom_affaire if etape.id == affaire.etape_id else None
+        if affaire.etape_id == affaire_etape_devis_id:
+            # Si l'affaire est à l'étape devis, la basculer dans l'étape client du tableau cockpit
+            for etape in ae:    
+                tmp['dashboard_' + str(etape.id)] = nom_affaire if etape.id == affaire_etape_client_id else None
+        else:
+            for etape in ae:
+                tmp['dashboard_' + str(etape.id)] = nom_affaire if etape.id == affaire.etape_id else None
 
         affaires.append(tmp)
 

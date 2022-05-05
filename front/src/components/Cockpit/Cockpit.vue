@@ -3,7 +3,6 @@
 
 
 <script>
-import AffairesChezClient from "@/components/Cockpit/AffairesChezClient/AffairesChezClient.vue";
 import Matdiff from "@/components/Cockpit/Matdiff/Matdiff.vue";
 
 import { handleException } from '@/services/exceptionsHandler';
@@ -12,7 +11,6 @@ import { checkPermission, getOperateurs, stringifyAutocomplete, stringifyAutocom
 export default {
   name: "Cockpit",
   components: {
-      AffairesChezClient,
       Matdiff,
   },
   data: () => {
