@@ -931,6 +931,7 @@ class PreavisRemarque(Base):  # currently not used, replaced by attribute Remarq
     remarque = Column(Text, nullable=False)
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+    lu_operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
 
 
 class GeosBalance(Base):
