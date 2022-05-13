@@ -149,6 +149,7 @@ export default {
       formData.append("bat_1", this.controleMutation.bat_1);
       formData.append("bat_2", this.controleMutation.bat_2);
       formData.append("bat_3", this.controleMutation.bat_3);
+      formData.append("bat_4", this.controleMutation.bat_4);
       formData.append("serv_1", this.controleMutation.serv_1);
       formData.append("serv_2", this.controleMutation.serv_2);
       formData.append("serv_3", this.controleMutation.serv_3);
