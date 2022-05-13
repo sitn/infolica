@@ -6,7 +6,7 @@ import pyramid.httpexceptions as exc
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Affaire, PreavisDecision, VAffaire, Operateur, Service
-# from infolica.models.models import PreavisRemarque
+from infolica.models.models import PreavisRemarque
 from infolica.models.models import Preavis, PreavisType, VAffairesPreavis
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
@@ -187,7 +187,7 @@ def service_externe_preavis_view(request):
     ).join(
         VAffaire, Preavis.affaire_id == VAffaire.id
     ).join(
-        Operateur, Preavis.operateur_service_id == Operateur.id
+        Operateur, Preavis.operateur_service_id == Operateur.id, isouter=True
     ).filter(
         Preavis.service_id == operateur.service_id
     )
@@ -196,7 +196,7 @@ def service_externe_preavis_view(request):
         if status == "open":
             query = query.filter(
                 Preavis.date_reponse == None,
-                Preavis.etape == 'externe',
+                Preavis.etape == 'externe'
             )
         elif status == "closed":
             query = query.filter(Preavis.etape == 'interne')
@@ -336,66 +336,66 @@ def service_externe_documents_view(request):
     return documents
 
 
-# @view_config(route_name='service_externe_conversation', request_method='GET', renderer='json')
-# def service_externe_conversation_view(request):
-#     """
-#     GET conversation of preavis_id for service externe
-#     """
-#     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
-#     strongAuthentication(request, preavis_id)
+@view_config(route_name='service_externe_conversation', request_method='GET', renderer='json')
+def service_externe_conversation_view(request):
+    """
+    GET conversation of preavis_id for service externe
+    """
+    preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
+    strongAuthentication(request, preavis_id)
     
-#     results = []
+    results = []
 
-#     query = request.dbsession.query(
-#         Operateur.nom,
-#         Operateur.prenom,
-#         PreavisRemarque.date,
-#         PreavisRemarque.remarque
-#     ).join(
-#         Operateur, PreavisRemarque.operateur_id == Operateur.id
-#     ).join(
-#         Preavis, PreavisRemarque.preavis_id == Preavis.id
-#     ).filter(
-#         Preavis.id == preavis_id
-#     ).order_by(PreavisRemarque.id.desc()).all()
+    query = request.dbsession.query(
+        Operateur.nom,
+        Operateur.prenom,
+        PreavisRemarque.date,
+        PreavisRemarque.remarque
+    ).join(
+        Operateur, PreavisRemarque.operateur_id == Operateur.id
+    ).join(
+        Preavis, PreavisRemarque.preavis_id == Preavis.id
+    ).filter(
+        Preavis.id == preavis_id
+    ).order_by(PreavisRemarque.id.desc()).all()
 
     
-#     for res in query:
-#         results.append({
-#             "operateur": ' '.join([res[1], res[0]]),
-#             "date": datetime.strftime(res[2], "%d.%m.%Y"),
-#             "message": res[3]
-#         })
+    for res in query:
+        results.append({
+            "operateur": ' '.join([res[1], res[0]]),
+            "date": datetime.strftime(res[2], "%d.%m.%Y"),
+            "message": res[3]
+        })
 
-#     return results
+    return results
 
 
-# @view_config(route_name='service_externe_conversation', request_method='POST', renderer='json')
-# def service_externe_conversation_new_view(request):
-#     """
-#     POST conversation of preavis_id for service externe
-#     """
-#     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
-#     commentaire = request.params['commentaire'] if 'commentaire' in request.params else None
-#     operateur = strongAuthentication(request, preavis_id)
+@view_config(route_name='service_externe_conversation', request_method='POST', renderer='json')
+def service_externe_conversation_new_view(request):
+    """
+    POST conversation of preavis_id for service externe
+    """
+    preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
+    commentaire = request.params['commentaire'] if 'commentaire' in request.params else None
+    operateur = strongAuthentication(request, preavis_id)
     
-#     preavis = request.dbsession.query(Preavis).filter(
-#         Preavis.id == preavis_id
-#     ).first()
+    preavis = request.dbsession.query(Preavis).filter(
+        Preavis.id == preavis_id
+    ).first()
 
-#     rp = PreavisRemarque()
+    rp = PreavisRemarque()
     
-#     params = {
-#         'preavis_id': preavis.id,
-#         'remarque': commentaire,
-#         'operateur_id': operateur.id,
-#         'date': datetime.strftime(datetime.now(), "%Y-%m-%d")
-#     }
+    params = {
+        'preavis_id': preavis.id,
+        'remarque': commentaire,
+        'operateur_id': operateur.id,
+        'date': datetime.strftime(datetime.now(), "%Y-%m-%d")
+    }
 
-#     model = Utils.set_model_record(rp, params)
-#     request.dbsession.add(model)
+    model = Utils.set_model_record(rp, params)
+    request.dbsession.add(model)
 
-#     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisRemarque.__tablename__))
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisRemarque.__tablename__))
 
 
 @view_config(route_name='service_externe_liste_decisions', request_method='GET', renderer='json')
