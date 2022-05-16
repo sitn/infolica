@@ -152,7 +152,8 @@ def affaire_cockpit_view(request):
             'attribution': affaire.attribution,
             'nom_affaire': nom_affaire,
             'title': title,
-            'preavis_status': preavis_status
+            'preavis_status': preavis_status,
+            'preavis_unread_remarks': Utils.check_unread_preavis_remarks(request, affaire.id)
         })
     
     return affaires

@@ -122,24 +122,17 @@ def preavis_delete_view(request):
 #    ROUTES POUR LES SERVICES EXTERNES
 # ====================================================================
 
-def getOperateurFromUser(request):
-    user = request.authenticated_userid    
-    operateur = request.dbsession.query(Operateur).filter(
-        func.lower(Operateur.login) == user
-    ).first()
-    return operateur
-
 def strongAuthentication(request, preavis_id):
     # Check connected
     if check_connected(request, ["SGRF"]):
-        operateur = getOperateurFromUser(request)
+        operateur = Utils.getOperateurFromUser(request)
         return operateur
     
     if not check_connected(request, ["SAT"]):
         raise exc.HTTPForbidden()
 
     # get service from user
-    operateur = getOperateurFromUser(request)
+    operateur = Utils.getOperateurFromUser(request)
     if operateur.service_id is None:
          exc.HTTPForbidden(detail="Opérateur non autorisé à accéder à ce contenu")
     
@@ -167,7 +160,7 @@ def service_externe_preavis_view(request):
         raise exc.HTTPForbidden()
 
     # get service from user
-    operateur = getOperateurFromUser(request)
+    operateur = Utils.getOperateurFromUser(request)
 
     if operateur.service_id is None:
         exc.HTTPForbidden(detail="Opérateur non autorisé à accéder à ce contenu")
@@ -226,6 +219,7 @@ def service_externe_preavis_view(request):
             'affaire_cadastre': rec[4],
             'affaire_description': rec[5],
             'preavis_attribution': ' '.join(filter(None, [rec[6], rec[7]])),
+            'unread_remarks': Utils.check_unread_preavis_remarks(request, rec[3], operateur.service_id),
         })
 
     return results

@@ -3,7 +3,7 @@ from datetime import date, datetime
 from sqlalchemy import func, and_, desc
 from sqlalchemy import String
 from sqlalchemy.sql.expression import cast
-from infolica.models.models import Affaire
+from infolica.models.models import Affaire, Preavis, PreavisRemarque
 from infolica.models.models import Numero, AffaireNumero, Client
 from infolica.models.models import Role, ReservationNumerosMO, Cadastre, Operateur
 from infolica.scripts.mailer import send_mail
@@ -275,6 +275,7 @@ class Utils(object):
             copytree(template_path, affaire_path, ignore=ignore_patterns('Thumbs.db'))
             settime = time.time()
             os.utime(affaire_path, times=(settime, settime))
+        return
     
     @classmethod
     def addNewRecord(cls, request, Model, params=None):
@@ -353,3 +354,43 @@ class Utils(object):
                 ]) + " &#8594; <a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'clients/edit', str(cl.id)) + "'>Lien sur la fiche du client</a>"+ "</li></ul>"
             html += "<p>Merci d'entreprendre les démarches nécessaires pour corriger le client ou pour demander sa création dans SAP.</p>"
             send_mail(request, mail_list, "", "Infolica - Client hors canton à vérifier", html=html)
+        return
+
+
+    @classmethod
+    def getOperateurFromUser(cls, request):
+        user = request.authenticated_userid    
+        operateur = request.dbsession.query(Operateur).filter(
+            func.lower(Operateur.login) == user
+        ).first()
+        return operateur
+
+    
+    @classmethod
+    def check_unread_preavis_remarks(cls, request, affaire_id, service_id=None):
+        
+        preavis_remarques = request.dbsession.query(
+            PreavisRemarque.operateur_id
+        ).join(
+            Preavis, Preavis.id == PreavisRemarque.preavis_id, isouter=True
+        ).filter(
+            Preavis.affaire_id == affaire_id,
+            PreavisRemarque.lu_operateur_id == None,
+        )
+        
+        if not service_id is None:
+            preavis_remarques = preavis_remarques.filter(Preavis.service_id == service_id)
+        
+        preavis_remarques = preavis_remarques.all()
+
+        connectedUser = cls.getOperateurFromUser(request)
+        pr_remark_user_query = request.dbsession.query(Operateur)
+
+        unread = 0
+        if len(preavis_remarques) > 0:
+            for pr in preavis_remarques:
+                pr_remark_user = pr_remark_user_query.filter(Operateur.id == pr[0]).first()
+                if not connectedUser.service_id == pr_remark_user.service_id:
+                    unread += 1
+        
+        return unread
