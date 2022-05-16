@@ -75,6 +75,7 @@ def test_error(exc, request):
 @view_config(route_name='emolument_affaire_repartiton', request_method='OPTIONS', renderer='json')
 @view_config(route_name='affaire_attribution_change_state', request_method='OPTIONS', renderer='json')
 @view_config(route_name='service_externe_decision', request_method='OPTIONS', renderer='json')
+@view_config(route_name='service_externe_conversation', request_method='OPTIONS', renderer='json')
 def options_response_view(request):
     """
     Common OPTION RESPONSE

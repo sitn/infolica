@@ -56,6 +56,26 @@ export default {
       }).catch(err => handleException(err));
     },
 
+    // remark read
+    async remark_read(pr) {
+      let formData = new FormData();
+      formData.append('preavis_remarque_id', pr.preavis_remarque_id);
+      formData.append('lu_operateur_id', JSON.parse(localStorage.getItem("infolica_user")).id);
+
+      this.$http.put(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_CONVERSATION_BY_PREAVIS_ID_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.getConversation();
+        }
+      }).catch(err => handleException(err, this));
+    },
+
 
   },
 

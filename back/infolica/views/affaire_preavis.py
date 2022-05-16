@@ -341,10 +341,13 @@ def service_externe_conversation_view(request):
     results = []
 
     query = request.dbsession.query(
+        Operateur.id,
         Operateur.nom,
         Operateur.prenom,
         PreavisRemarque.date,
-        PreavisRemarque.remarque
+        PreavisRemarque.remarque,
+        PreavisRemarque.lu_operateur_id,
+        PreavisRemarque.id,
     ).join(
         Operateur, PreavisRemarque.operateur_id == Operateur.id
     ).join(
@@ -353,12 +356,20 @@ def service_externe_conversation_view(request):
         Preavis.id == preavis_id
     ).order_by(PreavisRemarque.id.desc()).all()
 
-    
+
+    connectedUser = Utils.getOperateurFromUser(request)
+    pr_remark_user_query = request.dbsession.query(Operateur)
+
     for res in query:
+        pr_remark_user = pr_remark_user_query.filter(Operateur.id == res[0]).first()
+        unread = (res[5] is None) and (not connectedUser.service_id == pr_remark_user.service_id)
+
         results.append({
-            "operateur": ' '.join([res[1], res[0]]),
-            "date": datetime.strftime(res[2], "%d.%m.%Y"),
-            "message": res[3]
+            "operateur": ' '.join([res[2], res[1]]),
+            "date": datetime.strftime(res[3], "%d.%m.%Y"),
+            "message": res[4],
+            "unread": unread,
+            "preavis_remarque_id": res[6]
         })
 
     return results
@@ -388,6 +399,20 @@ def service_externe_conversation_new_view(request):
 
     model = Utils.set_model_record(rp, params)
     request.dbsession.add(model)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisRemarque.__tablename__))
+
+
+@view_config(route_name='service_externe_conversation', request_method='PUT', renderer='json')
+def service_externe_conversation_update_view(request):
+    """
+    PUT conversation of preavis_id for service externe
+    """
+    preavis_remarque_id = request.params['preavis_remarque_id'] if 'preavis_remarque_id' in request.params else None
+    lu_operateur_id = request.params['lu_operateur_id'] if 'lu_operateur_id' in request.params else None
+    preavis_remarque = request.dbsession.query(PreavisRemarque).filter(PreavisRemarque.id == preavis_remarque_id).first()
+
+    preavis_remarque.lu_operateur_id = lu_operateur_id
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisRemarque.__tablename__))
 

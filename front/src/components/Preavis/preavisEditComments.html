@@ -22,8 +22,9 @@
                         
                         <md-table-row slot="md-table-row" slot-scope="{ item }">
                             <md-table-cell style="width: 15%;" md-label="Date">{{ item.date }}</md-table-cell>
-                            <md-table-cell style="width: 15%;" md-label="Operateur">{{ item.operateur }}</md-table-cell>
-                            <md-table-cell style="width: 70%;" md-label="Message">{{ item.message }}</md-table-cell>
+                            <md-table-cell style="width: 20%;" md-label="Operateur">{{ item.operateur }}</md-table-cell>
+                            <md-table-cell style="width: 60%;" md-label="Message">{{ item.message }}</md-table-cell>
+                            <md-table-cell style="width: 5%;"><md-button v-if="item.unread === true" class="md-primary md-elevation-2" title="Marquer comme lu" style="min-width: fit-content;" @click="remark_read(item)"><b>Lu</b></md-button></md-table-cell>
                         </md-table-row>
                     </md-table>
                 </div>
