@@ -56,6 +56,7 @@ export default {
       graphicsLayer: null,
       graphicsLayerSource: null,
       markerStyle: null,
+      preavisDecision: {},
     };
   },
 
@@ -360,6 +361,8 @@ export default {
       let center = {x: this.affaire.coord_e, y: this.affaire.coord_n}
       this.initMap(center, process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM);
       this.addMarker(center.x, center.y);
+
+      this.preavisDecision = this.$refs.ped.decision;
     });
   }
 };

@@ -15,11 +15,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="item in decisions_liste">
+                        <tr v-for="item in decisions_liste" v-bind:class="{ oldVersion: item.version !== lastDecisionVersion }">
                             <td style="width: 100px; vertical-align: top; text-align: center;">{{ item.version }}</td>
                             <td style="width: 140px; vertical-align: top;">{{ item.operateur }}</td>
-                            <td style="width: 140px; vertical-align: top;"><md-icon :style="'color: ' + item.icon_status_color">{{ item.icon_status }}</md-icon> {{ item.decision }}</td>
-                            <td style="width: 1000px; white-space: pre-wrap;">{{ item.remarque }}</td>
+                            <td style="width: 140px; vertical-align: top;"><md-icon :style="item.icon_status_style">{{ item.icon_status }}</md-icon> {{ item.decision }}</td>
+                            <td style="max-width: 1000px; min-width: 800px; white-space: pre-wrap; vertical-align: top;">{{ item.remarque }}</td>
+                            <td style="width: 50px; white-space: pre-wrap;" v-if="showAddDecision === true && decision.show === true"><md-button @click="copyText(item)" class="md-primary md-icon-button" title="Récupérer le texte dans une nouvelle version de préavis"><md-icon>download</md-icon></md-button></td>
                         </tr>
                     </tbody>
                 </table>

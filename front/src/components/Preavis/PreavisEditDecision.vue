@@ -23,6 +23,7 @@ export default {
         show: false,
       },
       hasRightAddDecision: false,
+      lastDecisionVersion: -1,
     };
   },
 
@@ -57,19 +58,25 @@ export default {
       ).then(response => {
         if (response && response.data) {
           this.decisions_liste = response.data;
+          
+          //get max version of decision
+          this.decisions_liste.forEach(x => {
+            this.lastDecisionVersion = x.version > this.lastDecisionVersion? x.version: this.lastDecisionVersion;
+          });
+
           this.decisions_liste.forEach(x => {
             if (x.preavis_type_id === 1) {
               x.icon_status = 'check_circle_outline';
-              x.icon_status_color = 'green';
+              x.icon_status_style = x.version === this.lastDecisionVersion? 'color: green;': 'color: lightgrey; font-style: italic;';
             } else if (x.preavis_type_id === 2) {
               x.icon_status = 'highlight_off';
-              x.icon_status_color = 'red';
+              x.icon_status_style = x.version === this.lastDecisionVersion? 'color: red;': 'color: lightgrey; font-style: italic;';
             } else if (x.preavis_type_id === 3) {
               x.icon_status = 'remove_circle_outline';
-              x.icon_status_color = 'grey';
+              x.icon_status_style = x.version === this.lastDecisionVersion? 'color: grey;': 'color: lightgrey; font-style: italic;';
             } else if (x.preavis_type_id === 5) {
               x.icon_status = 'error_outline';
-              x.icon_status_color = 'orange';
+              x.icon_status_style = x.version === this.lastDecisionVersion? 'color: orange;': 'color: lightgrey; font-style: italic;';
             }
           });
         }
@@ -144,6 +151,11 @@ export default {
       if (session_user && session_user.service_id) {
         this.hasRightAddDecision = true;
       }
+    },
+
+    // copy text from old preavis
+    copyText(preavis) {
+      this.decision.remarque = preavis.remarque;
     }
   },
 
