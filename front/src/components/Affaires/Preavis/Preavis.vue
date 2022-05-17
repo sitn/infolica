@@ -496,6 +496,8 @@ export default {
       }
 
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_PREAVIS_EDITION) || this.$parent.parentAffaireReadOnly;
+    
+    this.$root.$on('getPreavis', () => this.searchAffairePreavis());
   }
 };
 </script>

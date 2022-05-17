@@ -48,7 +48,12 @@ def affaire_preavis_view(request):
         VAffairesPreavis.affaire_id == affaire_id
     ).all()
 
-    return Utils.serialize_many(records)
+    preavis = Utils.serialize_many(records)
+
+    for p in preavis:
+        p['unread_remarks'] = Utils.check_unread_preavis_remarks(request, affaire_id, service_id=p['service_id'])
+    
+    return preavis
 
 
 @view_config(route_name='preavis', request_method='POST', renderer='json')
@@ -219,7 +224,7 @@ def service_externe_preavis_view(request):
             'affaire_cadastre': rec[4],
             'affaire_description': rec[5],
             'preavis_attribution': ' '.join(filter(None, [rec[6], rec[7]])),
-            'unread_remarks': Utils.check_unread_preavis_remarks(request, rec[3], operateur.service_id),
+            'unread_remarks': Utils.check_unread_preavis_remarks(request, rec[3], service_id=operateur.service_id),
         })
 
     return results
