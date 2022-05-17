@@ -58,30 +58,34 @@ export default {
      * SEARCH AFFAIRE PREAVIS
      */
     async searchAffairePreavis() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_PREAVIS_ENDPOINT +
-            this.$route.params.id,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/json" }
-          }
-        )
-        .then(response => {
-          if (response.data) {
-            this.affaire_preavis = response.data;
-            if (this.affaire_preavis.date_demande) {
-              this.affaire_preavis.date_demande = moment(this.affaire_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+      return new Promise ((resolve, reject) => {
+        this.$http
+          .get(
+            process.env.VUE_APP_API_URL +
+              process.env.VUE_APP_AFFAIRE_PREAVIS_ENDPOINT +
+              this.$route.params.id,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
             }
-            if (this.affaire_preavis.date_reponse) {
-              this.affaire_preavis.date_reponse = moment(this.affaire_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+          )
+          .then(response => {
+            if (response.data) {
+              this.affaire_preavis = response.data;
+              if (this.affaire_preavis.date_demande) {
+                this.affaire_preavis.date_demande = moment(this.affaire_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+              }
+              if (this.affaire_preavis.date_reponse) {
+                this.affaire_preavis.date_reponse = moment(this.affaire_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+              }
+              resolve(this.affaier_preavis);
             }
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
+          })
+          .catch(err => {
+            handleException(err, this);
+            reject(err);
+          });
+      })
     },
 
     /*
@@ -143,7 +147,9 @@ export default {
     /**
      * Modifier un préavis existant
      */
-    onModifyPreavis: function(curr_preavis) {
+    async onModifyPreavis(curr_preavis) {
+      await this.searchAffairePreavis();
+
       this.new_preavis.id = curr_preavis.id;
       this.new_preavis.date_demande = moment(curr_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
       if (curr_preavis.date_reponse) {
@@ -433,9 +439,11 @@ export default {
     // on select table item
     onSelectTableItem(item) {
       this.selectedPreavis = item;
-      setTimeout(() => {
-        this.$refs.preavisExtDecision.getDecisionList();
-      }, 100); // set timeout so preavisEditDecision has enough time to load
+      if (item !== null) {
+        setTimeout(() => {
+          this.$refs.preavisExtDecision.getDecisionList();
+        }, 100); // set timeout so preavisEditDecision has enough time to load
+      }
     },
 
 
