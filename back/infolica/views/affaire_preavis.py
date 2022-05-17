@@ -309,28 +309,31 @@ def service_externe_documents_view(request):
 
     # get rel path of service
     service_relpath = request.dbsession.query(Service).filter(Service.id == operateur.service_id).first().relpath
-    affaire_chemin = os.path.join(affaire_chemin, service_relpath)
-
-    affaire_path = os.path.join(request.registry.settings['affaires_directory'], affaire_chemin)
-
+    courriers_courriels_rel_path = request.registry.settings['courriers_courriels_rel_path']
     documents = []
-    if not os.path.exists(affaire_path):
-        return documents
+    for rel_path in [service_relpath, courriers_courriels_rel_path]:
+        
+        affaire_rel_path = os.path.join(affaire_chemin, rel_path)
+
+        affaire_path = os.path.join(request.registry.settings['affaires_directory'], affaire_rel_path)
+
+        if not os.path.exists(affaire_path):
+            break
 
 
-    for root, _, files in os.walk(affaire_path, topdown=False):
-        for name in files:
-            if name.startswith(".") or name.startswith("~"):
-                continue
-            file_i = {}
-            file_i['filename'] = name
-            file_i['rel_path'] = service_relpath
-            file_i['size'] = str(ceil(os.path.getsize(os.path.join(root, name))/1000)) + ' ko' # ko
-            file_i['creation_sort'] = os.path.getctime(os.path.join(root, name))
-            file_i['modification_sort'] = os.path.getmtime(os.path.join(root, name))
-            file_i['creation'] = datetime.fromtimestamp(file_i['creation_sort']).strftime("%d.%m.%Y")
-            file_i['modification'] = datetime.fromtimestamp(file_i['modification_sort']).strftime("%d.%m.%Y")
-            documents.append(file_i)
+        for root, _, files in os.walk(affaire_path, topdown=False):
+            for name in files:
+                if name.startswith(".") or name.startswith("~"):
+                    continue
+                file_i = {}
+                file_i['filename'] = name
+                file_i['rel_path'] = rel_path
+                file_i['size'] = str(ceil(os.path.getsize(os.path.join(root, name))/1000)) + ' ko' # ko
+                file_i['creation_sort'] = os.path.getctime(os.path.join(root, name))
+                file_i['modification_sort'] = os.path.getmtime(os.path.join(root, name))
+                file_i['creation'] = datetime.fromtimestamp(file_i['creation_sort']).strftime("%d.%m.%Y")
+                file_i['modification'] = datetime.fromtimestamp(file_i['modification_sort']).strftime("%d.%m.%Y")
+                documents.append(file_i)
     
     return documents
 

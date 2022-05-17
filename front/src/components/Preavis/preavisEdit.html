@@ -4,7 +4,7 @@
     <md-toolbar class="justifyTitleBtn preavisHeader">
         <h1>Saisie de préavis pour l'affaire {{ affaire.id }}</h1>
         <div>
-            <md-button class="md-raised md-primary" @click="savePreavisDefinitively" :disabled="preavisDecision.preavis_type_id == null || preavisDecision.remarque == null || preavisDecision.remarque === ''"><md-icon>save</md-icon> Enregistrer définitivement</md-button>
+            <md-button class="md-raised md-primary" @click="savePreavisDefinitively" v-if="affaire.preavis_etape === 'externe'" :disabled="preavisDecision.preavis_type_id == null || preavisDecision.remarque == null || preavisDecision.remarque === ''"><md-icon>save</md-icon> Enregistrer définitivement</md-button>
             <md-button class="md-raised md-primary" @click="$router.push({name: 'Preavis'})"><md-icon>arrow_back</md-icon> Retour au tableau de préavis</md-button>
         </div>
     </md-toolbar>

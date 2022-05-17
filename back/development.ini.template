@@ -129,10 +129,12 @@ affaire_show_timedelta = 30
 
 # Affaire etape
 affaire_etape_priorite_1_id = 1
+affaire_etape_client_id = 1
 affaire_etape_traitement_id = 5
 affaire_etape_abandon_id = 12
 affaire_etape_fin_processus_id = 16
 affaire_etape_reactivation_id = 28
+affaire_etape_devis_id = 29
 affaire_premiere_etape_defaut_id = 13
 
 # Facture type
@@ -159,6 +161,7 @@ mails_templates_directory = C:/infolica_project/affaire_technique/mail_template
 temporary_directory = C:/infolica_project/back/tmp
 balance_file_rel_path = A_Administratif/Désignations
 balance_filename_prefix = Des_
+courriers_courriels_rel_path = A_Administratif/Courriers_Courriels
 
 ######################################################################################
 # Security
