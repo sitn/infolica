@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*--
 from math import ceil
+from infolica.scripts.mailer import send_mail
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
@@ -9,6 +10,7 @@ from infolica.models.models import Affaire, PreavisDecision, VAffaire, Operateur
 from infolica.models.models import PreavisRemarque
 from infolica.models.models import Preavis, PreavisType, VAffairesPreavis
 from infolica.scripts.utils import Utils
+from infolica.scripts.mail_templates import MailTemplates
 from infolica.scripts.authentication import check_connected
 
 from datetime import datetime
@@ -468,7 +470,6 @@ def service_externe_liste_decision_view(request):
     return liste_decisions
 
 
-    # version 2
 @view_config(route_name='service_externe_decision', request_method='GET', renderer='json')
 def service_externe_decision_view(request):
     """
@@ -547,6 +548,11 @@ def service_externe_decision_new_view(request):
         preavis.remarque = remarque
 
     request.dbsession.add(model)
+
+    # send mail to SGRF project managers
+    if definitif is True:
+        MailTemplates.sendMailPreavisReponse(request, preavis_id)
+
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisDecision.__tablename__))
 
