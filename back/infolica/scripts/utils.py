@@ -3,10 +3,9 @@ from datetime import date, datetime
 from sqlalchemy import func, and_, desc
 from sqlalchemy import String
 from sqlalchemy.sql.expression import cast
-from infolica.models.models import Affaire, Preavis, PreavisRemarque
-from infolica.models.models import Numero, AffaireNumero, Client
-from infolica.models.models import Role, ReservationNumerosMO, Cadastre, Operateur
-from infolica.scripts.mailer import send_mail
+from infolica.models.models import Preavis, PreavisRemarque
+from infolica.models.models import Numero, AffaireNumero
+from infolica.models.models import Role, ReservationNumerosMO, Operateur
 
 from infolica.scripts.authentication import get_user_functions, check_connected
 

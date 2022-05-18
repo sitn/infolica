@@ -6,7 +6,7 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import Affaire, PreavisDecision, VAffaire, Operateur, Service
+from infolica.models.models import Affaire, AffaireEtape, PreavisDecision, VAffaire, Operateur, Service
 from infolica.models.models import PreavisRemarque
 from infolica.models.models import Preavis, PreavisType, VAffairesPreavis
 from infolica.scripts.utils import Utils
@@ -552,6 +552,17 @@ def service_externe_decision_new_view(request):
     # send mail to SGRF project managers
     if definitif is True:
         MailTemplates.sendMailPreavisReponse(request, preavis_id)
+        
+        # log step
+        service = request.dbsession.query(Service).filter(Service.id == preavis.service_id).first().abreviation
+        params = {
+            'affaire_id': preavis.affaire_id,
+            'operateur_id': preavis.operateur_service_id,
+            'etape_id': request.registry.settings['affaire_etape_preavis_id'],
+            'remarque': service + ' - Retour ',
+            'datetime': datetime.now(),
+        }
+        Utils.addNewRecord(request, AffaireEtape, params=params)
 
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisDecision.__tablename__))
@@ -586,6 +597,20 @@ def service_externe_decision_update_view(request):
         preavis.date_reponse = datetime.strftime(datetime.now(), "%Y-%m-%d")
         preavis.preavis_type_id = preavis_type_id
         preavis.remarque = remarque
+
+        # send mail to SGRF project managers
+        MailTemplates.sendMailPreavisReponse(request, preavis_id)
+        
+        # log step
+        service = request.dbsession.query(Service).filter(Service.id == preavis.service_id).first().abreviation
+        params = {
+            'affaire_id': preavis.affaire_id,
+            'operateur_id': preavis.operateur_service_id,
+            'etape_id': request.registry.settings['affaire_etape_preavis_id'],
+            'remarque': service + ' - Retour ',
+            'datetime': datetime.now(),
+        }
+        Utils.addNewRecord(request, AffaireEtape, params=params)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisDecision.__tablename__))
 
