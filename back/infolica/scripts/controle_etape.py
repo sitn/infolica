@@ -20,7 +20,10 @@ class ControleEtapeChecker():
         final_decision = True
         results = []
         for controle in controles:
-            method_name = '_get_{}_controle'.format(controle.nom.lower())
+            ctrl_nom = controle.nom.lower()
+            if ctrl_nom.endswith('_2') or ctrl_nom.endswith('_3'):
+                ctrl_nom = ctrl_nom[:-2]
+            method_name = '_get_{}_controle'.format(ctrl_nom)
             method = getattr(cls, method_name, cls._get_undefined_controle)
 
             # Apply control
