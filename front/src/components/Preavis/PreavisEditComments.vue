@@ -72,7 +72,7 @@ export default {
       ).then(response => {
         if (response && response.data) {
           this.getConversation();
-          this.$root.$emit('getPreavis');
+          this.$root.$emit('getPreavis', this.preavis_id);
         }
       }).catch(err => handleException(err, this));
     },

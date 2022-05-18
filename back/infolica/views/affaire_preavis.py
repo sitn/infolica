@@ -87,15 +87,27 @@ def preavis_update_view(request):
         raise exc.HTTPForbidden()
 
     preavis_id = request.params['id'] if 'id' in request.params else None
+    logstep = request.params['logstep'] == 'true' if 'logstep' in request.params else False
 
-    record = request.dbsession.query(Preavis).filter(
+    preavis = request.dbsession.query(Preavis).filter(
         Preavis.id == preavis_id).first()
 
-    if not record:
+    if not preavis:
         raise CustomError(
             CustomError.RECORD_WITH_ID_NOT_FOUND.format(Preavis.__tablename__, preavis_id))
 
-    record = Utils.set_model_record(record, request.params)
+    preavis = Utils.set_model_record(preavis, request.params)
+
+    if logstep is True:
+        service = request.dbsession.query(Service).filter(Service.id == preavis.service_id).first().abreviation
+        params = {
+            'affaire_id': preavis.affaire_id,
+            'operateur_id': preavis.operateur_service_id,
+            'etape_id': request.registry.settings['affaire_etape_preavis_id'],
+            'remarque': service + ' - Demande ',
+            'datetime': datetime.now(),
+        }
+        Utils.addNewRecord(request, AffaireEtape, params=params)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Preavis.__tablename__))
 

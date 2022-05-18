@@ -58,6 +58,7 @@ export default {
      * SEARCH AFFAIRE PREAVIS
      */
     async searchAffairePreavis() {
+      let tmp = this.selectedPreavis;
       return new Promise ((resolve, reject) => {
         this.$http
           .get(
@@ -78,6 +79,9 @@ export default {
               if (this.affaire_preavis.date_reponse) {
                 this.affaire_preavis.date_reponse = moment(this.affaire_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
               }
+
+              this.selectedPreavis = tmp;
+
               resolve(this.affaier_preavis);
             }
           })
@@ -450,6 +454,7 @@ export default {
       formData.append('preavis_type_id', null);
       formData.append('remarque', null);
       formData.append('date_reponse', null);
+      formData.append('logstep', true);
 
       this.$http.put(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_ENDPOINT,
@@ -492,7 +497,17 @@ export default {
 
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_PREAVIS_EDITION) || this.$parent.parentAffaireReadOnly;
     
-    this.$root.$on('getPreavis', () => this.searchAffairePreavis());
+    // this.$root.$on('getPreavis', () => this.searchAffairePreavis());
+    this.$root.$on('getPreavis',
+      (preavis_id) => {
+        this.affaire_preavis.forEach(x => {
+          if (x.id === preavis_id) {
+            x.unread_remarks = x.unread_remarks-1;
+          }
+        }
+      ) 
+    }
+    );
   }
 };
 </script>

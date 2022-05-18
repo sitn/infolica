@@ -63,7 +63,10 @@
                     <md-table-cell md-label="Opérateur">
                         <div v-if="item.preavis_attribution">{{ item.preavis_attribution }}</div>
                     </md-table-cell> 
-                    <md-table-cell md-label="Consultation"><md-button class="md-icon-button md-primary" :to="{ name: 'PreavisEdit', params: { id: item.preavis_id } }"><md-icon>open_in_new</md-icon></md-button></md-table-cell>
+                    <md-table-cell md-label="Consultation">
+                        <div v-if="item.unread_remarks > 0"><md-badge :md-content="item.unread_remarks" md-dense><md-button class="md-icon-button md-primary" :to="{ name: 'PreavisEdit', params: { id: item.preavis_id } }"><md-icon>open_in_new</md-icon></md-button></md-badge></div>
+                        <div v-else><md-button class="md-icon-button md-primary" :to="{ name: 'PreavisEdit', params: { id: item.preavis_id } }"><md-icon>open_in_new</md-icon></md-button></div>
+                    </md-table-cell>
                 </md-table-row>
             </md-table>
         </md-card-content>
