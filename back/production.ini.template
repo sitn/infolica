@@ -131,6 +131,7 @@ affaire_etape_client_id = 1
 affaire_etape_traitement_id = 5
 affaire_etape_abandon_id = 12
 affaire_etape_fin_processus_id = 16
+affaire_etape_preavis_id = 17
 affaire_etape_reactivation_id = 28
 affaire_etape_devis_id = 29
 affaire_premiere_etape_defaut_id = 13
@@ -144,6 +145,7 @@ client_cadastration_id = 2896
 # Opérateurs à contacter pour les affaires urgentes
 operateur_affaire_urgente = 15,57,59,60
 operateur_secretariat = 9,39
+operateur_coordinateur_projets = 15,57
 
 # WeasyPrint webservice
 weasyprint_baseurl = /*TO COMPLETE*/
