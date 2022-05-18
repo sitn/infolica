@@ -9,6 +9,7 @@ from infolica.models.models import Affaire, AffaireType, ModificationAffaireType
 from infolica.models.models import ModificationAffaire, VAffaire, Facture, Client
 from infolica.models.models import ControleGeometre, ControleMutation, ControlePPE, SuiviMandat
 from infolica.models.models import AffaireEtape, Preavis
+from infolica.scripts.mail_templates import MailTemplates
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 
@@ -353,7 +354,7 @@ def affaires_new_view(request):
 
     # Envoyer e-mail si l'affaire est urgente (sauf si c'est une PPE ou modif de PPE)
     if model.urgent and (model.type_id != int(request.registry.settings['affaire_type_ppe_id']) or model.type_id != int(request.registry.settings['affaire_type_modification_ppe_id'])):
-        Utils.sendMailAffaireUrgente(request, model)
+        MailTemplates.sendMailAffaireUrgente(request, model)
 
     # Add facture
     if 'facture_client_id' in request.params:
@@ -448,7 +449,7 @@ def affaires_update_view(request):
 
     # If urgence defined after affaire creation, send e-mail
     if not affaire_urgence and "urgent" in params and (record.type_id != int(request.registry.settings['affaire_type_ppe_id']) or record.type_id != int(request.registry.settings['affaire_type_modification_ppe_id'])):
-        Utils.sendMailAffaireUrgente(request, record)
+        MailTemplates.sendMailAffaireUrgente(request, record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
 
