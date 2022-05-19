@@ -552,6 +552,9 @@ def service_externe_decision_new_view(request):
     preavis = request.dbsession.query(Preavis).filter(Preavis.id == preavis_id).first()
     preavis.operateur_service_id = operateur.id
 
+    request.dbsession.add(model)
+
+    # send mail to SGRF project managers
     if definitif is True:
         # update preavis etape and other infos
         preavis.etape = 'interne'
@@ -559,10 +562,6 @@ def service_externe_decision_new_view(request):
         preavis.preavis_type_id = preavis_type_id
         preavis.remarque = remarque
 
-    request.dbsession.add(model)
-
-    # send mail to SGRF project managers
-    if definitif is True:
         MailTemplates.sendMailPreavisReponse(request, preavis_id)
         
         # log step
