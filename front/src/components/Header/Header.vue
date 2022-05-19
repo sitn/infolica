@@ -15,6 +15,7 @@ export default {
       return {
           loggedUserName: String,
           isAdmin: false,
+          isUserSGRF: false,
           session_user: {},
           versionBtn: {
             version: null,
@@ -70,14 +71,17 @@ export default {
   },
 
   mounted: function(){
-      //this.userNameVisible = false;
 
       this.$root.$on('infolica_user_logged_in', (logged_user) =>{
         this.setUserName(logged_user);
+        this.checkIsAdmin();
+        this.isUserSGRF = logged_user.service === 'SGRF';
+
       });
 
       this.$root.$on('infolica_user_logged_out', () =>{
         this.setUserName(null);
+        this.isUserSGRF = false;
       });
 
       this.session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
