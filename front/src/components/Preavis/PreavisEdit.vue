@@ -56,7 +56,7 @@ export default {
       graphicsLayer: null,
       graphicsLayerSource: null,
       markerStyle: null,
-      preavisDecision: {},
+      preavisDecisionReady: false,
     };
   },
 
@@ -362,7 +362,7 @@ export default {
       this.initMap(center, process.env.VUE_APP_MAP_DEFAULT_AFFAIRE_ZOOM);
       this.addMarker(center.x, center.y);
 
-      this.preavisDecision = this.$refs.ped.decision;
+      this.$root.$on('setPreavisDecisionDraft', () => {this.preavisDecisionReady = true})
     });
   }
 };

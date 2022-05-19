@@ -98,6 +98,7 @@ export default {
           this.decision = response.data;
           this.decision.show = true;
         }
+        this.$root.$emit('setPreavisDecisionDraft');
       }
       ).catch(err => handleException(err));
     },
