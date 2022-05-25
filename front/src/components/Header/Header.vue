@@ -16,8 +16,9 @@ export default {
           loggedUserName: String,
           isAdmin: false,
           versionBtn: {
+            disabled: true,
             version: null,
-            showBadge: false
+            showBadge: false,
           }
       }
   },
@@ -28,11 +29,12 @@ export default {
      * Set user name
      */
     setUserName(data){
-      if(data && data.nom && data.prenom)
+      if(data && data.nom && data.prenom) {
         this.loggedUserName = data.prenom + ' ' + data.nom;
-
-      else
+        this.versionBtn.disabled = false;
+      } else {
         this.loggedUserName = null;
+      }
     },
 
     /**
@@ -43,6 +45,7 @@ export default {
         let vm = this;
         this.$router.push({name: "Login"}, function(){
           vm.$root.$emit("infolica_user_logout");
+          vm.versionBtn.disabled = true;
         });        
       }
       
@@ -73,6 +76,7 @@ export default {
 
       this.$root.$on('infolica_user_logged_in', (logged_user) =>{
         this.setUserName(logged_user);
+        this.checkIsAdmin();
       });
 
       this.$root.$on('infolica_user_logged_out', () =>{
@@ -80,10 +84,11 @@ export default {
       });
 
       var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
-      this.setUserName(session_user);
+      if (session_user) {
+        this.setUserName(session_user);
+        this.checkIsAdmin();
+      }
 
-      this.checkIsAdmin();
-      
       this.$root.$on("checkVersion", (version, isNew) => this.checkVersion(version, isNew));
   }
 }
