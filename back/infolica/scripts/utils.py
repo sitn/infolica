@@ -4,7 +4,7 @@ from sqlalchemy import func, and_, desc
 from sqlalchemy import String
 from sqlalchemy.sql.expression import cast
 from infolica.models.models import Affaire
-from infolica.models.models import Numero, AffaireNumero, Client
+from infolica.models.models import Numero, AffaireNumero, Client, Plan
 from infolica.models.models import Role, ReservationNumerosMO, Cadastre, Operateur
 from infolica.scripts.mailer import send_mail
 
@@ -184,7 +184,11 @@ class Utils(object):
         ))
 
         if plan_id:
-            query = query.filter(ReservationNumerosMO.plan_id == plan_id)
+            print(plan_id)
+            plan = request.dbsession.query(Plan).filter(Plan.idobj == plan_id).first()
+            _, plan_no = plan.id_obj2.split('_')
+            
+            query = query.filter(ReservationNumerosMO.plan == plan_no)
 
         return 0 if query.first()[0] is None else query.first()[0]
 

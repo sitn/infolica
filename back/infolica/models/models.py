@@ -424,6 +424,7 @@ class ControleMutation(Base):
     bat_1 = Column(Boolean)  # Contrôler dans la table « Adresses_des_batiments => Mise_a_jourBAT » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.
     bat_2 = Column(Boolean)  # Contrôler dans la table « Adresses_des_batiments => PosNumero_maison » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.assez_petite).
     bat_3 = Column(Boolean)  # Contrôler que les points adresses sont dans les géométries.
+    bat_4 = Column(Boolean)  # Contrôler Bâtiment IMVO (bâtiment sans numéro).
     serv_1 = Column(Boolean)  # Contrôler dans la table « Servitudes => Mise_a_jourSE » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.
     serv_2 = Column(Boolean)  # Contrôler dans la table « Servitudes => Servitude_surface » ou « Servitudes => Servitude_ligne » ou « Servitudes => Servitude_point » que l’attribut « Validite » est en_projet pour les nouvelles servitudes.
     serv_3 = Column(Boolean)  # Contrôler dans la table « Servitudes => PosNumero_de_servitude » que les éléments suivants sont corrects (Hali=Left, Vali=Base, Grandeur= -).
