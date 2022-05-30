@@ -592,7 +592,7 @@ def affaire_spatial(request):
     Get modification affaire by affaire_fille
     """
     # Check connected
-    if not check_connected(request, ['SGRF', 'SAT']):
+    if not check_connected(request, ['SGRF', 'SAT','SU_NE']):
         raise exc.HTTPForbidden()
 
     results = request.dbsession.query(VAffaire).filter(

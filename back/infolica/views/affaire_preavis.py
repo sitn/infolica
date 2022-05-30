@@ -147,7 +147,7 @@ def strongAuthentication(request, preavis_id):
         operateur = Utils.getOperateurFromUser(request)
         return operateur
     
-    if not check_connected(request, ["SAT"]):
+    if not check_connected(request, ["SAT", "SU_NE"]):
         raise exc.HTTPForbidden()
 
     # get service from user
@@ -175,7 +175,7 @@ def service_externe_preavis_view(request):
     GET preavis for service externe
     """
     # Check connected
-    if not check_connected(request, ["SAT"]):
+    if not check_connected(request, ["SAT", "SU_NE"]):
         raise exc.HTTPForbidden()
 
     # get service from user

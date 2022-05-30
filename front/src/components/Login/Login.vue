@@ -37,7 +37,7 @@ export default {
           if(response && response.data && response.data.id){
             this.processLogin(response.data);
 
-            if (response.data.service === "SAT") {
+            if (["SAT", "SU_NE"].includes(response.data.service)) {
               this.$router.push({ name: "Preavis"});
             } else {
               const redirectPath = localStorage.getItem('infolica_redirectPath');

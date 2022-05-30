@@ -83,6 +83,7 @@ class Cadastre(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
+    service_at_id = Column(BigInteger, ForeignKey(Service.id))
 
 
 class ClientType(Base):

@@ -16,7 +16,7 @@ def fonctions_roles_current_user_view(request):
     """
     Return fonctions of current user
     """
-    authorized_services = ['SGRF', 'SAT']
+    authorized_services = ['SGRF', 'SAT','SU_NE']
 
     # Check connected
     if not check_connected(request, services=authorized_services):

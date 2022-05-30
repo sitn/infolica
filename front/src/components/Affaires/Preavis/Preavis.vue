@@ -25,7 +25,6 @@ export default {
     return {
       affaire_preavis: [],
       affaireReadonly: true,
-      communeFusion: {},
       lastRecord: null,
       preavis_type_liste: [],
       modifyPreavis: false,
@@ -126,7 +125,7 @@ export default {
     async searchServices() {
       this.$http
         .get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_SERVICES_ENDPOINT,
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_SERVICES_ENDPOINT + '?cadastre_id=' + this.affaire.cadastre_id,
           {
             withCredentials: true,
             headers: { Accept: "application/json" }
@@ -203,7 +202,6 @@ export default {
      */
     async saveNewPreavis() {
       let formData = this.fillData();
-      let service_id = this.new_preavis.service.id;
 
       let req;
       let remarqueEtapeStatut = "";
@@ -237,7 +235,7 @@ export default {
             
             // download courrier preavis
             if (!this.modifyPreavis) {
-              this.downloadModel(service_id);
+              this.downloadModel();
               remarqueEtape += " + fichier de demande enregistré dans le dossier de l'affaire";
             }
 
@@ -338,24 +336,10 @@ export default {
     /**
      * getModel pour préavis
      */
-    async downloadModel(service_id) {
+    async downloadModel() {
       let form = {};
       
-      service_id = Number(service_id)
-      if (service_id === Number(process.env.VUE_APP_SERVICE_SCAT)) {
-        // SCAT, adresser au service de l'urbanisme des villes si besoin
-        if (this.communeFusion.neuchatel.includes(this.affaire.cadastre_id)) {
-          service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_NEUCHATEL_ID);
-        }
-        else if (this.communeFusion.laChauxDeFonds.includes(this.affaire.cadastre_id)) {
-          service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_LA_CHAUX_DE_FONDS_ID);
-        }
-        else if (this.communeFusion.leLocle.includes(this.affaire.cadastre_id)) {
-          service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_LE_LOCLE_ID);
-        }
-      }
-
-      const service_ = this.services_liste_bk.filter(x => x.id === service_id)[0];
+      const service_ = this.services_liste_bk.filter(x => x.id === this.new_preavis.service.id)[0];
       form.adresse_service = [
         service_.service,
         [service_.titre, service_.prenom, service_.nom].filter(Boolean).join(" ") !== ""? "À l'att. de " + [service_.titre, service_.prenom, service_.nom].filter(Boolean).join(" "): null, 
@@ -376,7 +360,7 @@ export default {
         titre: "",
         contenu: ""
       };
-      if (service_id === Number(process.env.VUE_APP_SERVICE_SCAT)) {
+      if (this.new_preavis.service.id === Number(process.env.VUE_APP_SERVICE_SCAT)) {
         observation.titre = "Observation:",
         observation.contenu = "Pour autant que vous le jugiez utile, veuillez transmettre le dossier au service des forêts ou au service de la viticulture."
       }
@@ -384,7 +368,7 @@ export default {
       let formData = new FormData();
       formData.append("affaire_id", this.affaire.id);
       formData.append("template", "Preavis");
-      formData.append("service_id", service_id);
+      formData.append("service_id", this.new_preavis.service.id);
       formData.append("values", JSON.stringify({
         ADRESSE_SERVICE: form.adresse_service,
         DATE_ENVOI: String(getCurrentDate()),
@@ -410,6 +394,9 @@ export default {
      * Open preavis dialog
      */
     openPreavisDialog() {
+      this.searchServices();
+      this.searchPreavisType();
+
       this.new_preavis = {
         id: null,
         service: null,
@@ -473,27 +460,6 @@ export default {
 
   mounted: function() {
     this.searchAffairePreavis();
-    this.searchPreavisType();
-    this.searchServices();
-
-    // Définit les cadastres fusionnés pour la demande de préavis au services de l'urbanisme des villes
-    this.communeFusion = {
-        neuchatel: [
-          Number(process.env.VUE_APP_CADASTRE_NEUCHATEL_ID),
-          Number(process.env.VUE_APP_CADASTRE_LA_COUDRE_ID),
-          Number(process.env.VUE_APP_CADASTRE_CORCELLES_CORMONDRECHE_ID),
-          Number(process.env.VUE_APP_CADASTRE_VALANGIN_ID),
-          Number(process.env.VUE_APP_CADASTRE_PESEUX_ID)
-        ],
-        laChauxDeFonds: [
-          Number(process.env.VUE_APP_CADASTRE_LA_CHAUX_DE_FONDS_ID),
-          Number(process.env.VUE_APP_CADASTRE_LES_EPLATURES_ID)
-        ],
-        leLocle: [
-          Number(process.env.VUE_APP_CADASTRE_LE_LOCLE_ID),
-          Number(process.env.VUE_APP_CADASTRE_LES_BRENETS_ID)
-        ]
-      }
 
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_PREAVIS_EDITION) || this.$parent.parentAffaireReadOnly;
     
