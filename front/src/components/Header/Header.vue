@@ -55,6 +55,20 @@ export default {
     },
 
     /**
+     * Check if user is from SGRF
+     */
+    checkIsSGRF() {
+      let session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+
+      if(session_user && session_user.service) {
+        console.log(session_user.service, process.env.VUE_APP_SERVICE_MO, session_user.service === process.env.VUE_APP_SERVICE_MO)
+        this.isUserSGRF = session_user.service === process.env.VUE_APP_SERVICE_MO;
+      } else {
+        this.isUserSGRF = false;
+      }
+    },
+
+    /**
      * set version and badge if new
      */
     checkVersion(version, isNew=false) {
@@ -71,25 +85,24 @@ export default {
   },
 
   mounted: function(){
-
-      this.$root.$on('infolica_user_logged_in', (logged_user) =>{
-        this.setUserName(logged_user);
-        this.checkIsAdmin();
-        this.isUserSGRF = logged_user.service === 'SGRF';
-
-      });
-
-      this.$root.$on('infolica_user_logged_out', () =>{
-        this.setUserName(null);
-        this.isUserSGRF = false;
-      });
-
-      this.session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
-      this.setUserName(this.session_user);
-
+    this.$root.$on('infolica_user_logged_in', (logged_user) =>{
+      this.setUserName(logged_user);
       this.checkIsAdmin();
-      
-      this.$root.$on("checkVersion", (version, isNew) => this.checkVersion(version, isNew));
+      this.isUserSGRF = logged_user.service === process.env.VUE_APP_SERVICE_MO;
+    });
+
+    this.$root.$on('infolica_user_logged_out', () =>{
+      this.setUserName(null);
+      this.isUserSGRF = false;
+    });
+
+    this.session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+    this.setUserName(this.session_user);
+
+    this.checkIsAdmin();
+    this.checkIsSGRF();
+    
+    this.$root.$on("checkVersion", (version, isNew) => this.checkVersion(version, isNew));
   }
 }
 </script>
