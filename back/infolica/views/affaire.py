@@ -592,7 +592,7 @@ def affaire_spatial(request):
     Get modification affaire by affaire_fille
     """
     # Check connected
-    if not check_connected(request, [*['SGRF'], *request.registry.settings['preavis_services_externes'].replace(' ', '').split(',')]):
+    if not check_connected(request, [*[request.registry.settings['service_mo'].replace(' ', '')], *request.registry.settings['preavis_services_externes'].replace(' ', '').split(',')]):
         raise exc.HTTPForbidden()
 
     results = request.dbsession.query(VAffaire).filter(

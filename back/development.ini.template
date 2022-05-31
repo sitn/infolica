@@ -154,6 +154,7 @@ weasyprint_baseurl = /*TO COMPLETE*/
 
 # Services externes (préavis)
 preavis_services_externes = /*TO COMPLETE*/
+service_mo = SGRF
 
 ######################################################################################
 # Accès dossiers

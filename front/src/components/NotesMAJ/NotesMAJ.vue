@@ -193,7 +193,7 @@ export default {
         operateur_service = response[0].data.service;
 
         // if user is not from SGRF, don't load version notes
-        if (operateur_service !== 'SGRF') {
+        if (operateur_service !== process.env.VUE_APP_SERVICE_MO) {
           return
         }
 

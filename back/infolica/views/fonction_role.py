@@ -16,7 +16,7 @@ def fonctions_roles_current_user_view(request):
     """
     Return fonctions of current user
     """
-    authorized_services = [*['SGRF'], *request.registry.settings['preavis_services_externes'].replace(' ', '').split(',')]
+    authorized_services = [*[request.registry.settings['service_mo'].replace(' ', '')], *request.registry.settings['preavis_services_externes'].replace(' ', '').split(',')]
 
     # Check connected
     if not check_connected(request, services=authorized_services):

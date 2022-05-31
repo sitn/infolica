@@ -17,10 +17,13 @@ def do_logout(request):
     return response
 
 
-def check_connected(request, services=["SGRF"]):
+def check_connected(request, services=None):
     """
     check connection
     """
+    if services is None:
+        services = [request.registry.settings['service_mo'].replace(' ', '')]
+
     user = request.authenticated_userid
 
     if user is None:

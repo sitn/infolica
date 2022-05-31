@@ -143,7 +143,7 @@ def preavis_delete_view(request):
 
 def strongAuthentication(request, preavis_id):
     # Check connected
-    if check_connected(request, ["SGRF"]):
+    if check_connected(request, [request.registry.settings['service_mo'].replace(' ', '')]):
         operateur = Utils.getOperateurFromUser(request)
         return operateur
     
