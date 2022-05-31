@@ -61,7 +61,6 @@ export default {
       let session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
 
       if(session_user && session_user.service) {
-        console.log(session_user.service, process.env.VUE_APP_SERVICE_MO, session_user.service === process.env.VUE_APP_SERVICE_MO)
         this.isUserSGRF = session_user.service === process.env.VUE_APP_SERVICE_MO;
       } else {
         this.isUserSGRF = false;
