@@ -152,6 +152,9 @@ operateur_coordinateur_projets = 15,57
 # WeasyPrint webservice
 weasyprint_baseurl = /*TO COMPLETE*/
 
+# Services externes (préavis)
+preavis_services_externes = /*TO COMPLETE*/
+
 ######################################################################################
 # Accès dossiers
 ######################################################################################

@@ -43,7 +43,7 @@ def operateur_by_id_view(request):
     """
     Return operateur by id
     """
-    authorized_services = ['SGRF', 'SAT','SU_NE']
+    authorized_services = [*['SGRF'], *request.registry.settings['preavis_services_externes'].replace(' ', '').split(',')]
 
     # Check connected
     if not check_connected(request, services=authorized_services):
