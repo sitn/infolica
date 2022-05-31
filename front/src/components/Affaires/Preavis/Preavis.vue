@@ -4,8 +4,8 @@
 
 <script>
 import { getCurrentDate, checkPermission, saveDocument, logAffaireEtape } from "@/services/helper";
-import PreavisEditComments from "@/components/Preavis/PreavisEditComments.vue";
-import PreavisEditDecision from "@/components/Preavis/PreavisEditDecision.vue";
+import PreavisEditComments from "@/components/PreavisExternes/PreavisExternesEditComments.vue";
+import PreavisEditDecision from "@/components/PreavisExternes/PreavisExternesEditDecision.vue";
 import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";

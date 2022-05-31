@@ -1,5 +1,5 @@
-<style src="./preavis.css" scoped></style>
-<template src="./preavis.html"></template>
+<style src="./preavisExternes.css" scoped></style>
+<template src="./preavisExternes.html"></template>
 
 
 <script>

@@ -1,5 +1,5 @@
-<style src="./preavisEditDecision.css" scoped></style>
-<template src="./preavisEditDecision.html"></template>
+<style src="./preavisExternesEditDecision.css" scoped></style>
+<template src="./preavisExternesEditDecision.html"></template>
 
 
 <script>

@@ -10,8 +10,8 @@ import NumerosHistory from './components/Numeros/NumerosHistory.vue'
 import About from './components/About/About.vue'
 import Login from './components/Login/Login.vue'
 import Cockpit from './components/Cockpit/Cockpit.vue'
-import Preavis from './components/Preavis/Preavis.vue'
-import PreavisEdit from './components/Preavis/PreavisEdit.vue'
+import Preavis from './components/PreavisExternes/PreavisExternes.vue'
+import PreavisEdit from './components/PreavisExternes/PreavisExternesEdit.vue'
 
 const routes = [
     { path: '/', component: Cockpit, redirect:'/cockpit', name: 'Home' },    

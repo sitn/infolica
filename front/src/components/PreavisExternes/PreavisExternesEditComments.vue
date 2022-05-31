@@ -1,5 +1,5 @@
-<style src="./preavisEditComments.css" scoped></style>
-<template src="./preavisEditComments.html"></template>
+<style src="./preavisExternesEditComments.css" scoped></style>
+<template src="./preavisExternesEditComments.html"></template>
 
 
 <script>

@@ -1,11 +1,11 @@
-<style src="./preavisEdit.css" scoped></style>
-<template src="./preavisEdit.html"></template>
+<style src="./preavisExternesEdit.css" scoped></style>
+<template src="./preavisExternesEdit.html"></template>
 
 
 <script>
 import MapHandler from "@/components/MapHandler/MapHandler.vue";
-import PreavisEditComments from "@/components/Preavis/PreavisEditComments.vue";
-import PreavisEditDecision from "@/components/Preavis/PreavisEditDecision.vue";
+import PreavisEditComments from "@/components/PreavisExternes/PreavisExternesEditComments.vue";
+import PreavisEditDecision from "@/components/PreavisExternes/PreavisExternesEditDecision.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
 
