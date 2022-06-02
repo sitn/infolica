@@ -19,7 +19,7 @@ export default {
           session_user: {},
           versionBtn: {
             version: null,
-            showBadge: false
+            showBadge: false,
           }
       }
   },
@@ -30,22 +30,22 @@ export default {
      * Set user name
      */
     setUserName(data){
-      if(data && data.nom && data.prenom)
+      if(data && data.nom && data.prenom) {
         this.loggedUserName = data.prenom + ' ' + data.nom;
-
-      else
+      } else {
         this.loggedUserName = null;
+      }
     },
 
     /**
      * call logout
      */
     callLogout(){
-      if(this.$router && this.$router.currentRoute && this.$router.currentRoute.name != 'Login'){
+      if(this.$router && this.$router.currentRoute && this.$router.currentRoute.name != 'Login') {
         let vm = this;
         this.$router.push({name: "Login"}, function(){
           vm.$root.$emit("infolica_user_logout");
-        });        
+        });
       }
       
     },

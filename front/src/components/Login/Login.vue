@@ -58,7 +58,7 @@ export default {
         .catch(err => {
           this.showProgess = false;
           handleException(err, this);
-        })
+        });
       },
       
       /**
@@ -78,7 +78,7 @@ export default {
         //Error 
         .catch(err => {
           handleException(err, this);
-        })
+        });
       },
 
 
@@ -91,6 +91,7 @@ export default {
           this.$root.$emit("notesMaj_hasAdminRights");
         });
         this.$root.$emit('infolica_user_logged_in', data);
+        localStorage.removeItem('infolica_cockpit_searchParams');
       },
 
       /**
@@ -125,13 +126,16 @@ export default {
     },
 
     mounted: function(){
-      this.getVersion();
-
       //Logout
       this.$root.$on("infolica_user_logout", () => {        
-        this.doLogout();    
-        this.processLogout();    
+        this.doLogout();
+        this.processLogout();
       });
+    },
+    
+    beforeMount: function() {
+      localStorage.removeItem('infolica_user');
+      this.getVersion();
     }
 }
 </script>
