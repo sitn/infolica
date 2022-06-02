@@ -332,7 +332,7 @@ class Utils(object):
         affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
         cl = request.dbsession.query(Client).filter(Client.id == client_id).first()
         #Contrôle que le client habite hors canton et que son numéros SAP est null
-        if cl.no_sap is None and int(cl.npa) not in request.registry.settings['npa_NE']:
+        if cl.no_sap is not None and int(cl.npa) not in request.registry.settings['npa_NE']:
             operateur_secretariat = request.registry.settings["operateur_secretariat"].split(",")
             mail_list = request.dbsession.query(Operateur.mail).filter(Operateur.id.in_(operateur_secretariat)).all()
             mail_list = [mail[0] for mail in mail_list]
