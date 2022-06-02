@@ -2,17 +2,11 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
-from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import ReservationNumerosMO, VReservationNumerosMO, Plan, Affaire
+from infolica.models.models import ReservationNumerosMO, VReservationNumerosMO
 from infolica.models.models import VProchainNumeroDisponible
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
-from sqlalchemy import and_, or_, func
-
-import os
-import json
-from datetime import datetime
 
 
 @view_config(route_name='reservation_numeros_mo_by_affaire_id', request_method='GET', renderer='json')

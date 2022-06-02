@@ -2,8 +2,6 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
-from sqlalchemy import func
-
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Operateur

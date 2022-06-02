@@ -4,7 +4,7 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import Numero, NumeroRelation, VNumerosRelations
+from infolica.models.models import NumeroRelation, VNumerosRelations
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 from sqlalchemy import and_

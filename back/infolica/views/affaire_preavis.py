@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*--
 from math import ceil
-from infolica.scripts.mailer import send_mail
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 

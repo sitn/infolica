@@ -9,7 +9,7 @@ from infolica.scripts.controle_etape import ControleEtapeChecker
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffaires, VAffaire
-from infolica.models.models import EtapeMailer, Operateur, Affaire, Facture, Client
+from infolica.models.models import EtapeMailer, Operateur, Affaire, Facture
 from infolica.scripts.mail_templates import MailTemplates
 from infolica.scripts.utils import Utils
 from infolica.scripts.mailer import send_mail
