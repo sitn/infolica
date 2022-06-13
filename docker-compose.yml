@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  back:
+    image: sitn/infolica-back
+    build:
+      context: back
+    command: "gunicorn wsgi --preload -b :8000 --worker-class=gthread --threads=10 --workers=4 --timeout=60 --max-requests=1000"
+    restart: unless-stopped
+    ports:
+      - "${DOCKER_BACK_PORT}:8000"
+    env_file: .env
+
+  front:
+    image: sitn/infolica-front
+    build:
+      context: front
+      args:
+        INSTANCE: ${INSTANCE}
+        PUBLIC_PATH: ${PUBLIC_PATH}
+    restart: unless-stopped
+    ports:
+      - "${DOCKER_FRONT_PORT}:80"
