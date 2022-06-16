@@ -71,6 +71,10 @@ def preavis_new_view(request):
     model = Utils.set_model_record(model, request.params)
 
     request.dbsession.add(model)
+    request.dbsession.flush()
+
+    # Send mail to external service for a new preavis demand
+    MailTemplates.sendMailPreavisDemande(request, model.id, model.service_id)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Preavis.__tablename__))
 
@@ -107,6 +111,9 @@ def preavis_update_view(request):
             'datetime': datetime.now(),
         }
         Utils.addNewRecord(request, AffaireEtape, params=params)
+
+        # Send mail to external service for a new preavis demand
+        MailTemplates.sendMailPreavisDemande(request, preavis.id, preavis.service_id)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Preavis.__tablename__))
 

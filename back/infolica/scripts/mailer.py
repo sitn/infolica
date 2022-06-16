@@ -3,7 +3,7 @@ import smtplib
 from email.message import EmailMessage
 from email.utils import formatdate
 
-def send_mail(request, mail_list, text, subject, html=None):
+def send_mail(request, mail_list, text, subject, html=None, signature='Infolica'):
     """
     mail_list: list of mail adresses (send to)
     text: Mail text. Note that mail footer is set to "Ce courrier a été généré automatiquement. Merci de ne pas y répondre."
@@ -20,9 +20,9 @@ def send_mail(request, mail_list, text, subject, html=None):
         msg.add_alternative("""
             <html>
                 <head></head>
-                <body>{}<br><br>Meilleures salutations,<br>Infolica<br><br><em style="font-size: 14px;">Ce courrier a été généré automatiquement. Merci de ne pas y répondre.</em></body>
+                <body>{}<br><br>Meilleures salutations,<br>{}<br><br><em style="font-size: 14px;">Ce courrier a été généré automatiquement. Merci de ne pas y répondre.</em></body>
             </html>
-        """.format(html), subtype="html")
+        """.format(html, signature), subtype="html")
     s = smtplib.SMTP(request.registry.settings["infolica_smtp"])
     s.send_message(msg)
     s.quit()

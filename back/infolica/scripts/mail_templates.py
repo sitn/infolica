@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*--
 from datetime import datetime
 from infolica.models.models import Affaire, Cadastre, Client
-from infolica.models.models import Operateur
+from infolica.models.models import EtapeMailer, Operateur
 from infolica.models.models import VAffairesPreavis
 from infolica.scripts.mailer import send_mail
 
@@ -91,6 +91,39 @@ class MailTemplates(object):
         
         send_mail(request, mail_list, "", "Infolica - Préavis saisi", html=html)
         return
-        
 
+
+    @classmethod
+    def sendMailPreavisDemande(cls, request, preavis_id, service_id):
+
+        operateurs = request.dbsession.query(Operateur).filter(Operateur.service_id == service_id).all()
+
+        mail_list = []
+        etape_mailer = request.dbsession.query(EtapeMailer)
+        for op in operateurs:
+            em = etape_mailer.filter(EtapeMailer.operateur_id == op.id).first()
+            if em is not None and em.sendmail is True:
+                mail_list.append(op.mail)
+        
+        if len(mail_list) > 0:
+            preavis = request.dbsession.query(VAffairesPreavis).filter(VAffairesPreavis.id == preavis_id).first()
+            affaire = request.dbsession.query(Affaire).filter(Affaire.id == preavis.affaire_id).first()
+            cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == affaire.cadastre_id).first().nom
+            
+            affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
+            link = str(os.path.join(request.registry.settings['infolica_url_base'], 'preavis/edit', str(preavis_id))).replace('\\', '/')
+
+            html = "<p>Bonjour,</p>"
+            html += "<p>"
+            html += "Une nouvelle demande de préavis est en attente dans la centrale à préavis."
+            html += "<ul>"
+            html += "<li>Référence de l'affaire au SGRF: " + str(affaire.id) + affaire_nom + "</li>"
+            html += "<li>Cadastre: " + cadastre + "</li>"
+            html += "<li>Description: " + affaire.nom + "</li>"
+            html += "<li>Lien: <a href='" + link + "'>" + link + "</a></li>"
+            html += "</ul>"
+            html += "</p>"
+            
+            send_mail(request, mail_list, "", "Infolica - Demande de préavis", html=html, signature="Le service de la géomatique et du registre foncier")
+            return
 
