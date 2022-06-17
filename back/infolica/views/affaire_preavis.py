@@ -244,7 +244,7 @@ def service_externe_preavis_view(request):
             'affaire_cadastre': rec[4],
             'affaire_description': rec[5],
             'preavis_attribution': ' '.join(filter(None, [rec[6], rec[7]])),
-            'unread_remarks': Utils.check_unread_preavis_remarks(request, rec[3], service_id=operateur.service_id),
+            'unread_remarks': Utils.check_unread_preavis_remarks(request, rec[3], service_id=operateur.service_id)
         })
 
     return results
@@ -283,6 +283,7 @@ def service_externe_affaire_view(request):
         Preavis.date_demande,
         Preavis.date_reponse,
         Preavis.etape,
+        Preavis.service_id
     ).filter(
         Preavis.id == preavis_id,
         VAffaire.id == Preavis.affaire_id,
@@ -311,7 +312,8 @@ def service_externe_affaire_view(request):
         'preavis_id': record[20],
         'preavis_date_demande': datetime.strftime(record[21], "%d.%m.%Y"),
         'preavis_date_reponse': datetime.strftime(record[22], "%d.%m.%Y") if record[22] is not None else None,
-        'preavis_etape': record[23]
+        'preavis_etape': record[23],
+        'preavis_service_id': record[24]
     }
 
     return result

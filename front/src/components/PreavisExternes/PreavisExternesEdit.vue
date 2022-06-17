@@ -57,6 +57,7 @@ export default {
       graphicsLayerSource: null,
       markerStyle: null,
       preavisDecisionReady: false,
+      service_edition_allowed: false,
     };
   },
 
@@ -76,6 +77,7 @@ export default {
             this.affaire = response.data;
             resolve(response.data);
             this.affaireLoaded = true;
+            this.service_edition_allowed = (response.data.preavis_service_id === Number(JSON.parse(localStorage.getItem("infolica_user")).service_id));
           }
         })
         .catch((err) => {
