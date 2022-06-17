@@ -6,7 +6,7 @@ import pyramid.httpexceptions as exc
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Affaire, AffaireEtape, PreavisDecision, VAffaire, Operateur, Service
-from infolica.models.models import PreavisRemarque
+from infolica.models.models import PreavisRemarque, PreavisGlossaire
 from infolica.models.models import Preavis, PreavisType, VAffairesPreavis
 from infolica.scripts.utils import Utils
 from infolica.scripts.mail_templates import MailTemplates
@@ -689,3 +689,19 @@ def service_externe_save_documents_new_view(request):
         file_i += 1
 
     return exc.HTTPOk(detail="Les fichiers ont bien été enregistrés")
+
+
+@view_config(route_name='service_externe_glossaire', request_method='GET', renderer='json')
+def service_externe_glossaire_view(request):
+    """
+    GET glossaire of service externe
+    """
+    preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
+
+    operateur = strongAuthentication(request, preavis_id)
+    
+    glossaire = request.dbsession.query(PreavisGlossaire).filter(
+        PreavisGlossaire.service_id == operateur.service_id
+    ).order_by(PreavisGlossaire.ordre.asc()).all()
+
+    return Utils.serialize_many(glossaire)

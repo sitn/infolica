@@ -925,7 +925,7 @@ class PreavisDecision(Base):
     version = Column(Integer)
 
 
-class PreavisRemarque(Base):  # currently not used, replaced by attribute Remarque in table Preavis
+class PreavisRemarque(Base):
     __tablename__ = 'preavis_remarque'
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
@@ -934,6 +934,16 @@ class PreavisRemarque(Base):  # currently not used, replaced by attribute Remarq
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     lu_operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
+
+
+class PreavisGlossaire(Base):
+    __tablename__ = 'preavis_glossaire'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    service_id = Column(BigInteger, ForeignKey(Service.id), nullable=False)
+    ordre = Column(Integer)
+    titre = Column(Text, nullable=False)
+    texte = Column(Text, nullable=False)
 
 
 class GeosBalance(Base):

@@ -19,3 +19,12 @@
     font-style: italic;
     color: gray;
 }
+
+.table_glossaire {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+.table_glossaire tr {
+    border: 1px dashed black;
+}

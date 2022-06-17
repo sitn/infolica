@@ -183,7 +183,6 @@ class Utils(object):
         ))
 
         if plan_id:
-            print(plan_id)
             plan = request.dbsession.query(Plan).filter(Plan.idobj == plan_id).first()
             _, plan_no = plan.id_obj2.split('_')
             

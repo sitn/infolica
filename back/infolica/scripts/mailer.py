@@ -9,6 +9,12 @@ def send_mail(request, mail_list, text, subject, html=None, signature='Infolica'
     text: Mail text. Note that mail footer is set to "Ce courrier a été généré automatiquement. Merci de ne pas y répondre."
     subject: mail subject
     """
+    mail_list = [value for value in mail_list if value != None]
+    mail_list = [value for value in mail_list if value != '']
+
+    if len(mail_list) == 0:
+        return
+    
     text += "\n\nMeilleures salutations,\nInfolica\n\nCe courrier a été généré automatiquement. Merci de ne pas y répondre."
     msg = EmailMessage()
     msg['From'] = request.registry.settings["infolica_mail"]
@@ -26,3 +32,4 @@ def send_mail(request, mail_list, text, subject, html=None, signature='Infolica'
     s = smtplib.SMTP(request.registry.settings["infolica_smtp"])
     s.send_message(msg)
     s.quit()
+    return
