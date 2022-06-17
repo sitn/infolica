@@ -48,7 +48,7 @@
                                 <md-radio v-model="decision.preavis_type_id" :value="2" :disabled="decision.definitif">Préavis négatif</md-radio>
                                 <md-radio v-model="decision.preavis_type_id" :value="3" :disabled="decision.definitif">Pas concerné</md-radio>
                             </div>
-                            <div>
+                            <div v-if="glossaire.length > 0">
                                 <md-button class="md-primary md-raised md-dense" @click="showGlossaire = !showGlossaire">Glossaire</md-button>
                             </div>
 
