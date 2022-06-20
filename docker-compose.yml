@@ -11,6 +11,10 @@ services:
     restart: unless-stopped
     ports:
       - "${DOCKER_BACK_PORT}:8000"
+    volumes:
+      - "${AFFAIRES_PATH}:/mnt/affaires_conservation:rw"
+      - "${TEMPLATES_PATH}:/mnt/infolica_templates:ro"
+      - "${TEMP_PATH}:/mnt/infolica_temp:rw"
     env_file: .env
 
   front:
