@@ -5,3 +5,7 @@ affaire_technique/
 taches_lancement_windows/
 scripts/*
 .env
+env.local
+env.dev
+env.prepub
+env.prod

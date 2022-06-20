@@ -5,6 +5,8 @@ services:
     image: sitn/infolica-back
     build:
       context: back
+      args:
+        BACK_INI_FILE: ${BACK_INI_FILE}
     command: "gunicorn wsgi --preload -b :8000 --worker-class=gthread --threads=10 --workers=4 --timeout=60 --max-requests=1000"
     restart: unless-stopped
     ports:
@@ -18,6 +20,7 @@ services:
       args:
         INSTANCE: ${INSTANCE}
         PUBLIC_PATH: ${PUBLIC_PATH}
+        API_URL: ${API_URL}
     restart: unless-stopped
     ports:
       - "${DOCKER_FRONT_PORT}:80"

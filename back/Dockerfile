@@ -12,4 +12,6 @@ RUN pip3 install -r requirements.txt
 
 COPY . ./
 
-RUN pip3 install -e .
+ARG BACK_INI_FILE
+RUN pip3 install -e . && \
+  alembic -c ${BACK_INI_FILE} upgrade head
