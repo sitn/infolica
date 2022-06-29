@@ -196,3 +196,5 @@ def includeme(config):
     config.add_route('service_externe_save_documents', '/infolica/api/service_externe_save_documents')
     config.add_route('service_externe_preavis_attribution', '/infolica/api/service_externe_preavis_attribution')
     config.add_route('service_externe_glossaire', '/infolica/api/service_externe_glossaire')
+    #Roles
+    config.add_route('user_roles', '/infolica/api/user_roles')
