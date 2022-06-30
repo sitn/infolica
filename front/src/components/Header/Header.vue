@@ -86,7 +86,9 @@ export default {
   mounted: function(){
     this.$root.$on('infolica_user_logged_in', (logged_user) =>{
       this.setUserName(logged_user);
-      this.checkIsAdmin();
+      setTimeout(() => {
+        this.checkIsAdmin();
+      }, 500);
       this.isUserSGRF = logged_user.service === process.env.VUE_APP_SERVICE_MO;
     });
 
