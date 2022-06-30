@@ -8,7 +8,7 @@ from infolica.models.constant import Constant
 from infolica.models.models import Affaire, AffaireType, ModificationAffaireType
 from infolica.models.models import ModificationAffaire, VAffaire, Facture, Client
 from infolica.models.models import ControleGeometre, ControleMutation, ControlePPE, SuiviMandat
-from infolica.models.models import AffaireEtape, Preavis
+from infolica.models.models import AffaireEtape, AffaireEtapeIndex, Preavis
 from infolica.scripts.mail_templates import MailTemplates
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
@@ -73,6 +73,8 @@ def affaire_cockpit_view(request):
     operateur_id = request.params['operateur_id'] if 'operateur_id' in request.params else None
     showFinProcessus = True if 'showFinProcessus' in request.params and request.params['showFinProcessus'] == 'true' else False
     showOnlyAffairesUrgentes = True if 'showOnlyAffairesUrgentes' in request.params and request.params['showOnlyAffairesUrgentes'] == 'true' else False
+    affaire_etape_devis_id = int(request.registry.settings['affaire_etape_devis_id'])
+    affaire_etape_client_id = int(request.registry.settings['affaire_etape_client_id'])
 
     etape_finProcessus_id = request.registry.settings["affaire_etape_fin_processus_id"]
     
@@ -116,9 +118,12 @@ def affaire_cockpit_view(request):
     
     query = query.all()
 
+    # get affaire etapes
+    ae = request.dbsession.query(AffaireEtapeIndex).filter(AffaireEtapeIndex.ordre != None).order_by(AffaireEtapeIndex.ordre.asc()).all()
+
     affaires = []
     for affaire in query:
-        urgent_echeance = datetime.strftime(affaire.urgent_echeance, '%Y-%m-%d') if not affaire.urgent_echeance is None else None
+        urgent_echeance = datetime.strftime(affaire.urgent_echeance, '%d.%m.%Y') if not affaire.urgent_echeance is None else None
         nom_affaire = (affaire.no_access if affaire.no_access else str(affaire.id)) + (" / " + urgent_echeance if urgent_echeance else "") + (" / " + affaire.attribution if affaire.attribution else "")
         etape_datetime = datetime.strftime(affaire.etape_datetime, '%Y-%m-%d %H:%M:%S')
         etape_days_elapsed = (datetime.now().date() - affaire.etape_datetime.date()).days
@@ -134,7 +139,7 @@ def affaire_cockpit_view(request):
             else:
                 preavis_status = 'pending'
 
-        affaires.append({
+        tmp = {
             'id': affaire.id,
             'affaire_type': affaire.type_affaire,
             'affaire_type_id': affaire.type_id,
@@ -155,8 +160,18 @@ def affaire_cockpit_view(request):
             'title': title,
             'preavis_status': preavis_status,
             'preavis_unread_remarks': Utils.check_unread_preavis_remarks(request, affaire.id)
-        })
-    
+        }
+
+        if affaire.etape_id == affaire_etape_devis_id:
+            # Si l'affaire est à l'étape devis, la basculer dans l'étape client du tableau cockpit
+            for etape in ae:    
+                tmp['dashboard_' + str(etape.id)] = nom_affaire if etape.id == affaire_etape_client_id else None
+        else:
+            for etape in ae:
+                tmp['dashboard_' + str(etape.id)] = nom_affaire if etape.id == affaire.etape_id else None
+
+        affaires.append(tmp)
+
     return affaires
 
 
