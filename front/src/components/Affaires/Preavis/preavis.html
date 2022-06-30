@@ -95,34 +95,6 @@
                         obligatoire</span>
                 </div>
             </div>
-            
-            <div class="md-layout md-gutter">
-                <div class="md-layout-item md-size-50 md-small-size-100">
-                    <md-autocomplete v-model="new_preavis.preavis" :md-options="preavis_type_liste" md-dense>
-                        <label>Préavis</label>
-                        <template slot="md-autocomplete-item" slot-scope="{ item }">
-                            {{ item.nom }}
-                        </template>
-                    </md-autocomplete>
-                </div>
-                <div class="md-layout-item md-size-50 md-small-size-100">
-                    <md-datepicker v-model="new_preavis.date_reponse" md-immediately>
-                        <label>Date de réponse</label>
-                    </md-datepicker>
-                </div>
-            </div>
-
-            <br/>
-    
-            <div class="md-layout md-gutter">
-                <div class="md-layout-item md-size-100">
-                    <md-field>
-                        <label>Remarque</label>
-                        <md-textarea v-model="new_preavis.remarque"></md-textarea>
-                    </md-field>
-                </div>
-            </div>
-            
     
         </md-dialog-content>
         <md-dialog-actions>

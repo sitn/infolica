@@ -26,15 +26,11 @@ export default {
       affaire_preavis: [],
       affaireReadonly: true,
       lastRecord: null,
-      preavis_type_liste: [],
       modifyPreavis: false,
       new_preavis: {
         id: null,
         service: null,
-        preavis: null,
         date_demande: getCurrentDate(),
-        date_reponse: null,
-        remarque: null
       },
       selectedPreavis: null,
       services_liste: [],
@@ -91,33 +87,6 @@ export default {
       })
     },
 
-    /*
-     * SEARCH PREAVIS TYPES
-     */
-    async searchPreavisType() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_PREAVIS_TYPE_ENDPOINT,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/json" }
-          }
-        )
-        .then(response => {
-          if (response.data) {
-            this.preavis_type_liste = response.data.map(x => ({
-              id: x.id,
-              nom: x.nom,
-              toLowerCase: () => x.nom.toLowerCase(),
-              toString: () => x.nom
-            }));
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
-    },
 
     /*
      * SEARCH SERVICES
@@ -171,16 +140,6 @@ export default {
           toLowerCase: () => x.nom.toLowerCase(),
           toString: () => x.nom
         }))[0];
-      if (curr_preavis) {
-        this.new_preavis.preavis = this.preavis_type_liste
-          .filter(data => data.nom === curr_preavis.preavis)
-          .map(x => ({
-            id: x.id,
-            nom: x.nom,
-            toLowerCase: () => x.nom.toLowerCase(),
-            toString: () => x.nom
-          }))[0];
-      }
       this.new_preavis.etape = curr_preavis.etape;
       this.modifyPreavis = true;
       this.showPreavisDialog = true;
@@ -264,19 +223,9 @@ export default {
         formData.append("service_id", this.new_preavis.service.id);
         this.lastRecord = this.new_preavis.service.nom;
       }
-      if (this.new_preavis.preavis) {
-        formData.append("preavis_type_id", this.new_preavis.preavis.id);
-      }
       if (this.new_preavis.date_demande) {
         formData.append("date_demande",
           moment(this.new_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      }
-      if (this.new_preavis.date_reponse) {
-        formData.append("date_reponse",
-          moment(this.new_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      }
-      if (this.new_preavis.remarque) {
-        formData.append("remarque", this.new_preavis.remarque);
       }
       if (this.new_preavis.id){
         formData.append("id", this.new_preavis.id);
@@ -302,10 +251,7 @@ export default {
       this.showPreavisDialog = false;
       this.new_preavis.id = null;
       this.new_preavis.service = null;
-      this.new_preavis.preavis = null;
       this.new_preavis.date_demande = getCurrentDate();
-      this.new_preavis.date_reponse = null;
-      this.new_preavis.remarque = null;
       this.modifyPreavis = false;
     },
 
@@ -394,16 +340,11 @@ export default {
      * Open preavis dialog
      */
     openPreavisDialog() {
-      this.searchServices();
-      this.searchPreavisType();
 
       this.new_preavis = {
         id: null,
         service: null,
-        preavis: null,
         date_demande: getCurrentDate(),
-        date_reponse: null,
-        remarque: null
       }
 
       this.showPreavisDialog = true;
@@ -460,6 +401,7 @@ export default {
 
   mounted: function() {
     this.searchAffairePreavis();
+    this.searchServices();
 
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_PREAVIS_EDITION) || this.$parent.parentAffaireReadOnly;
     
