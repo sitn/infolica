@@ -186,3 +186,15 @@ def includeme(config):
     config.add_route('operateur_notes_maj', '/infolica/api/operateur_notes_maj')
     #External ressources
     config.add_route('guichet_rf_saisie_pm', '/infolica/api/guichet_rf_saisie_pm')
+    #External services
+    config.add_route('service_externe_preavis', '/infolica/api/service_externe_preavis')
+    config.add_route('service_externe_affaire', '/infolica/api/service_externe_affaire')
+    config.add_route('service_externe_documents', '/infolica/api/service_externe_documents')
+    config.add_route('service_externe_conversation', '/infolica/api/service_externe_conversation')
+    config.add_route('service_externe_liste_decisions', '/infolica/api/service_externe_liste_decisions')
+    config.add_route('service_externe_decision', '/infolica/api/service_externe_decision')
+    config.add_route('service_externe_save_documents', '/infolica/api/service_externe_save_documents')
+    config.add_route('service_externe_preavis_attribution', '/infolica/api/service_externe_preavis_attribution')
+    config.add_route('service_externe_glossaire', '/infolica/api/service_externe_glossaire')
+    #Roles
+    config.add_route('user_roles', '/infolica/api/user_roles')

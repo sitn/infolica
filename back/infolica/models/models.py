@@ -41,6 +41,24 @@ class Fonction(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
 
+class Service(Base):
+    __tablename__ = 'service'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    service = Column(Text, nullable=False)
+    abreviation = Column(Text, nullable=False)
+    titre = Column(Text)
+    nom = Column(Text)
+    prenom = Column(Text)
+    adresse = Column(Text)
+    case_postale = Column(Text)
+    npa = Column(Text)
+    localite = Column(Text)
+    telephone = Column(Text)
+    mail = Column(Text)
+    ordre = Column(BigInteger)
+    relpath = Column(Text)
+
 class Operateur(Base):
     __tablename__ = 'operateur'
     __table_args__ = {'schema': 'infolica'}
@@ -56,6 +74,8 @@ class Operateur(Base):
     mail = Column(Text)
     last_notemaj_id = Column(BigInteger)
     role_id = Column(BigInteger, ForeignKey(Role.id))
+    service = Column(Text)
+    service_id = Column(BigInteger, ForeignKey(Service.id))
     role = relationship("Role", uselist=False)
 
 class Cadastre(Base):
@@ -63,6 +83,7 @@ class Cadastre(Base):
     __table_args__ = {'schema': 'infolica'}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
+    service_at_id = Column(BigInteger, ForeignKey(Service.id))
 
 
 class ClientType(Base):
@@ -869,25 +890,6 @@ class AffaireNumero(Base):
     affaire_destination_id = Column(BigInteger, ForeignKey(Affaire.id))
 
 
-class Service(Base):
-    __tablename__ = 'service'
-    __table_args__ = {'schema': 'infolica'}
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    service = Column(Text, nullable=False)
-    abreviation = Column(Text, nullable=False)
-    titre = Column(Text)
-    nom = Column(Text)
-    prenom = Column(Text)
-    adresse = Column(Text)
-    case_postale = Column(Text)
-    npa = Column(Text)
-    localite = Column(Text)
-    telephone = Column(Text)
-    mail = Column(Text)
-    ordre = Column(BigInteger)
-    relpath = Column(Text)
-
-
 class PreavisType(Base):
     __tablename__ = 'preavis_type'
     __table_args__ = {'schema': 'infolica'}
@@ -902,19 +904,46 @@ class Preavis(Base):
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     service_id = Column(BigInteger, ForeignKey(Service.id), nullable=False)
     preavis_type_id = Column(BigInteger, ForeignKey(PreavisType.id))
-    date_demande = Column(
-        Date, default=datetime.datetime.utcnow, nullable=False)
+    operateur_sgrf_id = Column(BigInteger, ForeignKey(Operateur.id))
+    operateur_service_id = Column(BigInteger, ForeignKey(Operateur.id))
+    date_demande = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     date_reponse = Column(Date)
     remarque = Column(Text)
+    etape = Column(Text)
 
 
-# class RemarquePreavis(Base):  # currently not used, replaced by attribute Remarque in table Preavis
-#     __tablename__ = 'remarque_preavis'
-#     __table_args__ = {'schema': 'infolica'}
-#     id = Column(BigInteger, primary_key=True, autoincrement=True)
-#     preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
-#     remarque = Column(Text, nullable=False)
-#     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+class PreavisDecision(Base):
+    __tablename__ = 'preavis_decision'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
+    preavis_type_id = Column(BigInteger, ForeignKey(PreavisType.id))
+    operateur_service_id = Column(BigInteger, ForeignKey(Operateur.id))
+    remarque = Column(Text)
+    date = Column(Date)
+    definitif = Column(Boolean)
+    version = Column(Integer)
+
+
+class PreavisRemarque(Base):
+    __tablename__ = 'preavis_remarque'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
+    remarque = Column(Text, nullable=False)
+    operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
+    date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
+    lu_operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
+
+
+class PreavisGlossaire(Base):
+    __tablename__ = 'preavis_glossaire'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    service_id = Column(BigInteger, ForeignKey(Service.id), nullable=False)
+    ordre = Column(Integer)
+    titre = Column(Text, nullable=False)
+    texte = Column(Text, nullable=False)
 
 
 class GeosBalance(Base):
@@ -1196,6 +1225,13 @@ class VAffairesPreavis(Base):
     date_demande = Column(Date)
     date_reponse = Column(Date)
     remarque = Column(Text)
+    etape = Column(Text)
+    operateur_sgrf_id = Column(BigInteger)
+    operateur_sgrf_prenom = Column(Text)
+    operateur_sgrf_nom = Column(Text)
+    operateur_service_id = Column(BigInteger)
+    operateur_service_prenom = Column(Text)
+    operateur_service_nom = Column(Text)
     
 
 class VTableauBord(Base):

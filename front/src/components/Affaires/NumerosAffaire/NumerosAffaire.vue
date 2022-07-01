@@ -93,7 +93,7 @@ export default {
         .get(
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT + "/" +
-            this.$route.params.id,
+            this.affaire.id,
           {
             withCredentials: true,
             headers: { Accept: "application/json" }
@@ -258,7 +258,7 @@ export default {
      * Ouvrir la boîte de dialogue de réservation de numéros
      */
     callOpenReservationDialog() {
-      this.affaire_id = Number(this.$route.params.id);
+      this.affaire_id = Number(this.affaire.id);
       this.$refs.formReservation.openReservationDialog();
     },
 
@@ -323,7 +323,7 @@ export default {
     async doCreateDiffererNumero(numero) {
       let formData = new FormData();
       formData.append("numero_id", numero.numero_id);
-      formData.append("affaire_id", this.$route.params.id)
+      formData.append("affaire_id", this.affaire.id)
       formData.append("date_entree", moment(getCurrentDate(), process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
 
       this.$http

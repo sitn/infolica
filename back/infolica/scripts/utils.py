@@ -3,10 +3,9 @@ from datetime import date, datetime
 from sqlalchemy import func, and_, desc
 from sqlalchemy import String
 from sqlalchemy.sql.expression import cast
-from infolica.models.models import Affaire
-from infolica.models.models import Numero, AffaireNumero, Client, Plan
-from infolica.models.models import Role, ReservationNumerosMO, Cadastre, Operateur
-from infolica.scripts.mailer import send_mail
+from infolica.models.models import Preavis, PreavisRemarque, Plan
+from infolica.models.models import Numero, AffaireNumero
+from infolica.models.models import Role, ReservationNumerosMO, Operateur
 
 from infolica.scripts.authentication import get_user_functions, check_connected
 
@@ -184,7 +183,6 @@ class Utils(object):
         ))
 
         if plan_id:
-            print(plan_id)
             plan = request.dbsession.query(Plan).filter(Plan.idobj == plan_id).first()
             _, plan_no = plan.id_obj2.split('_')
             
@@ -279,6 +277,7 @@ class Utils(object):
             copytree(template_path, affaire_path, ignore=ignore_patterns('Thumbs.db'))
             settime = time.time()
             os.utime(affaire_path, times=(settime, settime))
+        return
     
     @classmethod
     def addNewRecord(cls, request, Model, params=None):
@@ -298,62 +297,39 @@ class Utils(object):
 
 
     @classmethod
-    def sendMailAffaireUrgente(cls, request, model):
-        mail_list = []
-        operateur_affaire_urgente = request.registry.settings['operateur_affaire_urgente'].split(',')
-        for op_id in operateur_affaire_urgente:
-            op_mail = request.dbsession.query(Operateur).filter(Operateur.id == op_id).first().mail
-            if op_mail is not None:
-                mail_list.append(op_mail)
-        # Add technicien + creator of affaire
-        technicien = request.dbsession.query(Operateur).filter(Operateur.id == model.technicien_id).first()
-        if technicien.mail is not None:
-            mail_list.append(technicien.mail)
+    def getOperateurFromUser(cls, request):
+        user = request.authenticated_userid    
+        operateur = request.dbsession.query(Operateur).filter(
+            func.lower(Operateur.login) == user
+        ).first()
+        return operateur
 
-        if len(mail_list) == 0:
-            return
-
-        subject = "Infolica - Affaire urgente"
-        cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == model.cadastre_id).first().nom
-        affaire_nom = " (" + model.no_access + ")" if model.no_access is not None else ""
-        text = "La mention 'URGENTE' a été attribuée à l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(model.id)) + "'>" + str(model.id) + affaire_nom + "</a></b>.<br>"
-        echeance = "non défini"
-        if not model.urgent_echeance is None:
-            echeance = datetime.strptime(model.urgent_echeance, '%Y-%m-%d').strftime("%d.%m.%Y")
-        text += "Échéance: " + echeance + "<br><br>"
-        text += "Merci de traiter cette affaire en priorité."
-        text += "<br><br><br>Données de l'affaire:<br> \
-                <ul><li>Chef de projet: " + str(technicien.initiales) + "</li>\
-                <li>Cadastre: " + str(cadastre) + "</li>\
-                <li>Description: " + str(model.nom) + "</li></ul>"
-        send_mail(request, mail_list, "", subject, html=text)
-        return
-
-
+    
     @classmethod
-    def sendMailClientHorsCanton(cls, request, client_id, affaire_id):
-        affaire = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
-        affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
-        cl = request.dbsession.query(Client).filter(Client.id == client_id).first()
-        #Contrôle que le client habite hors canton et que son numéros SAP est null
-        if cl.no_sap is None and int(cl.npa) not in request.registry.settings['npa_NE']:
-            operateur_secretariat = request.registry.settings["operateur_secretariat"].split(",")
-            mail_list = request.dbsession.query(Operateur.mail).filter(Operateur.id.in_(operateur_secretariat)).all()
-            mail_list = [mail[0] for mail in mail_list]
+    def check_unread_preavis_remarks(cls, request, affaire_id, service_id=None):
+        
+        preavis_remarques = request.dbsession.query(
+            PreavisRemarque.operateur_id
+        ).join(
+            Preavis, Preavis.id == PreavisRemarque.preavis_id, isouter=True
+        ).filter(
+            Preavis.affaire_id == affaire_id,
+            PreavisRemarque.lu_operateur_id == None,
+        )
+        
+        if not service_id is None:
+            preavis_remarques = preavis_remarques.filter(Preavis.service_id == service_id)
+        
+        preavis_remarques = preavis_remarques.all()
 
-            html = "<h3>Vérification de client</h3>"
-            html += "<p>Un client hors canton et sans numéro SAP a été référencé dans la facturation de l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire_id)) + "'>" + str(affaire_id) + affaire_nom + "</a></b>.</p>"
-            html += "<ul><li>" + ", ".join([
-                cl.entreprise if cl.entreprise is not None else " ".join([
-                    cl.titre if cl.titre is not None else "", 
-                    cl.prenom if cl.prenom is not None else "", 
-                    cl.nom if cl.nom is not None else ""
-                ]), 
-                cl.adresse if cl.adresse is not None else "", 
-                " ".join([
-                        cl.npa if cl.npa is not None else "", 
-                        cl.localite if cl.localite is not None else ""
-                    ])
-                ]) + " &#8594; <a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'clients/edit', str(cl.id)) + "'>Lien sur la fiche du client</a>"+ "</li></ul>"
-            html += "<p>Merci d'entreprendre les démarches nécessaires pour corriger le client ou pour demander sa création dans SAP.</p>"
-            send_mail(request, mail_list, "", "Infolica - Client hors canton à vérifier", html=html)
+        connectedUser = cls.getOperateurFromUser(request)
+        pr_remark_user_query = request.dbsession.query(Operateur)
+
+        unread = 0
+        if len(preavis_remarques) > 0:
+            for pr in preavis_remarques:
+                pr_remark_user = pr_remark_user_query.filter(Operateur.id == pr[0]).first()
+                if not connectedUser.service_id == pr_remark_user.service_id:
+                    unread += 1
+        
+        return unread

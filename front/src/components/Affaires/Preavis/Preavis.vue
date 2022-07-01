@@ -4,6 +4,8 @@
 
 <script>
 import { getCurrentDate, checkPermission, saveDocument, logAffaireEtape } from "@/services/helper";
+import PreavisEditComments from "@/components/PreavisExternes/PreavisExternesEditComments.vue";
+import PreavisEditDecision from "@/components/PreavisExternes/PreavisExternesEditDecision.vue";
 import { handleException } from "@/services/exceptionsHandler";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -15,27 +17,26 @@ export default {
   props: {
     affaire: {}
   },
-  components: {},
+  components: {
+    PreavisEditComments,
+    PreavisEditDecision
+  },
   data: () => {
     return {
       affaire_preavis: [],
-      preavis_type_liste: [],
-      services_liste: [],
-      services_liste_bk: [],
-      lastRecord: null,
-      showNewPreavisBtn: false,
-      showPreavisDialog: false,
-      modifyPreavis: false,
       affaireReadonly: true,
+      lastRecord: null,
+      modifyPreavis: false,
       new_preavis: {
         id: null,
         service: null,
-        preavis: null,
         date_demande: getCurrentDate(),
-        date_reponse: null,
-        remarque: null
       },
-      communeFusion: {},
+      selectedPreavis: null,
+      services_liste: [],
+      services_liste_bk: [],
+      showNewPreavisBtn: false,
+      showPreavisDialog: false,
     };
   },
 
@@ -52,59 +53,40 @@ export default {
      * SEARCH AFFAIRE PREAVIS
      */
     async searchAffairePreavis() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_AFFAIRE_PREAVIS_ENDPOINT +
-            this.$route.params.id,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/json" }
-          }
-        )
-        .then(response => {
-          if (response.data) {
-            this.affaire_preavis = response.data;
-            if (this.affaire_preavis.date_demande) {
-              this.affaire_preavis.date_demande = moment(this.affaire_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+      let tmp = this.selectedPreavis;
+      return new Promise ((resolve, reject) => {
+        this.$http
+          .get(
+            process.env.VUE_APP_API_URL +
+              process.env.VUE_APP_AFFAIRE_PREAVIS_ENDPOINT +
+              this.$route.params.id,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
             }
-            if (this.affaire_preavis.date_reponse) {
-              this.affaire_preavis.date_reponse = moment(this.affaire_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+          )
+          .then(response => {
+            if (response.data) {
+              this.affaire_preavis = response.data;
+              if (this.affaire_preavis.date_demande) {
+                this.affaire_preavis.date_demande = moment(this.affaire_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+              }
+              if (this.affaire_preavis.date_reponse) {
+                this.affaire_preavis.date_reponse = moment(this.affaire_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+              }
+
+              this.selectedPreavis = tmp;
+
+              resolve(this.affaier_preavis);
             }
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
+          })
+          .catch(err => {
+            handleException(err, this);
+            reject(err);
+          });
+      })
     },
 
-    /*
-     * SEARCH PREAVIS TYPES
-     */
-    async searchPreavisType() {
-      this.$http
-        .get(
-          process.env.VUE_APP_API_URL +
-            process.env.VUE_APP_PREAVIS_TYPE_ENDPOINT,
-          {
-            withCredentials: true,
-            headers: { Accept: "application/json" }
-          }
-        )
-        .then(response => {
-          if (response.data) {
-            this.preavis_type_liste = response.data.map(x => ({
-              id: x.id,
-              nom: x.nom,
-              toLowerCase: () => x.nom.toLowerCase(),
-              toString: () => x.nom
-            }));
-          }
-        })
-        .catch(err => {
-          handleException(err, this);
-        });
-    },
 
     /*
      * SEARCH SERVICES
@@ -112,7 +94,7 @@ export default {
     async searchServices() {
       this.$http
         .get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_SERVICES_ENDPOINT,
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_SERVICES_ENDPOINT + '?cadastre_id=' + this.affaire.cadastre_id,
           {
             withCredentials: true,
             headers: { Accept: "application/json" }
@@ -137,7 +119,9 @@ export default {
     /**
      * Modifier un préavis existant
      */
-    onModifyPreavis: function(curr_preavis) {
+    async onModifyPreavis(curr_preavis) {
+      await this.searchAffairePreavis();
+
       this.new_preavis.id = curr_preavis.id;
       this.new_preavis.date_demande = moment(curr_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
       if (curr_preavis.date_reponse) {
@@ -156,16 +140,7 @@ export default {
           toLowerCase: () => x.nom.toLowerCase(),
           toString: () => x.nom
         }))[0];
-      if (curr_preavis) {
-        this.new_preavis.preavis = this.preavis_type_liste
-          .filter(data => data.nom === curr_preavis.preavis)
-          .map(x => ({
-            id: x.id,
-            nom: x.nom,
-            toLowerCase: () => x.nom.toLowerCase(),
-            toString: () => x.nom
-          }))[0];
-      }
+      this.new_preavis.etape = curr_preavis.etape;
       this.modifyPreavis = true;
       this.showPreavisDialog = true;
     },
@@ -186,7 +161,6 @@ export default {
      */
     async saveNewPreavis() {
       let formData = this.fillData();
-      let service_id = this.new_preavis.service.id;
 
       let req;
       let remarqueEtapeStatut = "";
@@ -220,7 +194,7 @@ export default {
             
             // download courrier preavis
             if (!this.modifyPreavis) {
-              this.downloadModel(service_id);
+              this.downloadModel();
               remarqueEtape += " + fichier de demande enregistré dans le dossier de l'affaire";
             }
 
@@ -249,23 +223,15 @@ export default {
         formData.append("service_id", this.new_preavis.service.id);
         this.lastRecord = this.new_preavis.service.nom;
       }
-      if (this.new_preavis.preavis) {
-        formData.append("preavis_type_id", this.new_preavis.preavis.id);
-      }
       if (this.new_preavis.date_demande) {
         formData.append("date_demande",
           moment(this.new_preavis.date_demande, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       }
-      if (this.new_preavis.date_reponse) {
-        formData.append("date_reponse",
-          moment(this.new_preavis.date_reponse, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-      }
-      if (this.new_preavis.remarque) {
-        formData.append("remarque", this.new_preavis.remarque);
-      }
       if (this.new_preavis.id){
         formData.append("id", this.new_preavis.id);
       }
+      
+      formData.append("etape", 'externe');
 
       return formData;
     },
@@ -285,10 +251,7 @@ export default {
       this.showPreavisDialog = false;
       this.new_preavis.id = null;
       this.new_preavis.service = null;
-      this.new_preavis.preavis = null;
       this.new_preavis.date_demande = getCurrentDate();
-      this.new_preavis.date_reponse = null;
-      this.new_preavis.remarque = null;
       this.modifyPreavis = false;
     },
 
@@ -319,24 +282,10 @@ export default {
     /**
      * getModel pour préavis
      */
-    async downloadModel(service_id) {
+    async downloadModel() {
       let form = {};
       
-      service_id = Number(service_id)
-      if (service_id === Number(process.env.VUE_APP_SERVICE_SCAT)) {
-        // SCAT, adresser au service de l'urbanisme des villes si besoin
-        if (this.communeFusion.neuchatel.includes(this.affaire.cadastre_id)) {
-          service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_NEUCHATEL_ID);
-        }
-        else if (this.communeFusion.laChauxDeFonds.includes(this.affaire.cadastre_id)) {
-          service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_LA_CHAUX_DE_FONDS_ID);
-        }
-        else if (this.communeFusion.leLocle.includes(this.affaire.cadastre_id)) {
-          service_id = Number(process.env.VUE_APP_SERVICE_URBANISME_LE_LOCLE_ID);
-        }
-      }
-
-      const service_ = this.services_liste_bk.filter(x => x.id === service_id)[0];
+      const service_ = this.services_liste_bk.filter(x => x.id === this.new_preavis.service.id)[0];
       form.adresse_service = [
         service_.service,
         [service_.titre, service_.prenom, service_.nom].filter(Boolean).join(" ") !== ""? "À l'att. de " + [service_.titre, service_.prenom, service_.nom].filter(Boolean).join(" "): null, 
@@ -357,7 +306,7 @@ export default {
         titre: "",
         contenu: ""
       };
-      if (service_id === Number(process.env.VUE_APP_SERVICE_SCAT)) {
+      if (this.new_preavis.service.id === Number(process.env.VUE_APP_SERVICE_SCAT)) {
         observation.titre = "Observation:",
         observation.contenu = "Pour autant que vous le jugiez utile, veuillez transmettre le dossier au service des forêts ou au service de la viticulture."
       }
@@ -365,7 +314,7 @@ export default {
       let formData = new FormData();
       formData.append("affaire_id", this.affaire.id);
       formData.append("template", "Preavis");
-      formData.append("service_id", service_id);
+      formData.append("service_id", this.new_preavis.service.id);
       formData.append("values", JSON.stringify({
         ADRESSE_SERVICE: form.adresse_service,
         DATE_ENVOI: String(getCurrentDate()),
@@ -391,13 +340,11 @@ export default {
      * Open preavis dialog
      */
     openPreavisDialog() {
+
       this.new_preavis = {
         id: null,
         service: null,
-        preavis: null,
         date_demande: getCurrentDate(),
-        date_reponse: null,
-        remarque: null
       }
 
       this.showPreavisDialog = true;
@@ -416,36 +363,59 @@ export default {
       ).then(() => {
         this.showPreavisDialog = false;
         this.searchAffairePreavis();
-        this.$root.$emit("showMessage", "Le prévais a bien été supprimé");
+        this.$root.$emit("ShowMessage", "Le prévais a bien été supprimé");
+      }).catch(err => handleException(err, this));
+    },
+
+
+    // on select table item
+    onSelectTableItem(item) {
+      this.selectedPreavis = item;
+    },
+
+
+    // reopen preavis for service externe
+    async reopenPreavis(){
+      let formData = new FormData();
+      formData.append('id', this.new_preavis.id);
+      formData.append('etape', 'externe');
+      formData.append('preavis_type_id', null);
+      formData.append('remarque', null);
+      formData.append('date_reponse', null);
+      formData.append('logstep', true);
+
+      this.$http.put(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      ).then(() => {
+        this.showPreavisDialog = false;
+        this.searchAffairePreavis();
+        this.$root.$emit("ShowMessage", "La demande de modification du préavis a bien été enregistrée");
       }).catch(err => handleException(err, this));
     }
   },
 
   mounted: function() {
     this.searchAffairePreavis();
-    this.searchPreavisType();
     this.searchServices();
 
-    // Définit les cadastres fusionnés pour la demande de préavis au services de l'urbanisme des villes
-    this.communeFusion = {
-        neuchatel: [
-          Number(process.env.VUE_APP_CADASTRE_NEUCHATEL_ID),
-          Number(process.env.VUE_APP_CADASTRE_LA_COUDRE_ID),
-          Number(process.env.VUE_APP_CADASTRE_CORCELLES_CORMONDRECHE_ID),
-          Number(process.env.VUE_APP_CADASTRE_VALANGIN_ID),
-          Number(process.env.VUE_APP_CADASTRE_PESEUX_ID)
-        ],
-        laChauxDeFonds: [
-          Number(process.env.VUE_APP_CADASTRE_LA_CHAUX_DE_FONDS_ID),
-          Number(process.env.VUE_APP_CADASTRE_LES_EPLATURES_ID)
-        ],
-        leLocle: [
-          Number(process.env.VUE_APP_CADASTRE_LE_LOCLE_ID),
-          Number(process.env.VUE_APP_CADASTRE_LES_BRENETS_ID)
-        ]
-      }
-
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_PREAVIS_EDITION) || this.$parent.parentAffaireReadOnly;
+    
+    // this.$root.$on('getPreavis', () => this.searchAffairePreavis());
+    this.$root.$on('getPreavis',
+      (preavis_id) => {
+        this.affaire_preavis.forEach(x => {
+          if (x.id === preavis_id) {
+            x.unread_remarks = x.unread_remarks-1;
+          }
+        }
+      ) 
+    }
+    );
   }
 };
 </script>

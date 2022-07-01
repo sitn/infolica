@@ -65,7 +65,7 @@ export default {
         .get(
           process.env.VUE_APP_API_URL +
             process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT + "/" +
-            this.$route.params.id + "?affaire_numero_actif=true",
+            this.affaire.id + "?affaire_numero_actif=true",
           {
             withCredentials: true,
             headers: { Accept: "application/json" }

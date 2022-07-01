@@ -2,8 +2,6 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
-from sqlalchemy import func
-
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Operateur
@@ -43,8 +41,10 @@ def operateur_by_id_view(request):
     """
     Return operateur by id
     """
+    authorized_services = [*[request.registry.settings['service_mo'].replace(' ', '')], *request.registry.settings['preavis_services_externes'].replace(' ', '').split(',')]
+
     # Check connected
-    if not check_connected(request):
+    if not check_connected(request, services=authorized_services):
         raise exc.HTTPForbidden()
 
     id = request.matchdict['id']

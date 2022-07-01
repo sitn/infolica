@@ -8,7 +8,8 @@ from infolica.models.constant import Constant
 from infolica.models.models import Affaire, AffaireType, ModificationAffaireType
 from infolica.models.models import ModificationAffaire, VAffaire, Facture, Client
 from infolica.models.models import ControleGeometre, ControleMutation, ControlePPE, SuiviMandat
-from infolica.models.models import AffaireEtape, AffaireEtapeIndex
+from infolica.models.models import AffaireEtape, AffaireEtapeIndex, Preavis
+from infolica.scripts.mail_templates import MailTemplates
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 
@@ -129,6 +130,15 @@ def affaire_cockpit_view(request):
         etape_days_elapsed_text = "aujourd'hui" if etape_days_elapsed == 0 else ("hier" if etape_days_elapsed == 1 else str(etape_days_elapsed) + " jours")
         title = affaire.technicien_initiales + " — Affaire " + str(affaire.id) + " — " + affaire.cadastre + " — " + affaire.nom + " — Dans cette étape depuis " + etape_days_elapsed_text
         
+        nb_preavis = request.dbsession.query(func.count(Preavis.affaire_id)).filter(Preavis.affaire_id == affaire.id).scalar()
+        nb_closed_preavis = request.dbsession.query(func.count(Preavis.affaire_id)).filter(Preavis.affaire_id == affaire.id, Preavis.date_reponse != None).scalar()
+        preavis_status = None
+        if nb_preavis > 0:
+            if nb_preavis == nb_closed_preavis:
+                preavis_status = 'ok'
+            else:
+                preavis_status = 'pending'
+
         tmp = {
             'id': affaire.id,
             'affaire_type': affaire.type_affaire,
@@ -147,7 +157,9 @@ def affaire_cockpit_view(request):
             'urgent_echeance': urgent_echeance,
             'attribution': affaire.attribution,
             'nom_affaire': nom_affaire,
-            'title': title
+            'title': title,
+            'preavis_status': preavis_status,
+            'preavis_unread_remarks': Utils.check_unread_preavis_remarks(request, affaire.id)
         }
 
         if affaire.etape_id == affaire_etape_devis_id:
@@ -357,7 +369,7 @@ def affaires_new_view(request):
 
     # Envoyer e-mail si l'affaire est urgente (sauf si c'est une PPE ou modif de PPE)
     if model.urgent and (model.type_id != int(request.registry.settings['affaire_type_ppe_id']) or model.type_id != int(request.registry.settings['affaire_type_modification_ppe_id'])):
-        Utils.sendMailAffaireUrgente(request, model)
+        MailTemplates.sendMailAffaireUrgente(request, model)
 
     # Add facture
     if 'facture_client_id' in request.params:
@@ -452,7 +464,7 @@ def affaires_update_view(request):
 
     # If urgence defined after affaire creation, send e-mail
     if not affaire_urgence and "urgent" in params and (record.type_id != int(request.registry.settings['affaire_type_ppe_id']) or record.type_id != int(request.registry.settings['affaire_type_modification_ppe_id'])):
-        Utils.sendMailAffaireUrgente(request, record)
+        MailTemplates.sendMailAffaireUrgente(request, record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
 
@@ -595,7 +607,7 @@ def affaire_spatial(request):
     Get modification affaire by affaire_fille
     """
     # Check connected
-    if not check_connected(request):
+    if not check_connected(request, [*[request.registry.settings['service_mo'].replace(' ', '')], *request.registry.settings['preavis_services_externes'].replace(' ', '').split(',')]):
         raise exc.HTTPForbidden()
 
     results = request.dbsession.query(VAffaire).filter(

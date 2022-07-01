@@ -43,7 +43,7 @@ export default {
           .get(
             process.env.VUE_APP_API_URL +
               process.env.VUE_APP_AFFAIRE_SUIVI_MANDAT_ENDPOINT +
-              this.$route.params.id,
+              this.affaire.id,
             {
               withCredentials: true,
               headers: { Accept: "application/json" }
@@ -98,7 +98,7 @@ export default {
      */
     newSuiviMandat() {
       var formData = new FormData();
-      formData.append("affaire_id", this.$route.params.id);
+      formData.append("affaire_id", this.affaire.id);
 
       this.$http
         .post(
@@ -170,7 +170,7 @@ export default {
      */
     updateAffaireDateValidation(){
       let formData = new FormData();
-      formData.append("id_affaire", this.$route.params.id);
+      formData.append("id_affaire", this.affaire.id);
       formData.append("date_validation", moment(this.suiviMandat.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
 
       this.$http.put(

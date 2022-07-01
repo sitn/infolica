@@ -15,8 +15,9 @@ export default {
       return {
           loggedUserName: String,
           isAdmin: false,
+          isUserSGRF: false,
+          session_user: {},
           versionBtn: {
-            disabled: true,
             version: null,
             showBadge: false,
           }
@@ -31,7 +32,6 @@ export default {
     setUserName(data){
       if(data && data.nom && data.prenom) {
         this.loggedUserName = data.prenom + ' ' + data.nom;
-        this.versionBtn.disabled = false;
       } else {
         this.loggedUserName = null;
       }
@@ -41,18 +41,30 @@ export default {
      * call logout
      */
     callLogout(){
-      if(this.$router && this.$router.currentRoute && this.$router.currentRoute.name != 'Login'){
+      if(this.$router && this.$router.currentRoute && this.$router.currentRoute.name != 'Login') {
         let vm = this;
         this.$router.push({name: "Login"}, function(){
           vm.$root.$emit("infolica_user_logout");
-          vm.versionBtn.disabled = true;
-        });        
+        });
       }
       
     },
 
     checkIsAdmin() {
       this.isAdmin = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
+    },
+
+    /**
+     * Check if user is from SGRF
+     */
+    checkIsSGRF() {
+      let session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+
+      if(session_user && session_user.service) {
+        this.isUserSGRF = session_user.service === process.env.VUE_APP_SERVICE_MO;
+      } else {
+        this.isUserSGRF = false;
+      }
     },
 
     /**
@@ -72,24 +84,26 @@ export default {
   },
 
   mounted: function(){
-      //this.userNameVisible = false;
-
-      this.$root.$on('infolica_user_logged_in', (logged_user) =>{
-        this.setUserName(logged_user);
+    this.$root.$on('infolica_user_logged_in', (logged_user) =>{
+      this.setUserName(logged_user);
+      setTimeout(() => {
         this.checkIsAdmin();
-      });
+      }, 500);
+      this.isUserSGRF = logged_user.service === process.env.VUE_APP_SERVICE_MO;
+    });
 
-      this.$root.$on('infolica_user_logged_out', () =>{
-        this.setUserName(null);
-      });
+    this.$root.$on('infolica_user_logged_out', () =>{
+      this.setUserName(null);
+      this.isUserSGRF = false;
+    });
 
-      var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
-      if (session_user) {
-        this.setUserName(session_user);
-        this.checkIsAdmin();
-      }
+    this.session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+    this.setUserName(this.session_user);
 
-      this.$root.$on("checkVersion", (version, isNew) => this.checkVersion(version, isNew));
+    this.checkIsAdmin();
+    this.checkIsSGRF();
+    
+    this.$root.$on("checkVersion", (version, isNew) => this.checkVersion(version, isNew));
   }
 }
 </script>

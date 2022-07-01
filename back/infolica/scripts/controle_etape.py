@@ -6,8 +6,6 @@ from infolica.models import Preavis, SuiviMandat
 from infolica.scripts.utils import Utils
 from sqlalchemy import func
 
-from datetime import datetime
-
 LOGGER = logging.getLogger(__name__)
 
 class ControleEtapeChecker():
@@ -22,7 +20,10 @@ class ControleEtapeChecker():
         final_decision = True
         results = []
         for controle in controles:
-            method_name = '_get_{}_controle'.format(controle.nom.lower())
+            ctrl_nom = controle.nom.lower()
+            if ctrl_nom.endswith('_2') or ctrl_nom.endswith('_3'):
+                ctrl_nom = ctrl_nom[:-2]
+            method_name = '_get_{}_controle'.format(ctrl_nom)
             method = getattr(cls, method_name, cls._get_undefined_controle)
 
             # Apply control
@@ -91,13 +92,16 @@ class ControleEtapeChecker():
         request = kwargs.get('request')
         affaire_id = kwargs.get('affaire_id')
         
-        test = request.dbsession.query(
+        query = request.dbsession.query(
             func.count(Preavis.affaire_id)
         ).filter(
             Preavis.affaire_id == affaire_id
-        ).scalar()
+        )
 
-        return test > 0
+        nb_demandes = query.scalar() 
+        nb_reponses = query.filter(Preavis.date_reponse != None).scalar()
+
+        return nb_demandes == nb_reponses
     
     
     @staticmethod

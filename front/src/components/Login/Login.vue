@@ -37,12 +37,16 @@ export default {
           if(response && response.data && response.data.id){
             this.processLogin(response.data);
 
-            const redirectPath = localStorage.getItem('infolica_redirectPath');
-            if (redirectPath) {
-              this.$router.replace(redirectPath);
-              localStorage.removeItem('infolica_redirectPath');
+            if (process.env.VUE_APP_SERVICE_MO === response.data.service) {
+              const redirectPath = localStorage.getItem('infolica_redirectPath');
+              if (redirectPath) {
+                this.$router.replace(redirectPath);
+                localStorage.removeItem('infolica_redirectPath');
+              } else {
+                this.$router.push({ name: "Cockpit"});
+              }
             } else {
-              this.$router.push({ name: "Cockpit"});
+                this.$router.push({ name: "Preavis"});
             }
           } else {
             this.showProgess = false;

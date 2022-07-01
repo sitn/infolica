@@ -9,7 +9,8 @@ from infolica.scripts.controle_etape import ControleEtapeChecker
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffaires, VAffaire
-from infolica.models.models import EtapeMailer, Operateur, Affaire, Facture, Client
+from infolica.models.models import EtapeMailer, Operateur, Affaire, Facture
+from infolica.scripts.mail_templates import MailTemplates
 from infolica.scripts.utils import Utils
 from infolica.scripts.mailer import send_mail
 from infolica.scripts.authentication import check_connected
@@ -169,7 +170,7 @@ def etapes_new_view(request):
         clients_factures_id = request.dbsession.query(Facture.client_id).filter(Facture.affaire_id == affaire_id).all()
         clients_factures_id = [cl_id[0] for cl_id in clients_factures_id]
         for cl_id in clients_factures_id:
-            Utils.sendMailClientHorsCanton(request, cl_id, affaire.id)
+            MailTemplates.sendMailClientHorsCanton(request, cl_id, affaire.id)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireEtape.__tablename__))
 

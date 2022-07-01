@@ -7,7 +7,7 @@ from infolica.models.constant import Constant
 from infolica.models.models import NotesMAJ, Operateur
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
-from datetime import date, datetime
+from datetime import datetime
 
 
 @view_config(route_name='notes_maj', request_method='GET', renderer='json')

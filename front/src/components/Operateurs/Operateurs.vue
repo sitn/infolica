@@ -4,7 +4,7 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission} from '@/services/helper';
+import {checkPermission, stringifyAutocomplete2} from '@/services/helper';
 const moment = require('moment');
 
 export default {
@@ -24,6 +24,11 @@ export default {
         responsable: false,
         chef_equipe: false,
         mail: null,
+        service: {},
+        entree: null,
+        sortie: null,
+        role_id: null,
+        service_id: null,
       },
       operateurs: [],
       search: {
@@ -31,6 +36,8 @@ export default {
         prenom: null,
         login: null
       },
+      services: [],
+      roles: [],
       divEditUser: {
         title: "",
         show: false,
@@ -52,7 +59,7 @@ export default {
         formData.append("login", this.search.login);
 
       this.$http.post(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_OPERATEURS_ENDPOINT, 
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_OPERATEURS_ENDPOINT,
         formData,
         {
           withCredentials: true,
@@ -61,12 +68,19 @@ export default {
       )
       .then(response =>{
         if(response && response.data){
-          this.operateurs = response.data;
+          let tmp = response.data;
+
+          tmp.forEach(x => {
+            x.entree = x.entree === null? null: moment(x.entree, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            x.sortie = x.sortie === null? null: moment(x.sortie, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+          });
+
+          this.operateurs = tmp;
         }
       })
-      //Error 
+      //Error
       .catch(err => {
-        handleException(err, this);  
+        handleException(err, this);
       })
     },
 
@@ -91,7 +105,7 @@ export default {
       this.divEditUser.title = "Modifier un·e opérateur·rice existant·e";
       this.divEditUser.show = true;
     },
-    
+
     /**
      * Call delete operateur
      */
@@ -116,7 +130,7 @@ export default {
     onConfirmDelete () {
 
       this.$http.delete(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT + "?id=" +  this.currentDeleteId, 
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT + "?id=" +  this.currentDeleteId,
         {
           withCredentials: true,
           headers: {"Accept": "application/json"}
@@ -128,9 +142,9 @@ export default {
           this.$root.$emit('ShowMessage', "L'opérateur a bien été supprimé.");
         }
       })
-      //Error 
+      //Error
       .catch(err => {
-        handleException(err, this);  
+        handleException(err, this);
       })
     },
 
@@ -171,6 +185,10 @@ export default {
         responsable: false,
         chef_equipe: false,
         mail: null,
+        service_id: null,
+        role_id: null,
+        entree: null,
+        sortie: null,
       };
     },
 
@@ -182,8 +200,14 @@ export default {
 
       let errors = [];
       for (const elem in this.form) {
-        if (this.form[elem] !== null && this.form[elem] !== "") {
-          formData.append(elem, this.form[elem]);
+        if ( (this.form[elem] !== null && this.form[elem] !== "") || (elem !== "service_id" || elem !== "sortie")) {
+          if (elem === 'entree') {
+            formData.append(elem, moment(this.form[elem], process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
+          } else if (elem === 'sortie') {
+            formData.append(elem, this.form[elem]? moment(this.form[elem], process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
+          } else {
+            formData.append(elem, this.form[elem]);
+          }
         } else {
           if (elem !== "id") {
             errors.push(elem);
@@ -254,12 +278,55 @@ export default {
         ).then(response => resolve(response))
         .catch(err => reject(err));
       });
+    },
+
+
+    /**
+     * get services
+     */
+    async getService() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_SERVICES_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+
+          this.services = stringifyAutocomplete2(response.data, ['abreviation']);
+        }
+      })
+      .catch(err => handleException(err, this));
+    },
+
+
+    /**
+     * get services
+     */
+    async getRoles() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_USER_ROLE_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+
+          this.roles = stringifyAutocomplete2(response.data, ['nom']);
+
+        }
+      })
+      .catch(err => handleException(err, this));
     }
 
 
   },
 
   mounted: function(){
+    this.getService();
+    this.getRoles();
     this.searchOperateurs();
     this.editionOperateursAllowed = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
   }

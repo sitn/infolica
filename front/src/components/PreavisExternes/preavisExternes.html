@@ -1,0 +1,74 @@
+<div id="preavis" class="preavis">
+    <md-toolbar class="justifyTitleBtn">
+        <h1>Préavis</h1>
+    </md-toolbar>
+
+    <md-card>
+        <md-card-content>
+            <md-table v-model="liste_preavis_attente" md-sort="date_demande" md-sort-order="desc" md-card>
+                <md-table-toolbar>
+                    <div class="md-toolbar-section-start">
+                        <h1 class="md-title">Demandes en cours</h1>
+                    </div>
+          
+                    <md-field md-clearable style="width: 350px;">
+                        <md-input placeholder="Rechercher" v-model="searchTerm" @input="getOpenedPreavis" />
+                    </md-field>
+                </md-table-toolbar>
+          
+                <md-table-empty-state
+                    md-label="Aucun préavis en attente">
+                </md-table-empty-state>
+          
+                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                    <md-table-cell md-label="Date demande" md-sort-by="preavis_date_demande_int" md-numeric>{{ item.preavis_date_demande }}</md-table-cell>
+                    <md-table-cell md-label="Affaire_id" md-sort-by="preavis_affaire_id" md-numeric>{{ item.preavis_affaire_id }}</md-table-cell>
+                    <md-table-cell md-label="Cadastre" md-sort-by="affaire_cadastre">{{ item.affaire_cadastre }}</md-table-cell>
+                    <md-table-cell md-label="Description">{{ item.affaire_description }}</md-table-cell> 
+                    <md-table-cell md-label="Opérateur">
+                        <div v-if="item.preavis_attribution">{{ item.preavis_attribution }}</div>
+                        <div v-else><md-button class="md-dense md-raised md-primary" @click="preavisAttribution(item)">attribution</md-button></div>
+                    </md-table-cell> 
+                    <md-table-cell md-label="Consultation">
+                        <div v-if="item.unread_remarks > 0"><md-badge :md-content="item.unread_remarks" md-dense><md-button class="md-icon-button md-primary" :to="{ name: 'PreavisEdit', params: { id: item.preavis_id } }"><md-icon>open_in_new</md-icon></md-button></md-badge></div>
+                        <div v-else><md-button class="md-icon-button md-primary" :to="{ name: 'PreavisEdit', params: { id: item.preavis_id } }"><md-icon>open_in_new</md-icon></md-button></div>
+                    </md-table-cell>
+                </md-table-row>
+            </md-table>
+
+            <br>
+            <md-divider></md-divider>
+            <br>
+
+            <md-table v-model="liste_preavis_old" md-sort="date_demande" md-sort-order="desc" md-card>
+                <md-table-toolbar>
+                    <div class="md-toolbar-section-start">
+                        <h1 class="md-title">Demandes réalisées</h1>
+                    </div>
+          
+                    <md-field md-clearable style="width: 350px;">
+                        <md-input placeholder="Rechercher" v-model="searchTerm_old" @input="getClosedPreavis" />
+                    </md-field>
+                </md-table-toolbar>
+          
+                <md-table-empty-state
+                    md-label="Aucun préavis réalisé">
+                </md-table-empty-state>
+          
+                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                    <md-table-cell md-label="Date demande" md-sort-by="preavis_date_demande_int" md-numeric>{{ item.preavis_date_demande }}</md-table-cell>
+                    <md-table-cell md-label="Affaire_id" md-sort-by="preavis_affaire_id" md-numeric>{{ item.preavis_affaire_id }}</md-table-cell>
+                    <md-table-cell md-label="Cadastre" md-sort-by="affaire_cadastre">{{ item.affaire_cadastre }}</md-table-cell>
+                    <md-table-cell md-label="Description">{{ item.affaire_description }}</md-table-cell> 
+                    <md-table-cell md-label="Opérateur">
+                        <div v-if="item.preavis_attribution">{{ item.preavis_attribution }}</div>
+                    </md-table-cell> 
+                    <md-table-cell md-label="Consultation">
+                        <div v-if="item.unread_remarks > 0"><md-badge :md-content="item.unread_remarks" md-dense><md-button class="md-icon-button md-primary" :to="{ name: 'PreavisEdit', params: { id: item.preavis_id } }"><md-icon>open_in_new</md-icon></md-button></md-badge></div>
+                        <div v-else><md-button class="md-icon-button md-primary" :to="{ name: 'PreavisEdit', params: { id: item.preavis_id } }"><md-icon>open_in_new</md-icon></md-button></div>
+                    </md-table-cell>
+                </md-table-row>
+            </md-table>
+        </md-card-content>
+    </md-card>
+</div>

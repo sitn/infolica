@@ -1,37 +1,35 @@
-# infolica
-Fork and clone Infolica.  
+# Infolica
+Infolica is a web application for the management of cadastral survey affairs.
 
-## Production
-### back
-Open a cmd window and move to back folder.
+## Install
+Go to your project folder
+```
+cd path/to/project
+```
+
+Get project from github
+```
+git init
+git remote add upstream https://github.com/sitn/infolica.git
+```
+
+### App architecture
+Backend and frontend are completely independant in Infolica, so they must be installed separately.
+
+#### Backend: 
+- You will need to create a virtual environment with `venv`
+- In `back/` directory, ou must rename `production.ini.template` to `production.ini` and adapt variables
+
 ```
 cd back
-```
-Create a Python virtual environment with venv 
-```
 python -m venv env
-```
-Launch the virtual environment  
-```
 env/Scripts/activate
-```
-Install requirements  
-```
 pip install -r requirements.txt
-```
-
-Make your changes in config files.
-Rename `production.ini.template` to `production.ini`.
-Open the file and adapt `sqlalchemy.url`, `ldap_url`, `ldap_passwd` and all the config according to your needs.
-
-> :warning: Infolica is based on PG Database and depends on some geographical components. Make sure to add the `postgis` extension to your database schema.
-
-Install the project in editable mode
-```
 pip install -e .
+deactivate
 ```
 
-To test if the backend is responding, type the following in your virtual env. It will serve your api.
+To test if the backend is responding correctly, enter the following in your virtual env. It will serve your api.
 ```
 pserve --reload development.ini
 ```
@@ -41,27 +39,33 @@ localhost:6543/infolica/api/test
 ```
 If you can read "Yeah, your api is working!", your installation is running correctly.
 
+#### Frontend: 
 
-### front
-Move to front.
 ```
 cd ../front
-```
-
-Install dependencies.
-```
-npm install
+npm install --legacy-peer-deps
 ```
 
 Duplicate the `.env` file to `env.development.local` for development, `env.production.local` for production or whatever mode you like (`.env.[my_mode].local`) and adapt urls and config. Files ending with `*.local` are ignored by git.
 
-Then build with `npm run build -- --mode my_mode`. For production mode, use:
+Then build with `npm run build -- --mode my_mode`. For production mode (further readings about this [here](https://cli.vuejs.org/guide/mode-and-env.html#environment-variables).), use:
 ```
 npm run build [-- --mode production]
 ```
-Further readings about this [here](https://cli.vuejs.org/guide/mode-and-env.html#environment-variables).
 
-### Development
+You can also use `npm run serve` to test your client, which will reload on the fly after your modifications on the front.
+```
+npm run serve
+```
+
+#### Database
+> :warning: Infolica is based on PG Database and depends on some geographical components. Make sure to add the `postgis` extension to your database schema.
+
+
+
+
+
+# Apache
 
 When developping and to avoid getting cross-origin issues with the application cookie, one should proxy the whole application through Apache.
 

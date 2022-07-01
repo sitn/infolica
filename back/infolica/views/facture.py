@@ -7,6 +7,7 @@ from infolica.models.constant import Constant
 from infolica.models.models import AffaireEtape
 from infolica.models.models import EmolumentAffaire, EmolumentAffaireRepartition
 from infolica.models.models import Facture, FactureType, VFactures
+from infolica.scripts.mail_templates import MailTemplates
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 import json
@@ -89,7 +90,7 @@ def factures_new_view(request):
             AffaireEtape.etape_id == request.registry.settings['affaire_etape_traitement_id']
         ).count()
         if nb_etape_traitement >= 1:
-            Utils.sendMailClientHorsCanton(request, client_id, affaire_id)
+            MailTemplates.sendMailClientHorsCanton(request, client_id, affaire_id)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Facture.__tablename__))
 
@@ -137,7 +138,7 @@ def factures_update_view(request):
         AffaireEtape.etape_id == request.registry.settings['affaire_etape_traitement_id']
     ).count()
     if facture_client_id_new and facture_client_id_old != facture_client_id_new and nb_etape_traitement >= 1:
-        Utils.sendMailClientHorsCanton(request, facture_record.client_id, facture_record.affaire_id)
+        MailTemplates.sendMailClientHorsCanton(request, facture_record.client_id, facture_record.affaire_id)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Facture.__tablename__))
 

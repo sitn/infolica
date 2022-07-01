@@ -16,23 +16,36 @@ def do_logout(request):
     response = Response('{"error": "false", "code": 200, "message": "User logged out"}', headers=headers)
     return response
 
-def check_connected(request):
+
+def check_connected(request, services=None):
+    """
+    check connection
+    """
+    if services is None:
+        services = [request.registry.settings['service_mo'].replace(' ', '')]
 
     user = request.authenticated_userid
 
     if user is None:
         return False
+    
+    operateur = request.dbsession.query(Operateur).filter(
+        func.lower(Operateur.login) == user
+    ).first()
 
-    return True
+    if operateur.service in services:
+        return True
+    else:
+        return False
+
 
 def get_user_functions(request):
     
     results = {}
 
     operateur = request.dbsession.query(Operateur).filter(
-        func.lower(
-            Operateur.login) == request.authenticated_userid
-        ).first()
+        func.lower(Operateur.login) == request.authenticated_userid
+    ).first()
 
     if operateur:
         fonctions = operateur.role.fonctions

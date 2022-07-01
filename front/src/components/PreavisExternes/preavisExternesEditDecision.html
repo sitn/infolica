@@ -1,0 +1,80 @@
+<div id="preavisEditDecision" class="preavisEditDecision">
+    <md-card>
+        <md-card-header>
+            <div class="md-title">Préavis</div>
+        </md-card-header>
+        <md-card-content>
+            <div v-if="decisions_liste.length > 0">
+                <table class="tg">
+                    <thead>
+                        <tr>
+                            <th>Version</th>
+                            <th style="text-align: left;">Opérateur</th>
+                            <th style="text-align: left;">Préavis</th>
+                            <th style="text-align: left;">Commentaire</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in decisions_liste" v-bind:class="{ oldVersion: item.version !== lastDecisionVersion }">
+                            <td style="width: 100px; vertical-align: top; text-align: center;">{{ item.version }}</td>
+                            <td style="width: 140px; vertical-align: top;">{{ item.operateur }}</td>
+                            <td style="width: 140px; vertical-align: top;"><md-icon :style="item.icon_status_style">{{ item.icon_status }}</md-icon> {{ item.decision }}</td>
+                            <td style="max-width: 1000px; min-width: 800px; white-space: pre-wrap; vertical-align: top;">{{ item.remarque }}</td>
+                            <td style="width: 50px; white-space: pre-wrap;" v-if="showAddDecision === true && decision.show === true"><md-button @click="copyText(item)" class="md-primary md-icon-button" title="Récupérer le texte dans une nouvelle version de préavis"><md-icon>download</md-icon></md-button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div v-else>
+                <em>Aucun préavis n'a été saisi pour le moment.</em>
+            </div>
+
+            <div v-if="showAddDecision">
+                <br>
+                <md-button @click="openNewDecision" class="md-primary md-raised" v-if="decision.show === false">Saisir une nouvelle version</md-button>
+    
+                <md-card v-if="decision.show === true">
+                    <md-card-header>
+                        <div class="md-title">Saisie d'une nouvelle version du préavis</div>
+                    </md-card-header>
+
+                    <md-card-content>
+                        <div style="margin-top: 10px; margin-bottom: 10px;" v-if="decision.version"><em>Version provisoire n° {{ decision.version }} du {{ decision.date }} enregistrée par {{ decision.operateur }}</em></div>
+
+                        <div class="justifyTitleBtn">
+                            <div>
+                                <md-radio v-model="decision.preavis_type_id" :value="1" :disabled="decision.definitif">Préavis positif</md-radio>
+                                <md-radio v-model="decision.preavis_type_id" :value="5" :disabled="decision.definitif">Préavis positif avec conditions</md-radio>
+                                <md-radio v-model="decision.preavis_type_id" :value="2" :disabled="decision.definitif">Préavis négatif</md-radio>
+                                <md-radio v-model="decision.preavis_type_id" :value="3" :disabled="decision.definitif">Pas concerné</md-radio>
+                            </div>
+                            <div v-if="glossaire.length > 0">
+                                <md-button class="md-primary md-raised md-dense" @click="showGlossaire = !showGlossaire">Glossaire</md-button>
+                            </div>
+
+                        </div>
+                        <br>
+                        
+                        <div v-if="showGlossaire" style="font-size: 12px;">
+                            <table class="table_glossaire" cellpadding="5px">
+                                <tbody>
+                                    <tr v-for="item in glossaire">
+                                        <td><button @click="addGlossaireText(item.texte)">+</button></td>
+                                        <td style="white-space: pre-wrap;">{{ item.texte }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br>
+                        </div>
+                        
+                        <md-field>
+                            <label>Commentaire</label>
+                            <md-textarea v-model="decision.remarque" :disabled="decision.definitif" style="max-height: 70vh; height: 70vh;"></md-textarea>
+                        </md-field>
+                        <md-button @click="saveDecisionProvisoire" class="md-raised md-primary" style="float: right; margin-bottom: 20px;" :disabled="decision.preavis_type_id == null || decision.remarque == null || decision.remarque === ''" v-if="!decision.definitif">Enregistrer provisoirement</md-button>
+                    </md-card-content>
+                </md-card>
+            </div>
+        </md-card-content>
+    </md-card>
+</div>

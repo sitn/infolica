@@ -1,0 +1,71 @@
+.preavisEdit {
+    width: 90%;
+    margin: auto;
+    height: calc(100vh - 80px);
+}
+
+.preavisHeader {
+    position: fixed;
+    margin-top: 0px;
+    width: calc(90% - 33px);
+}
+
+.preavisContent {
+    position: relative; top: 70px;
+}
+
+.title {
+    font-weight: bold;
+    width: 180px;
+}
+
+.content {
+    width: 400px;
+}
+
+.tg {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.tg tr {
+    height: 45px;
+}
+
+.tg td {
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+    padding: 10px;
+}
+
+#mapContainer {
+    width: 95%;
+    margin: auto;
+    height: 370px; /*valeur empirique*/
+    border: 1px;
+    border-width: 1px;
+    border-color: black;
+    border-style: solid;
+}
+
+.highlightDecision {
+    background-color: yellow;
+}
+
+.dragdrop {
+    height: 200px; /*valeur empirique*/
+    border: 1px;
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: black;
+    border-style: dashed;
+    text-align: center;
+    background-color: lightgray;
+}
+
+.map{
+    width: 100%;
+    height: 100%;
+    float: left;
+}
