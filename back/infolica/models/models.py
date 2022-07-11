@@ -76,6 +76,7 @@ class Operateur(Base):
     role_id = Column(BigInteger, ForeignKey(Role.id))
     service = Column(Text)
     service_id = Column(BigInteger, ForeignKey(Service.id))
+    ldap_domain = Column(String(5))
     role = relationship("Role", uselist=False)
 
 class Cadastre(Base):

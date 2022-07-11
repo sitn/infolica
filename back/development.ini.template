@@ -30,7 +30,6 @@ sqlalchemy.url = postgresql://users:password@host/infolica
 #############################################
 ldap_url = /*TO COMPLETE*/
 ldap_login_base_dn = /*TO COMPLETE*/
-ldap_login_domain = /*TO COMPLETE*/
 ldap_login_attributes= /*TO COMPLETE*/
 ldap_login_filter_tmpl = /*TO COMPLETE*/
 ldap_login_scope = /*TO COMPLETE*/

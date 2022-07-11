@@ -10,12 +10,12 @@ LOG = logging.getLogger(__name__)
 class LDAPQuery(object):
 
     @classmethod
-    def do_login(cls, request, login, password):
+    def do_login(cls, request, login, password, domain):
         settings = request.registry.settings
         # Check if user exists in LDAP
         try:
             server = Server(settings['ldap_url'])
-            with Connection(server=server, user="ACN\\"+login, password=password, auto_bind=True, authentication=NTLM) as conn:
+            with Connection(server=server, user=domain+"\\"+login, password=password, auto_bind=True, authentication=NTLM) as conn:
                 result = conn.search(
                     search_base=settings['ldap_login_base_dn'],
                     search_filter=settings['ldap_login_filter_tmpl'].format(login),

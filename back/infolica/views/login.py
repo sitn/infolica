@@ -47,7 +47,7 @@ def login_view(request):
             return exc.HTTPForbidden('Mot de passe incorrect !')
     else:
         try:
-            resp_json = LDAPQuery.do_login(request, login, password)
+            resp_json = LDAPQuery.do_login(request, login, password, operateur.ldap_domain)
 
         except Exception as error:
             log.error(str(error))
