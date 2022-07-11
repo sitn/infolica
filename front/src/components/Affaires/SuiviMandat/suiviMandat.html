@@ -23,7 +23,7 @@
                     <p v-if="suiviMandat.date" style="margin-top: 0px;">Dernier contrôle effectué le {{suiviMandat.date}} par {{suiviMandat.visa.prenom}} {{suiviMandat.visa.nom}}</p>
 
                     <div v-if="suiviMandat.id">
-                        <div class="md-layout md-gutter md-alignment-top-space-between" v-if="affaire.type_id !== typesAffaires_conf.mpd">
+                        <div class="md-layout md-gutter md-alignment-top-space-between" v-if="affaire.type_id !== typesAffaires_conf.mpd && affaire.type_id !== typesAffaires_conf.retablissement_pfp3">
                             <div class="md-layout-item md-size-35">
                                 <!-- Mensuration officielle en cours -->
                                 <md-card>
@@ -381,6 +381,57 @@
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.normes_bat_couv_digitalises">Pas de bâtiments ni de couverts digitalisés</md-checkbox>
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </div>
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+                        </div>
+
+
+                        <!-- Affaire_type Rétablissement de PFP3 -->
+                        <div class="md-layout md-gutter md-alignment-top-space-between" v-if="affaire.type_id === typesAffaires_conf.retablissement_pfp3">
+                            <div class="md-layout-item">
+                                <md-card>
+                                    <md-card-content>
+                                        <div class="md-layout md-gutter md-alignment-top-space-between">
+                                            <div class="md-layout-item md-size-30">
+                                                <div class="md-subhead">Plan</div>
+                                                <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('plan_')">Tout cocher</md-button>
+                                                <div id="plan_">
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.plan_cadastre">Nom du cadastre</md-checkbox>
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.plan_titre">Titre</md-checkbox>
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.plan_num_bf_infolica">Contrôle des numéros de PFP3 réservés dans Infolica</md-checkbox>
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.plan_echelle">Échelle</md-checkbox>
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.plan_agrandissement_reduction">Agrandissement et réduction</md-checkbox>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="md-layout-item md-size-30">
+                                                <div class="md-subhead">Contrôle calcul réseau et base de données</div>
+                                                <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('pfp3_')">Tout cocher</md-button>
+                                                <div id="pfp3_">
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.pfp3_ctrl_calcul">Contrôle du calcul (WI, NABLA, ZI, etc...)</md-checkbox>
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.pfp3_ctrl_fiabilite">Contrôle de la fiabilité des nouveaux points</md-checkbox>
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.pfp3_ctrl_coordonnees_geomedia_ltop">Contrôle que les coordonnées des nouveaux PFP (Géomedia) correspondent aux coordonnées définitives du calcul réseau (LTOP)</md-checkbox>
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.pfp3_protection_symbole_geomedia">Protection des symboles PFP dans Géomedia</md-checkbox>
+                                                </div>
+                                                
+                                            </div>
+        
+                                            <div class="md-layout-item md-size-30">
+                                                <div class="md-subhead">Facture</div>
+                                                <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('fact_')">Tout cocher</md-button>
+                                                <div id="fact_">
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.fact_forfait">Forfait de 380 (TTC) par point (mettre 352 dans le tableau des émoluments)</md-checkbox>
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.fact_lettre_accompagnement">Lettre d'accompagnement</md-checkbox>
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.fact_tva">Pas de TVA si SPCH</md-checkbox>
+                                                </div>
+
+                                                <br>
+
+                                                <div class="md-subhead">Documents</div>
+                                                <md-checkbox class="md-primary" v-model="suiviMandat.documents_complets">Contrôle de l'enregistrement de tous les documents</md-checkbox>
                                             </div>
                                         </div>
                                     </md-card-content>
