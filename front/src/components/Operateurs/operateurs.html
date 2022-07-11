@@ -42,10 +42,6 @@
                         </md-field>
                     </div>
                     <div class="md-layout-item md-size-25 md-small-size-50" style="display: flex;">
-                        <md-checkbox v-model="form.responsable">Responsable</md-checkbox>
-                        <md-checkbox v-model="form.chef_equipe">Chef·fe d'équipe</md-checkbox>
-                    </div>
-                    <div class="md-layout-item md-size-25 md-small-size-50" style="display: flex;">
                         <md-datepicker v-model="form.entree" md-immediately>
                             <label>Date d'entrée</label>
                         </md-datepicker>
@@ -69,6 +65,16 @@
                             </md-select>
                         </md-field>
                     </div>
+                    <div class="md-layout-item md-size-25 md-small-size-100">
+                        <md-field>
+                            <label>Domaine LDAP</label>
+                            <md-input v-model="form.ldap_domain" maxlength="5" @keyup="textUpperCase()"></md-input>
+                        </md-field>
+                    </div>
+                    <div class="md-layout-item md-size-25 md-small-size-50" style="display: flex;">
+                        <md-checkbox v-model="form.responsable">Responsable</md-checkbox>
+                        <md-checkbox v-model="form.chef_equipe">Chef·fe d'équipe</md-checkbox>
+                    </div>
                     <div class="md-layout-item md-size-100 md-small-size-100" style="text-align: right;">
                         <md-button class="md-accent md-elevation-1" @click="onCancelNewOperateur">Annuler</md-button>
                         <md-button class="md-primary md-elevation-1" @click="onSaveNewOperateur">Enregistrer</md-button>
@@ -77,14 +83,14 @@
             </md-card-content>
         </md-card>
     </div>
-
+    
     <!-- Search -->
     <md-card>
         <!-- Search Header -->
         <md-card-header>
             <div class="md-title">Recherche</div>
         </md-card-header>
-
+        
         <md-card-expand-trigger>
             <md-button class="md-icon-button expandCollapseBtn">
                 <md-icon>keyboard_arrow_down</md-icon>
@@ -99,21 +105,21 @@
                         <div class="md-layout-item md-small-size-30">
                             <md-field>
                                 <label for="prenom">Prénom</label>
-                                <md-input name="prenom" id="prenom" v-model="search.prenom" />
+                                <md-input name="prenom" id="prenom" v-model="search.prenom" @keyup="searchOperateurs()"/>
                             </md-field>
                         </div>
 
                         <div class="md-layout-item md-small-size-30">
                             <md-field>
                                 <label for="nom">Nom</label>
-                                <md-input name="nom" id="nom" v-model="search.nom" />
+                                <md-input name="nom" id="nom" v-model="search.nom" @keyup="searchOperateurs()"/>
                             </md-field>
                         </div>
 
                         <div class="md-layout-item md-small-size-30">
                             <md-field>
                                 <label for="login">Login</label>
-                                <md-input name="login" id="login" v-model="search.login" />
+                                <md-input name="login" id="login" v-model="search.login" @keyup="searchOperateurs()"/>
                             </md-field>
                         </div>
                     </div>
