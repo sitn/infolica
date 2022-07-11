@@ -207,7 +207,9 @@ def service_externe_preavis_view(request):
     ).join(
         Operateur, Preavis.operateur_service_id == Operateur.id, isouter=True
     ).filter(
-        Preavis.service_id == operateur.service_id
+        Preavis.service_id == operateur.service_id,
+        VAffaire.date_envoi == None,
+        VAffaire.date_cloture == None
     )
 
     if status is not None:

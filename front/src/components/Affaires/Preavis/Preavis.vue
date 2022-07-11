@@ -3,7 +3,7 @@
 
 
 <script>
-import { getCurrentDate, checkPermission, saveDocument, logAffaireEtape } from "@/services/helper";
+import { getCurrentDate, checkPermission, logAffaireEtape } from "@/services/helper";
 import PreavisEditComments from "@/components/PreavisExternes/PreavisExternesEditComments.vue";
 import PreavisEditDecision from "@/components/PreavisExternes/PreavisExternesEditDecision.vue";
 import { handleException } from "@/services/exceptionsHandler";
@@ -192,12 +192,6 @@ export default {
           if (response && response.data) {
             let remarqueEtape = this.lastRecord + " - " + remarqueEtapeStatut;
             
-            // download courrier preavis
-            if (!this.modifyPreavis) {
-              this.downloadModel();
-              remarqueEtape += " + fichier de demande enregistré dans le dossier de l'affaire";
-            }
-
             // handle success
             this.$root.$emit("ShowMessage", "Le préavis au " + this.lastRecord + " a été enregistré avec succès");
             
@@ -277,63 +271,6 @@ export default {
       if (!this.$v.$invalid) {
         this.onConfirmEditPreavis();
       }
-    },
-
-    /**
-     * getModel pour préavis
-     */
-    async downloadModel() {
-      let form = {};
-      
-      const service_ = this.services_liste_bk.filter(x => x.id === this.new_preavis.service.id)[0];
-      form.adresse_service = [
-        service_.service,
-        [service_.titre, service_.prenom, service_.nom].filter(Boolean).join(" ") !== ""? "À l'att. de " + [service_.titre, service_.prenom, service_.nom].filter(Boolean).join(" "): null, 
-        service_.adresse,
-        service_.case_postale,
-        [service_.npa, service_.localite].filter(Boolean).join(" ")
-      ].filter(Boolean).join("\n");
-
-      form.adresse_demandeur = [
-        this.affaire.client_commande_entreprise,
-        [this.affaire.client_commande_titre, this.affaire.client_commande_prenom, this.affaire.client_commande_nom].filter(Boolean).join(" "),
-        this.affaire.client_commande_adresse,
-        this.affaire.client_commande_case_postale,
-        [this.affaire.client_commande_npa, this.affaire.client_commande_localite].filter(Boolean).join(" ")
-      ].filter(Boolean).join("\n");
-      
-      let observation = {
-        titre: "",
-        contenu: ""
-      };
-      if (this.new_preavis.service.id === Number(process.env.VUE_APP_SERVICE_SCAT)) {
-        observation.titre = "Observation:",
-        observation.contenu = "Pour autant que vous le jugiez utile, veuillez transmettre le dossier au service des forêts ou au service de la viticulture."
-      }
-
-      let formData = new FormData();
-      formData.append("affaire_id", this.affaire.id);
-      formData.append("template", "Preavis");
-      formData.append("service_id", this.new_preavis.service.id);
-      formData.append("values", JSON.stringify({
-        ADRESSE_SERVICE: form.adresse_service,
-        DATE_ENVOI: String(getCurrentDate()),
-        NREF: this.affaire.id,
-        DATE_DEMANDE: String(this.affaire.date_ouverture),
-        ADRESSE_DEMANDEUR: form.adresse_demandeur,
-        CADASTRE: this.affaire.cadastre,
-        CONCERNE: this.affaire.nom,
-        OBSERVATION_TITRE: observation.titre,
-        OBSERVATION: observation.contenu,
-        ANNEXES: ""
-      }));
-
-      saveDocument(formData)
-      .then(response => {
-          this.$root.$emit("ShowMessage", "Le fichier '" + response.data.filename + " a été enregistré dans le dossier '" + response.data.folderpath + "' de l'affaire");
-          this.$root.$emit("searchAffaireDocuments");
-      })
-      .catch(err => handleException(err, this));
     },
 
     /**
