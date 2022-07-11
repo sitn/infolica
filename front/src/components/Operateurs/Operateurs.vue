@@ -29,6 +29,7 @@ export default {
         sortie: null,
         role_id: null,
         service_id: null,
+        ldap_domain: null
       },
       operateurs: [],
       search: {
@@ -187,6 +188,7 @@ export default {
         mail: null,
         service_id: null,
         role_id: null,
+        ldap_domain: null,
         entree: null,
         sortie: null,
       };
@@ -319,6 +321,10 @@ export default {
         }
       })
       .catch(err => handleException(err, this));
+    },
+
+    textUpperCase() {
+      this.form.ldap_domain = this.form.ldap_domain.toUpperCase();
     }
 
 
