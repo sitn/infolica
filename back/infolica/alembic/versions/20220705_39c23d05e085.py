@@ -1,7 +1,7 @@
 """update ctrl coordinateur
 
 Revision ID: 39c23d05e085
-Revises: bb9331cedec2
+Revises: f9b610b87b94
 Create Date: 2022-07-05 10:28:12.964901
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '39c23d05e085'
-down_revision = 'bb9331cedec2'
+down_revision = 'f9b610b87b94'
 branch_labels = None
 depends_on = None
 
