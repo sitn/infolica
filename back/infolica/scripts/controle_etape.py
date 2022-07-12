@@ -2,6 +2,7 @@ import logging
 from infolica.models import AffaireNumero, ControleEtape, ControleEtapeTypeAffaire, ControleGeometre, ControleMutation
 from infolica.models import Emolument, EmolumentAffaire, EmolumentAffaireRepartition, Facture, NumeroRelation
 from infolica.models import Preavis, SuiviMandat
+from infolica.models import NumeroDiffere
 
 from infolica.scripts.utils import Utils
 from sqlalchemy import func
@@ -29,12 +30,25 @@ class ControleEtapeChecker():
             # Apply control
             actual_decision = method(controle_name=controle, **kwargs)
 
-            result = {
-                'nom': controle.nom,
-                'detail': controle.detail,
-                'force': controle.force,
-                'result': actual_decision
-            }
+            if controle.force == "INFO":
+                if actual_decision is True:
+                    result = {
+                        'nom': controle.nom,
+                        'detail': controle.detail,
+                        'force': controle.force,
+                        'result': True
+                    }
+
+                else:
+                    break
+
+            else:
+                result = {
+                    'nom': controle.nom,
+                    'detail': controle.detail,
+                    'force': controle.force,
+                    'result': actual_decision
+                }
 
             results.append(result)
             
@@ -359,4 +373,20 @@ class ControleEtapeChecker():
         ).scalar()
 
         return test > 0
+    
+
+    @staticmethod
+    def _get_mat_diff_observation_balance_controle(**kwargs):
+        request = kwargs.get('request')
+        affaire_id = kwargs.get('affaire_id')
+
+        nb_mat_diff = request.dbsession.query(
+            func.count(NumeroDiffere.id)
+        ).filter(
+            NumeroDiffere.affaire_id == affaire_id,
+            NumeroDiffere.date_entree != None,
+            NumeroDiffere.date_sortie == None
+        ).scalar()
+
+        return nb_mat_diff > 0
     
