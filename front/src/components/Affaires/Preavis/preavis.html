@@ -94,6 +94,12 @@
                     <span class="md-error" v-if="!$v.new_preavis.date_demande.required">La date de demande est
                         obligatoire</span>
                 </div>
+                <div class="md-layout-item md-size-100">
+                    <md-field>
+                        <label>Remarque (facultatif)</label>
+                        <md-textarea v-model="new_preavis.remarque_conversation" v-if="new_preavis.id === null"></md-textarea>
+                    </md-field>
+                </div>
             </div>
     
         </md-dialog-content>

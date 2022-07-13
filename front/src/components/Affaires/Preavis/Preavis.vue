@@ -31,6 +31,7 @@ export default {
         id: null,
         service: null,
         date_demande: getCurrentDate(),
+        remarque_conversation: null
       },
       selectedPreavis: null,
       services_liste: [],
@@ -131,7 +132,7 @@ export default {
         this.new_preavis.date_reponse = moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
         }
       // this.new_preavis.date_reponse = curr_preavis.date_reponse;
-      this.new_preavis.remarque = curr_preavis.remarque;
+      // this.new_preavis.remarque = curr_preavis.remarque;
       this.new_preavis.service = this.services_liste
         .filter(data => data.nom === curr_preavis.service)
         .map(x => ({
@@ -225,6 +226,11 @@ export default {
         formData.append("id", this.new_preavis.id);
       }
       
+      if (this.new_preavis.remarque_conversation){
+        formData.append("remarque_conversation", this.new_preavis.remarque_conversation);
+      }
+      
+      formData.append("operateur_sgrf_id", JSON.parse(localStorage.getItem("infolica_user")).id);
       formData.append("etape", 'externe');
 
       return formData;
@@ -245,6 +251,7 @@ export default {
       this.showPreavisDialog = false;
       this.new_preavis.id = null;
       this.new_preavis.service = null;
+      this.new_preavis.remarque_conversation = null;
       this.new_preavis.date_demande = getCurrentDate();
       this.modifyPreavis = false;
     },

@@ -94,7 +94,7 @@ class MailTemplates(object):
 
 
     @classmethod
-    def sendMailPreavisDemande(cls, request, preavis_id, service_id):
+    def sendMailPreavisDemande(cls, request, preavis_id, service_id, message=None):
 
         operateurs = request.dbsession.query(Operateur).filter(Operateur.service_id == service_id).all()
 
@@ -121,6 +121,8 @@ class MailTemplates(object):
             html += "<li>Cadastre: " + cadastre + "</li>"
             html += "<li>Description: " + affaire.nom + "</li>"
             html += "<li>Lien: <a href='" + link + "'>" + link + "</a></li>"
+            if message is not None:
+                html += "<li>Remarque: " + message + "</li>"
             html += "</ul>"
             html += "</p>"
             
