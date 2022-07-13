@@ -80,7 +80,7 @@ def preavis_new_view(request):
             'preavis_id': model.id,
             'remarque': remarque_conversation,
             'operateur_id': model.operateur_sgrf_id,
-            'date': time.strftime(datetime.now(), '%Y-%m-%d')
+            'date': datetime.strftime(datetime.now(), '%Y-%m-%d')
         }
         Utils.addNewRecord(request, PreavisRemarque, _params)
     

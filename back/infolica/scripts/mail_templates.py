@@ -113,9 +113,18 @@ class MailTemplates(object):
             affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
             link = str(os.path.join(request.registry.settings['infolica_url_base'], 'preavis/edit', str(preavis_id))).replace('\\', '/')
 
+            subject_suffix = ''
+
             html = "<p>Bonjour,</p>"
             html += "<p>"
             html += "Une nouvelle demande de préavis est en attente dans la centrale à préavis."
+            if affaire.urgent is True:
+                subject_suffix = ' - affaire urgente'
+                html += "<br>"
+                html += "L'affaire porte la mention <b>urgente</b>."
+                if affaire.urgent_echeance is not None:
+                    html += " Le délai de traitement au SGRF a été fixé au " + datetime.strftime(affaire.urgent_echeance, '%d.%m.%Y')
+                html += "<br>"
             html += "<ul>"
             html += "<li>Référence de l'affaire au SGRF: " + str(affaire.id) + affaire_nom + "</li>"
             html += "<li>Cadastre: " + cadastre + "</li>"
@@ -126,6 +135,6 @@ class MailTemplates(object):
             html += "</ul>"
             html += "</p>"
             
-            send_mail(request, mail_list, "", "Infolica - Demande de préavis", html=html, signature="Le service de la géomatique et du registre foncier")
+            send_mail(request, mail_list, "", "Infolica - Demande de préavis" + subject_suffix, html=html, signature="Le service de la géomatique et du registre foncier")
             return
 
