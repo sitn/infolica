@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*--
 from datetime import datetime
 from infolica.models.models import Affaire, Cadastre, Client
-from infolica.models.models import EtapeMailer, Operateur
+from infolica.models.models import AffaireEtape, EtapeMailer, Operateur
 from infolica.models.models import VAffairesPreavis
 from infolica.scripts.mailer import send_mail
-
+from infolica.scripts.utils import Utils
+from sqlalchemy import func
 
 import os
 
@@ -46,9 +47,22 @@ class MailTemplates(object):
 
     @classmethod
     def sendMailClientHorsCanton(cls, request, client_id, affaire_id):
+        affaire_etape_client_hors_canton_id = int(request.registry.settings['affaire_etape_client_hors_canton_id'])
         affaire = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
         affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
         cl = request.dbsession.query(Client).filter(Client.id == client_id).first()
+
+        # contrôle qu'aucune étape de demande de création du client hors canton n'ait été envoyée
+        nb_demandes = request.dbsession.query(
+            func.count(AffaireEtape.id)
+        ).filter(
+            # AffaireEtape.affaire_id == affaire_id,
+            AffaireEtape.etape_id == affaire_etape_client_hors_canton_id,
+            AffaireEtape.remarque == 'client_id=' + str(cl.id)
+        ).scalar()
+        if nb_demandes:
+            return
+
         #Contrôle que le client habite hors canton et que son numéros SAP est null
         if cl.no_sap is None and int(cl.npa) not in request.registry.settings['npa_NE']:
             operateur_secretariat = request.registry.settings["operateur_secretariat"].split(",")
@@ -71,6 +85,16 @@ class MailTemplates(object):
                 ]) + " &#8594; <a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'clients/edit', str(cl.id)) + "'>Lien sur la fiche du client</a>"+ "</li></ul>"
             html += "<p>Merci d'entreprendre les démarches nécessaires pour corriger le client ou pour demander sa création dans SAP.</p>"
             send_mail(request, mail_list, "", "Infolica - Client hors canton à vérifier", html=html)
+
+            affaire_etape = AffaireEtape(
+                affaire_id = affaire_id,
+                operateur_id = Utils.getOperateurFromUser(request).id,
+                etape_id = affaire_etape_client_hors_canton_id,
+                datetime = datetime.now(),
+                remarque = 'client_id=' + str(cl.id)
+            )
+            request.dbsession.add(affaire_etape)
+
         return
 
 

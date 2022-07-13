@@ -156,16 +156,7 @@ def etapes_new_view(request):
     # If last step was treatment & client_facture is outside of canton and has no SAP number, send mail to secretariat
     etape_traitement_id = int(request.registry.settings['affaire_etape_traitement_id'])
     
-    # Count nb of occurences of etape_traitement for this affaire_is
-    nb_affaireEtape_traitement = request.dbsession.query(
-        AffaireEtape
-    ).filter(
-        AffaireEtape.affaire_id == affaire_id
-    ).filter(
-        AffaireEtape.etape_id == etape_traitement_id
-    ).count()
-
-    if (len(lastSteps) > 1 and lastSteps[1].etape_id == etape_traitement_id and nb_affaireEtape_traitement == 1):
+    if (len(lastSteps) > 1 and lastSteps[1].etape_id == etape_traitement_id):
         # get clients_facture
         clients_factures_id = request.dbsession.query(Facture.client_id).filter(Facture.affaire_id == affaire_id).all()
         clients_factures_id = [cl_id[0] for cl_id in clients_factures_id]
