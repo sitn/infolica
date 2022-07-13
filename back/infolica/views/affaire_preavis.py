@@ -73,8 +73,19 @@ def preavis_new_view(request):
     request.dbsession.add(model)
     request.dbsession.flush()
 
+    # if a remarque for conversation is written, save it in PreavisRemarque
+    remarque_conversation = request.params['remarque_conversation'] if 'remarque_conversation' in request.params else None
+    if remarque_conversation is not None:
+        _params = {
+            'preavis_id': model.id,
+            'remarque': remarque_conversation,
+            'operateur_id': model.operateur_sgrf_id,
+            'date': datetime.strftime(datetime.now(), '%Y-%m-%d')
+        }
+        Utils.addNewRecord(request, PreavisRemarque, _params)
+    
     # Send mail to external service for a new preavis demand
-    MailTemplates.sendMailPreavisDemande(request, model.id, model.service_id)
+    MailTemplates.sendMailPreavisDemande(request, model.id, model.service_id, message=remarque_conversation)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Preavis.__tablename__))
 
