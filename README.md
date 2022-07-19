@@ -1,57 +1,36 @@
-# Infolica
-Infolica is a web application for the management of cadastral survey affairs.
+# infolica
 
-## Install
-Go to your project folder
-```
-cd path/to/project
-```
+Infolica est une application destinées à gérer le livre du cadastre du canton de Neuchâtel.
 
-Get project from github
-```
-git init
-git remote add upstream https://github.com/sitn/infolica.git
-```
+## Requirements
 
-### App architecture
-Backend and frontend are completely independant in Infolica, so they must be installed separately.
+* A running database with PostGIS extension.
+* Python
 
-#### Backend: 
-- You will need to create a virtual environment with `venv`
-- In `back/` directory, ou must rename `production.ini.template` to `production.ini` and adapt variables
+## Deploy
 
-```
-cd back
-python -m venv env
-env/Scripts/activate
-pip install -r requirements.txt
-pip install -e .
-deactivate
+Everytime production is deployed, prepub should be deployed before. Instructions hereafter are for `prepub` instance but you have to do the same for `production` before.
+
+Prepare prepub configuration:
+
+```powershell
+cp back/prepub.ini.template back/prepub.ini
+cp env.prepub env.prepub
 ```
 
-To test if the backend is responding correctly, enter the following in your virtual env. It will serve your api.
-```
-pserve --reload development.ini
-```
-In a web browser, check this url:
-```
-localhost:6543/infolica/api/test
-```
-If you can read "Yeah, your api is working!", your installation is running correctly.
+Adapt `prepub.ini` and `env.prepub` according to your environnement. Then:
 
-#### Frontend: 
-
-```
-cd ../front
-npm install --legacy-peer-deps
+```powershell
+python deploy prepub
 ```
 
-Duplicate the `.env` file to `env.development.local` for development, `env.production.local` for production or whatever mode you like (`.env.[my_mode].local`) and adapt urls and config. Files ending with `*.local` are ignored by git.
+Logs can be accessed with:
 
-Then build with `npm run build -- --mode my_mode`. For production mode (further readings about this [here](https://cli.vuejs.org/guide/mode-and-env.html#environment-variables).), use:
 ```
-npm run build [-- --mode production]
+docker-compose logs --tail=200 -f
 ```
+
+By default, docker-compose will be executed to the remote you've just deployed.
 
 You can also use `npm run serve` to test your client, which will reload on the fly after your modifications on the front.
 ```
