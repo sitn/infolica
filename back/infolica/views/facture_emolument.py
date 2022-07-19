@@ -538,16 +538,12 @@ def export_emoluments_pdf_view(request):
         table {{
         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
         border-collapse: collapse;
-        width: 100%;
-        }}
-        td, th {{
-        border: 1px solid #ddd;
-        padding: 2px;
+        max-width: 17cm !important;
         }}
         tr:nth-child(even){{background-color: #f2f2f2;}}
         th {{
-        padding-top: 4px;
-        padding-bottom: 4px;
+        padding-top: 1mm;
+        padding-bottom: 1mm;
         text-align: left;
         background-color: #499c6c;
         color: white;
@@ -558,46 +554,46 @@ def export_emoluments_pdf_view(request):
             counter-increment: page;
             @bottom-center {{
                 content: "Page " counter(page) " de " counter(pages) ", impression du {now}";
-                font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 9px;
+                font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 7pt;
                 border-top: .25pt solid #666;
-                width: 75%;
+                width: 60%;
             }}
             @bottom-right {{
                 content: "SERVICE DE LA GEOMATIQUE ET DU REGISTRE FONCIER";
-                font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 9px;
+                font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 7pt;
             }}
         }}
-        h1 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 20px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 20px; }}
-        p {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 11px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 15px; }}
-        th {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 11px; font-style: normal; font-variant: normal; font-weight: bold; line-height: 15px; border-color: black; border-style: solid; border-width: 1px; }}
-        td {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 11px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 15px; border-color: black; border-style: solid; border-width: 1px; }}
+        h1 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 15pt; font-style: normal; font-variant: normal; font-weight: 700; line-height: 20pt; }}
+        p {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 8pt; font-style: normal; font-variant: normal; font-weight: 400; line-height: 9pt; }}
+        th {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 8pt; font-style: normal; font-variant: normal; font-weight: bold; line-height: 9pt; border-color: black; border-style: solid; border-width: 0.1mm; }}
+        td {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 8pt; font-style: normal; font-variant: normal; font-weight: 400; line-height: 9pt; border-color: black; border-style: solid; border-width: 0.1mm; }}
         
-        .nbInput {{ width: 50px; text-align: center; }}
-        .nbField {{ margin: 0px; margin-bottom: 2px; min-height: 15px !important; padding: 3px 0px 0px 0px !important; }}
+        .nbInput {{ width: 3mm; text-align: center; }}
+        .nbField {{ margin: 0mm; margin-bottom: 1mm; min-height: 1mm !important; padding: 1mm 0mm 0mm 0mm !important; }}
         .subtitle {{ background-color: lightgray; }}
         .alignRight {{ text-align: right !important; }}
         .alignCenter {{ text-align: center !important; }}
         .notEditable {{ background-color: lightgray; }}
         .montantTotal {{ font-weight: bold; }}
-        .tabulation {{ padding-left: 15px !important; font-style: italic; }}
-        .tabulation-2 {{ padding-left: 30px !important; font-style: italic; }}
-        .batiment-separator {{ border-left: 3px solid black !important; }}
-        .code {{ max-width: 50px !important; }}
-        .position {{ max-width: 250px !important; }}
-        .position_divers {{ max-width: 250px !important; }}
-        .position_recapitulatif {{ max-width: 400px !important; }}
-        .unite {{ width: 60px !important; }}
-        .prix_unitaire {{ width: 70px !important; }}
-        .nombre {{ width: 40px !important; }}
-        .montant {{ width: 70px !important;; }}
-        .overHead {{ line-break: normal !important; font-weight: normal !important; font-style: italic; text-align: left; border-top: 0px !important; border-left: 0px !important; border-right: 0px !important; padding-bottom: 10px !important; }}
-        .rowChapterDistinction {{ border-top: 3px solid; }}
+        .tabulation {{ padding-left: 7.5mm !important; font-style: italic; }}
+        .tabulation-2 {{ padding-left: 15mm !important; font-style: italic; }}
+        .batiment-separator {{ border-left: 0.3mm solid black !important; }}
+        .code {{ max-width: 5mm!important; }}
+        .position {{ max-width: 50mm !important; }}
+        .position_divers {{ max-width: 50mm !important; }}
+        .position_recapitulatif {{ max-width: 10mm !important; }}
+        .unite {{ width: 15mm !important; }}
+        .prix_unitaire {{ width: 15mm !important; }}
+        .nombre {{ width: 5mm !important; }}
+        .montant {{ width: 16mm !important;; }}
+        .overHead {{ line-break: normal !important; font-weight: normal !important; font-style: italic; text-align: left; border-top: 0mm !important; border-left: 0mm !important; border-right: 0mm !important; padding-bottom: 1mm !important; }}
+        .rowChapterDistinction {{ border-top: 0.3mm solid; }}
         """ 
 
     header_str += ppp.format(**d)
     header_str += "</style></head><body>"
     header_str += "<img class='logo' src='https://sitn.ne.ch/web/images/06ne.ch_RVB.png' alt='Logo'>"
-    header_str += '<p style="font-size: 10px; line-height: 12px; margin-top: 0px; padding-top: 4px; margin-left: 0px; padding-left: 0px;"><b>DÉPARTEMENT DU DÉVELOPPEMENT<br> \
+    header_str += '<p style="font-size: 8pt; line-height: 8pt; margin-top: 0mm; padding-top: 1mm; margin-left: 0mm; padding-left: 0mm;"><b>DÉPARTEMENT DU DÉVELOPPEMENT<br> \
                     TERRITORIAL ET DE L\'ENVIRONNEMENT</b><br> \
                     SERVICE DE LA GÉOMATIQUE ET<br> \
                     DU REGISTRE FONCIER</p>'
@@ -626,7 +622,7 @@ def export_emoluments_pdf_view(request):
 
 
     tableau_emoluments_html = header_str + tableau_emoluments_html
-    tableau_emoluments_html += '<br><p style="font-size:20px;"><b>Récapitulatif</b></p>'
+    tableau_emoluments_html += '<br><p style="font-size:15pt;"><b>Récapitulatif</b></p>'
     tableau_emoluments_html += tableau_recapitulatif_html + "</body></html>"
 
     filename = "Tableau_émoluments_" + str(tableau_emoluments_id) + "_Affaire_" + str(affaire_id) + ".pdf"
