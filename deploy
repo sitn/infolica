@@ -18,6 +18,10 @@ def load_env(env_file):
             key, value = line.strip().split('=', 1)
             os.environ[key] = value or ''
 
+def call_cmd(cmd):
+    print(" ".join(cmd))
+    subprocess.check_call(cmd)
+
 def main():
     parser = argparse.ArgumentParser(description="Déploiement infolica")
     parser.add_argument("env", nargs="*", help="The environment config")
@@ -33,11 +37,13 @@ def main():
     load_env(dotenv_file)
     shutil.copy(dotenv_file, '.env')
 
-    cmd = ["docker-compose", "up", "-d" , "--build"]
-
     print('DOCKER_HOST is: {}'.format(os.environ.get('DOCKER_HOST', 'not setted')))
-    print(" ".join(cmd))
-    subprocess.check_call(cmd)
+
+    call_cmd(["docker-compose", "build", "back"])
+    call_cmd(["docker-compose", "build", "front"])
+    call_cmd(["docker-compose", "down"])
+    call_cmd(["docker-compose", "up", "-d"])
+
     print('\a')
 
 if __name__ == "__main__":
