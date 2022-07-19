@@ -134,6 +134,7 @@ affaire_etape_fin_processus_id = 16
 affaire_etape_preavis_id = 17
 affaire_etape_reactivation_id = 28
 affaire_etape_devis_id = 29
+affaire_etape_client_hors_canton_id = 32
 affaire_premiere_etape_defaut_id = 13
 
 # Facture type

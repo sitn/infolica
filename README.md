@@ -15,7 +15,7 @@ Prepare prepub configuration:
 
 ```powershell
 cp back/prepub.ini.template back/prepub.ini
-cp env.prepub env.prepub
+cp env.sample env.prepub
 ```
 
 Adapt `prepub.ini` and `env.prepub` according to your environnement. Then:
