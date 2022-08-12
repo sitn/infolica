@@ -183,24 +183,30 @@ export default {
      * Get operateurs
      */
     async getOperateursList() {
-        getOperateurs()
-        .then(response => {
-            if (response && response.data) {
-                let tmp = response.data;
-                tmp = tmp.filter(x => x.chef_equipe);
-
-                // set operateur by default if he is chef_equipe
-                let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
-                let currentUserRoleID = getCurrentUserRoleId();
-                if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe) && (currentUserRoleID && [this.role.mo, this.role.ppe].includes(currentUserRoleID))) {
-                    this.search.operateur_id = Number(currentUserID);
+        return new Promise ((resolve, reject) => {
+            getOperateurs()
+            .then(response => {
+                if (response && response.data) {
+                    let tmp = response.data;
+                    tmp = tmp.filter(x => x.chef_equipe);
+    
+                    // set operateur by default if he is chef_equipe
+                    let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
+                    let currentUserRoleID = getCurrentUserRoleId();
+                    if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe) && (currentUserRoleID && [this.role.mo, this.role.ppe].includes(currentUserRoleID))) {
+                        this.search.operateur_id = Number(currentUserID);
+                    }
+    
+                    tmp = stringifyAutocomplete2(tmp, "prenom_nom", null, "prenom_nom");
+    
+                    this.operateurs = tmp;
+                    resolve(tmp);
                 }
-
-                tmp = stringifyAutocomplete2(tmp, "prenom_nom", null, "prenom_nom");
-
-                this.operateurs = tmp;
-            }
-        }).catch(err => handleException(err, this));
+            }).catch(err => {
+                handleException(err, this);
+                reject(err);
+            });
+        });
     },
 
     /**
@@ -241,13 +247,16 @@ export default {
      * get search params from localstorage
      */
     getSearchParams() {
-        const searchParams = localStorage.getItem('infolica_cockpit_searchParams');
-        if (searchParams) {
-            this.search = JSON.parse(searchParams);
-            this.current_sort = this.search.current_sort;
-            this.current_sort_order = this.search.current_sort_order;
-            this.customSort(this.affaires);
-        }
+        return new Promise((resolve) => {
+            const searchParams = localStorage.getItem('infolica_cockpit_searchParams');
+            if (searchParams) {
+                this.search = JSON.parse(searchParams);
+                this.current_sort = this.search.current_sort;
+                this.current_sort_order = this.search.current_sort_order;
+                this.customSort(this.affaires);
+            }
+            resolve();
+        });
     },
 
     setSearchParams() {
@@ -261,14 +270,16 @@ export default {
   mounted: function() {
     this.getAffaireEtapes()
     this.getAffaireTypes()
-    this.getAffaire();
-    this.getOperateursList();
+    this.getOperateursList().then(() => {
+        this.getAffaire();
+    });
     this.getPermissions();
   },
   
   created() {
-    this.refreshAffaire = setInterval(this.getAffaire, 60000); // Recharge le tableau toutes les minutes
-    this.getSearchParams()
+    this.getSearchParams().then(() => {
+        this.refreshAffaire = setInterval(this.getAffaire, 60000); // Recharge le tableau toutes les minutes
+    });
   },
 
   beforeDestroy() {
