@@ -144,7 +144,7 @@ def get_balance_files_view(request):
 
     affaire_id = request.params["affaire_id"] if 'affaire_id' in request.params else None
     affaires_directory = request.registry.settings['affaires_directory']
-    balance_file_rel_path = request.registry.settings['balance_file_rel_path'].encode("latin1").decode()
+    balance_file_rel_path = request.registry.settings['balance_file_rel_path']
     balance_filename_prefix = request.registry.settings['balance_filename_prefix']
 
     # Get affaire path and search file
