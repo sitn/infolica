@@ -8,8 +8,23 @@
                 <md-button class="md-raised md-primary" @click="$router.push({name: 'Preavis'})"><md-icon>arrow_back</md-icon> Retour au tableau de préavis</md-button>
             </div>
         </md-toolbar>
-    
+
+        
         <div class="preavisContent">
+            <md-card style="background-color: orange;" v-if="affaire.remarque_warning">
+                <md-card-content style="padding: 16px;">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td><md-icon style="color: red;">warning</md-icon></td>
+                                <td><ul style="list-style: none; margin: 0; padding: 0 0 0 10px;"><span v-html="affaire.remarque_warning"></span></ul></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </md-card-content>
+            </md-card>
+
+
             <md-card>
                 <md-card-content>
                     <div class="md-layout md-gutter md-alignment-top-space-between">

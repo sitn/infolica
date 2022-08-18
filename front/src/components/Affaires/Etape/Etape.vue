@@ -383,9 +383,15 @@ export default {
           let tmp = response.data.detail;
           tmp.forEach(x => {
             if (x.result === true) {
-              x.icon = "check_circle";
-              x.icon_color = "green";
-              x.icon_title = "Cette condition est vérifiée.";
+              if (x.force !== "INFO") {
+                x.icon = "check_circle";
+                x.icon_color = "green";
+                x.icon_title = "Cette condition est vérifiée.";
+              } else {
+                x.icon = "info";
+                x.icon_color = "blue";
+                x.icon_title = "Information non bloquante pour le passage à la prochaine étape.";
+              }
             } else {
               if (x.force === 'NOGO') {
                 x.icon = "cancel";

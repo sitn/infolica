@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*--
 from datetime import datetime
 from infolica.models.models import Affaire, Cadastre, Client
-from infolica.models.models import EtapeMailer, Operateur
+from infolica.models.models import AffaireEtape, EtapeMailer, Operateur
 from infolica.models.models import VAffairesPreavis
 from infolica.scripts.mailer import send_mail
-
+from infolica.scripts.utils import Utils
+from sqlalchemy import func
 
 import os
 
@@ -46,9 +47,22 @@ class MailTemplates(object):
 
     @classmethod
     def sendMailClientHorsCanton(cls, request, client_id, affaire_id):
+        affaire_etape_client_hors_canton_id = int(request.registry.settings['affaire_etape_client_hors_canton_id'])
         affaire = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
         affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
         cl = request.dbsession.query(Client).filter(Client.id == client_id).first()
+
+        # contrôle qu'aucune étape de demande de création du client hors canton n'ait été envoyée
+        nb_demandes = request.dbsession.query(
+            func.count(AffaireEtape.id)
+        ).filter(
+            # AffaireEtape.affaire_id == affaire_id,
+            AffaireEtape.etape_id == affaire_etape_client_hors_canton_id,
+            AffaireEtape.remarque == 'client_id=' + str(cl.id)
+        ).scalar()
+        if nb_demandes:
+            return
+
         #Contrôle que le client habite hors canton et que son numéros SAP est null
         if cl.no_sap is None and int(cl.npa) not in request.registry.settings['npa_NE']:
             operateur_secretariat = request.registry.settings["operateur_secretariat"].split(",")
@@ -71,6 +85,16 @@ class MailTemplates(object):
                 ]) + " &#8594; <a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'clients/edit', str(cl.id)) + "'>Lien sur la fiche du client</a>"+ "</li></ul>"
             html += "<p>Merci d'entreprendre les démarches nécessaires pour corriger le client ou pour demander sa création dans SAP.</p>"
             send_mail(request, mail_list, "", "Infolica - Client hors canton à vérifier", html=html)
+
+            affaire_etape = AffaireEtape(
+                affaire_id = affaire_id,
+                operateur_id = Utils.getOperateurFromUser(request).id,
+                etape_id = affaire_etape_client_hors_canton_id,
+                datetime = datetime.now(),
+                remarque = 'client_id=' + str(cl.id)
+            )
+            request.dbsession.add(affaire_etape)
+
         return
 
 
@@ -94,7 +118,7 @@ class MailTemplates(object):
 
 
     @classmethod
-    def sendMailPreavisDemande(cls, request, preavis_id, service_id):
+    def sendMailPreavisDemande(cls, request, preavis_id, service_id, message=None):
 
         operateurs = request.dbsession.query(Operateur).filter(Operateur.service_id == service_id).all()
 
@@ -113,17 +137,28 @@ class MailTemplates(object):
             affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
             link = str(os.path.join(request.registry.settings['infolica_url_base'], 'preavis/edit', str(preavis_id))).replace('\\', '/')
 
+            subject_suffix = ''
+
             html = "<p>Bonjour,</p>"
             html += "<p>"
             html += "Une nouvelle demande de préavis est en attente dans la centrale à préavis."
+            if affaire.urgent is True:
+                subject_suffix = ' - affaire urgente'
+                html += "<br>"
+                html += "L'affaire porte la mention <b>urgente</b>."
+                if affaire.urgent_echeance is not None:
+                    html += " Le délai de traitement au SGRF a été fixé au " + datetime.strftime(affaire.urgent_echeance, '%d.%m.%Y')
+                html += "<br>"
             html += "<ul>"
             html += "<li>Référence de l'affaire au SGRF: " + str(affaire.id) + affaire_nom + "</li>"
             html += "<li>Cadastre: " + cadastre + "</li>"
             html += "<li>Description: " + affaire.nom + "</li>"
             html += "<li>Lien: <a href='" + link + "'>" + link + "</a></li>"
+            if message is not None:
+                html += "<li>Remarque: " + message + "</li>"
             html += "</ul>"
             html += "</p>"
             
-            send_mail(request, mail_list, "", "Infolica - Demande de préavis", html=html, signature="Le service de la géomatique et du registre foncier")
+            send_mail(request, mail_list, "", "Infolica - Demande de préavis" + subject_suffix, html=html, signature="Le service de la géomatique et du registre foncier")
             return
 

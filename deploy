@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+
+# SITN deploy helper
+
+import os
+import argparse
+import subprocess
+import sys
+import shutil
+
+ALLOWED_INSTANCES = ["prepub", "prod", "dev", "local"]
+
+def load_env(env_file):
+    with open(env_file) as f:
+        for line in f:
+            if line.startswith('#') or not line.strip():
+                continue
+            key, value = line.strip().split('=', 1)
+            os.environ[key] = value or ''
+
+def call_cmd(cmd):
+    print(" ".join(cmd))
+    subprocess.check_call(cmd)
+
+def main():
+    parser = argparse.ArgumentParser(description="Déploiement infolica")
+    parser.add_argument("env", nargs="*", help="The environment config")
+    args = parser.parse_args()
+    if len(args.env) != 1:
+        sys.exit("Vous devez utiliser ce script avec au moins un argument: " + '|'.join(ALLOWED_INSTANCES))
+    instance = args.env[0]
+
+    if instance not in ALLOWED_INSTANCES:
+        sys.exit(f"L'instance {instance} n'est pas autorisée.")
+
+    dotenv_file = f"env.{instance}"
+    load_env(dotenv_file)
+    shutil.copy(dotenv_file, '.env')
+
+    print('DOCKER_HOST is: {}'.format(os.environ.get('DOCKER_HOST', 'not setted')))
+
+    call_cmd(["docker-compose", "build", "back"])
+    call_cmd(["docker-compose", "build", "front"])
+    call_cmd(["docker-compose", "down"])
+    call_cmd(["docker-compose", "up", "-d"])
+
+    print('\a')
+
+if __name__ == "__main__":
+    main()

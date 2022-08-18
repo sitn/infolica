@@ -73,8 +73,19 @@ def preavis_new_view(request):
     request.dbsession.add(model)
     request.dbsession.flush()
 
+    # if a remarque for conversation is written, save it in PreavisRemarque
+    remarque_conversation = request.params['remarque_conversation'] if 'remarque_conversation' in request.params else None
+    if remarque_conversation is not None:
+        _params = {
+            'preavis_id': model.id,
+            'remarque': remarque_conversation,
+            'operateur_id': model.operateur_sgrf_id,
+            'date': datetime.strftime(datetime.now(), '%Y-%m-%d')
+        }
+        Utils.addNewRecord(request, PreavisRemarque, _params)
+    
     # Send mail to external service for a new preavis demand
-    MailTemplates.sendMailPreavisDemande(request, model.id, model.service_id)
+    MailTemplates.sendMailPreavisDemande(request, model.id, model.service_id, message=remarque_conversation)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Preavis.__tablename__))
 
@@ -201,7 +212,10 @@ def service_externe_preavis_view(request):
         VAffaire.cadastre,
         VAffaire.nom,
         Operateur.prenom,
-        Operateur.nom
+        Operateur.nom,
+        VAffaire.urgent,
+        VAffaire.urgent_echeance,
+        VAffaire.etape_id
     ).join(
         VAffaire, Preavis.affaire_id == VAffaire.id
     ).join(
@@ -236,6 +250,21 @@ def service_externe_preavis_view(request):
 
     results = []
     for rec in records:
+        remarque = ''
+        priorite_idx = 2
+        priorite = 'Normal'
+        if rec[8] is True:
+            priorite_idx = 1
+            priorite = 'Haut'
+            tmp = 'Affaire urgente!'
+            if rec[9] is not None:
+                tmp += ' (délai SGRF: ' + datetime.strftime(rec[9], '%d.%m.%Y') + ')'
+            remarque += '<li>' + tmp + '</li>'
+        if rec[10] in [int(request.registry.settings['affaire_etape_client_id']), int(request.registry.settings['affaire_etape_devis_id'])]:
+            priorite_idx = 3
+            priorite = 'Faible'
+            remarque += '<li>En attente chez le client</li>'
+
         results.append({
             'preavis_id': rec[0],
             'preavis_date_demande': datetime.strftime(rec[1], "%d.%m.%Y"),
@@ -246,8 +275,13 @@ def service_externe_preavis_view(request):
             'affaire_cadastre': rec[4],
             'affaire_description': rec[5],
             'preavis_attribution': ' '.join(filter(None, [rec[6], rec[7]])),
-            'unread_remarks': Utils.check_unread_preavis_remarks(request, rec[3], service_id=operateur.service_id)
+            'unread_remarks': Utils.check_unread_preavis_remarks(request, rec[3], service_id=operateur.service_id),
+            'priorite_idx': priorite_idx,
+            'priorite': priorite,
+            'remarque': remarque
         })
+        
+        results = sorted(results, key=lambda x: x['priorite_idx'], reverse=False)
 
     return results
 
@@ -285,7 +319,10 @@ def service_externe_affaire_view(request):
         Preavis.date_demande,
         Preavis.date_reponse,
         Preavis.etape,
-        Preavis.service_id
+        Preavis.service_id,
+        VAffaire.urgent,
+        VAffaire.urgent_echeance,
+        VAffaire.etape_id
     ).filter(
         Preavis.id == preavis_id,
         VAffaire.id == Preavis.affaire_id,
@@ -302,6 +339,15 @@ def service_externe_affaire_view(request):
         record[14]
     ]))
 
+    remarque_warning = ''
+    if record[25] is True:
+        tmp = 'Affaire urgente, à traiter en priorité'
+        if record[26] is not None:
+            tmp += ' (délai de traitement au SGRF: ' + datetime.strftime(record[26], '%d.%m.%Y') + ')'
+        remarque_warning += '<li>' + tmp + '</li>'
+    if record[27] in [int(request.registry.settings['affaire_etape_client_id']), int(request.registry.settings['affaire_etape_devis_id'])]:
+        remarque_warning += '<li>L''affaire est en attente chez le client</li>'
+
     result = {
         'id': record[0],
         'nom': record[1],
@@ -315,7 +361,8 @@ def service_externe_affaire_view(request):
         'preavis_date_demande': datetime.strftime(record[21], "%d.%m.%Y"),
         'preavis_date_reponse': datetime.strftime(record[22], "%d.%m.%Y") if record[22] is not None else None,
         'preavis_etape': record[23],
-        'preavis_service_id': record[24]
+        'preavis_service_id': record[24],
+        'remarque_warning': remarque_warning
     }
 
     return result

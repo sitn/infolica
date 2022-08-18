@@ -98,12 +98,11 @@
                 </md-table>
             </div>
 
+            <div style="float: right;">
+                <md-button class="md-accent" @click="etapeAffaire.showDialog = false">Annuler</md-button>
+                <md-button class="md-primary" @click="validateForm" :disabled="!allowSaveNewStep">Enregistrer</md-button>
+            </div>
         </md-dialog-content>
-
-        <md-dialog-actions>
-            <md-button class="md-accent" @click="etapeAffaire.showDialog = false">Annuler</md-button>
-            <md-button class="md-primary" @click="validateForm" :disabled="!allowSaveNewStep">Enregistrer</md-button>
-        </md-dialog-actions>
     </md-dialog>
 
 
