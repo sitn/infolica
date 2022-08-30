@@ -60,7 +60,7 @@ class MailTemplates(object):
             AffaireEtape.etape_id == affaire_etape_client_hors_canton_id,
             AffaireEtape.remarque == 'client_id=' + str(cl.id)
         ).scalar()
-        if nb_demandes:
+        if nb_demandes > 0:
             return
 
         #Contrôle que le client habite hors canton et que son numéros SAP est null

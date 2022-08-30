@@ -44,6 +44,7 @@ export default {
         searchTerm: null,
         current_sort: "id",
         current_sort_order: "desc",
+        timestamp_searchAffaire: 0,
     };
   },
 
@@ -99,6 +100,14 @@ export default {
             }
         ).then(response => {
             if (response && response.data) {
+                // Start - Only consider last request
+                let new_timestamp_searchAffaire = Number(response.config.url.split('ts=').slice(-1)[0]);
+                if (new_timestamp_searchAffaire < this.timestamp_searchAffaire){
+                    return
+                }
+                this.timestamp_searchAffaire = new_timestamp_searchAffaire;
+                // End - Only consider last request
+
                 let tmp = response.data;
 
                 tmp = this.customSort(tmp);
@@ -173,6 +182,7 @@ export default {
         query.push("showOnlyAffairesUrgentes=" + this.search.showOnlyAffairesUrgentes);
         // query.push("sort_by=" + this.current_sort);
         // query.push("sort_order=" + this.current_sort_order);
+        query.push('ts=' + Date.now());
         
         query = "?" + query.join('&');
 
