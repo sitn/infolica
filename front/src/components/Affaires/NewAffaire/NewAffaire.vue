@@ -121,6 +121,7 @@ export default {
       role_conf: {
         ppe_user_id: Number(process.env.VUE_APP_PPE_ROLE_ID),
         mo_user_id: Number(process.env.VUE_APP_MO_ROLE_ID),
+        mo_ppe_user_id: Number(process.env.VUE_APP_MO_PPE_ROLE_ID),
         secretariat_user_id: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID),
         responsable_user_id: Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID),
         admin_user_id: Number(process.env.VUE_APP_ADMIN_ROLE_ID)
@@ -287,7 +288,7 @@ export default {
             let type_filter = [];
             // Only suggest affaire types to which user has rights
             let userRoleID = getCurrentUserRoleId()
-            if (userRoleID && [this.role_conf.secretariat_user_id, this.role_conf.mo_user_id, this.role_conf.ppe_user_id].includes(userRoleID)) {
+            if (userRoleID && [this.role_conf.secretariat_user_id, this.role_conf.mo_user_id, this.role_conf.ppe_user_id, this.role_conf.mo_ppe_user_id].includes(userRoleID)) {
               if (checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION)) {
                 type_filter.push(this.typesAffaires_conf.ppe);
                 type_filter.push(this.typesAffaires_conf.modification);

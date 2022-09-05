@@ -479,6 +479,7 @@ export default {
         Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID),
         Number(process.env.VUE_APP_ADMIN_ROLE_ID),
         Number(process.env.VUE_APP_PPE_ROLE_ID),
+        Number(process.env.VUE_APP_MO_PPE_ROLE_ID),
       ].includes(role_id);
     },
 
