@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 ENV PATH=${PATH}:./node_modules/.bin
 ENV NODE_PATH=/usr/src/app/node_modules
 COPY package*.json ./
-RUN npm install --no-progress --loglevel=error --no-audit
+RUN npm install --no-progress --loglevel=error --no-audit --legacy-peer-deps
 COPY . .
 ARG API_URL
 RUN sed -i "s={API_URL}=${API_URL}=" ./.env
