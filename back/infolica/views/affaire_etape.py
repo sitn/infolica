@@ -96,10 +96,6 @@ def etapes_new_view(request):
         chef_equipe_mail = request.dbsession.query(Operateur).filter(Operateur.id == chef_equipe_id).first().mail
         if chef_equipe_mail is not None:
             mail_list.append( chef_equipe_mail )
-        
-        # update chef d'équipe in affaire
-        affaire = request.dbsession.query(Affaire).filter(Affaire.id == model.affaire_id).first()
-        affaire.technicien_id = chef_equipe_id
 
     # construct mail_list
     for em_i in etape_mailer:
@@ -135,6 +131,11 @@ def etapes_new_view(request):
                 </tr>" + lastSteps_html + "</table>") if lastSteps_html != "" else ""
         subject = "Infolica - affaire " + str(v_affaire.id) + (" - URGENT" if v_affaire.urgent else "")
         send_mail(request, mail_list, "", subject, html=text)
+    
+    # update chef d'équipe in affaire
+    affaire = request.dbsession.query(Affaire).filter(Affaire.id == model.affaire_id).first()
+    if not affaire.technicien_id == chef_equipe_id:
+        affaire.technicien_id = chef_equipe_id
 
     # Finally erase attribution on affaire if etape_priority == 1 and if last etape was different
     if affaire_etape_index.priorite == 1:
