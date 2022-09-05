@@ -479,7 +479,7 @@ export default {
       //Check if role secretaire
       this.editMatDiffAllowed = this.permission.editNumerosAllowed;
       let role_id = getCurrentUserRoleId();
-      if (role_id && !isNaN(role_id) && [Number(process.env.VUE_APP_MO_ROLE_ID), Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)].includes(Number(role_id))) {
+      if (role_id && !isNaN(role_id) && [Number(process.env.VUE_APP_MO_ROLE_ID), Number(process.env.VUE_APP_MO_PPE_ROLE_ID), Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)].includes(Number(role_id))) {
         this.editMatDiffAllowed = true;
       }
       if (role_id && !isNaN(role_id) && [Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID), Number(process.env.VUE_APP_ADMIN_ROLE_ID)].includes(Number(role_id))) {

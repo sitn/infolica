@@ -266,6 +266,14 @@ export default {
             _this.permission.affaireCloture = [ _this.typesAffaires_conf.ppe, _this.typesAffaires_conf.modification_ppe].includes(_this.affaire.type_id);
           }
           
+          // Opérateur mo_ppe peut modifier les informations générales de l'affaire
+          if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_MO_PPE_ROLE_ID)) {
+            _this.permission.editFactureAllowed = _this.permission.editFactureAllowed && _this.affaire.type_id === _this.typesAffaires_conf.cadastration;
+            _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
+            _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
+            _this.permission.affaireCloture = [ _this.typesAffaires_conf.ppe, _this.typesAffaires_conf.modification_ppe].includes(_this.affaire.type_id);
+          }
+          
           // Opérateur responsable peut référencer des numéros
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)) {
             _this.permission.editEmolumentIndiceApplication = true;

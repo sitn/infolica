@@ -31,6 +31,7 @@ export default {
             secretaire: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID),
             mo: Number(process.env.VUE_APP_MO_ROLE_ID),
             ppe: Number(process.env.VUE_APP_PPE_ROLE_ID),
+            mo_ppe: Number(process.env.VUE_APP_MO_PPE_ROLE_ID),
             responsable: Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)
         },
         search: {
@@ -63,17 +64,22 @@ export default {
             
             //Check if role secretaire
             let role_id = getCurrentUserRoleId();
-            if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.secretaire  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
+            if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.secretaire || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
                 this.showMatdiff_secr = true;
             } 
             
             //Check if role MO
-            if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.mo  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
+            if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.mo || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
+                this.showMatdiff_mo = true;
+            }
+
+            //Check if role MO_PPE
+            if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.mo_ppe || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
                 this.showMatdiff_mo = true;
             }
 
             //Check if role responsable
-            if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.responsable  || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
+            if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.responsable || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
                 // this.showMatdiff_secr = true;
                 this.showMatdiff_mo = true;
                 this.showMatdiff_ctrl = true;
@@ -203,7 +209,7 @@ export default {
                     // set operateur by default if he is chef_equipe
                     let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
                     let currentUserRoleID = getCurrentUserRoleId();
-                    if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe) && (currentUserRoleID && [this.role.mo, this.role.ppe].includes(currentUserRoleID))) {
+                    if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe) && (currentUserRoleID && [this.role.mo, this.role.ppe, this.role.mo_ppe].includes(currentUserRoleID))) {
                         this.search.operateur_id = Number(currentUserID);
                     }
     
