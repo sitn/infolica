@@ -602,7 +602,7 @@ def export_emoluments_pdf_view(request):
     header_str += "<p>Affaire n° " + str(affaire_id) + " sur le cadastre: " + affaire.cadastre + "</p>"
     
     # numéros de BF s'ils sont rattachés
-    if emolument_bf_html is not None and emolument_bf_html is not "":
+    if emolument_bf_html is not None and emolument_bf_html != "":
         header_str += "<p>Bien(s)-fonds n° " + emolument_bf_html + "</p>"
     header_str += "<p>Emolument n° " + str(tableau_emoluments_id) + "</p>"
     
