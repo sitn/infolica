@@ -134,7 +134,7 @@ def etapes_new_view(request):
     
     # update chef d'équipe in affaire
     affaire = request.dbsession.query(Affaire).filter(Affaire.id == model.affaire_id).first()
-    if not affaire.technicien_id == chef_equipe_id:
+    if not affaire.technicien_id == chef_equipe_id and chef_equipe_id is not None:
         affaire.technicien_id = chef_equipe_id
 
     # Finally erase attribution on affaire if etape_priority == 1 and if last etape was different
