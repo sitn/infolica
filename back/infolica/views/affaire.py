@@ -159,7 +159,8 @@ def affaire_cockpit_view(request):
             'nom_affaire': nom_affaire,
             'title': title,
             'preavis_status': preavis_status,
-            'preavis_unread_remarks': Utils.check_unread_preavis_remarks(request, affaire.id)
+            'preavis_unread_remarks': Utils.check_unread_preavis_remarks(request, affaire.id),
+            'geos_retarder_validation': affaire.geos_retarder_validation
         }
 
         if affaire.etape_id == affaire_etape_devis_id:

@@ -9,6 +9,7 @@
                     <span v-if="affaire.no_access !== null">[{{ affaire.no_access }}]</span>
                     <span v-if="affaire.urgent && affaire.date_envoi === null && !affaire.abandon" style="padding-left: 30px; padding-right: 30px; color:red">!!! AFFAIRE URGENTE !!! <span style="font-size: 20px;" v-if="affaire.urgent_echeance">Échéance: {{ affaire.urgent_echeance }}, il reste {{ affaire.urgent_echeance_reste }} jour(s)</span></span>
                     <span v-if="affaire.abandon"> - ABANDONNE</span>
+                    <span v-if="affaire.geos_retarder_validation === true"> - Validation retardée dans GEOMEDIA</span>
                 </h1>
             </div>
 

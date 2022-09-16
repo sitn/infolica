@@ -158,6 +158,9 @@ export default {
             if (this.suiviMandat.date !== null) {
               this.confirmDialogActive = true;
             }
+
+            // reload affaire to update geos_retarder_validation
+            this.$root.$emit('setAffaire');
           }
         })
         .catch(err => {
