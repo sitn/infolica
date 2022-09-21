@@ -118,7 +118,7 @@ export default {
         moral: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID),
       },
       showMovePointComment: false,
-      // numeros_base_associes = []
+      cssHeaderWidth: 'width: calc(100% - 80px)',
     };
   },
 
@@ -305,6 +305,13 @@ export default {
           } else {
             _this.affaireAttribution.checked = false;
             _this.affaireAttribution.text = "Cliquer pour s'attribuer l'étape";
+          }
+
+          // Set header width
+          if (_this.affaire.date_cloture) {
+            _this.cssHeaderWidth = 'width: 100%';
+          } else {
+            _this.cssHeaderWidth = 'width: calc(100% - 80px)';
           }
 
           // init params attribution affaire
