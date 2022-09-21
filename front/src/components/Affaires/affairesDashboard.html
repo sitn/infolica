@@ -2,32 +2,37 @@
 
     <!-- TITRE -->
     <md-toolbar class="affaireDashboardTitle">
-        <div style="width: 96% " class="md-layout md-gutter md-alignment-center-space-between">
+        <div :style="cssHeaderWidth" class="md-layout md-gutter md-alignment-top-space-between">
             <div class="md-layout-item md-size-70">
                 <h1 style="margin-bottom: 0px;">
                     Affaire {{ affaire.id }}
                     <span v-if="affaire.no_access !== null">[{{ affaire.no_access }}]</span>
                     <span v-if="affaire.urgent && affaire.date_envoi === null && !affaire.abandon" style="padding-left: 30px; padding-right: 30px; color:red">!!! AFFAIRE URGENTE !!! <span style="font-size: 20px;" v-if="affaire.urgent_echeance">Échéance: {{ affaire.urgent_echeance }}, il reste {{ affaire.urgent_echeance_reste }} jour(s)</span></span>
                     <span v-if="affaire.abandon"> - ABANDONNE</span>
+                    <span v-if="affaire.geos_retarder_validation === true"> - Validation retardée dans GEOMEDIA</span>
                 </h1>
             </div>
 
-            <div class="md-layout-item" style="text-align: right;">
-                <md-button class="md-primary md-raised" v-if="permission.editAffaireAllowed" v-on:click="generateBordereauAffaire" title="Générer la page de demande de l'affaire">
-                    <md-icon md-dense>text_snippet</md-icon> Bordereau de l'affaire
-                </md-button>
-                <md-button class="md-accent md-raised" v-if="permission.affaireReactivation && affaire.date_cloture !== null" @click="callActivationAffaire">Réactiver l'affaire</md-button>
+            <div class="md-layout-item md-size-30" style="text-align: right;">
+                <div style="position: absolute; right: 25px; top: 0;">
+                    <md-speed-dial style="align-items: flex-end; z-index: 1;" v-if="permission.affaireCloture && affaire.date_cloture === null" md-direction="bottom"  md-event="click">
+                        <md-speed-dial-target id="closeAffaireBtn" class="md-raised md-accent" style="margin: 6px !important;">
+                            <md-icon>block</md-icon>
+                        </md-speed-dial-target>
+        
+                        <md-speed-dial-content style="align-items: flex-end;">
+                            <md-button class="md-accent" @click="callClotureAffaire" v-if="permission.cloreAffaireEnabled" md-dense>Cloturer</md-button>
+                            <md-button class="md-accent" @click="openAbandonMenu" v-if="permission.abandonAffaireEnabled" md-dense>Abandonner</md-button>
+                        </md-speed-dial-content>
+                    </md-speed-dial>
+                </div>
+                <div>
+                    <md-button class="md-primary md-raised" v-if="permission.editAffaireAllowed" v-on:click="generateBordereauAffaire" title="Générer la page de demande de l'affaire">
+                        <md-icon md-dense>text_snippet</md-icon> Bordereau de l'affaire
+                    </md-button>
+                    <md-button class="md-accent md-raised" v-if="permission.affaireReactivation && affaire.date_cloture !== null" @click="callActivationAffaire">Réactiver l'affaire</md-button>
+                </div>
 
-                <md-speed-dial style="align-items: flex-end; z-index: 1;" v-if="permission.affaireCloture && affaire.date_cloture === null" md-direction="bottom" class="md-fixed" md-event="click">
-                    <md-speed-dial-target id="closeAffaireBtn" class="md-raised md-accent" style="margin: 6px !important;">
-                        <md-icon>block</md-icon>
-                    </md-speed-dial-target>
-
-                    <md-speed-dial-content style="align-items: flex-end;">
-                        <md-button class="md-accent" @click="callClotureAffaire" v-if="permission.cloreAffaireEnabled" md-dense>Cloturer</md-button>
-                        <md-button class="md-accent" @click="openAbandonMenu" v-if="permission.abandonAffaireEnabled" md-dense>Abandonner</md-button>
-                    </md-speed-dial-content>
-                </md-speed-dial>
             </div>
         </div>
 
@@ -37,7 +42,7 @@
                     <Etape :affaire="affaire" :chefs_equipe_list="chefs_equipe_list" :etapes_affaire_conf="etapes_affaire_conf" @setAffaire="setAffaire()" :typesAffaires_conf="typesAffaires_conf" />
                 </div>
                 <div class="md-layout-item" style="max-width: 350px;" v-if="affaireAttribution.show">
-                    <md-checkbox @change="affaireAttributionChangeState" v-model="affaireAttribution.checked">{{ affaireAttribution.text }}</md-checkbox>
+                    <md-checkbox style="width: fit-content; float: right;" @change="affaireAttributionChangeState" v-model="affaireAttribution.checked">{{ affaireAttribution.text }}</md-checkbox>
                 </div>
             </div>
         </div>

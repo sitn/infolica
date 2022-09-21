@@ -2,7 +2,7 @@ import logging
 from infolica.models import AffaireNumero, ControleEtape, ControleEtapeTypeAffaire, ControleGeometre, ControleMutation
 from infolica.models import Emolument, EmolumentAffaire, EmolumentAffaireRepartition, Facture, NumeroRelation
 from infolica.models import Preavis, SuiviMandat
-from infolica.models import NumeroDiffere
+from infolica.models import NumeroDiffere, VAffaire
 
 from infolica.scripts.utils import Utils
 from sqlalchemy import func
@@ -390,3 +390,14 @@ class ControleEtapeChecker():
 
         return nb_mat_diff > 0
     
+
+    @staticmethod
+    def _get_geos_retarder_validation_controle(**kwargs):
+        request = kwargs.get('request')
+        affaire_id = kwargs.get('affaire_id')
+
+        affaire = request.dbsession.query(VAffaire).filter(
+            VAffaire.id == affaire_id
+        ).first()
+
+        return not affaire.geos_retarder_validation is True

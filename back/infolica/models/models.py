@@ -388,6 +388,7 @@ class SuiviMandat(Base):
     geos_servitude_libelle_classe = Column(Boolean)
     geos_servitude_droit_jouissance = Column(Boolean)
     geos_couleur_pastilles = Column(Boolean)
+    geos_retarder_validation = Column(Boolean)
     emol_frais_cad = Column(Boolean)
     emol_frais_rf = Column(Boolean)
     emol_frais_division = Column(Boolean)
@@ -1175,6 +1176,7 @@ class VAffaire(Base):
     urgent = Column(Boolean)
     urgent_echeance = Column(Date)
     attribution = Column(Text)
+    geos_retarder_validation = Column(Boolean)
 
 
 class VEnvois(Base):

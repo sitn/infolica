@@ -17,7 +17,6 @@ export default {
   },
   data: () => ({
     chefsProjetMO_liste: [],
-    confirmDialogActive: false,
     confirmUpdateAffaireDateValidation: false,
     needToCreateSuiviMandat: false,
     selectAll_val: {
@@ -155,9 +154,8 @@ export default {
             //Log edition facture
             logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_VALIDATION_TECHNIQUE_ID), "Edition du formulaire");
 
-            if (this.suiviMandat.date !== null) {
-              this.confirmDialogActive = true;
-            }
+            // reload affaire to update geos_retarder_validation
+            this.$root.$emit('setAffaire');
           }
         })
         .catch(err => {
@@ -165,24 +163,6 @@ export default {
         });
     },
 
-    /**
-     * Update affaire date validation
-     */
-    updateAffaireDateValidation(){
-      let formData = new FormData();
-      formData.append("id_affaire", this.affaire.id);
-      formData.append("date_validation", moment(this.suiviMandat.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-
-      this.$http.put(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
-        formData,
-        {
-          withCredentials: true,
-          headers: {Accept: "application/json"}
-        }
-      ).then(() => this.$parent.setAffaire())
-      .catch(err => handleException(err, this));
-    },
 
     /**
      * select all in form

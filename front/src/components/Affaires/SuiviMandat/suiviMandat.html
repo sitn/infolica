@@ -318,7 +318,8 @@
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_servitude_libelle">Contrôler le libellé des servitudes.</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_servitude_no_rs">Contrôler que l'attribut "Numero_RS" dans la table "Servitudes" est bien saisi (exemple:"0ProjetA").</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_servitude_libelle_classe">Contrôler que l'attribut "Libelle" ainsi que "Classe" dans la table "Servitudes" sont bien corrects et conformes.</md-checkbox>
-                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_servitude_droit_jouissance">Effacer les droits de jouissance car ils ne doivent pas figurés dans la base de données (a effacer lors de la validation).</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_servitude_droit_jouissance">Effacer les droits de jouissance car ils ne doivent pas figurés dans la base de données (à effacer lors de la validation).</md-checkbox>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_retarder_validation">Retarder la validation de l'affaire dans GEOMEDIA.</md-checkbox>
                                                     </div>
                                                 
                                                     <md-divider></md-divider>
@@ -459,14 +460,5 @@
             </md-card-expand-content>
         </md-card-expand>
     </md-card>
-
-    <md-dialog-confirm
-    :md-active.sync="confirmDialogActive"
-    md-title="Date de validation"
-    md-content="Mettre à jour la date de validation de l'affaire?"
-    md-confirm-text="Oui"
-    md-cancel-text="Non"
-    @md-cancel="confirmDialogActive = false"
-    @md-confirm="updateAffaireDateValidation" />
 
 </div>

@@ -118,7 +118,7 @@ export default {
         moral: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID),
       },
       showMovePointComment: false,
-      // numeros_base_associes = []
+      cssHeaderWidth: 'width: calc(100% - 80px)',
     };
   },
 
@@ -211,7 +211,7 @@ export default {
           _this.permission.editNumerosAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editNumerosMOAllowed = checkPermission(process.env.VUE_APP_NUMERO_MO_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editControleGeometreAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_CONTROLE_GEOMETRE_EDITION) && !_this.parentAffaireReadOnly;
-          _this.permission.editSuiviMandatAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_SUIVI_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.editSuiviMandatAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_SUIVI_EDITION) && !(_this.affaire.date_validation !== null && _this.affaire.date_validation !== undefined);
           _this.permission.editEmolumentAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editFactureAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.affaireCloture = checkPermission(process.env.VUE_APP_AFFAIRE_CLOTURE);
@@ -305,6 +305,13 @@ export default {
           } else {
             _this.affaireAttribution.checked = false;
             _this.affaireAttribution.text = "Cliquer pour s'attribuer l'étape";
+          }
+
+          // Set header width
+          if (_this.affaire.date_cloture) {
+            _this.cssHeaderWidth = 'width: 100%';
+          } else {
+            _this.cssHeaderWidth = 'width: calc(100% - 80px)';
           }
 
           // init params attribution affaire
