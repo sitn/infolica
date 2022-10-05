@@ -67,6 +67,8 @@ def affaire_cockpit_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
+    settings = request.registry.settings
+
     type_id = request.params['type_id'] if 'type_id' in request.params else None
     etape_id = request.params['etape_id'].split(',') if 'etape_id' in request.params else None
     searchTerm = request.params['searchTerm'] if 'searchTerm' in request.params else None
@@ -123,7 +125,7 @@ def affaire_cockpit_view(request):
 
     affaires = []
     for affaire in query:
-        urgent_echeance = datetime.strftime(affaire.urgent_echeance, '%d.%m.%Y') if not affaire.urgent_echeance is None else None
+        urgent_echeance = datetime.strftime(affaire.urgent_echeance, '%d.%m.%Y') if not affaire.urgent_echeance is None and not affaire.etape_id in [int(settings['affaire_etape_validation_bd_id']), int(settings['affaire_etape_signature_art35_id']), int(settings['affaire_etape_fin_processus_id'])] else None
         nom_affaire = (affaire.no_access if affaire.no_access else str(affaire.id)) + (" / " + urgent_echeance if urgent_echeance else "") + (" / " + affaire.attribution if affaire.attribution else "")
         etape_datetime = datetime.strftime(affaire.etape_datetime, '%Y-%m-%d %H:%M:%S')
         etape_days_elapsed = (datetime.now().date() - affaire.etape_datetime.date()).days
