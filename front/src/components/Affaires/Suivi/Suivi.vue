@@ -64,7 +64,7 @@ export default {
               if (max_next_datetime_sort < x.next_datetime_sort) {
                 max_next_datetime_sort = x.next_datetime_sort;
               }
-              x.next_datetime = x.next_datetime? moment(new Date(x.next_datetime)).format(process.env.VUE_APP_DATETIMEFORMAT_CLIENT): null;
+              x.next_datetime = x.next_datetime? moment(new Date(x.next_datetime)).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null;
             });
 
             let primaryKeys = [];
