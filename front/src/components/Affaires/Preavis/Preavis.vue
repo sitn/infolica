@@ -340,6 +340,41 @@ export default {
         this.searchAffairePreavis();
         this.$root.$emit("ShowMessage", "La demande de modification du préavis a bien été enregistrée");
       }).catch(err => handleException(err, this));
+    },
+    
+    
+    async onExportPreavisPDF(preavis) {
+      let formData = new FormData();
+      formData.append('preavis_id', preavis.id)
+
+      this.$http.post(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_PREAVIS_PRINT_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"},
+          responseType: "blob"
+        }
+        ).then(response => {
+          let fileURL = window.URL.createObjectURL(new Blob([response.data]));
+          let fileLink = document.createElement('a');
+        
+          fileLink.href = fileURL;
+          let header_content_type = response.headers['content-type'];
+          let filename = undefined;
+          for (let item of header_content_type.split(';')){
+            item = item.trim(); 
+            if (item.startsWith('filename=')) {
+              filename = item.replace('filename=', '').replaceAll('"', '');
+              break
+            }
+          }
+          fileLink.setAttribute('download', filename);
+          document.body.appendChild(fileLink);
+          fileLink.click();
+
+          this.$root.$emit("ShowMessage", "Le préavis a bien été téléchargé");
+      }).catch (err => handleException(err, this));
     }
   },
 
@@ -357,7 +392,7 @@ export default {
             x.unread_remarks = x.unread_remarks-1;
           }
         }
-      ) 
+      );
     }
     );
   }
