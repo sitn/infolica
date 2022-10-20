@@ -28,10 +28,10 @@
                                 <md-table-cell md-label="Préavis" md-sort-by="preavis" style="min-width: 100px;">{{ item.preavis }}</md-table-cell>
                                 <md-table-cell md-label="Remarque" md-sort-by="remarque"  style="min-width: 1000px;">{{ item.remarque }}</md-table-cell>
                                 <md-table-cell md-label="Actions" v-if="!affaireReadonly"  style="min-width: 200px;">
-                                    <md-button class="md-icon-button md-primary md-dense" v-on:click="onModifyPreavis(item)" title="Mettre à jour le préavis" v-if="!affaireReadonly">
+                                    <md-button class="md-icon-button md-primary md-dense" v-on:click.prevent.stop="onModifyPreavis(item)" title="Mettre à jour le préavis" v-if="!affaireReadonly">
                                         <md-icon class="md-edit">edit</md-icon>
                                     </md-button>
-                                    <md-button class="md-icon-button md-primary md-dense" v-on:click="onExportPreavisPDF(item)" title="Exporter le préavis dans un PDF">
+                                    <md-button class="md-icon-button md-primary md-dense" v-on:click.prevent.stop="onExportPreavisPDF(item)" title="Exporter le préavis dans un PDF">
                                         <md-icon class="md-edit">download</md-icon>
                                     </md-button>
                                 </md-table-cell>
