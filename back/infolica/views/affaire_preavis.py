@@ -776,6 +776,8 @@ def preavis_print_view(request):
         Preavis.remarque,
         VAffaire.cadastre,
         Service.abreviation,
+        VAffaire.nom,
+        Preavis.operateur_service_id,
     ).join(
         Service
     ).join(
@@ -785,6 +787,10 @@ def preavis_print_view(request):
     ).filter(
         Preavis.id == preavis_id
     ).first()
+
+    operateur = None
+    if data[9] is not None:
+        operateur = request.dbsession.query(Operateur).filter(Operateur.id == data[9]).first()
 
     now = datetime.now()
     d = {"now": now.strftime("%d.%m.%Y, %H:%M:%S")}
@@ -800,8 +806,12 @@ def preavis_print_view(request):
             size: A4 portrait;
             margin: 2cm;
             counter-increment: page;
+            @bottom-left {{
+                content: "Impression du {now}";
+                font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 7pt;
+            }}
             @bottom-center {{
-                content: "Page " counter(page) " de " counter(pages) ", impression du {now}";
+                content: "Page " counter(page) " de " counter(pages);
                 font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 7pt;
                 border-top: .25pt solid #666;
                 width: 60%;
@@ -811,8 +821,8 @@ def preavis_print_view(request):
                 font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 7pt;
             }}
         }}
-        h1 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 15pt; font-style: normal; font-variant: normal; font-weight: 700; line-height: 20pt; }}
-        p {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 8pt; font-style: normal; font-variant: normal; font-weight: 400; line-height: 9pt; }}
+        h1 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 18pt; font-style: normal; font-variant: normal; font-weight: 700; line-height: 20pt; }}
+        p {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 400; line-height: 14pt; text-align: justify; }}
         """ 
 
     html += ppp.format(**d)
@@ -827,9 +837,14 @@ def preavis_print_view(request):
 
     html += "<h1>Préavis du " + data[1] + "</h1>"
     html += "<p>Affaire n° " + str(data[0]) + "<br>" + "Cadastre: " + data[6] + "</p>"
-    html += "<p>Date de la demande: " + str(data[2].strftime("%d.%m.%Y")) + "<br>" + "Date du retour: " + str(data[3].strftime("%d.%m.%Y")) + "</p>"
+    html += "<p>Description de l'affaire: " + data[8] + "</p>"
+    html += "<p>Date de la demande de préavis: " + str(data[2].strftime("%d.%m.%Y")) + "<br>" + "Date de retour du préavis: " + str(data[3].strftime("%d.%m.%Y")) + "</p>"
+    html += "<p>"
+    if operateur is not None:
+        html += "Préavisé par: " + operateur.nom + " " + operateur.prenom
+    html += "<br>Contact: 032 889 67 40</p>"
     html += "<br>"
-    html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14px; padding: 4px'>Préavis: " + data[4] + "</p>"
+    html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + data[4] + "</p>"
     html += "<br>"
     html += "<p><em>Détail:</em></p><p><em>" + data[5] + "</em></p>"
 
@@ -839,7 +854,7 @@ def preavis_print_view(request):
 
     html = html.encode('utf-8')
 
-    result = requests.post(request.registry.settings['weasyprint_baseurl'] + filename, data=html) #, headers=headers)
+    result = requests.post(request.registry.settings['weasyprint_baseurl'] + filename, data=html)
 
     response = Response(result.content)
     params = response.content_type_params
