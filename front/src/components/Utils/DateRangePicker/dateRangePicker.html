@@ -1,0 +1,9 @@
+<div id="dateRangePicker">
+    <md-datepicker v-model="date_from" style="float: left;" md-immediately :md-disabled-dates="disabledDates">
+        <label>Depuis le...</label>
+    </md-datepicker>
+    <md-datepicker v-model="date_to" style="float: left;" md-immediately :md-disabled-dates="disabledDates">
+        <label>Jusqu'au...</label>
+    </md-datepicker>
+    <div style="float: left; text-align: center;" v-if="showPeriodInfo && date_from && date_to"><p style="margin-top: 25px">({{ Math.floor((date_to - date_from)/86400000) +1 }} jour{{ Math.floor((date_to - date_from)/86400000) +1>1? 's': '' }})</p></div>
+</div>

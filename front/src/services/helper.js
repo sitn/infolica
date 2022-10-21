@@ -415,11 +415,14 @@ export const setDateFormatClient = function(obj) {
 /**
  * Log new step
  */
-export const logAffaireEtape = async function(affaire_id, etape_id, remarque=null, chef_equipe_id=null, nb_jours_hors_sgrf=0) {
+export const logAffaireEtape = async function(affaire_id, etape_id, remarque=null, chef_equipe_id=null, hors_sgrf_from=null, hors_sgrf_to=null) {
     let formData = new FormData();
     formData.append("affaire_id", affaire_id);
     formData.append("etape_id", etape_id);
-    formData.append("nb_jours_hors_sgrf", nb_jours_hors_sgrf);
+    if (hors_sgrf_from !== null && hors_sgrf_to !== null) {
+        formData.append("hors_sgrf_from", hors_sgrf_from);
+        formData.append("hors_sgrf_to", hors_sgrf_to);
+    }
     formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
     formData.append("datetime", moment(new Date()).format(process.env.VUE_APP_DATETIMEFORMAT_WS));
     if (remarque) {
@@ -443,10 +446,12 @@ export const logAffaireEtape = async function(affaire_id, etape_id, remarque=nul
 }
 
 
-export const disabledDates_fct = function(date) {
+export const disabledDates_fct = function(date, dateperiod_start=new Date(0), dateperiod_end=new Date()) {
     const day = date.getDay();
-    const now = new Date()
+    date = date.setHours(0, 0, 0, 1);
+    dateperiod_start = dateperiod_start.setHours(0, 0, 0, 0);
+    dateperiod_end = dateperiod_end.setHours(23, 59, 59, 0);
 
-    return day === 6 || day === 0 || date < now;
+    return day === 6 || day === 0 || date < dateperiod_start || date > dateperiod_end;
 }
 

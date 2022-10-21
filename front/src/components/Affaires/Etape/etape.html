@@ -57,17 +57,17 @@
                     </md-field>
                 </div>
 
-                <div v-if="joursHorsSGRF.show" class="md-layout-item md-size-45">
-                    <md-field :class="getValidationClass('nb_jours')">
-                        <label>Temps passé hors SGRF [jours]</label>
-                        <md-input v-model="joursHorsSGRF.nb_jours" style="text-align: center;" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>
-                        <span class="md-error" v-if="!$v.joursHorsSGRF.nb_jours.maxValue">La période hors SGRF ne peut pas excéder celle de l'étape en cours.</span>
-                    </md-field>
-                </div>
-                <div v-if="joursHorsSGRF.show" class="md-layout-item md-size-55">
-                    <p style="margin-top: 8px; margin-bottom: 24px; padding-top: 16px;">
-                        Dans cette étape depuis {{ etapeAffaire.nb_jours_etape }} jour{{ etapeAffaire.nb_jours_etape > 1? 's': '' }}
-                    </p>
+
+                <div v-if="joursHorsSGRF.enabled" class="md-layout-item md-size-100">
+                    <md-checkbox v-model="joursHorsSGRF.show" class="md-primary">Correction chez le client</md-checkbox>
+
+                    <div v-if="joursHorsSGRF.show">
+                        
+                        <DateRangePicker
+                            :dateperiod_start="dateperiod_start"
+                            :showPeriodInfo="true"
+                            ref="DateRangePicker"/>
+                    </div>
                 </div>
                 
                 <div class="md-layout-item"
@@ -100,7 +100,7 @@
 
             <div style="float: right;">
                 <md-button class="md-accent" @click="etapeAffaire.showDialog = false">Annuler</md-button>
-                <md-button class="md-primary" @click="validateForm" :disabled="!allowSaveNewStep">Enregistrer</md-button>
+                <md-button class="md-primary" @click="updateAffaireEtape" :disabled="!allowSaveNewStep">Enregistrer</md-button>
             </div>
         </md-dialog-content>
     </md-dialog>
