@@ -151,7 +151,21 @@ export default {
      * Enregistrer la nouvelle étape
      */
     async updateAffaireEtape() {
+      // get date_from and date_to from DateRangePicker
+      if (this.joursHorsSGRF.enabled && this.joursHorsSGRF.show && this.$refs.DateRangePicker.date_from && this.$refs.DateRangePicker.date_to) {
+        this.joursHorsSGRF.date_from = this.$refs.DateRangePicker.date_from;
+        this.joursHorsSGRF.date_to = this.$refs.DateRangePicker.date_to;
+      } else {
+        this.joursHorsSGRF.date_from = null;
+        this.joursHorsSGRF.date_to = null;
+      }
+
       if (!this.etapeAffaire.prochaine || !this.etapeAffaire.prochaine.id) {
+        alert("Il faut renseigner le champ 'prochaine étape'.")
+        return
+      }
+      if (this.joursHorsSGRF.enabled && this.joursHorsSGRF.show && !this.joursHorsSGRF.date_from && !this.joursHorsSGRF.date_to) {
+        alert("Il faut renseigner la période durant laquelle l'affaire était chez le client.")
         return
       }
 
@@ -171,10 +185,6 @@ export default {
 
       // fix value of this.etapeAffaire.chef_equipe_id to null if another step is selected
       this.etapeAffaire.chef_equipe_id = this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.travaux_chef_equipe? this.etapeAffaire.chef_equipe_id: null;
-
-      // get date_from and date_to from DateRangePicker
-      this.joursHorsSGRF.date_from = this.$refs.DateRangePicker.date_from;
-      this.joursHorsSGRF.date_to = this.$refs.DateRangePicker.date_to;
       
       logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine.id, this.etapeAffaire.remarque, this.etapeAffaire.chef_equipe_id, this.joursHorsSGRF.date_from, this.joursHorsSGRF.date_to)
       .then(() => {

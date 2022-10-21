@@ -419,15 +419,23 @@ export const logAffaireEtape = async function(affaire_id, etape_id, remarque=nul
     let formData = new FormData();
     formData.append("affaire_id", affaire_id);
     formData.append("etape_id", etape_id);
+
+    let remarque_ = '';
     if (hors_sgrf_from !== null && hors_sgrf_to !== null) {
-        formData.append("hors_sgrf_from", hors_sgrf_from);
-        formData.append("hors_sgrf_to", hors_sgrf_to);
+        formData.append("hors_sgrf_de", moment(hors_sgrf_from).format(process.env.VUE_APP_DATEFORMAT_WS));
+        formData.append("hors_sgrf_a", moment(hors_sgrf_to).format(process.env.VUE_APP_DATEFORMAT_WS));
+        remarque_ = 'Affaire chez le client du ' + moment(hors_sgrf_from).format(process.env.VUE_APP_DATEFORMAT_CLIENT) + ' au ' + moment(hors_sgrf_from).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
     }
+
     formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
     formData.append("datetime", moment(new Date()).format(process.env.VUE_APP_DATETIMEFORMAT_WS));
+
     if (remarque) {
-        formData.append("remarque", remarque);
+        formData.append("remarque", remarque + ' // ' + remarque_);
+    } else if (remarque_) {
+        formData.append("remarque", remarque_);
     }
+
     if (chef_equipe_id) {
         formData.append("chef_equipe_id", chef_equipe_id);
     }
