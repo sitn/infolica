@@ -408,6 +408,7 @@ class SuiviMandat(Base):
     fact_forfait = Column(Boolean)
     fact_lettre_accompagnement = Column(Boolean)
     fact_tva = Column(Boolean)
+    fact_domaine_ofrou = Column(Boolean)
     documents_complets = Column(Boolean)
     visa = Column(BigInteger, ForeignKey(Operateur.id))
     date = Column(Date)
