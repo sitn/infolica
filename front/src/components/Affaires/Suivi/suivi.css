@@ -16,3 +16,7 @@
     z-index: 6; /* Le dialogue apparaît sous le div de suggestions du md-autocomplete pour la recherche de clients*/
 }
 
+.affaire_suivi_prio2 {
+    font-style: italic;
+    background-color: rgb(236, 236, 236);
+}
