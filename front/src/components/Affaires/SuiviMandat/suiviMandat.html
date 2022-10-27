@@ -425,6 +425,10 @@
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.pfp3_protection_symbole_geomedia">Protection des symboles PFP dans Géomedia</md-checkbox>
                                                 </div>
                                                 
+                                                <br>
+    
+                                                <div class="md-subhead">Documents</div>
+                                                <md-checkbox class="md-primary" v-model="suiviMandat.documents_complets">Contrôle de l'enregistrement de tous les documents</md-checkbox>
                                             </div>
         
                                             <div class="md-layout-item md-size-30">
@@ -432,15 +436,13 @@
                                                 <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('fact_')">Tout cocher</md-button>
                                                 <div id="fact_">
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.fact_forfait">Forfait de 380 (TTC) par point (mettre 352 dans le tableau des émoluments)</md-checkbox>
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.fact_adresse_correcte">Adresse de facturation correcte (en principe pas SGRF)</md-checkbox>
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.fact_lettre_accompagnement">Lettre d'accompagnement</md-checkbox>
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.fact_tva">Pas de TVA si SPCH</md-checkbox>
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.fact_coordination_cdf_ne">Coordination avec La Chaux-de-Fonds ou Neuchâtel</md-checkbox>
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.fact_domaine_ofrou">PFP sur domaine OFROU (Cohérence de l’adresse de facturation)</md-checkbox>
                                                 </div>
 
-                                                <br>
-
-                                                <div class="md-subhead">Documents</div>
-                                                <md-checkbox class="md-primary" v-model="suiviMandat.documents_complets">Contrôle de l'enregistrement de tous les documents</md-checkbox>
                                             </div>
                                         </div>
                                     </md-card-content>
