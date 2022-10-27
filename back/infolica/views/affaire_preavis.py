@@ -844,9 +844,9 @@ def preavis_print_view(request):
         html += "Préavisé par: " + operateur.nom + " " + operateur.prenom
     html += "<br>Contact: 032 889 67 40</p>"
     html += "<br>"
-    html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + data[4] + "</p>"
+    html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + (data[4] if data[4] is not None else 'indéfini') + "</p>"
     html += "<br>"
-    html += "<p><em>Détail:</em></p><p><em>" + data[5] + "</em></p>"
+    html += "<p><em>Détail:</em></p><p><em>" + (data[5] if data[5] is not None else '-') + "</em></p>"
 
     html += "</body></html>"
 

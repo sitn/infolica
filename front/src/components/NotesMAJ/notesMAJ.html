@@ -17,9 +17,6 @@
                             <label>Version</label>
                             <md-input v-model="newNote.version"></md-input>
                         </md-field>
-                        <md-datepicker style="width: 150px !important;" v-model="newNote.delai" md-immediately :md-disabled-dates="disabledDates">
-                            <label>Délai</label>
-                        </md-datepicker>
                         <md-field style="width: 300px; margin-left: 10px; margin-right: 10px;">
                             <label>Titre</label>
                             <md-input v-model="newNote.titre"></md-input>
@@ -35,7 +32,7 @@
                     </div>
                 </div>
                 <div v-if="notes.length > 0">
-                    <p>Voici mises à jour apportées depuis votre dernière connexion à Infolica:</p>
+                    <p>Voici les mises à jour apportées depuis votre dernière connexion à Infolica:</p>
                     <ul style="margin-top: 0px;">
                         <li v-for="item in notes" :title="item.title">{{ item.titre }}: {{ item.message }}</li>
                     </ul>

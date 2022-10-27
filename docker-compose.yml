@@ -16,6 +16,8 @@ services:
       - "${TEMPLATES_PATH}:/mnt/infolica_templates:ro"
       - "${TEMP_PATH}:/mnt/infolica_temp:rw"
     env_file: .env
+    environment:
+      - TZ=Europe/Zurich
 
   front:
     image: sitn/infolica-front
@@ -28,3 +30,5 @@ services:
     restart: unless-stopped
     ports:
       - "${DOCKER_FRONT_PORT}:80"
+    environment:
+      - TZ=Europe/Zurich
