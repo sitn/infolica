@@ -4,20 +4,19 @@
 
 <script>
 import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
+import DateRangePicker from "@/components/Utils/DateRangePicker/DateRangePicker.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
 import { getTypesAffaires, stringifyAutocomplete2, logAffaireEtape, checkPermission } from '@/services/helper';
-import { validationMixin } from "vuelidate";
-import { maxValue } from 'vuelidate/lib/validators';
 
 
 const moment = require('moment');
 
 export default {
   name: "Etape",
-  mixins: [validationMixin],
   components: {
-    ClotureAffaire
+    ClotureAffaire,
+    DateRangePicker
   },
   props: {
     affaire: Object,
@@ -31,6 +30,7 @@ export default {
     art35Radio: "",
     cloreAffaire: false,
     controleEtape : [],
+    dateperiod_start: null,
     etapeAffaire: {
       nb_jours_etape: 0,
       prochaine: null,
@@ -40,6 +40,7 @@ export default {
     final_decision: false,
     isAdmin: false,
     numerosReserves: [],
+    periodClientStatus: false,
     suiviAffaireTheorique: [],
     updateAffaireDate: {
       text: "",
@@ -48,20 +49,12 @@ export default {
       show: false,
     },
     joursHorsSGRF: {
-      nb_jours: null,
+      from: null,
+      to: null,
+      enabled: false,
       show: false
     }
   }),
-
-  validations() {
-    return {
-      joursHorsSGRF: {
-        nb_jours: {
-          maxValue: maxValue(this.etapeAffaire.nb_jours_etape -1)
-        }
-      }
-    };
-  },
 
   methods: {
     /**
@@ -137,11 +130,12 @@ export default {
         this.typesAffaires_conf.modification_mutation
       ];
 
-      this.joursHorsSGRF.nb_jours = 0;
+      this.joursHorsSGRF.from = null;
+      this.joursHorsSGRF.to = null;
       if (etapes_jours_clients.includes(this.affaire.etape_id) && types_affaires_jours_clients.includes(this.affaire.type_id)) {
-        this.joursHorsSGRF.show = true;
+        this.joursHorsSGRF.enabled = true;
       } else {
-        this.joursHorsSGRF.show = false;
+        this.joursHorsSGRF.enabled = false;
       }
 
       // Update affaire dates
@@ -157,7 +151,21 @@ export default {
      * Enregistrer la nouvelle étape
      */
     async updateAffaireEtape() {
+      // get date_from and date_to from DateRangePicker
+      if (this.joursHorsSGRF.enabled && this.joursHorsSGRF.show && this.$refs.DateRangePicker.date_from && this.$refs.DateRangePicker.date_to) {
+        this.joursHorsSGRF.date_from = this.$refs.DateRangePicker.date_from;
+        this.joursHorsSGRF.date_to = this.$refs.DateRangePicker.date_to;
+      } else {
+        this.joursHorsSGRF.date_from = null;
+        this.joursHorsSGRF.date_to = null;
+      }
+
       if (!this.etapeAffaire.prochaine || !this.etapeAffaire.prochaine.id) {
+        alert("Il faut renseigner le champ 'prochaine étape'.")
+        return
+      }
+      if (this.joursHorsSGRF.enabled && this.joursHorsSGRF.show && !this.joursHorsSGRF.date_from && !this.joursHorsSGRF.date_to) {
+        alert("Il faut renseigner la période durant laquelle l'affaire était chez le client.")
         return
       }
 
@@ -177,8 +185,8 @@ export default {
 
       // fix value of this.etapeAffaire.chef_equipe_id to null if another step is selected
       this.etapeAffaire.chef_equipe_id = this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.travaux_chef_equipe? this.etapeAffaire.chef_equipe_id: null;
-
-      logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine.id, this.etapeAffaire.remarque, this.etapeAffaire.chef_equipe_id, this.joursHorsSGRF.nb_jours)
+      
+      logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine.id, this.etapeAffaire.remarque, this.etapeAffaire.chef_equipe_id, this.joursHorsSGRF.date_from, this.joursHorsSGRF.date_to)
       .then(() => {
         this.$root.$emit("ShowMessage", "L'étape a bien été mise à jour");
         this.etapeAffaire.showDialog = false;
@@ -412,27 +420,6 @@ export default {
       }).catch(err => handleException(err, this));
     },
 
-    /**
-     * Validation
-     */
-    getValidationClass(fieldName) {
-      const field = this.$v.joursHorsSGRF[fieldName];
-
-      if (field) {
-        return {
-          "md-invalid": field.$invalid && field.$dirty
-        };
-      }
-    },
-
-    validateForm () {
-      this.$v.$touch()
-
-      if (!this.$v.$invalid) {
-        this.updateAffaireEtape()
-      }
-    },
-
   },
 
   mounted: function() {
@@ -441,6 +428,8 @@ export default {
 
     // operateur is admin?
     this.isAdmin = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);
+
+    this.dateperiod_start = new Date(moment(this.affaire.etape_datetime, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
   }
 };
 </script>

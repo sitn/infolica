@@ -203,8 +203,10 @@ class AffaireEtape(Base):
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
     etape_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id), nullable=False)
-    nb_jours_hors_sgrf = Column(Integer, default=0)
     datetime = Column(DateTime, nullable=False)
+    nb_jours_hors_sgrf = Column(Integer, default=0)
+    hors_sgrf_de = Column(Date)
+    hors_sgrf_a = Column(Date)
     remarque = Column(Text)
 
 
