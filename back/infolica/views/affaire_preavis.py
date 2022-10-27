@@ -2,6 +2,7 @@
 from math import ceil
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
+from pyramid.response import Response
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
@@ -16,6 +17,7 @@ from datetime import datetime
 import time
 import os
 import shutil
+import requests
 
 from sqlalchemy import func, cast, Text, or_
 
@@ -756,3 +758,107 @@ def service_externe_glossaire_view(request):
     ).order_by(PreavisGlossaire.ordre.asc()).all()
 
     return Utils.serialize_many(glossaire)
+
+
+@view_config(route_name='preavis_print', request_method='POST')
+def preavis_print_view(request):
+    """
+    GET PDF of specified preavis
+    """
+    preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
+    
+    data = request.dbsession.query(
+        Preavis.affaire_id,
+        Service.service,
+        Preavis.date_demande,
+        Preavis.date_reponse,
+        PreavisType.nom,
+        Preavis.remarque,
+        VAffaire.cadastre,
+        Service.abreviation,
+        VAffaire.nom,
+        Preavis.operateur_service_id,
+    ).join(
+        Service
+    ).join(
+        PreavisType, PreavisType.id == Preavis.preavis_type_id
+    ).join(
+        VAffaire, VAffaire.id == Preavis.affaire_id
+    ).filter(
+        Preavis.id == preavis_id
+    ).first()
+
+    operateur = None
+    if data[9] is not None:
+        operateur = request.dbsession.query(Operateur).filter(Operateur.id == data[9]).first()
+
+    now = datetime.now()
+    d = {"now": now.strftime("%d.%m.%Y, %H:%M:%S")}
+
+    html = "<html><head><meta charset='UTF-8'><style>"
+
+    ppp = """
+        .logo {{
+            width: 3.68cm;
+            image-resolution: 300dpi
+        }}
+        @page {{
+            size: A4 portrait;
+            margin: 2cm;
+            counter-increment: page;
+            @bottom-left {{
+                content: "Impression du {now}";
+                font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 7pt;
+            }}
+            @bottom-center {{
+                content: "Page " counter(page) " de " counter(pages);
+                font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 7pt;
+                border-top: .25pt solid #666;
+                width: 60%;
+            }}
+            @bottom-right {{
+                content: "SERVICE DE LA GEOMATIQUE ET DU REGISTRE FONCIER";
+                font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 7pt;
+            }}
+        }}
+        h1 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 18pt; font-style: normal; font-variant: normal; font-weight: 700; line-height: 20pt; }}
+        p {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 400; line-height: 14pt; text-align: justify; }}
+        """ 
+
+    html += ppp.format(**d)
+    html += "</style></head>"
+
+    html += "<body>"
+    html += "<img class='logo' src='https://sitn.ne.ch/web/images/06ne.ch_RVB.png' alt='Logo'>"
+    html += '<p style="font-size: 8pt; line-height: 8pt; margin-top: 0mm; padding-top: 1mm; margin-left: 0mm; padding-left: 0mm;"><b>DÉPARTEMENT DU DÉVELOPPEMENT<br> \
+                    TERRITORIAL ET DE L\'ENVIRONNEMENT</b><br> \
+                    SERVICE DE LA GÉOMATIQUE ET<br> \
+                    DU REGISTRE FONCIER</p>'
+
+    html += "<h1>Préavis du " + data[1] + "</h1>"
+    html += "<p>Affaire n° " + str(data[0]) + "<br>" + "Cadastre: " + data[6] + "</p>"
+    html += "<p>Description de l'affaire: " + data[8] + "</p>"
+    html += "<p>Date de la demande de préavis: " + str(data[2].strftime("%d.%m.%Y")) + "<br>" + "Date de retour du préavis: " + str(data[3].strftime("%d.%m.%Y")) + "</p>"
+    html += "<p>"
+    if operateur is not None:
+        html += "Préavisé par: " + operateur.nom + " " + operateur.prenom
+    html += "<br>Contact: 032 889 67 40</p>"
+    html += "<br>"
+    html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + data[4] + "</p>"
+    html += "<br>"
+    html += "<p><em>Détail:</em></p><p><em>" + data[5] + "</em></p>"
+
+    html += "</body></html>"
+
+    filename = "Préavis_" + str(data[7]) + "_Affaire_" + str(data[0]) + ".pdf"
+
+    html = html.encode('utf-8')
+
+    result = requests.post(request.registry.settings['weasyprint_baseurl'] + filename, data=html)
+
+    response = Response(result.content)
+    params = response.content_type_params
+    params['filename'] = filename
+    response.content_type = 'application/pdf'
+    response.content_type_params = params
+    return response
