@@ -31,7 +31,7 @@
                                     <md-button class="md-icon-button md-primary md-dense" v-on:click.prevent.stop="onModifyPreavis(item)" title="Mettre à jour le préavis" v-if="!affaireReadonly">
                                         <md-icon class="md-edit">edit</md-icon>
                                     </md-button>
-                                    <md-button class="md-icon-button md-primary md-dense" v-on:click.prevent.stop="onExportPreavisPDF(item)" title="Exporter le préavis dans un PDF">
+                                    <md-button v-if="item.date_reponse" class="md-icon-button md-primary md-dense" v-on:click.prevent.stop="onExportPreavisPDF(item)" title="Exporter le préavis dans un PDF">
                                         <md-icon class="md-edit">download</md-icon>
                                     </md-button>
                                 </md-table-cell>
