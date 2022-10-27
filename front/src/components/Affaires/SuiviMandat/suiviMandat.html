@@ -261,7 +261,7 @@
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.desbal_adresse_bat">Contrôle adresse bâtiment</md-checkbox>
                                                         <div style="display: flex; vertical-align: middle; margin-top: 16px; margin-bottom: 16px;">
                                                             <md-checkbox style="margin: 0px;" class="md-primary" v-model="suiviMandat.desbal_libel_prov">Contrôle libellé provenance</md-checkbox>
-                                                            <a style="margin-left: 10px;" href="https://sitnintra.ne.ch/bookstack_sgrf/books/mo-libellé-standard/page/libellé-des-provenances">lien bookstack</a>
+                                                            <a style="margin-left: 10px;" href="https://sitnintra.ne.ch/bookstack_sgrf/books/mo-libell%C3%A9-standard/page/libelles-des-provenances">lien bookstack</a>
                                                         </div>
                                                         <div style="display: flex; vertical-align: middle; margin-top: 16px; margin-bottom: 16px;">
                                                             <md-checkbox style="margin: 0px;" class="md-primary" v-model="suiviMandat.desbal_libel_remarques_rf">Contrôle libellé remarques RF</md-checkbox>
@@ -276,7 +276,7 @@
                                                         
                                                         <md-divider class="md-inset"></md-divider>
                                                         <br>
-    
+
                                                         <div class="md-subhead"> - Balance</div>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.desbal_num_bf_anciens_nouveaux">Contrôle des n° de BF nouveaux + anciens</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.desbal_surf_ancien">Contrôle des surfaces ancien état)</md-checkbox>
@@ -296,6 +296,14 @@
                                                     <div id="emol_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.emol_frais_division">Frais division de base saisie</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.emol_frais_materialisation">Frais de matérialisation</md-checkbox>
+                                                    </div>
+
+                                                    <md-divider></md-divider>
+                                                    <br>
+
+                                                    <div class="md-subhead">Validation dans Geomédia</div>
+                                                    <div>
+                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_retarder_validation">Retarder la validation de l'affaire dans GEOMEDIA.</md-checkbox>
                                                     </div>
                                                 </div>
 
@@ -319,7 +327,6 @@
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_servitude_no_rs">Contrôler que l'attribut "Numero_RS" dans la table "Servitudes" est bien saisi (exemple:"0ProjetA").</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_servitude_libelle_classe">Contrôler que l'attribut "Libelle" ainsi que "Classe" dans la table "Servitudes" sont bien corrects et conformes.</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_servitude_droit_jouissance">Effacer les droits de jouissance car ils ne doivent pas figurés dans la base de données (à effacer lors de la validation).</md-checkbox>
-                                                        <md-checkbox class="md-primary" v-model="suiviMandat.geos_retarder_validation">Retarder la validation de l'affaire dans GEOMEDIA.</md-checkbox>
                                                     </div>
                                                 
                                                     <md-divider></md-divider>
@@ -418,6 +425,10 @@
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.pfp3_protection_symbole_geomedia">Protection des symboles PFP dans Géomedia</md-checkbox>
                                                 </div>
                                                 
+                                                <br>
+    
+                                                <div class="md-subhead">Documents</div>
+                                                <md-checkbox class="md-primary" v-model="suiviMandat.documents_complets">Contrôle de l'enregistrement de tous les documents</md-checkbox>
                                             </div>
         
                                             <div class="md-layout-item md-size-30">
@@ -425,15 +436,13 @@
                                                 <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('fact_')">Tout cocher</md-button>
                                                 <div id="fact_">
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.fact_forfait">Forfait de 380 (TTC) par point (mettre 352 dans le tableau des émoluments)</md-checkbox>
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.fact_adresse_correcte">Adresse de facturation correcte (en principe pas SGRF)</md-checkbox>
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.fact_lettre_accompagnement">Lettre d'accompagnement</md-checkbox>
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.fact_tva">Pas de TVA si SPCH</md-checkbox>
+                                                    <md-checkbox class="md-primary" v-model="suiviMandat.fact_coordination_cdf_ne">Coordination avec La Chaux-de-Fonds ou Neuchâtel</md-checkbox>
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.fact_domaine_ofrou">PFP sur domaine OFROU (Cohérence de l’adresse de facturation)</md-checkbox>
                                                 </div>
 
-                                                <br>
-
-                                                <div class="md-subhead">Documents</div>
-                                                <md-checkbox class="md-primary" v-model="suiviMandat.documents_complets">Contrôle de l'enregistrement de tous les documents</md-checkbox>
                                             </div>
                                         </div>
                                     </md-card-content>

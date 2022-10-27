@@ -35,7 +35,7 @@
 
                         <div style="clear: left;">
                             <md-table  md-height="100%" v-model="affaire_suivi" md-sort="next_datetime_sort" md-sort-order="desc" md-card>
-                                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{ affaire_suivi_prio2: item.etape_priorite == 2 }">
                                     <md-table-cell md-label="Étape" style="width: 250px !important;">{{ item.etape }}</md-table-cell>
                                     <md-table-cell md-label="Réalisée par" style="width: 200px !important;">{{ item.next_operateur_prenom }} {{ item.next_operateur_nom }}</md-table-cell>
                                     <md-table-cell md-label="Réalisée le" md-sort-by="next_datetime_sort" style="width: 170px !important;">{{ item.next_datetime }}</md-table-cell>
