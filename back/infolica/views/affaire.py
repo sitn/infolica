@@ -125,7 +125,11 @@ def affaire_cockpit_view(request):
 
     affaires = []
     for affaire in query:
-        urgent_echeance = datetime.strftime(affaire.urgent_echeance, '%d.%m.%Y') if not affaire.urgent_echeance is None and not affaire.etape_id in [int(settings['affaire_etape_validation_bd_id']), int(settings['affaire_etape_signature_art35_id']), int(settings['affaire_etape_fin_processus_id'])] else None
+        urgent_echeance = None
+        if not affaire.urgent_echeance is None \
+            and not affaire.etape_id in [int(settings['affaire_etape_validation_bd_id']), int(settings['affaire_etape_signature_art35_id']), int(settings['affaire_etape_fin_processus_id'])]:
+            urgent_echeance = datetime.strftime(affaire.urgent_echeance, '%d.%m.%Y')
+        
         nom_affaire = (affaire.no_access if affaire.no_access else str(affaire.id)) + (" / " + urgent_echeance if urgent_echeance else "") + (" / " + affaire.attribution if affaire.attribution else "")
         etape_datetime = datetime.strftime(affaire.etape_datetime, '%Y-%m-%d %H:%M:%S')
         etape_days_elapsed = (datetime.now().date() - affaire.etape_datetime.date()).days
