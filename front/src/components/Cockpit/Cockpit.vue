@@ -4,6 +4,7 @@
 
 <script>
 import Matdiff from "@/components/Cockpit/Matdiff/Matdiff.vue";
+import Snow from "@/components/Utils/Snow/Snow.vue";
 
 import { handleException } from '@/services/exceptionsHandler';
 import { checkPermission, getOperateurs, stringifyAutocomplete, stringifyAutocomplete2, getCurrentUserRoleId } from '@/services/helper';
@@ -12,9 +13,16 @@ export default {
   name: "Cockpit",
   components: {
       Matdiff,
+      Snow,
   },
   data: () => {
     return {
+        snow: {
+            activate: false,
+            show: false,
+            newYear: null
+        },
+
         affaires: [{}],
         affaireEtapes: [],
         affaireTypes: [],
@@ -290,6 +298,15 @@ export default {
         this.getAffaire();
     });
     this.getPermissions();
+
+    // snow
+    let timedelta = [18, 5];
+    let now = new Date().getTime();
+    let newYear = new Date(new Date().getTime()+((timedelta[0]+1)*24*60*60*1000)).getFullYear();
+    if (now >= new Date(newYear+'-01-01').getTime()-(timedelta[0]*24*60*60*1000) && now <= new Date(newYear+'-01-01').getTime()+(timedelta[1]*24*60*60*1000)) {
+        this.snow.show = true;
+        this.snow.newYear = newYear;
+    }
   },
   
   created() {

@@ -1,6 +1,8 @@
 <div id="cockpit">
+    <Snow :activateSnow="snow.activate" v-if="snow.show"></Snow>
     <md-toolbar class="justifyTitleBtn">
         <h1>Cockpit</h1>
+        <md-button class="md-raised" @click="snow.activate = !snow.activate" v-if="snow.show"><b><md-icon style="color: green;">park</md-icon> Joyeux Noël et bonne année {{ snow.newYear }} ! <md-icon style="color: green;">park</md-icon></b></md-button>
         <md-button class="md-raised md-accent" v-if="newAffaireAllowed" @click="$router.push({name: 'NewAffaire'})">Nouvelle affaire</md-button>
     </md-toolbar>
 
