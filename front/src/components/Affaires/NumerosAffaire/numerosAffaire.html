@@ -40,9 +40,12 @@
                                                 <md-table-cell md-label="Repris par" md-sort-by="affaire_destination_id">
                                                     <a v-bind:href="item.affaire_destination_href">{{item.affaire_destination_id }}</a>
                                                 </md-table-cell>
-                                                <md-table-cell md-label="Délier de l'affaire" v-if="show.deleteReferencedNumberColumn">
-                                                    <md-button class="md-icon-button md-accent md-dense" @click="onRemoveNumeroReference(item)">
+                                                <md-table-cell md-label="Action" v-if="show.deleteReferencedNumberBtn || show.updateReferencedNumberBtn">
+                                                    <md-button class="md-icon-button md-accent md-dense" @click="onRemoveNumeroReference(item)" title="Délier l'immeuble de l'affaire" v-if="show.deleteReferencedNumberBtn">
                                                         <md-icon>delete</md-icon>
+                                                    </md-button>
+                                                    <md-button class="md-icon-button md-accent md-dense" @click="onUpdateBaseNumber(item)" title="Modifier l'immeuble de base" v-if="show.updateReferencedNumberBtn">
+                                                        <md-icon>wifi_protected_setup</md-icon>
                                                     </md-button>
                                                 </md-table-cell>
                                             </md-table-row>
@@ -154,9 +157,18 @@
 
     <!-- Référence de numéros -->
     <ReferenceNumeros ref="formReference" 
+                      id="test1"
                       :affaire_numeros_anciens="affaire_numeros_anciens"
                       :cadastre_id="affaire.cadastre_id"
                       :saveNumerosReferences="saveReferenceNumeros" />
+    
+    <ReferenceNumeros ref="formModifReference" 
+                      id="test2"
+                      dialogTitle="test"
+                      selectionType="single"
+                      :affaire_numeros_anciens="affaire_numeros_anciens"
+                      :cadastre_id="affaire.cadastre_id"
+                      :saveNumerosReferences="saveModifReferenceNumeros" />
     
     <!-- Réservation de numéros -->
     <ReservationNumeros ref="formReservation"

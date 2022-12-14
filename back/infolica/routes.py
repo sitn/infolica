@@ -91,6 +91,7 @@ def includeme(config):
     #Référence de numéros
     config.add_route('reference_numeros','/infolica/api/reference_numeros')
     config.add_route('reference_numeros_s','/infolica/api/reference_numeros/')
+    config.add_route('modification_reference_numeros','/infolica/api/modification_reference_numeros')
     #Réservation de numéros
     config.add_route('reservation_numeros','/infolica/api/reservation_numeros')
     config.add_route('reservation_numeros_s','/infolica/api/reservation_numeros/')

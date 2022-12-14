@@ -5,7 +5,7 @@ import pyramid.httpexceptions as exc
 from sqlalchemy import and_
 
 from infolica.models.constant import Constant
-from infolica.models.models import AffaireNumero, Numero, Affaire, Facture
+from infolica.models.models import AffaireNumero, Numero, Affaire, Facture, NumeroRelation
 from infolica.scripts.utils import Utils
 from infolica.views.numero import affaire_numero_new_view
 
@@ -80,3 +80,39 @@ def reference_numeros_delete_view(request):
     request.dbsession.delete(affNum)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Numero.__tablename__))
+
+
+@view_config(route_name='modification_reference_numeros', request_method='POST', renderer='json')
+def modification_reference_numeros_view(request):
+    """
+    modification reference numero
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+
+    # Get affaire_id
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+
+    # get old and new number
+    numero_id_old = request.params['numero_id_old'] if 'numero_id_old' in request.params else None
+    numero_id_new = request.params['numero_id_new'] if 'numero_id_new' in request.params else None
+
+    # update affaire_numero
+    affnum = request.dbsession.query(AffaireNumero).filter(
+        AffaireNumero.affaire_id==affaire_id,
+        AffaireNumero.numero_id==numero_id_old
+    ).first()
+    affnum.numero_id = numero_id_new
+
+    # update numero_relation if already exists
+    numrel = request.dbsession.query(NumeroRelation).filter(
+        NumeroRelation.affaire_id==affaire_id,
+        NumeroRelation.numero_id_base==numero_id_old
+    ).all()
+
+    for numrel_i in numrel:
+        numrel_i.numero_id_base = numero_id_new
+    
+    return exc.HTTPOk(detail="Le numéro de base a été modifié correctement (num_id {}->{}) dans l'affaire {}".format(numero_id_old, numero_id_new, affaire_id))
+

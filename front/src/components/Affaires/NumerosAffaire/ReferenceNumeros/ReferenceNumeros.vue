@@ -12,6 +12,8 @@ export default {
     affaire_numeros_anciens: {type: Array, default: () => []},
     cadastre_id: {type: Number, default: null},
     saveNumerosReferences: {type: Function, default: () => {alert("Echec de l'enregistrement")}},
+    dialogTitle: {type: String, default: () => 'Référencer des numéros'},
+    selectionType: {type: String, default: () => 'multiple'},
   },
   components: {},
   data() {
