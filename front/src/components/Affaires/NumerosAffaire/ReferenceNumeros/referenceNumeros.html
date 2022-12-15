@@ -3,7 +3,7 @@
     <md-dialog :md-active.sync="showReferenceDialog" md-confirm-text="Enregistrer" md-cancel-text="Annuler"
         md-title="Référencer des numéros" :md-close-on-esc="true" :md-click-outside-to-close="true">
 
-        <md-dialog-title>Référencer des numéros</md-dialog-title>
+        <md-dialog-title>{{ dialogTitle }}</md-dialog-title>
 
         <md-dialog-content>
             <md-card class="md-elevation-0 simple">
@@ -82,7 +82,7 @@
                             md-description="Tous les critères sont-ils corrects?">
                         </md-table-empty-state>
 
-                        <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple"
+                        <md-table-row slot="md-table-row" slot-scope="{ item }" :md-selectable="selectionType"
                             class="md-primary md-raised" md-auto-select>
                             <md-table-cell md-label="Cadastre" md-sort-by="cadastre">
                                 {{ item.cadastre }}

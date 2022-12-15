@@ -55,7 +55,8 @@ export default {
       numerosMoLoading: true,
       show: {
         balance: false,
-        deleteReferencedNumberColumn: false,
+        deleteReferencedNumberBtn: false,
+        updateReferencedNumberBtn: false,
         numeros_references_card: false,
         numeros_reserves_card: false,
         numeros_reserves_immeuble_base: false,
@@ -77,7 +78,8 @@ export default {
       etatNumeros_conf: {
         projet: Number(process.env.VUE_APP_NUMERO_PROJET_ID),
         abandonne: Number(process.env.VUE_APP_NUMERO_ABANDONNE_ID)
-      }
+      },
+      modificationNumeroBaseId: null,
       // numeros_base_relations: []
     };
   },
@@ -549,9 +551,8 @@ export default {
           this.typesAffaires_conf.modification_duplicata
         ].includes(this.affaire.type_id),
 
-        deleteReferencedNumberColumn: [
+        deleteReferencedNumberBtn: [
           this.typesAffaires_conf.cadastration,
-          this.typesAffaires_conf.ppe,
           this.typesAffaires_conf.mat_diff,
           this.typesAffaires_conf.revision_abornement,
           this.typesAffaires_conf.autre,
@@ -560,6 +561,12 @@ export default {
           this.typesAffaires_conf.modification_abandon_partiel
         ].includes(this.affaire.type_id)
           && role_id && !isNaN(role_id) && Number(process.env.VUE_APP_ADMIN_ROLE_ID) === Number(role_id),
+        
+        updateReferencedNumberBtn: [
+          this.typesAffaires_conf.ppe,
+          this.typesAffaires_conf.pcop
+        ].includes(this.affaire.type_id)
+          && (this.affaire.operateur_id === JSON.parse(localStorage.getItem("infolica_user")).id || role_id && !isNaN(role_id) && Number(process.env.VUE_APP_ADMIN_ROLE_ID) === Number(role_id)),
       }
     },
 
@@ -623,54 +630,96 @@ export default {
       });
     },
 
-  /**
-   * Remove link referenced Number
-   */
-  onRemoveNumeroReference(item) {
-    // Control if numeros relations are based on current item
-    let testBaseNumber = this.affaire_numeros_nouveaux.some(x => x.numero_base_id === item.numero_id);
 
-    if (testBaseNumber) {
-      this.$root.$emit("ShowAlert", {
-        title: "Action impossible",
-        content: "Le numéro " + item.numero + " du cadastre de " + item.numero_cadastre + " est utilisé comme bien-fonds de base pour des numéros dans cette affaire."
+    /**
+     * Fonction appelée lorsque des numéros référencés sont modifiés 
+     */
+    async saveModifReferenceNumeros(data) {
+      let formData = new FormData();
+      formData.append("affaire_id", this.affaire.id);
+      formData.append("numero_id_old", this.modificationNumeroBaseId);
+      formData.append("numero_id_new", data.id);
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_MODIFICATION_REFERENCE_NUMEROS_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        )
+        .then(response => {
+          this.$root.$emit("searchAffaireNumeros");
+          this.$root.$emit("ShowMessage", "Les modifications ont été apportées correctement");
+          this.$root.$emit("updateNumerosFactureList");
+          this.$root.$emit("searchAffaireFactures");
+          resolve(response);
+          this.modificationNumeroBaseId = null;
+        }).catch(err => {
+          reject(err);
+          this.modificationNumeroBaseId = null;
+        });
       });
-    } else {
-      
-      let content = "Confirmer la suppression du lien entre le numéro "  + item.numero + " du cadastre de " + item.numero_cadastre + " et l'affaire " + this.affaire.id + "."
-      if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
-        content += " Les factures liées à ce numéro seront également supprimée automatiquement."
-      }
-      
-      this.$root.$emit("ShowConfirmation", {
-        title: "Demande de confirmation",
-        content: content,
-        onConfirm: () => { this.deleteNumeroAffaire(item) }
-      })
+    },
 
+    /**
+     * Remove link referenced Number
+     */
+    onRemoveNumeroReference(item) {
+      // Control if numeros relations are based on current item
+      let testBaseNumber = this.affaire_numeros_nouveaux.some(x => x.numero_base_id === item.numero_id);
+
+      if (testBaseNumber) {
+        this.$root.$emit("ShowAlert", {
+          title: "Action impossible",
+          content: "Le numéro " + item.numero + " du cadastre de " + item.numero_cadastre + " est utilisé comme bien-fonds de base pour des numéros dans cette affaire."
+        });
+      } else {
+        
+        let content = "Confirmer la suppression du lien entre le numéro "  + item.numero + " du cadastre de " + item.numero_cadastre + " et l'affaire " + this.affaire.id + "."
+        if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
+          content += " Les factures liées à ce numéro seront également supprimée automatiquement."
+        }
+        
+        this.$root.$emit("ShowConfirmation", {
+          title: "Demande de confirmation",
+          content: content,
+          onConfirm: () => { this.deleteNumeroAffaire(item) }
+        })
+
+      }
+    },
+
+
+    /**
+     * Supprimer lien numéro_affaire
+     */
+    async deleteNumeroAffaire(item) {
+      this.$http.delete(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT
+          + "?affaire_id=" + item.affaire_id + "&numero_id=" + item.numero_id,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.searchAffaireNumeros();
+          this.$root.$emit("ShowMessage", "Le numéro " + item.numero + " du cadastre de " + item.numero_cadastre + " a bien été délié de l'affaire");
+          this.$root.$emit("searchAffaireFactures");
+        }
+      }).catch(err => handleException(err, this));
+    },
+    
+    
+    /**
+     * Modifier numéro de base (PPE/PCOP)
+     */
+    onUpdateBaseNumber(data) {
+      this.modificationNumeroBaseId = data.numero_id;
+      /** Ouvrir la boîte de dialogue de référence de numéros **/
+      this.$refs.formModifReference.openReferenceDialog();
     }
-  },
-
-
-  /**
-   * Supprimer lien numéro_affaire
-   */
-  async deleteNumeroAffaire(item) {
-    this.$http.delete(
-      process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMEROS_ENDPOINT
-        + "?affaire_id=" + item.affaire_id + "&numero_id=" + item.numero_id,
-      {
-        withCredentials: true,
-        headers: { Accept: "application/json" }
-      }
-    ).then(response => {
-      if (response && response.data) {
-        this.searchAffaireNumeros();
-        this.$root.$emit("ShowMessage", "Le numéro " + item.numero + " du cadastre de " + item.numero_cadastre + " a bien été délié de l'affaire");
-        this.$root.$emit("searchAffaireFactures");
-      }
-    }).catch(err => handleException(err, this));
-  }
 
 
   },
