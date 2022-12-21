@@ -47,7 +47,9 @@
                     <div class="md-toolbar-section-start">
                         <h1 class="md-title">Demandes réalisées</h1>
                     </div>
-          
+
+                    <div v-if="liste_preavis_old.length === 20" style="background-color: lightblue; margin: 0 20px 0 20px; padding: 0 5px 0 5px;"><em>Pour des raisons de performances, seules 20 affaires sont chargées ici. Utiliser la fonction de recherche pour retrouver une affaire en particulier.</em></div>
+                    
                     <md-field md-clearable style="width: 350px;">
                         <md-input placeholder="Rechercher" v-model="searchTerm_old" @input="getClosedPreavis" />
                     </md-field>

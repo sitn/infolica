@@ -223,19 +223,24 @@ def service_externe_preavis_view(request):
     ).join(
         Operateur, Preavis.operateur_service_id == Operateur.id, isouter=True
     ).filter(
-        Preavis.service_id == operateur.service_id,
-        VAffaire.date_envoi == None,
-        VAffaire.date_cloture == None
+        Preavis.service_id == operateur.service_id
     )
 
     if status is not None:
         if status == "open":
             query = query.filter(
                 Preavis.date_reponse == None,
-                Preavis.etape == 'externe'
+                Preavis.etape == 'externe',
+                VAffaire.date_envoi == None,
+                VAffaire.date_cloture == None
             )
         elif status == "closed":
             query = query.filter(Preavis.etape == 'interne')
+    else:
+        query = query.filter(
+            VAffaire.date_envoi == None,
+            VAffaire.date_cloture == None
+        )
     
     if search is not None:
         search = search.split(' ')
@@ -248,7 +253,12 @@ def service_externe_preavis_view(request):
                 )
             )
 
-    records = query.order_by(Preavis.date_demande.desc()).all()
+    query = query.order_by(Preavis.date_demande.desc())
+    
+    if status is not None and status == "closed":
+        query = query.limit(request.registry.settings['search_limit'])
+
+    records = query.all()
 
     results = []
     for rec in records:
@@ -324,7 +334,8 @@ def service_externe_affaire_view(request):
         Preavis.service_id,
         VAffaire.urgent,
         VAffaire.urgent_echeance,
-        VAffaire.etape_id
+        VAffaire.etape_id,
+        VAffaire.date_envoi
     ).filter(
         Preavis.id == preavis_id,
         VAffaire.id == Preavis.affaire_id,
@@ -342,7 +353,7 @@ def service_externe_affaire_view(request):
     ]))
 
     remarque_warning = ''
-    if record[25] is True:
+    if record[25] is True and record[28] is None:
         tmp = 'Affaire urgente, à traiter en priorité'
         if record[26] is not None:
             tmp += ' (délai de traitement au SGRF: ' + datetime.strftime(record[26], '%d.%m.%Y') + ')'
