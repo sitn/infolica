@@ -19,7 +19,6 @@ from sqlalchemy.sql.expression import cast
 import os
 import json
 from datetime import datetime, timedelta
-from docxtpl import DocxTemplate, RichText
 import re
 
 ###########################################################
@@ -482,31 +481,77 @@ def courrier_affaire_view(request):
     """
     Create  file
     """
-    settings = request.registry.settings
-    mails_templates_directory = settings['mails_templates_directory']
-    temporary_directory = settings['temporary_directory']
-
     # Get request params
     template = request.params['template']
     values = request.params['values']
     output_file_name = request.params['output_file_name'] if 'output_file_name' in request.params else template
 
-    # Set output file name
-    date_time = datetime.now().strftime("%Y%m%d")
-    filename = output_file_name + "_" + date_time + '.docx'
-    file_path = os.path.join(temporary_directory, filename)
+    # Set context
+    data = json.loads(values)
+    filename = Utils.generate_file_from_template(request, template, data, output_file_name=output_file_name)
+
+    return {'filename': filename}
+
+
+@view_config(route_name='courrier_retablissement_pfp', request_method='POST', renderer='json')
+def courrier_retablissement_pfp_view(request):
+    """
+    Create  file
+    """
+    # Get request params
+    facture_id = request.params['facture_id'] if 'facture_id' in request.params else None
+    template = 'RetablissementPointsFixes'
+    output_file_name = 'Lettre_retablissement_pfp'
+
+    fac = request.dbsession.query(
+        Facture.id,  # 0
+        Facture.montant_total,  # 1
+        Client.entreprise,  # 2
+        Client.adresse,  # 3
+        Client.npa,  # 4
+        Client.localite,  # 5
+        Affaire.id,  # 6
+        Affaire.nom,  # 7
+        Affaire.date_ouverture,  # 8
+    ).join(
+        Client, Facture.client_id == Client.id
+    ).join(
+        Affaire, Facture.affaire_id == Affaire.id
+    ).filter(
+        Facture.id==facture_id
+    ).first()
+
+    today_date = datetime.today().strftime('%d.%m.%Y')
+
+    mois = {
+        '1': 'janvier',
+        '2': 'février',
+        '3': 'mars',
+        '4': 'avril',
+        '5': 'mai',
+        '6': 'juin',
+        '7': 'juillet',
+        '8': 'août',
+        '9': 'septembre',
+        '10': 'octobre',
+        '11': 'novembre',
+        '12': 'décembre',
+    }
+
+    data = {
+        'AFFAIRE_ID': fac[6],
+        'ADRESSE': '\n'.join([fac[2], fac[3], fac[4] + ' ' + fac[5]]),
+        'DATE': today_date,
+        'DESCRIPTION_AFFAIRE': fac[7],
+        'MOIS': mois[str(fac[8].month)],
+        'ANNEE': fac[8].year,
+        'MONTANT_TOTAL_FACTURE': '{:.2f}'.format(fac[1]),
+        'LEVE_NOUVEAUX_AMENAGEMENTS': False,
+        # 'LEVE_NOUVEAUX_AMENAGEMENTS': True,
+    }
 
     # Set context
-    context = json.loads(values)
-    for key in context.keys():
-        context[key] = RichText(context[key])
-
-    # Ouverture du document template
-    doc = DocxTemplate(os.path.join(mails_templates_directory, template + ".docx"))
-
-    # Replace values by keywords and save
-    doc.render(context)
-    doc.save(file_path)
+    filename = Utils.generate_file_from_template(request, template, data, output_file_name=output_file_name)
 
     return {'filename': filename}
 

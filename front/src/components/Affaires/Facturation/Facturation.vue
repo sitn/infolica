@@ -9,7 +9,9 @@ import { getCurrentDate,
          getDocument,
          logAffaireEtape,
          setClientsAdresse_,
-         getClientsByTerm } from "@/services/helper";
+         getClientsByTerm,
+         downloadGeneratedDocument,
+         deleteGeneratedDocument } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -593,6 +595,36 @@ export default {
       getDocument(formData).then(response => {
         this.$root.$emit("ShowMessage", "Le fichier '" + response + "' se trouve dans le dossier 'Téléchargement'")
       }).catch(err => handleException(err, this));
+    },
+    
+    
+    /**
+     * Générer lettre d'accompagnement (rétablissement de PFP)
+     */
+    async generateLettrePFP(facture) {
+      let formData = new FormData();
+      formData.append('facture_id', facture.id);
+      
+      this.$http.post(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_COURRIER_TEMPLATE_PFP_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          const filename = response.data.filename;
+
+          downloadGeneratedDocument(filename).then(
+            response => {
+              deleteGeneratedDocument(response)
+              .catch(err => handleException(err, this));
+          }).catch(err => handleException(err, this));
+        }
+      }).catch(err => handleException(err, this));  
+        
+        
     },
 
     /**
