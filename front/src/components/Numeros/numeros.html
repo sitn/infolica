@@ -96,6 +96,14 @@
                                 </md-table-row>
                             </md-table>
                         </div>
+                        <div v-else-if="emptyResultNumeros">
+                            <br><br>
+                            <md-empty-state
+                                md-icon="kitesurfing"
+                                md-label="Aucun numéro trouvé"
+                                md-description="Aucun résultat ne correspond à la recherche.">
+                            </md-empty-state>
+                        </div>
                     </md-card-content>
                 </md-card>
         
@@ -160,6 +168,14 @@
                                     <md-table-cell md-label="Premier numéro disponible">{{ item.prochain_numero }}</md-table-cell>
                                   </md-table-row>
                             </md-table>
+                        </div>
+                        <div v-else-if="emptyResultNumerosMO">
+                            <br><br>
+                            <md-empty-state
+                                md-icon="sports_handball"
+                                md-label="Aucun numéro trouvé"
+                                md-description="Aucun résultat ne correspond à la recherche.">
+                            </md-empty-state>
                         </div>
         
                     </md-card-content>
