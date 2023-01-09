@@ -288,7 +288,14 @@ export default {
       this.compareOperateurVersionWithCurrentVersion();
     }
 
-    this.$root.$on("openNotesMAJ", () => {this.compareOperateurVersionWithCurrentVersion(); this.showNotesMAJ=true;});
+    this.$root.$on("openNotesMAJ", () => {
+      if (!this.showNotesMAJ) {
+        this.compareOperateurVersionWithCurrentVersion();
+        this.showNotesMAJ=true;
+      } else {
+        this.closeInfobulle();
+      }
+    });
     this.$root.$on("notesMaj_set_default_params", () => this.showNotesMAJ = false);
 
     this.$root.$on("notesMaj_hasAdminRights", () => {
