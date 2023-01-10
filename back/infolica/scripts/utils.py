@@ -336,22 +336,27 @@ class Utils(object):
     
     
     @classmethod
-    def generate_file_from_template(cls, request, template, data, output_file_name=None):
+    def generate_file_from_template(cls, request, template, data, output_file_name, timeout=5):
         settings = request.registry.settings
         mails_templates_directory = settings['mails_templates_directory']
         temporary_directory = settings['temporary_directory']
 
 
         # Set output file name
-        date_time = datetime.now().strftime("%Y%m%d")
+        date_time = datetime.now().strftime("%Y%m%d%H%M%S")
         filename = output_file_name + "_" + date_time + '.docx'
         file_path = os.path.join(temporary_directory, filename)
 
         # Set context
         for key in data.keys():
-            if data[key] is True or data[key] is False:
-                continue
-            data[key] = RichText(data[key])
+            if type(data[key]) is tuple:
+                if data[key][0] is True or data[key][0] is False:
+                    continue
+                data[key] = RichText(data[key][0], **data[key][1])
+            else:
+                if data[key] is True or data[key] is False:
+                    continue
+                data[key] = RichText(data[key])
 
         # Ouverture du document template
         doc = DocxTemplate(os.path.join(mails_templates_directory, template + ".docx"))
