@@ -9,7 +9,6 @@ from infolica.models.models import Affaire, AffaireType, ModificationAffaireType
 from infolica.models.models import ModificationAffaire, VAffaire, Facture, Client
 from infolica.models.models import ControleGeometre, ControleMutation, ControlePPE, SuiviMandat
 from infolica.models.models import AffaireEtape, AffaireEtapeIndex, Preavis
-from infolica.models.models import Emolument, EmolumentAffaire, EmolumentAffaireRepartition
 from infolica.scripts.mail_templates import MailTemplates
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
@@ -544,21 +543,6 @@ def courrier_retablissement_pfp_view(request):
         '12': 'décembre',
     }
 
-    test = request.dbsession.query(
-        Emolument.position
-    ).join(
-        EmolumentAffaire, EmolumentAffaire.id==Emolument.emolument_affaire_id
-    ).join(
-        EmolumentAffaireRepartition, EmolumentAffaireRepartition.emolument_affaire_id==EmolumentAffaire.id
-    ).filter(
-        EmolumentAffaireRepartition.facture_id==facture_id,
-        EmolumentAffaire.affaire_id==fac[6]
-    ).first()
-
-    leve_nouveaux_amenagements = False
-    if test is not None and test[0] is not None:
-        leve_nouveaux_amenagements = bool(re.search("point.? fixe.?", test[0], flags=re.IGNORECASE))
-
     data = {
         'AFFAIRE_ID': fac[6] or '',
         'ADRESSE': '\n'.join([fac[2] or '', fac[3] or '', ' '.join([fac[4] or '', fac[5] or ''])]),
@@ -567,7 +551,6 @@ def courrier_retablissement_pfp_view(request):
         'MOIS': mois[str(fac[8].month)] or '',
         'ANNEE': fac[8].year or '',
         'MONTANT_TOTAL_FACTURE': '{:.2f}'.format(fac[1]) or '',
-        'LEVE_NOUVEAUX_AMENAGEMENTS': leve_nouveaux_amenagements,
     }
 
     # Set context
