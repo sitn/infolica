@@ -50,7 +50,7 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-          this.dossier_affaire = response.data;
+          this.dossier_affaire = response.data.replace(/^!\//g, "\\");
         }
       }).catch(err => handleException(err, this))
     },

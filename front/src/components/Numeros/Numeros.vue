@@ -34,6 +34,8 @@ export default {
       type: null,
       plan: null
     },
+    emptyResultNumeros: false,
+    emptyResultNumerosMO: false,
   }),
 
   methods: {
@@ -72,8 +74,11 @@ export default {
           }
         )
         .then(response => {
-          if (response && response.data) {
+          if (response && response.data && response.data.length > 0) {
             this.numeros = response.data;
+            this.emptyResultNumeros = false;
+          } else {
+            this.emptyResultNumeros = true;
           }
         })
         .catch(err => {
@@ -155,6 +160,7 @@ export default {
       this.search.etat = "";
       this.search.matDiff = false;
       this.numeros = [];
+      this.emptyResultNumeros = false;
     },
 
     // ------------------ NUMEROS MO ------------------
@@ -188,8 +194,11 @@ export default {
           headers: {"Accept": "application/json"}
         }
       ).then(response => {
-        if (response && response.data) {
+        if (response && response.data && response.data.length > 0) {
           this.numerosMO = response.data;
+          this.emptyResultNumerosMO = false;
+        } else {
+          this.emptyResultNumerosMO = true;
         }
       }).catch(err => handleException(err, this));
     },
@@ -224,6 +233,7 @@ export default {
       };
 
       this.numerosMO = [];
+      this.emptyResultNumerosMO = false;
     }
 
   },

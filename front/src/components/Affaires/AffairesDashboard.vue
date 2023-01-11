@@ -17,6 +17,7 @@ import ControlePPE from "@/components/Affaires/ControlePPE/ControlePPE.vue";
 import SuiviMandat from "@/components/Affaires/SuiviMandat/SuiviMandat.vue";
 import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
 import ActivationAffaire from "@/components/Affaires/ActivationAffaire/ActivationAffaire.vue";
+import EmptyPage from "@/components/Utils/EmptyPage/EmptyPage.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
 import { getOperateurs, checkPermission, getDocument, logAffaireEtape, getCurrentUserRoleId } from '@/services/helper'
@@ -40,7 +41,8 @@ export default {
     ControlePPE,
     SuiviMandat,
     ClotureAffaire,
-    ActivationAffaire
+    ActivationAffaire,
+    EmptyPage
   },
   data() {
     return {
@@ -51,6 +53,7 @@ export default {
         text: ""
       },
       affaireLoaded: false,
+      emptyPage: false,
       chefs_equipe_list: [],
       mapLoaded: false,
       numerosReserves: [],
@@ -188,7 +191,13 @@ export default {
               if (obj.urgent_echeance !== null) {
                 obj.urgent_echeance_reste = Math.ceil(Math.max(0, moment(obj.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT)-new Date())/1000/3600/24)+1;
               }
+
+              // reset emptyPage
+              this.emptyPage = false;
+
               resolve(obj);
+            } else {
+              this.emptyPage = true;
             }
           })
           .catch(() => reject);

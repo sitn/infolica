@@ -38,20 +38,13 @@ export default {
             this.processLogin(response.data);
 
             if (process.env.VUE_APP_SERVICE_MO === response.data.service) {
-              const redirectPath = localStorage.getItem('infolica_redirectPath');
-              if (redirectPath) {
-                this.$router.replace(redirectPath);
-                localStorage.removeItem('infolica_redirectPath');
-              } else {
-                this.$router.push({ name: "Cockpit"});
-              }
+              this.$router.push(this.$route.query.redirect || { name: "Cockpit"});
             } else {
-                this.$router.push({ name: "Preavis"});
+                this.$router.push(this.$route.query.redirect || { name: "Preavis"});
             }
           } else {
             this.showProgess = false;
             this.$refs.userpass.value = "";
-            this.$root.$emit("ShowError", "Le nom d'utilisateur ou le mot de passe est incorrect");
           }
         })
         //Error 
