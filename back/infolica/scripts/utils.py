@@ -6,10 +6,10 @@ from sqlalchemy.sql.expression import cast
 from infolica.models.models import Preavis, PreavisRemarque, Plan
 from infolica.models.models import Numero, AffaireNumero
 from infolica.models.models import Role, ReservationNumerosMO, Operateur
-
 from infolica.scripts.authentication import get_user_functions, check_connected
 
 from shutil import copytree, ignore_patterns
+from docxtpl import DocxTemplate, RichText
 import json
 import os
 import time
@@ -333,3 +333,38 @@ class Utils(object):
                     unread += 1
         
         return unread
+    
+    
+    @classmethod
+    def generate_file_from_template(cls, request, template, data, output_file_name, timeout=5):
+        settings = request.registry.settings
+        mails_templates_directory = settings['mails_templates_directory']
+        temporary_directory = settings['temporary_directory']
+
+
+        # Set output file name
+        date_time = datetime.now().strftime("%Y%m%d%H%M%S")
+        filename = output_file_name + "_" + date_time + '.docx'
+        file_path = os.path.join(temporary_directory, filename)
+
+        # Set context
+        for key in data.keys():
+            if type(data[key]) is tuple:
+                if data[key][0] is True or data[key][0] is False:
+                    continue
+                data[key] = RichText(data[key][0], **data[key][1])
+            else:
+                if data[key] is True or data[key] is False:
+                    continue
+                data[key] = RichText(data[key])
+
+        # Ouverture du document template
+        doc = DocxTemplate(os.path.join(mails_templates_directory, template + ".docx"))
+
+        # Replace values by keywords and save
+        doc.render(data)
+        doc.save(file_path)
+        
+        return filename
+
+    

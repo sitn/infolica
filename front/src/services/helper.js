@@ -335,7 +335,7 @@ export const getDocument = async function(formData) {
 /**
  * Download GeneratedDocument
  */
-const downloadGeneratedDocument = async function(filename) {
+export const downloadGeneratedDocument = async function(filename) {
     return new Promise(resolve => {
         let url =
         process.env.VUE_APP_API_URL +
@@ -350,7 +350,7 @@ const downloadGeneratedDocument = async function(filename) {
 /**
  * Delete generated document
  */
-const deleteGeneratedDocument = async function(filename) {
+export const deleteGeneratedDocument = async function(filename) {
     return new Promise((resolve, reject) => {
         new Promise(r => setTimeout(r, 200)).then(() => {
 

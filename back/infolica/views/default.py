@@ -56,6 +56,7 @@ def test_error(exc, request):
 @view_config(route_name='numeros_differes_s', request_method='OPTIONS', renderer='json')
 @view_config(route_name='courrier_affaire', request_method='OPTIONS', renderer='json')
 @view_config(route_name='courrier_affaire_s', request_method='OPTIONS', renderer='json')
+@view_config(route_name='courrier_retablissement_pfp', request_method='OPTIONS', renderer='json')
 @view_config(route_name='delete_affaire_document', request_method='OPTIONS', renderer='json')
 @view_config(route_name='numeros', request_method='OPTIONS', renderer='json')
 @view_config(route_name='numeros_s', request_method='OPTIONS', renderer='json')

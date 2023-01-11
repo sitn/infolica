@@ -116,6 +116,11 @@
                                         <md-icon>save_alt</md-icon>
                                     </md-button>
                                 </md-table-cell>
+                                <md-table-cell md-label="Lettre rétablissement PFP" class="actionsColumn" v-if="permission.editFactureAllowed && affaire.type_id === typesAffaires_conf.retablissement_pfp3" style="width: 10%;">
+                                    <md-button class="md-primary md-icon-button md-dense" v-on:click="generateLettrePFP(item)" title="Générer la lettre d'accompagnement.">
+                                        <md-icon>save_alt</md-icon>
+                                    </md-button>
+                                </md-table-cell>
                             </md-table-row>
                         </md-table>
                     </div>
