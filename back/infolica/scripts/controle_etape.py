@@ -402,18 +402,3 @@ class ControleEtapeChecker():
 
         return not affaire.geos_retarder_validation is True
 
-
-    @staticmethod
-    def _get_ctrl_coord_prj_fact_pfp3_domaine_ofrou_controle(**kwargs):
-        request = kwargs.get('request')
-        affaire_id = kwargs.get('affaire_id')
-
-        fact_lettre_accompagnement = request.dbsession.query(
-            SuiviMandat.fact_lettre_accompagnement
-        ).join(
-            VAffaire, VAffaire.id == SuiviMandat.affaire_id
-        ).filter(
-            VAffaire.id == affaire_id
-        ).first()
-
-        return fact_lettre_accompagnement[0] is True
