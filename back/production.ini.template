@@ -213,14 +213,14 @@ listen = 127.0.0.1:81
 keys = root, infolica, sqlalchemy
 
 [handlers]
-keys = console, filelog,accesslog
+keys = console
 
 [formatters]
-keys = generic,accesslog
+keys = generic
 
 [logger_root]
 level = WARN
-handlers = filelog
+handlers = console
 
 [logger_infolica]
 level = WARN
@@ -240,18 +240,6 @@ class = StreamHandler
 args = (sys.stderr,)
 level = NOTSET
 formatter = generic
-
-[handler_filelog]
-class = FileHandler
-args = (r'%(here)s/logs/logs.log','a')
-level = INFO
-formatter = generic
-
-[handler_accesslog]
-class = FileHandler
-args = (r'%(here)s/logs/access.log','a')
-level = INFO
-formatter = accesslog
 
 [formatter_generic]
 format = %(asctime)s %(levelname)-5.5s [%(name)s:%(lineno)s][%(threadName)s] %(message)s
