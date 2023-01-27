@@ -76,6 +76,7 @@ export default {
         editEmolumentIndiceApplication: false,
         editEmolumentTva: false,
         editEmolumentFreeze: false,
+        loadNumerosFromExcel_nouvelleMensuration: false,
         showEmolumentRepartition_saveToFactures_btn: false,
       },
       showConfirmAbandonAffaireDialog: false,
@@ -101,6 +102,7 @@ export default {
         modification_mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_MUTATION),
         modification_ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_PPE),
         modification_retour_etat_juridique: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_RETABLISSEMENT_ETAT_JURIDIQUE),
+        nouvelle_mensuration: Number(process.env.VUE_APP_TYPE_AFFAIRE_NOUVELLE_MENSURATION),
       },
       etapes_affaire_conf: {
         coordination: Number(process.env.VUE_APP_ETAPE_COORDINATION_ID),
@@ -243,6 +245,8 @@ export default {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_MPD_EDITION) && !_this.parentAffaireReadOnly;
           } else if (_this.affaire.type_id === _this.typesAffaires_conf.autre) {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION) && !_this.parentAffaireReadOnly;
+          } else if (_this.affaire.type_id === _this.typesAffaires_conf.nouvelle_mensuration) {
+            _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NOUVELLE_MENSURATION_EDITION) && !_this.parentAffaireReadOnly;
           }
 
           //Check role_id

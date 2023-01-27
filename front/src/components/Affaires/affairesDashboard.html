@@ -104,13 +104,13 @@
             </div>
 
             <!-- CONTROLE TECHNIQUE MUTATION -->
-            <div class="affairesDashboard" v-if="![typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.mpd].includes(affaire.type_id) &&
+            <div class="affairesDashboard" v-if="![typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.mpd, typesAffaires_conf.nouvelle_mensuration].includes(affaire.type_id) &&
                                                 !(affaire.type_id===typesAffaires_conf.modification_ppe)">
                 <ControleMutation :affaire="affaire" :permission="permission" />
             </div>
 
             <!-- SUIVI DU MANDAT -->
-            <div class="affairesDashboard" v-if="![typesAffaires_conf.ppe, typesAffaires_conf.pcop].includes(affaire.type_id) &&
+            <div class="affairesDashboard" v-if="![typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.nouvelle_mensuration].includes(affaire.type_id) &&
                                                 !(affaire.type_id===typesAffaires_conf.modification_ppe)">
                 <SuiviMandat :affaire="affaire" :permission="permission" :typesAffaires_conf="typesAffaires_conf" />
             </div>
@@ -122,7 +122,7 @@
             </div>
 
             <!-- CONTROLE DU GEOMETRE CANTONAL -->
-            <div class="affairesDashboard" v-if="![typesAffaires_conf.pcop, typesAffaires_conf.mpd].includes(affaire.type_id)">
+            <div class="affairesDashboard" v-if="![typesAffaires_conf.pcop, typesAffaires_conf.mpd, typesAffaires_conf.nouvelle_mensuration].includes(affaire.type_id)">
                 <ControleGeometre :typesAffaires_conf="typesAffaires_conf" :affaire="affaire" :permission="permission" />
             </div>
             <!-- DOCUMENTS -->

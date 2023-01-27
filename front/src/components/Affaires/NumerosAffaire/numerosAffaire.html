@@ -17,7 +17,11 @@
                 <md-card-content>
                     
                     <div class="md-layout md-gutter">
-                    <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
+                        <div class="md-layout-item md-size-100" v-if="permission.loadNumerosFromExcel_nouvelleMensuration">
+                            <md-button class="md-raised md-primary" v-on:click="loadNumerosFromExcel_nouvelleMensuration"><md-icon>description</md-icon> Importer les numéros depuis le fichier excel</md-button>
+                        </div>
+                        
+                        <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
                         <div class="md-layout-item md-size-45" v-if="show.numeros_references_card || affaire_numeros_anciens.length > 0">
                     
                             <md-card>

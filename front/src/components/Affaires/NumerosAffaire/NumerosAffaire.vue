@@ -509,7 +509,8 @@ export default {
         numeros_reserves_card: typeAffaire_modification_all.concat([
           this.typesAffaires_conf.mutation, 
           this.typesAffaires_conf.ppe, 
-          this.typesAffaires_conf.pcop
+          this.typesAffaires_conf.pcop,
+          this.typesAffaires_conf.nouvelle_mensuration
         ]).includes(this.affaire.type_id),
         
         numeros_references_card: [
@@ -522,7 +523,8 @@ export default {
           this.typesAffaires_conf.servitude,
           this.typesAffaires_conf.mpd,
           this.typesAffaires_conf.modification_ppe,
-          this.typesAffaires_conf.modification_abandon_partiel
+          this.typesAffaires_conf.modification_abandon_partiel,
+          this.typesAffaires_conf.nouvelle_mensuration
         ].includes(this.affaire.type_id),
 
         numeros_reserves_immeuble_base: [
@@ -719,6 +721,13 @@ export default {
       this.modificationNumeroBaseId = data.numero_id;
       /** Ouvrir la boîte de dialogue de référence de numéros **/
       this.$refs.formModifReference.openReferenceDialog();
+    },
+
+    /**
+     * on loadNumerosFromExcel_nouvelleMensuration
+     */
+    async loadNumerosFromExcel_nouvelleMensuration() {
+      alert('toto')
     }
 
 

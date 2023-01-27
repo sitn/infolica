@@ -117,6 +117,7 @@ export default {
         modification_mutation: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_MUTATION),
         modification_ppe: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_PPE),
         modification_retablissement_etat_juridique: Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIF_RETABLISSEMENT_ETAT_JURIDIQUE),
+        nouvelle_mensuration: Number(process.env.VUE_APP_TYPE_AFFAIRE_NOUVELLE_MENSURATION),
       },
       role_conf: {
         ppe_user_id: Number(process.env.VUE_APP_PPE_ROLE_ID),
@@ -193,7 +194,8 @@ export default {
           this.typesAffaires_conf.servitude,
           this.typesAffaires_conf.mpd,
           this.typesAffaires_conf.modification_abandon_partiel,
-          this.typesAffaires_conf.modification_retablissement_etat_juridique
+          this.typesAffaires_conf.modification_retablissement_etat_juridique,
+          this.typesAffaires_conf.nouvelle_mensuration
         ].includes(this.form.type.id)
       } else {
         this.showReferenceNumeros = false;
@@ -310,6 +312,9 @@ export default {
               }
               if (checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION)) {
                 type_filter.push(this.typesAffaires_conf.autre);
+              }
+              if (checkPermission(process.env.VUE_APP_AFFAIRE_NOUVELLE_MENSURATION_EDITION)) {
+                type_filter.push(this.typesAffaires_conf.nouvelle_mensuration);
               }
               if (type_filter.length>0) {
                 tmp = tmp.filter(x => type_filter.includes(x.id));
