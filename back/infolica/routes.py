@@ -20,6 +20,7 @@ def includeme(config):
     config.add_route('affaire_spatial', '/infolica/api/affaires/spatial')
     config.add_route('types_affaires', '/infolica/api/types_affaires')
     config.add_route('types_affaires_s', '/infolica/api/types_affaires/')
+    config.add_route('affaire_dashboard_layout', '/infolica/api/affaire_dashboard_layout')
     config.add_route('affaire_by_id', '/infolica/api/affaires/{id}')
     config.add_route('recherche_affaires', '/infolica/api/recherche_affaires')
     config.add_route('recherche_affaires_s', '/infolica/api/recherche_affaires/')

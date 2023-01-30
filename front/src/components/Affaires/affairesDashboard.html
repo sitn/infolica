@@ -1,5 +1,5 @@
 <div class="affairesDashboard">
-    <div v-if="affaireLoaded">
+    <div v-if="affaireLoaded && affaireDashboardLayout">
         <!-- TITRE -->
         <md-toolbar class="affaireDashboardTitle">
             <div :style="cssHeaderWidth" class="md-layout md-gutter md-alignment-top-space-between">
@@ -84,49 +84,46 @@
             </div>
 
             <!-- SUIVI D'AFFAIRE -->
-            <div class="affairesDashboard">
+            <div class="affairesDashboard" v-if="affaireDashboardLayout.section_suivi">
                 <suivi />
             </div>
 
             <!-- PREAVIS -->
-            <div class="affairesDashboard" v-if="[typesAffaires_conf.mutation, typesAffaires_conf.modification_mutation].includes(affaire.type_id)">
+            <div class="affairesDashboard" v-if="affaireDashboardLayout.section_preavis">
                 <preavis :affaire="affaire" />
             </div>
 
             <!-- NUMEROS -->
-            <div class="affairesDashboard">
+            <div class="affairesDashboard" v-if="affaireDashboardLayout.section_numeros">
                 <numerosAffaire :affaire="affaire" :typesAffaires_conf="typesAffaires_conf" :permission="permission" ref="numeros" />
             </div>
 
             <!-- FACTURATION -->
-            <div class="affairesDashboard" v-if="affaire.type_id!==typesAffaires_conf.pcop">
+            <div class="affairesDashboard" v-if="affaireDashboardLayout.section_facture">
                 <Facturation ref="facturation" :typesAffaires_conf="typesAffaires_conf" :affaire="affaire" :permission="permission" :clientTypes_conf="clientTypes_conf" />
             </div>
 
             <!-- CONTROLE TECHNIQUE MUTATION -->
-            <div class="affairesDashboard" v-if="![typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.mpd, typesAffaires_conf.nouvelle_mensuration].includes(affaire.type_id) &&
-                                                !(affaire.type_id===typesAffaires_conf.modification_ppe)">
+            <div class="affairesDashboard" v-if="affaireDashboardLayout.section_ctrl_chefprojet_mo">
                 <ControleMutation :affaire="affaire" :permission="permission" />
             </div>
 
             <!-- SUIVI DU MANDAT -->
-            <div class="affairesDashboard" v-if="![typesAffaires_conf.ppe, typesAffaires_conf.pcop, typesAffaires_conf.nouvelle_mensuration].includes(affaire.type_id) &&
-                                                !(affaire.type_id===typesAffaires_conf.modification_ppe)">
+            <div class="affairesDashboard" v-if="affaireDashboardLayout.section_ctrl_coordprojets">
                 <SuiviMandat :affaire="affaire" :permission="permission" :typesAffaires_conf="typesAffaires_conf" />
             </div>
 
             <!-- CONTROLE TECHNIQUE PPE (Technicien)-->
-            <div class="affairesDashboard" v-if="affaire.type_id===typesAffaires_conf.ppe ||
-                                                (affaire.type_id===typesAffaires_conf.modification_ppe)">
+            <div class="affairesDashboard" v-if="affaireDashboardLayout.section_ctrl_chefprojet_ppe">
                 <ControlePPE :affaire="affaire" :permission="permission" />
             </div>
 
             <!-- CONTROLE DU GEOMETRE CANTONAL -->
-            <div class="affairesDashboard" v-if="![typesAffaires_conf.pcop, typesAffaires_conf.mpd, typesAffaires_conf.nouvelle_mensuration].includes(affaire.type_id)">
+            <div class="affairesDashboard" v-if="affaireDashboardLayout.section_ctrl_geometre">
                 <ControleGeometre :typesAffaires_conf="typesAffaires_conf" :affaire="affaire" :permission="permission" />
             </div>
             <!-- DOCUMENTS -->
-            <div class="affairesDashboard">
+            <div class="affairesDashboard" v-if="affaireDashboardLayout.section_documents">
                 <Documents :affaire="affaire" />
             </div>
 

@@ -53,6 +53,7 @@ export default {
         text: ""
       },
       affaireLoaded: false,
+      affaireDashboardLayout: null,
       emptyPage: false,
       chefs_equipe_list: [],
       mapLoaded: false,
@@ -128,6 +129,31 @@ export default {
   },
 
   methods: {
+    /*
+     * AFFAIRE TYPE LAYOUT
+     */
+    async searchAffaireTypeLayout() {
+      return new Promise((resolve, reject) => {
+        let formData = new FormData();
+        formData.append('affaire_id', this.$route.params.id);
+
+        this.$http
+          .post(
+            process.env.VUE_APP_API_URL +
+              process.env.VUE_APP_AFFAIRE_DASHBOARD_LAYOUT_ENDPOINT,
+              formData,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          ).then(response => {
+            this.affaireDashboardLayout = response.data;
+            resolve(response);
+          }).catch(err => reject(err))
+      });
+    },
+
+
     /*
      * SEARCH AFFAIRE
      */
@@ -686,6 +712,7 @@ export default {
   },
 
   mounted: function() {
+    this.searchAffaireTypeLayout();
     this.setAffaire();
     this.getChefsEquipe();
 
