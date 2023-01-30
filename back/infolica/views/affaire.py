@@ -276,22 +276,39 @@ def affaire_dashboard_layout_view(request):
         raise exc.HTTPForbidden()
         
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    affaire_type_id = request.params['affaire_type_id'] if 'affaire_type_id' in request.params else None
 
-    type_affaire_layout = request.dbsession.query(
-        AffaireType.affaire_section_suivi,
-        AffaireType.affaire_section_preavis,
-        AffaireType.affaire_section_numeros,
-        AffaireType.affaire_section_facture,
-        AffaireType.affaire_section_ctrl_chefprojet_mo,
-        AffaireType.affaire_section_ctrl_chefprojet_ppe,
-        AffaireType.affaire_section_ctrl_coordprojets,
-        AffaireType.affaire_section_ctrl_geometre,
-        AffaireType.affaire_section_documents
-    ).join(
-        Affaire, Affaire.type_id == AffaireType.id
-    ).filter(
-        Affaire.id == affaire_id
-    ).first()
+    if affaire_id is not None:
+        type_affaire_layout = request.dbsession.query(
+            AffaireType.affaire_section_suivi,
+            AffaireType.affaire_section_preavis,
+            AffaireType.affaire_section_numeros,
+            AffaireType.affaire_section_facture,
+            AffaireType.affaire_section_ctrl_chefprojet_mo,
+            AffaireType.affaire_section_ctrl_chefprojet_ppe,
+            AffaireType.affaire_section_ctrl_coordprojets,
+            AffaireType.affaire_section_ctrl_geometre,
+            AffaireType.affaire_section_documents
+        ).join(
+            Affaire, Affaire.type_id == AffaireType.id
+        ).filter(
+            Affaire.id == affaire_id
+        ).first()
+
+    elif affaire_type_id is not None:
+        type_affaire_layout = request.dbsession.query(
+            AffaireType.affaire_section_suivi,
+            AffaireType.affaire_section_preavis,
+            AffaireType.affaire_section_numeros,
+            AffaireType.affaire_section_facture,
+            AffaireType.affaire_section_ctrl_chefprojet_mo,
+            AffaireType.affaire_section_ctrl_chefprojet_ppe,
+            AffaireType.affaire_section_ctrl_coordprojets,
+            AffaireType.affaire_section_ctrl_geometre,
+            AffaireType.affaire_section_documents
+        ).filter(
+            AffaireType.id == affaire_type_id
+        ).first()
 
     layout = {
         'section_suivi': type_affaire_layout[0],
