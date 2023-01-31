@@ -14,6 +14,10 @@ from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 from datetime import datetime
 
+import os
+import shutil
+import openpyxl
+
 
 @view_config(route_name='numeros', request_method='GET', renderer='json')
 @view_config(route_name='numeros_s', request_method='GET', renderer='json')
@@ -620,3 +624,50 @@ def numero_differe_delete_view(request):
     request.dbsession.delete(record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(NumeroDiffere.__tablename__))
+
+
+@view_config(route_name='loadfile_bf_nm', request_method='POST', renderer='json')
+def loadfile_bf_nm(request):
+    """
+    Get File containing BF of NM
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+
+    file = request.params["file"] if "file" in request.params else None
+    
+    if file is None:
+        return exc.HTTPError('Le fichier est vide')
+
+    temporary_directory = request.registry.settings['temporary_directory']
+    file_path = os.path.join(temporary_directory, file.filename)
+    print(file_path)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    
+    with open(file_path, 'wb') as output_file:
+        shutil.copyfileobj(file.file, output_file)
+
+    wb = openpyxl.load_workbook(file_path)
+
+    sheets = ['Infolica', 'Terris']
+    for sheet in sheets:
+        print(sheet)
+        ws = wb[sheet]
+        
+        row_i = 1
+        while row_i < 1000:
+            cell = ws.cell(row=row_i, column=1).value
+            print(cell)
+            if cell:
+                row_i += 1
+            else: 
+                break
+
+    
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    
+    return 
+    

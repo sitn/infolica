@@ -687,7 +687,7 @@ export default {
           title: "Demande de confirmation",
           content: content,
           onConfirm: () => { this.deleteNumeroAffaire(item) }
-        })
+        });
 
       }
     },
@@ -723,11 +723,59 @@ export default {
       this.$refs.formModifReference.openReferenceDialog();
     },
 
+    checkFile(inputFile, file_extension, file_size=0) {
+      if (inputFile && inputFile.name.endsWith(file_extension) && inputFile.size>file_size) {
+        return true;
+      }
+      return false;
+    },
+
+    async onConfirmLoadNumerosFromExcel_nouvelleMensuration(){
+      let file = document.getElementById('inputFile').files[0];
+      let test = this.checkFile(file, '.xlsx');
+      
+      if(test===false){
+        return;
+      }
+
+      console.log(file)
+
+      let formData = new FormData();
+      formData.append("file", file);
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_POST_FILE_NOUVELLE_MENSURATION_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            // 'content-type': 'multipart/form-data',
+            headers: { Accept: "application/json" }
+          }
+        )
+        .then(response => {
+          console.log(response.data)
+          resolve(response)
+        }).catch(err => {
+          console.log(err)
+          reject(err);
+        });
+      });
+
+    },
+
     /**
      * on loadNumerosFromExcel_nouvelleMensuration
      */
     async loadNumerosFromExcel_nouvelleMensuration() {
-      alert('toto')
+      this.confirmDialog= {
+        show: true,
+        title: 'Importer les biens-fonds depuis un fichier EXCEL',
+        content: "Le fichier excel doit être enregistré au format .xlsx et avoir la même structure que le fichier de comparaison Terris/Infolica.<br>\
+                  Contacter l'administrateur en cas de question.<br><br>\
+                  <input id='inputFile' type='file' accept='.xlsx' />",
+        onConfirm: () => { this.onConfirmLoadNumerosFromExcel_nouvelleMensuration() }
+      };
+
     }
 
 
