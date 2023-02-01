@@ -53,6 +53,7 @@ export default {
       editMatDiffCtrlAllowed: false,
       numerosBaseListe: [],
       numerosMoLoading: true,
+      numerosNouvelleMensuration: [],
       show: {
         balance: false,
         deleteReferencedNumberBtn: false,
@@ -738,8 +739,6 @@ export default {
         return;
       }
 
-      console.log(file)
-
       let formData = new FormData();
       formData.append("file", file);
 
@@ -748,15 +747,41 @@ export default {
           formData,
           {
             withCredentials: true,
-            // 'content-type': 'multipart/form-data',
             headers: { Accept: "application/json" }
           }
         )
         .then(response => {
-          console.log(response.data)
+
+          this.numerosNouvelleMensuration = response.data;
+
+          let content = "";
+          
+          response.data.forEach(x => {
+            // source Infolica or Terris
+            content += "<h3>" + x.source + "</h3>";
+            content += "<table border='1'><thead><tr><th>Cadastre</th><th>Biens-fonds</th></tr></thead><tbody>";
+              x.data.forEach(y => {
+                // data cadastre, number, etc.
+                content += "<tr>";
+                content += "<td style='width: 100px;'>" + y.cadastre + "</td>";
+                content += "<td style='width: 1000px;'><span style='color: " + y.color + ";'>" + y.numero.join(', ') + "</span></td>";
+                content += "<tr>";
+              });
+            content += "</tbody></table>";
+            
+          });
+          content += "<p style='font-style: italic;'>Les biens-fonds en <span style='color: green;'>vert</span> sont ceux qui existent déjà dans la base de données. Ceux en <span style='color: red;'>rouge</span> seront créés en cliquant sur 'confimer'.</p>";
+          
+          this.confirmDialog= {
+            show: true,
+            title: 'Biens-fonds chargés',
+            content: content,
+            onConfirm: () => { alert('toto') }
+          };
+
           resolve(response)
         }).catch(err => {
-          console.log(err)
+          handleException(err, this);
           reject(err);
         });
       });

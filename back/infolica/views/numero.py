@@ -2,14 +2,15 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
-from sqlalchemy import and_, Integer, func
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy import and_, func, Integer, BigInteger
+from sqlalchemy.dialects.postgresql import ARRAY, aggregate_order_by
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import AffaireNumero, Numero, NumeroDiffere, NumeroEtat
 from infolica.models.models import NumeroEtatHisto, NumeroType, VNumeros
 from infolica.models.models import VNumerosAffaires, Affaire, Facture
+from infolica.models.models import Cadastre
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 from datetime import datetime
@@ -17,6 +18,7 @@ from datetime import datetime
 import os
 import shutil
 import openpyxl
+import re
 
 
 @view_config(route_name='numeros', request_method='GET', renderer='json')
@@ -626,10 +628,42 @@ def numero_differe_delete_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(NumeroDiffere.__tablename__))
 
 
+def __getNumberId(request, numero, cadastre_id):
+    numero_id = request.dbsession.query(
+        Numero.id
+    ).filter(
+        Numero.cadastre_id == cadastre_id,
+        Numero.numero == numero
+    ).first()
+    return numero_id[0] if numero_id is not None else None
+
+
+def __getCadastre(request, cadastre_id):
+    cadastre = request.dbsession.query(
+        Cadastre.nom
+    ).filter(
+        Cadastre.id == cadastre_id
+    ).first()
+    return cadastre[0] if cadastre is not None else None
+
+
+def __getAffairesIdFromNumeroId(request, numero_id, numero_type_id):
+    affaires_id_agg = func.array_agg(AffaireNumero.affaire_id, type_=ARRAY(BigInteger))
+    
+    affaires_id = request.dbsession.query(
+        affaires_id_agg
+    ).filter(
+        AffaireNumero.numero_id == numero_id,
+        AffaireNumero.type_id == numero_type_id,
+        AffaireNumero.actif == True
+    ).group_by(AffaireNumero.numero_id).first()
+    return [str(i) for i in affaires_id[0]] if affaires_id is not None else []
+
+
 @view_config(route_name='loadfile_bf_nm', request_method='POST', renderer='json')
 def loadfile_bf_nm(request):
     """
-    Get File containing BF of NM
+    Get File containing BF of NM and read it
     """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
@@ -642,7 +676,7 @@ def loadfile_bf_nm(request):
 
     temporary_directory = request.registry.settings['temporary_directory']
     file_path = os.path.join(temporary_directory, file.filename)
-    print(file_path)
+
     if os.path.exists(file_path):
         os.remove(file_path)
     
@@ -651,23 +685,119 @@ def loadfile_bf_nm(request):
 
     wb = openpyxl.load_workbook(file_path)
 
-    sheets = ['Infolica', 'Terris']
-    for sheet in sheets:
-        print(sheet)
-        ws = wb[sheet]
-        
-        row_i = 1
-        while row_i < 1000:
-            cell = ws.cell(row=row_i, column=1).value
-            print(cell)
-            if cell:
-                row_i += 1
-            else: 
-                break
+    # =============================
+    # Let's focus on Infolica sheet
+    # =============================
+    sheet = 'Infolica'
+    ws = wb[sheet]
+    
+    data = []
 
+    numero_id_agg = func.array_agg(Numero.id, type_=ARRAY(BigInteger))
+    numero_numero_agg = func.array_agg(aggregate_order_by(Numero.numero, Numero.numero.asc()), type_=ARRAY(BigInteger))
+    
+    # prepare query to search Number
+    data_query = request.dbsession.query(
+        numero_id_agg,
+        Numero.cadastre_id,
+        numero_numero_agg,
+        Cadastre.nom
+    ).join(
+        Cadastre, Cadastre.id == Numero.cadastre_id
+    )
+
+    data_id = []
+
+    row_i = 2
+    while row_i < 1000:
+        numero_id = ws.cell(row=row_i, column=1).value
+
+        if numero_id is not None:
+
+            if sheet == 'Infolica':
+                data_id.append(numero_id)
+            
+            row_i += 1
+        
+        else:
+            results = data_query.filter(
+                Numero.id.in_(data_id)
+            ).group_by(Numero.cadastre_id, Cadastre.nom).order_by(Cadastre.nom).all()
+
+            tmp = []
+            for result in results:
+                tmp.append({
+                    'numero_id': result[0],
+                    'cadastre_id': result[1],
+                    'numero': result[2],
+                    'cadastre': result[3],
+                    'sheet': sheet,
+                    'color': 'black',
+                })
+
+            data.append({
+                'source': sheet,
+                'data': tmp
+            })
+            
+            break
+    
+    # ===========================
+    # Let's focus on Terris sheet
+    # ===========================
+    sheet = 'Terris'
+    ws = wb[sheet]
+    
+    tmp = []
+
+    row_i = 2
+    while row_i < 1000:
+        cadastre_id = ws.cell(row=row_i, column=2).value
+        
+        if cadastre_id is not None:
+            numero = re.split('\D', str(ws.cell(row=row_i, column=3).value))[0]
+
+            numero_id = __getNumberId(request, numero, cadastre_id)
+            if numero_id is not None:
+                affaires_id = __getAffairesIdFromNumeroId(request, numero_id, numero_type_id=1)
+                numero = numero + (" [affaire(s): " + ', '.join(affaires_id) + "]" if len(affaires_id) > 0 else "")
+
+            cadastre = __getCadastre(request, cadastre_id)
+
+            cadastre_id_already_exists = False
+            for elem in tmp:
+                if elem['cadastre_id'] == cadastre_id:
+                    elem['numero_id'].append(numero_id)    
+                    elem['numero'].append(numero)
+                    cadastre_id_already_exists = True
+                    break
+
+            if cadastre_id_already_exists is False:
+                tmp.append({
+                    'numero_id': [numero_id],
+                    'cadastre_id': cadastre_id,
+                    'numero': [numero],
+                    'cadastre': cadastre,
+                    'sheet': sheet,
+                    'color': 'green' if numero_id is not None else 'red',
+                })
+
+            row_i += 1
+        
+        else:
+            # sort number lists
+            for elem in tmp:
+                elem['numero'].sort(key=lambda x: int(x.split(' ')[0]))
+
+            data.append({
+                'source': sheet,
+                'data': tmp
+            })
+            
+            break
     
     if os.path.exists(file_path):
         os.remove(file_path)
     
-    return 
+    return data
     
