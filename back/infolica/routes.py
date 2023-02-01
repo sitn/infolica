@@ -34,6 +34,7 @@ def includeme(config):
     config.add_route('abandon_affaire_reopen_parent_affaire', '/infolica/api/abandon_affaire_reopen_parent_affaire')
     config.add_route('affaire_attribution_change_state', '/infolica/api/affaire_attribution_change_state')
     config.add_route('loadfile_bf_nm', '/infolica/api/loadfile_bf_nm')
+    config.add_route('save_bf_nm', '/infolica/api/save_bf_nm')
     #Factures
     config.add_route('factures', '/infolica/api/factures')
     config.add_route('factures_s', '/infolica/api/factures/')

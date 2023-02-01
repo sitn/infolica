@@ -19,6 +19,7 @@ import os
 import shutil
 import openpyxl
 import re
+import json
 
 
 @view_config(route_name='numeros', request_method='GET', renderer='json')
@@ -800,4 +801,136 @@ def loadfile_bf_nm(request):
         os.remove(file_path)
     
     return data
+
+
+@view_config(route_name='save_bf_nm', request_method='POST', renderer='json')
+def save_bf_nm(request):
+    """
+    Save BF of NM-file
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+
+    affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
+    num_projet = json.loads(request.params["num_projet"]) if "num_projet" in request.params else None
+    num_vigueur = json.loads(request.params["num_vigueur"]) if "num_vigueur" in request.params else None
     
+    affaire_numero_type_ancien_id = request.registry.settings['affaire_numero_type_ancien_id']
+    affaire_numero_type_nouveau_id = request.registry.settings['affaire_numero_type_nouveau_id']
+    numero_projet_id = request.registry.settings['numero_projet_id']
+    numero_vigueur_id = request.registry.settings['numero_vigueur_id']
+    numero_bf_id = request.registry.settings['numero_bf_id']
+
+    date = datetime.strftime(datetime.now(), "%Y-%m-%d")
+
+    num_req = request.dbsession.query(Numero)
+    an_req = request.dbsession.query(AffaireNumero)
+
+    # numeros dans Terris pas Infolica
+    for num_cad in num_projet:
+        # on parcourt les cadastres
+        for num_cad_num in num_cad['numero']:
+            
+            numero = num_cad_num.split(' ')[0]
+
+            num = num_req.filter(
+                Numero.cadastre_id == num_cad['cadastre_id'],
+                Numero.numero == numero
+            ).first()
+
+            if num is None:
+                num = Numero(
+                    cadastre_id = num_cad['cadastre_id'],
+                    numero = numero,
+                    etat_id = numero_projet_id,
+                    type_id = numero_bf_id
+                )
+                request.dbsession.add(num)
+                request.dbsession.flush()
+
+                # update numero_etat_histo
+                neh = NumeroEtatHisto(
+                    numero_id = num.id,
+                    numero_etat_id = numero_projet_id,
+                    date = date
+                )
+
+                request.dbsession.add(neh)
+
+            else:
+                # s'assurer que le numéro ait l'état en projet
+                if not num.etat_id == numero_projet_id:
+                    num.etat_id = numero_projet_id
+
+                    # update numero_etat_histo
+                    neh = NumeroEtatHisto(
+                        numero_id = num.id,
+                        numero_etat_id = numero_projet_id,
+                        date = date
+                    )
+
+                    request.dbsession.add(neh)
+            
+            # log dans table affaire_numero if not already exists
+            an = an_req.filter(
+                AffaireNumero.affaire_id == affaire_id,
+                AffaireNumero.numero_id == num.id,
+                AffaireNumero.type_id == affaire_numero_type_nouveau_id
+            ).first()
+
+            if an is None:
+                an = AffaireNumero(
+                    affaire_id = affaire_id,
+                    numero_id = num.id,
+                    type_id = affaire_numero_type_nouveau_id,
+                    actif = True
+                )
+
+                request.dbsession.add(an)
+
+
+
+    # numeros dans Infolica pas Terris
+    for num_cad in num_vigueur:
+        # on parcourt les cadastres
+        for num_cad_num in num_cad['numero']:
+
+            num = num_req.filter(
+                Numero.cadastre_id == num_cad['cadastre_id'],
+                Numero.numero == num_cad_num
+            ).first()
+
+            # log dans table affaire_numero if not already exists
+            an = an_req.filter(
+                AffaireNumero.affaire_id == affaire_id,
+                AffaireNumero.numero_id == num.id,
+                AffaireNumero.type_id == affaire_numero_type_ancien_id
+            ).first()
+
+            print(an)
+
+            if an is None:
+                an = AffaireNumero(
+                    affaire_id = affaire_id,
+                    numero_id = num.id,
+                    type_id = affaire_numero_type_ancien_id,
+                    actif = True
+                )
+                request.dbsession.add(an)
+
+            # s'assurer que le numéro ait l'état en vigueur
+            if not num.etat_id == numero_vigueur_id:
+                num.etat_id = numero_vigueur_id
+
+                # update numero_etat_histo
+                neh = NumeroEtatHisto(
+                    numero_id = num.id,
+                    numero_etat_id = numero_vigueur_id,
+                    date = date
+                )
+
+                request.dbsession.add(neh)
+
+
+    return

@@ -731,6 +731,32 @@ export default {
       return false;
     },
 
+    
+    async saveNumerosFromExcel_nouvelleMensuration(data){
+      let formData = new FormData();
+      formData.append('affaire_id', this.affaire.id);
+      formData.append('num_projet', JSON.stringify(data[1].data));
+      formData.append('num_vigueur', JSON.stringify(data[0].data));
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_SAVE_BF_NOUVELLE_MENSURATION_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        ).then(response => {
+          this.$root.$emit("ShowMessage", "Les biens-fonds ont été correctement enregistrés et liés à l'affaire.")
+          resolve(response)
+        }).catch(err => {
+          handleException(err, this);
+          reject(err);
+        });
+      });
+
+    },
+
+
     async onConfirmLoadNumerosFromExcel_nouvelleMensuration(){
       let file = document.getElementById('inputFile').files[0];
       let test = this.checkFile(file, '.xlsx');
@@ -752,7 +778,7 @@ export default {
         )
         .then(response => {
 
-          this.numerosNouvelleMensuration = response.data;
+          // this.numerosNouvelleMensuration = response.data;
 
           let content = "";
           
@@ -776,7 +802,7 @@ export default {
             show: true,
             title: 'Biens-fonds chargés',
             content: content,
-            onConfirm: () => { alert('toto') }
+            onConfirm: () => { this.saveNumerosFromExcel_nouvelleMensuration(response.data) }
           };
 
           resolve(response)
