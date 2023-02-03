@@ -747,6 +747,7 @@ export default {
           }
         ).then(response => {
           this.$root.$emit("ShowMessage", "Les biens-fonds ont été correctement enregistrés et liés à l'affaire.")
+          this.$root.$emit("searchAffaireNumeros");
           resolve(response)
         }).catch(err => {
           handleException(err, this);
@@ -760,12 +761,14 @@ export default {
     async onConfirmLoadNumerosFromExcel_nouvelleMensuration(){
       let file = document.getElementById('inputFile').files[0];
       let test = this.checkFile(file, '.xlsx');
+      let allowConfirm = true;
       
       if(test===false){
         return;
       }
 
       let formData = new FormData();
+      formData.append("affaire_id", this.affaire.id);
       formData.append("file", file);
 
       return new Promise((resolve, reject) => {
@@ -787,23 +790,44 @@ export default {
             content += "<h3>" + x.source + "</h3>";
             content += "<table border='1'><thead><tr><th>Cadastre</th><th>Biens-fonds</th></tr></thead><tbody>";
               x.data.forEach(y => {
-                // data cadastre, number, etc.
+                // data cadastre, liste_numeros.
                 content += "<tr>";
                 content += "<td style='width: 100px;'>" + y.cadastre + "</td>";
-                content += "<td style='width: 1000px;'><span style='color: " + y.color + ";'>" + y.numero.join(', ') + "</span></td>";
+                content += "<td style='width: 1000px;'>"
+                
+                let sep = '';
+                y.liste_numeros.forEach(z => {
+                  // parcourir liste_numeros
+                  content += sep + "<span style='color: " + z.font_color + ";'>" + z.numero + "</span>";
+                  sep = ', ';
+                  if (allowConfirm && z.reservation_autre_affaire) {
+                    allowConfirm = false;
+                  }
+                });
+                content += "</td>";
                 content += "<tr>";
               });
             content += "</tbody></table>";
             
           });
-          content += "<p style='font-style: italic;'>Les biens-fonds en <span style='color: green;'>vert</span> sont ceux qui existent déjà dans la base de données. Ceux en <span style='color: red;'>rouge</span> seront créés en cliquant sur 'confimer'.</p>";
+          content += "<p style='font-style: italic;'>Les numéros de biens-fonds en <span style='color: green;'>vert</span> sont ceux qui ont déjà été réservés dans l'affaire, ceux en <span style='color: blue;'>bleu</span> ont été réservés dans une autre affaire et ceux en <span style='color: red;'>rouge</span> seront créés en cliquant sur 'confimer'.</p>";
           
-          this.confirmDialog= {
-            show: true,
-            title: 'Biens-fonds chargés',
-            content: content,
-            onConfirm: () => { this.saveNumerosFromExcel_nouvelleMensuration(response.data) }
-          };
+          if (allowConfirm) {
+            this.confirmDialog= {
+              show: true,
+              title: 'Biens-fonds chargés',
+              content: content,
+              onConfirm: () => { this.saveNumerosFromExcel_nouvelleMensuration(response.data) }
+            };
+          } else {
+            content += "<p style='font-weight: bold; color: blue;'>Les numéros réservés dans une autre affaire doivent être manuellement supprimés dans le fichier Excel afin de valider le processus.</p>";
+            
+            this.alertDialog= {
+              show: true,
+              title: 'Biens-fonds chargés',
+              content: content,
+            };
+          }
 
           resolve(response)
         }).catch(err => {
