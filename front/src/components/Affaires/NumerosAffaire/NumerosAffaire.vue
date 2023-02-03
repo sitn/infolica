@@ -511,7 +511,7 @@ export default {
           this.typesAffaires_conf.mutation, 
           this.typesAffaires_conf.ppe, 
           this.typesAffaires_conf.pcop,
-          this.typesAffaires_conf.nouvelle_mensuration
+          this.typesAffaires_conf.remaniement_parcellaire
         ]).includes(this.affaire.type_id),
         
         numeros_references_card: [
@@ -525,7 +525,7 @@ export default {
           this.typesAffaires_conf.mpd,
           this.typesAffaires_conf.modification_ppe,
           this.typesAffaires_conf.modification_abandon_partiel,
-          this.typesAffaires_conf.nouvelle_mensuration
+          this.typesAffaires_conf.remaniement_parcellaire
         ].includes(this.affaire.type_id),
 
         numeros_reserves_immeuble_base: [
@@ -732,14 +732,14 @@ export default {
     },
 
     
-    async saveNumerosFromExcel_nouvelleMensuration(data){
+    async saveNumerosFromExcel_remaniementParcellaire(data){
       let formData = new FormData();
       formData.append('affaire_id', this.affaire.id);
       formData.append('num_projet', JSON.stringify(data[1].data));
       formData.append('num_vigueur', JSON.stringify(data[0].data));
 
       return new Promise((resolve, reject) => {
-        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_SAVE_BF_NOUVELLE_MENSURATION_ENDPOINT,
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_SAVE_BF_REMANIEMENT_PARCELLAIRE_ENDPOINT,
           formData,
           {
             withCredentials: true,
@@ -758,7 +758,7 @@ export default {
     },
 
 
-    async onConfirmLoadNumerosFromExcel_nouvelleMensuration(){
+    async onConfirmLoadNumerosFromExcel_remaniementParcellaire(){
       let file = document.getElementById('inputFile').files[0];
       let test = this.checkFile(file, '.xlsx');
       let allowConfirm = true;
@@ -772,7 +772,7 @@ export default {
       formData.append("file", file);
 
       return new Promise((resolve, reject) => {
-        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_POST_FILE_NOUVELLE_MENSURATION_ENDPOINT,
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_POST_FILE_REMANIEMENT_PARCELLAIRE_ENDPOINT,
           formData,
           {
             withCredentials: true,
@@ -780,9 +780,6 @@ export default {
           }
         )
         .then(response => {
-
-          // this.numerosNouvelleMensuration = response.data;
-
           let content = "";
           
           response.data.forEach(x => {
@@ -817,7 +814,7 @@ export default {
               show: true,
               title: 'Biens-fonds chargés',
               content: content,
-              onConfirm: () => { this.saveNumerosFromExcel_nouvelleMensuration(response.data) }
+              onConfirm: () => { this.saveNumerosFromExcel_remaniementParcellaire(response.data) }
             };
           } else {
             content += "<p style='font-weight: bold; color: blue;'>Les numéros réservés dans une autre affaire doivent être manuellement supprimés dans le fichier Excel afin de valider le processus.</p>";
@@ -839,16 +836,16 @@ export default {
     },
 
     /**
-     * on loadNumerosFromExcel_nouvelleMensuration
+     * on loadNumerosFromExcel_remaniementParcellaire
      */
-    async loadNumerosFromExcel_nouvelleMensuration() {
+    async loadNumerosFromExcel_remaniementParcellaire() {
       this.confirmDialog= {
         show: true,
         title: 'Importer les biens-fonds depuis un fichier EXCEL',
         content: "Le fichier excel doit être enregistré au format .xlsx et avoir la même structure que le fichier de comparaison Terris/Infolica.<br>\
                   Contacter l'administrateur en cas de question.<br><br>\
                   <input id='inputFile' type='file' accept='.xlsx' />",
-        onConfirm: () => { this.onConfirmLoadNumerosFromExcel_nouvelleMensuration() }
+        onConfirm: () => { this.onConfirmLoadNumerosFromExcel_remaniementParcellaire() }
       };
 
     }

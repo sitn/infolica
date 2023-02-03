@@ -385,8 +385,8 @@ def affaires_new_view(request):
     elif affaire_type == request.registry.settings['affaire_type_autre_id']:
         permission = request.registry.settings['affaire_autre_edition']
     # Affaire nouvelle mensuration
-    elif affaire_type == request.registry.settings['affaire_nouvelle_mensuration_id']:
-        permission = request.registry.settings['affaire_nouvelle_mensuration_edition']
+    elif affaire_type == request.registry.settings['affaire_remaniement_parcellaire_id']:
+        permission = request.registry.settings['affaire_remaniement_parcellaire_edition']
 
     # Check authorization
     if not Utils.has_permission(request, permission):
@@ -510,8 +510,8 @@ def affaires_update_view(request):
         # Affaire autre
         elif affaire_type == request.registry.settings['affaire_type_autre_id']:
             permission = request.registry.settings['affaire_autre_edition']
-        elif affaire_type == request.registry.settings['affaire_nouvelle_mensuration_id']:
-            permission = request.registry.settings['affaire_nouvelle_mensuration_edition']
+        elif affaire_type == request.registry.settings['affaire_remaniement_parcellaire_id']:
+            permission = request.registry.settings['affaire_remaniement_parcellaire_edition']
         else:
             raise exc.HTTPForbidden()
 

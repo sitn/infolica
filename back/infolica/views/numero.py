@@ -665,10 +665,10 @@ def __getAffairesIdFromNumeroId(request, numero_id, numero_type_id):
     return [str(i) for i in affaires_id[0]] if affaires_id is not None else []
 
 
-@view_config(route_name='loadfile_bf_nm', request_method='POST', renderer='json')
-def loadfile_bf_nm(request):
+@view_config(route_name='loadfile_bf_rp', request_method='POST', renderer='json')
+def loadfile_bf_rp(request):
     """
-    Get File containing BF of NM and read it
+    Get File containing BF of RP and read it
     """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
@@ -773,7 +773,6 @@ def loadfile_bf_nm(request):
             numero_id = __getNumberId(request, numero, cadastre_id)
             if numero_id is not None:
                 affaires_id = __getAffairesIdFromNumeroId(request, numero_id, numero_type_id=affaire_numero_type_nouveau_id)
-                # numero = numero + (" [affaire(s): " + ', '.join(affaires_id) + "]" if len(affaires_id) > 0 else "")
 
             cadastre = __getCadastre(request, cadastre_id)
 
@@ -817,7 +816,7 @@ def loadfile_bf_nm(request):
 
             for tmp_ln in tmp: # parcourir les cadastres
                 tmp_ln['liste_numeros'].sort(key=lambda x: int(x['numero'].split(' ')[0]))
-                
+
             data.append({
                 'source': sheet,
                 'data': tmp
@@ -900,10 +899,10 @@ def __save_bf_rp(request, affaire_id, data, numero_type_id, numero_etat_id, nume
     return
 
 
-@view_config(route_name='save_bf_nm', request_method='POST', renderer='json')
-def save_bf_nm(request):
+@view_config(route_name='save_bf_rp', request_method='POST', renderer='json')
+def save_bf_rp(request):
     """
-    Save BF of NM-file
+    Save BF of RP-file
     """
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
