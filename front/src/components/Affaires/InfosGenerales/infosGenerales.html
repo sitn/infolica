@@ -78,7 +78,7 @@
                 </div>
             </div>
             
-            <div id="clients" v-if="affaire.type_id !== typesAffaires_conf.cadastration">
+            <div id="clients" v-if="affaireDashboardLayout.section_facture && affaire.type_id !== typesAffaires_conf.cadastration">
                 <div  v-if="infoGenReadonly">
                     <!-- Clients (read-only) -->
                     <div class="md-layout md-gutter">
