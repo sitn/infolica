@@ -52,8 +52,8 @@ export default {
       editMatDiffAllowed: false,
       editMatDiffCtrlAllowed: false,
       numerosBaseListe: [],
+      numerosLoading: false,
       numerosMoLoading: true,
-      numerosNouvelleMensuration: [],
       show: {
         balance: false,
         deleteReferencedNumberBtn: false,
@@ -738,6 +738,8 @@ export default {
       formData.append('num_projet', JSON.stringify(data[1].data));
       formData.append('num_vigueur', JSON.stringify(data[0].data));
 
+      this.numerosLoading = true;
+
       return new Promise((resolve, reject) => {
         this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_SAVE_BF_REMANIEMENT_PARCELLAIRE_ENDPOINT,
           formData,
@@ -748,9 +750,11 @@ export default {
         ).then(response => {
           this.$root.$emit("ShowMessage", "Les biens-fonds ont été correctement enregistrés et liés à l'affaire.")
           this.$root.$emit("searchAffaireNumeros");
-          resolve(response)
+          this.numerosLoading = false;
+          resolve(response);
         }).catch(err => {
           handleException(err, this);
+          this.numerosLoading = false;
           reject(err);
         });
       });

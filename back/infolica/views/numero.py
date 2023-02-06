@@ -771,6 +771,7 @@ def loadfile_bf_rp(request):
             numero = re.split('\D', str(ws.cell(row=row_i, column=3).value))[0]
 
             numero_id = __getNumberId(request, numero, cadastre_id)
+            affaires_id = []
             if numero_id is not None:
                 affaires_id = __getAffairesIdFromNumeroId(request, numero_id, numero_type_id=affaire_numero_type_nouveau_id)
 

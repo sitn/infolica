@@ -384,7 +384,7 @@ def affaires_new_view(request):
     # Affaire autre
     elif affaire_type == request.registry.settings['affaire_type_autre_id']:
         permission = request.registry.settings['affaire_autre_edition']
-    # Affaire nouvelle mensuration
+    # Affaire affaire_remaniement_parcellaire_id
     elif affaire_type == request.registry.settings['affaire_remaniement_parcellaire_id']:
         permission = request.registry.settings['affaire_remaniement_parcellaire_edition']
 
