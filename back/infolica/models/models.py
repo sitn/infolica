@@ -11,7 +11,8 @@ from sqlalchemy import (
     ARRAY,
     ForeignKey,
     UniqueConstraint,
-    Table
+    Table,
+    text
 )
 
 from sqlalchemy.orm import relationship
@@ -156,6 +157,15 @@ class AffaireType(Base):
     reservation_numeros_types_id = Column(ARRAY(BigInteger))
     modif_affaire_type_id_vers = Column(ARRAY(BigInteger))
     logique_processus = Column(ARRAY(BigInteger))
+    affaire_section_suivi = Column(Boolean, server_default=text('true'))
+    affaire_section_preavis = Column(Boolean, server_default=text('false'))
+    affaire_section_numeros = Column(Boolean, server_default=text('true'))
+    affaire_section_facture = Column(Boolean, server_default=text('false'))
+    affaire_section_ctrl_chefprojet_mo = Column(Boolean, server_default=text('false'))
+    affaire_section_ctrl_chefprojet_ppe = Column(Boolean, server_default=text('false'))
+    affaire_section_ctrl_coordprojets = Column(Boolean, server_default=text('false'))
+    affaire_section_ctrl_geometre = Column(Boolean, server_default=text('false'))
+    affaire_section_documents = Column(Boolean, server_default=text('true'))
 
 
 class Affaire(Base):

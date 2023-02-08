@@ -288,10 +288,10 @@
                 
                 
                 <!-- Client FACTURE et ligne complément -->
-                <div v-if="form.type && form.type.id && form.type.id!==typesAffaires_conf.pcop">
+                <div v-if="this.affaireTypeRequirements && this.affaireTypeRequirements.section_facture">
                     <br>
                     <md-divider style="background-color: blue;"></md-divider>
-                    <div class="md-layout md-gutter md-alignment-center-left" v-if="form.type && form.type.id && form.type.id!==typesAffaires_conf.pcop">
+                    <div class="md-layout md-gutter md-alignment-center-left" v-if="this.affaireTypeRequirements && this.affaireTypeRequirements.section_facture">
     
                         <div class="md-layout-item md-small-size-100 md-size-50">
                             <md-field>

@@ -52,6 +52,7 @@ export default {
       editMatDiffAllowed: false,
       editMatDiffCtrlAllowed: false,
       numerosBaseListe: [],
+      numerosLoading: false,
       numerosMoLoading: true,
       show: {
         balance: false,
@@ -509,7 +510,8 @@ export default {
         numeros_reserves_card: typeAffaire_modification_all.concat([
           this.typesAffaires_conf.mutation, 
           this.typesAffaires_conf.ppe, 
-          this.typesAffaires_conf.pcop
+          this.typesAffaires_conf.pcop,
+          this.typesAffaires_conf.remaniement_parcellaire
         ]).includes(this.affaire.type_id),
         
         numeros_references_card: [
@@ -522,7 +524,8 @@ export default {
           this.typesAffaires_conf.servitude,
           this.typesAffaires_conf.mpd,
           this.typesAffaires_conf.modification_ppe,
-          this.typesAffaires_conf.modification_abandon_partiel
+          this.typesAffaires_conf.modification_abandon_partiel,
+          this.typesAffaires_conf.remaniement_parcellaire
         ].includes(this.affaire.type_id),
 
         numeros_reserves_immeuble_base: [
@@ -685,7 +688,7 @@ export default {
           title: "Demande de confirmation",
           content: content,
           onConfirm: () => { this.deleteNumeroAffaire(item) }
-        })
+        });
 
       }
     },
@@ -719,6 +722,136 @@ export default {
       this.modificationNumeroBaseId = data.numero_id;
       /** Ouvrir la boîte de dialogue de référence de numéros **/
       this.$refs.formModifReference.openReferenceDialog();
+    },
+
+    checkFile(inputFile, file_extension, file_size=0) {
+      if (inputFile && inputFile.name.endsWith(file_extension) && inputFile.size>file_size) {
+        return true;
+      }
+      return false;
+    },
+
+    
+    async saveNumerosFromExcel_remaniementParcellaire(data){
+      let formData = new FormData();
+      formData.append('affaire_id', this.affaire.id);
+      formData.append('num_projet', JSON.stringify(data[1].data));
+      formData.append('num_vigueur', JSON.stringify(data[0].data));
+
+      this.numerosLoading = true;
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_SAVE_BF_REMANIEMENT_PARCELLAIRE_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        ).then(response => {
+          this.$root.$emit("ShowMessage", "Les biens-fonds ont été correctement enregistrés et liés à l'affaire.")
+          this.$root.$emit("searchAffaireNumeros");
+          this.numerosLoading = false;
+          resolve(response);
+        }).catch(err => {
+          handleException(err, this);
+          this.numerosLoading = false;
+          reject(err);
+        });
+      });
+
+    },
+
+
+    async onConfirmLoadNumerosFromExcel_remaniementParcellaire(){
+      let file = document.getElementById('inputFile').files[0];
+      let test = this.checkFile(file, '.xlsx');
+      let allowConfirm = true;
+      
+      if(test===false){
+        return;
+      }
+
+      let formData = new FormData();
+      formData.append("affaire_id", this.affaire.id);
+      formData.append("file", file);
+
+      return new Promise((resolve, reject) => {
+        this.$http.post(process.env.VUE_APP_API_URL + process.env.VUE_APP_POST_FILE_REMANIEMENT_PARCELLAIRE_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: { Accept: "application/json" }
+          }
+        )
+        .then(response => {
+          let content = "";
+          
+          response.data.forEach(x => {
+            // source Infolica or Terris
+            content += "<h3>" + x.source + "</h3>";
+            content += "<table border='1'><thead><tr><th>Cadastre</th><th>Biens-fonds</th></tr></thead><tbody>";
+              x.data.forEach(y => {
+                // data cadastre, liste_numeros.
+                content += "<tr>";
+                content += "<td style='width: 100px;'>" + y.cadastre + "</td>";
+                content += "<td style='width: 1000px;'>"
+                
+                let sep = '';
+                y.liste_numeros.forEach(z => {
+                  // parcourir liste_numeros
+                  content += sep + "<span style='color: " + z.font_color + ";'>" + z.numero + "</span>";
+                  sep = ', ';
+                  if (allowConfirm && z.reservation_autre_affaire) {
+                    allowConfirm = false;
+                  }
+                });
+                content += "</td>";
+                content += "<tr>";
+              });
+            content += "</tbody></table>";
+            
+          });
+          content += "<p style='font-style: italic;'>Les numéros de biens-fonds en <span style='color: green;'>vert</span> sont ceux qui ont déjà été réservés dans l'affaire, ceux en <span style='color: blue;'>bleu</span> ont été réservés dans une autre affaire et ceux en <span style='color: red;'>rouge</span> seront créés en cliquant sur 'confimer'.</p>";
+          
+          if (allowConfirm) {
+            this.confirmDialog= {
+              show: true,
+              title: 'Biens-fonds chargés',
+              content: content,
+              onConfirm: () => { this.saveNumerosFromExcel_remaniementParcellaire(response.data) }
+            };
+          } else {
+            content += "<p style='font-weight: bold; color: blue;'>Les numéros réservés dans une autre affaire doivent être manuellement supprimés dans le fichier Excel afin de valider le processus.</p>";
+            
+            this.alertDialog= {
+              show: true,
+              title: 'Biens-fonds chargés',
+              content: content,
+            };
+          }
+
+          resolve(response)
+        }).catch(err => {
+          handleException(err, this);
+          reject(err);
+        });
+      });
+
+    },
+
+    /**
+     * on loadNumerosFromExcel_remaniementParcellaire
+     */
+    async loadNumerosFromExcel_remaniementParcellaire() {
+      this.confirmDialog= {
+        show: true,
+        title: 'Importer les biens-fonds depuis un fichier EXCEL',
+        content: "Le fichier excel doit être enregistré au format .xlsx et avoir la même structure que le fichier de comparaison Terris/Infolica.<br>\
+                  Contacter l'administrateur en cas de question.<br><br>\
+                  <input id='inputFile' type='file' accept='.xlsx' />",
+        onConfirm: () => { this.onConfirmLoadNumerosFromExcel_remaniementParcellaire() }
+      };
+
     }
 
 

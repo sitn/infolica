@@ -267,6 +267,64 @@ def affaires_search_view(request):
     return results
 
 
+@view_config(route_name='affaire_dashboard_layout', request_method='POST', renderer='json')
+def affaire_dashboard_layout_view(request):
+    """
+    Return all types affaires not modif
+    """
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+        
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    affaire_type_id = request.params['affaire_type_id'] if 'affaire_type_id' in request.params else None
+
+    if affaire_id is not None:
+        type_affaire_layout = request.dbsession.query(
+            AffaireType.affaire_section_suivi,
+            AffaireType.affaire_section_preavis,
+            AffaireType.affaire_section_numeros,
+            AffaireType.affaire_section_facture,
+            AffaireType.affaire_section_ctrl_chefprojet_mo,
+            AffaireType.affaire_section_ctrl_chefprojet_ppe,
+            AffaireType.affaire_section_ctrl_coordprojets,
+            AffaireType.affaire_section_ctrl_geometre,
+            AffaireType.affaire_section_documents
+        ).join(
+            Affaire, Affaire.type_id == AffaireType.id
+        ).filter(
+            Affaire.id == affaire_id
+        ).first()
+
+    elif affaire_type_id is not None:
+        type_affaire_layout = request.dbsession.query(
+            AffaireType.affaire_section_suivi,
+            AffaireType.affaire_section_preavis,
+            AffaireType.affaire_section_numeros,
+            AffaireType.affaire_section_facture,
+            AffaireType.affaire_section_ctrl_chefprojet_mo,
+            AffaireType.affaire_section_ctrl_chefprojet_ppe,
+            AffaireType.affaire_section_ctrl_coordprojets,
+            AffaireType.affaire_section_ctrl_geometre,
+            AffaireType.affaire_section_documents
+        ).filter(
+            AffaireType.id == affaire_type_id
+        ).first()
+
+    layout = {
+        'section_suivi': type_affaire_layout[0],
+        'section_preavis': type_affaire_layout[1],
+        'section_numeros': type_affaire_layout[2],
+        'section_facture': type_affaire_layout[3],
+        'section_ctrl_chefprojet_mo': type_affaire_layout[4],
+        'section_ctrl_chefprojet_ppe': type_affaire_layout[5],
+        'section_ctrl_coordprojets': type_affaire_layout[6],
+        'section_ctrl_geometre': type_affaire_layout[7],
+        'section_documents': type_affaire_layout[8]
+    }
+
+    return layout
+
+
 @view_config(route_name='types_affaires', request_method='GET', renderer='json')
 @view_config(route_name='types_affaires_s', request_method='GET', renderer='json')
 def types_affaires_view(request):
@@ -326,6 +384,9 @@ def affaires_new_view(request):
     # Affaire autre
     elif affaire_type == request.registry.settings['affaire_type_autre_id']:
         permission = request.registry.settings['affaire_autre_edition']
+    # Affaire affaire_remaniement_parcellaire_id
+    elif affaire_type == request.registry.settings['affaire_remaniement_parcellaire_id']:
+        permission = request.registry.settings['affaire_remaniement_parcellaire_edition']
 
     # Check authorization
     if not Utils.has_permission(request, permission):
@@ -449,6 +510,8 @@ def affaires_update_view(request):
         # Affaire autre
         elif affaire_type == request.registry.settings['affaire_type_autre_id']:
             permission = request.registry.settings['affaire_autre_edition']
+        elif affaire_type == request.registry.settings['affaire_remaniement_parcellaire_id']:
+            permission = request.registry.settings['affaire_remaniement_parcellaire_edition']
         else:
             raise exc.HTTPForbidden()
 

@@ -67,6 +67,7 @@ operateur_consultation = operateur_consultation
 client_consultation = client_consultation
 client_edition = client_edition
 numero_mo_edition = numero_mo_edition
+affaire_remaniement_parcellaire_edition = affaire_remaniement_parcellaire_edition
 
 ######################################################################################
 # Variables tirées de la base de données
@@ -76,6 +77,7 @@ affaire_type_cadastration_id = 2
 affaire_type_ppe_id = 3
 affaire_type_revision_abornement_id = 4
 affaire_type_mpd_id = 8
+affaire_remaniement_parcellaire_id = 9
 affaire_type_retablissement_pfp3_id = 12
 affaire_type_autre_id = 7
 affaire_type_part_copropriete_id = 10

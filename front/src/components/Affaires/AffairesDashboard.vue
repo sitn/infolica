@@ -53,8 +53,9 @@ export default {
         text: ""
       },
       affaireLoaded: false,
-      emptyPage: false,
+      affaireDashboardLayout: null,
       chefs_equipe_list: [],
+      emptyPage: false,
       mapLoaded: false,
       numerosReserves: [],
       parentAffaireReadOnly: false,
@@ -76,6 +77,7 @@ export default {
         editEmolumentIndiceApplication: false,
         editEmolumentTva: false,
         editEmolumentFreeze: false,
+        loadNumerosFromExcel_remaniementParcellaire: false,
         showEmolumentRepartition_saveToFactures_btn: false,
       },
       showConfirmAbandonAffaireDialog: false,
@@ -126,6 +128,31 @@ export default {
   },
 
   methods: {
+    /*
+     * AFFAIRE TYPE LAYOUT
+     */
+    async searchAffaireTypeLayout() {
+      return new Promise((resolve, reject) => {
+        let formData = new FormData();
+        formData.append('affaire_id', this.$route.params.id);
+
+        this.$http
+          .post(
+            process.env.VUE_APP_API_URL +
+              process.env.VUE_APP_AFFAIRE_DASHBOARD_LAYOUT_ENDPOINT,
+              formData,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          ).then(response => {
+            this.affaireDashboardLayout = response.data;
+            resolve(response);
+          }).catch(err => reject(err))
+      });
+    },
+
+
     /*
      * SEARCH AFFAIRE
      */
@@ -243,6 +270,8 @@ export default {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_MPD_EDITION) && !_this.parentAffaireReadOnly;
           } else if (_this.affaire.type_id === _this.typesAffaires_conf.autre) {
             _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION) && !_this.parentAffaireReadOnly;
+          } else if (_this.affaire.type_id === _this.typesAffaires_conf.remaniement_parcellaire) {
+            _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_REMANIEMENT_PARCELLAIRE_EDITION) && !_this.parentAffaireReadOnly;
           }
 
           //Check role_id
@@ -682,6 +711,7 @@ export default {
   },
 
   mounted: function() {
+    this.searchAffaireTypeLayout();
     this.setAffaire();
     this.getChefsEquipe();
 

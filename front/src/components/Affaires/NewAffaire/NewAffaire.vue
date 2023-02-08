@@ -34,6 +34,7 @@ export default {
     return {
       affaire_numeros_anciens: [],
       affaire_numeros_nouveaux: [],
+      affaireTypeRequirements: {},
       cadastres_list: [],
       client_facture: null,
       client_facture_premiere_ligne: null,
@@ -146,7 +147,7 @@ export default {
         client_envoi: {required}
       };
 
-      if (this.form.type && this.form.type.id && this.typesAffaires_conf.pcop !== this.form.type.id) {
+      if (this.affaireTypeRequirements && this.affaireTypeRequirements.section_facture) {
         client_facture = {
           id: {required}
         };
@@ -193,7 +194,8 @@ export default {
           this.typesAffaires_conf.servitude,
           this.typesAffaires_conf.mpd,
           this.typesAffaires_conf.modification_abandon_partiel,
-          this.typesAffaires_conf.modification_retablissement_etat_juridique
+          this.typesAffaires_conf.modification_retablissement_etat_juridique,
+          this.typesAffaires_conf.remaniement_parcellaire
         ].includes(this.form.type.id)
       } else {
         this.showReferenceNumeros = false;
@@ -310,6 +312,9 @@ export default {
               }
               if (checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION)) {
                 type_filter.push(this.typesAffaires_conf.autre);
+              }
+              if (checkPermission(process.env.VUE_APP_AFFAIRE_REMANIEMENT_PARCELLAIRE_EDITION)) {
+                type_filter.push(this.typesAffaires_conf.remaniement_parcellaire);
               }
               if (type_filter.length>0) {
                 tmp = tmp.filter(x => type_filter.includes(x.id));
@@ -528,8 +533,7 @@ export default {
       }
 
       // FACTURE
-      if (this.client_facture && this.client_facture.id &&
-          this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop){
+      if (this.affaireTypeRequirements.section_facture && this.client_facture && this.client_facture.id){
         formData.append("facture_client_id", this.client_facture.id);
         if (this.client_facture_premiere_ligne !== null) {
           formData.append("facture_client_premiere_ligne", this.client_facture_premiere_ligne);
@@ -830,8 +834,7 @@ export default {
           this.form.client_envoi = client;
           this.client_moral_personnes.envoi = this.client_moral_personnes.commande;
         }
-        if ((this.client_facture === null || this.client_facture === "") && 
-             this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop) {
+        if (this.affaireTypeRequirements.section_facture && (this.client_facture === null || this.client_facture === "")) {
           this.client_facture = client;
         }
       });
@@ -845,10 +848,38 @@ export default {
       window.open(routedata.href, "_blank");
     },
 
+
+    /*
+     * Get affaire type requirements
+     */
+     async getAffaireTypeRequirements(affaire_type_id) {
+      return new Promise((resolve, reject) => {
+        let formData = new FormData();
+        formData.append('affaire_type_id', affaire_type_id);
+
+        this.$http
+          .post(
+            process.env.VUE_APP_API_URL +
+              process.env.VUE_APP_AFFAIRE_DASHBOARD_LAYOUT_ENDPOINT,
+              formData,
+            {
+              withCredentials: true,
+              headers: { Accept: "application/json" }
+            }
+          ).then(response => {
+            this.affaireTypeRequirements = response.data;
+            resolve(response);
+          }).catch(err => reject(err))
+      });
+    },
+
     /**
      * On Select Type affaire
      */
-    async onSelectType() {
+    async onSelectType(selectedType) {
+      //re-initialize affaireTypeRequirements
+      this.affaireTypeRequirements = {};
+
       if (this.form.type.id === Number(process.env.VUE_APP_TYPE_AFFAIRE_MODIFICATION)){
         this.type_modification_bool = true;
       } else {
@@ -859,6 +890,9 @@ export default {
       await getClients(process.env.VUE_APP_CLIENT_CADASTRATION_ID)
       .then(response => defaultClient = stringifyAutocomplete2(setClientsAdresse_(response.data), 'adresse_')[0])
       .catch(err => handleException(err));
+
+      // is facture required?
+      await this.getAffaireTypeRequirements(selectedType.id)
 
       if (this.form.type.id === this.typesAffaires_conf.cadastration) {
         this.showClientsForm = false;
@@ -1156,8 +1190,7 @@ export default {
       if (this.form.client_envoi !== null && this.form.client_envoi.id !== null) {
         this.initClientMoralPersonnes(this.form.client_envoi.id, 'envoi');
       }
-      if (this.client_facture !== null && this.client_facture.id !== null &&
-          this.form.type && this.form.type.id && this.form.type.id !== this.typesAffaires_conf.pcop) {
+      if (this.affaireTypeRequirements.section_facture && this.client_facture !== null && this.client_facture.id !== null) {
         this.initClientMoralPersonnes(this.client_facture.id, 'facture');
       }
     },

@@ -2,17 +2,24 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
-from sqlalchemy import and_, Integer, func
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy import and_, func, Integer, BigInteger
+from sqlalchemy.dialects.postgresql import ARRAY, aggregate_order_by
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import AffaireNumero, Numero, NumeroDiffere, NumeroEtat
 from infolica.models.models import NumeroEtatHisto, NumeroType, VNumeros
 from infolica.models.models import VNumerosAffaires, Affaire, Facture
+from infolica.models.models import Cadastre
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 from datetime import datetime
+
+import os
+import shutil
+import openpyxl
+import re
+import json
 
 
 @view_config(route_name='numeros', request_method='GET', renderer='json')
@@ -620,3 +627,299 @@ def numero_differe_delete_view(request):
     request.dbsession.delete(record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(NumeroDiffere.__tablename__))
+
+#####################################
+#  Numeros remaniement parcellaire  #
+#####################################
+
+
+def __getNumberId(request, numero, cadastre_id):
+    numero_id = request.dbsession.query(
+        Numero.id
+    ).filter(
+        Numero.cadastre_id == cadastre_id,
+        Numero.numero == numero
+    ).first()
+    return numero_id[0] if numero_id is not None else None
+
+
+def __getCadastre(request, cadastre_id):
+    cadastre = request.dbsession.query(
+        Cadastre.nom
+    ).filter(
+        Cadastre.id == cadastre_id
+    ).first()
+    return cadastre[0] if cadastre is not None else None
+
+
+def __getAffairesIdFromNumeroId(request, numero_id, numero_type_id):
+    affaires_id_agg = func.array_agg(AffaireNumero.affaire_id, type_=ARRAY(BigInteger))
+    
+    affaires_id = request.dbsession.query(
+        affaires_id_agg
+    ).filter(
+        AffaireNumero.numero_id == numero_id,
+        AffaireNumero.type_id == numero_type_id,
+        AffaireNumero.actif == True
+    ).group_by(AffaireNumero.numero_id).first()
+    return [str(i) for i in affaires_id[0]] if affaires_id is not None else []
+
+
+@view_config(route_name='loadfile_bf_rp', request_method='POST', renderer='json')
+def loadfile_bf_rp(request):
+    """
+    Get File containing BF of RP and read it
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+
+    affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
+    file = request.params["file"] if "file" in request.params else None
+    
+    if file is None:
+        return exc.HTTPError('Le fichier est vide')
+
+    temporary_directory = request.registry.settings['temporary_directory']
+    affaire_numero_type_nouveau_id = request.registry.settings['affaire_numero_type_nouveau_id']
+    file_path = os.path.join(temporary_directory, file.filename)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    
+    with open(file_path, 'wb') as output_file:
+        shutil.copyfileobj(file.file, output_file)
+
+    wb = openpyxl.load_workbook(file_path)
+
+    # =============================
+    # Let's focus on Infolica sheet
+    # =============================
+    sheet = 'Infolica'
+    ws = wb[sheet]
+    
+    data = []
+
+    numero_id_agg = func.array_agg(Numero.id, type_=ARRAY(BigInteger))
+    numero_numero_agg = func.array_agg(aggregate_order_by(Numero.numero, Numero.numero.asc()), type_=ARRAY(BigInteger))
+    
+    # prepare query to search Number
+    data_query = request.dbsession.query(
+        numero_id_agg,
+        Numero.cadastre_id,
+        numero_numero_agg,
+        Cadastre.nom
+    ).join(
+        Cadastre, Cadastre.id == Numero.cadastre_id
+    )
+
+    data_id = []
+
+    row_i = 2
+    while row_i < 1000:
+        numero_id = ws.cell(row=row_i, column=1).value
+
+        if numero_id is not None:
+
+            if sheet == 'Infolica':
+                data_id.append(numero_id)
+            
+            row_i += 1
+        
+        else:
+            results = data_query.filter(
+                Numero.id.in_(data_id)
+            ).group_by(Numero.cadastre_id, Cadastre.nom).order_by(Cadastre.nom).all()
+
+            tmp = []
+            for result in results: # parcourir les cadastres
+                tmp.append({
+                    'cadastre': result[3],
+                    'cadastre_id': result[1],
+                    'liste_numeros': [{
+                        'numero_id': result[0][i],
+                        'cadastre_id': result[1],
+                        'numero': numero_,
+                        'cadastre': result[3],
+                        'sheet': sheet,
+                        'font-color': 'black',
+                        'reservation_autre_affaire': False,
+                    } for i, numero_ in enumerate(result[2])]
+                })
+             
+            data.append({
+                'source': sheet,
+                'data': tmp
+            })
+            
+            break
+    
+    # ===========================
+    # Let's focus on Terris sheet
+    # ===========================
+    sheet = 'Terris'
+    ws = wb[sheet]
+    
+    tmp = []
+
+    row_i = 2
+    while row_i < 1000:
+        cadastre_id = ws.cell(row=row_i, column=2).value
+        
+
+        if cadastre_id is not None:
+            numero = re.split('\D', str(ws.cell(row=row_i, column=3).value))[0]
+
+            numero_id = __getNumberId(request, numero, cadastre_id)
+            affaires_id = []
+            if numero_id is not None:
+                affaires_id = __getAffairesIdFromNumeroId(request, numero_id, numero_type_id=affaire_numero_type_nouveau_id)
+
+            cadastre = __getCadastre(request, cadastre_id)
+
+            reservation_autre_affaire = False
+            font_color = 'red'
+            if affaire_id in (affaires_id):
+                font_color = 'green'
+            elif len(affaires_id) > 0:
+                numero = numero + (" [affaire(s): " + ', '.join(affaires_id) + "]" if len(affaires_id) > 0 else "")
+                font_color = 'blue'
+                reservation_autre_affaire = True
+
+
+            numero_ = {
+                'numero_id': numero_id,
+                'cadastre_id': cadastre_id,
+                'numero': numero,
+                'cadastre': cadastre,
+                'sheet': sheet,
+                'font_color': font_color,
+                'reservation_autre_affaire': reservation_autre_affaire
+            }
+
+            cadastre_id_already_exists = False
+            for elem in tmp:
+                if elem['cadastre_id'] == cadastre_id:
+                    elem['liste_numeros'].append(numero_)
+                    cadastre_id_already_exists = True
+                    break
+
+            if cadastre_id_already_exists is False:
+                tmp.append({
+                    'cadastre': cadastre,
+                    'cadastre_id': cadastre_id,
+                    'liste_numeros': [numero_]
+                })
+            
+            row_i += 1
+        
+        else:
+
+            for tmp_ln in tmp: # parcourir les cadastres
+                tmp_ln['liste_numeros'].sort(key=lambda x: int(x['numero'].split(' ')[0]))
+
+            data.append({
+                'source': sheet,
+                'data': tmp
+            })
+            
+            break
+    
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    
+    return data
+
+
+def __save_bf_rp(request, affaire_id, data, numero_type_id, numero_etat_id, numero_ancien_nouveau_id):
+    num_req = request.dbsession.query(Numero)
+    an_req = request.dbsession.query(AffaireNumero)
+
+    date = datetime.strftime(datetime.now(), "%Y-%m-%d")
+
+    for num_cad in data:
+        # on parcourt les cadastres
+        for numero_obj in num_cad['liste_numeros']:
+            
+            numero = str(numero_obj['numero']).split(' ')[0]
+
+            num = num_req.filter(
+                Numero.cadastre_id == num_cad['cadastre_id'],
+                Numero.numero == numero
+            ).first()
+
+            if num is None:
+                num = Numero(
+                    cadastre_id = num_cad['cadastre_id'],
+                    numero = numero,
+                    etat_id = numero_etat_id,
+                    type_id = numero_type_id
+                )
+                request.dbsession.add(num)
+                request.dbsession.flush()
+
+                # update numero_etat_histo
+                neh = NumeroEtatHisto(
+                    numero_id = num.id,
+                    numero_etat_id = numero_etat_id,
+                    date = date
+                )
+
+                request.dbsession.add(neh)
+
+            else:
+                # s'assurer que le numéro ait l'état en projet
+                if not num.etat_id == numero_etat_id:
+                    num.etat_id = numero_etat_id
+
+                    # update numero_etat_histo
+                    neh = NumeroEtatHisto(
+                        numero_id = num.id,
+                        numero_etat_id = numero_etat_id,
+                        date = date
+                    )
+
+                    request.dbsession.add(neh)
+            
+            # log dans table affaire_numero if not already exists
+            an = an_req.filter(
+                AffaireNumero.affaire_id == affaire_id,
+                AffaireNumero.numero_id == num.id,
+                AffaireNumero.type_id == numero_ancien_nouveau_id
+            ).first()
+
+            if an is None:
+                an = AffaireNumero(
+                    affaire_id = affaire_id,
+                    numero_id = num.id,
+                    type_id = numero_ancien_nouveau_id,
+                    actif = True
+                )
+
+                request.dbsession.add(an)
+    return
+
+
+@view_config(route_name='save_bf_rp', request_method='POST', renderer='json')
+def save_bf_rp(request):
+    """
+    Save BF of RP-file
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+
+    affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
+    num_projet = json.loads(request.params["num_projet"]) if "num_projet" in request.params else None
+    num_vigueur = json.loads(request.params["num_vigueur"]) if "num_vigueur" in request.params else None
+    
+    affaire_numero_type_ancien_id = request.registry.settings['affaire_numero_type_ancien_id']
+    affaire_numero_type_nouveau_id = request.registry.settings['affaire_numero_type_nouveau_id']
+    numero_projet_id = request.registry.settings['numero_projet_id']
+    numero_vigueur_id = request.registry.settings['numero_vigueur_id']
+    numero_bf_id = request.registry.settings['numero_bf_id']
+    
+    __save_bf_rp(request, affaire_id, num_projet, numero_bf_id, numero_projet_id, affaire_numero_type_nouveau_id)
+    __save_bf_rp(request, affaire_id, num_vigueur, numero_bf_id, numero_vigueur_id, affaire_numero_type_ancien_id)
+    
+    return exc.HTTPOk()
