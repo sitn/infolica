@@ -77,7 +77,7 @@ export default {
         editEmolumentIndiceApplication: false,
         editEmolumentTva: false,
         editEmolumentFreeze: false,
-        loadNumerosFromExcel_remaniementParcellaire: false,
+        showRemaniementParcellaireLoadingBtn: false,
         showEmolumentRepartition_saveToFactures_btn: false,
       },
       showConfirmAbandonAffaireDialog: false,
