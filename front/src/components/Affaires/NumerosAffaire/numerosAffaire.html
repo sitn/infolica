@@ -16,7 +16,7 @@
             <md-card-expand-content>
                 <md-card-content>
                     <div class="md-layout md-gutter">
-                        <div class="md-layout-item md-size-100" v-if="permission.loadNumerosFromExcel_remaniementParcellaire">
+                        <div class="md-layout-item md-size-100" v-if="affaire.type_id === typesAffaires_conf.remaniement_parcellaire && permission.showRemaniementParcellaireLoadingBtn">
                             <md-button class="md-raised md-primary" v-on:click="loadNumerosFromExcel_remaniementParcellaire"><md-icon>description</md-icon> Importer les numéros de biens-fonds depuis le fichier excel</md-button>
                             <md-progress-bar md-mode="indeterminate" v-if="numerosLoading"></md-progress-bar>
                         </div>

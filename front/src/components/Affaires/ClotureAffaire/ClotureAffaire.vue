@@ -92,7 +92,8 @@ export default {
           this.typesAffaires_conf.modification_mutation, 
           this.typesAffaires_conf.modification_visa, 
           this.typesAffaires_conf.modification_duplicata, 
-          this.typesAffaires_conf.modification_retour_etat_juridique
+          this.typesAffaires_conf.modification_retour_etat_juridique,
+          this.typesAffaires_conf.remaniement_parcellaire
         ].includes(this.affaire.type_id)) {
         data = data.filter(x => x.affaire_numero_type_id !== num_type.ancien_id);
       }
@@ -172,6 +173,7 @@ export default {
               this.$root.$emit("ShowMessage", "L'affaire " + this.affaire.id + " a été clôturées avec succès");
   
               //Log cloture affaire
+              logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_FIN_PROCESSUS_ID))
               logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_CLOTURE_ID))
               .then(() => this.$router.go(0));
             })
