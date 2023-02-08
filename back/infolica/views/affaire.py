@@ -410,17 +410,21 @@ def affaires_new_view(request):
         else:
             Utils.create_affaire_folder(request.registry.settings['affaireTemplateDir'], affaire_chemin_full_path)
 
+
     # Créer les formulaires de contrôle
     params = {'affaire_id': model.id}
-    if not model.type_id in [int(request.registry.settings['affaire_type_part_copropriete_id']), int(request.registry.settings['affaire_type_autre_id'])]:
-        if model.type_id == int(request.registry.settings['affaire_type_ppe_id']):
-            # Create controle PPE
-            Utils.addNewRecord(request, ControlePPE, params)
-        else:
-            # Create controle Mutation
-            Utils.addNewRecord(request, ControleMutation, params)
-        
+    affaireType = request.dbsession.query(AffaireType).filter(AffaireType.id == affaire_type).first()
+    
+    if affaireType.affaire_section_ctrl_chefprojet_mo is True:
+        Utils.addNewRecord(request, ControleMutation, params)
+    
+    if affaireType.affaire_section_ctrl_chefprojet_ppe is True:
+        Utils.addNewRecord(request, ControlePPE, params)
+    
+    if affaireType.affaire_section_ctrl_coordprojets is True:
         Utils.addNewRecord(request, SuiviMandat, params)
+    
+    if affaireType.affaire_section_ctrl_geometre is True:
         Utils.addNewRecord(request, ControleGeometre, params)
 
 
@@ -435,9 +439,11 @@ def affaires_new_view(request):
     params['datetime'] = datetime.now()
     Utils.addNewRecord(request, AffaireEtape, params)
 
+
     # Envoyer e-mail si l'affaire est urgente (sauf si c'est une PPE ou modif de PPE)
     if model.urgent and (model.type_id != int(request.registry.settings['affaire_type_ppe_id']) or model.type_id != int(request.registry.settings['affaire_type_modification_ppe_id'])):
         MailTemplates.sendMailAffaireUrgente(request, model)
+
 
     # Add facture
     if 'facture_client_id' in request.params:
