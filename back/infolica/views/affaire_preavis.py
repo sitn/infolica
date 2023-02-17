@@ -779,20 +779,22 @@ def preavis_print_view(request):
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
     
     data = request.dbsession.query(
-        Preavis.affaire_id,
-        Service.service,
-        Preavis.date_demande,
-        Preavis.date_reponse,
-        PreavisType.nom,
-        Preavis.remarque,
-        VAffaire.cadastre,
-        Service.abreviation,
-        VAffaire.nom,
-        Preavis.operateur_service_id,
+        Preavis.affaire_id,  # 0
+        Service.service,  # 1
+        Preavis.date_demande,  # 2
+        Preavis.date_reponse,  # 3
+        PreavisType.nom,  # 4
+        Preavis.remarque,  # 5
+        VAffaire.cadastre,  # 6
+        Service.abreviation,  # 7
+        VAffaire.nom,  # 8
+        Preavis.operateur_service_id,  # 9
+        Service.telephone,  # 10
+        Service.mail,  # 11
     ).join(
         Service
     ).join(
-        PreavisType, PreavisType.id == Preavis.preavis_type_id
+        PreavisType, PreavisType.id == Preavis.preavis_type_id, isouter=True
     ).join(
         VAffaire, VAffaire.id == Preavis.affaire_id
     ).filter(
@@ -802,6 +804,43 @@ def preavis_print_view(request):
     operateur = None
     if data[9] is not None:
         operateur = request.dbsession.query(Operateur).filter(Operateur.id == data[9]).first()
+
+
+    preavis_decisions = request.dbsession.query(
+        PreavisDecision.id,
+        PreavisDecision.date,
+        PreavisDecision.version,
+        PreavisDecision.remarque,
+        PreavisType.nom,
+        Operateur.prenom,
+        Operateur.nom,
+        PreavisDecision.preavis_type_id
+    ).join(
+        PreavisType, PreavisType.id == PreavisDecision.preavis_type_id
+    ).join(
+        Operateur, Operateur.id == PreavisDecision.operateur_service_id
+    ).filter(
+        PreavisDecision.preavis_id == preavis_id,
+        PreavisDecision.definitif == True
+    ).order_by(PreavisDecision.id.asc()).all()
+
+    liste_decisions = []
+    preavis_version_max = 1
+    for res in preavis_decisions:
+        preavis_version_max = res[2] if res[2] > preavis_version_max else preavis_version_max
+        liste_decisions.append(
+            {   
+                'preavisDecision_id': res[0],
+                'date': datetime.strftime(res[1], "%d.%m.%Y"),
+                'version': res[2],
+                'remarque': res[3],
+                'decision': res[4],
+                'operateur': ' '.join([res[6], res[5]]),
+                'preavis_type_id': res[7]
+            }
+        )
+
+
 
     now = datetime.now()
     d = {"now": now.strftime("%d.%m.%Y, %H:%M:%S")}
@@ -833,6 +872,8 @@ def preavis_print_view(request):
             }}
         }}
         h1 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 18pt; font-style: normal; font-variant: normal; font-weight: 700; line-height: 20pt; }}
+        h2 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 16pt; font-style: normal; font-variant: normal; font-weight: 700; line-height: 18pt; }}
+        h3 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 14pt; font-style: normal; font-variant: normal; font-weight: 700; line-height: 16pt; }}
         p {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 400; line-height: 14pt; text-align: justify; }}
         """ 
 
@@ -847,17 +888,50 @@ def preavis_print_view(request):
                     DU REGISTRE FONCIER</p>'
 
     html += "<h1>Préavis du " + data[1] + "</h1>"
+    if data[10] is not None or data[11] is not None:
+        html += "<p>Contact: "
+        
+        contacts = []
+        if data[10] is not None:
+            contacts.append(data[10])
+        
+        if data[11] is not None:
+            contacts.append(
+                "<a href=\"mailto:" + data[11] + "?subject=Préavis de l'affaire: " + str(data[0]) + " du cadastre: " + data[6] + "\">" + data[11] + "</a>"
+            )
+        
+        html += " / ".join(contacts) + "</p>"
+
+        
     html += "<p>Affaire n° " + str(data[0]) + "<br>" + "Cadastre: " + data[6] + "</p>"
     html += "<p>Description de l'affaire: " + data[8] + "</p>"
-    html += "<p>Date de la demande de préavis: " + str(data[2].strftime("%d.%m.%Y")) + "<br>" + "Date de retour du préavis: " + str(data[3].strftime("%d.%m.%Y")) + "</p>"
-    html += "<p>"
+    html += "<p>Date de la demande de préavis: " + str(data[2].strftime("%d.%m.%Y")) + "</p>"
+    html += "<br>"
+    html += "<h2>Version n° {} (en vigueur)</h2>".format(preavis_version_max)
+    html += "<p>Préavisé le {}".format(str(data[3].strftime("%d.%m.%Y")))
     if operateur is not None:
-        html += "Préavisé par: " + operateur.nom + " " + operateur.prenom
-    html += "<br>Contact: 032 889 67 40</p>"
+        html += " par: " + operateur.nom + " " + operateur.prenom
+    html += "</p>"
     html += "<br>"
     html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + (data[4] if data[4] is not None else 'indéfini') + "</p>"
     html += "<br>"
-    html += "<p><em>Détail:</em></p><p><em>" + (data[5] if data[5] is not None else '-') + "</em></p>"
+    html += "<p><em>Détail:</em></p><p style='white-space: pre-wrap;'><em>" + (data[5] if data[5] is not None else '-') + "</em></p>"
+
+    if len(liste_decisions)>1:
+        for c, decision in enumerate(liste_decisions[:-1]):
+
+            html += "<div style='break-after:page'></div>" # SAUT DE PAGE
+            if c == 0:
+                html += "<h1>HISTORIQUE DES PREAVIS</h1>"
+            html += "<h2>Version n° {} (remplacée par la version n° {})</h2>".format(decision['version'], preavis_version_max)
+            html += "<p>Préavisé le {} par {}</p>".format(decision['date'], decision['operateur'])
+            html += "<br>"
+            html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + (decision['decision'] if decision['decision'] is not None else 'indéfini') + "</p>"
+            html += "<br>"
+            html += "<p><em>Détail:</em></p><p style='white-space: pre-wrap;'><em>" + (decision['remarque'] if decision['remarque'] is not None else '-') + "</em></p>"
+
+
+
 
     html += "</body></html>"
 
