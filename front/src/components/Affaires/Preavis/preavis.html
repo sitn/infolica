@@ -27,7 +27,6 @@
                                 <md-table-cell md-label="Réponse" md-sort-by="date_reponse" style="min-width: 100px;">{{ item.date_reponse | formatDate }}</md-table-cell>
                                 <md-table-cell md-label="Préavis" md-sort-by="preavis" style="min-width: 100px;">{{ item.preavis }}</md-table-cell>
                                 <md-table-cell md-label="Remarque" md-sort-by="remarque"  style="min-width: 1000px;">{{ item.remarque.length>250? item.remarque.substring(0, 250) + "...": item.remarque }}</md-table-cell>
-                                <!-- <md-table-cell md-label="Remarque" md-sort-by="remarque"  style="min-width: 1000px;">{{ item.remarque.substring(0, 250) }}{{ item.remarque.length>250? "...": "" }}</md-table-cell> -->
                                 <md-table-cell md-label="Actions" style="min-width: 200px;">
                                     <md-button class="md-icon-button md-primary md-dense" v-on:click.prevent.stop="onModifyPreavis(item)" title="Mettre à jour le préavis" v-if="!affaireReadonly">
                                         <md-icon class="md-edit">edit</md-icon>

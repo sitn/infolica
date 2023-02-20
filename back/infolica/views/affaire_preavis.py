@@ -779,18 +779,18 @@ def preavis_print_view(request):
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
     
     data = request.dbsession.query(
-        Preavis.affaire_id,  # 0
-        Service.service,  # 1
-        Preavis.date_demande,  # 2
-        Preavis.date_reponse,  # 3
-        PreavisType.nom,  # 4
-        Preavis.remarque,  # 5
-        VAffaire.cadastre,  # 6
-        Service.abreviation,  # 7
-        VAffaire.nom,  # 8
-        Preavis.operateur_service_id,  # 9
-        Service.telephone,  # 10
-        Service.mail,  # 11
+        Preavis.affaire_id,
+        Service.service,
+        Preavis.date_demande,
+        Preavis.date_reponse,
+        PreavisType.nom.label('preavis_type_nom'),
+        Preavis.remarque,
+        VAffaire.cadastre,
+        Service.abreviation.label('abreviation'),
+        VAffaire.nom.label('affaire_description'),
+        Preavis.operateur_service_id,
+        Service.telephone.label('service_telephone'),
+        Service.mail.label('service_mail'),
     ).join(
         Service
     ).join(
@@ -802,7 +802,7 @@ def preavis_print_view(request):
     ).first()
 
     operateur = None
-    if data[9] is not None:
+    if data.operateur_service_id is not None:
         operateur = request.dbsession.query(Operateur).filter(Operateur.id == data[9]).first()
 
 
@@ -812,8 +812,8 @@ def preavis_print_view(request):
         PreavisDecision.version,
         PreavisDecision.remarque,
         PreavisType.nom,
-        Operateur.prenom,
-        Operateur.nom,
+        Operateur.prenom.label('operateur_prenom'),
+        Operateur.nom.label('operateur_nom'),
         PreavisDecision.preavis_type_id
     ).join(
         PreavisType, PreavisType.id == PreavisDecision.preavis_type_id
@@ -827,16 +827,16 @@ def preavis_print_view(request):
     liste_decisions = []
     preavis_version_max = 1
     for res in preavis_decisions:
-        preavis_version_max = res[2] if res[2] > preavis_version_max else preavis_version_max
+        preavis_version_max = res.version if res.version > preavis_version_max else preavis_version_max
         liste_decisions.append(
             {   
-                'preavisDecision_id': res[0],
-                'date': datetime.strftime(res[1], "%d.%m.%Y"),
-                'version': res[2],
-                'remarque': res[3],
-                'decision': res[4],
-                'operateur': ' '.join([res[6], res[5]]),
-                'preavis_type_id': res[7]
+                'preavisDecision_id': res.id,
+                'date': datetime.strftime(res.date, "%d.%m.%Y"),
+                'version': res.version,
+                'remarque': res.remarque,
+                'decision': res.nom,
+                'operateur': ' '.join([res.operateur_prenom, res.operateur_nom]),
+                'preavis_type_id': res.preavis_type_id
             }
         )
 
@@ -887,35 +887,35 @@ def preavis_print_view(request):
                     SERVICE DE LA GÉOMATIQUE ET<br> \
                     DU REGISTRE FONCIER</p>'
 
-    html += "<h1>Préavis du " + data[1] + "</h1>"
-    if data[10] is not None or data[11] is not None:
+    html += "<h1>Préavis du " + data.service + "</h1>"
+    if data.service_telephone is not None or data.service_mail is not None:
         html += "<p>Contact: "
         
         contacts = []
-        if data[10] is not None:
-            contacts.append(data[10])
+        if data.service_telephone is not None:
+            contacts.append(data.service_telephone)
         
-        if data[11] is not None:
+        if data.service_mail is not None:
             contacts.append(
-                "<a href=\"mailto:" + data[11] + "?subject=Préavis de l'affaire: " + str(data[0]) + " du cadastre: " + data[6] + "\">" + data[11] + "</a>"
+                "<a href=\"mailto:" + data.service_mail + "?subject=Préavis de l'affaire: " + str(data.affaire_id) + " du cadastre: " + data.cadastre + "\">" + data.service_mail + "</a>"
             )
         
         html += " / ".join(contacts) + "</p>"
 
         
-    html += "<p>Affaire n° " + str(data[0]) + "<br>" + "Cadastre: " + data[6] + "</p>"
-    html += "<p>Description de l'affaire: " + data[8] + "</p>"
-    html += "<p>Date de la demande de préavis: " + str(data[2].strftime("%d.%m.%Y")) + "</p>"
+    html += "<p>Affaire n° " + str(data.affaire_id) + "<br>" + "Cadastre: " + data.cadastre + "</p>"
+    html += "<p>Description de l'affaire: " + data.affaire_description + "</p>"
+    html += "<p>Date de la demande de préavis: " + str(data.date_demande.strftime("%d.%m.%Y")) + "</p>"
     html += "<br>"
     html += "<h2>Version n° {} (en vigueur)</h2>".format(preavis_version_max)
-    html += "<p>Préavisé le {}".format(str(data[3].strftime("%d.%m.%Y")))
+    html += "<p>Préavisé le {}".format(str(data.date_reponse.strftime("%d.%m.%Y")))
     if operateur is not None:
-        html += " par: " + operateur.nom + " " + operateur.prenom
+        html += " par: " + operateur.prenom + " " + operateur.nom
     html += "</p>"
     html += "<br>"
-    html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + (data[4] if data[4] is not None else 'indéfini') + "</p>"
+    html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + (data.preavis_type_nom if data.preavis_type_nom is not None else 'indéfini') + "</p>"
     html += "<br>"
-    html += "<p><em>Détail:</em></p><p style='white-space: pre-wrap;'><em>" + (data[5] if data[5] is not None else '-') + "</em></p>"
+    html += "<p><em>Détail:</em></p><p style='white-space: pre-wrap;'><em>" + (data.remarque if data.remarque is not None else '-') + "</em></p>"
 
     if len(liste_decisions)>1:
         for c, decision in enumerate(liste_decisions[:-1]):
@@ -935,7 +935,7 @@ def preavis_print_view(request):
 
     html += "</body></html>"
 
-    filename = "Préavis_" + str(data[7]) + "_Affaire_" + str(data[0]) + ".pdf"
+    filename = "Préavis_" + str(data.abreviation) + "_Affaire_" + str(data.affaire_id) + ".pdf"
 
     html = html.encode('utf-8')
 
