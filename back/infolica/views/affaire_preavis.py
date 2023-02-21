@@ -783,16 +783,18 @@ def preavis_print_view(request):
         Service.service,
         Preavis.date_demande,
         Preavis.date_reponse,
-        PreavisType.nom,
+        PreavisType.nom.label('preavis_type_nom'),
         Preavis.remarque,
         VAffaire.cadastre,
-        Service.abreviation,
-        VAffaire.nom,
+        Service.abreviation.label('abreviation'),
+        VAffaire.nom.label('affaire_description'),
         Preavis.operateur_service_id,
+        Service.telephone.label('service_telephone'),
+        Service.mail.label('service_mail'),
     ).join(
         Service
     ).join(
-        PreavisType, PreavisType.id == Preavis.preavis_type_id
+        PreavisType, PreavisType.id == Preavis.preavis_type_id, isouter=True
     ).join(
         VAffaire, VAffaire.id == Preavis.affaire_id
     ).filter(
@@ -800,8 +802,45 @@ def preavis_print_view(request):
     ).first()
 
     operateur = None
-    if data[9] is not None:
+    if data.operateur_service_id is not None:
         operateur = request.dbsession.query(Operateur).filter(Operateur.id == data[9]).first()
+
+
+    preavis_decisions = request.dbsession.query(
+        PreavisDecision.id,
+        PreavisDecision.date,
+        PreavisDecision.version,
+        PreavisDecision.remarque,
+        PreavisType.nom,
+        Operateur.prenom.label('operateur_prenom'),
+        Operateur.nom.label('operateur_nom'),
+        PreavisDecision.preavis_type_id
+    ).join(
+        PreavisType, PreavisType.id == PreavisDecision.preavis_type_id
+    ).join(
+        Operateur, Operateur.id == PreavisDecision.operateur_service_id
+    ).filter(
+        PreavisDecision.preavis_id == preavis_id,
+        PreavisDecision.definitif == True
+    ).order_by(PreavisDecision.id.asc()).all()
+
+    liste_decisions = []
+    preavis_version_max = 1
+    for res in preavis_decisions:
+        preavis_version_max = res.version if res.version > preavis_version_max else preavis_version_max
+        liste_decisions.append(
+            {   
+                'preavisDecision_id': res.id,
+                'date': datetime.strftime(res.date, "%d.%m.%Y"),
+                'version': res.version,
+                'remarque': res.remarque,
+                'decision': res.nom,
+                'operateur': ' '.join([res.operateur_prenom, res.operateur_nom]),
+                'preavis_type_id': res.preavis_type_id
+            }
+        )
+
+
 
     now = datetime.now()
     d = {"now": now.strftime("%d.%m.%Y, %H:%M:%S")}
@@ -833,6 +872,8 @@ def preavis_print_view(request):
             }}
         }}
         h1 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 18pt; font-style: normal; font-variant: normal; font-weight: 700; line-height: 20pt; }}
+        h2 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 16pt; font-style: normal; font-variant: normal; font-weight: 700; line-height: 18pt; }}
+        h3 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 14pt; font-style: normal; font-variant: normal; font-weight: 700; line-height: 16pt; }}
         p {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 400; line-height: 14pt; text-align: justify; }}
         """ 
 
@@ -846,22 +887,55 @@ def preavis_print_view(request):
                     SERVICE DE LA GÉOMATIQUE ET<br> \
                     DU REGISTRE FONCIER</p>'
 
-    html += "<h1>Préavis du " + data[1] + "</h1>"
-    html += "<p>Affaire n° " + str(data[0]) + "<br>" + "Cadastre: " + data[6] + "</p>"
-    html += "<p>Description de l'affaire: " + data[8] + "</p>"
-    html += "<p>Date de la demande de préavis: " + str(data[2].strftime("%d.%m.%Y")) + "<br>" + "Date de retour du préavis: " + str(data[3].strftime("%d.%m.%Y")) + "</p>"
-    html += "<p>"
+    html += "<h1>Préavis du " + data.service + "</h1>"
+    if data.service_telephone is not None or data.service_mail is not None:
+        html += "<p>Contact: "
+        
+        contacts = []
+        if data.service_telephone is not None:
+            contacts.append(data.service_telephone)
+        
+        if data.service_mail is not None:
+            contacts.append(
+                "<a href=\"mailto:" + data.service_mail + "?subject=Préavis de l'affaire: " + str(data.affaire_id) + " du cadastre: " + data.cadastre + "\">" + data.service_mail + "</a>"
+            )
+        
+        html += " / ".join(contacts) + "</p>"
+
+        
+    html += "<p>Affaire n° " + str(data.affaire_id) + "<br>" + "Cadastre: " + data.cadastre + "</p>"
+    html += "<p>Description de l'affaire: " + data.affaire_description + "</p>"
+    html += "<p>Date de la demande de préavis: " + str(data.date_demande.strftime("%d.%m.%Y")) + "</p>"
+    html += "<br>"
+    html += "<h2>Version n° {} (en vigueur)</h2>".format(preavis_version_max)
+    html += "<p>Préavisé le {}".format(str(data.date_reponse.strftime("%d.%m.%Y")))
     if operateur is not None:
-        html += "Préavisé par: " + operateur.nom + " " + operateur.prenom
-    html += "<br>Contact: 032 889 67 40</p>"
+        html += " par: " + operateur.prenom + " " + operateur.nom
+    html += "</p>"
     html += "<br>"
-    html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + (data[4] if data[4] is not None else 'indéfini') + "</p>"
+    html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + (data.preavis_type_nom if data.preavis_type_nom is not None else 'indéfini') + "</p>"
     html += "<br>"
-    html += "<p><em>Détail:</em></p><p><em>" + (data[5] if data[5] is not None else '-') + "</em></p>"
+    html += "<p><em>Détail:</em></p><p style='white-space: pre-wrap;'><em>" + (data.remarque if data.remarque is not None else '-') + "</em></p>"
+
+    if len(liste_decisions)>1:
+        for c, decision in enumerate(liste_decisions[:-1]):
+
+            html += "<div style='break-after:page'></div>" # SAUT DE PAGE
+            if c == 0:
+                html += "<h1>HISTORIQUE DES PREAVIS</h1>"
+            html += "<h2>Version n° {} (remplacée par la version n° {})</h2>".format(decision['version'], preavis_version_max)
+            html += "<p>Préavisé le {} par {}</p>".format(decision['date'], decision['operateur'])
+            html += "<br>"
+            html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + (decision['decision'] if decision['decision'] is not None else 'indéfini') + "</p>"
+            html += "<br>"
+            html += "<p><em>Détail:</em></p><p style='white-space: pre-wrap;'><em>" + (decision['remarque'] if decision['remarque'] is not None else '-') + "</em></p>"
+
+
+
 
     html += "</body></html>"
 
-    filename = "Préavis_" + str(data[7]) + "_Affaire_" + str(data[0]) + ".pdf"
+    filename = "Préavis_" + str(data.abreviation) + "_Affaire_" + str(data.affaire_id) + ".pdf"
 
     html = html.encode('utf-8')
 
