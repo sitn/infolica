@@ -801,7 +801,7 @@ export default {
                   // parcourir liste_numeros
                   content += sep + "<span style='color: " + z.font_color + ";'>" + z.numero + "</span>";
                   sep = ', ';
-                  if (allowConfirm && z.reservation_autre_affaire) {
+                  if (allowConfirm && z.error) {
                     allowConfirm = false;
                   }
                 });
@@ -821,7 +821,7 @@ export default {
               onConfirm: () => { this.saveNumerosFromExcel_remaniementParcellaire(response.data) }
             };
           } else {
-            content += "<p style='font-weight: bold; color: blue;'>Les numéros réservés dans une autre affaire doivent être manuellement supprimés dans le fichier Excel afin de valider le processus.</p>";
+            content += "<p style='font-weight: bold; color: blue;'>Les numéros réservés dans une autre affaire ou les DDP doivent être manuellement supprimés dans le fichier Excel afin de valider le processus.</p>";
             
             this.alertDialog= {
               show: true,
