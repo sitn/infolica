@@ -633,7 +633,7 @@ def numero_differe_delete_view(request):
 #####################################
 
 
-def __getNumberId(request, numero, cadastre_id):
+def _getNumberId(request, numero, cadastre_id):
     numero = request.dbsession.query(
         Numero.id,
         Numero.type_id
@@ -644,7 +644,7 @@ def __getNumberId(request, numero, cadastre_id):
     return (numero.id, numero.type_id) if numero is not None else None
 
 
-def __getCadastre(request, cadastre_id):
+def _getCadastre(request, cadastre_id):
     cadastre = request.dbsession.query(
         Cadastre.nom
     ).filter(
@@ -653,7 +653,7 @@ def __getCadastre(request, cadastre_id):
     return cadastre[0] if cadastre is not None else None
 
 
-def __getAffairesIdFromNumeroId(request, numero_id, numero_type_id):
+def _getAffairesIdFromNumeroId(request, numero_id, numero_type_id):
     affaires_id_agg = func.array_agg(AffaireNumero.affaire_id, type_=ARRAY(BigInteger))
     
     affaires_id = request.dbsession.query(
@@ -782,12 +782,12 @@ def loadfile_bf_rp(request):
         if cadastre_id is not None:
             numero = re.split('\D', str(ws.cell(row=row_i, column=3).value))[0]
 
-            numero_id, numero_type_id = __getNumberId(request, numero, cadastre_id)
+            numero_id, numero_type_id = _getNumberId(request, numero, cadastre_id)
             affaires_id = []
             if numero_id is not None:
-                affaires_id = __getAffairesIdFromNumeroId(request, numero_id, numero_type_id=affaire_numero_type_nouveau_id)
+                affaires_id = _getAffairesIdFromNumeroId(request, numero_id, numero_type_id=affaire_numero_type_nouveau_id)
 
-            cadastre = __getCadastre(request, cadastre_id)
+            cadastre = _getCadastre(request, cadastre_id)
 
             # errors
             error = False
