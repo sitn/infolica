@@ -633,17 +633,18 @@ def numero_differe_delete_view(request):
 #####################################
 
 
-def __getNumberId(request, numero, cadastre_id):
-    numero_id = request.dbsession.query(
-        Numero.id
+def _getNumberId(request, numero, cadastre_id):
+    numero = request.dbsession.query(
+        Numero.id,
+        Numero.type_id
     ).filter(
         Numero.cadastre_id == cadastre_id,
         Numero.numero == numero
     ).first()
-    return numero_id[0] if numero_id is not None else None
+    return (numero.id, numero.type_id) if numero is not None else (None, None)
 
 
-def __getCadastre(request, cadastre_id):
+def _getCadastre(request, cadastre_id):
     cadastre = request.dbsession.query(
         Cadastre.nom
     ).filter(
@@ -652,7 +653,7 @@ def __getCadastre(request, cadastre_id):
     return cadastre[0] if cadastre is not None else None
 
 
-def __getAffairesIdFromNumeroId(request, numero_id, numero_type_id):
+def _getAffairesIdFromNumeroId(request, numero_id, numero_type_id):
     affaires_id_agg = func.array_agg(AffaireNumero.affaire_id, type_=ARRAY(BigInteger))
     
     affaires_id = request.dbsession.query(
@@ -682,6 +683,7 @@ def loadfile_bf_rp(request):
 
     temporary_directory = request.registry.settings['temporary_directory']
     affaire_numero_type_nouveau_id = request.registry.settings['affaire_numero_type_nouveau_id']
+    numero_ddp_id = int(request.registry.settings['numero_ddp_id'])
     file_path = os.path.join(temporary_directory, file.filename)
 
     if os.path.exists(file_path):
@@ -691,6 +693,9 @@ def loadfile_bf_rp(request):
         shutil.copyfileobj(file.file, output_file)
 
     wb = openpyxl.load_workbook(file_path)
+    data = []
+
+    numero_query = request.dbsession.query(Numero)
 
     # =============================
     # Let's focus on Infolica sheet
@@ -698,8 +703,6 @@ def loadfile_bf_rp(request):
     sheet = 'Infolica'
     ws = wb[sheet]
     
-    data = []
-
     numero_id_agg = func.array_agg(Numero.id, type_=ARRAY(BigInteger))
     numero_numero_agg = func.array_agg(aggregate_order_by(Numero.numero, Numero.numero.asc()), type_=ARRAY(BigInteger))
     
@@ -720,10 +723,7 @@ def loadfile_bf_rp(request):
         numero_id = ws.cell(row=row_i, column=1).value
 
         if numero_id is not None:
-
-            if sheet == 'Infolica':
-                data_id.append(numero_id)
-            
+            data_id.append(numero_id)
             row_i += 1
         
         else:
@@ -733,18 +733,31 @@ def loadfile_bf_rp(request):
 
             tmp = []
             for result in results: # parcourir les cadastres
+
+                liste_numeros = []
+                for i, numero_ in enumerate(result[2]):
+                    num = numero_query.filter(Numero.id == result[0][i]).first()
+
+                    error = False
+                    font_color = 'black'
+                    if num is not None and num.type_id == numero_ddp_id:
+                        error = True
+                        font_color = 'blue'
+
+                    liste_numeros.append({
+                        'numero_id': result[0][i],
+                        'cadastre_id': result[1],
+                        'numero': str(numero_) if error is False else 'DDP ' + str(numero_),
+                        'cadastre': result[3],
+                        'sheet': sheet,
+                        'font_color': font_color,
+                        'error': error,
+                    })
+
                 tmp.append({
                     'cadastre': result[3],
                     'cadastre_id': result[1],
-                    'liste_numeros': [{
-                        'numero_id': result[0][i],
-                        'cadastre_id': result[1],
-                        'numero': numero_,
-                        'cadastre': result[3],
-                        'sheet': sheet,
-                        'font-color': 'black',
-                        'reservation_autre_affaire': False,
-                    } for i, numero_ in enumerate(result[2])]
+                    'liste_numeros': liste_numeros
                 })
              
             data.append({
@@ -759,7 +772,6 @@ def loadfile_bf_rp(request):
     # ===========================
     sheet = 'Terris'
     ws = wb[sheet]
-    
     tmp = []
 
     row_i = 2
@@ -770,21 +782,27 @@ def loadfile_bf_rp(request):
         if cadastre_id is not None:
             numero = re.split('\D', str(ws.cell(row=row_i, column=3).value))[0]
 
-            numero_id = __getNumberId(request, numero, cadastre_id)
+            numero_id, numero_type_id = _getNumberId(request, numero, cadastre_id)
             affaires_id = []
             if numero_id is not None:
-                affaires_id = __getAffairesIdFromNumeroId(request, numero_id, numero_type_id=affaire_numero_type_nouveau_id)
+                affaires_id = _getAffairesIdFromNumeroId(request, numero_id, numero_type_id=affaire_numero_type_nouveau_id)
 
-            cadastre = __getCadastre(request, cadastre_id)
+            cadastre = _getCadastre(request, cadastre_id)
 
-            reservation_autre_affaire = False
+            # errors
+            error = False
             font_color = 'red'
             if affaire_id in (affaires_id):
                 font_color = 'green'
             elif len(affaires_id) > 0:
                 numero = numero + (" [affaire(s): " + ', '.join(affaires_id) + "]" if len(affaires_id) > 0 else "")
                 font_color = 'blue'
-                reservation_autre_affaire = True
+                error = True
+
+            if numero_type_id == numero_ddp_id:
+                numero = 'DDP ' + numero
+                font_color = 'blue'
+                error = True
 
 
             numero_ = {
@@ -794,7 +812,7 @@ def loadfile_bf_rp(request):
                 'cadastre': cadastre,
                 'sheet': sheet,
                 'font_color': font_color,
-                'reservation_autre_affaire': reservation_autre_affaire
+                'error': error 
             }
 
             cadastre_id_already_exists = False

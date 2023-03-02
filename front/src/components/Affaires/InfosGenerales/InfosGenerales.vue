@@ -22,6 +22,7 @@ export default {
     clientTypes_conf: {type: Object},
     permission: {type: Object},
     etapes_affaire_conf: {type: Object},
+    affaireDashboardLayout: {type: Object},
   },
   components: {},
   data() {
