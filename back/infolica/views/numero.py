@@ -641,7 +641,7 @@ def _getNumberId(request, numero, cadastre_id):
         Numero.cadastre_id == cadastre_id,
         Numero.numero == numero
     ).first()
-    return (numero.id, numero.type_id) if numero is not None else None
+    return (numero.id, numero.type_id) if numero is not None else (None, None)
 
 
 def _getCadastre(request, cadastre_id):
