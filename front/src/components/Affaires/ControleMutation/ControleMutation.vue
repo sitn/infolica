@@ -12,22 +12,13 @@ export default {
   name: "ControleMutation",
   props: {
     affaire: Object,
-    permission: Object
+    permission: Object,
+    typesAffaires_conf: Object
   },
   data: () => ({
     showNewControleMutationBtn: false,
     needToCreateControleMutation: false,
     controleMutation: {},
-    checkAll: {
-      suivi_: false,
-      bf_: false,
-      cs_: false,
-      od_: false,
-      bat_: false,
-      serv_: false,
-      suiv_mut_: false,
-      div_: false,
-    }
   }),
 
   methods: {
@@ -141,6 +132,9 @@ export default {
       formData.append("cs_3", this.controleMutation.cs_3);
       formData.append("cs_4", this.controleMutation.cs_4);
       formData.append("cs_5", this.controleMutation.cs_5);
+      formData.append("cs_6", this.controleMutation.cs_6);
+      formData.append("cs_7", this.controleMutation.cs_7);
+      formData.append("cs_8", this.controleMutation.cs_8);
       formData.append("od_1", this.controleMutation.od_1);
       formData.append("od_2", this.controleMutation.od_2);
       formData.append("od_3", this.controleMutation.od_3);
@@ -159,6 +153,10 @@ export default {
       formData.append("div_1", this.controleMutation.div_1);
       formData.append("div_2", this.controleMutation.div_2);
       formData.append("div_3", this.controleMutation.div_3);
+      formData.append("gen_1", this.controleMutation.gen_1);
+      formData.append("gen_2", this.controleMutation.gen_2);
+      formData.append("gen_3", this.controleMutation.gen_3);
+      formData.append("gen_4", this.controleMutation.gen_4);
       formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
       formData.append("visa", JSON.parse(localStorage.getItem("infolica_user")).id);
       
@@ -189,21 +187,16 @@ export default {
     /**
      * Select all checkbox (subdomain)
      */
-    selectAll(key_) {
-      for (let key in this.controleMutation) {
-        if (["suivi_", ].includes(key_)) {
-          if (key.startsWith(key_)) {
-            if (this.checkAll[key_]) {
-              // Case desactivée
-              this.controleMutation[key] = moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
-            } else {
-              // Case activée
-              this.controleMutation[key] = null;
+    selectAll(term) {
+      let fields = document.getElementById(term).getElementsByClassName('md-checkbox');
+
+      for (const x in fields) {
+        if (typeof fields[x] === 'object' && !fields[x].classList.contains('md-checked')) {
+          for (const elem of fields[x].children) {
+            if (elem.className === 'md-checkbox-container') {
+              elem.click();
+              break
             }
-          }
-        } else {
-          if (key.startsWith(key_)) {  
-            this.controleMutation[key] = this.checkAll[key_];
           }
         }
       }
