@@ -52,8 +52,8 @@
                                                 <md-checkbox class="md-primary" v-model="controleMutation.cs_7">Réservation des numéros de bâtiments</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.cs_8">Désignation des bâtiments et bâtiments souterrains</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.cs_1">Contrôler les numéros des points particuliers "660" ainsi que la valeur, la précision et la fiabilité des points en adéquations avec le niveau de tolérance de la zone de travail</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.cs_2">Contrôler dans la table « Couverture_du_sol =>Mise_a_jourCS » qu’il y a que les nouvelles surfaces créées dans votre affaire qu'il n'y a pas de surfaces sans géométrie</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.cs_3">Contrôler dans la table « Couverture_du_sol =>PosNumero_de_batiment » que les éléments suivants sont corrects (Hali=Center, Vali=Base, Grandeur=Petite.tres_petite).</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.cs_2">Contrôler dans la table « Couverture_du_sol => Mise_a_jourCS » qu’il y a que les nouvelles surfaces créées dans votre affaire qu'il n'y a pas de surfaces sans géométrie</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.cs_3">Contrôler dans la table « Couverture_du_sol => PosNumero_de_batiment » que les éléments suivants sont corrects (Hali=Center, Vali=Base, Grandeur=Petite.tres_petite).</md-checkbox>
                                             </div>
                                         </md-card-content>
                                     </md-card>
@@ -71,7 +71,7 @@
                                                 <md-checkbox class="md-primary" v-model="controleMutation.od_1">Tous les points de constructions "760" sont supprimés.</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.od_2">Contrôler les nouveaux éléments créés dans votre affaire et qu'il n'y a pas d'objets divers sans géométrie.</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.od_3">Contrôler que les bâtiments souterrains ont les bons numéros et une désignation.</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.od_5">Contrôler que l'attribut « Objets_divers =>SymboleElement_surfacique » est rempli pour les piscines.</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.od_5">Contrôler que l'attribut « Objets_divers => SymboleElement_surfacique » est rempli pour les piscines.</md-checkbox>
                                             </div>
                                         </md-card-content>
                                     </md-card>
@@ -87,8 +87,8 @@
 
                                             <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('bat_')">Tout cocher</md-button>
                                             <div id="bat_">
-                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_1">Contrôler dans la table « Adresses_des_batiments =>Mise_a_jourBAT » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_2">Contrôler dans la table « Adresses_des_batiments =>PosNumero_maison » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.assez_petite).</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_1">Contrôler dans la table « Adresses_des_batiments => Mise_a_jourBAT » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_2">Contrôler dans la table « Adresses_des_batiments => PosNumero_maison » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.assez_petite).</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.bat_3">Contrôler que les points adresses sont dans les géométries.</md-checkbox>
                                             </div>
                                         </md-card-content>
@@ -128,7 +128,7 @@
                                             <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('bf_')">Tout cocher</md-button>
                                             <div id="bf_">
                                                 <md-checkbox class="md-primary" v-model="controleMutation.bf_1">Contrôler les numéros des points limites ainsi que la valeur, la précision et la fiabilité des points sont en adéquations avec le niveau de tolérance de la zone de travail.</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.bf_2">Contrôler dans la table « Bien_fonds =>Mise_a_jourBF » qu’il y que les nouveaux biens-fonds créés dans votre affaire et qu'il n'y a pas de biens-fonds sans géométrie.</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.bf_2">Contrôler dans la table « Bien_fonds => Mise_a_jourBF » qu’il y que les nouveaux biens-fonds créés dans votre affaire et qu'il n'y a pas de biens-fonds sans géométrie.</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.bf_3">Contrôler dans la table « Bien_fonds » que l’attribut « Validation_juridique » est non pour les nouveaux biens-fonds sauf pour les nouveaux DP</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.bf_4">Contrôler dans la table « Biens_fonds.PosImmeuble » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.petite)</md-checkbox>
                                             </div>
@@ -145,8 +145,8 @@
                                             <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('cs_')">Tout cocher</md-button>
                                             <div id="cs_">
                                                 <md-checkbox class="md-primary" v-model="controleMutation.cs_1">Contrôler les numéros des points particuliers "660" ainsi que la valeur, la précision et la fiabilité des points sont en adéquations avec le niveau de tolérance de la zone de travail.</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.cs_2">Contrôler dans la table « Couverture_du_sol =>Mise_a_jourCS » qu’il y a que les nouvelles surfaces créées dans votre affaire qu'il n'y a pas de surfaces sans géométrie.</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.cs_3">Contrôler dans la table « Couverture_du_sol =>PosNumero_de_batiment » que les éléments suivants sont corrects (Hali=Center, Vali=Base, Grandeur=Petite.tres_petite)</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.cs_2">Contrôler dans la table « Couverture_du_sol => Mise_a_jourCS » qu’il y a que les nouvelles surfaces créées dans votre affaire qu'il n'y a pas de surfaces sans géométrie.</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.cs_3">Contrôler dans la table « Couverture_du_sol => PosNumero_de_batiment » que les éléments suivants sont corrects (Hali=Center, Vali=Base, Grandeur=Petite.tres_petite)</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.cs_4">Insérer les points dans la base Acces des bâtiments projets (voir Processus).</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.cs_5">Contrôler la géométrie des EGID (01.01.2012).</md-checkbox>
                                             </div>
@@ -165,7 +165,7 @@
                                                 <md-checkbox class="md-primary" v-model="controleMutation.od_2">Contrôler les nouveaux éléments créés dans votre affaire et qu'il n'y a pas d'objets divers sans géométrie</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.od_3">Contrôler que les bâtiments souterrains ont les bons numéros et une désignation.</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.od_4">Insérer les points dans la base Acces des bâtiments projets (voir Processus)</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.od_5">Contrôler que l'attribut « Objets_divers =>SymboleElement_surfacique » est rempli pour les piscines</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.od_5">Contrôler que l'attribut « Objets_divers => SymboleElement_surfacique » est rempli pour les piscines</md-checkbox>
                                             </div>
                                         </md-card-content>
                                     </md-card>
@@ -178,8 +178,8 @@
                                             <div class="md-title">ADRESSES DES BATIMENTS</div>
 
                                             <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('bat_')">Tout cocher</md-button><div id="bat_">
-                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_1">Contrôler dans la table « Adresses_des_batiments =>Mise_a_jourBAT » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_2">Contrôler dans la table « Adresses_des_batiments =>PosNumero_maison » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.assez_petite).</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_1">Contrôler dans la table « Adresses_des_batiments => Mise_a_jourBAT » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_2">Contrôler dans la table « Adresses_des_batiments => PosNumero_maison » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.assez_petite).</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.bat_3">Contrôler que les points adresses sont dans les géométries.</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.bat_4">Contrôler les bâtiments IMVO (bâtiments sans numéros).</md-checkbox>
                                             </div>
@@ -194,9 +194,9 @@
                                             <div class="md-title">SERVITUDES</div>
 
                                             <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('serv_')">Tout cocher</md-button><div id="serv_">
-                                                <md-checkbox class="md-primary" v-model="controleMutation.serv_1">Contrôler dans la table « Servitudes =>Mise_a_jourSE » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.serv_2">Contrôler dans la table « Servitudes =>Servitude_surface » ou « Servitudes =>Servitude_ligne » ou « Servitudes =>Servitude_point » que l’attribut « Validite » est en_projet pour les nouvelles servitudes</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.serv_3">Contrôler dans la table « Servitudes =>PosNumero_de_servitude » que les éléments suivants sont corrects (Hali=Left, Vali=Base, Grandeur= -)</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.serv_1">Contrôler dans la table « Servitudes => Mise_a_jourSE » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.serv_2">Contrôler dans la table « Servitudes => Servitude_surface » ou « Servitudes => Servitude_ligne » ou « Servitudes => Servitude_point » que l’attribut « Validite » est en_projet pour les nouvelles servitudes</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.serv_3">Contrôler dans la table « Servitudes => PosNumero_de_servitude » que les éléments suivants sont corrects (Hali=Left, Vali=Base, Grandeur= -)</md-checkbox>
                                             </div>
                                         </md-card-content>
                                     </md-card>
