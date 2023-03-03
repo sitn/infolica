@@ -453,6 +453,10 @@ class ControleMutation(Base):
     suivi_10 = Column(Date)  # Suivi - Transmission au secrétariat
     suivi_11 = Column(Date)  # Suivi - Validation technique de la mutation
     suivi_12 = Column(Date)  # Suivi - Annulation de la mutation
+    gen_1 = Column(Boolean)  # Fichier PDF après MPD figurant les travaux en couleur
+    gen_2 = Column(Boolean)  # Scan du croquis terrain
+    gen_3 = Column(Boolean)  # Attributs corrects dans le suivi (géoportail) : type, statut, personne pré-analyse, personne mesure, remarque
+    gen_4 = Column(Boolean)  # Toutes les pastilles sont vertes ou grises
     bf_1 = Column(Boolean)  # Contrôler les numéros des points limites ainsi que la valeur, la prévision et la fiabilité des points sont en adéquation avec le niveau de tolérence de la zone de travail
     bf_2 = Column(Boolean)  # Contrôler dans la table « Bien_fonds => Mise_a_jourBF » qu’il y que les nouveaux biens-fonds créés dans votre affaire et qu'il n'y a pas de biens-fonds sans géométrie
     bf_3 = Column(Boolean)  # Contrôler dans la table « Bien_fonds » que l’attribut « Validation_juridique » est non pour les nouveaux biens-fonds sauf pour les nouveaux DP.
@@ -462,6 +466,9 @@ class ControleMutation(Base):
     cs_3 = Column(Boolean)  # Contrôler dans la table « Couverture_du_sol => PosNumero_de_batiment » que les éléments suivants sont corrects (Hali=Center, Vali=Base, Grandeur=Petite.tres_petite).
     cs_4 = Column(Boolean)  # Insérer les points dans la base Acces des bâtiments projets (voir Processus)
     cs_5 = Column(Boolean)  # Contrôler la géométrie des EGID (01.01.2012).
+    cs_6 = Column(Boolean)  # Réservation des numéros de points particuliers (660).
+    cs_7 = Column(Boolean)  # Réservation des numéros de bâtiments.
+    cs_8 = Column(Boolean)  # Désignation des bâtiments et bâtiments souterrains.
     od_1 = Column(Boolean)  # Tous les points de constructions "760" sont supprimés.
     od_2 = Column(Boolean)  # Contrôler les nouveaux éléments créés dans votre affaire et qu'il n'y a pas d'objets divers sans géométrie.
     od_3 = Column(Boolean)  # Contrôler que les bâtiments souterrains ont les bons numéros et une désignation.

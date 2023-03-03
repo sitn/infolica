@@ -3,10 +3,6 @@
     float: left;
 }
 
-.controleMutation .controleMutationForm {
-    width: 32%;
-}
-
 .controleMutation .justify {
     display: flex;
     justify-content: space-between;

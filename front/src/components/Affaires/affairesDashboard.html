@@ -105,7 +105,7 @@
 
             <!-- CONTROLE TECHNIQUE MUTATION -->
             <div class="affairesDashboard" v-if="affaireDashboardLayout.section_ctrl_chefprojet_mo">
-                <ControleMutation :affaire="affaire" :permission="permission" />
+                <ControleMutation :affaire="affaire" :permission="permission" :typesAffaires_conf="typesAffaires_conf" />
             </div>
 
             <!-- SUIVI DU MANDAT -->
