@@ -4,7 +4,6 @@
 }
 
 .md-dialog {
-    z-index: 6; 
     width: 50%;
     min-width: 950px;
     margin: auto;

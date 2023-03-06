@@ -1,4 +1,5 @@
 <style src="./balanceFromFile.css" scoped></style>
+<style lang="css">.md-menu-content { z-index: 9000 !important; }</style>
 <template src="./balanceFromFile.html"></template>
 
 <script>

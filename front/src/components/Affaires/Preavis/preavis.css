@@ -6,9 +6,3 @@
 .preavis .md-table {
     width: 70%;
 }
-
-.md-dialog {
-    z-index: 6;
-    /* Le dialogue apparaît sous le div de suggestions du md-autocomplete pour la recherche de clients*/
-}
-

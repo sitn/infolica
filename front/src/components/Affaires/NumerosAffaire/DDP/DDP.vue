@@ -1,4 +1,5 @@
 <style src="./ddp.css" scoped></style>
+<style lang="css">.md-menu-content { z-index: 9000 !important; }</style>
 <template src="./ddp.html"></template>
 
 
