@@ -18,7 +18,7 @@
   
 
     <!-- Dialog pour la création de nouvelle étape dans l'affaire -->
-    <md-dialog :md-active.sync="etapeAffaire.showDialog" style="z-index: 6; margin: auto; width: 900px;">
+    <md-dialog :md-active.sync="etapeAffaire.showDialog" style="margin: auto; width: 900px">
         <md-dialog-title>Nouvelle étape</md-dialog-title>
 
         <md-dialog-content>
@@ -35,7 +35,7 @@
 
                 <div class="md-layout-item md-size-45">
                     <!-- Nom de la prochaine étape -->
-                    <md-autocomplete v-model="etapeAffaire.prochaine" :md-options="affaireEtapes" md-dense required @md-selected="onSelectNextStep">
+                    <md-autocomplete v-model="etapeAffaire.prochaine" :md-options="affaireEtapes" md-dense required @md-selected="onSelectNextStep" style="z-index: 9000 !important">
                         <label>Prochaine étape</label>
                     </md-autocomplete>
                 </div>
