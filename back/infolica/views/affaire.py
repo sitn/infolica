@@ -9,6 +9,7 @@ from infolica.models.models import Affaire, AffaireType, ModificationAffaireType
 from infolica.models.models import ModificationAffaire, VAffaire, Facture, Client
 from infolica.models.models import ControleGeometre, ControleMutation, ControlePPE, SuiviMandat
 from infolica.models.models import AffaireEtape, AffaireEtapeIndex, Preavis
+from infolica.models.models import AffaireNumero, Numero, NumeroEtatHisto, NumeroRelation
 from infolica.scripts.mail_templates import MailTemplates
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
@@ -848,3 +849,83 @@ def guichet_rf_saisie_pm_view(request):
         }
 
     return result
+
+
+def _reopen_affaire(request, affaire_id):
+    affaire = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
+
+    affaire.date_envoi = None
+    affaire.date_cloture = None
+    affaire.date_validation = None
+    affaire.abandon = False
+    affaire.urgent = False
+    affaire.urgent_echeance = None
+    affaire.attribution = None
+
+    return
+
+
+def _reinitialiser_etat_numero(request, affaire_id, numeros_type_id, nouvel_etat_id):
+    # numéros
+    numeros = request.dbsession.query(Numero).join(
+        AffaireNumero, AffaireNumero.numero_id == Numero.id
+    ).filter(
+        AffaireNumero.affaire_id == affaire_id,
+        AffaireNumero.type_id == numeros_type_id
+    ).all()
+
+    for num in numeros:
+        num.etat_id = nouvel_etat_id
+
+        neh = NumeroEtatHisto()
+        neh.numero_id = num.id
+        neh.numero_etat_id = nouvel_etat_id
+        neh.date = datetime.strftime(datetime.now(), '%Y-%m-%d')
+        request.dbsession.add(neh)
+
+    return
+
+
+def _remove_balance(request, affaire_id):
+    nr = request.dbsession.query(NumeroRelation).filter(NumeroRelation.affaire_id == affaire_id).all()
+    for num_rel_i in nr:
+        request.dbsession.delete(num_rel_i)
+    return
+
+
+@view_config(route_name='activer_affaire', request_method='POST', renderer='json')
+def activer_affaire_view(request):
+    """
+    Re-activate affaire
+    """
+    # Check connected
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    etape_id = request.params['etape_id'] if 'etape_id' in request.params else None
+
+    if affaire_id is None or etape_id is None:
+        exc.HTTPBadRequest('Il manque un paramètre à la requête (affaire_id et etape_id).')
+
+    ### Affaire
+    _reopen_affaire(request, affaire_id)
+
+    ### Numéros
+    affaire_numero_type_ancien_id = request.registry.settings['affaire_numero_type_ancien_id']
+    affaire_numero_type_nouveau_id = request.registry.settings['affaire_numero_type_nouveau_id']
+    numero_projet_id = request.registry.settings['numero_projet_id']
+    numero_vigueur_id = request.registry.settings['numero_vigueur_id']
+    # anciens numéros
+    _reinitialiser_etat_numero(request, affaire_id, numeros_type_id=affaire_numero_type_nouveau_id, nouvel_etat_id=numero_projet_id)
+
+    # Nouveaux numéros
+    _reinitialiser_etat_numero(request, affaire_id, numeros_type_id=affaire_numero_type_ancien_id, nouvel_etat_id=numero_vigueur_id)
+
+    # Effacer la balance
+    _remove_balance(request, affaire_id)
+
+    # set new affaire_etape
+    Utils.newAffaireEtape(request, affaire_id, etape_id, remarque="RÉACTIVATION DE L'AFFAIRE")
+
+    return exc.HTTPOk('Affaire réactivée avec succès. L''état des numéros liés à l''affaire a été réinitialisé.' )

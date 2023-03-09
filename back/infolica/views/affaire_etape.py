@@ -9,7 +9,7 @@ from infolica.scripts.controle_etape import ControleEtapeChecker
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import AffaireEtape, AffaireEtapeIndex, VEtapesAffaires
-from infolica.models.models import Affaire, VAffaire, Facture
+from infolica.models.models import Affaire, VAffaire, AffaireType, Facture
 from infolica.scripts.mail_templates import MailTemplates
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
@@ -18,6 +18,54 @@ import os
 ###########################################################
 # ETAPES AFFAIRE
 ###########################################################
+@view_config(route_name='etapes_index_by_affaire_id', request_method='GET', renderer='json')
+def etape_index_by_affaire_id_view(request):
+    """
+    GET etape index by affaire_id
+    """
+    # Check connected
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+
+    if affaire_id is None:
+        raise exc.HTTPBadRequest(detail="Aucun index spécifié")
+
+    etape = request.dbsession.query(
+        AffaireEtapeIndex
+    ).join(
+        AffaireEtape, AffaireEtape.etape_id == AffaireEtapeIndex.id
+    ).filter(
+        AffaireEtape.affaire_id == affaire_id,
+        AffaireEtapeIndex.ordre != None
+    ).order_by(AffaireEtape.datetime.desc()).limit(1).first()
+
+    # get next step id
+    logique_processus = request.dbsession.query(
+        AffaireType.logique_processus
+    ).join(
+        Affaire, Affaire.type_id == AffaireType.id
+    ).filter(
+        Affaire.id == affaire_id
+    ).scalar()
+
+    next_step_id = None
+    if logique_processus is not None and etape.id in logique_processus:
+        idx = logique_processus.index(etape.id)
+
+        if idx < len(logique_processus)-1:
+            next_step_id = logique_processus[idx + 1]
+
+    data = {
+        'etape': etape.nom if etape is not None else None,
+        'predicted_next_step_id': next_step_id
+    }
+
+
+    return data
+
+
 @view_config(route_name='etapes_index', request_method='GET', renderer='json')
 @view_config(route_name='etapes_index_s', request_method='GET', renderer='json')
 def etapes_index_view(request):

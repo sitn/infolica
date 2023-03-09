@@ -1,40 +1,27 @@
 <div class="activationAffaire">
-  <md-dialog :md-active.sync="showActivationDialog">
+  <md-dialog :md-active.sync="showActivationDialog" class="activationAffaireDialog">
     <md-dialog-title>Réactivation de l'affaire</md-dialog-title>
+
+    <md-dialog-content>
+      <p>
+        En confirmant, les opérations suivantes seront réalisées:
+        <ul>
+          <li>Les dates d'envoi, clôture et de validation de l'affaire seront effacées,</li>
+          <li>l'affaire sera renvoyé à l'étape précisée ci-dessous,</li>
+          <li>les biens-fonds réservés dans l'affaire redeviendront à l'état "projet" et ceux liés à l'affaire à l'état "validé",</li>
+          <li>la balance et les relations entre les numéros (DDP, PPE, PCOP) de l'affaire seront effacées</li>
+        </ul>
+      </p>
+      <br>
+      <NewStepSetter :affaire_id="affaire.id" @new-step-selected="setNewStepId" />
+    </md-dialog-content>
     
-    <!-- <md-dialog-content>
-      <p>Vérifier l'état des numéros</p>
-      <md-table v-model="affaire_numeros" md-sort="numero" md-sort-order="asc" md-card md-dense md-fixed-header>
-        <md-table-row slot="md-table-row" slot-scope="{ item }">
-          <md-table-cell md-label="id" md-sort-by="numero_id" v-if="false">{{ item.numero_id }}</md-table-cell>
-          <md-table-cell md-label="Cadastre" md-sort-by="numero_cadastre">{{ item.numero_cadastre }}</md-table-cell>
-          <md-table-cell md-label="Type" md-sort-by="numero_type">{{ item.numero_type }}</md-table-cell>
-          <md-table-cell md-label="Numéro" md-sort-by="numero" number>{{ item.numero }}</md-table-cell>
-          <md-table-cell md-label="Suffixe/Unité" md-sort-by="numero_suffixe">{{ item.numero_suffixe }}</md-table-cell>
-          <md-table-cell md-label="Etat" md-sort-by="numero_etat">{{ item.numero_etat }}</md-table-cell>
-          <md-table-cell md-label="Nouvel état" md-sort-by="numero_etatFutur_id">
-            <md-field>
-              <md-select v-model="item.numero_etatFutur_id" md-dense>
-                <md-option v-for="etat in numero_etats_liste" :key="etat.id" :value="etat.id">{{ etat.nom }}</md-option>
-              </md-select>
-            </md-field>
-          </md-table-cell>
-        </md-table-row>
-      </md-table>
-    </md-dialog-content> -->
 
     <md-dialog-actions>
+      <md-progress-bar md-mode="indeterminate" v-if="showProgressBar"></md-progress-bar>
       <md-button class="md-accent" @click="showActivationDialog=false">Annuler</md-button>
-      <md-button class="md-primary" @click="activateAffaire">Confirmer</md-button>
+      <md-button class="md-primary" @click="activateAffaire" :disabled="disabledConfirmBtn">Confirmer</md-button>
     </md-dialog-actions>
 
   </md-dialog>
-
-  <!-- Supprimer la balance ? -->
-  <md-dialog-alert
-      :md-active.sync="showBalanceAlertDialog"
-      md-title="Balance de l'affaire"
-      md-content="Vérifier l'exactitude de la balance!"
-      md-confirm-text="Reçu 5/5" />
-
 </div>

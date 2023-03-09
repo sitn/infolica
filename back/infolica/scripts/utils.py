@@ -4,7 +4,7 @@ from sqlalchemy import func, and_, desc
 from sqlalchemy import String
 from sqlalchemy.sql.expression import cast
 from infolica.models.models import Preavis, PreavisRemarque, Plan
-from infolica.models.models import Numero, AffaireNumero
+from infolica.models.models import Numero, AffaireNumero, AffaireEtape
 from infolica.models.models import Role, ReservationNumerosMO, Operateur
 from infolica.scripts.authentication import get_user_functions, check_connected
 
@@ -366,5 +366,30 @@ class Utils(object):
         doc.save(file_path)
         
         return filename
+    
+
+    @classmethod
+    def newAffaireEtape(cls, request, affaire_id, etape_id, remarque=None, operateur_id=None, datetime_=None):
+        print(etape_id)
+        
+        if datetime_ is None:
+            datetime_ = datetime.now()
+        
+        if operateur_id is None:
+            operateur_id = cls.getOperateurFromUser(request).id,
+        
+        params = Utils._params(
+            affaire_id = affaire_id,
+            etape_id = etape_id,
+            operateur_id = operateur_id,
+            datetime = datetime_,
+            remarque = remarque
+        )
+
+        record = AffaireEtape()
+        record = Utils.set_model_record(record, params)
+        request.dbsession.add(record)
+        
+        return
 
     
