@@ -1,0 +1,23 @@
+<div id="newStepSetter">
+    <div class="md-layout md-gutter md-alignment-top-space-between">
+        <div class="md-layout-item md-size-45">
+            <!-- Nom de l'étape en cours -->
+            <md-field class="inputWidth">
+                <label>Etape en cours</label>
+                <md-input v-model="actual_step" readonly></md-input>
+            </md-field>
+        </div>
+
+        <h3 style="margin-top: 24px">=></h3>
+
+        <div class="md-layout-item md-size-45">
+            <!-- Nom de la prochaine étape -->
+            <md-field  class="inputWidth">
+                <label>Prochaine étape</label>
+                <md-select v-model="new_step_id" md-dense @md-selected="newStepSelected">
+                    <md-option v-for="item in etapes" :value="item.id">{{ item.nom }}</md-option>
+                </md-select>
+            </md-field>
+        </div>
+    </div>
+</div>
