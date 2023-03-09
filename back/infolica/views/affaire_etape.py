@@ -62,7 +62,6 @@ def etape_index_by_affaire_id_view(request):
         'predicted_next_step_id': next_step_id
     }
 
-
     return data
 
 
