@@ -3,6 +3,11 @@
     margin: auto;
 }
 
+.referenceNumeros .md-dialog-container {
+    min-width: 750px;
+    width: 750px;
+  }
+
 .referenceNumeros .md-card .simple {
     width: 100%;
     display: inline-block;
