@@ -370,7 +370,6 @@ class Utils(object):
 
     @classmethod
     def newAffaireEtape(cls, request, affaire_id, etape_id, remarque=None, operateur_id=None, datetime_=None):
-        print(etape_id)
         
         if datetime_ is None:
             datetime_ = datetime.now()
