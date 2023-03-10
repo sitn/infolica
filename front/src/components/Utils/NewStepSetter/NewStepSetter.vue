@@ -32,7 +32,7 @@ export default {
         }
       ).then(response => {
         this.actual_step = response.data.etape;
-        this.next_step_id = response.data.predicted_next_step_id;
+        this.new_step_id = response.data.predicted_next_step_id;
       }).catch(err => handleException(err, this));
     },
     

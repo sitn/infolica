@@ -18,29 +18,16 @@
   
 
     <!-- Dialog pour la création de nouvelle étape dans l'affaire -->
-    <md-dialog :md-active.sync="etapeAffaire.showDialog" style="margin: auto; width: 900px">
+    <md-dialog :md-active.sync="etapeAffaire.showDialog" class="etapeDialog">
         <md-dialog-title>Nouvelle étape</md-dialog-title>
 
         <md-dialog-content>
             <div class="md-layout md-gutter md-alignment-top-space-between">
-                <div class="md-layout-item md-size-45">
-                    <!-- Nom de l'étape en cours -->
-                    <md-field>
-                        <label>Etape en cours</label>
-                        <md-input v-model="affaire.etape" readonly></md-input>
-                    </md-field>
+                <div class="md-layout-item md-size-100">
+
+                    <NewStepSetter :affaire_id="affaire.id" @new-step-selected="setNewStepId" />
                 </div>
-
-                <h3 style="margin-top: 24px">=></h3>
-
-                <div class="md-layout-item md-size-45">
-                    <!-- Nom de la prochaine étape -->
-                    <md-autocomplete v-model="etapeAffaire.prochaine" :md-options="affaireEtapes" md-dense required @md-selected="onSelectNextStep" style="z-index: 9000 !important">
-                        <label>Prochaine étape</label>
-                    </md-autocomplete>
-                </div>
-
-                <div class="md-layout-item md-size-45" v-if="etapeAffaire.prochaine && etapeAffaire.prochaine.id && etapeAffaire.prochaine.id === etapes_affaire_conf.travaux_chef_equipe">
+                <div class="md-layout-item md-size-45" v-if="etapeAffaire.prochaine_id === etapes_affaire_conf.travaux_chef_equipe">
                     <!-- Sélection de l'opérateur -->
                     <md-field>
                         <label>Opérateur·rice</label>

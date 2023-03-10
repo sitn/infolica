@@ -126,7 +126,7 @@ def numeros_search_view(request):
     # filter by conditions
     query = request.dbsession.query(VNumeros).order_by(
         VNumeros.cadastre,
-        VNumeros.numero.desc()
+        VNumeros.numero.asc()
     ).filter(*conditions)
 
     query = query.filter(VNumeros.type_numero_id <= 4)

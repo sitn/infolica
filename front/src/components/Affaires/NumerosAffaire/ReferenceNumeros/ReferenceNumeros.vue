@@ -1,4 +1,4 @@
-<style src="./referenceNumeros.css" scoped></style>
+<style src="./referenceNumeros.css"></style>
 <style lang="css">.md-menu-content { z-index: 9000 !important; }</style>
 <template src="./referenceNumeros.html"></template>
 

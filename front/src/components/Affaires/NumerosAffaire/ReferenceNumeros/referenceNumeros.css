@@ -9,3 +9,8 @@
     vertical-align: top;
     margin: 0px;
 }
+
+.referenceNumerosDialog .md-dialog-container {
+    min-width: 900px;
+    width: 900px;
+}

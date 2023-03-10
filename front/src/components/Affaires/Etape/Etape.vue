@@ -1,4 +1,4 @@
-<style src="./etape.css" scoped></style>
+<style src="./etape.css" ></style>
 <style lang="css">.md-menu-content { z-index: 9000 !important; }</style>
 <template src="./etape.html"></template>
 
@@ -6,9 +6,10 @@
 <script>
 import ClotureAffaire from "@/components/Affaires/ClotureAffaire/ClotureAffaire.vue";
 import DateRangePicker from "@/components/Utils/DateRangePicker/DateRangePicker.vue";
+import NewStepSetter from "@/components/Utils/NewStepSetter/NewStepSetter.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { getTypesAffaires, stringifyAutocomplete2, logAffaireEtape, checkPermission } from '@/services/helper';
+import { logAffaireEtape, checkPermission } from '@/services/helper';
 
 
 const moment = require('moment');
@@ -17,7 +18,8 @@ export default {
   name: "Etape",
   components: {
     ClotureAffaire,
-    DateRangePicker
+    DateRangePicker,
+    NewStepSetter
   },
   props: {
     affaire: Object,
@@ -34,7 +36,7 @@ export default {
     dateperiod_start: null,
     etapeAffaire: {
       nb_jours_etape: 0,
-      prochaine: null,
+      prochaine_id: null,
       remarque: null,
       showDialog: false,
     },
@@ -42,7 +44,6 @@ export default {
     isAdmin: false,
     numerosReserves: [],
     periodClientStatus: false,
-    suiviAffaireTheorique: [],
     updateAffaireDate: {
       text: "",
       value: false,
@@ -59,38 +60,11 @@ export default {
 
   methods: {
     /**
-     * Search affaire etapes
-     */
-    async searchAffaireEtapes() {
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_ETAPES_INDEX_ENDPOINT,
-        {
-          withCredentials: true,
-          headers: { Accept: "application/json" }
-        }
-      ).then(response => {
-        this.affaireEtapes = stringifyAutocomplete2(response.data.filter(x => x.ordre !== null));
-        // get suivi d'affaire théorique
-        this.typesAffaires = getTypesAffaires().then(response => {
-          if (response && response.data) {
-            try {
-              this.suiviAffaireTheorique = response.data.filter(x => x.id === this.affaire.type_id)[0].logique_processus;
-            }
-            catch {
-              this.suiviAffaireTheorique = [];
-            }
-
-          }
-        })
-      }).catch(err => handleException(err, this));
-    },
-
-    /**
      * open New state dialog
      */
     async openNewStateDialog(){
       // set next step prediction
-      this.etapeAffaire.prochaine = null;
+      this.etapeAffaire.prochaine_id = null;
       this.etapeAffaire.chef_equipe_id = this.affaire.technicien_id || null;
       this.etapeAffaire.remarque = null;
 
@@ -99,13 +73,10 @@ export default {
       
       this.etapeAffaire.nb_jours_etape = Math.floor((now_datetime - etape_datetime)/3600000/24) + 1;
       
-      if (this.suiviAffaireTheorique.includes(this.affaire.etape_id)) {
-        this.etapeAffaire.prochaine = this.affaireEtapes.filter(x => x.id === this.suiviAffaireTheorique[this.suiviAffaireTheorique.indexOf(this.affaire.etape_id)+1])[0];
-      }
 
       // if step "chez le client" next step is "operateur_travail"
       if (this.affaire.etape_id === this.etapes_affaire_conf.chez_client) {
-        this.etapeAffaire.prochaine = this.affaireEtapes.filter(x => x.id === this.etapes_affaire_conf.travaux_chef_equipe)[0];
+        this.etapeAffaire.prochaine_id = this.etapes_affaire_conf.travaux_chef_equipe;
       } 
       
       const etapes_jours_clients = [
@@ -161,7 +132,7 @@ export default {
         this.joursHorsSGRF.date_to = null;
       }
 
-      if (!this.etapeAffaire.prochaine || !this.etapeAffaire.prochaine.id) {
+      if (!this.etapeAffaire.prochaine_id) {
         alert("Il faut renseigner le champ 'prochaine étape'.")
         return
       }
@@ -185,9 +156,9 @@ export default {
       }
 
       // fix value of this.etapeAffaire.chef_equipe_id to null if another step is selected
-      this.etapeAffaire.chef_equipe_id = this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.travaux_chef_equipe? this.etapeAffaire.chef_equipe_id: null;
+      this.etapeAffaire.chef_equipe_id = this.etapeAffaire.prochaine_id === this.etapes_affaire_conf.travaux_chef_equipe? this.etapeAffaire.chef_equipe_id: null;
       
-      logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine.id, this.etapeAffaire.remarque, this.etapeAffaire.chef_equipe_id, this.joursHorsSGRF.date_from, this.joursHorsSGRF.date_to)
+      logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine_id, this.etapeAffaire.remarque, this.etapeAffaire.chef_equipe_id, this.joursHorsSGRF.date_from, this.joursHorsSGRF.date_to)
       .then(() => {
         this.$root.$emit("ShowMessage", "L'étape a bien été mise à jour");
         this.etapeAffaire.showDialog = false;
@@ -280,7 +251,7 @@ export default {
         }
 
         // Si aucun numéro n'est réservé dans l'affaire, clôre l'affaire
-        if ((this.etapeAffaire.prochaine && this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.fin_processus) &&
+        if ((this.etapeAffaire.prochaine_id === this.etapes_affaire_conf.fin_processus) &&
             (![this.typesAffaires_conf.mutation, this.typesAffaires_conf.modification, this.typesAffaires_conf.remaniement_parcellaire,
                this.typesAffaires_conf.modification_visa, this.typesAffaires_conf.modification_mutation].includes(this.affaire.type_id)) &&
             (this.numerosReserves.length === 0)) {
@@ -306,9 +277,9 @@ export default {
       this.updateAffaireDate.show = (
         [this.etapes_affaire_conf.envoi, this.etapes_affaire_conf.validation].includes(this.affaire.etape_id) && this.affaire.type_id !== this.typesAffaires_conf.pcop) ||
         (this.etapes_affaire_conf.envoi_pcop === this.affaire.etape_id && this.affaire.type_id === this.typesAffaires_conf.pcop) || 
-        this.etapeAffaire.prochaine && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.fin_processus && this.affaire.type_id === this.typesAffaires_conf.cadastration;
+        this.etapeAffaire.prochaine_id === this.etapes_affaire_conf.fin_processus && this.affaire.type_id === this.typesAffaires_conf.cadastration;
       
-      if (this.etapeAffaire.prochaine && this.etapeAffaire.prochaine.id) {
+      if (this.etapeAffaire.prochaine_id) {
         this.setNewEtapeParameters();
       }
     },
@@ -325,12 +296,12 @@ export default {
       };
 
       if (
-        (this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.fin_processus) &&
+        (this.etapeAffaire.prochaine_id === this.etapes_affaire_conf.fin_processus) &&
         ![this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe, this.typesAffaires_conf.pcop].includes(this.affaire.type_id)
       ) {
         // update date_validation or date_cloture if next step is "fin de processus"
         if (
-          (this.etapeAffaire.prochaine && this.etapeAffaire.prochaine.id && this.etapeAffaire.prochaine.id === this.etapes_affaire_conf.fin_processus) &&
+          (this.etapeAffaire.prochaine_id === this.etapes_affaire_conf.fin_processus) &&
           (![this.typesAffaires_conf.mutation, this.typesAffaires_conf.modification, this.typesAffaires_conf.remaniement_parcellaire,
           this.typesAffaires_conf.modification_visa, this.typesAffaires_conf.modification_mutation].includes(this.affaire.type_id)) && (this.numerosReserves.length === 0)
         ) {
@@ -364,7 +335,7 @@ export default {
         ((this.affaire.etape_id === this.etapes_affaire_conf.envoi && ![this.typesAffaires_conf.pcop, this.typesAffaires_conf.cadastration].includes(this.affaire.type_id)) ||
         (this.affaire.etape_id === this.etapes_affaire_conf.envoi_pcop && this.affaire.type_id === this.typesAffaires_conf.pcop) ||
         (this.affaire.etape_id === this.etapes_affaire_conf.envoi_cadastration && this.affaire.type_id === this.typesAffaires_conf.cadastration)) &&
-        ([this.etapes_affaire_conf.validation, this.etapes_affaire_conf.signature_art35].includes(this.etapeAffaire.prochaine.id) ||
+        ([this.etapes_affaire_conf.validation, this.etapes_affaire_conf.signature_art35].includes(this.etapeAffaire.prochaine_id) ||
         [this.typesAffaires_conf.ppe, this.typesAffaires_conf.modification_ppe, this.typesAffaires_conf.pcop].includes(this.affaire.type_id))
       ) {
         this.updateAffaireDate = {
@@ -421,10 +392,14 @@ export default {
       }).catch(err => handleException(err, this));
     },
 
+    /** get selected value for new step */
+    setNewStepId(value) {
+      this.etapeAffaire.prochaine_id = value;
+    }
+
   },
 
   mounted: function() {
-    this.searchAffaireEtapes();
     this.$root.$on( "setEtapeNouveauxNumeros", (data) => this.setNumerosReserves(data) );
 
     // operateur is admin?
