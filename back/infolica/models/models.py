@@ -284,6 +284,11 @@ class TableauEmoluments(Base):
     date_sortie = Column(Date)
     remplace = Column(BigInteger)
     priorite = Column(Integer)
+    ordre = Column(Integer)
+    id_hmtl = Column(Text)
+    batiment = Column(Boolean)
+    bien_fonds = Column(Boolean)
+    code = Column(String(8))
 
 
 class EmolumentAffaire(Base):
