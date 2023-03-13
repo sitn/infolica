@@ -29,7 +29,7 @@ def tableau_emoluments_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    query = request.dbsession.query(TableauEmoluments).order_by(TableauEmoluments.ordre).all()
+    query = request.dbsession.query(TableauEmoluments).order_by(TableauEmoluments.id).all()
     return Utils.serialize_many(query)
 
 

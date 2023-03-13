@@ -283,7 +283,7 @@ class TableauEmoluments(Base):
     date_entree = Column(Date)
     date_sortie = Column(Date)
     remplace = Column(BigInteger)
-    priorite = Column(Integer)
+    priorite = Column(Boolean)
     ordre = Column(Integer)
     id_hmtl = Column(Text)
     batiment = Column(Boolean)

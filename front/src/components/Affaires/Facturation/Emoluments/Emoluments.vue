@@ -22,6 +22,7 @@ export default {
   data: function () {
       return {
         cadastrationFactureNumerosId_old: [],
+        chapters: [],
         confirmationRemoveDialog: {
           title: "Demande de confirmation",
           msg: "Confirmez-vous la suppression de l'émolument?",
@@ -35,6 +36,7 @@ export default {
         divers: [],
         emolument_facture_repartition_ctrl: false,
         emolumentsGeneral_list: [],
+        emolument_priorite: true,
         emolumentsUnits: [],
         factures_repartition: [],
         form_general: {}, //général
@@ -97,8 +99,14 @@ export default {
                 batiment: 0,
                 batiment_f: 1,
                 montant: numeral(0).format("0.00"),
+                priorite: tmp[x-1].priorite,
               }
               i = i+1;
+            });
+
+            this.chapters.push({
+              'nom': 'mandat',
+              'nb_rows': 0
             });
   
             // Travaux terrain
@@ -113,8 +121,14 @@ export default {
                 batiment: 0,
                 batiment_f: 1,
                 montant: numeral(0).format("0.00"),
+                priorite: tmp[x-1].priorite,
               }
               i = i+1;
+            });
+
+            this.chapters.push({
+              'nom': 'travauxTerrain',
+              'nb_rows': 0
             });
   
             // Travaux matérialisation
@@ -129,8 +143,14 @@ export default {
                 batiment: 0,
                 batiment_f: 1,
                 montant: numeral(0).format("0.00"),
+                priorite: tmp[x-1].priorite,
               }
               i = i+1;
+            });
+
+            this.chapters.push({
+              'nom': 'travauxMaterialisation',
+              'nb_rows': 0
             });
   
             // Déplacements et débours
@@ -145,8 +165,14 @@ export default {
                 batiment: 0,
                 batiment_f: 1,
                 montant: numeral(0).format("0.00"),
+                priorite: tmp[x-1].priorite,
               }
               i = i+1;
+            });
+
+            this.chapters.push({
+              'nom': 'deplacementDebours',
+              'nb_rows': 0
             });
   
             // Travaux bureau
@@ -161,8 +187,14 @@ export default {
                 batiment: 0,
                 batiment_f: 1,
                 montant: numeral(0).format("0.00"),
+                priorite: tmp[x-1].priorite,
               }
               i = i+1;
+            });
+
+            this.chapters.push({
+              'nom': 'travauxBureau',
+              'nb_rows': 0
             });
   
             // RF
@@ -177,8 +209,14 @@ export default {
                 batiment: 0,
                 batiment_f: 1,
                 montant: numeral(0).format("0.00"),
+                priorite: tmp[x-1].priorite,
               }
               i = i+1;
+            });
+
+            this.chapters.push({
+              'nom': 'registreFoncier',
+              'nb_rows': 0
             });
   
             // Divers
@@ -192,8 +230,14 @@ export default {
                 batiment: 0,
                 batiment_f: 1,
                 montant: numeral(0).format("0.00"),
+                priorite: true,
               }
             }
+            
+            this.chapters.push({
+              'nom': 'divers',
+              'nb_rows': 0
+            });
   
             //relations avec autres services
             this.form_detail["relations_autres_services1"] = {
@@ -205,6 +249,7 @@ export default {
               batiment: 0,
               batiment_f: 1,
               montant: numeral(0).format("0.00"),
+              priorite: true,
             }
   
             //forfait RF
@@ -217,8 +262,9 @@ export default {
               batiment: 0,
               batiment_f: 1,
               montant: numeral(0).format("0.00"),
+              priorite: true,
             }
-  
+
             this.emolumentsUnits = tmp;
             resolve(tmp);
   
@@ -283,6 +329,7 @@ export default {
             batiment: 0,
             batiment_f: 1,
             montant: numeral(0).format("0.00"),
+            priorite: true,
           }
         }
         
@@ -341,7 +388,7 @@ export default {
 
       this.disabled = false;
       this.computeZi();
-      this.updateMontants()
+      this.updateMontants();
     },
 
     /**
@@ -374,6 +421,7 @@ export default {
         tmp[key].batiment_f = this.form_general.batiment_f[this.form_general.nb_batiments];
       }
       this.form_detail_batiment.push(tmp);
+      this.updateChapter();
     },
 
     /**
@@ -1020,6 +1068,7 @@ export default {
               batiment: 0,
               batiment_f: 1,
               montant: numeral(0).format("0.00"),
+              priorite: true,
             }
           }
 
@@ -1064,9 +1113,11 @@ export default {
             }
           }
 
+          this.updateChapter();
           this.updateMontants();
           this.updateFactureRepartition();
           this.showEmolumentsDialog = true;
+
 
           // if cadastration, load numeros concerned by emoluments
           if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
@@ -1514,6 +1565,26 @@ export default {
     updateUsed() {
       this.fixEmolumentDefinitively(this.form_general.id, this.form_general.utilise);
       this.disabled = this.form_general.utilise;
+    },
+
+    updateChapter(){
+      setTimeout(() => {
+        let collection = document.getElementById('tableau_emoluments').getElementsByTagName('tr');
+        this.chapters.forEach(x => {
+          x['nb_rows'] = 0;
+        });
+  
+        let _id = '';
+        for (let i = 0; i < collection.length; i++) {
+          _id = collection[i].id;
+          
+          this.chapters.forEach(x => {
+            if (_id.startsWith('form_detail.' + x['nom'])) {
+              x['nb_rows'] += 1;
+            }
+          });
+        }
+      }, 100);
     }
 
   },

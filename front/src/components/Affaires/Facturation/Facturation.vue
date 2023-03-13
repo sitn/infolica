@@ -668,6 +668,7 @@ export default {
     openEmolumentsDialog() {
       this.$refs.emoluments.initForm();
       this.$refs.emoluments.initFactureRepartition([]);
+      this.$refs.emoluments.updateChapter();
       this.$refs.emoluments.showEmolumentsDialog = true;
     },
 
