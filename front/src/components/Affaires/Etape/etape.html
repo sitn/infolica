@@ -25,7 +25,11 @@
             <div class="md-layout md-gutter md-alignment-top-space-between">
                 <div class="md-layout-item md-size-100">
 
-                    <NewStepSetter :affaire_id="affaire.id" @new-step-selected="setNewStepId" />
+                    <NewStepSetter 
+                        :affaire_id="affaire.id" 
+                        @new-step-selected="setNewStepId" 
+                        @next-step-authorization="getNextStepAuthorization" />
+
                 </div>
                 <div class="md-layout-item md-size-45" v-if="etapeAffaire.prochaine_id === etapes_affaire_conf.travaux_chef_equipe">
                     <!-- Sélection de l'opérateur -->
@@ -87,7 +91,7 @@
 
             <div style="float: right;">
                 <md-button class="md-accent" @click="etapeAffaire.showDialog = false">Annuler</md-button>
-                <md-button class="md-primary" @click="updateAffaireEtape" :disabled="!allowSaveNewStep">Enregistrer</md-button>
+                <md-button class="md-primary" @click="updateAffaireEtape" :disabled="!(allowSaveNewStep.ctrl_etape || allowSaveNewStep.logique_processus)">Enregistrer</md-button>
             </div>
         </md-dialog-content>
     </md-dialog>

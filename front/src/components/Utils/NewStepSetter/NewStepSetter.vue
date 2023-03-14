@@ -48,9 +48,27 @@ export default {
         this.etapes = response.data;
       }).catch(err => handleException(err, this));
     },
+    
+    
+    async checkLogiqueProcessus(new_etape_id) {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_CHECK_LOGIQUE_PROCESSUS_ENDPOINT + '?affaire_id=' + this.affaire_id + '&etape_id=' + new_etape_id,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      ).then(response => {
+        this.$emit('next-step-authorization', response.data);
+      }).catch(err => handleException(err, this));
+    },
 
     newStepSelected(value) {
       this.$emit('new-step-selected', value);
+
+      // execute checkLogiqueProcessus function if it is called by parent component
+      if (this.$listeners['next-step-authorization']) {
+        this.checkLogiqueProcessus(value);
+      }
     }
 
   },

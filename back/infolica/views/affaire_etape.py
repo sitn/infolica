@@ -203,3 +203,46 @@ def controle_etape_view(request):
     )
 
     return results
+
+
+@view_config(route_name='check_etape_processus', request_method='GET', renderer='json')
+def check_etape_processus_view(request):
+    """
+    Controles s'il est possible d'enregistrer la nouvelle étape en esquivant les contrôles liés à l'étape
+    """
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    etape_nouvelle_id = request.params['etape_id'] if 'etape_id' in request.params else None
+
+    affaire_etape_priorite_1_id = request.registry.settings['affaire_etape_priorite_1_id']
+    affaire_etape_client_id = request.registry.settings['affaire_etape_client_id']
+    affaire_etape_devis_id = request.registry.settings['affaire_etape_devis_id']
+
+
+    etape_actuelle = request.dbsession.query(
+        AffaireEtapeIndex
+    ).join(
+        AffaireEtape, AffaireEtape.etape_id == AffaireEtapeIndex.id
+    ).filter(
+        AffaireEtape.affaire_id == affaire_id,
+        AffaireEtapeIndex.priorite == affaire_etape_priorite_1_id
+    ).order_by(AffaireEtape.datetime.desc()).first()
+
+    etape_nouvelle_ordre = request.dbsession.query(
+        AffaireEtapeIndex.ordre
+    ).filter(
+        AffaireEtapeIndex.id == etape_nouvelle_id
+    ).scalar()
+
+
+    result = False
+    if (etape_nouvelle_ordre <= etape_actuelle.ordre):
+        result = True
+
+    # exceptions if actual or next step is client or devis
+    if etape_nouvelle_id in [affaire_etape_client_id, affaire_etape_devis_id] or etape_actuelle.id in [affaire_etape_client_id, affaire_etape_devis_id]:
+        result = True
+
+    return result

@@ -64,6 +64,8 @@
                                         <!-- Autre types d'affaires que cadastration et division/réunion -->
                                         <div v-if="![typesAffaires_conf.cadastration,
                                                      typesAffaires_conf.mutation,
+                                                     typesAffaires_conf.modification_visa,
+                                                     typesAffaires_conf.modification_duplicata,
                                                      typesAffaires_conf.modification_mutation].includes(affaire.type_id)">
                                             <div class="md-layout md-gutter">
                                                 <div class="md-layout-item md-size-50">
@@ -208,8 +210,8 @@
                                             </div>
                                         </div>
 
-                                        <!-- Affaire_type mutation et modification -->
-                                        <div v-if="[typesAffaires_conf.mutation, typesAffaires_conf.modification_mutation].includes(affaire.type_id)">
+                                        <!-- Affaire_type mutation et modifications -->
+                                        <div v-if="[typesAffaires_conf.mutation, typesAffaires_conf.modification_mutation, typesAffaires_conf.modification_visa, typesAffaires_conf.modification_duplicata].includes(affaire.type_id)">
                                             <div class="md-layout md-gutter">
                                                 <div class="md-layout-item md-size-50">
                                                     <div class="md-subhead">Respect des directives du SCAT, SAGR ou service de l'urbanisme</div>
