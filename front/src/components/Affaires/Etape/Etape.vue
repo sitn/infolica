@@ -29,7 +29,10 @@ export default {
   },
   data: () => ({
     affaireEtapes: [],
-    allowSaveNewStep: false,
+    allowSaveNewStep: {
+      ctrl_etape: false,
+      logique_processus: false,
+    },    
     art35Radio: "",
     cloreAffaire: false,
     controleEtape : [],
@@ -262,9 +265,9 @@ export default {
 
       // Il est possible de passer l'affaire à une étape inférieure ou chez le client même si les contrôles ne sont pas tous OK
       if ( (this.affaire.etape_ordre >= etape.ordre) || ([Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID), Number(process.env.VUE_APP_ETAPE_DEVIS_ID)].includes(etape.id)) ) {
-        this.allowSaveNewStep = true;
+        this.allowSaveNewStep.ctrl_etape = true;
       } else {
-        this.allowSaveNewStep = this.final_decision;
+        this.allowSaveNewStep.ctrl_etape = this.final_decision;
       }
 
       this.saveDatesDiv();
@@ -387,7 +390,7 @@ export default {
           this.controleEtape = tmp;
 
           this.final_decision = response.data.final_decision.result;
-          this.allowSaveNewStep = response.data.final_decision.result;
+          this.allowSaveNewStep.ctrl_etape = response.data.final_decision.result;
         }
       }).catch(err => handleException(err, this));
     },
@@ -395,6 +398,11 @@ export default {
     /** get selected value for new step */
     setNewStepId(value) {
       this.etapeAffaire.prochaine_id = value;
+    },
+
+    /**get next step authorization (autorize next step if it is ) */
+    getNextStepAuthorization(value) {
+      this.allowSaveNewStep.logique_processus = value;
     }
 
   },
