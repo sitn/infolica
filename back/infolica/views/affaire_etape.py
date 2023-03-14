@@ -228,7 +228,7 @@ def check_etape_processus_view(request):
     ).filter(
         AffaireEtape.affaire_id == affaire_id,
         AffaireEtapeIndex.priorite == affaire_etape_priorite_1_id
-    ).order_by(AffaireEtape.datetime.desc()).limit(1).first()
+    ).order_by(AffaireEtape.datetime.desc()).first()
 
     etape_nouvelle_ordre = request.dbsession.query(
         AffaireEtapeIndex.ordre
