@@ -119,6 +119,9 @@ export default {
       // Controles-étape en cours
       await this.getControleEtape();
 
+      // update parameters based on new step prediction
+      this.setNewEtapeParameters();
+
       this.etapeAffaire.showDialog = true;
     },
 
@@ -234,44 +237,6 @@ export default {
       this.numerosReserves = data;
     },
 
-    /**
-     * On select next step
-     */
-    onSelectNextStep(etape) {
-      if (etape.id === this.etapes_affaire_conf.fin_processus) {
-        if (this.affaire.type_id === this.typesAffaires_conf.modification_visa) {
-          this.updateAffaireDate = {
-            text: "Mettre à jour la date d'envoi de l'affaire",
-            value: true,
-            date_type: "date_envoi"
-          };
-        } else {
-          this.updateAffaireDate = {
-            text: "Mettre à jour la date de validation de l'affaire",
-            value: true,
-            date_type: "date_validation"
-          };
-        }
-
-        // Si aucun numéro n'est réservé dans l'affaire, clôre l'affaire
-        if ((this.etapeAffaire.prochaine_id === this.etapes_affaire_conf.fin_processus) &&
-            (![this.typesAffaires_conf.mutation, this.typesAffaires_conf.modification, this.typesAffaires_conf.remaniement_parcellaire,
-               this.typesAffaires_conf.modification_visa, this.typesAffaires_conf.modification_mutation].includes(this.affaire.type_id)) &&
-            (this.numerosReserves.length === 0)) {
-          this.updateAffaireDate.text = "Mettre à jour les dates de validation et de clôture de l'affaire";
-          this.cloreAffaire = true;
-        }
-      }
-
-      // Il est possible de passer l'affaire à une étape inférieure ou chez le client même si les contrôles ne sont pas tous OK
-      if ( (this.affaire.etape_ordre >= etape.ordre) || ([Number(process.env.VUE_APP_ETAPE_CHEZ_CLIENT_ID), Number(process.env.VUE_APP_ETAPE_DEVIS_ID)].includes(etape.id)) ) {
-        this.allowSaveNewStep.ctrl_etape = true;
-      } else {
-        this.allowSaveNewStep.ctrl_etape = this.final_decision;
-      }
-
-      this.saveDatesDiv();
-    },
 
     /**
      * set Save Dates div
@@ -398,6 +363,7 @@ export default {
     /** get selected value for new step */
     setNewStepId(value) {
       this.etapeAffaire.prochaine_id = value;
+      this.setNewEtapeParameters();
     },
 
     /**get next step authorization (autorize next step if it is ) */
