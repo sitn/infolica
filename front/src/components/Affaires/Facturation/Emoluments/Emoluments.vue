@@ -1,4 +1,4 @@
-<style src="./emoluments.css" scoped></style>
+<style src="./emoluments.css"></style>
 <template src="./emoluments.html"></template>
 
 
@@ -1304,6 +1304,7 @@ export default {
         }
       }).catch(err => handleException(err, this));
 
+      this.emolument_priorite = true;
       this.getEmolumentsDetail(emolument_affaire_id);
     },
 

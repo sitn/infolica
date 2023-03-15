@@ -3,9 +3,9 @@
   margin: auto;
 }
 
-.md-dialog-content {
-  height: 1000px;
-  padding-bottom: 0px;
+.md-dialog-container {
+  max-height: unset;
+  height: 95vh !important;
 }
 
 .formField {
