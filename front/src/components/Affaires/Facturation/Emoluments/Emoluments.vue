@@ -1399,7 +1399,7 @@ export default {
         }
       }).catch(err => handleException(err, this));
 
-      this.emolument_priorite = false;
+      this.terrainBureau_autocomplete = false;
       this.emolument_priorite = true;
       this.getEmolumentsDetail(emolument_affaire_id);
     },
@@ -1594,6 +1594,13 @@ export default {
      * Download emoluments pdf
      */
     async downloadEmoluments() {
+      // show the entire table
+      let last_emolument_priorite = false;
+      if (this.emolument_priorite === true) {
+        last_emolument_priorite = true;
+        this.emolument_priorite = false;
+      }
+
       // tableau emoluments
       let tableau_emoluments_html = JSON.parse(JSON.stringify(document.getElementById("tableau_emoluments").outerHTML));
       let inputs = tableau_emoluments_html.matchAll(/(md-input-)\w+/g);
@@ -1653,7 +1660,11 @@ export default {
         fileLink.setAttribute('download', filename);
         document.body.appendChild(fileLink);
         fileLink.click();
-      }).catch(err => handleException(err, this));
+      }).catch(err => {
+        handleException(err, this);
+      }).finally(() => {
+        this.emolument_priorite = last_emolument_priorite;
+      });
     },
 
     /**
