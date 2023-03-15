@@ -167,7 +167,7 @@
           
           <md-tab md-label="Tableau des émoluments" ref="tabRecapitulatif">
             <md-switch v-model="emolument_priorite" @change="updateChapter()">Afficher le tableau restreint</md-switch>
-            <md-switch v-model="terrainBureau_autocomplete" @change="updateMontants()" style="margin-left: 50px;" :disabled="disabled">Autocompléter les quantités du terrain dans le bureau</md-switch>
+            <md-switch v-model="terrainBureau_autocomplete" @change="updateMontants()" style="margin-left: 50px;" :disabled="disabled">Saisie automatique des unités du bureau</md-switch>
             <table class="tg customTable" id="tableau_emoluments">
               <thead class="customTableHead">
                 <template v-if="form_general.nb_batiments > 0">
