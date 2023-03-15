@@ -670,6 +670,7 @@ export default {
       this.$refs.emoluments.initFactureRepartition([]);
       this.$refs.emoluments.updateChapter();
       this.$refs.emoluments.emolument_priorite = true;
+      this.$refs.emoluments.terrainBureau_autocomplete = true;
       this.$refs.emoluments.showEmolumentsDialog = true;
     },
 

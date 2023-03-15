@@ -1,65 +1,61 @@
-.md-dialog {
+#emolumentsDialog .md-dialog {
   max-width: 1600px !important;
   margin: auto;
 }
 
-.md-dialog-container {
+#emolumentsDialog .md-dialog-container {
   max-height: unset;
   height: 95vh !important;
 }
 
-.formField {
+#emolumentsDialog .formField {
   width: 250px;
 }
 
-.md-input {
+#zi .md-input, #tableau_emoluments .md-input {
   text-align: right;
   height: 20px !important
 }
 
-.nbField {
+#emolumentsDialog .nbField {
   margin: 0px;
   margin-bottom: 2px;
   min-height: 23px !important;
   padding: 3px 0px 0px 0px !important;
 }
 
-.nbInput {
+#emolumentsDialog .nbInput {
   width: 50px;
   text-align: center;
 }
 
-.nbSelect{
+#emolumentsDialog .nbSelect{
   width: 100px !important;
   text-align: center;
   height: 20px;
 }
 
-.md-field .md-input, .md-field .md-textarea {
+#emolumentsDialog .md-field .md-input, .md-field .md-textarea {
   height: 32px;
 }
 
-.inputMontant {
+#emolumentsDialog .inputMontant {
   width: 70px;
   text-align: Right;
   margin-right: 5px;
 }
 
-.inputText {
+#emolumentsDialog .inputText {
   width: 200px;
   text-align: Left;
 }
 
-.md-select {
-  text-align: right;
-}
-
-.tg {
+#emolumentsDialog .tg {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-.tg td {
+#emolumentsDialog .tg td {
   border-color: black;
   border-style: solid;
   border-width: 1px;
@@ -70,7 +66,7 @@
   word-break: normal;
 }
 
-.tg th {
+#emolumentsDialog .tg th {
   border-color: black;
   border-style: solid;
   border-width: 1px;
@@ -82,46 +78,46 @@
   word-break: normal;
 }
 
-.tg .tg-0lax {
+#emolumentsDialog .tg .tg-0lax {
   text-align: left;
   vertical-align: center
 }
 
-.subtitle {
+#emolumentsDialog .subtitle {
   background-color: lightgray;
 }
 
-.alignRight {
+#emolumentsDialog .alignRight {
   text-align: right !important;
 }
 
-.alignCenter {
+#emolumentsDialog .alignCenter {
   text-align: center !important;
 }
 
-.notEditable {
+#emolumentsDialog .notEditable {
   background-color: lightgray;
 }
 
-.montantTotal {
+#emolumentsDialog .montantTotal {
   font-weight: bold;
 }
 
-.tabulation {
+#emolumentsDialog .tabulation {
   padding-left: 15px !important;
   font-style: italic;
 }
 
-.tabulation-2 {
+#emolumentsDialog .tabulation-2 {
   padding-left: 30px !important;
   font-style: italic;
 }
 
-.batiment-separator {
+#emolumentsDialog .batiment-separator {
   border-left: 3px solid black !important;
 }
 
-.overHead {
+#emolumentsDialog .overHead {
   line-break: normal !important;
   font-weight: normal !important;
   font-style: italic;
@@ -132,78 +128,78 @@
   padding-bottom: 10px !important;
 }
 
-.highlightEmolument {
+#emolumentsDialog .highlightEmolument {
   background-color: lightgreen;
 }
 
-.hideNulls {
+#emolumentsDialog .hideNulls {
   font-size: 0px !important;
 }
 
-.customTable .customTableHead {
+#emolumentsDialog .customTable .customTableHead {
   width: calc(100% - 1em);
 }
 
-.customTable .customTableBody, .customTable .customTableHead {
+#emolumentsDialog .customTable .customTableBody, .customTable .customTableHead {
   display: block;
 }
 
-.customTable .customTableBody {
+#emolumentsDialog .customTable .customTableBody {
   overflow-y: scroll;
   max-height: 610px;
 }
 
-th, td {
+#emolumentsDialog th, td {
   width: 150px !important;
 }
 
-.code {
+#emolumentsDialog .code {
   width: 50px !important;
 }
 
-.position {
+#emolumentsDialog .position {
   width: 250px !important;
 }
 
-.position_divers {
+#emolumentsDialog .position_divers {
   width: 250px !important;
 }
 
-.position_recapitulatif {
+#emolumentsDialog .position_recapitulatif {
   width: 400px !important;
 }
 
-.unite {
+#emolumentsDialog .unite {
   width: 100px !important;
 }
 
-.prix_unitaire {
+#emolumentsDialog .prix_unitaire {
   width: 120px !important;
 }
 
-.nombre {
+#emolumentsDialog .nombre {
   width: 70px !important;
 }
 
-.montant {
+#emolumentsDialog .montant {
   width: 80px;
 }
 
-.repartitionFaux {
+#emolumentsDialog .repartitionFaux {
   background-color: lightcoral;
 }
 
-.repartitionJuste {
+#emolumentsDialog .repartitionJuste {
   background-color: lightgreen;
 }
 
-.chapter {
+#emolumentsDialog .chapter {
   width: 35px !important;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   transform: rotate(180deg);
 }
 
-.rowChapterDistinction {
+#emolumentsDialog .rowChapterDistinction {
   border-top: 3px solid;
 }

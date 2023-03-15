@@ -66,6 +66,7 @@ export default {
         showEmolumentsDialog: false,
         showProgressBar: false,
         showSendValuesToFacture: false,
+        terrainBureau_autocomplete: false,
         total: {}
       }
   },
@@ -473,10 +474,103 @@ export default {
       ).format("0.00");
     },
 
+
+    /** Autocompletion terrain-bureau */
+    terrainBureau_autocompletion() {
+      if (!this.terrainBureau_autocomplete || this.disabled) {
+        return
+      }
+
+      // 2.29 = 2.21 + ... + 2.28
+      this.form_detail.travauxTerrain25.nombre = 
+        Number(this.form_detail.travauxTerrain17.nombre) +
+        Number(this.form_detail.travauxTerrain18.nombre) +
+        Number(this.form_detail.travauxTerrain19.nombre) +
+        Number(this.form_detail.travauxTerrain20.nombre) +
+        Number(this.form_detail.travauxTerrain21.nombre) +
+        Number(this.form_detail.travauxTerrain22.nombre) +
+        Number(this.form_detail.travauxTerrain23.nombre) +
+        Number(this.form_detail.travauxTerrain24.nombre);
+        
+      // 4.11 = 2.17 + 2.110 + 2.111 **bat
+      this.form_detail.travauxBureau1.nombre =
+        Number(this.form_detail.travauxTerrain9.nombre) +
+        Number(this.form_detail.travauxTerrain12.nombre) +
+        Number(this.form_detail.travauxTerrain13.nombre);
+      
+      // 4.31 = 2.31 **bat
+      this.form_detail.travauxBureau13.nombre =
+        Number(this.form_detail.travauxTerrain15.nombre);
+      
+      // 4.32 = 2.32 **bat
+      this.form_detail.travauxBureau14.nombre =
+        Number(this.form_detail.travauxTerrain16.nombre);
+        
+      // 4.36 = 2.31 + 2.32 **bat
+      this.form_detail.travauxBureau18.nombre =
+        Number(this.form_detail.travauxTerrain15.nombre) +
+        Number(this.form_detail.travauxTerrain16.nombre);
+        
+      // 4.21 = 2.23 + 2.24
+      this.form_detail.travauxBureau28.nombre =
+        Number(this.form_detail.travauxTerrain19.nombre) +
+        Number(this.form_detail.travauxTerrain20.nombre);
+      
+      // 4.23 = 2.25
+      this.form_detail.travauxBureau31.nombre =
+        Number(this.form_detail.travauxTerrain21.nombre);
+
+      // 4.26 = 2.27
+      this.form_detail.travauxBureau34.nombre =
+        Number(this.form_detail.travauxTerrain23.nombre);
+
+      // 4.29 = 2.27
+      this.form_detail.travauxBureau37.nombre =
+        Number(this.form_detail.travauxTerrain23.nombre);
+
+      // 4.210 = 2.27
+      this.form_detail.travauxBureau38.nombre =
+        Number(this.form_detail.travauxTerrain23.nombre);
+      
+      // 4.213 = 2.25 + 2.27
+      this.form_detail.travauxBureau41.nombre =
+        Number(this.form_detail.travauxTerrain21.nombre) +
+        Number(this.form_detail.travauxTerrain23.nombre);
+      
+
+
+      // Update nombres avec bâtiments
+      for (let j=0; j<Number(this.form_general.nb_batiments); j++) {
+        // 4.11 = 2.17 + 2.110 + 2.111 **bat
+        this.form_detail_batiment[j].travauxBureau1.nombre =
+          Number(this.form_detail_batiment[j].travauxTerrain9.nombre) +
+          Number(this.form_detail_batiment[j].travauxTerrain12.nombre) +
+          Number(this.form_detail_batiment[j].travauxTerrain13.nombre);
+        
+        // 4.31 = 2.31 **bat
+        this.form_detail_batiment[j].travauxBureau13.nombre =
+          Number(this.form_detail_batiment[j].travauxTerrain15.nombre);
+        
+        // 4.32 = 2.32 **bat
+        this.form_detail_batiment[j].travauxBureau14.nombre =
+          Number(this.form_detail_batiment[j].travauxTerrain16.nombre);
+          
+        // 4.36 = 2.31 + 2.32 **bat
+        this.form_detail_batiment[j].travauxBureau18.nombre =
+          Number(this.form_detail_batiment[j].travauxTerrain15.nombre) +
+          Number(this.form_detail_batiment[j].travauxTerrain16.nombre);
+      }
+      
+    },
+
+
     /**
      * Update montants
      */
     updateMontants() {
+      // update montants par auto-complétion terrain-bureau
+      this.terrainBureau_autocompletion();
+
       //update form_detail.relations_autres_services1
       if (this.form_detail.relations_autres_services1 && this.form_detail.relations_autres_services1.prix_unitaire) {
         if (Number(this.form_detail.relations_autres_services1.prix_unitaire) > 0) {
@@ -1116,6 +1210,7 @@ export default {
           this.updateChapter();
           this.updateMontants();
           this.updateFactureRepartition();
+          this.terrainBureau_autocomplete = false;
           this.showEmolumentsDialog = true;
 
 
@@ -1304,6 +1399,7 @@ export default {
         }
       }).catch(err => handleException(err, this));
 
+      this.emolument_priorite = false;
       this.emolument_priorite = true;
       this.getEmolumentsDetail(emolument_affaire_id);
     },
