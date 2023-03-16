@@ -476,7 +476,7 @@ export default {
 
 
     /** Autocompletion terrain-bureau */
-    terrainBureau_autocompletion() {
+    terrainBureau_autocompletion(value=true) {
       if (!this.terrainBureau_autocomplete || this.disabled) {
         return
       }
@@ -499,17 +499,19 @@ export default {
         Number(this.form_detail.travauxTerrain13.nombre);
       
       // 4.31 = 2.31 **bat
-      this.form_detail.travauxBureau13.nombre =
-        Number(this.form_detail.travauxTerrain15.nombre);
+      if (value===true) {
+        this.form_detail.travauxBureau13.nombre =
+          Number(this.form_detail.travauxTerrain15.nombre);
+      }
       
       // 4.32 = 2.32 **bat
       this.form_detail.travauxBureau14.nombre =
         Number(this.form_detail.travauxTerrain16.nombre);
         
-      // 4.36 = 2.31 + 2.32 **bat
+      // 4.36 = 4.31 + 4.32 **bat
       this.form_detail.travauxBureau18.nombre =
-        Number(this.form_detail.travauxTerrain15.nombre) +
-        Number(this.form_detail.travauxTerrain16.nombre);
+        Number(this.form_detail.travauxBureau13.nombre) +
+        Number(this.form_detail.travauxBureau14.nombre);
         
       // 4.21 = 2.23 + 2.24
       this.form_detail.travauxBureau28.nombre =
@@ -521,21 +523,27 @@ export default {
         Number(this.form_detail.travauxTerrain21.nombre);
 
       // 4.26 = 2.27
-      this.form_detail.travauxBureau34.nombre =
-        Number(this.form_detail.travauxTerrain23.nombre);
+      if (value===true) {
+        this.form_detail.travauxBureau34.nombre =
+          Number(this.form_detail.travauxTerrain23.nombre);
+      }
 
       // 4.29 = 2.27
       this.form_detail.travauxBureau37.nombre =
         Number(this.form_detail.travauxTerrain23.nombre);
 
       // 4.210 = 2.27
-      this.form_detail.travauxBureau38.nombre =
-        Number(this.form_detail.travauxTerrain23.nombre);
-      
-      // 4.213 = 2.25 + 2.27
+      if (value===true) {
+        this.form_detail.travauxBureau38.nombre =
+          Number(this.form_detail.travauxTerrain23.nombre);
+      }
+
+      // 4.213 = 4.23 + 4.26 + 4.29 + 4.10
       this.form_detail.travauxBureau41.nombre =
-        Number(this.form_detail.travauxTerrain21.nombre) +
-        Number(this.form_detail.travauxTerrain23.nombre);
+        Number(this.form_detail.travauxBureau31.nombre) +
+        Number(this.form_detail.travauxBureau34.nombre) +
+        Number(this.form_detail.travauxBureau37.nombre) +
+        Number(this.form_detail.travauxBureau38.nombre);
       
 
 
@@ -548,8 +556,10 @@ export default {
           Number(this.form_detail_batiment[j].travauxTerrain13.nombre);
         
         // 4.31 = 2.31 **bat
-        this.form_detail_batiment[j].travauxBureau13.nombre =
-          Number(this.form_detail_batiment[j].travauxTerrain15.nombre);
+        if (value===true) {
+          this.form_detail_batiment[j].travauxBureau13.nombre =
+            Number(this.form_detail_batiment[j].travauxTerrain15.nombre);
+        }
         
         // 4.32 = 2.32 **bat
         this.form_detail_batiment[j].travauxBureau14.nombre =
@@ -557,8 +567,8 @@ export default {
           
         // 4.36 = 2.31 + 2.32 **bat
         this.form_detail_batiment[j].travauxBureau18.nombre =
-          Number(this.form_detail_batiment[j].travauxTerrain15.nombre) +
-          Number(this.form_detail_batiment[j].travauxTerrain16.nombre);
+          Number(this.form_detail_batiment[j].travauxBureau13.nombre) +
+          Number(this.form_detail_batiment[j].travauxBureau14.nombre);
       }
       
     },
@@ -568,9 +578,6 @@ export default {
      * Update montants
      */
     updateMontants() {
-      // update montants par auto-complétion terrain-bureau
-      this.terrainBureau_autocompletion();
-
       //update form_detail.relations_autres_services1
       if (this.form_detail.relations_autres_services1 && this.form_detail.relations_autres_services1.prix_unitaire) {
         if (Number(this.form_detail.relations_autres_services1.prix_unitaire) > 0) {
