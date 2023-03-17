@@ -554,9 +554,10 @@ export default {
         Number(this.form_detail.travauxTerrain19.nombre) +
         Number(this.form_detail.travauxTerrain20.nombre);
       
-      // 4.23 = 2.25
+      // 4.23 = 2.25 + 2.28
       this.form_detail.travauxBureau31.nombre =
-        Number(this.form_detail.travauxTerrain21.nombre);
+        Number(this.form_detail.travauxTerrain21.nombre) +
+        Number(this.form_detail.travauxTerrain24.nombre);
 
       // 4.26 = 2.27
       if (value===true) {
