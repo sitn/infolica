@@ -66,7 +66,6 @@ export default {
         showEmolumentsDialog: false,
         showProgressBar: false,
         showSendValuesToFacture: false,
-        terrainBureau_autocomplete: false,
         total: {}
       }
   },
@@ -487,7 +486,7 @@ export default {
 
     /** Autocompletion terrain-bureau */
     terrainBureau_autocompletion(value=true) {
-      if (!this.terrainBureau_autocomplete || this.disabled) {
+      if (this.form_general.utilise || this.disabled) {
         return
       }
 
@@ -1257,7 +1256,6 @@ export default {
           this.updateChapter();
           this.updateMontants();
           this.updateFactureRepartition();
-          this.terrainBureau_autocomplete = false;
           this.showEmolumentsDialog = true;
 
 
@@ -1446,7 +1444,6 @@ export default {
         }
       }).catch(err => handleException(err, this));
 
-      this.terrainBureau_autocomplete = false;
       this.emolument_priorite = true;
       this.getEmolumentsDetail(emolument_affaire_id);
     },
