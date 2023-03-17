@@ -285,7 +285,7 @@ class TableauEmoluments(Base):
     remplace = Column(BigInteger)
     priorite = Column(Boolean)
     ordre = Column(Integer)
-    id_hmtl = Column(Text)
+    id_html = Column(Text)
     batiment = Column(Boolean)
     bien_fonds = Column(Boolean)
     code = Column(String(8))
