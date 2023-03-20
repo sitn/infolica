@@ -490,10 +490,8 @@ export default {
         return
       }
 
-      // 2.29 = 2.21 + ... + 2.28
+      // 2.29 = 2.23 + ... + 2.28
       this.form_detail.travauxTerrain25.nombre = 
-        Number(this.form_detail.travauxTerrain17.nombre) +
-        Number(this.form_detail.travauxTerrain18.nombre) +
         Number(this.form_detail.travauxTerrain19.nombre) +
         Number(this.form_detail.travauxTerrain20.nombre) +
         Number(this.form_detail.travauxTerrain21.nombre) +
