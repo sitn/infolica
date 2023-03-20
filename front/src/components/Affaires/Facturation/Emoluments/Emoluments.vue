@@ -1728,11 +1728,13 @@ export default {
         });
   
         let _id = '';
+        let _style = null;
         for (let i = 0; i < collection.length; i++) {
           _id = collection[i].id;
+          _style = collection[i].style;
           
           this.chapters.forEach(x => {
-            if (_id.startsWith('form_detail.' + x['nom'])) {
+            if (_id.startsWith('form_detail.' + x['nom']) && _style.display!=="none") {
               x['nb_rows'] += 1;
             }
           });
