@@ -1,4 +1,4 @@
-<style src="./emoluments.css" scoped></style>
+<style src="./emoluments.css"></style>
 <template src="./emoluments.html"></template>
 
 
@@ -22,6 +22,7 @@ export default {
   data: function () {
       return {
         cadastrationFactureNumerosId_old: [],
+        chapters: [],
         confirmationRemoveDialog: {
           title: "Demande de confirmation",
           msg: "Confirmez-vous la suppression de l'émolument?",
@@ -35,6 +36,7 @@ export default {
         divers: [],
         emolument_facture_repartition_ctrl: false,
         emolumentsGeneral_list: [],
+        emolument_priorite: true,
         emolumentsUnits: [],
         factures_repartition: [],
         form_general: {}, //général
@@ -49,7 +51,7 @@ export default {
         indexFromDB: {
           mandat: [1,2,3,4,5,6],
           travauxTerrain: [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
-          travauxMaterialisation: [32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48],
+          travauxMaterialisation: [32,33,34,35,36,37,38,104,39,40,41,42,43,44,45,46,47,48],
           deplacementDebours: [49],
           travauxBureau: [50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95],
           registreFoncier: [96,97,98,99,100],
@@ -97,8 +99,15 @@ export default {
                 batiment: 0,
                 batiment_f: 1,
                 montant: numeral(0).format("0.00"),
+                priorite: tmp[x-1].priorite,
+                code: tmp[x-1].code,
               }
               i = i+1;
+            });
+
+            this.chapters.push({
+              'nom': 'mandat',
+              'nb_rows': 0
             });
   
             // Travaux terrain
@@ -113,8 +122,15 @@ export default {
                 batiment: 0,
                 batiment_f: 1,
                 montant: numeral(0).format("0.00"),
+                priorite: tmp[x-1].priorite,
+                code: tmp[x-1].code,
               }
               i = i+1;
+            });
+
+            this.chapters.push({
+              'nom': 'travauxTerrain',
+              'nb_rows': 0
             });
   
             // Travaux matérialisation
@@ -129,8 +145,15 @@ export default {
                 batiment: 0,
                 batiment_f: 1,
                 montant: numeral(0).format("0.00"),
+                priorite: tmp[x-1].priorite,
+                code: tmp[x-1].code,
               }
               i = i+1;
+            });
+
+            this.chapters.push({
+              'nom': 'travauxMaterialisation',
+              'nb_rows': 0
             });
   
             // Déplacements et débours
@@ -145,8 +168,15 @@ export default {
                 batiment: 0,
                 batiment_f: 1,
                 montant: numeral(0).format("0.00"),
+                priorite: tmp[x-1].priorite,
+                code: tmp[x-1].code,
               }
               i = i+1;
+            });
+
+            this.chapters.push({
+              'nom': 'deplacementDebours',
+              'nb_rows': 0
             });
   
             // Travaux bureau
@@ -161,8 +191,15 @@ export default {
                 batiment: 0,
                 batiment_f: 1,
                 montant: numeral(0).format("0.00"),
+                priorite: tmp[x-1].priorite,
+                code: tmp[x-1].code,
               }
               i = i+1;
+            });
+
+            this.chapters.push({
+              'nom': 'travauxBureau',
+              'nb_rows': 0
             });
   
             // RF
@@ -177,8 +214,15 @@ export default {
                 batiment: 0,
                 batiment_f: 1,
                 montant: numeral(0).format("0.00"),
+                priorite: tmp[x-1].priorite,
+                code: tmp[x-1].code,
               }
               i = i+1;
+            });
+
+            this.chapters.push({
+              'nom': 'registreFoncier',
+              'nb_rows': 0
             });
   
             // Divers
@@ -192,8 +236,15 @@ export default {
                 batiment: 0,
                 batiment_f: 1,
                 montant: numeral(0).format("0.00"),
+                priorite: true,
+                code: null,
               }
             }
+            
+            this.chapters.push({
+              'nom': 'divers',
+              'nb_rows': 0
+            });
   
             //relations avec autres services
             this.form_detail["relations_autres_services1"] = {
@@ -205,6 +256,8 @@ export default {
               batiment: 0,
               batiment_f: 1,
               montant: numeral(0).format("0.00"),
+              priorite: true,
+              code: null,
             }
   
             //forfait RF
@@ -217,8 +270,10 @@ export default {
               batiment: 0,
               batiment_f: 1,
               montant: numeral(0).format("0.00"),
+              priorite: true,
+              code: null,
             }
-  
+
             this.emolumentsUnits = tmp;
             resolve(tmp);
   
@@ -283,6 +338,8 @@ export default {
             batiment: 0,
             batiment_f: 1,
             montant: numeral(0).format("0.00"),
+            priorite: true,
+            code: null,
           }
         }
         
@@ -341,7 +398,7 @@ export default {
 
       this.disabled = false;
       this.computeZi();
-      this.updateMontants()
+      this.updateMontants();
     },
 
     /**
@@ -374,6 +431,7 @@ export default {
         tmp[key].batiment_f = this.form_general.batiment_f[this.form_general.nb_batiments];
       }
       this.form_detail_batiment.push(tmp);
+      this.updateChapter();
     },
 
     /**
@@ -425,6 +483,134 @@ export default {
       ).format("0.00");
     },
 
+
+    /** Autocompletion terrain-bureau */
+    terrainBureau_autocompletion(value=true) {
+      if (this.form_general.utilise || this.disabled) {
+        return
+      }
+
+      // 2.29 = 2.23 + ... + 2.28
+      this.form_detail.travauxTerrain25.nombre = 
+        Number(this.form_detail.travauxTerrain19.nombre) +
+        Number(this.form_detail.travauxTerrain20.nombre) +
+        Number(this.form_detail.travauxTerrain21.nombre) +
+        Number(this.form_detail.travauxTerrain22.nombre) +
+        Number(this.form_detail.travauxTerrain23.nombre) +
+        Number(this.form_detail.travauxTerrain24.nombre);
+     
+        
+      // 3.31 = 3.11 + 3.115
+      this.form_detail.travauxMaterialisation9.nombre =
+        Number(this.form_detail.travauxMaterialisation1.nombre) +
+        Number(this.form_detail.travauxMaterialisation2.nombre);
+      
+      // 3.33 = 3.18
+      this.form_detail.travauxMaterialisation11.nombre =
+        Number(this.form_detail.travauxMaterialisation8.nombre);
+      
+      // 3.34 = 3.115
+      this.form_detail.travauxMaterialisation12.nombre =
+        Number(this.form_detail.travauxMaterialisation2.nombre);
+      
+      // 3.35 = 3.11
+      this.form_detail.travauxMaterialisation13.nombre =
+        Number(this.form_detail.travauxMaterialisation1.nombre);
+      
+      // 3.36 = 3.17
+      this.form_detail.travauxMaterialisation14.nombre =
+        Number(this.form_detail.travauxMaterialisation7.nombre);
+      
+   
+      // 4.11 = 2.17 + 2.110 + 2.111 **bat
+      this.form_detail.travauxBureau1.nombre =
+        Number(this.form_detail.travauxTerrain9.nombre) +
+        Number(this.form_detail.travauxTerrain12.nombre) +
+        Number(this.form_detail.travauxTerrain13.nombre);
+
+      // 4.15 = 2.110 **bat
+      this.form_detail.travauxBureau6.nombre =
+        Number(this.form_detail.travauxTerrain12.nombre);
+      
+      // 4.31 = 2.31 **bat
+      if (value===true) {
+        this.form_detail.travauxBureau13.nombre =
+          Number(this.form_detail.travauxTerrain15.nombre);
+      }
+      
+      // 4.32 = 2.32 **bat
+      this.form_detail.travauxBureau14.nombre =
+        Number(this.form_detail.travauxTerrain16.nombre);
+        
+      // 4.36 = 4.31 + 4.32 **bat
+      this.form_detail.travauxBureau18.nombre =
+        Number(this.form_detail.travauxBureau13.nombre) +
+        Number(this.form_detail.travauxBureau14.nombre);
+        
+      // 4.21 = 2.23 + 2.24
+      this.form_detail.travauxBureau28.nombre =
+        Number(this.form_detail.travauxTerrain19.nombre) +
+        Number(this.form_detail.travauxTerrain20.nombre);
+      
+      // 4.23 = 2.25 + 2.28
+      this.form_detail.travauxBureau31.nombre =
+        Number(this.form_detail.travauxTerrain21.nombre) +
+        Number(this.form_detail.travauxTerrain24.nombre);
+
+      // 4.26 = 2.27
+      if (value===true) {
+        this.form_detail.travauxBureau34.nombre =
+          Number(this.form_detail.travauxTerrain23.nombre);
+      }
+
+      // 4.29 = 2.27
+      this.form_detail.travauxBureau37.nombre =
+        Number(this.form_detail.travauxTerrain23.nombre);
+
+      // 4.210 = 2.27
+      if (value===true) {
+        this.form_detail.travauxBureau38.nombre =
+          Number(this.form_detail.travauxTerrain23.nombre);
+      }
+
+      // 4.213 = 4.23 + 4.26
+      this.form_detail.travauxBureau41.nombre =
+        Number(this.form_detail.travauxBureau31.nombre) +
+        Number(this.form_detail.travauxBureau34.nombre);
+      
+
+
+      // Update nombres avec bâtiments
+      for (let j=0; j<Number(this.form_general.nb_batiments); j++) {
+        // 4.11 = 2.17 + 2.110 + 2.111 **bat
+        this.form_detail_batiment[j].travauxBureau1.nombre =
+          Number(this.form_detail_batiment[j].travauxTerrain9.nombre) +
+          Number(this.form_detail_batiment[j].travauxTerrain12.nombre) +
+          Number(this.form_detail_batiment[j].travauxTerrain13.nombre);
+        
+        // 4.15 = 2.110 **bat
+        this.form_detail_batiment[j].travauxBureau6.nombre =
+          Number(this.form_detail_batiment[j].travauxTerrain12.nombre);
+
+        // 4.31 = 2.31 **bat
+        if (value===true) {
+          this.form_detail_batiment[j].travauxBureau13.nombre =
+            Number(this.form_detail_batiment[j].travauxTerrain15.nombre);
+        }
+        
+        // 4.32 = 2.32 **bat
+        this.form_detail_batiment[j].travauxBureau14.nombre =
+          Number(this.form_detail_batiment[j].travauxTerrain16.nombre);
+          
+        // 4.36 = 2.31 + 2.32 **bat
+        this.form_detail_batiment[j].travauxBureau18.nombre =
+          Number(this.form_detail_batiment[j].travauxBureau13.nombre) +
+          Number(this.form_detail_batiment[j].travauxBureau14.nombre);
+      }
+      
+    },
+
+
     /**
      * Update montants
      */
@@ -454,10 +640,10 @@ export default {
 
       // set number of pces matdiff
       this.pointsMatDiff_nombre = 
-        this.form_detail.travauxMaterialisation14.nombre +
         this.form_detail.travauxMaterialisation15.nombre +
         this.form_detail.travauxMaterialisation16.nombre +
-        this.form_detail.travauxMaterialisation17.nombre;
+        this.form_detail.travauxMaterialisation17.nombre +
+        this.form_detail.travauxMaterialisation18.nombre;
 
       //form_detail
       for (let key in this.form_detail) {
@@ -624,10 +810,10 @@ export default {
         Number(this.form_detail.deplacementDebours1.montant);
 
       this.total.montant_34_matdiff = 
-        Number(this.form_detail.travauxMaterialisation14.montant) +
         Number(this.form_detail.travauxMaterialisation15.montant) +
         Number(this.form_detail.travauxMaterialisation16.montant) +
-        Number(this.form_detail.travauxMaterialisation17.montant);
+        Number(this.form_detail.travauxMaterialisation17.montant) +
+        Number(this.form_detail.travauxMaterialisation18.montant);
       
       this.total.montant_travauxMaterialisation_total = 
         Number(this.total.montant_31_32_std_compl_zi) +
@@ -753,26 +939,26 @@ export default {
     /** Set nombre points mat_diff */
     updateMatDiff() {
       // répartir les points dans les bons émoluments
-      this.form_detail.travauxMaterialisation14.nombre = 0;
       this.form_detail.travauxMaterialisation15.nombre = 0;
       this.form_detail.travauxMaterialisation16.nombre = 0;
       this.form_detail.travauxMaterialisation17.nombre = 0;
+      this.form_detail.travauxMaterialisation18.nombre = 0;
 
       let tmp = Number(this.pointsMatDiff_nombre);
       let c = 1;
       while (tmp > 0) {
         if (c <= 5) {
           // de 1 à 5 points
-          this.form_detail.travauxMaterialisation14.nombre += 1;
+          this.form_detail.travauxMaterialisation15.nombre += 1;
         } else if (c <= 10) {
           // de 6 à 10 points
-          this.form_detail.travauxMaterialisation15.nombre += 1;
+          this.form_detail.travauxMaterialisation16.nombre += 1;
         } else if (c <= 15) {
           // de 11 à 15 points
-          this.form_detail.travauxMaterialisation16.nombre += 1;
+          this.form_detail.travauxMaterialisation17.nombre += 1;
         } else {
           // plus de 16 points
-          this.form_detail.travauxMaterialisation17.nombre += 1;
+          this.form_detail.travauxMaterialisation18.nombre += 1;
         }
 
         tmp -= 1;
@@ -1020,6 +1206,8 @@ export default {
               batiment: 0,
               batiment_f: 1,
               montant: numeral(0).format("0.00"),
+              priorite: true,
+              code: null,
             }
           }
 
@@ -1064,9 +1252,11 @@ export default {
             }
           }
 
+          this.updateChapter();
           this.updateMontants();
           this.updateFactureRepartition();
           this.showEmolumentsDialog = true;
+
 
           // if cadastration, load numeros concerned by emoluments
           if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
@@ -1253,6 +1443,7 @@ export default {
         }
       }).catch(err => handleException(err, this));
 
+      this.emolument_priorite = true;
       this.getEmolumentsDetail(emolument_affaire_id);
     },
 
@@ -1446,6 +1637,13 @@ export default {
      * Download emoluments pdf
      */
     async downloadEmoluments() {
+      // show the entire table
+      let last_emolument_priorite = false;
+      if (this.emolument_priorite === true) {
+        last_emolument_priorite = true;
+        this.emolument_priorite = false;
+      }
+
       // tableau emoluments
       let tableau_emoluments_html = JSON.parse(JSON.stringify(document.getElementById("tableau_emoluments").outerHTML));
       let inputs = tableau_emoluments_html.matchAll(/(md-input-)\w+/g);
@@ -1505,7 +1703,11 @@ export default {
         fileLink.setAttribute('download', filename);
         document.body.appendChild(fileLink);
         fileLink.click();
-      }).catch(err => handleException(err, this));
+      }).catch(err => {
+        handleException(err, this);
+      }).finally(() => {
+        this.emolument_priorite = last_emolument_priorite;
+      });
     },
 
     /**
@@ -1514,6 +1716,28 @@ export default {
     updateUsed() {
       this.fixEmolumentDefinitively(this.form_general.id, this.form_general.utilise);
       this.disabled = this.form_general.utilise;
+    },
+
+    updateChapter(){
+      setTimeout(() => {
+        let collection = document.getElementById('tableau_emoluments').getElementsByTagName('tr');
+        this.chapters.forEach(x => {
+          x['nb_rows'] = 0;
+        });
+  
+        let _id = '';
+        let _style = null;
+        for (let i = 0; i < collection.length; i++) {
+          _id = collection[i].id;
+          _style = collection[i].style;
+          
+          this.chapters.forEach(x => {
+            if (_id.startsWith('form_detail.' + x['nom']) && _style.display!=="none") {
+              x['nb_rows'] += 1;
+            }
+          });
+        }
+      }, 100);
     }
 
   },
