@@ -1132,7 +1132,7 @@
                 <tr id="form_detail.travauxBureau_title4.4">
                   <td class="tg-0lax subtitle" :colspan="6 + 2* Number(form_general.nb_batiments)">4.4 Surfaces</td>
                 </tr>
-                <tr v-if="!emolument_priorite || form_detail.travauxBureau23.priorite" v-show="!emolument_priorite || !affaire.type_id === typesAffaires_conf.cadastration" id="form_detail.travauxBureau23">
+                <tr v-if="!emolument_priorite || form_detail.travauxBureau23.priorite" v-show="!emolument_priorite || !(affaire.type_id === typesAffaires_conf.cadastration)" id="form_detail.travauxBureau23">
                   <td class="tg-0lax code">{{ form_detail.travauxBureau23.code }}</td>
                   <td class="tg-0lax position">{{ form_detail.travauxBureau23.nom }}</td>
                   <td class="tg-0lax alignCenter unite">{{ form_detail.travauxBureau23.unite }}</td>
@@ -1156,7 +1156,7 @@
                     <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail_batiment[i-1].travauxBureau24.montant>0)">{{ form_detail_batiment[i-1].travauxBureau24.montant }} CHF</span></td>
                   </template>
                 </tr>
-                <tr v-if="!emolument_priorite || form_detail.travauxBureau25.priorite" v-show="!emolument_priorite || affaire.type_id === typesAffaires_conf.cadastration" id="form_detail.travauxBureau25">
+                <tr v-if="!emolument_priorite || form_detail.travauxBureau25.priorite" v-show="!emolument_priorite || (affaire.type_id === typesAffaires_conf.cadastration)" id="form_detail.travauxBureau25">
                   <td class="tg-0lax code">{{ form_detail.travauxBureau25.code }}</td>
                   <td class="tg-0lax position">{{ form_detail.travauxBureau25.nom }}</td>
                   <td class="tg-0lax alignCenter unite">{{ form_detail.travauxBureau25.unite }}</td>
