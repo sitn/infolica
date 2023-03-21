@@ -1,4 +1,4 @@
-<style src="./preavisExternesEditDecision.css" scoped></style>
+<style src="./preavisExternesEditDecision.css"></style>
 <template src="./preavisExternesEditDecision.html"></template>
 
 

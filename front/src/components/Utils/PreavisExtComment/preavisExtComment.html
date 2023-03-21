@@ -1,0 +1,23 @@
+<div id="preavisExtComment">
+    <!-- Glossaire -->
+    <div v-if="glossaire.length > 0" style="font-size: 12px;">
+        <table class="table_glossaire" cellpadding="5px">
+            <tbody>
+                <tr v-for="item in glossaire">
+                    <td><button @click="addGlossaireText(item.texte)">+</button></td>
+                    <td style="white-space: pre-wrap;">{{ item.texte }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+    </div>
+    
+    
+    <!-- Commentaire -->
+    <md-field>
+        <label>Commentaire</label>
+        <md-textarea v-model="commentaire" :disabled="disabled" style="max-height: 30vh; height: 20vh;"></md-textarea>
+    </md-field>
+
+
+</div>
