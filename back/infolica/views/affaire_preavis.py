@@ -556,7 +556,7 @@ def service_externe_liste_decision_view(request):
                 'remarque_stationnement_art29': res.remarque_stationnement_art29,
                 'remarque_autre': res.remarque_autre,
                 'decision': res.decision,
-                'operateur': ' '.join([res.prenom, res.nom]),
+                'operateur': ' '.join([res.operateur_prenom, res.operateur_nom]),
                 'preavis_type_id': res.preavis_type_id
             }
         )

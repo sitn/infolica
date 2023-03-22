@@ -19,7 +19,23 @@
                             <td style="width: 100px; vertical-align: top; text-align: center;">{{ item.version }}</td>
                             <td style="width: 140px; vertical-align: top;">{{ item.operateur }}</td>
                             <td style="width: 140px; vertical-align: top;"><md-icon :style="item.icon_status_style">{{ item.icon_status }}</md-icon> {{ item.decision }}</td>
-                            <td style="max-width: 1000px; min-width: 800px; white-space: pre-wrap; vertical-align: top;">{{ item.remarque }}</td>
+                            <td style="max-width: 1000px; min-width: 800px; white-space: pre-wrap; vertical-align: top;">
+                                <div class="md-title">Contexte et situation</div>
+                                {{ item.remarque_contexte }}
+                                <br><br><br>
+                                <div class="md-title">Restriction(s)</div>
+                                <div class="md-subhead">Limite fictive de gabarits</div>
+                                {{ item.remarque_limite_fictive_gabarits }}
+                                <br><br><br>
+                                <div class="md-subhead">Transfert de droits à bâtir</div>
+                                {{ item.remarque_transfert_droit_batir }}
+                                <br><br><br>
+                                <div class="md-subhead">Place de stationnement (Article 29 RELConstr.)</div>
+                                {{ item.remarque_stationnement_art29 }}
+                                <br><br><br>
+                                <div class="md-title">Autre</div>
+                                {{ item.remarque_autre }}
+                            </td>
                             <td style="width: 50px; white-space: pre-wrap;" v-if="showAddDecision === true && decision.show === true"><md-button @click="copyText(item)" class="md-primary md-icon-button" title="Récupérer le texte dans une nouvelle version de préavis"><md-icon>download</md-icon></md-button></td>
                         </tr>
                     </tbody>
