@@ -32,6 +32,11 @@
 #preavisEditDecision .table_glossaire_add {
     width: 50px !important;
 }
+
 #preavisEditDecision .table_glossaire_text {
     width: 1400px !important;
+}
+
+#preavisEditDecision .remarque_contexte_situation .md-textarea {
+    height: 40vh;
 }

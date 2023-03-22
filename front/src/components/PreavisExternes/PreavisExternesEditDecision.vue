@@ -4,6 +4,8 @@
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
+import PreavisExtComment from "@/components/Utils/PreavisExtComment/PreavisExtComment.vue";
+
 
 export default {
   name: "PreavisEditDecision",
@@ -11,7 +13,9 @@ export default {
     preavis_id: Number,
     showAddDecision: Boolean
   },
-  components: {},
+  components: {
+    PreavisExtComment
+  },
   data() {
     return {
       decisions_liste: [],
@@ -19,6 +23,11 @@ export default {
         id: null,
         preavis_type_id: null,
         remarque: null,
+        remarque_contexte: null,
+        remarque_limite_fictive_gabarits: null,
+        remarque_transfert_droit_batir: null,
+        remarque_stationnement_art29: null,
+        remarque_autre: null,
         disabled: true,
         show: false,
       },
@@ -85,7 +94,7 @@ export default {
           });
         }
       }
-      ).catch(err => handleException(err));
+      ).catch(err => handleException(err, this));
     },
 
 
@@ -104,7 +113,8 @@ export default {
         }
         this.$root.$emit('setPreavisDecisionDraft');
       }
-      ).catch(err => handleException(err));
+      ).catch(err => handleException(err))
+      .finally(() => this.getGlossaire());
     },
     
     
@@ -114,6 +124,11 @@ export default {
       formData.append('preavis_id', this.preavis_id);
       formData.append('preavis_type_id', this.decision.preavis_type_id);
       formData.append('remarque', this.decision.remarque);
+      formData.append('remarque_contexte', this.decision.remarque_contexte);
+      formData.append('remarque_limite_fictive_gabarits', this.decision.remarque_limite_fictive_gabarits);
+      formData.append('remarque_transfert_droit_batir', this.decision.remarque_transfert_droit_batir);
+      formData.append('remarque_stationnement_art29', this.decision.remarque_stationnement_art29);
+      formData.append('remarque_autre', this.decision.remarque_autre);
       formData.append('definitif', definitif);
 
       return new Promise((resolve, reject) => {

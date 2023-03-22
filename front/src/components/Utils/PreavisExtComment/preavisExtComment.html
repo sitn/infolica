@@ -4,8 +4,8 @@
         <table class="table_glossaire" cellpadding="5px">
             <tbody>
                 <tr v-for="item in glossaire">
-                    <td><button @click="addGlossaireText(item.texte)">+</button></td>
-                    <td style="white-space: pre-wrap;">{{ item.texte }}</td>
+                    <td class="addBtn"><button @click="addGlossaireText(item)">+</button></td>
+                    <td class="texte">{{ item }}</td>
                 </tr>
             </tbody>
         </table>
@@ -16,7 +16,7 @@
     <!-- Commentaire -->
     <md-field>
         <label>Commentaire</label>
-        <md-textarea v-model="commentaire" :disabled="disabled" style="max-height: 30vh; height: 20vh;"></md-textarea>
+        <md-textarea v-model="inputVal" :disabled="disabled" class="textAreaCommentaire"></md-textarea>
     </md-field>
 
 

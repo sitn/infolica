@@ -4,6 +4,8 @@ from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 from pyramid.response import Response
 
+from sqlalchemy.dialects.postgresql import aggregate_order_by
+
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Affaire, AffaireEtape, PreavisDecision, VAffaire, Operateur, Service
@@ -522,9 +524,14 @@ def service_externe_liste_decision_view(request):
         PreavisDecision.date,
         PreavisDecision.version,
         PreavisDecision.remarque,
-        PreavisType.nom,
-        Operateur.prenom,
-        Operateur.nom,
+        PreavisDecision.remarque_contexte,
+        PreavisDecision.remarque_limite_fictive_gabarits,
+        PreavisDecision.remarque_transfert_droit_batir,
+        PreavisDecision.remarque_stationnement_art29,
+        PreavisDecision.remarque_autre,
+        PreavisType.nom.label('decision'),
+        Operateur.prenom.label('operateur_prenom'),
+        Operateur.nom.label('operateur_nom'),
         PreavisDecision.preavis_type_id
     ).join(
         PreavisType, PreavisType.id == PreavisDecision.preavis_type_id
@@ -539,13 +546,18 @@ def service_externe_liste_decision_view(request):
     for res in result:
         liste_decisions.append(
             {   
-                'preavisDecision_id': res[0],
-                'date': datetime.strftime(res[1], "%d.%m.%Y"),
-                'version': res[2],
-                'remarque': res[3],
-                'decision': res[4],
-                'operateur': ' '.join([res[5], res[6]]),
-                'preavis_type_id': res[7]
+                'preavisDecision_id': res.id,
+                'date': datetime.strftime(res.date, "%d.%m.%Y"),
+                'version': res.version,
+                'remarque': res.remarque,
+                'remarque_contexte': res.remarque_contexte,
+                'remarque_limite_fictive_gabarits': res.remarque_limite_fictive_gabarits,
+                'remarque_transfert_droit_batir': res.remarque_transfert_droit_batir,
+                'remarque_stationnement_art29': res.remarque_stationnement_art29,
+                'remarque_autre': res.remarque_autre,
+                'decision': res.decision,
+                'operateur': ' '.join([res.prenom, res.nom]),
+                'preavis_type_id': res.preavis_type_id
             }
         )
 
@@ -564,9 +576,14 @@ def service_externe_decision_view(request):
     res = request.dbsession.query(
         PreavisDecision.preavis_type_id,
         PreavisDecision.remarque,
+        PreavisDecision.remarque_contexte,
+        PreavisDecision.remarque_limite_fictive_gabarits,
+        PreavisDecision.remarque_transfert_droit_batir,
+        PreavisDecision.remarque_stationnement_art29,
+        PreavisDecision.remarque_autre,
         PreavisDecision.date,
-        Operateur.prenom,
-        Operateur.nom,
+        Operateur.prenom.label('operateur_prenom'),
+        Operateur.nom.label('operateur_nom'),
         PreavisDecision.id,
         PreavisDecision.version,
     ).join(
@@ -578,13 +595,18 @@ def service_externe_decision_view(request):
 
     if res is not None:
         result = { 
-            'preavis_type_id': res[0],
-            'remarque': res[1],
-            'date': datetime.strftime(res[2], "%d.%m.%Y"),
-            "operateur": ' '.join([res[3], res[4]]),
+            'preavis_type_id': res.preavis_type_id,
+            'remarque': res.remarque,
+            'remarque_contexte': res.remarque_contexte,
+            'remarque_limite_fictive_gabarits': res.remarque_limite_fictive_gabarits,
+            'remarque_transfert_droit_batir': res.remarque_transfert_droit_batir,
+            'remarque_stationnement_art29': res.remarque_stationnement_art29,
+            'remarque_autre': res.remarque_autre,
+            'date': datetime.strftime(res.date, "%d.%m.%Y"),
+            "operateur": ' '.join([res.operateur_prenom, res.operateur_nom]),
             "definitif": False,
-            "id": res[5],
-            "version": res[6],
+            "id": res.id,
+            "version": res.version,
         }
     else:
        result = None
@@ -600,6 +622,11 @@ def service_externe_decision_new_view(request):
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
     preavis_type_id = request.params['preavis_type_id'] if 'preavis_type_id' in request.params else None
     remarque = request.params['remarque'] if 'remarque' in request.params else None
+    remarque_contexte = request.params['remarque_contexte'] if 'remarque_contexte' in request.params else None
+    remarque_limite_fictive_gabarits = request.params['remarque_limite_fictive_gabarits'] if 'remarque_limite_fictive_gabarits' in request.params else None
+    remarque_transfert_droit_batir = request.params['remarque_transfert_droit_batir'] if 'remarque_transfert_droit_batir' in request.params else None
+    remarque_stationnement_art29 = request.params['remarque_stationnement_art29'] if 'remarque_stationnement_art29' in request.params else None
+    remarque_autre = request.params['remarque_autre'] if 'remarque_autre' in request.params else None
     definitif = request.params['definitif'] == 'true' if 'definitif' in request.params else False
     operateur = strongAuthentication(request, preavis_id)
     
@@ -612,6 +639,11 @@ def service_externe_decision_new_view(request):
         'preavis_type_id': preavis_type_id,
         'operateur_service_id': operateur.id,
         'remarque': remarque,
+        'remarque_contexte': remarque_contexte,
+        'remarque_limite_fictive_gabarits': remarque_limite_fictive_gabarits,
+        'remarque_transfert_droit_batir': remarque_transfert_droit_batir,
+        'remarque_stationnement_art29': remarque_stationnement_art29,
+        'remarque_autre': remarque_autre,
         'date': datetime.strftime(datetime.now(), "%Y-%m-%d"),
         'version': max_version + 1,
         'definitif': definitif
@@ -636,15 +668,13 @@ def service_externe_decision_new_view(request):
         
         # log step
         service = request.dbsession.query(Service).filter(Service.id == preavis.service_id).first().abreviation
-        params = {
-            'affaire_id': preavis.affaire_id,
-            'operateur_id': preavis.operateur_service_id,
-            'etape_id': request.registry.settings['affaire_etape_preavis_id'],
-            'remarque': service + ' - Retour ',
-            'datetime': datetime.now(),
-        }
-        Utils.addNewRecord(request, AffaireEtape, params=params)
-
+        Utils.newAffaireEtape(
+            request=request,
+            affaire_id=preavis.affaire_id,
+            etape_id=request.registry.settings['affaire_etape_preavis_id'],
+            remarque=service + ' -Retour',
+            operateur_id=preavis.operateur_service_id,
+        )
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisDecision.__tablename__))
 
@@ -658,6 +688,11 @@ def service_externe_decision_update_view(request):
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
     preavis_type_id = request.params['preavis_type_id'] if 'preavis_type_id' in request.params else None
     remarque = request.params['remarque'] if 'remarque' in request.params else None
+    remarque_contexte = request.params['remarque_contexte'] if 'remarque_contexte' in request.params else None
+    remarque_limite_fictive_gabarits = request.params['remarque_limite_fictive_gabarits'] if 'remarque_limite_fictive_gabarits' in request.params else None
+    remarque_transfert_droit_batir = request.params['remarque_transfert_droit_batir'] if 'remarque_transfert_droit_batir' in request.params else None
+    remarque_stationnement_art29 = request.params['remarque_stationnement_art29'] if 'remarque_stationnement_art29' in request.params else None
+    remarque_autre = request.params['remarque_autre'] if 'remarque_autre' in request.params else None
     definitif = request.params['definitif'] == 'true' if 'definitif' in request.params else False
     operateur = strongAuthentication(request, preavis_id)
     
@@ -666,6 +701,11 @@ def service_externe_decision_update_view(request):
     result.preavis_type_id = preavis_type_id
     result.operateur_id = operateur.id
     result.remarque = remarque
+    result.remarque_contexte = remarque_contexte
+    result.remarque_limite_fictive_gabarits = remarque_limite_fictive_gabarits
+    result.remarque_transfert_droit_batir = remarque_transfert_droit_batir
+    result.remarque_stationnement_art29 = remarque_stationnement_art29
+    result.remarque_autre = remarque_autre
     result.date = datetime.strftime(datetime.now(), "%Y-%m-%d")
     result.definitif = definitif
 
@@ -684,14 +724,13 @@ def service_externe_decision_update_view(request):
         
         # log step
         service = request.dbsession.query(Service).filter(Service.id == preavis.service_id).first().abreviation
-        params = {
-            'affaire_id': preavis.affaire_id,
-            'operateur_id': preavis.operateur_service_id,
-            'etape_id': request.registry.settings['affaire_etape_preavis_id'],
-            'remarque': service + ' - Retour ',
-            'datetime': datetime.now(),
-        }
-        Utils.addNewRecord(request, AffaireEtape, params=params)
+        Utils.newAffaireEtape(
+            request=request,
+            affaire_id=preavis.affaire_id,
+            etape_id=request.registry.settings['affaire_etape_preavis_id'],
+            remarque=service + ' - Retour',
+            operateur_id=preavis.operateur_service_id
+        )
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisDecision.__tablename__))
 
@@ -764,11 +803,22 @@ def service_externe_glossaire_view(request):
 
     operateur = strongAuthentication(request, preavis_id)
     
-    glossaire = request.dbsession.query(PreavisGlossaire).filter(
+    results = request.dbsession.query(
+        PreavisGlossaire.chapitre,
+        func.array_agg(aggregate_order_by(PreavisGlossaire.texte, PreavisGlossaire.ordre.asc())).label('textes')
+    ).filter(
         PreavisGlossaire.service_id == operateur.service_id
-    ).order_by(PreavisGlossaire.ordre.asc()).all()
+    ).group_by(
+        PreavisGlossaire.chapitre
+    ).order_by(
+        PreavisGlossaire.chapitre.asc(),
+    ).all()
 
-    return Utils.serialize_many(glossaire)
+    glossaire = {}
+    for res in results:
+        glossaire[res[0]] = res[1]
+    
+    return glossaire
 
 
 @view_config(route_name='preavis_print', request_method='POST')
@@ -811,6 +861,11 @@ def preavis_print_view(request):
         PreavisDecision.date,
         PreavisDecision.version,
         PreavisDecision.remarque,
+        PreavisDecision.remarque_contexte,
+        PreavisDecision.remarque_limite_fictive_gabarits,
+        PreavisDecision.remarque_transfert_droit_batir,
+        PreavisDecision.remarque_stationnement_art29,
+        PreavisDecision.remarque_autre,
         PreavisType.nom,
         Operateur.prenom.label('operateur_prenom'),
         Operateur.nom.label('operateur_nom'),
@@ -834,6 +889,11 @@ def preavis_print_view(request):
                 'date': datetime.strftime(res.date, "%d.%m.%Y"),
                 'version': res.version,
                 'remarque': res.remarque,
+                'remarque_contexte': res.remarque_contexte,
+                'remarque_limite_fictive_gabarits': res.remarque_limite_fictive_gabarits,
+                'remarque_transfert_droit_batir': res.remarque_transfert_droit_batir,
+                'remarque_stationnement_art29': res.remarque_stationnement_art29,
+                'remarque_autre': res.remarque_autre,
                 'decision': res.nom,
                 'operateur': ' '.join([res.operateur_prenom, res.operateur_nom]),
                 'preavis_type_id': res.preavis_type_id

@@ -1,3 +1,22 @@
-#dateRangePicker .md-datepicker {
-    margin-right: 30px;
+#preavisExtComment {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+}
+
+#preavisExtComment .table_glossaire {
+    width: 90%;
+}
+
+#preavisExtComment .table_glossaire .texte {
+    white-space: pre-wrap;
+}
+
+#preavisExtComment .table_glossaire .addBtn  {
+    width: 50px;
+    text-align: center;
+}
+
+#preavisExtComment .textAreaCommentaire {
+    max-height: 40vh;
 }

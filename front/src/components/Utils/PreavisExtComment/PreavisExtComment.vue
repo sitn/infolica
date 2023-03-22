@@ -1,4 +1,4 @@
-<style src="./preavisExtComment.css"></style>
+<style src="./preavisExtComment.css" scoped></style>
 <template src="./preavisExtComment.html"></template>
 
 
@@ -7,26 +7,55 @@
 export default {
   name: "PreavisExtComment",
   props: {
-    glossaire: {
-      type: Array,
-      default() { return [] }
-    },
-    commentaire: {
+    value: {
       type: String,
       default() { return null }
     },
     disabled: {
       type: Boolean,
-      default() { return false }
+      default() { return true }
+    },
+    glossaire: {
+      type: Array,
+      default() { return [] }
     },
   },
-  // data: () => {
-  //   return {
-  //   };
-  // },
 
-  // methods: {
-  // },
+  data() {
+    return {
+      foo: null
+    }
+  },
+
+  methods: {
+    addGlossaireText(text) {
+      if (!this.foo) {
+        this.foo = text;
+      } else {
+        this.foo += '\n\n' + text;
+      }
+    },
+
+    loadFoo() {
+      this.foo = this.value;
+    }
+  },
+
+  computed: {
+    inputVal: {
+      get() {
+        return this.foo;
+      },
+      set(val) {
+        this.foo = val;
+        this.$emit('input', val);
+      }
+    },
+  },
+
+  mounted: function() {
+    this.loadFoo();
+  }
 };
 
 </script>
