@@ -1,8 +1,8 @@
-.preavis .preavis {
+#preavis .preavis {
     width: 100%;
     float: left;
 }
 
-.preavis .md-table {
+#preavis .md-table {
     width: 70%;
 }
