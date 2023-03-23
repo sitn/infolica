@@ -7,7 +7,7 @@
 export default {
   name: "PreavisExtComment",
   props: {
-    value: {
+    remarque: {
       type: String,
       default() { return null }
     },
@@ -21,41 +21,28 @@ export default {
     },
   },
 
-  data() {
-    return {
-      foo: null
-    }
-  },
+  emits: ['update:remarque'],
 
   methods: {
     addGlossaireText(text) {
-      if (!this.foo) {
-        this.foo = text;
+      if (!this.value) {
+        this.value = text;
       } else {
-        this.foo += '\n\n' + text;
+        this.value += '\n\n' + text;
       }
     },
-
-    loadFoo() {
-      this.foo = this.value;
-    }
   },
 
   computed: {
-    inputVal: {
+    value: {
       get() {
-        return this.foo;
+        return this.remarque;
       },
       set(val) {
-        this.foo = val;
-        this.$emit('input', val);
+        this.$emit('update:remarque', val);
       }
     },
   },
-
-  mounted: function() {
-    this.loadFoo();
-  }
 };
 
 </script>

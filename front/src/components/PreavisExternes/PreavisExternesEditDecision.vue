@@ -176,6 +176,11 @@ export default {
     // copy text from old preavis
     copyText(preavis) {
       this.decision.remarque = preavis.remarque;
+      this.decision.remarque_contexte = preavis.remarque_contexte;
+      this.decision.remarque_limite_fictive_gabarits = preavis.remarque_limite_fictive_gabarits;
+      this.decision.remarque_transfert_droit_batir = preavis.remarque_transfert_droit_batir;
+      this.decision.remarque_stationnement_art29 = preavis.remarque_stationnement_art29;
+      this.decision.remarque_autre = preavis.remarque_autre;
     },
 
     // get service glossaire
@@ -191,15 +196,6 @@ export default {
         }
       }).catch(err => handleException(err));
     },
-    
-    addGlossaireText(data) {
-      if (!this.decision.remarque) {
-        this.decision.remarque = data;
-      } else {
-        this.decision.remarque += '\n\n' + data;
-      }
-    }
-
   },
 
   mounted: function() {

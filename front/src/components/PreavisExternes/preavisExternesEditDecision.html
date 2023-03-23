@@ -76,7 +76,8 @@
                         <div class="md-title">Contexte et situation</div>
                         <PreavisExtComment
                             :glossaire="glossaire.__CONTEXTE__"
-                            v-model="decision.remarque_contexte"
+                            :remarque="decision.remarque_contexte"
+                            @update:remarque="value => this.decision.remarque_contexte = value"
                             :disabled="false"
                             class="remarque_contexte_situation"/>
                         
