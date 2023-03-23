@@ -38,7 +38,7 @@
 }
 
 #preavisEditDecision .remarque_contexte_situation .md-textarea {
-    height: 40vh;
+    min-height: 250px;
 }
 
 #preavisEditDecision .title {

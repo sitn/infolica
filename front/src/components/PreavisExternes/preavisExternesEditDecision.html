@@ -71,7 +71,7 @@
                             </div>
                         </div>
                         <br>
-                        
+
 
                         <div class="md-title">Contexte et situation</div>
                         <PreavisExtComment
@@ -79,31 +79,35 @@
                             :remarque="decision.remarque_contexte"
                             @update:remarque="value => this.decision.remarque_contexte = value"
                             :disabled="false"
-                            class="remarque_contexte_situation"/>
-                        
+                            class="remarque_contexte_situation" />
+
                         <div class="md-title">Servitude(s) et mention(s)</div>
                         <div class="subtitle">Limite fictive de gabarits</div>
                         <PreavisExtComment
                             :glossaire="glossaire.__LIMITE_FICTIVE_GABARITS__"
-                            v-model="decision.remarque_limite_fictive_gabarits"
+                            :remarque="decision.remarque_limite_fictive_gabarits"
+                            @update:remarque="value => this.decision.remarque_limite_fictive_gabarits = value"
                             :disabled="false"/>
-            
+
                         <div class="subtitle">Transfert de droits à bâtir</div>
                         <PreavisExtComment
                             :glossaire="glossaire.__TRANSFERT_DROIT_BATIR__"
-                            v-model="decision.remarque_transfert_droit_batir"
+                            :remarque="decision.remarque_transfert_droit_batir"
+                            @update:remarque="value => this.decision.remarque_transfert_droit_batir = value"
                             :disabled="false"/>
-            
+
                         <div class="subtitle">Place de stationnement (Article 29 RELConstr.)</div>
                         <PreavisExtComment
                             :glossaire="glossaire.__STATIONNEMENT_ART29__"
-                            v-model="decision.remarque_stationnement_art29"
+                            :remarque="decision.remarque_stationnement_art29"
+                            @update:remarque="value => this.decision.remarque_stationnement_art29 = value"
                             :disabled="false"/>
-            
+
                         <div class="subtitle">Autres servitudes et mentions</div>
                         <PreavisExtComment
                             :glossaire="glossaire.__AUTRE__"
-                            v-model="decision.remarque_autre"
+                            :remarque="decision.remarque_autre"
+                            @update:remarque="value => this.decision.remarque_autre = value"
                             :disabled="false"/>
 
                         <md-button @click="saveDecisionProvisoire" class="md-raised md-primary" style="float: right; margin-bottom: 20px;" :disabled="decision.preavis_type_id == null" v-if="!decision.definitif">Enregistrer provisoirement</md-button>
