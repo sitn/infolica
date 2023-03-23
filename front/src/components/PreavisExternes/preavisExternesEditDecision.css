@@ -40,3 +40,26 @@
 #preavisEditDecision .remarque_contexte_situation .md-textarea {
     height: 40vh;
 }
+
+#preavisEditDecision .title {
+    width: 400px;
+    font-weight: bold;
+    font-size: 15pt;
+    color: black;
+    opacity: 0.8;
+    padding-bottom: 15px;
+}
+
+#preavisEditDecision .subtitle {
+    font-weight: bold;
+    color: black;
+    opacity: 0.7;
+    font-size: 12pt;
+    padding-bottom: 10px;
+}
+
+#preavisEditDecision .subtitle::before {
+    content: '-';
+    padding-right: 10px;
+    padding-left: 5px;
+}

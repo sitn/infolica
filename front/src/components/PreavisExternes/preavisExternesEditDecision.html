@@ -19,24 +19,24 @@
                             <td style="width: 100px; vertical-align: top; text-align: center;">{{ item.version }}</td>
                             <td style="width: 140px; vertical-align: top;">{{ item.operateur }}</td>
                             <td style="width: 140px; vertical-align: top;"><md-icon :style="item.icon_status_style">{{ item.icon_status }}</md-icon> {{ item.decision }}</td>
-                            <td style="max-width: 1000px; min-width: 800px; white-space: pre-wrap; vertical-align: top;">
-                                <div class="md-title">Contexte et situation</div>
-                                {{ item.remarque_contexte }}
+                            <td style="max-width: 1000px; min-width: 800px; white-space: pre-line; vertical-align: top;">
+                                <div class="title">Contexte et situation</div>
+                                {{ item.remarque_contexte || '-' }}
+                                <br><br><hr><hr><br>
+                                <div class="title">Servitude(s) et mention(s)</div>
+                                <div class="subtitle">Limite fictive de gabarits</div>
+                                {{ item.remarque_limite_fictive_gabarits || '-' }}
                                 <br><br><br>
-                                <div class="md-title">Restriction(s)</div>
-                                <div class="md-subhead">Limite fictive de gabarits</div>
-                                {{ item.remarque_limite_fictive_gabarits }}
+                                <div class="subtitle">Transfert de droits à bâtir</div>
+                                {{ item.remarque_transfert_droit_batir || '-' }}
                                 <br><br><br>
-                                <div class="md-subhead">Transfert de droits à bâtir</div>
-                                {{ item.remarque_transfert_droit_batir }}
+                                <div class="subtitle">Place de stationnement (Article 29 RELConstr.)</div>
+                                {{ item.remarque_stationnement_art29 || '-' }}
                                 <br><br><br>
-                                <div class="md-subhead">Place de stationnement (Article 29 RELConstr.)</div>
-                                {{ item.remarque_stationnement_art29 }}
-                                <br><br><br>
-                                <div class="md-title">Autre</div>
-                                {{ item.remarque_autre }}
+                                <div class="subtitle">Autres servitudes et mentions</div>
+                                {{ item.remarque_autre || '-' }}
                             </td>
-                            <td style="width: 50px; white-space: pre-wrap;" v-if="showAddDecision === true && decision.show === true"><md-button @click="copyText(item)" class="md-primary md-icon-button" title="Récupérer le texte dans une nouvelle version de préavis"><md-icon>download</md-icon></md-button></td>
+                            <td style="width: 50px; white-space: pre-line;" v-if="showAddDecision === true && decision.show === true"><md-button @click="copyText(item)" class="md-primary md-icon-button" title="Récupérer le texte dans une nouvelle version de préavis"><md-icon>download</md-icon></md-button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -80,26 +80,26 @@
                             :disabled="false"
                             class="remarque_contexte_situation"/>
                         
-                        <div class="md-title">Restriction(s)</div>
-                        <div class="md-subhead">Limite fictive de gabarits</div>
+                        <div class="md-title">Servitude(s) et mention(s)</div>
+                        <div class="subtitle">Limite fictive de gabarits</div>
                         <PreavisExtComment
                             :glossaire="glossaire.__LIMITE_FICTIVE_GABARITS__"
                             v-model="decision.remarque_limite_fictive_gabarits"
                             :disabled="false"/>
             
-                        <div class="md-subhead">Transfert de droits à bâtir</div>
+                        <div class="subtitle">Transfert de droits à bâtir</div>
                         <PreavisExtComment
                             :glossaire="glossaire.__TRANSFERT_DROIT_BATIR__"
                             v-model="decision.remarque_transfert_droit_batir"
                             :disabled="false"/>
             
-                        <div class="md-subhead">Place de stationnement (Article 29 RELConstr.)</div>
+                        <div class="subtitle">Place de stationnement (Article 29 RELConstr.)</div>
                         <PreavisExtComment
                             :glossaire="glossaire.__STATIONNEMENT_ART29__"
                             v-model="decision.remarque_stationnement_art29"
                             :disabled="false"/>
             
-                        <div class="md-title">Autre</div>
+                        <div class="subtitle">Autres servitudes et mentions</div>
                         <PreavisExtComment
                             :glossaire="glossaire.__AUTRE__"
                             v-model="decision.remarque_autre"

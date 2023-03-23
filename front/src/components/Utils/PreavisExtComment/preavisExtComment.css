@@ -9,7 +9,7 @@
 }
 
 #preavisExtComment .table_glossaire .texte {
-    white-space: pre-wrap;
+    white-space: pre-line;
 }
 
 #preavisExtComment .table_glossaire .addBtn  {

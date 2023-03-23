@@ -975,7 +975,7 @@ def preavis_print_view(request):
     html += "<br>"
     html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + (data.preavis_type_nom if data.preavis_type_nom is not None else 'indéfini') + "</p>"
     html += "<br>"
-    html += "<p><em>Détail:</em></p><p style='white-space: pre-wrap;'><em>" + (data.remarque if data.remarque is not None else '-') + "</em></p>"
+    html += "<p><em>Détail:</em></p><p style='white-space: pre-line;'><em>" + (data.remarque if data.remarque is not None else '-') + "</em></p>"
 
     if len(liste_decisions)>1:
         for c, decision in enumerate(liste_decisions[:-1]):
@@ -988,7 +988,7 @@ def preavis_print_view(request):
             html += "<br>"
             html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + (decision['decision'] if decision['decision'] is not None else 'indéfini') + "</p>"
             html += "<br>"
-            html += "<p><em>Détail:</em></p><p style='white-space: pre-wrap;'><em>" + (decision['remarque'] if decision['remarque'] is not None else '-') + "</em></p>"
+            html += "<p><em>Détail:</em></p><p style='white-space: pre-line;'><em>" + (decision['remarque'] if decision['remarque'] is not None else '-') + "</em></p>"
 
 
 
