@@ -35,7 +35,7 @@
   height: 20px;
 }
 
-#emolumentsDialog .md-field .md-input, .md-field .md-textarea {
+#emolumentsDialog .md-field .md-input, #emolumentsDialog .md-field .md-textarea {
   height: 32px;
 }
 
@@ -133,14 +133,14 @@
 }
 
 #emolumentsDialog .hideNulls {
-  font-size: 0px !important;
+  font-size: 0px;
 }
 
 #emolumentsDialog .customTable .customTableHead {
   width: calc(100% - 1em);
 }
 
-#emolumentsDialog .customTable .customTableBody, .customTable .customTableHead {
+#emolumentsDialog .customTable .customTableBody, #emolumentsDialog .customTable .customTableHead {
   display: block;
 }
 
@@ -149,7 +149,7 @@
   max-height: 610px;
 }
 
-#emolumentsDialog th, td {
+#emolumentsDialog th, #emolumentsDialog td {
   width: 150px !important;
 }
 
