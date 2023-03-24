@@ -118,14 +118,12 @@ def preavis_update_view(request):
 
     if logstep is True:
         service = request.dbsession.query(Service).filter(Service.id == preavis.service_id).first().abreviation
-        params = {
-            'affaire_id': preavis.affaire_id,
-            'operateur_id': preavis.operateur_service_id,
-            'etape_id': request.registry.settings['affaire_etape_preavis_id'],
-            'remarque': service + ' - Demande ',
-            'datetime': datetime.now(),
-        }
-        Utils.addNewRecord(request, AffaireEtape, params=params)
+        Utils.newAffaireEtape(
+            request=request,
+            affaire_id=preavis.affaire_id,
+            etape_id=request.registry.settings['affaire_etape_preavis_id'],
+            remarque=service + ' - Demande',
+        )
 
         # Send mail to external service for a new preavis demand
         MailTemplates.sendMailPreavisDemande(request, preavis.id, preavis.service_id)
@@ -214,9 +212,9 @@ def service_externe_preavis_view(request):
         Preavis.date_reponse,
         Preavis.affaire_id,
         VAffaire.cadastre,
-        VAffaire.nom,
-        Operateur.prenom,
-        Operateur.nom,
+        VAffaire.nom.label('affaire_description'),
+        Operateur.prenom.label('operateur_prenom'),
+        Operateur.nom.label('operateur_nom'),
         VAffaire.urgent,
         VAffaire.urgent_echeance,
         VAffaire.etape_id
@@ -267,29 +265,29 @@ def service_externe_preavis_view(request):
         remarque = ''
         priorite_idx = 2
         priorite = 'Normal'
-        if rec[8] is True:
+        if rec.urgent is True:
             priorite_idx = 1
             priorite = 'Haut'
             tmp = 'Affaire urgente!'
-            if rec[9] is not None:
-                tmp += ' (délai SGRF: ' + datetime.strftime(rec[9], '%d.%m.%Y') + ')'
+            if rec.urgent_echeance is not None:
+                tmp += ' (délai SGRF: ' + datetime.strftime(rec.urgent_echeance, '%d.%m.%Y') + ')'
             remarque += '<li>' + tmp + '</li>'
-        if rec[10] in [int(request.registry.settings['affaire_etape_client_id']), int(request.registry.settings['affaire_etape_devis_id'])]:
+        if rec.etape_id in [int(request.registry.settings['affaire_etape_client_id']), int(request.registry.settings['affaire_etape_devis_id'])]:
             priorite_idx = 3
             priorite = 'Faible'
             remarque += '<li>En attente chez le client</li>'
 
         results.append({
-            'preavis_id': rec[0],
-            'preavis_date_demande': datetime.strftime(rec[1], "%d.%m.%Y"),
-            'preavis_date_demande_int': time.mktime(rec[1].timetuple()),
-            'preavis_date_reponse': datetime.strftime(rec[2], "%d.%m.%Y") if rec[2] is not None else None,
-            'preavis_date_reponse_int': time.mktime(rec[2].timetuple()) if rec[2] is not None else None,
-            'preavis_affaire_id': rec[3],
-            'affaire_cadastre': rec[4],
-            'affaire_description': rec[5],
-            'preavis_attribution': ' '.join(filter(None, [rec[6], rec[7]])),
-            'unread_remarks': Utils.check_unread_preavis_remarks(request, rec[3], service_id=operateur.service_id),
+            'preavis_id': rec.id,
+            'preavis_date_demande': datetime.strftime(rec.date_demande, "%d.%m.%Y"),
+            'preavis_date_demande_int': time.mktime(rec.date_demande.timetuple()),
+            'preavis_date_reponse': datetime.strftime(rec.date_reponse, "%d.%m.%Y") if rec.date_reponse is not None else None,
+            'preavis_date_reponse_int': time.mktime(rec.date_reponse.timetuple()) if rec.date_reponse is not None else None,
+            'preavis_affaire_id': rec.affaire_id,
+            'affaire_cadastre': rec.cadastre,
+            'affaire_description': rec.affaire_description,
+            'preavis_attribution': ' '.join(filter(None, [rec.operateur_prenom, rec.operateur_nom])),
+            'unread_remarks': Utils.check_unread_preavis_remarks(request, rec.affaire_id, service_id=operateur.service_id),
             'priorite_idx': priorite_idx,
             'priorite': priorite,
             'remarque': remarque
@@ -304,7 +302,6 @@ def service_externe_affaire_view(request):
     """
     GET affaire for service externe
     """
-    # affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
     strongAuthentication(request, preavis_id)
 
@@ -523,7 +520,6 @@ def service_externe_liste_decision_view(request):
         PreavisDecision.id,
         PreavisDecision.date,
         PreavisDecision.version,
-        PreavisDecision.remarque,
         PreavisDecision.remarque_contexte,
         PreavisDecision.remarque_limite_fictive_gabarits,
         PreavisDecision.remarque_transfert_droit_batir,
@@ -549,7 +545,6 @@ def service_externe_liste_decision_view(request):
                 'preavisDecision_id': res.id,
                 'date': datetime.strftime(res.date, "%d.%m.%Y"),
                 'version': res.version,
-                'remarque': res.remarque,
                 'remarque_contexte': res.remarque_contexte,
                 'remarque_limite_fictive_gabarits': res.remarque_limite_fictive_gabarits,
                 'remarque_transfert_droit_batir': res.remarque_transfert_droit_batir,
@@ -575,7 +570,6 @@ def service_externe_decision_view(request):
     
     res = request.dbsession.query(
         PreavisDecision.preavis_type_id,
-        PreavisDecision.remarque,
         PreavisDecision.remarque_contexte,
         PreavisDecision.remarque_limite_fictive_gabarits,
         PreavisDecision.remarque_transfert_droit_batir,
@@ -596,7 +590,6 @@ def service_externe_decision_view(request):
     if res is not None:
         result = { 
             'preavis_type_id': res.preavis_type_id,
-            'remarque': res.remarque,
             'remarque_contexte': res.remarque_contexte,
             'remarque_limite_fictive_gabarits': res.remarque_limite_fictive_gabarits,
             'remarque_transfert_droit_batir': res.remarque_transfert_droit_batir,
@@ -621,7 +614,6 @@ def service_externe_decision_new_view(request):
     """
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
     preavis_type_id = request.params['preavis_type_id'] if 'preavis_type_id' in request.params else None
-    remarque = request.params['remarque'] if 'remarque' in request.params else None
     remarque_contexte = request.params['remarque_contexte'] if 'remarque_contexte' in request.params else None
     remarque_limite_fictive_gabarits = request.params['remarque_limite_fictive_gabarits'] if 'remarque_limite_fictive_gabarits' in request.params else None
     remarque_transfert_droit_batir = request.params['remarque_transfert_droit_batir'] if 'remarque_transfert_droit_batir' in request.params else None
@@ -638,7 +630,6 @@ def service_externe_decision_new_view(request):
         'preavis_id': preavis_id,
         'preavis_type_id': preavis_type_id,
         'operateur_service_id': operateur.id,
-        'remarque': remarque,
         'remarque_contexte': remarque_contexte,
         'remarque_limite_fictive_gabarits': remarque_limite_fictive_gabarits,
         'remarque_transfert_droit_batir': remarque_transfert_droit_batir,
@@ -662,7 +653,7 @@ def service_externe_decision_new_view(request):
         preavis.etape = 'interne'
         preavis.date_reponse = datetime.strftime(datetime.now(), "%Y-%m-%d")
         preavis.preavis_type_id = preavis_type_id
-        preavis.remarque = remarque
+        preavis.remarque = '\n\n'.join(filter(None, [remarque_contexte, remarque_limite_fictive_gabarits, remarque_transfert_droit_batir, remarque_stationnement_art29, remarque_autre]))
 
         MailTemplates.sendMailPreavisReponse(request, preavis_id)
         
@@ -672,7 +663,7 @@ def service_externe_decision_new_view(request):
             request=request,
             affaire_id=preavis.affaire_id,
             etape_id=request.registry.settings['affaire_etape_preavis_id'],
-            remarque=service + ' -Retour',
+            remarque=service + ' - Retour',
             operateur_id=preavis.operateur_service_id,
         )
 
@@ -687,7 +678,6 @@ def service_externe_decision_update_view(request):
     preavis_decision_id = request.params['preavis_decision_id'] if 'preavis_decision_id' in request.params else None
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
     preavis_type_id = request.params['preavis_type_id'] if 'preavis_type_id' in request.params else None
-    remarque = request.params['remarque'] if 'remarque' in request.params else None
     remarque_contexte = request.params['remarque_contexte'] if 'remarque_contexte' in request.params else None
     remarque_limite_fictive_gabarits = request.params['remarque_limite_fictive_gabarits'] if 'remarque_limite_fictive_gabarits' in request.params else None
     remarque_transfert_droit_batir = request.params['remarque_transfert_droit_batir'] if 'remarque_transfert_droit_batir' in request.params else None
@@ -700,7 +690,6 @@ def service_externe_decision_update_view(request):
     
     result.preavis_type_id = preavis_type_id
     result.operateur_id = operateur.id
-    result.remarque = remarque
     result.remarque_contexte = remarque_contexte
     result.remarque_limite_fictive_gabarits = remarque_limite_fictive_gabarits
     result.remarque_transfert_droit_batir = remarque_transfert_droit_batir
@@ -717,7 +706,7 @@ def service_externe_decision_update_view(request):
         preavis.etape = 'interne'
         preavis.date_reponse = datetime.strftime(datetime.now(), "%Y-%m-%d")
         preavis.preavis_type_id = preavis_type_id
-        preavis.remarque = remarque
+        preavis.remarque = '\n\n'.join(filter(None, [remarque_contexte, remarque_limite_fictive_gabarits, remarque_transfert_droit_batir, remarque_stationnement_art29, remarque_autre]))
 
         # send mail to SGRF project managers
         MailTemplates.sendMailPreavisReponse(request, preavis_id)
@@ -834,7 +823,6 @@ def preavis_print_view(request):
         Preavis.date_demande,
         Preavis.date_reponse,
         PreavisType.nom.label('preavis_type_nom'),
-        Preavis.remarque,
         VAffaire.cadastre,
         Service.abreviation.label('abreviation'),
         VAffaire.nom.label('affaire_description'),
@@ -853,14 +841,13 @@ def preavis_print_view(request):
 
     operateur = None
     if data.operateur_service_id is not None:
-        operateur = request.dbsession.query(Operateur).filter(Operateur.id == data[9]).first()
+        operateur = request.dbsession.query(Operateur).filter(Operateur.id == data.operateur_service_id).first()
 
 
     preavis_decisions = request.dbsession.query(
         PreavisDecision.id,
         PreavisDecision.date,
         PreavisDecision.version,
-        PreavisDecision.remarque,
         PreavisDecision.remarque_contexte,
         PreavisDecision.remarque_limite_fictive_gabarits,
         PreavisDecision.remarque_transfert_droit_batir,
@@ -888,7 +875,6 @@ def preavis_print_view(request):
                 'preavisDecision_id': res.id,
                 'date': datetime.strftime(res.date, "%d.%m.%Y"),
                 'version': res.version,
-                'remarque': res.remarque,
                 'remarque_contexte': res.remarque_contexte,
                 'remarque_limite_fictive_gabarits': res.remarque_limite_fictive_gabarits,
                 'remarque_transfert_droit_batir': res.remarque_transfert_droit_batir,
@@ -935,6 +921,28 @@ def preavis_print_view(request):
         h2 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 16pt; font-style: normal; font-variant: normal; font-weight: 700; line-height: 18pt; }}
         h3 {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 14pt; font-style: normal; font-variant: normal; font-weight: 700; line-height: 16pt; }}
         p {{ font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 400; line-height: 14pt; text-align: justify; }}
+        .title {{
+            width: 400px;
+            font-weight: bold;
+            font-size: 15pt;
+            color: black;
+            opacity: 0.8;
+            padding-bottom: 15px;
+        }}
+
+        .subtitle {{
+            font-weight: bold;
+            color: black;
+            opacity: 0.7;
+            font-size: 12pt;
+            padding-bottom: 10px;
+        }}
+
+        .subtitle::before {{
+            content: '-';
+            padding-right: 10px;
+            padding-left: 5px;
+        }}
         """ 
 
     html += ppp.format(**d)
@@ -975,7 +983,23 @@ def preavis_print_view(request):
     html += "<br>"
     html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + (data.preavis_type_nom if data.preavis_type_nom is not None else 'indéfini') + "</p>"
     html += "<br>"
-    html += "<p><em>Détail:</em></p><p style='white-space: pre-line;'><em>" + (data.remarque if data.remarque is not None else '-') + "</em></p>"
+    html += "<p><em>Détail:</em></p><p style='white-space: pre-line;'><em>" +\
+        "<div class='title'>Contexte et situation</div>" +\
+        (liste_decisions[-1]['remarque_contexte'] or '-') +\
+        "<br><br><hr><hr><br>" +\
+        "<div class='title'>Servitude(s) / mention(s)</div>" +\
+        "<div class='subtitle'>Limite fictive de gabarits</div>" +\
+        (liste_decisions[-1]['remarque_limite_fictive_gabarits'] or '-') +\
+        "<br><br><br>" +\
+        "<div class='subtitle'>Transfert de droits à bâtir</div>" +\
+        (liste_decisions[-1]['remarque_transfert_droit_batir'] or '-') +\
+        "<br><br><br>" +\
+        "<div class='subtitle'>Place de stationnement (Article 29 RELConstr.)</div>" +\
+        (liste_decisions[-1]['remarque_stationnement_art29'] or '-') +\
+        "<br><br><br>" +\
+        "<div class='subtitle'>Autres servitudes et mentions</div>" +\
+        (liste_decisions[-1]['remarque_autre'] or '-') +\
+        "</em></p>"
 
     if len(liste_decisions)>1:
         for c, decision in enumerate(liste_decisions[:-1]):
@@ -988,7 +1012,23 @@ def preavis_print_view(request):
             html += "<br>"
             html += "<p style='font-weight: bold; background-color: LightGray; font-size: 14pt; padding: 4pt'>Préavis: " + (decision['decision'] if decision['decision'] is not None else 'indéfini') + "</p>"
             html += "<br>"
-            html += "<p><em>Détail:</em></p><p style='white-space: pre-line;'><em>" + (decision['remarque'] if decision['remarque'] is not None else '-') + "</em></p>"
+            html += "<p><em>Détail:</em></p><p style='white-space: pre-line;'><em>" +\
+                "<div class='title'>Contexte et situation</div>" +\
+                (decision['remarque_contexte'] or '-') +\
+                "<br><br><hr><hr><br>" +\
+                "<div class='title'>Servitude(s) / mention(s)</div>" +\
+                "<div class='subtitle'>Limite fictive de gabarits</div>" +\
+                (decision['remarque_limite_fictive_gabarits'] or '-') +\
+                "<br><br><br>" +\
+                "<div class='subtitle'>Transfert de droits à bâtir</div>" +\
+                (decision['remarque_transfert_droit_batir'] or '-') +\
+                "<br><br><br>" +\
+                "<div class='subtitle'>Place de stationnement (Article 29 RELConstr.)</div>" +\
+                (decision['remarque_stationnement_art29'] or '-') +\
+                "<br><br><br>" +\
+                "<div class='subtitle'>Autres servitudes et mentions</div>" +\
+                (decision['remarque_autre'] or '-') +\
+                "</em></p>"
 
 
 

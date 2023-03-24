@@ -961,7 +961,6 @@ class PreavisDecision(Base):
     remarque_transfert_droit_batir = Column(Text)
     remarque_stationnement_art29 = Column(Text)
     remarque_autre = Column(Text)
-    remarque = Column(Text)
     date = Column(Date)
     definitif = Column(Boolean)
     version = Column(Integer)

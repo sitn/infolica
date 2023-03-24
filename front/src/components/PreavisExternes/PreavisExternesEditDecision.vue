@@ -22,7 +22,6 @@ export default {
       decision: {
         id: null,
         preavis_type_id: null,
-        remarque: null,
         remarque_contexte: null,
         remarque_limite_fictive_gabarits: null,
         remarque_transfert_droit_batir: null,
@@ -34,8 +33,6 @@ export default {
       glossaire: [],
       hasRightAddDecision: false,
       lastDecisionVersion: -1,
-      selected_glossaire: {},
-      showGlossaire: false,
     };
   },
 
@@ -55,7 +52,11 @@ export default {
     // reset decision
     resetDecision() {
       this.decision.preavis_type_id = null;
-      this.decision.remarque = null;
+      this.decision.remarque_contexte = null;
+      this.decision.remarque_limite_fictive_gabarits = null;
+      this.decision.remarque_transfert_droit_batir = null;
+      this.decision.remarque_stationnement_art29 = null;
+      this.decision.remarque_autre = null;
       this.decision.operateur = null;
       this.decision.date = null;
     },
@@ -123,7 +124,6 @@ export default {
       let formData = new FormData();
       formData.append('preavis_id', this.preavis_id);
       formData.append('preavis_type_id', this.decision.preavis_type_id);
-      formData.append('remarque', this.decision.remarque);
       formData.append('remarque_contexte', this.decision.remarque_contexte);
       formData.append('remarque_limite_fictive_gabarits', this.decision.remarque_limite_fictive_gabarits);
       formData.append('remarque_transfert_droit_batir', this.decision.remarque_transfert_droit_batir);
@@ -175,7 +175,6 @@ export default {
 
     // copy text from old preavis
     copyText(preavis) {
-      this.decision.remarque = preavis.remarque;
       this.decision.remarque_contexte = preavis.remarque_contexte;
       this.decision.remarque_limite_fictive_gabarits = preavis.remarque_limite_fictive_gabarits;
       this.decision.remarque_transfert_droit_batir = preavis.remarque_transfert_droit_batir;

@@ -23,7 +23,7 @@
                                 <div class="title">Contexte et situation</div>
                                 {{ item.remarque_contexte || '-' }}
                                 <br><br><hr><hr><br>
-                                <div class="title">Servitude(s) et mention(s)</div>
+                                <div class="title">Servitude(s) / mention(s)</div>
                                 <div class="subtitle">Limite fictive de gabarits</div>
                                 {{ item.remarque_limite_fictive_gabarits || '-' }}
                                 <br><br><br>
@@ -64,11 +64,6 @@
                                 <md-radio v-model="decision.preavis_type_id" :value="2" :disabled="decision.definitif">Préavis négatif</md-radio>
                                 <md-radio v-model="decision.preavis_type_id" :value="3" :disabled="decision.definitif">Pas concerné</md-radio>
                             </div>
-                            
-                            <div v-if="glossaire.length > 0">
-                                <h1>à supprimer !!!</h1>
-                                <md-button class="md-primary md-raised md-dense" @click="showGlossaire = !showGlossaire">Glossaire</md-button>
-                            </div>
                         </div>
                         <br>
 
@@ -81,7 +76,7 @@
                             :disabled="false"
                             class="remarque_contexte_situation" />
 
-                        <div class="md-title">Servitude(s) et mention(s)</div>
+                        <div class="md-title">Servitude(s) / mention(s)</div>
                         <div class="subtitle">Limite fictive de gabarits</div>
                         <PreavisExtComment
                             :glossaire="glossaire.__LIMITE_FICTIVE_GABARITS__"
