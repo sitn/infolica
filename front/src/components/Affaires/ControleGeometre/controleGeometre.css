@@ -1,43 +1,53 @@
-.controleGeometre {
+#controleGeometre .controleGeometre {
     width: 100%;
     float: left;
 }
 
-.controleGeometre .label {
+
+#controleGeometre .controleGeometre .label {
     display: block;
 }
 
-table, th, td {
+
+#controleGeometre table, #controleGeometre th, #controleGeometre td {
     border: 1px solid lightgray;
     border-collapse: collapse;
 }
-th, td {
+
+#controleGeometre th, #controleGeometre td {
     padding: 5px;
 }
-th {
+
+#controleGeometre th {
     vertical-align: bottom;
 }
-th.ctrl_radiobtn {
+
+#controleGeometre th.ctrl_radiobtn {
     writing-mode: vertical-lr;
     transform: rotate(180deg);
     vertical-align: top;
 }
-td {
+
+#controleGeometre td {
     vertical-align: middle;
 }
-.ctrl_title {
+
+#controleGeometre .ctrl_title {
     font-style: italic;
     background-color: lightgray;
 }
-.ctrl_label {
+
+#controleGeometre .ctrl_label {
     text-align: left;
     width: 700px;
 }
-.ctrl_radiobtn {
+
+#controleGeometre .ctrl_radiobtn {
     text-align: center;
     width: 32px;
 }
-.md-radio {
+
+#controleGeometre .md-radio {
     margin: 0px;
     padding: 0px;
     vertical-align: middle;
