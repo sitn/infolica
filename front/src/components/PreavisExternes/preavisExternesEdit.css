@@ -14,25 +14,25 @@
     position: relative; top: 70px;
 }
 
-#preavisEdit .title {
+#preavisEdit .table_infogen .title {
     font-weight: bold;
-    width: 180px !important;
+    width: 180px;
 }
 
-#preavisEdit .content {
-    width: 400px !important;
+#preavisEdit .table_infogen .content {
+    width: 400px;
 }
 
-#preavisEdit .tg {
+#preavisEdit .table_infogen {
     border-collapse: collapse;
     border-spacing: 0;
 }
 
-#preavisEdit .tg tr {
+#preavisEdit .table_infogen tr {
     height: 45px;
 }
 
-#preavisEdit .tg td {
+#preavisEdit .table_infogen td {
     border-color: black;
     border-style: solid;
     border-width: 1px;

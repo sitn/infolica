@@ -149,7 +149,7 @@
   max-height: 610px;
 }
 
-#emolumentsDialog th, td {
+#emolumentsDialog th, #emolumentsDialog td {
   width: 150px !important;
 }
 

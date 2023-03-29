@@ -1,9 +1,11 @@
-<style src="./preavisExternesEditDecision.css" scoped></style>
+<style src="./preavisExternesEditDecision.css"></style>
 <template src="./preavisExternesEditDecision.html"></template>
 
 
 <script>
 import { handleException } from "@/services/exceptionsHandler";
+import PreavisExtComment from "@/components/Utils/PreavisExtComment/PreavisExtComment.vue";
+
 
 export default {
   name: "PreavisEditDecision",
@@ -11,22 +13,26 @@ export default {
     preavis_id: Number,
     showAddDecision: Boolean
   },
-  components: {},
+  components: {
+    PreavisExtComment
+  },
   data() {
     return {
       decisions_liste: [],
       decision: {
         id: null,
         preavis_type_id: null,
-        remarque: null,
+        remarque_contexte: null,
+        remarque_limite_fictive_gabarits: null,
+        remarque_transfert_droit_batir: null,
+        remarque_stationnement_art29: null,
+        remarque_autre: null,
         disabled: true,
         show: false,
       },
       glossaire: [],
       hasRightAddDecision: false,
       lastDecisionVersion: -1,
-      selected_glossaire: {},
-      showGlossaire: false,
     };
   },
 
@@ -46,7 +52,11 @@ export default {
     // reset decision
     resetDecision() {
       this.decision.preavis_type_id = null;
-      this.decision.remarque = null;
+      this.decision.remarque_contexte = null;
+      this.decision.remarque_limite_fictive_gabarits = null;
+      this.decision.remarque_transfert_droit_batir = null;
+      this.decision.remarque_stationnement_art29 = null;
+      this.decision.remarque_autre = null;
       this.decision.operateur = null;
       this.decision.date = null;
     },
@@ -85,7 +95,7 @@ export default {
           });
         }
       }
-      ).catch(err => handleException(err));
+      ).catch(err => handleException(err, this));
     },
 
 
@@ -104,7 +114,8 @@ export default {
         }
         this.$root.$emit('setPreavisDecisionDraft');
       }
-      ).catch(err => handleException(err));
+      ).catch(err => handleException(err))
+      .finally(() => this.getGlossaire());
     },
     
     
@@ -113,7 +124,11 @@ export default {
       let formData = new FormData();
       formData.append('preavis_id', this.preavis_id);
       formData.append('preavis_type_id', this.decision.preavis_type_id);
-      formData.append('remarque', this.decision.remarque);
+      formData.append('remarque_contexte', this.decision.remarque_contexte);
+      formData.append('remarque_limite_fictive_gabarits', this.decision.remarque_limite_fictive_gabarits);
+      formData.append('remarque_transfert_droit_batir', this.decision.remarque_transfert_droit_batir);
+      formData.append('remarque_stationnement_art29', this.decision.remarque_stationnement_art29);
+      formData.append('remarque_autre', this.decision.remarque_autre);
       formData.append('definitif', definitif);
 
       return new Promise((resolve, reject) => {
@@ -160,7 +175,11 @@ export default {
 
     // copy text from old preavis
     copyText(preavis) {
-      this.decision.remarque = preavis.remarque;
+      this.decision.remarque_contexte = preavis.remarque_contexte;
+      this.decision.remarque_limite_fictive_gabarits = preavis.remarque_limite_fictive_gabarits;
+      this.decision.remarque_transfert_droit_batir = preavis.remarque_transfert_droit_batir;
+      this.decision.remarque_stationnement_art29 = preavis.remarque_stationnement_art29;
+      this.decision.remarque_autre = preavis.remarque_autre;
     },
 
     // get service glossaire
@@ -176,15 +195,6 @@ export default {
         }
       }).catch(err => handleException(err));
     },
-    
-    addGlossaireText(data) {
-      if (!this.decision.remarque) {
-        this.decision.remarque = data;
-      } else {
-        this.decision.remarque += '\n\n' + data;
-      }
-    }
-
   },
 
   mounted: function() {

@@ -1,0 +1,23 @@
+#preavisExtComment {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+}
+
+#preavisExtComment .table_glossaire {
+    width: 90%;
+}
+
+#preavisExtComment .table_glossaire .texte {
+    white-space: pre-line;
+}
+
+#preavisExtComment .table_glossaire .addBtn  {
+    width: 50px;
+    text-align: center;
+}
+
+#preavisExtComment .textAreaCommentaire {
+    min-height: 130px;
+    max-height: 600px;
+}

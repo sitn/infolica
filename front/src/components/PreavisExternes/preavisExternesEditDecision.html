@@ -19,8 +19,24 @@
                             <td style="width: 100px; vertical-align: top; text-align: center;">{{ item.version }}</td>
                             <td style="width: 140px; vertical-align: top;">{{ item.operateur }}</td>
                             <td style="width: 140px; vertical-align: top;"><md-icon :style="item.icon_status_style">{{ item.icon_status }}</md-icon> {{ item.decision }}</td>
-                            <td style="max-width: 1000px; min-width: 800px; white-space: pre-wrap; vertical-align: top;">{{ item.remarque }}</td>
-                            <td style="width: 50px; white-space: pre-wrap;" v-if="showAddDecision === true && decision.show === true"><md-button @click="copyText(item)" class="md-primary md-icon-button" title="Récupérer le texte dans une nouvelle version de préavis"><md-icon>download</md-icon></md-button></td>
+                            <td style="max-width: 1000px; min-width: 800px; white-space: pre-line; vertical-align: top;">
+                                <div class="title">Contexte et situation</div>
+                                {{ item.remarque_contexte || '-' }}
+                                <br><br><hr><hr><br>
+                                <div class="title">Servitude(s) / mention(s)</div>
+                                <div class="subtitle">Limite fictive de gabarits</div>
+                                {{ item.remarque_limite_fictive_gabarits || '-' }}
+                                <br><br><br>
+                                <div class="subtitle">Transfert de droits à bâtir</div>
+                                {{ item.remarque_transfert_droit_batir || '-' }}
+                                <br><br><br>
+                                <div class="subtitle">Place de stationnement (Article 29 RELConstr.)</div>
+                                {{ item.remarque_stationnement_art29 || '-' }}
+                                <br><br><br>
+                                <div class="subtitle">Autres servitudes et mentions</div>
+                                {{ item.remarque_autre || '-' }}
+                            </td>
+                            <td style="width: 50px; white-space: pre-line;" v-if="showAddDecision === true && decision.show === true"><md-button @click="copyText(item)" class="md-primary md-icon-button" title="Récupérer le texte dans une nouvelle version de préavis"><md-icon>download</md-icon></md-button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -32,7 +48,7 @@
             <div v-if="showAddDecision">
                 <br>
                 <md-button @click="openNewDecision" class="md-primary md-raised" v-if="decision.show === false">Saisir une nouvelle version</md-button>
-    
+
                 <md-card v-if="decision.show === true">
                     <md-card-header>
                         <div class="md-title">Saisie d'une nouvelle version du préavis</div>
@@ -48,30 +64,48 @@
                                 <md-radio v-model="decision.preavis_type_id" :value="2" :disabled="decision.definitif">Préavis négatif</md-radio>
                                 <md-radio v-model="decision.preavis_type_id" :value="3" :disabled="decision.definitif">Pas concerné</md-radio>
                             </div>
-                            <div v-if="glossaire.length > 0">
-                                <md-button class="md-primary md-raised md-dense" @click="showGlossaire = !showGlossaire">Glossaire</md-button>
-                            </div>
-
                         </div>
                         <br>
-                        
-                        <div v-if="showGlossaire" style="font-size: 12px;">
-                            <table class="table_glossaire" cellpadding="5px">
-                                <tbody>
-                                    <tr v-for="item in glossaire">
-                                        <td><button @click="addGlossaireText(item.texte)">+</button></td>
-                                        <td style="white-space: pre-wrap;">{{ item.texte }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <br>
-                        </div>
-                        
-                        <md-field>
-                            <label>Commentaire</label>
-                            <md-textarea v-model="decision.remarque" :disabled="decision.definitif" style="max-height: 70vh; height: 70vh;"></md-textarea>
-                        </md-field>
-                        <md-button @click="saveDecisionProvisoire" class="md-raised md-primary" style="float: right; margin-bottom: 20px;" :disabled="decision.preavis_type_id == null || decision.remarque == null || decision.remarque === ''" v-if="!decision.definitif">Enregistrer provisoirement</md-button>
+
+
+                        <div class="md-title">Contexte et situation</div>
+                        <PreavisExtComment
+                            :glossaire="glossaire.__CONTEXTE__"
+                            :remarque="decision.remarque_contexte"
+                            @update:remarque="value => this.decision.remarque_contexte = value"
+                            :disabled="false"
+                            class="remarque_contexte_situation" />
+
+                        <div class="md-title">Servitude(s) / mention(s)</div>
+                        <div class="subtitle">Limite fictive de gabarits</div>
+                        <PreavisExtComment
+                            :glossaire="glossaire.__LIMITE_FICTIVE_GABARITS__"
+                            :remarque="decision.remarque_limite_fictive_gabarits"
+                            @update:remarque="value => this.decision.remarque_limite_fictive_gabarits = value"
+                            :disabled="false"/>
+
+                        <div class="subtitle">Transfert de droits à bâtir</div>
+                        <PreavisExtComment
+                            :glossaire="glossaire.__TRANSFERT_DROIT_BATIR__"
+                            :remarque="decision.remarque_transfert_droit_batir"
+                            @update:remarque="value => this.decision.remarque_transfert_droit_batir = value"
+                            :disabled="false"/>
+
+                        <div class="subtitle">Place de stationnement (Article 29 RELConstr.)</div>
+                        <PreavisExtComment
+                            :glossaire="glossaire.__STATIONNEMENT_ART29__"
+                            :remarque="decision.remarque_stationnement_art29"
+                            @update:remarque="value => this.decision.remarque_stationnement_art29 = value"
+                            :disabled="false"/>
+
+                        <div class="subtitle">Autres servitudes et mentions</div>
+                        <PreavisExtComment
+                            :glossaire="glossaire.__AUTRE__"
+                            :remarque="decision.remarque_autre"
+                            @update:remarque="value => this.decision.remarque_autre = value"
+                            :disabled="false"/>
+
+                        <md-button @click="saveDecisionProvisoire" class="md-raised md-primary" style="float: right; margin-bottom: 20px;" :disabled="decision.preavis_type_id == null && (!decision.remarque_contexte && !decision.remarque_limite_fictive_gabarits && !decision.remarque_transfert_droit_batir && !decision.remarque_stationnement_art29 && !decision.remarque_autre)" v-if="!decision.definitif">Enregistrer provisoirement</md-button>
                     </md-card-content>
                 </md-card>
             </div>

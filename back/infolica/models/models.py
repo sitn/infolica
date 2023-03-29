@@ -956,7 +956,11 @@ class PreavisDecision(Base):
     preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
     preavis_type_id = Column(BigInteger, ForeignKey(PreavisType.id))
     operateur_service_id = Column(BigInteger, ForeignKey(Operateur.id))
-    remarque = Column(Text)
+    remarque_contexte = Column(Text)
+    remarque_limite_fictive_gabarits = Column(Text)
+    remarque_transfert_droit_batir = Column(Text)
+    remarque_stationnement_art29 = Column(Text)
+    remarque_autre = Column(Text)
     date = Column(Date)
     definitif = Column(Boolean)
     version = Column(Integer)
@@ -981,6 +985,7 @@ class PreavisGlossaire(Base):
     ordre = Column(Integer)
     titre = Column(Text, nullable=False)
     texte = Column(Text, nullable=False)
+    chapitre = Column(String(40))
 
 
 class GeosBalance(Base):

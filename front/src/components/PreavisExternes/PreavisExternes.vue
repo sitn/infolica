@@ -1,4 +1,4 @@
-<style src="./preavisExternes.css" scoped></style>
+<style src="./preavisExternes.css"></style>
 <template src="./preavisExternes.html"></template>
 
 
