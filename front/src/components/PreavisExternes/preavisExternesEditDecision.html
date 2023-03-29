@@ -105,7 +105,7 @@
                             @update:remarque="value => this.decision.remarque_autre = value"
                             :disabled="false"/>
 
-                        <md-button @click="saveDecisionProvisoire" class="md-raised md-primary" style="float: right; margin-bottom: 20px;" :disabled="decision.preavis_type_id == null" v-if="!decision.definitif">Enregistrer provisoirement</md-button>
+                        <md-button @click="saveDecisionProvisoire" class="md-raised md-primary" style="float: right; margin-bottom: 20px;" :disabled="decision.preavis_type_id == null && (!decision.remarque_contexte && !decision.remarque_limite_fictive_gabarits && !decision.remarque_transfert_droit_batir && !decision.remarque_stationnement_art29 && !decision.remarque_autre)" v-if="!decision.definitif">Enregistrer provisoirement</md-button>
                     </md-card-content>
                 </md-card>
             </div>
