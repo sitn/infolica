@@ -42,7 +42,7 @@
             <md-divider></md-divider>
             <br>
 
-            <md-table v-model="liste_preavis_old" md-sort="date_demande" md-sort-order="desc" md-card>
+            <md-table v-model="liste_preavis_old" md-sort="preavis_date_reponse_int" md-sort-order="desc" md-card>
                 <md-table-toolbar>
                     <div class="md-toolbar-section-start">
                         <h1 class="md-title">Demandes réalisées</h1>
@@ -61,6 +61,7 @@
           
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell md-label="Date demande" md-sort-by="preavis_date_demande_int" md-numeric>{{ item.preavis_date_demande }}</md-table-cell>
+                    <md-table-cell md-label="Date réponse" md-sort-by="preavis_date_reponse_int" md-numeric>{{ item.preavis_date_reponse }}</md-table-cell>
                     <md-table-cell md-label="Affaire_id" md-sort-by="preavis_affaire_id" md-numeric>{{ item.preavis_affaire_id }}</md-table-cell>
                     <md-table-cell md-label="Cadastre" md-sort-by="affaire_cadastre">{{ item.affaire_cadastre }}</md-table-cell>
                     <md-table-cell md-label="Description">{{ item.affaire_description }}</md-table-cell> 

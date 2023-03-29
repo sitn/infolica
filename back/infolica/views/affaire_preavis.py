@@ -253,7 +253,7 @@ def service_externe_preavis_view(request):
                 )
             )
 
-    query = query.order_by(Preavis.date_demande.desc())
+    query = query.order_by(Preavis.date_reponse.desc()) if status == "closed" else query.order_by(Preavis.date_demande.desc())
     
     if status is not None and status == "closed":
         query = query.limit(request.registry.settings['search_limit'])
@@ -293,9 +293,11 @@ def service_externe_preavis_view(request):
             'remarque': remarque
         })
         
-        results = sorted(results, key=lambda x: x['priorite_idx'], reverse=False)
+        if status == 'open':
+            results = sorted(results, key=lambda x: x['priorite_idx'], reverse=False)
 
     return results
+
 
 @view_config(route_name='service_externe_affaire', request_method='GET', renderer='json')
 def service_externe_affaire_view(request):
