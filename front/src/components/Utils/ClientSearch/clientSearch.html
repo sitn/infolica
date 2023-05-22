@@ -1,0 +1,12 @@
+<div id="clientSearch">
+    <md-autocomplete
+        id="clientSearchAutocomplete"
+        v-model="value"
+        :md-options="liste_clients"
+        @md-changed="searchClient"
+        @md-selected="$emit('update:client_id', $event.id)"
+        :title="title"
+        md-dense>
+        <label>Client</label>
+    </md-autocomplete>
+</div>

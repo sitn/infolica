@@ -9,6 +9,7 @@ from infolica.scripts.authentication import check_connected
 import json
 from datetime import datetime
 from sqlalchemy import cast, or_, String
+import re
 
 
 @view_config(route_name='types_clients', request_method='GET', renderer='json')
@@ -108,7 +109,8 @@ def clients_search_by_term_view(request):
     searchTerm = request.params["searchTerm"] if "searchTerm" in request.params else None
     old_clients = request.params['old_clients'] == 'true' if 'old_clients' in request.params else False
 
-    searchTerms = searchTerm.strip().split(" ")
+    searchTerms = re.split(r'\s|\,|\:|\-|SAP|BDP/BDEE', searchTerm.strip())
+    searchTerms = list(filter(None, searchTerms))
 
     query = request.dbsession.query(Client)
     if not old_clients:
@@ -139,8 +141,29 @@ def clients_search_by_term_view(request):
             )
     
     query = query.limit(search_limit).all()
+
+    sep = ', '
+    liste_clients = []
+    for client in query:
+        nom_ = sep.join(filter(None, [
+            client.entreprise,
+            ' '.join(filter(None, [client.titre, client.prenom, client.nom])),
+            client.co,
+            client.adresse,
+            ' '.join(filter(None, [client.npa, client.localite])),
+            'SAP: ' + (client.no_sap if client.no_sap is not None else '-'),
+            'BDP/BDEE: ' + (client.no_bdp_bdee if client.no_bdp_bdee is not None else '-')
+        ]))
+
+        if client.sortie is not None:
+            nom_ = '(ancien client) ' + nom_ 
+
+        liste_clients.append({
+            'id': client.id,
+            'nom': nom_
+        })
     
-    return Utils.serialize_many(query)
+    return liste_clients
 
 
 @view_config(route_name='clients', request_method='POST', renderer='json')

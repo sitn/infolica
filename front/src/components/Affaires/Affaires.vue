@@ -15,11 +15,15 @@ import {
   setClientsAdresse_
 } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler';
+import ClientSearch from "@/components/Utils/ClientSearch/ClientSearch.vue";
 
 const moment = require('moment');
 
 export default {
   name: "Affaires",
+  components: {
+    ClientSearch
+  },
   props: {},
   data: () => ({
     affaires: [],
@@ -34,7 +38,7 @@ export default {
       nom: null,
       cadastre: "",
       type: "",
-      client: null,
+      client_id: null,
       operateur: null,
       dateFrom: null,
       dateTo: null,
@@ -144,12 +148,13 @@ export default {
       this.search.nom = null;
       this.search.cadastre = "";
       this.search.type = "";
-      this.search.client = null;
       this.search.operateur = null;
       this.search.dateFrom = null;
       this.search.dateTo = null;
       this.search.etape = null;
       this.search.limitNbResults = true;
+      this.search.client_id = null;
+      this.$root.$emit('resetSearchClientTerm');
     },
     
     /*
@@ -178,8 +183,8 @@ export default {
         formData.append("type_affaire", this.search.type);
       }
       
-      if (this.search.client && this.search.client.id !== null) {
-        formData.append("client_id", this.search.client.id);
+      if (this.search.client_id) {
+        formData.append("client_id", this.search.client_id);
       }
 
       if (this.search.operateur && this.search.operateur.id !== null) {
