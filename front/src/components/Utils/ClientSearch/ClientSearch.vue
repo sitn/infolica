@@ -16,6 +16,10 @@ export default {
       type: Number,
       default: null
     },
+    label: {
+      type: String,
+      default: 'Client'
+    },
     old_clients: {
       type: Boolean,
       default: true
@@ -102,6 +106,15 @@ export default {
             this.client = stringifyAutocomplete2(response.data, ["nom"], ", ", "nom");
           }
         }).catch(err => handleException(err, this));
+    },
+
+
+    /**
+     * openCreateClient
+     */
+     openCreateClient() {
+      let routedata = this.$router.resolve({ name: "ClientsNew" });
+      window.open(routedata.href, "_blank");
     },
   },
 
