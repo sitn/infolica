@@ -213,15 +213,11 @@
                         <md-input v-model="selectedFacture.client_premiere_ligne"></md-input>
                     </md-field>
         
-                    <!-- <md-autocomplete v-model="selectedClient" :md-options="clients_liste_select" @md-selected="setSelectedClientObject(selectedClient)" :class="getValidationClass('client')" -->
-                    <md-autocomplete v-model="selectedClient" :md-options="clients_liste_select" @md-selected="setSelectedClientObject(selectedClient)"
-                        @md-changed="getClientSearch(selectedClient)" required md-dense>
-                        <label>Facturer à (débiteur)</label>
-                        <template slot="md-autocomplete-empty" slot-scope="{ term }" v-if="term && term.length > 2">
-                            Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editClientAllowed">Créer le client !</a>
-                        </template>
-                        <!-- <span class="md-error" v-if="!$v.selectedFacture.client.objectValidation">Le client est obligatoire</span> -->
-                    </md-autocomplete>
+                    
+                    <ClientSearch
+                        :client_id="selectedFacture.client_id"
+                        @update:client_id="value => selectedFacture.client_id = value"
+                        :initial_client_id="selectedFacture.client_id" />
 
                     <div style="background-color: #eff551;" v-if="selectedClient && selectedClient.besoin_vref_facture">
                         <md-icon style="margin-left: 5px;">warning</md-icon> <span>Le client demande d'indiquer une référence sur la facture.</span>

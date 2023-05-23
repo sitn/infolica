@@ -5,18 +5,16 @@
 
 <script>
 import { getCurrentDate,
-         getClients,
          stringifyAutocomplete2,
          getDocument,
          logAffaireEtape,
-         setClientsAdresse_,
-         getClientsByTerm,
          downloadGeneratedDocument,
          deleteGeneratedDocument } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler'
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import Emoluments from "@/components/Affaires/Facturation/Emoluments/Emoluments.vue";
+import ClientSearch from "@/components/Utils/ClientSearch/ClientSearch.vue";
 
 const numeral = require("numeral");
 const moment = require('moment')
@@ -31,6 +29,7 @@ export default {
     clientTypes_conf: Object
     },
   components: {
+    ClientSearch,
     Emoluments
   },
   data: () => {
@@ -40,7 +39,6 @@ export default {
       numeros_references: [],
       numeros_references_bk: [],
       numeros_references_restant: [],
-      clients_liste_select: [],
       createFacture: false,
       configFactureTypeID: {
         devis: Number(process.env.VUE_APP_FACTURE_TYPE_DEVIS_ID),
@@ -54,7 +52,7 @@ export default {
       lastRecordSAP: null,
       selectedFacture: {
         id: null,
-        client: null,
+        client_id: null,
         client_premiere_ligne: null,
         date: null,
         montant_mat_diff: null,
@@ -75,11 +73,8 @@ export default {
 
   // Validations
   validations() {
-    // const objectValidation = (client) => client && client.id && client.nom;
 
     let selectedFacture = {
-      // date: { required },
-      // client: { objectValidation },
       montant_mo: { required },
       montant_mat_diff: { required },
       montant_rf: { required },
@@ -171,22 +166,6 @@ export default {
         });
     },
 
-    /**
-     * getClientSearch by searchTerm
-     */
-    async getClientSearch(searchTerm) {
-      let conditions = {
-        'searchTerm': searchTerm,
-      };
-
-      getClientsByTerm(conditions)
-      .then(response => {
-        if (response && response.data) {
-          this.clients_liste_select = stringifyAutocomplete2( setClientsAdresse_(response.data), "adresse_" );
-        }
-      }).catch(err => handleException(err, this));
-    },
-
     /*
      * SEARCH AFFAIRE NUMEROS
      */
@@ -253,6 +232,7 @@ export default {
           numeros_obj: [],
           remarque: tmp.remarque,
           type_id: tmp.type_id,
+          client_id: tmp.client_id,
         }
       } else {
         this.selectedFacture = {
@@ -269,28 +249,11 @@ export default {
           numeros_obj: [],
           remarque: tmp.remarque,
           type_id: tmp.type_id,
+          client_id: tmp.client_id,
         }
       }
-
-      // récupère le client de la facture
-      let client_facture_tmp = {};
-      getClients(data.client_id)
-      .then(response => client_facture_tmp = stringifyAutocomplete2(response.data, "adresse_" ))
-      .catch(err => handleException(err));
-      if (client_facture_tmp && client_facture_tmp.length > 0) {
-        this.selectedFacture.client = client_facture_tmp[0];
-      } else {
-        this.selectedFacture.client = {
-          id: data.client_id,
-          nom: data.adresse_facturation_,
-          type_id: data.client_type_id,
-          toString: () => data.adresse_facturation_,
-          toLowerCase: () => data.adresse_facturation_.toLowerCase()
-        };
-      }
-        this.selectedClient = this.selectedFacture.client;
-        this.selectedFacture.client = null;
-
+      
+      
       if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
         this.selectedFacture.numeros_id = [];
         tmp.numeros_id.forEach(x => this.selectedFacture.numeros_obj.push(this.numeros_references.filter(y => y.numero_id === x)[0]));
@@ -314,7 +277,7 @@ export default {
         id: null,
         sap: null,
         date: dateFacture,
-        client: null,
+        client_id: null,
         client_premiere_ligne: null,
         montant_mo: numeral(0).format('0.00'),
         montant_mat_diff: numeral(0).format('0.00'),
@@ -327,10 +290,7 @@ export default {
 
       // Set default client if affaire type is cadastration
       if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
-        this.selectedFacture.client = {};
-        await getClients(process.env.VUE_APP_CLIENT_CADASTRATION_ID)
-        .then(response => this.selectedFacture.client = stringifyAutocomplete2(setClientsAdresse_(response.data), "adresse_" )[0])
-        .catch(err => handleException(err));
+        this.selectedFacture.client_id = process.env.VUE_APP_CLIENT_CADASTRATION_ID;
       }
 
       if (facture_type === 'devis') {
@@ -386,8 +346,8 @@ export default {
       if (this.selectedFacture.date) {
         formData.append("date", moment(this.selectedFacture.date, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
       }
-      if (this.selectedFacture.client && this.selectedFacture.client.id) {
-        formData.append("client_id", this.selectedFacture.client.id);
+      if (this.selectedFacture.client_id) {
+        formData.append("client_id", this.selectedFacture.client_id);
       }
 
       if (this.selectedFacture.montant_mo) {
@@ -654,13 +614,6 @@ export default {
       });
     },
 
-    /**
-     * set selected Client object if not the case
-     * workaround to get client object in md-select
-     */
-    setSelectedClientObject(client) {
-      this.selectedFacture.client = {...client};
-    },
 
     /**
      * open emolument dialog

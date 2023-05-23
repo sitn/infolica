@@ -12,9 +12,17 @@ export default {
   name: "ClientSearch",
   
   props: {
+    initial_client_id: {
+      type: Number,
+      default: null
+    },
     old_clients: {
       type: Boolean,
       default: true
+    },
+    permission_createClient: {
+      type: Boolean,
+      default: false
     },
     title: {
       type: String,
@@ -28,6 +36,7 @@ export default {
   
   data: () => {
     return {
+      client: null,
       liste_clients: [],
       searchTerm: null
     };
@@ -77,7 +86,23 @@ export default {
           .then(response => resolve(response))
           .catch(err => reject(err));
       });
-    }
+    },
+
+
+    async getClientById(client_id) {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_AGGREGATED_ENDPOINT + '/' + client_id,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+          if (response && response.data) {
+            
+            this.client = stringifyAutocomplete2(response.data, ["nom"], ", ", "nom");
+          }
+        }).catch(err => handleException(err, this));
+    },
   },
 
   computed: {
@@ -87,9 +112,11 @@ export default {
       },
       set(value) {
         if (value && value.id) {
+          this.client_id = value.id;
           this.$emit('update:client_id', value.id);
         }
         if (value === null || value === '') {
+          this.client_id = value;
           this.$emit('update:client_id', value);
         }
       }
@@ -97,6 +124,11 @@ export default {
   },
 
   mounted: function() {
+    if (this.initial_client_id !== null) {
+      this.getClientById(this.initial_client_id);
+    }
+
+
     this.$root.$on('resetSearchClientTerm', () => { document.querySelector('#clientSearchAutocomplete > button').click(); });
   }
 };

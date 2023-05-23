@@ -14,6 +14,7 @@ def includeme(config):
     config.add_route('client_moral_personnes_by_client_id', '/infolica/api/client_moral_personnes/{client_id}')
     config.add_route('client_moral_personnes', '/infolica/api/client_moral_personnes')
     config.add_route('client_moral_personnes_s', '/infolica/api/client_moral_personnes/')
+    config.add_route('client_aggregated_by_id', '/infolica/api/client_aggregated/{id}')
     #Affaires
     config.add_route('affaires', '/infolica/api/affaires')
     config.add_route('affaires_s', '/infolica/api/affaires/')

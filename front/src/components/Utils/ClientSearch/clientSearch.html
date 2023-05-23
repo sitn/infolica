@@ -1,12 +1,15 @@
 <div id="clientSearch">
     <md-autocomplete
         id="clientSearchAutocomplete"
-        v-model="value"
+        v-model="client"
         :md-options="liste_clients"
         @md-changed="searchClient"
         @md-selected="$emit('update:client_id', $event.id)"
         :title="title"
         md-dense>
         <label>Client</label>
+        <template slot="md-autocomplete-empty" slot-scope="{ term }" v-if="term && term.length > 2">
+            Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission_createClient">Créer le client !</a>
+        </template>
     </md-autocomplete>
 </div>

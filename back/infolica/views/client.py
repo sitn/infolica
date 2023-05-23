@@ -12,6 +12,23 @@ from sqlalchemy import cast, or_, String
 import re
 
 
+def _set_client_aggregated_name(client, sep=', '):
+    nom_ = sep.join(filter(None, [
+        client.entreprise,
+        ' '.join(filter(None, [client.titre, client.prenom, client.nom])),
+        client.co,
+        client.adresse,
+        ' '.join(filter(None, [client.npa, client.localite])),
+        'SAP: ' + (client.no_sap if client.no_sap is not None else '-'),
+        'BDP/BDEE: ' + (client.no_bdp_bdee if client.no_bdp_bdee is not None else '-')
+    ]))
+
+    if client.sortie is not None:
+        nom_ = '(ancien client) ' + nom_
+    
+    return nom_
+
+
 @view_config(route_name='types_clients', request_method='GET', renderer='json')
 @view_config(route_name='types_clients_s', request_method='GET', renderer='json')
 def types_clients_view(request):
@@ -56,6 +73,27 @@ def client_by_id_view(request):
     query = request.dbsession.query(Client).filter(
         Client.id == id).first()
     return Utils.serialize_one(query)
+
+
+@view_config(route_name='client_aggregated_by_id', request_method='GET', renderer='json')
+def client_aggregated_by_id_view(request):
+    """
+    Return client aggregated by id
+    """
+    # Check connected
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+
+    id = request.matchdict['id']
+    result = request.dbsession.query(Client).filter(
+        Client.id == id).first()
+    
+    client = {
+        'id': result.id,
+        'nom': _set_client_aggregated_name(result)
+    }
+
+    return client
 
 
 @view_config(route_name='recherche_clients', request_method='POST', renderer='json')
@@ -142,21 +180,9 @@ def clients_search_by_term_view(request):
     
     query = query.limit(search_limit).all()
 
-    sep = ', '
     liste_clients = []
     for client in query:
-        nom_ = sep.join(filter(None, [
-            client.entreprise,
-            ' '.join(filter(None, [client.titre, client.prenom, client.nom])),
-            client.co,
-            client.adresse,
-            ' '.join(filter(None, [client.npa, client.localite])),
-            'SAP: ' + (client.no_sap if client.no_sap is not None else '-'),
-            'BDP/BDEE: ' + (client.no_bdp_bdee if client.no_bdp_bdee is not None else '-')
-        ]))
-
-        if client.sortie is not None:
-            nom_ = '(ancien client) ' + nom_ 
+        nom_ = _set_client_aggregated_name(client)
 
         liste_clients.append({
             'id': client.id,

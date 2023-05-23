@@ -8,11 +8,8 @@ import {
   getTypesAffaires,
   getEtapesAffaire,
   getOperateurs,
-  stringifyAutocomplete,
   stringifyAutocomplete2,
   checkPermission,
-  getClientsByTerm,
-  setClientsAdresse_
 } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler';
 import ClientSearch from "@/components/Utils/ClientSearch/ClientSearch.vue";
@@ -90,29 +87,6 @@ export default {
         .catch(err => {
           handleException(err, this);
         });
-    },
-   
-    /**
-     * searchClient
-     */
-    async searchClient(searchTerm) {
-      let conditions = {
-        'searchTerm': searchTerm,
-        'old_clients': true
-      };
-
-      getClientsByTerm(conditions)
-      .then(response => {
-        if (response && response.data) {
-          let tmp = setClientsAdresse_(response.data);
-          tmp.forEach(x => {
-            if (x.sortie) {
-              x.adresse_ = "(ancien client) " + x.adresse_;
-            }
-          });
-          this.clients = stringifyAutocomplete(tmp, "adresse_");
-        }
-      }).catch(err => handleException(err, this));
     },
    
     /**
