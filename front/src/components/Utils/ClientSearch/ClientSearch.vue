@@ -7,10 +7,15 @@
 import { handleException } from "@/services/exceptionsHandler";
 import { stringifyAutocomplete2 } from "@/services/helper";
 
+import { validationMixin } from 'vuelidate'
+import { required } from 'vuelidate/lib/validators'
+
 export default {
   
   name: "ClientSearch",
   
+  mixins: [validationMixin],
+
   props: {
     initial_client_id: {
       type: Number,
@@ -31,9 +36,13 @@ export default {
     title: {
       type: String,
       default: 'Recherche de client'
+    },
+    validation_error_msg: {
+      type: String,
+      default: 'Le client est obligatoire'
     }
   },
-  
+
   emits: [
     'update:client_id'
   ],
@@ -45,7 +54,11 @@ export default {
       searchTerm: null
     };
   },
-
+  
+  validations: {
+      client: { required }
+  },
+  
   methods: {
     /**
      * searchClient
@@ -116,6 +129,29 @@ export default {
       let routedata = this.$router.resolve({ name: "ClientsNew" });
       window.open(routedata.href, "_blank");
     },
+
+    /**
+     * Validations
+     */
+    getValidationClass (fieldName) {
+      const field = this.$v[fieldName];
+
+      if (field) {
+        return {
+          'md-invalid': field.$invalid && field.$dirty
+        }
+      }
+    },
+
+    validator () {
+      this.$v.$touch();
+
+      if (!this.$v.$invalid) {
+        return true;
+      }
+      return false
+    }
+
   },
 
   computed: {

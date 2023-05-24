@@ -138,7 +138,6 @@ export default {
   // Validations
   validations() {
     let form = {};
-    let client_facture_id = null;
 
     if (this.showClientsForm) {
       form = {
@@ -148,13 +147,7 @@ export default {
         technicien_id: {required},
         date_ouverture: {required},
         localisation: {required},
-        client_commande_id: {required},
-        client_envoi_id: {required}
       };
-
-      if (this.affaireTypeRequirements && this.affaireTypeRequirements.section_facture) {
-        client_facture_id = required;
-      }
 
       if (this.form.urgent) {
         form.technicien_id = {required};
@@ -175,7 +168,7 @@ export default {
       form.affaire_modif_type = {required}  
     }
 
-    return {form, client_facture_id}
+    return {form}
   },
 
   methods: {
@@ -759,7 +752,16 @@ export default {
      */
     validateForm() {
       this.$v.$touch();
-      if (!this.$v.$invalid) {
+
+      // test validation of clients which are in a different component
+      let test = true;
+      test = test && this.$refs.ref_client_commande.validator();
+      test = test && this.$refs.ref_client_envoi.validator();
+      if (this.affaireTypeRequirements && this.affaireTypeRequirements.section_facture) {
+        test = test && this.$refs.ref_client_facture.validator();
+      }
+
+      if (!this.$v.$invalid && test) {
         this.saveData();
       }
     },
@@ -1278,8 +1280,13 @@ export default {
     },
 
     selectedClient(client_id, client_type) {
-      this.form[client_type + '_id'] = client_id;
-      this.form[client_type + '_type_id'] = this.$refs['ref_' + client_type].client.type_client;
+      if (client_type === 'client_facture') {
+        this[client_type + '_id'] = client_id;
+        this[client_type + '_type_id'] = this.$refs['ref_' + client_type].client.type_client;
+      } else {
+        this.form[client_type + '_id'] = client_id;
+        this.form[client_type + '_type_id'] = this.$refs['ref_' + client_type].client.type_client;
+      }
       this.updateContact();
     }
 
