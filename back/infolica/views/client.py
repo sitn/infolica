@@ -90,7 +90,8 @@ def client_aggregated_by_id_view(request):
     
     client = {
         'id': result.id,
-        'nom': _set_client_aggregated_name(result)
+        'nom': _set_client_aggregated_name(result),
+        'type_client': result.type_client
     }
 
     return client
@@ -186,7 +187,8 @@ def clients_search_by_term_view(request):
 
         liste_clients.append({
             'id': client.id,
-            'nom': nom_
+            'nom': nom_,
+            'type_client': client.type_client
         })
     
     return liste_clients
