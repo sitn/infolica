@@ -218,7 +218,8 @@
                         :client_id="selectedFacture.client_id"
                         @update:client_id="value => selectedFacture.client_id = value"
                         :initial_client_id="selectedFacture.client_id"
-                        :permission_createClient="permission.editClientAllowed" />
+                        :permission_createClient="permission.editClientAllowed"
+                        :old_clients="false" />
 
                     <div style="background-color: #eff551;" v-if="selectedClient && selectedClient.besoin_vref_facture">
                         <md-icon style="margin-left: 5px;">warning</md-icon> <span>Le client demande d'indiquer une référence sur la facture.</span>
