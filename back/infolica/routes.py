@@ -11,9 +11,11 @@ def includeme(config):
     config.add_route('client_by_id', '/infolica/api/clients/{id}')
     config.add_route('recherche_clients', '/infolica/api/recherche_clients')
     config.add_route('recherche_clients_s', '/infolica/api/recherche_clients/')
+    config.add_route('search_clients_by_term', '/infolica/api/search_clients_by_term')
     config.add_route('client_moral_personnes_by_client_id', '/infolica/api/client_moral_personnes/{client_id}')
     config.add_route('client_moral_personnes', '/infolica/api/client_moral_personnes')
     config.add_route('client_moral_personnes_s', '/infolica/api/client_moral_personnes/')
+    config.add_route('client_aggregated', '/infolica/api/client_aggregated')
     config.add_route('client_aggregated_by_id', '/infolica/api/client_aggregated/{id}')
     #Affaires
     config.add_route('affaires', '/infolica/api/affaires')

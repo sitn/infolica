@@ -29,6 +29,47 @@ def _set_client_aggregated_name(client, sep=', '):
     return nom_
 
 
+def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, search_limit='default'):
+    if search_limit == 'default':
+        search_limit = int(request.registry.settings['search_limit'])
+
+    searchTerms = re.split(r'\s|\,|\:|\-|SAP|BDP/BDEE', searchTerm.strip())
+    searchTerms = list(filter(None, searchTerms))
+
+    query = request.dbsession.query(Client)
+    if not old_clients:
+        query = query.filter(Client.sortie == None)
+
+    if len(searchTerms) > 0:
+        for term in searchTerms:
+            term = str(term) + '%'
+            # term = '%' + str(term) + '%'
+            query = query.filter(
+                or_(
+                    Client.entreprise.ilike(term),
+                    Client.titre.ilike(term),
+                    Client.nom.ilike(term),
+                    Client.prenom.ilike(term),
+                    Client.co.ilike(term),
+                    Client.adresse.ilike(term),
+                    # cast(Client.npa, String).ilike(term),
+                    # Client.localite.ilike(term),
+                    # cast(Client.case_postale, String).ilike(term),
+                    # cast(Client.tel_fixe, String).ilike(term),
+                    # cast(Client.fax, String).ilike(term),
+                    # cast(Client.tel_portable, String).ilike(term),
+                    # Client.mail.ilike(term),
+                    cast(Client.no_sap, String).ilike(term),
+                    cast(Client.no_bdp_bdee, String).ilike(term),
+                    # cast(Client.no_access, String).ilike(term),
+                )
+            )
+    
+    results = query.limit(search_limit).all()
+    
+    return results
+
+
 @view_config(route_name='types_clients', request_method='GET', renderer='json')
 @view_config(route_name='types_clients_s', request_method='GET', renderer='json')
 def types_clients_view(request):
@@ -134,52 +175,36 @@ def clients_search_view(request):
     return Utils.serialize_many(query)
 
 
-@view_config(route_name='recherche_clients', request_method='GET', renderer='json')
+@view_config(route_name='search_clients_by_term', request_method='GET', renderer='json')
 def clients_search_by_term_view(request):
     """
-    Search clients
+    Search clients by term
     """
     # Check connected
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    settings = request.registry.settings
-    search_limit = int(settings['search_limit'])
     searchTerm = request.params["searchTerm"] if "searchTerm" in request.params else None
     old_clients = request.params['old_clients'] == 'true' if 'old_clients' in request.params else False
 
-    searchTerms = re.split(r'\s|\,|\:|\-|SAP|BDP/BDEE', searchTerm.strip())
-    searchTerms = list(filter(None, searchTerms))
-
-    query = request.dbsession.query(Client)
-    if not old_clients:
-        query = query.filter(Client.sortie == None)
-
-    if len(searchTerms) > 0:
-        for term in searchTerms:
-            term = '%' + str(term) + '%'
-            query = query.filter(
-                or_(
-                    Client.entreprise.ilike(term),
-                    Client.titre.ilike(term),
-                    Client.nom.ilike(term),
-                    Client.prenom.ilike(term),
-                    Client.co.ilike(term),
-                    Client.adresse.ilike(term),
-                    cast(Client.npa, String).ilike(term),
-                    Client.localite.ilike(term),
-                    cast(Client.case_postale, String).ilike(term),
-                    cast(Client.tel_fixe, String).ilike(term),
-                    cast(Client.fax, String).ilike(term),
-                    cast(Client.tel_portable, String).ilike(term),
-                    Client.mail.ilike(term),
-                    cast(Client.no_sap, String).ilike(term),
-                    cast(Client.no_bdp_bdee, String).ilike(term),
-                    cast(Client.no_access, String).ilike(term),
-                )
-            )
+    clients = _multipleAttributesClientSearch(request, searchTerm, old_clients=old_clients)
     
-    query = query.limit(search_limit).all()
+    return Utils.serialize_many(clients)
+
+
+@view_config(route_name='client_aggregated', request_method='GET', renderer='json')
+def clients_aggregated_search_by_term_view(request):
+    """
+    Search clients aggregated
+    """
+    # Check connected
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+
+    searchTerm = request.params["searchTerm"] if "searchTerm" in request.params else None
+    old_clients = request.params['old_clients'] == 'true' if 'old_clients' in request.params else False
+
+    query = _multipleAttributesClientSearch(request, searchTerm, old_clients=old_clients)
 
     liste_clients = []
     for client in query:
