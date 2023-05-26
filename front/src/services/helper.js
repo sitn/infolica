@@ -161,36 +161,6 @@ export const getClients = async function (id) {
     });
 };
 
-/**
- * search Client by term
- */
-export const getClientsByTerm = async function(conditions) {
-    let params = [];
-    if (conditions && typeof conditions === 'object') {
-        for (const property in conditions) {
-            params.push(property + "=" + conditions[property]);
-        }
-    }
-    
-    if (params.length > 0) {
-        params = "?" + params.join("&");
-    } else {
-        params = "";
-    } 
-
-    return new Promise((resolve, reject) => {
-        axios.get(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_ENDPOINT + params,
-            {
-                withCredentials: true,
-                headers: {"accept": "application/json"}
-            }
-        )
-        .then(response => resolve(response))
-        .catch(err => reject(err));
-    });
-};
-
 export const setClientsAdresse_ = function(clients, sep=", ") {
     let isArray = true;
     if (!Array.isArray(clients)) {

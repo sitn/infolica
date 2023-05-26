@@ -94,7 +94,7 @@ export default {
 
       return new Promise((resolve, reject) => {
           this.$http.get(
-              process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_ENDPOINT + params,
+              process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_AGGREGATED_ENDPOINT + params,
               {
                   withCredentials: true,
                   headers: {"accept": "application/json"}
@@ -108,7 +108,7 @@ export default {
 
     async getClientById(client_id) {
       this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_AGGREGATED_ENDPOINT + '/' + client_id,
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_AGGREGATED_BY_ID_ENDPOINT + '/' + client_id,
         {
           withCredentials: true,
           headers: {"Accept": "application/json"}
@@ -125,7 +125,7 @@ export default {
     /**
      * openCreateClient
      */
-     openCreateClient() {
+    openCreateClient() {
       let routedata = this.$router.resolve({ name: "ClientsNew" });
       window.open(routedata.href, "_blank");
     },

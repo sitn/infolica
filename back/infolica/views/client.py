@@ -42,8 +42,7 @@ def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, sear
 
     if len(searchTerms) > 0:
         for term in searchTerms:
-            term = str(term) + '%'
-            # term = '%' + str(term) + '%'
+            term = '%' + str(term) + '%'
             query = query.filter(
                 or_(
                     Client.entreprise.ilike(term),
@@ -116,7 +115,7 @@ def client_by_id_view(request):
     return Utils.serialize_one(query)
 
 
-@view_config(route_name='client_aggregated_by_id', request_method='GET', renderer='json')
+@view_config(route_name='search_client_aggregated_by_id', request_method='GET', renderer='json')
 def client_aggregated_by_id_view(request):
     """
     Return client aggregated by id
@@ -192,7 +191,7 @@ def clients_search_by_term_view(request):
     return Utils.serialize_many(clients)
 
 
-@view_config(route_name='client_aggregated', request_method='GET', renderer='json')
+@view_config(route_name='search_clients_aggregated_by_term', request_method='GET', renderer='json')
 def clients_aggregated_search_by_term_view(request):
     """
     Search clients aggregated

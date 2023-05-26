@@ -5,12 +5,12 @@
 <script>
 import {handleException} from '@/services/exceptionsHandler';
 import {stringifyAutocomplete,
-        getClients,
-        filterList,
         getDocument,
         getCurrentUserRoleId,
         getOperateurs,
         stringifyAutocomplete2} from '@/services/helper';
+
+import ClientSearch from "@/components/Utils/ClientSearch/ClientSearch.vue";
 
 const moment = require("moment");
 
@@ -24,7 +24,9 @@ export default {
     etapes_affaire_conf: {type: Object},
     affaireDashboardLayout: {type: Object},
   },
-  components: {},
+  components: {
+    ClientSearch
+  },
   data() {
     return {
       affaire_backup: {},
@@ -47,17 +49,19 @@ export default {
         selected_id: 0,
         selected_adress: ''
       },
-      clientContactsListe: [{}],
-      clientsListe: [],
-      clientsListe_bk: [],
-      searchClientsListe: [],
+      client_moral_personnes: {
+        commande: [],
+        envoi: [],
+      },
       form: {
         technicien: null,
         responsable: null,
         typeAffaire: null,
-        client_commande: null,
+        client_commande_id: null,
+        client_commande_type_id: null,
         client_commande_complement: null,
-        client_envoi: null,
+        client_envoi_id: null,
+        client_envoi_type_id: null,
         client_envoi_complement: null
       },
       show: {
@@ -67,36 +71,6 @@ export default {
   },
 
   methods: {
-    /**
-     * Search clients
-     */
-    async initClientsListe() {
-      getClients()
-        .then(response => {
-          if (response && response.data) {
-            this.clientsListe_bk = response.data;
-            this.clientsListe = response.data.map(x => ({
-              id: x.id,
-              nom: x.adresse_,
-              type_id: x.type_client,
-              toLowerCase: () => x.adresse_.toLowerCase(),
-              toString: () => x.adresse_
-            }));
-          }
-        })
-        //Error
-        .catch(err => {
-          handleException(err, this);
-        });
-    },
-
-    /**
-     * Search Client after 3 letters
-     */
-    searchClients(value) {
-      this.searchClientsListe = filterList(this.clientsListe, value, 3);
-    },
-
     /**
      * Ouvre la page de consultation/édition de client
      */
@@ -141,12 +115,12 @@ export default {
         formData.append("nom", this.affaire.nom || null);
       }
 
-      if (this.form.client_commande && this.form.client_commande.id) {
-        formData.append("client_commande_id", this.form.client_commande.id || null);
+      if (this.form.client_commande_id) {
+        formData.append("client_commande_id", this.form.client_commande_id || null);
       }
 
-      if (this.form.client_envoi && this.form.client_envoi.id) {
-        formData.append("client_envoi_id", this.form.client_envoi.id || null);
+      if (this.form.client_envoi_id) {
+        formData.append("client_envoi_id", this.form.client_envoi_id || null);
       }
 
       if (this.affaireUrgente.urgent) {
@@ -202,36 +176,19 @@ export default {
       this.form.technicien = this.operateursListe.filter(x => x.id === this.affaire.technicien_id)[0];
       this.form.typeAffaire = this.typesAffairesListe_all.filter(x => x.id === this.affaire.type_id)[0];
 
-      let client_commande_tmp = this.clientsListe.filter(x => x.id === this.affaire.client_commande_id);
-      if (client_commande_tmp.length > 0) {
-        this.form.client_commande = client_commande_tmp[0];
-      } else {
-        this.form.client_commande = {
-          id: this.affaire.client_commande_id, 
-          nom: this.affaire.client_commande_nom_.replace("\n", ", "), 
-          type_id: this.affaire.client_commande_type_id,
-          toLowerCase: () => this.affaire.client_commande_nom_.toLowerCase(),
-          toString: () => this.affaire.client_commande_nom_.toString(),
-        };
-      }
+      this.form.client_commande_id = this.affaire.client_commande_id;
       this.form.client_commande_complement = this.affaire.client_commande_complement;
       
-      let client_envoi_tmp = this.clientsListe.filter(x => x.id === this.affaire.client_envoi_id);
-      if (client_envoi_tmp.length > 0) {
-        this.form.client_envoi = client_envoi_tmp[0];
-      } else {
-        this.form.client_envoi = {
-          id: this.affaire.client_envoi_id, 
-          nom: this.affaire.client_envoi_nom_.replace("\n", ", "), 
-          type_id: this.affaire.client_envoi_type_id,
-          toLowerCase: () => this.affaire.client_envoi_nom_.toLowerCase(),
-          toString: () => this.affaire.client_envoi_nom_.toString(),
-        };
-      }
+      this.form.client_envoi_id = this.affaire.client_envoi_id;
       this.form.client_envoi_complement = this.affaire.client_envoi_complement;
-
+      
       this.infoGenReadonly = false;
       this.$emit('modify-off', false);
+      
+      setTimeout(() => {
+        this.selectedClient(this.form.client_commande_id, 'client_commande');
+        this.selectedClient(this.form.client_envoi_id, 'client_envoi');
+      }, 200);
     },
 
     /**
@@ -423,28 +380,6 @@ export default {
       this.$router.go(0);
     },
 
-    /**
-     * Get client contact for client entreprise
-     */
-    async getClientContact(client) {
-      let type_client = this.clientsListe_bk.filter(x => x.id === client.id)[0].type_client;
-      if (type_client === this.clientTypes_conf.moral) {
-        // get client contacts
-        this.$http.get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_MORAL_PERSONNES_ENDPOINT + "/" + client.id,
-          {
-            withCredentials: true,
-            headers: {Accept: "application/json"}
-          }
-        ).then(response => {
-          if (response && response.data) {
-            let tmp = [];
-            response.data.forEach(x => tmp.push([x.titre, x.prenom, x.nom].filter(Boolean).join(" ")));
-            this.clientContactsListe = tmp;
-          }
-        }).catch(err => handleException(err, this));
-      }
-    },
 
     /**
      * on set echeance
@@ -494,7 +429,51 @@ export default {
         && this.affaire.modif_affaire_type_id_vers !== null
         && [this.etapes_affaire_conf.coordination, this.etapes_affaire_conf.travaux_chef_equipe, this.etapes_affaire_conf.controle_technique].includes(this.affaire.etape_id)
       );
-    }
+    },
+
+    selectedClient(client_id, client_type) {
+      this.form[client_type + '_id'] = client_id;
+      this.form[client_type + '_type_id'] = this.$refs['ref_' + client_type].client.type_client;
+      this.updateContact();
+    },
+
+    /**
+     * Update contact when 
+     */
+     async updateContact() {
+      if (this.form.client_commande_id !== null) {
+        this.initClientMoralPersonnes(this.form.client_commande_id, 'commande');
+      }
+      if (this.form.client_envoi_id !== null) {
+        this.initClientMoralPersonnes(this.form.client_envoi_id, 'envoi');
+      }
+    },
+
+    /**
+     * Init liste of people working in an entreprise
+     */
+     async initClientMoralPersonnes(client_id, client_type) {
+      return new Promise((resolve) => {
+        if (client_id) {
+          this.$http.get(
+            process.env.VUE_APP_API_URL +
+            process.env.VUE_APP_CLIENT_MORAL_PERSONNES_ENDPOINT + "/" +
+            client_id,
+            {
+              withCredentials: true,
+              headers: {Accept: "application/json"}
+            }
+          ).then(response => {
+            if (response && response.data) {
+              let tmp = [];
+              response.data.forEach(x => tmp.push([x.titre, x.prenom, x.nom].filter(Boolean).join(" ")));
+              this.client_moral_personnes[client_type] = tmp;
+              resolve(tmp);
+            }
+          }).catch(err => this.handleException(err, this));
+        }
+      });
+    },
 
   },
 
@@ -504,7 +483,6 @@ export default {
     this.initTypesAffairesListe();
     this.searchAffaireSource();
     this.searchAffaireDestination();
-    this.initClientsListe();
     this.searchClientsFacture();
     this.setAffaireUrgente();
     this.setPermissions();

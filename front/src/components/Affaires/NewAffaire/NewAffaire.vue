@@ -13,9 +13,7 @@ import { getCurrentDate,
          stringifyAutocomplete2,
          checkPermission,
          getCurrentUserRoleId,
-         getOperateurs,
-         getClientsByTerm,
-         setClientsAdresse_ } from "@/services/helper";
+         getOperateurs } from "@/services/helper";
 import Autocomplete from "vuejs-auto-complete";
 import ReferenceNumeros from "@/components/Affaires/NumerosAffaire/ReferenceNumeros/ReferenceNumeros.vue";
 import ClientSearch from "@/components/Utils/ClientSearch/ClientSearch.vue";
@@ -1251,21 +1249,6 @@ export default {
       });
     },
 
-    /**
-     * searchClient
-     */
-    async searchClients(searchTerm) {
-      let conditions = {
-        'searchTerm': searchTerm,
-      };
-
-      getClientsByTerm(conditions)
-      .then(response => {
-        if (response && response.data) {
-          this.search_clients_list = stringifyAutocomplete2( setClientsAdresse_(response.data), "adresse_" );
-        }
-      }).catch(err => handleException(err, this));
-    },
 
     updateAffaireName(val) {
       if (this.form.type && this.form.type.id == this.typesAffaires_conf.mpd) {
