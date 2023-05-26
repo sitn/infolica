@@ -830,6 +830,24 @@ export default {
 
 
     /**
+     * Complète par défaut les clients envoi et facture
+     */
+     defaultCompleteClients(client_id) {
+      if (this.form.client_envoi_id === null) {
+        this.client_moral_personnes.envoi = this.client_moral_personnes.commande;
+        this.$refs.ref_client_envoi.getClientById(client_id);
+        
+        setTimeout(() => {
+          this.form.client_envoi_type_id = this.$refs.ref_client_envoi.client.type_client;
+        }, 200);
+      }
+      if (this.affaireTypeRequirements.section_facture && this.client_facture_id === null) {
+        this.$refs.ref_client_facture.getClientById(client_id);
+      }
+    },
+
+
+    /**
      * openCreateClient
      */
     openCreateClient() {
@@ -1267,6 +1285,10 @@ export default {
         this[client_type + '_id'] = client_id;
         this[client_type + '_type_id'] = this.$refs['ref_' + client_type].client.type_client;
       } else {
+        if (client_type === 'client_commande') {
+          this.defaultCompleteClients(client_id);
+        }
+
         this.form[client_type + '_id'] = client_id;
         this.form[client_type + '_type_id'] = this.$refs['ref_' + client_type].client.type_client;
       }
