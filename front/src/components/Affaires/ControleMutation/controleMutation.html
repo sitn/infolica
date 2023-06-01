@@ -17,7 +17,10 @@
             <md-card-expand-content>
                 <md-card-content v-bind:class="{ disabledElement: !permission.editAffaireAllowed }">
 
-                    <p v-if="controleMutation.date" style="margin-top: 0px;">Dernier contrôle effectué le {{controleMutation.date}} par {{controleMutation.operateur_prenom_nom}}</p>
+                    <div class="md-layout md-alignment-center-space-between">
+                        <p v-if="controleMutation.date" style="margin-top: 0px;">Dernier contrôle effectué le {{controleMutation.date}} par {{controleMutation.operateur_prenom_nom}}</p>
+                        <md-button style="background-color:lightgreen;" md-dense @click="launchCtrlGeos">Contrôles GEOS</md-button>
+                    </div>
 
                     <div v-if="controleMutation.id">
                         <div v-if="affaire.type_id === typesAffaires_conf.mpd">
