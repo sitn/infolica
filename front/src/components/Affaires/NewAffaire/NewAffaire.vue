@@ -980,8 +980,8 @@ export default {
 
           if (tmp.date_envoi) {
             // L'affaire a bien une date d'envoi
-            if (!tmp.date_cloture) {
-              // L'affaire n'est pas clôturée
+            if (!tmp.date_cloture || tmp.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_SERVITUDE)) {
+              // L'affaire n'est pas clôturée ou l'affaire est clôturée mais est de type servitude
 
               _this.selectedModificationAffaire = response.data;
 
