@@ -267,6 +267,37 @@ def affaires_search_view(request):
 
     return results
 
+@view_config(route_name='affaire_mpd', request_method='GET', renderer='json')
+def affaire_mpd_view(request):
+    """
+    Search affaire mpd
+    """
+    # Check connected
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+
+    cadastre_id = request.params['cadastre_id'] if 'cadastre_id' in request.params else None
+    plan_no = request.params['plan_no'] if 'plan_no' in request.params else None
+
+    affaire_type_mpd_id = request.registry.settings['affaire_type_mpd_id']
+
+    affaires = request.dbsession.query(
+        Affaire
+    ).filter(
+        Affaire.type_id==affaire_type_mpd_id,
+        Affaire.cadastre_id==cadastre_id,
+        Affaire.date_cloture==None
+    ).all()
+
+    affaire = None
+    regexp = r"\b{}\b".format(plan_no)
+    for aff in affaires:
+        if re.search(regexp, aff.nom) is not None:
+            affaire = aff
+            break
+    
+    return Utils.serialize_one(affaire)
+
 
 @view_config(route_name='affaire_dashboard_layout', request_method='POST', renderer='json')
 def affaire_dashboard_layout_view(request):

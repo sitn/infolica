@@ -78,6 +78,10 @@ export default {
         urgent_echeance: null,
       },
       lastRecord: null,
+      msg_mpd: {
+        data: null,
+        show: false
+      },
       numerosReferences: [],
       operateurs_list: [],
       permission: {
@@ -1294,13 +1298,35 @@ export default {
     updateAffaireName(val) {
       if (this.form.type && this.form.type.id == this.typesAffaires_conf.mpd) {
         if (val) {
-          this.form.nom = "Mise à jour périodique - Plan " + val; 
+          this.form.nom = "Mise à jour périodique - Plan " + val;
+          
+          this.checkAvailableAffaireMPD(this.form.cadastre.id, val);
         } else {
           this.form.nom = "Mise à jour périodique"; 
         }
       } else {
         this.form.nom = null;
       }
+    },
+
+
+    async checkAvailableAffaireMPD(cadastre_id, plan_no) {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_MPD_BY_CADPLAN_ENDPOINT + '?cadastre_id=' + cadastre_id + '&plan_no=' + plan_no,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.msg_mpd.data = response.data;
+          this.msg_mpd.show = true;
+          this.form.plan = null;
+        } else {
+          this.msg_mpd.show = false;
+          this.msg_mpd.data = null;
+        }
+      }).catch(err => this.handleException(err, this));
     }
 
 
