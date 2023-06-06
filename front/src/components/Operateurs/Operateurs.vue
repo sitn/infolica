@@ -11,38 +11,40 @@ export default {
   name: 'Operateurs',
   props: {},
   data: () => ({
+    affaireEtapesAll: {},
     currentDeleteId: null,
-      deleteOperateurActive: false,
-      deleteMessage: '',
-      editionOperateursAllowed: false,
-      form: {
-        id: null,
-        nom: null,
-        prenom: null,
-        initiales: null,
-        login: null,
-        responsable: false,
-        chef_equipe: false,
-        mail: null,
-        service: {},
-        entree: null,
-        sortie: null,
-        role_id: null,
-        service_id: null,
-        ldap_domain: null
-      },
-      operateurs: [],
-      search: {
-        nom: null,
-        prenom: null,
-        login: null
-      },
-      services: [],
-      roles: [],
-      divEditUser: {
-        title: "",
-        show: false,
-      }
+    deleteOperateurActive: false,
+    deleteMessage: '',
+    editionOperateursAllowed: false,
+    form: {
+      id: null,
+      nom: null,
+      prenom: null,
+      initiales: null,
+      login: null,
+      responsable: false,
+      chef_equipe: false,
+      mail: null,
+      service: {},
+      entree: null,
+      sortie: null,
+      role_id: null,
+      service_id: null,
+      ldap_domain: null,
+      affaire_etapes_mailer: []
+    },
+    operateurs: [],
+    search: {
+      nom: null,
+      prenom: null,
+      login: null
+    },
+    services: [],
+    roles: [],
+    divEditUser: {
+      title: "",
+      show: false,
+    }
   }),
   methods: {
     /**
@@ -99,11 +101,11 @@ export default {
      * Call edit operateur
      */
     callEditOperateur (op) {
-      for (const elem in this.form) {
-        this.form[elem] = op[elem];
-      }
-
       this.divEditUser.title = "Modifier un·e opérateur·rice existant·e";
+      
+      this.getOperateur(op.id);
+      this.getAffaireEtapesAll();
+
       this.divEditUser.show = true;
     },
 
@@ -191,6 +193,7 @@ export default {
         ldap_domain: null,
         entree: null,
         sortie: null,
+        affaire_etapes_mailer: [],
       };
     },
 
@@ -207,6 +210,8 @@ export default {
             formData.append(elem, moment(this.form[elem], process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
           } else if (elem === 'sortie') {
             formData.append(elem, this.form[elem]? moment(this.form[elem], process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
+          } else if (elem === 'affaire_etapes_mailer') {
+            formData.append(elem, JSON.stringify(this.form[elem]));
           } else {
             formData.append(elem, this.form[elem]);
           }
@@ -322,11 +327,59 @@ export default {
       })
       .catch(err => handleException(err, this));
     },
-
+    
     textUpperCase() {
       this.form.ldap_domain = this.form.ldap_domain.toUpperCase();
-    }
+    },
+    
+    /**
+     * get Affaire Etapes
+     */
+    async getAffaireEtapesAll() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_ETAPES_ALL_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
 
+          this.affaireEtapesAll = response.data;
+
+          this.affaireEtapesAll.prio1 = stringifyAutocomplete2(this.affaireEtapesAll.prio1, ['etape']);
+          this.affaireEtapesAll.prio2 = stringifyAutocomplete2(this.affaireEtapesAll.prio2, ['etape']);
+
+        }
+      })
+      .catch(err => handleException(err, this));
+    },
+    
+    
+    /**
+     * get Operateur for update
+     */
+    async getOperateur(operateur_id) {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEUR_UPDATE_ENDPOINT + '?operateur_id=' + operateur_id,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+
+          let tmp = response.data;
+
+          tmp.entree = tmp.entree === null? null: moment(tmp.entree, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+          tmp.sortie = tmp.sortie === null? null: moment(tmp.sortie, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+
+          this.form = tmp;
+
+        }
+      })
+      .catch(err => handleException(err, this));
+    },
 
   },
 
