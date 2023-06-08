@@ -51,7 +51,7 @@
                     </div>
                     <div class="md-layout-item md-size-25 md-small-size-50">
                         <md-field>
-                            <label>Service</label>
+                            <label>Service (laisser vide pour SGRF)</label>
                             <md-select v-model="form.service_id" md-dense>
                                 <md-option v-for="item in services" :key="item.id" :value="item.id">{{ item.nom_ }}</md-option>
                             </md-select>
