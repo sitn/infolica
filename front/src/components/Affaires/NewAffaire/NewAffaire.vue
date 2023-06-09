@@ -994,6 +994,14 @@ export default {
 
               //Search numéros immeubles
               _this.setModificationAffaireNuméros();
+
+              // fill clients from old affaire
+              this.$refs.ref_client_commande.getClientById(_this.selectedModificationAffaire.client_commande_id);
+              this.$refs.ref_client_envoi.getClientById(_this.selectedModificationAffaire.client_envoi_id);
+              this.getParentAffaireFactureClients(this.form.affaire_base_id).then(() => {
+                this.$refs.ref_client_facture.getClientById(this.client_facture_id);
+              });
+
             } else {
               this.$root.$emit("ShowError", "L'affaire de base est déjà clôturée. Contrôler le numéro de l'affaire");
               this.form.affaire_base_id = null;
@@ -1106,22 +1114,29 @@ export default {
             this.selectedAnciensNumeros = this.affaire_numeros_anciens;
             this.selectedNouveauxNumeros = this.affaire_numeros_nouveaux;
           }
-
-          // get client_affaire
-          const url = process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_FACTURES_ENDPOINT + this.form.affaire_base_id;
-          this.$http.get(url,
-          {
-            withCredentials: true,
-            headers: {Accept: "application/json"}
-          }).then(response => {
-            if(response && response.data)
-              var affaire_factures = response.data;
-              this.client_facture_id = affaire_factures[0].client_id;
-          }).catch(err => handleException(err, this));
         }
       })
       .catch(err => {
         handleException(err, this);
+      });
+    },
+
+    /**
+     * get facture client of parent affaire
+     */
+    async getParentAffaireFactureClients(parent_affaire_id) {
+      return new Promise((resolve, reject) => {
+        const url = process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_FACTURES_ENDPOINT + parent_affaire_id;
+        this.$http.get(url,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }).then(response => {
+          if(response && response.data)
+            var affaire_factures = response.data;
+            this.client_facture_id = affaire_factures[0].client_id;
+            resolve(affaire_factures[0].client_id);
+        }).catch(err => reject(err));
       });
     },
 
