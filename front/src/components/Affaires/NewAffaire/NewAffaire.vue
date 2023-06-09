@@ -1037,7 +1037,7 @@ export default {
         this.form.nom = modif_type;
         if (this.form.affaire_modif_type && this.form.affaire_modif_type.id === Number(process.env.VUE_APP_TYPE_MODIFICATION_RETABLISSEMENT_ETAT_JURIDIQUE_ID)) {
           this.form.nom = modif_type;
-          } else {
+        } else {
           this.form.nom = modif_type + this.selectedModificationAffaire.nom;
         }
         this.form.nom_ = this.selectedModificationAffaire.nom; // garder le nom pas modifié en mémoire
@@ -1301,8 +1301,6 @@ export default {
         } else {
           this.form.nom = "Mise à jour périodique"; 
         }
-      } else {
-        this.form.nom = null;
       }
     }
 
