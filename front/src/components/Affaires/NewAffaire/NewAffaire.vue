@@ -407,7 +407,7 @@ export default {
               }
               if (this.selectedAnciensNumeros.length === this.affaire_numeros_anciens.length && this.selectedNouveauxNumeros.length === this.affaire_numeros_nouveaux.length) {
                 // Si tous les numéros sont sélectionnés, clôre l'affaire de base !
-                promises.push(this.cloreAffaireBase());
+                promises.push(this.cloreAffaireBase(id_new_affaire));
               }
               if (this.form.affaire_modif_type.id === this.typesAffaires_conf.modification_abandon_partiel) {
                 // supprimer les bf référencés à l'affaire
@@ -638,20 +638,23 @@ export default {
      * Affaire de modification: tous les numéros sont récupérés par l'affaire fille:
      * cloturer l'affaire de base
      */
-    async cloreAffaireBase() {
+    async cloreAffaireBase(new_affaire_id) {
       let formData = new FormData();
-      formData.append("id_affaire", this.form.affaire_base_id);
-      formData.append("date_cloture", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
-      
+      formData.append('affaire_id', this.form.affaire_base_id);
+      formData.append('remarque', "L'affaire a été clôturée avec l'ouverture de l'affaire de modification " + new_affaire_id);
+
       return new Promise((resolve, reject) => {
-        this.$http.put(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_CLOTURE_ENDPOINT,
           formData,
           {
             withCredentials: true,
             headers: {Accept: "application/json"}
           }
-        ).then(response => resolve(response))
+        ).then((response) => {
+          this.$root.$emit('ShowMessage', "L'affaire de base a bien été clôturée");
+          resolve(response);
+        })
         .catch(err => reject(err));
       });
     },
@@ -1034,7 +1037,7 @@ export default {
         this.form.nom = modif_type;
         if (this.form.affaire_modif_type && this.form.affaire_modif_type.id === Number(process.env.VUE_APP_TYPE_MODIFICATION_RETABLISSEMENT_ETAT_JURIDIQUE_ID)) {
           this.form.nom = modif_type;
-          } else {
+        } else {
           this.form.nom = modif_type + this.selectedModificationAffaire.nom;
         }
         this.form.nom_ = this.selectedModificationAffaire.nom; // garder le nom pas modifié en mémoire
@@ -1298,8 +1301,6 @@ export default {
         } else {
           this.form.nom = "Mise à jour périodique"; 
         }
-      } else {
-        this.form.nom = null;
       }
     }
 

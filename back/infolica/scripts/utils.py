@@ -388,4 +388,36 @@ class Utils(object):
         
         return
 
+
+    @classmethod
+    def affaireUpdatePermission(cls, request, affaire_type):
+        permission = request.registry.settings['affaire_edition']
+
+        # Affaire de cadastration
+        if affaire_type == request.registry.settings['affaire_type_cadastration_id']:
+            permission = request.registry.settings['affaire_cadastration_edition']
+        # Affaire de PPE
+        elif affaire_type == request.registry.settings['affaire_type_ppe_id']:
+            permission = request.registry.settings['affaire_ppe_edition']
+        # Affaire de révision d'abornement
+        elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
+            permission = request.registry.settings['affaire_revision_abornement_edition']
+        # Affaire de rétablissement de PFP3
+        elif affaire_type == request.registry.settings['affaire_type_retablissement_pfp3_id']:
+            permission = request.registry.settings['affaire_retablissement_pfp3_edition']
+        # Affaire pcop
+        elif affaire_type == request.registry.settings['affaire_type_part_copropriete_id']:
+            permission = request.registry.settings['affaire_pcop_edition']
+        # Affaire mpd
+        elif affaire_type == request.registry.settings['affaire_type_mpd_id']:
+            permission = request.registry.settings['affaire_mpd_edition']
+        # Affaire autre
+        elif affaire_type == request.registry.settings['affaire_type_autre_id']:
+            permission = request.registry.settings['affaire_autre_edition']
+        # Affaire affaire_remaniement_parcellaire_id
+        elif affaire_type == request.registry.settings['affaire_remaniement_parcellaire_id']:
+            permission = request.registry.settings['affaire_remaniement_parcellaire_edition']
+
+        return permission
+
     

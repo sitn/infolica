@@ -362,32 +362,7 @@ def affaires_new_view(request):
     affaire_type = request.params['type_id'] if 'type_id' in request.params else None
 
     # Permission (fonction) par défaut
-    permission = request.registry.settings['affaire_edition']
-
-    # Affaire de cadastration
-    if affaire_type == request.registry.settings['affaire_type_cadastration_id']:
-        permission = request.registry.settings['affaire_cadastration_edition']
-    # Affaire de PPE
-    elif affaire_type == request.registry.settings['affaire_type_ppe_id']:
-        permission = request.registry.settings['affaire_ppe_edition']
-    # Affaire de révision d'abornement
-    elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
-        permission = request.registry.settings['affaire_revision_abornement_edition']
-    # Affaire de rétablissement de PFP3
-    elif affaire_type == request.registry.settings['affaire_type_retablissement_pfp3_id']:
-        permission = request.registry.settings['affaire_retablissement_pfp3_edition']
-    # Affaire pcop
-    elif affaire_type == request.registry.settings['affaire_type_part_copropriete_id']:
-        permission = request.registry.settings['affaire_pcop_edition']
-    # Affaire mpd
-    elif affaire_type == request.registry.settings['affaire_type_mpd_id']:
-        permission = request.registry.settings['affaire_mpd_edition']
-    # Affaire autre
-    elif affaire_type == request.registry.settings['affaire_type_autre_id']:
-        permission = request.registry.settings['affaire_autre_edition']
-    # Affaire affaire_remaniement_parcellaire_id
-    elif affaire_type == request.registry.settings['affaire_remaniement_parcellaire_id']:
-        permission = request.registry.settings['affaire_remaniement_parcellaire_edition']
+    permission = Utils.affaireUpdatePermission(request, affaire_type)
 
     # Check authorization
     if not Utils.has_permission(request, permission):
@@ -542,6 +517,35 @@ def affaires_update_view(request):
     # If urgence defined after affaire creation, send e-mail
     if not affaire_urgence and "urgent" in params and (record.type_id != int(request.registry.settings['affaire_type_ppe_id']) or record.type_id != int(request.registry.settings['affaire_type_modification_ppe_id'])):
         MailTemplates.sendMailAffaireUrgente(request, record)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
+
+
+@view_config(route_name='affaire_cloture', request_method='POST', renderer='json')
+def affaire_cloture_view(request):
+    """
+    Cloture affaire
+    """
+    # Check connected
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+    
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    remarque = request.params['remarque'] if 'remarque' in request.params else None
+
+    if affaire_id is None:
+        exc.HTTPBadRequest('affaire_id non spécifié')
+
+    affaire = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
+
+    permission = Utils.affaireUpdatePermission(request, affaire.type_id)
+    if not Utils.has_permission(request, permission):
+        raise exc.HTTPForbidden()
+
+    etape_id = request.registry.settings['affaire_etape_fin_processus_id']
+    affaire.date_cloture = datetime.strftime(datetime.now(), '%Y-%m-%d')
+
+    Utils.newAffaireEtape(request, affaire_id, etape_id, remarque)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
 
