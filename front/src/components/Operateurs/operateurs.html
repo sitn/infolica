@@ -51,7 +51,7 @@
                     </div>
                     <div class="md-layout-item md-size-25 md-small-size-50">
                         <md-field>
-                            <label>Service</label>
+                            <label>Service (laisser vide pour SGRF)</label>
                             <md-select v-model="form.service_id" md-dense>
                                 <md-option v-for="item in services" :key="item.id" :value="item.id">{{ item.nom_ }}</md-option>
                             </md-select>
@@ -74,6 +74,19 @@
                     <div class="md-layout-item md-size-25 md-small-size-50" style="display: flex;">
                         <md-checkbox v-model="form.responsable">Responsable</md-checkbox>
                         <md-checkbox v-model="form.chef_equipe">Chef·fe d'équipe</md-checkbox>
+                    </div>
+                    <div class="md-layout-item md-size-25 md-small-size-50" style="display: flex;">
+                        <md-field>
+                            <label>Etape-mailer</label>
+                            <md-select v-model="form.affaire_etapes_mailer" multiple md-dense>
+                                <md-optgroup label="Priorité 1">
+                                    <md-option v-for="item in affaireEtapesAll.prio1" :value="item.id">{{ item.nom_ }}</md-option>
+                                </md-optgroup>
+                                <md-optgroup label="Priorité 2">
+                                    <md-option v-for="item in affaireEtapesAll.prio2" :value="item.id">{{ item.nom_ }}</md-option>
+                                </md-optgroup>
+                            </md-select>
+                        </md-field>
                     </div>
                     <div class="md-layout-item md-size-100 md-small-size-100" style="text-align: right;">
                         <md-button class="md-accent md-elevation-1" @click="onCancelNewOperateur">Annuler</md-button>

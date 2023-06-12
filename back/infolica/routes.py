@@ -57,6 +57,7 @@ def includeme(config):
     config.add_route('operateur_by_id', '/infolica/api/operateurs/{id}')
     config.add_route('recherche_operateurs', '/infolica/api/recherche_operateurs')
     config.add_route('recherche_operateurs_s', '/infolica/api/recherche_operateurs/')
+    config.add_route('operateur_update', '/infolica/api/operateur_update')
     #Test (temp endpoint)
     config.add_route('test_client', '/infolica/api/test_client')
     #Controle_mutation
@@ -119,6 +120,7 @@ def includeme(config):
     config.add_route('affaire_etapes_by_affaire_id','/infolica/api/affaire_etapes/{id}')
     config.add_route('controle_etape','/infolica/api/controle_etape')
     config.add_route('check_etape_processus','/infolica/api/check_etape_processus')
+    config.add_route('etape_index_all','/infolica/api/etape_index_all')
     #Numeros affaires
     config.add_route('numero_affaires_by_numero_id','/infolica/api/numero_affaires/{id}')
     #Preavis affaire
