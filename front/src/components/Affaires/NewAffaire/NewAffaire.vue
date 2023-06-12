@@ -850,7 +850,7 @@ export default {
         }, 200);
       }
       if (this.affaireTypeRequirements.section_facture && this.client_facture_id === null) {
-        this.form.client_facture_id = client_id;
+        this.client_facture_id = client_id;
         this.$refs.ref_client_facture.getClientById(client_id);
       }
     },
