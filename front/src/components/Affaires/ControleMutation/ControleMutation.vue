@@ -201,6 +201,31 @@ export default {
         }
       }
 
+    },
+
+    /**
+     * trigger ctrl geos
+     */
+    async launchCtrlGeos() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_CONTROLE_MUTATION_GEOS_ENDPOINT + "?affaire_id=" + this.affaire.id,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      )
+      .then(response => {
+        if (response && response.data) {
+          let url = response.data.url;
+
+          window.open(url,  "_blank");
+
+          this.$root.$emit("ShowMessage", "Le contrôle va être lancé dans quelques instants");
+        }
+      })
+      .catch(err => {
+        handleException(err, this);
+      });
     }
   },
 

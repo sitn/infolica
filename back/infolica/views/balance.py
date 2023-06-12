@@ -23,7 +23,7 @@ def balance_generate_table_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    send_mail(request, [request.registry.settings["infolica_balance_mail"]], "Génération Balance Infolica\nMail généré automatiquement", "Infolica-Balance")
+    send_mail(request, [request.registry.settings["infolica_cron_mail_trigger"]], "Génération Balance Infolica\nMail généré automatiquement", "Infolica-Balance")
     return "ok"
     
 

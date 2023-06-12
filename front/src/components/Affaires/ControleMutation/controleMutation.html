@@ -17,7 +17,10 @@
             <md-card-expand-content>
                 <md-card-content v-bind:class="{ disabledElement: !permission.editAffaireAllowed }">
 
-                    <p v-if="controleMutation.date" style="margin-top: 0px;">Dernier contrôle effectué le {{controleMutation.date}} par {{controleMutation.operateur_prenom_nom}}</p>
+                    <div style="height: 50px;">
+                        <p v-if="controleMutation.date" style="margin-top: 0px; float: left;">Dernier contrôle effectué le {{controleMutation.date}} par {{controleMutation.operateur_prenom_nom}}</p>
+                        <md-button class="md-primary md-raised" style="float: right" md-dense @click="launchCtrlGeos"><md-icon style="margin-right: 5px; margin-bottom: 4px;">checklist</md-icon> Contrôles GEOMEDIA</md-button>
+                    </div>
 
                     <div v-if="controleMutation.id">
                         <div v-if="affaire.type_id === typesAffaires_conf.mpd">
