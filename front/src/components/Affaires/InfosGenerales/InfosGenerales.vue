@@ -181,7 +181,6 @@ export default {
       
       this.form.client_envoi_id = this.affaire.client_envoi_id;
       this.form.client_envoi_complement = this.affaire.client_envoi_complement;
-      
       this.infoGenReadonly = false;
       this.$emit('modify-off', false);
       
