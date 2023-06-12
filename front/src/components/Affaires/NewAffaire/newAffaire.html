@@ -105,6 +105,11 @@
                         </md-select>
                     </md-field>
                 </div>
+                <div class="md-layout-item md-size-50">
+                    <p style="color: red" id="mpd_msg" v-if="msg_mpd.show === true">
+                        L'affaire <router-link :to="{ name: 'AffairesDashboard', params: { id: msg_mpd.data.id }}">{{  msg_mpd.data.id  }}</router-link> ({{ msg_mpd.data.nom }}) existe déjà et n'est pas encore clôturée.
+                    </p>
+                </div>
             </div>
 
             <!-- Description de l'affaire -->

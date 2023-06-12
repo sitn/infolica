@@ -42,7 +42,6 @@ export default {
       etape: null,
       limitNbResults: true,
     },
-    searchClientsListe: [],
     showProgressBar: false,
     types_affaires: []
   }),

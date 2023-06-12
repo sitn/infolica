@@ -80,6 +80,10 @@ export default {
         urgent_echeance: null,
       },
       lastRecord: null,
+      msg_mpd: {
+        data: null,
+        show: false
+      },
       numerosReferences: [],
       operateurs_list: [],
       permission: {
@@ -837,6 +841,7 @@ export default {
      */
      defaultCompleteClients(client_id) {
       if (this.form.client_envoi_id === null) {
+        this.form.client_envoi_id = client_id;
         this.client_moral_personnes.envoi = this.client_moral_personnes.commande;
         this.$refs.ref_client_envoi.getClientById(client_id);
         
@@ -845,6 +850,7 @@ export default {
         }, 200);
       }
       if (this.affaireTypeRequirements.section_facture && this.client_facture_id === null) {
+        this.form.client_facture_id = client_id;
         this.$refs.ref_client_facture.getClientById(client_id);
       }
     },
@@ -984,8 +990,8 @@ export default {
 
           if (tmp.date_envoi) {
             // L'affaire a bien une date d'envoi
-            if (!tmp.date_cloture) {
-              // L'affaire n'est pas clôturée
+            if (!tmp.date_cloture || tmp.type_id === Number(process.env.VUE_APP_TYPE_AFFAIRE_SERVITUDE)) {
+              // L'affaire n'est pas clôturée ou l'affaire est clôturée mais est de type servitude
 
               _this.selectedModificationAffaire = response.data;
 
@@ -1289,12 +1295,35 @@ export default {
     updateAffaireName(val) {
       if (this.form.type && this.form.type.id == this.typesAffaires_conf.mpd) {
         if (val) {
-          this.form.nom = "Mise à jour périodique - Plan " + val; 
+          this.form.nom = "Mise à jour périodique - Plan " + val;
+          
+          this.checkAvailableAffaireMPD(this.form.cadastre.id, val);
         } else {
           this.form.nom = "Mise à jour périodique"; 
         }
       }
     },
+
+
+    async checkAvailableAffaireMPD(cadastre_id, plan_no) {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_MPD_BY_CADPLAN_ENDPOINT + '?cadastre_id=' + cadastre_id + '&plan_no=' + plan_no,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.msg_mpd.data = response.data;
+          this.msg_mpd.show = true;
+          this.form.plan = null;
+        } else {
+          this.msg_mpd.show = false;
+          this.msg_mpd.data = null;
+        }
+      }).catch(err => this.handleException(err, this));
+    },
+
 
     selectedClient(client_id, client_type) {
       if (client_type === 'client_facture') {
