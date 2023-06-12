@@ -149,16 +149,24 @@
                         </md-card-header>
                         <md-card-content>
                             <div class="md-layout-item md-size-100 md-small-size-100">
-                                <md-autocomplete v-model="form.client_commande" :md-options="searchClientsListe" @md-changed="searchClients(form.client_commande)" required md-dense>
-                                    <label><strong style="color: blue">Commandé par</strong></label>
-                                    <template slot="md-autocomplete-empty" slot-scope="{ term }"  v-if="term && term.length > 2">
-                                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editClientAllowed">Créer le client !</a>
-                                    </template>
-                                </md-autocomplete>
+                                <ClientSearch
+                                    :client_id="form.client_commande_id"
+                                    @update:client_id="client_id => selectedClient(client_id, 'client_commande')"
+                                    :initial_client_id="form.client_commande_id"
+                                    :permission_createClient="permission.editClientAllowed"
+                                    :old_clients="false"
+                                    validation_error_msg="Le client qui qui a commandé l'affaire doit être renseigné ici"
+                                    label="Commandé par" 
+                                    ref="ref_client_commande"/>
                             </div>
-                            <div class="md-layout-item md-size-50 md-small-size-100"  v-if="form.client_commande.type_id === clientTypes_conf.moral">
-                                <md-autocomplete v-model="form.client_commande_complement" :md-options="clientContactsListe" @md-opened="getClientContact(form.client_commande)" md-dense>
+                            <div class="md-layout-item md-size-50 md-small-size-100"  v-if="form.client_commande_type_id === clientTypes_conf.moral">
+                                <md-autocomplete v-model="form.client_commande_complement"
+                                    :md-options="client_moral_personnes.commande"
+                                    md-dense>
                                     <label>Personne de contact</label>
+                                    <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                        Le contact "{{ term }}" n'existe pas dans la base. <a @click="openCreateContact(form.client_commande.id)">Le créer !</a>
+                                    </template>
                                 </md-autocomplete>
                             </div>
                         </md-card-content>
@@ -170,16 +178,24 @@
                         </md-card-header>
                         <md-card-content>
                             <div class="md-layout-item md-size-100 md-small-size-100">
-                                <md-autocomplete v-model="form.client_envoi" :md-options="searchClientsListe" @md-changed="searchClients(form.client_envoi)" required md-dense>
-                                    <label><strong style="color: blue">Envoyer à</strong></label>
-                                    <template slot="md-autocomplete-empty" slot-scope="{ term }"  v-if="term && term.length > 2">
-                                        Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission.editClientAllowed">Créer le client !</a>
-                                    </template>
-                                </md-autocomplete>
+                                <ClientSearch
+                                    :client_id="form.client_envoi_id"
+                                    @update:client_id="client_id => selectedClient(client_id, 'client_envoi')"
+                                    :initial_client_id="form.client_envoi_id"
+                                    :permission_createClient="permission.editClientAllowed"
+                                    :old_clients="false"
+                                    validation_error_msg="Le client qui qui a commandé l'affaire doit être renseigné ici"
+                                    label="Envoyer à" 
+                                    ref="ref_client_envoi"/>
                             </div>
-                            <div class="md-layout-item md-size-50 md-small-size-100" v-if="form.client_envoi.type_id === clientTypes_conf.moral">
-                                <md-autocomplete v-model="form.client_envoi_complement" :md-options="clientContactsListe" @md-opened="getClientContact(form.client_envoi)" md-dense>
+                            <div class="md-layout-item md-size-50 md-small-size-100" v-if="form.client_envoi_type_id === clientTypes_conf.moral">
+                                <md-autocomplete v-model="form.client_envoi_complement"
+                                    :md-options="client_moral_personnes.envoi"
+                                    md-dense>
                                     <label>À l'attention de...</label>
+                                    <template slot="md-autocomplete-empty" slot-scope="{ term }">
+                                        Le contact "{{ term }}" n'existe pas dans la base. <a @click="openCreateContact(form.client_envoi.id)">Le créer !</a>
+                                    </template>
                                 </md-autocomplete>
                             </div>
                         </md-card-content>

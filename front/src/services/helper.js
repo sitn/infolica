@@ -161,36 +161,6 @@ export const getClients = async function (id) {
     });
 };
 
-/**
- * search Client by term
- */
-export const getClientsByTerm = async function(conditions) {
-    let params = [];
-    if (conditions && typeof conditions === 'object') {
-        for (const property in conditions) {
-            params.push(property + "=" + conditions[property]);
-        }
-    }
-    
-    if (params.length > 0) {
-        params = "?" + params.join("&");
-    } else {
-        params = "";
-    } 
-
-    return new Promise((resolve, reject) => {
-        axios.get(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_ENDPOINT + params,
-            {
-                withCredentials: true,
-                headers: {"accept": "application/json"}
-            }
-        )
-        .then(response => resolve(response))
-        .catch(err => reject(err));
-    });
-};
-
 export const setClientsAdresse_ = function(clients, sep=", ") {
     let isArray = true;
     if (!Array.isArray(clients)) {
@@ -278,14 +248,30 @@ export const stringifyAutocomplete2 = function(liste, keys=["nom"], sep=", ", ne
         keys = [keys];
     }
 
-    liste.forEach(x => {
-        let nom_ = [];
-        keys.forEach(key => nom_.push(x[key]));
+    if (Array.isArray(liste) === true) {
+    
+        // Here are treated objects in lists
+        liste.forEach(x => {
+            let nom_ = [];
+            keys.forEach(key => nom_.push(x[key]));
+    
+            x[new_key] = nom_.filter(Boolean).join(sep);
+            x.toLowerCase = () => String(x[new_key]).toLowerCase();
+            x.toString = () => String(x[new_key]);
+        });
+    
+    } else {
 
-        x[new_key] = nom_.filter(Boolean).join(sep);
-        x.toLowerCase = () => String(x[new_key]).toLowerCase();
-        x.toString = () => String(x[new_key]);
-    });
+        // Here are treated objects solo
+        let nom_ = [];
+        keys.forEach(key => nom_.push(liste[key]))
+
+        liste[new_key] = nom_.filter(Boolean).join(sep);
+        liste.toLowerCase = () => String(liste[new_key]).toLowerCase();
+        liste.toString = () => String(liste[new_key]);
+
+    }
+
     return liste;
 };
 

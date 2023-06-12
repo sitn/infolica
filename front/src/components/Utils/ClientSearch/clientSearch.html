@@ -1,0 +1,19 @@
+<div id="clientSearch">
+    <md-autocomplete :class="getValidationClass('client')"
+        id="clientSearchAutocomplete"
+        v-model="client"
+        :md-options="liste_clients"
+        @md-changed="searchClient"
+        @md-selected="$emit('update:client_id', $event.id)"
+        :title="title"
+        md-dense>
+
+        <label>{{ label }}</label>
+
+        <template slot="md-autocomplete-empty" slot-scope="{ term }" v-if="term && term.length > 2">
+            Pas de client correspondant à la recherche "{{ term }}". <a @click="openCreateClient" v-if="permission_createClient">Créer le client !</a>
+        </template>
+
+        <span class="md-error" v-if="!$v.client.required">{{ validation_error_msg }}</span>
+    </md-autocomplete>
+</div>

@@ -8,18 +8,19 @@ import {
   getTypesAffaires,
   getEtapesAffaire,
   getOperateurs,
-  stringifyAutocomplete,
   stringifyAutocomplete2,
   checkPermission,
-  getClientsByTerm,
-  setClientsAdresse_
 } from "@/services/helper";
 import {handleException} from '@/services/exceptionsHandler';
+import ClientSearch from "@/components/Utils/ClientSearch/ClientSearch.vue";
 
 const moment = require('moment');
 
 export default {
   name: "Affaires",
+  components: {
+    ClientSearch
+  },
   props: {},
   data: () => ({
     affaires: [],
@@ -34,7 +35,7 @@ export default {
       nom: null,
       cadastre: "",
       type: "",
-      client: null,
+      client_id: null,
       operateur: null,
       dateFrom: null,
       dateTo: null,
@@ -89,29 +90,6 @@ export default {
     },
    
     /**
-     * searchClient
-     */
-    async searchClient(searchTerm) {
-      let conditions = {
-        'searchTerm': searchTerm,
-        'old_clients': true
-      };
-
-      getClientsByTerm(conditions)
-      .then(response => {
-        if (response && response.data) {
-          let tmp = setClientsAdresse_(response.data);
-          tmp.forEach(x => {
-            if (x.sortie) {
-              x.adresse_ = "(ancien client) " + x.adresse_;
-            }
-          });
-          this.clients = stringifyAutocomplete(tmp, "adresse_");
-        }
-      }).catch(err => handleException(err, this));
-    },
-   
-    /**
      * init operateurs liste
      */
     async initOperateursListe() {
@@ -144,12 +122,13 @@ export default {
       this.search.nom = null;
       this.search.cadastre = "";
       this.search.type = "";
-      this.search.client = null;
       this.search.operateur = null;
       this.search.dateFrom = null;
       this.search.dateTo = null;
       this.search.etape = null;
       this.search.limitNbResults = true;
+      this.search.client_id = null;
+      this.$root.$emit('resetSearchClientTerm');
     },
     
     /*
@@ -178,8 +157,8 @@ export default {
         formData.append("type_affaire", this.search.type);
       }
       
-      if (this.search.client && this.search.client.id !== null) {
-        formData.append("client_id", this.search.client.id);
+      if (this.search.client_id) {
+        formData.append("client_id", this.search.client_id);
       }
 
       if (this.search.operateur && this.search.operateur.id !== null) {
