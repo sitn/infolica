@@ -6,8 +6,7 @@
 import {handleException} from '@/services/exceptionsHandler';
 import {checkPermission,
         getClients,
-        filterList,
-        getClientsByTerm } from '@/services/helper';
+        filterList } from '@/services/helper';
 
 import moment from "moment";
 
@@ -190,13 +189,15 @@ export default {
     async searchClientsByTerm() {
       this.clearForm();
 
-      let conditions = {
-        "searchTerm": this.searchTerm? this.searchTerm: "",
-        "old_clients": this.searchOldClientMode,
-      };
-
-      getClientsByTerm(conditions)
-      .then(response => {
+      let params = '?old_clients=' + this.searchOldClientMode + '&searchTerm=' + this.searchTerm;
+      
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_BY_TERM_ENDPOINT + params,
+        {
+          withCredentials: true,
+          headers: {"accept": "application/json"}
+        }
+      ).then(response => {
         if (response && response.data) {
           this.clients = this.setDateformat(response.data);
         }

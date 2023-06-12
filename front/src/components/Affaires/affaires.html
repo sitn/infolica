@@ -106,19 +106,16 @@
 
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-size-50">
-                            <md-autocomplete v-model="search.client"
-                                :md-options="clients"
-                                @md-changed="searchClient"
-                                md-dense>
-                                <label>Client</label>
-                            </md-autocomplete>
+                            <ClientSearch
+                                :client_id="search.client_id"
+                                @update:client_id="value => search.client_id = value"/>
                         </div>
                     </div>
 
                     <!-- Search Actions -->
                     <md-card-actions>
                         <md-button class="md-raised"
-                            v-bind:disabled="!search.id && !search.nom && !search.cadastre && !search.type"
+                            v-bind:disabled="!search.id && !search.nom && !search.cadastre && !search.type && !search.client_id"
                             v-on:click="clearForm">Réinitialiser</md-button>
                         <md-button class="md-raised md-primary" v-on:click="searchAffaires">Rechercher</md-button>
                     </md-card-actions>

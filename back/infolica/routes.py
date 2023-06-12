@@ -11,9 +11,12 @@ def includeme(config):
     config.add_route('client_by_id', '/infolica/api/clients/{id}')
     config.add_route('recherche_clients', '/infolica/api/recherche_clients')
     config.add_route('recherche_clients_s', '/infolica/api/recherche_clients/')
+    config.add_route('search_clients_by_term', '/infolica/api/search_clients_by_term')
     config.add_route('client_moral_personnes_by_client_id', '/infolica/api/client_moral_personnes/{client_id}')
     config.add_route('client_moral_personnes', '/infolica/api/client_moral_personnes')
     config.add_route('client_moral_personnes_s', '/infolica/api/client_moral_personnes/')
+    config.add_route('search_clients_aggregated_by_term', '/infolica/api/search_clients_aggregated_by_term')
+    config.add_route('search_client_aggregated_by_id', '/infolica/api/search_client_aggregated/{id}')
     #Affaires
     config.add_route('affaires', '/infolica/api/affaires')
     config.add_route('affaires_s', '/infolica/api/affaires/')
@@ -37,6 +40,7 @@ def includeme(config):
     config.add_route('save_bf_rp', '/infolica/api/save_bf_rp')
     config.add_route('activer_affaire', '/infolica/api/activer_affaire')
     config.add_route('affaire_mpd', '/infolica/api/affaire_mpd')
+    config.add_route('affaire_cloture', '/infolica/api/affaire_cloture')
     #Factures
     config.add_route('factures', '/infolica/api/factures')
     config.add_route('factures_s', '/infolica/api/factures/')
@@ -58,6 +62,7 @@ def includeme(config):
     config.add_route('operateur_by_id', '/infolica/api/operateurs/{id}')
     config.add_route('recherche_operateurs', '/infolica/api/recherche_operateurs')
     config.add_route('recherche_operateurs_s', '/infolica/api/recherche_operateurs/')
+    config.add_route('operateur_update', '/infolica/api/operateur_update')
     #Test (temp endpoint)
     config.add_route('test_client', '/infolica/api/test_client')
     #Controle_mutation
@@ -65,6 +70,7 @@ def includeme(config):
     config.add_route('controles_mutations_s','/infolica/api/controles_mutations/')
     config.add_route('controle_mutation_by_id', '/infolica/api/controles_mutations/{id}')
     config.add_route('controle_mutation_by_affaire_id', '/infolica/api/affaire_controles_mutations/{id}')
+    config.add_route('controle_mutation_geos','/infolica/api/controle_mutation_geos')
     #Controle_PPE
     config.add_route('controles_ppe','/infolica/api/controles_ppe')
     config.add_route('controles_ppe_s','/infolica/api/controles_ppe/')
@@ -120,6 +126,7 @@ def includeme(config):
     config.add_route('affaire_etapes_by_affaire_id','/infolica/api/affaire_etapes/{id}')
     config.add_route('controle_etape','/infolica/api/controle_etape')
     config.add_route('check_etape_processus','/infolica/api/check_etape_processus')
+    config.add_route('etape_index_all','/infolica/api/etape_index_all')
     #Numeros affaires
     config.add_route('numero_affaires_by_numero_id','/infolica/api/numero_affaires/{id}')
     #Preavis affaire

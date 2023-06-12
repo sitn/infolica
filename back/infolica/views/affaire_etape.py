@@ -77,7 +77,7 @@ def etapes_index_view(request):
 
     records = request.dbsession.query(AffaireEtapeIndex).filter(
         AffaireEtapeIndex.ordre != None
-        ).order_by(AffaireEtapeIndex.ordre.asc()).all()
+    ).order_by(AffaireEtapeIndex.ordre.asc()).all()
     return Utils.serialize_many(records)
 
 
@@ -246,3 +246,41 @@ def check_etape_processus_view(request):
         result = True
 
     return result
+
+
+@view_config(route_name='etape_index_all', request_method='GET', renderer='json')
+def etape_index_all_view(request):
+    """
+    Return all etapes
+    """
+    # Check connected
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+    
+    affaire_etape_priorite_1_id = int(request.registry.settings['affaire_etape_priorite_1_id'])
+
+    aei = request.dbsession.query(
+        AffaireEtapeIndex
+    ).order_by(
+        AffaireEtapeIndex.priorite,
+        AffaireEtapeIndex.ordre,
+    ).all()
+
+    etapes = {
+        'prio1': [],
+        'prio2': []
+    }
+
+    for etape in aei:
+        if etape.priorite == affaire_etape_priorite_1_id:
+            etapes['prio1'].append({
+                'id': etape.id,
+                'etape': etape.nom,
+            })
+        else:
+            etapes['prio2'].append({
+                'id': etape.id,
+                'etape': etape.nom,
+            })
+
+    return etapes

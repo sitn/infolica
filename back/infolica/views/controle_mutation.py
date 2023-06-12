@@ -139,3 +139,23 @@ def controles_mutations_delete_view(request):
     request.dbsession.delete(record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(ControleMutation.__tablename__))
+
+
+@view_config(route_name='controle_mutation_geos', request_method='GET', renderer='json')
+def controles_mutations_delete_view(request):
+    """
+    Trigger controle_mutation_geos
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_edition']):
+        raise exc.HTTPForbidden()
+
+    # Get controle mutation id
+    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+
+    operateur = Utils.getOperateurFromUser(request)
+
+    url = request.registry.settings['infolica_cron_url_trigger'] + 'controle_mutation_geos?' \
+                'variables=mutation={}|initiale={}|mail={}'.format(affaire_id, operateur.initiales, operateur.mail)
+    
+    return {'url': url}
