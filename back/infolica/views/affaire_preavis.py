@@ -231,7 +231,6 @@ def service_externe_preavis_view(request):
             query = query.filter(
                 Preavis.date_reponse == None,
                 Preavis.etape == 'externe',
-                VAffaire.date_envoi == None,
                 VAffaire.date_cloture == None
             )
         elif status == "closed":
