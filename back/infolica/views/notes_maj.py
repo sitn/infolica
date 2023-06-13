@@ -38,7 +38,7 @@ def version_view(request):
     """
     Return version
     """
-    model_version = request.dbsession.query(NotesMAJ).order_by(NotesMAJ.version.desc()).first()
+    model_version = request.dbsession.query(NotesMAJ).order_by(NotesMAJ.id.desc()).first()
     model_delai = request.dbsession.query(NotesMAJ).order_by(NotesMAJ.delai.desc()).first()
     model_lastId = request.dbsession.query(NotesMAJ).order_by(NotesMAJ.id.desc()).first()
 
