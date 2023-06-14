@@ -760,9 +760,13 @@ export default {
 
       // test validation of clients which are in a different component
       let test = true;
-      test = test && this.$refs.ref_client_commande.validator();
-      test = test && this.$refs.ref_client_envoi.validator();
-      if (this.affaireTypeRequirements && this.affaireTypeRequirements.section_facture) {
+      if (this.$refs.ref_client_commande) {
+        test = test && this.$refs.ref_client_commande.validator();
+      }
+      if (this.$refs.ref_client_envoi) {
+        test = test && this.$refs.ref_client_envoi.validator();
+      }
+      if (this.affaireTypeRequirements && this.affaireTypeRequirements.section_facture && this.$refs.ref_client_facture) {
         test = test && this.$refs.ref_client_facture.validator();
       }
 
@@ -910,7 +914,7 @@ export default {
         this.form.client_commande_id = process.env.VUE_APP_CLIENT_CADASTRATION_ID;
         this.form.client_envoi_id = process.env.VUE_APP_CLIENT_CADASTRATION_ID;
         this.form.client_envoi_complement = null;
-        this.client_facture_id = null;
+        this.client_facture_id = process.env.VUE_APP_CLIENT_CADASTRATION_ID;
         this.client_facture_premiere_ligne = null;
         this.form.nom = "Cadastration sur ";
       } else if (this.form.type.id === this.typesAffaires_conf.mpd) {
@@ -1005,8 +1009,12 @@ export default {
               _this.setModificationAffaireNuméros();
 
               // fill clients from old affaire
-              this.$refs.ref_client_commande.getClientById(_this.selectedModificationAffaire.client_commande_id);
-              this.$refs.ref_client_envoi.getClientById(_this.selectedModificationAffaire.client_envoi_id);
+              if (this.$refs.ref_client_commande) {
+                this.$refs.ref_client_commande.getClientById(_this.selectedModificationAffaire.client_commande_id);
+              }
+              if (this.$refs.ref_client_envoi) {
+                this.$refs.ref_client_envoi.getClientById(_this.selectedModificationAffaire.client_envoi_id);
+              }
               this.getParentAffaireFactureClients(this.form.affaire_base_id).then(() => {
                 this.$refs.ref_client_facture.getClientById(this.client_facture_id);
               });
