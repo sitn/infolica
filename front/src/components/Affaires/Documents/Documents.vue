@@ -3,7 +3,7 @@
 
 
 <script>
-import { checkPermission } from '@/services/helper'
+import { checkPermission, getCurrentUserRoleId } from '@/services/helper'
 import { handleException } from '@/services/exceptionsHandler'
 import axios from "axios";
 
@@ -204,7 +204,8 @@ export default {
     });
 
     // show edit affaire path
-    if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN)) {
+    let role_id = getCurrentUserRoleId();
+    if(checkPermission(process.env.VUE_APP_FONCTION_ADMIN) || (role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID))) {
       this.showEditAffairePathBtn = true;
     }
 
