@@ -19,6 +19,7 @@ export default {
           session_user: {},
           versionBtn: {
             version: null,
+            version_show: process.env.VUE_APP_VERSION,
             showBadge: false,
           }
       }
