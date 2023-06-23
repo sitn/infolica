@@ -6,9 +6,7 @@
 import {handleException} from '@/services/exceptionsHandler';
 import {stringifyAutocomplete,
         getDocument,
-        getCurrentUserRoleId,
-        getOperateurs,
-        stringifyAutocomplete2} from '@/services/helper';
+        getCurrentUserRoleId} from '@/services/helper';
 
 import ClientSearch from "@/components/Utils/ClientSearch/ClientSearch.vue";
 
@@ -38,7 +36,6 @@ export default {
         urgent: false,
         urgent_echeance: null,
       },
-      operateursListe: [],
       typesAffairesListe_all: [],
       typesAffairesListe: [],
       affaires_source: [],
@@ -54,8 +51,6 @@ export default {
         envoi: [],
       },
       form: {
-        technicien: null,
-        responsable: null,
         typeAffaire: null,
         client_commande_id: null,
         client_commande_type_id: null,
@@ -106,7 +101,6 @@ export default {
     async onConfirmEdit() {
       let formData = new FormData();
       formData.append("id_affaire", this.affaire.id);
-      formData.append("technicien_id", this.form.technicien.id);
       formData.append("type_id", this.form.typeAffaire.id);
       formData.append("information", this.affaire.information);
       formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
@@ -157,23 +151,11 @@ export default {
         });
     },
 
-    /**
-     * Initialiser la liste des opérateurs
-     */
-    async initOperateursListe() {
-      getOperateurs()
-      .then(response => {
-        if (response && response.data) {
-          this.operateursListe = stringifyAutocomplete2(response.data, "prenom_nom", null, "prenom_nom");
-        }
-      }).catch(err => handleException(err, this));
-    },
 
     /**
      * Open Edit mode
      */
     openEditMode() {
-      this.form.technicien = this.operateursListe.filter(x => x.id === this.affaire.technicien_id)[0];
       this.form.typeAffaire = this.typesAffairesListe_all.filter(x => x.id === this.affaire.type_id)[0];
 
       this.form.client_commande_id = this.affaire.client_commande_id;
@@ -478,7 +460,6 @@ export default {
 
   mounted: function() {
     this.copyAffaire();
-    this.initOperateursListe();
     this.initTypesAffairesListe();
     this.searchAffaireSource();
     this.searchAffaireDestination();
