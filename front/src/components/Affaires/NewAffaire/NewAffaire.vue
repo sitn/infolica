@@ -907,22 +907,23 @@ export default {
       }
 
       // is facture required?
-      await this.getAffaireTypeRequirements(selectedType.id)
+      await this.getAffaireTypeRequirements(selectedType.id);
+      let client_cadastration_id = Number(process.env.VUE_APP_CLIENT_CADASTRATION_ID);
 
       if (this.form.type.id === this.typesAffaires_conf.cadastration) {
         this.showClientsForm = false;
-        this.form.client_commande_id = process.env.VUE_APP_CLIENT_CADASTRATION_ID;
-        this.form.client_envoi_id = process.env.VUE_APP_CLIENT_CADASTRATION_ID;
+        this.form.client_commande_id = client_cadastration_id;
+        this.form.client_envoi_id = client_cadastration_id;
         this.form.client_envoi_complement = null;
-        this.client_facture_id = process.env.VUE_APP_CLIENT_CADASTRATION_ID;
+        this.client_facture_id = client_cadastration_id;
         this.client_facture_premiere_ligne = null;
         this.form.nom = "Cadastration sur ";
       } else if (this.form.type.id === this.typesAffaires_conf.mpd) {
-        this.form.client_commande_id = process.env.VUE_APP_CLIENT_CADASTRATION_ID;
-        this.form.client_envoi_id = process.env.VUE_APP_CLIENT_CADASTRATION_ID;
+        this.form.client_commande_id = client_cadastration_id;
+        this.form.client_envoi_id = client_cadastration_id;
         this.form.client_envoi_complement = null;
         this.client_facture_premiere_ligne = null;
-        this.client_facture_id = process.env.VUE_APP_CLIENT_CADASTRATION_ID;
+        this.client_facture_id = client_cadastration_id;
         this.client_facture_premiere_ligne = null;
         this.form.nom = "Mise à jour périodique";
       } else {

@@ -21,6 +21,10 @@ export default {
       type: Number,
       default: null
     },
+    client_id: {
+      type: Number,
+      default: null
+    },
     label: {
       type: String,
       default: 'Client'
@@ -51,7 +55,6 @@ export default {
     return {
       client: null,
       liste_clients: [],
-      searchTerm: null
     };
   },
   
@@ -107,6 +110,11 @@ export default {
 
 
     async getClientById(client_id) {
+      if (client_id === null) {
+        this.client = '';
+        return;
+      }
+
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_AGGREGATED_BY_ID_ENDPOINT + '/' + client_id,
         {
@@ -154,24 +162,6 @@ export default {
 
   },
 
-  computed: {
-    value: {
-      get() {
-        return this.client_id;
-      },
-      set(value) {
-        if (value && value.id) {
-          this.client_id = value.id;
-          this.$emit('update:client_id', value.id);
-        }
-        if (value === null || value === '') {
-          this.client_id = value;
-          this.$emit('update:client_id', value);
-        }
-      }
-    }
-  },
-
   mounted: function() {
     if (this.initial_client_id !== null) {
       this.getClientById(this.initial_client_id);
@@ -179,6 +169,25 @@ export default {
 
 
     this.$root.$on('resetSearchClientTerm', () => { document.querySelector('#clientSearchAutocomplete > button').click(); });
+  },
+
+  watch: {
+    client_id: function() {
+      if (this.client_id !== null) {
+        this.getClientById(this.client_id);
+      } else {
+        this.client = '';
+      }
+    },
+    
+    client: function() {
+      if (this.client && this.client.id) {
+        this.$emit('update:client_id', this.client.id);
+      } else {
+        this.client_id = null;
+        this.$emit('update:client_id', null);
+      }
+    }
   }
 };
 
