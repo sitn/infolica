@@ -12,12 +12,7 @@ export const handleException = function (error, component) {
     }
     //Not authorized
     else if(code === 403){
-        if(component.$router && component.$router.currentRoute && component.$router.currentRoute.name != 'Login') {
-            component.$router.push({name: "Login", query: { redirect: component.$router.currentRoute.path }});
-            component.$root.$emit("ShowError", "Veuillez vous connecter pour continuer"); 
-        } else {
-            component.$root.$emit("ShowError", "Le nom d'utilisateur ou le mot de passe est incorrect");
-        }
+       component.$root.$emit("ShowError", "Veuillez vous connecter pour continuer"); 
     }
     //Custom error
     else if(error && error.msg){
@@ -38,4 +33,3 @@ export const handleException = function (error, component) {
        component.$root.$emit("ShowError", "Une erreur est survenue, contacter l'administrateur.");   
     }
 };
-

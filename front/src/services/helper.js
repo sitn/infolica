@@ -8,8 +8,11 @@ export const checkLogged = function () {
     var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
     
     //Set current user functions
-    if(session_user)
+    if(session_user){
         setCurrentUserFunctions();
+    } else {
+        alert("Veuillez vous connecter pour continuer")
+    }
     
     return session_user !== null;
 };
