@@ -5,13 +5,14 @@
 <script>
 import { handleException } from '@/services/exceptionsHandler'
 import { checkPermission, getCurrentUserRoleId } from '@/services/helper'
+import OperatorSelect from "@/components/Utils/OperatorSelect/OperatorSelect.vue";
 
 const moment = require('moment')
 
 export default {
   name: "Matdiff_mo",
-  props: {
-    operateurs: {type: Array},
+  components: {
+    OperatorSelect,
   },
   data: () => {
     return {

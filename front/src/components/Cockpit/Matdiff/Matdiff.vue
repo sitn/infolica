@@ -16,7 +16,6 @@ export default {
     Matdiff_ctrl
   },
   props: {
-    operateurs: {type: Array},
     showMatdiff_secr: {type: Boolean},
     showMatdiff_mo: {type: Boolean},
     showMatdiff_ctrl: {type: Boolean},
@@ -26,7 +25,6 @@ export default {
       affaires: [{}],
       affaires_bk: [{}],
       plural: "",
-      selectedOperateur_id: -1,
     }
   },
 };

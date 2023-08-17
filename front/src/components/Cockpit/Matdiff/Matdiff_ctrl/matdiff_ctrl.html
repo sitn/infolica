@@ -9,13 +9,13 @@
                 </div>
 
                 <div class="md-toolbar-section-end">
-                    <md-field style="margin-left: 50px; width: 250px">
-                        <label for="operateur">Opérateur·rice</label>
-                        <md-select v-model="selectedOperateur_id" name="operateur" id="operateur" @md-selected="getNumerosDifferes()" md-dense>
-                            <md-option :value="-1">Tous</md-option>
-                            <md-option v-for="item in operateurs" :value="item.id">{{ item.prenom_nom }}</md-option>
-                        </md-select>
-                    </md-field>
+                    <operatorSelect
+                        :operateur_id="selectedOperateur_id"
+                        @update:operateur_id="newValue => selectedOperateur_id = newValue"
+                        @update:selected="getNumerosDifferes"
+                        :select_all_permitted="true"
+                        :inactive_operateurs_permitted="true"
+                    />
                 </div>
             </md-table-toolbar>
 

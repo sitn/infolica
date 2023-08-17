@@ -63,6 +63,7 @@ def includeme(config):
     config.add_route('recherche_operateurs', '/infolica/api/recherche_operateurs')
     config.add_route('recherche_operateurs_s', '/infolica/api/recherche_operateurs/')
     config.add_route('operateur_update', '/infolica/api/operateur_update')
+    config.add_route('search_operateur_aggregated', '/infolica/api/search_operateur_aggregated')
     #Test (temp endpoint)
     config.add_route('test_client', '/infolica/api/test_client')
     #Controle_mutation

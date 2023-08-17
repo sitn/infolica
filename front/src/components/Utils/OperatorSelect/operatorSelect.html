@@ -1,0 +1,35 @@
+<div id="operatorSelect">
+    <md-field class="select-field" :class="getValidationClass('operateur_id')">
+
+        <label for="select-operateur">{{ label }}</label>
+
+        <md-select 
+            name="select-operateur"
+            id="select-operateur"
+            :value="operateur_id"
+            @input="$emit('update:operateur_id', $event)"
+            @md-selected="$emit('update:selected')"
+            :title="title"
+            md-dense>
+
+            <md-option :value="-1" v-if="select_all_permitted">Tous</md-option>
+
+            <div v-if="inactive_operateurs_permitted">
+                <md-optgroup label="Opérateurs actifs">
+                    <md-option v-for="item in liste_operateurs.active" :value="item.id">{{ item.prenom_nom }}</md-option>
+                </md-optgroup>
+            </div>
+            <div v-else>
+                <md-option v-for="item in liste_operateurs.active" :value="item.id">{{ item.prenom_nom }}</md-option>
+            </div>
+
+            <md-optgroup label="Opérateurs inactifs" v-if="inactive_operateurs_permitted">
+                <md-option v-for="item in liste_operateurs.inactive" :value="item.id"><i>{{ item.prenom_nom }}</i></md-option>
+            </md-optgroup>
+
+        </md-select>
+
+        <span class="md-error" v-if="!$v.operateur_id.required">{{ validation_error_msg }}</span>
+
+    </md-field>
+</div>

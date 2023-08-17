@@ -4,15 +4,17 @@
 
 <script>
 import Matdiff from "@/components/Cockpit/Matdiff/Matdiff.vue";
+import OperatorSelect from "@/components/Utils/OperatorSelect/OperatorSelect.vue";
 import Snow from "@/components/Utils/Snow/Snow.vue";
 
 import { handleException } from '@/services/exceptionsHandler';
-import { checkPermission, getOperateurs, stringifyAutocomplete, stringifyAutocomplete2, getCurrentUserRoleId } from '@/services/helper';
+import { checkPermission, stringifyAutocomplete, getCurrentUserRoleId } from '@/services/helper';
 
 export default {
   name: "Cockpit",
   components: {
       Matdiff,
+      OperatorSelect,
       Snow,
   },
   data: () => {
@@ -28,7 +30,6 @@ export default {
         affaireTypes: [],
         loadingAffaires: false,
         newAffaireAllowed: false,
-        operateurs: [],
         plural: '',
         refreshAffaire: null,
         showMatdiff_secr: false,
@@ -203,35 +204,6 @@ export default {
         return query;
     },
 
-    /**
-     * Get operateurs
-     */
-    async getOperateursList() {
-        return new Promise ((resolve, reject) => {
-            getOperateurs()
-            .then(response => {
-                if (response && response.data) {
-                    let tmp = response.data;
-                    tmp = tmp.filter(x => x.chef_equipe);
-    
-                    // set operateur by default if he is chef_equipe
-                    let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
-                    let currentUserRoleID = getCurrentUserRoleId();
-                    if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe) && (currentUserRoleID && [this.role.mo, this.role.ppe, this.role.mo_ppe].includes(currentUserRoleID))) {
-                        this.search.operateur_id = Number(currentUserID);
-                    }
-    
-                    tmp = stringifyAutocomplete2(tmp, "prenom_nom", null, "prenom_nom");
-    
-                    this.operateurs = tmp;
-                    resolve(tmp);
-                }
-            }).catch(err => {
-                handleException(err, this);
-                reject(err);
-            });
-        });
-    },
 
     /**
      * custom sort
@@ -287,16 +259,25 @@ export default {
         this.search.current_sort = this.current_sort;
         this.search.current_sort_order = this.current_sort_order;
         localStorage.setItem("infolica_cockpit_searchParams", JSON.stringify(this.search));
+    },
+
+    setOperatorFilter() {
+        // set operateur by default if he is chef_equipe
+        let currentUserChefEquipe = JSON.parse(localStorage.getItem("infolica_user")).chef_equipe;
+        let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
+        let currentUserRoleID = getCurrentUserRoleId();
+        if (currentUserChefEquipe && (currentUserRoleID && [this.role.mo, this.role.ppe, this.role.mo_ppe].includes(currentUserRoleID))) {
+            this.search.operateur_id = Number(currentUserID);
+        }
     }
 
   },
 
   mounted: function() {
-    this.getAffaireEtapes()
-    this.getAffaireTypes()
-    this.getOperateursList().then(() => {
-        this.getAffaire();
-    });
+    this.setOperatorFilter();
+    this.getAffaireEtapes();
+    this.getAffaireTypes();
+    this.getAffaire();
     this.getPermissions();
 
     // snow

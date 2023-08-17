@@ -4,13 +4,14 @@
 
 <script>
 import { handleException } from '@/services/exceptionsHandler'
+import OperatorSelect from "@/components/Utils/OperatorSelect/OperatorSelect.vue";
 
 const moment = require('moment')
 
 export default {
   name: "Matdiff_ctrl",
-  props: {
-    operateurs: {type: Array},
+  components: {
+      OperatorSelect,
   },
   data: () => {
     return {
