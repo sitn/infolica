@@ -360,8 +360,8 @@
                                             <div class="md-layout md-gutter">
                                                 <div class="md-layout-item md-size-30">
                                                     <div class="md-subhead">Général</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('gen_')">Tout cocher</md-button>
-                                                    <div id="gen_">
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('ctrl_coord-mpd-gen_')">Tout cocher</md-button>
+                                                    <div id="ctrl_coord-mpd-gen_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.ap_21">Répertoire de travail (bon endroit, bonne structure)</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.gen_pdf_travaux">Fichier PDF après MPD figurant les travaux en couleur</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.gen_scan_croquis">Scan du croquis terrain</md-checkbox>
@@ -372,8 +372,8 @@
           
                                                 <div class="md-layout-item md-size-30">
                                                     <div class="md-subhead">Base de données</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('geos_')">Tout cocher</md-button>
-                                                    <div id="geos_">
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('ctrl_coord-mpd-geos_')">Tout cocher</md-button>
+                                                    <div id="ctrl_coord-mpd-geos_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_couleur_pastilles">Toutes les pastilles sont vertes ou grises</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_couvsol_numerotation_pt_particuliers">Réservation des numéros de points particuliers (660)</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_couvsol_numerotation_bat">Réservation des numéros de bâtiments</md-checkbox>
@@ -385,8 +385,8 @@
                                                 
                                                 <div class="md-layout-item md-size-30">
                                                     <div class="md-subhead">Normes</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('normes_')">Tout cocher</md-button>
-                                                    <div id="normes_">
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('ctrl_coord-mpd-normes_')">Tout cocher</md-button>
+                                                    <div id="ctrl_coord-mpd-normes_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.normes_respect_petits_objects">Les objets du type : balcons, petits bâtiments, petites surfaces de nature respectent les normes (ne pas en saisir trop)</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.normes_bat_couv_digitalises">Pas de bâtiments ni de couverts digitalisés</md-checkbox>
                                                     </div>

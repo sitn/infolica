@@ -175,7 +175,7 @@ export default {
           for (const elem of fields[x].children) {
             if (elem.className === 'md-checkbox-container') {
               elem.click();
-              break
+              break;
             }
           }
         }
