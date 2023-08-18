@@ -40,7 +40,7 @@ export default {
             if (process.env.VUE_APP_SERVICE_MO === response.data.service) {
               this.$router.push(this.$route.query.redirect || { name: "Cockpit"});
             } else {
-                this.$router.push(this.$route.query.redirect || { name: "Preavis"});
+              this.$router.push(this.$route.query.redirect || { name: "Preavis"});
             }
           } else {
             this.showProgess = false;
@@ -48,9 +48,9 @@ export default {
           }
         })
         //Error 
-        .catch(err => {
+        .catch(() => {
           this.showProgess = false;
-          handleException(err, this);
+          this.$root.$emit('ShowError', "Le nom d'utilisateur ou le mot de passe est incorrect")
         });
       },
       

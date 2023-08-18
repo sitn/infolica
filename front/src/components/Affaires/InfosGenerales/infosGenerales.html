@@ -163,7 +163,7 @@
                                 md-dense>
                                 <label>Personne de contact</label>
                                 <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                    Le contact "{{ term }}" n'existe pas dans la base. <a @click="openCreateContact(form.client_commande.id)">Le créer !</a>
+                                    Le contact "{{ term }}" n'existe pas dans la base. <a @click="openCreateContact(form.client_commande_id)">Le créer !</a>
                                 </template>
                             </md-autocomplete>
                         </div>
@@ -192,7 +192,7 @@
                                 md-dense>
                                 <label>À l'attention de...</label>
                                 <template slot="md-autocomplete-empty" slot-scope="{ term }">
-                                    Le contact "{{ term }}" n'existe pas dans la base. <a @click="openCreateContact(form.client_envoi.id)">Le créer !</a>
+                                    Le contact "{{ term }}" n'existe pas dans la base. <a @click="openCreateContact(form.client_envoi_id)">Le créer !</a>
                                 </template>
                             </md-autocomplete>
                         </div>

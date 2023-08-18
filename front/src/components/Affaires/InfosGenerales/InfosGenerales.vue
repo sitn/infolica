@@ -456,6 +456,14 @@ export default {
       });
     },
 
+    /**
+     * open create contact
+     */
+     openCreateContact(client_id) {
+      let routeData = this.$router.resolve({name: "ClientsEdit", params: {id: client_id}});
+      window.open(routeData.href, "_blank");
+    },
+
   },
 
   mounted: function() {

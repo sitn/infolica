@@ -234,7 +234,6 @@
                         <ClientSearch id="client_commande"
                             :client_id="form.client_commande_id"
                             @update:client_id="client_id => selectedClient(client_id, 'client_commande')"
-                            :initial_client_id="form.client_commande_id"
                             :permission_createClient="permission.editClientAllowed"
                             :old_clients="false"
                             validation_error_msg="Le client qui a commandé l'affaire doit être renseigné ici"
@@ -264,7 +263,6 @@
                         <ClientSearch id="client_envoi"
                             :client_id="form.client_envoi_id"
                             @update:client_id="client_id => selectedClient(client_id, 'client_envoi')"
-                            :initial_client_id="form.client_envoi_id"
                             :permission_createClient="permission.editClientAllowed"
                             :old_clients="false"
                             validation_error_msg="Le client à qui l'on doit envoyer les documents doit être renseigné ici"
@@ -299,10 +297,9 @@
                         </div>
     
                         <div class="md-layout-item md-small-size-100 md-size-100">
-                            <ClientSearch id="client_envoi"
-                                :client_id="form.client_facture_id"
+                            <ClientSearch id="client_facture"
+                                :client_id="client_facture_id"
                                 @update:client_id="client_id => selectedClient(client_id, 'client_facture')"
-                                :initial_client_id="form.client_facture_id"
                                 :permission_createClient="permission.editClientAllowed"
                                 :old_clients="false"
                                 validation_error_msg="Le client à qui sera adressée la facture de l'affaire doit être renseigné ici"
