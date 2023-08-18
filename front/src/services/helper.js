@@ -11,7 +11,7 @@ export const checkLogged = function () {
     if(session_user){
         setCurrentUserFunctions();
     } else {
-        alert("Veuillez vous connecter pour continuer")
+        alert("Veuillez vous connecter pour continuer");
     }
     
     return session_user !== null;

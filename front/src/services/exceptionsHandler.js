@@ -12,7 +12,8 @@ export const handleException = function (error, component) {
     }
     //Not authorized
     else if(code === 403){
-       component.$root.$emit("ShowError", "Veuillez vous connecter pour continuer"); 
+        let a = component.$router.push({name: "Login", query: { redirect: component.$router.currentRoute.path }});
+        a.then(() => { component.$root.$emit("ShowError", "Veuillez vous connecter pour continuer") });
     }
     //Custom error
     else if(error && error.msg){
