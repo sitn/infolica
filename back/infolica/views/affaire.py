@@ -135,7 +135,7 @@ def affaire_cockpit_view(request):
         etape_datetime = datetime.strftime(affaire.etape_datetime, '%Y-%m-%d %H:%M:%S')
         etape_days_elapsed = (datetime.now().date() - affaire.etape_datetime.date()).days
         etape_days_elapsed_text = "aujourd'hui" if etape_days_elapsed == 0 else ("hier" if etape_days_elapsed == 1 else str(etape_days_elapsed) + " jours")
-        title = affaire.technicien_initiales + " — Affaire " + str(affaire.id) + " — " + affaire.cadastre + " — " + affaire.nom + " — Dans cette étape depuis " + etape_days_elapsed_text
+        title = affaire.technicien_initiales + " — Affaire " + str(affaire.id) + " — " + affaire.cadastre + " — " + (affaire.nom if affaire.nom is not None else "~ Aucune description ~") + " — Dans cette étape depuis " + etape_days_elapsed_text
         
         nb_preavis = request.dbsession.query(func.count(Preavis.affaire_id)).filter(Preavis.affaire_id == affaire.id).scalar()
         nb_closed_preavis = request.dbsession.query(func.count(Preavis.affaire_id)).filter(Preavis.affaire_id == affaire.id, Preavis.date_reponse != None).scalar()

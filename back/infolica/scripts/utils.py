@@ -414,8 +414,8 @@ class Utils(object):
         # Affaire autre
         elif affaire_type == request.registry.settings['affaire_type_autre_id']:
             permission = request.registry.settings['affaire_autre_edition']
-        # Affaire affaire_remaniement_parcellaire_id
-        elif affaire_type == request.registry.settings['affaire_remaniement_parcellaire_id']:
+        # Affaire affaire_type_remaniement_parcellaire_id
+        elif affaire_type == request.registry.settings['affaire_type_remaniement_parcellaire_id']:
             permission = request.registry.settings['affaire_remaniement_parcellaire_edition']
 
         return permission
