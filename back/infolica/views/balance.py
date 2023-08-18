@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*--
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-from sqlalchemy import and_
+from sqlalchemy import and_, text
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.models import Affaire, GeosBalance, Numero, NumeroEtatHisto, AffaireNumero
@@ -196,5 +196,119 @@ def balance_from_file_view(request):
                     })
     
     return balance
+
+
+# Route used by external applications
+@view_config(route_name='balance_from_affaire_id', request_method='GET', renderer='json')
+def get_balance_from_affaire_id(request):
+    """
+    Send entire balance of affaire_id in a 2d array format
+    """
+    
+    affaire_id = request.params["division_id"] if "division_id" in request.params else None
+    cadastre_id = int(request.params["cadastre_id"]) if "cadastre_id" in request.params else None
+    
+    if affaire_id is None:
+        return {'error': {'status_code': 400, 'detail': 'L\'identifiant de l\'affaire manque ! (affaire_id = {})'.format(affaire_id)}}
+
+    # get affaire
+    affaire = request.dbsession.query(Affaire)
+    if affaire_id.isnumeric():
+        affaire = affaire.filter(Affaire.id == affaire_id)
+    else:
+        affaire_no_access = ''
+        affaire_split = affaire_id.split('_')
+        if len(affaire_split) == 1:
+            last_char = "A"
+            for char in affaire_id:
+                char = int(char) if char.isdigit() else char
+                if type(last_char) == type(char):
+                    affaire_no_access += str(char)
+                else:
+                    affaire_no_access += "_" + str(char)
+                last_char = char
+
+            affaire_no_access += "_0"
+        elif len(affaire_split) == 2:
+            affaire_no_access = affaire_id + "_0"
+        elif len(affaire_split) == 3:
+            affaire_no_access = affaire_id
+        else:
+            raise exc.HTTPBadRequest()
+
+        affaire = affaire.filter(Affaire.no_access.ilike(affaire_no_access))
+    affaire = affaire.first()
+
+    if affaire is None:
+        return {'error': {'status_code': 400, 'detail': 'Cette affaire n\'existe pas ! (affaire_id = {})'.format(affaire_id)}}
+
+    if affaire.type_id not in [1, 6, 16, 17, 19]:
+        return {'error': {'status_code': 400, 'detail': 'Le type de cette affaire n\'est pas une division ! (affaire_id = {})'.format(affaire_id)}}
+
+    if affaire.date_envoi is None:
+        return {'error': {'status_code': 400, 'detail': 'Cette affaire n\'a pas encore été envoyée ! (affaire_id = {})'.format(affaire_id)}}
+
+    if affaire.cadastre_id != cadastre_id:
+        return {'error': {'status_code': 400, 'detail': 'Cette affaire est enregistrée sur un autre cadastre ! (affaire_id = {})'.format(affaire_id)}}
+
+    # get number relations
+    sql = " \
+        select nb.no_access as source, \
+            na.no_access as destination \
+        from infolica.numero_relation nr, \
+            infolica.numero nb, \
+            infolica.numero na \
+        where nr.numero_id_base = nb.id \
+            and nr.numero_id_associe = na.id \
+            and nr.relation_type_id = 1 \
+            and nr.affaire_id = {}; \
+    ".format(affaire.id)
+    
+    results = request.dbsession.execute(text(sql))
+    
+    source_bf = []
+    destination_bf = []
+    relations = []
+
+    for res in results:
+        if res.destination:
+            source_bf.append(res.source) if not res.source in source_bf else None
+            destination_bf.append(res.destination) if not res.destination in destination_bf else None
+            relations.append([res.source, res.destination])
+
+    # rename "0_1" into "DP" and rename "0_2" into "RP"
+    source_bf = ['DP' if x == '0_1' else x for x in source_bf]
+    destination_bf = ['DP' if x == '0_1' else x for x in destination_bf]
+    relations = [ ['DP' if y == '0_1' else y for y in x] for x in relations]
+    source_bf = ['RP' if x == '0_2' else x for x in source_bf]
+    destination_bf = ['RP' if x == '0_2' else x for x in destination_bf]
+    relations = [ ['RP' if y == '0_2' else y for y in x] for x in relations]
+
+    source_bf.sort()
+    destination_bf.sort()
+
+    balance = None
+
+    if len(source_bf) > 0 and len(destination_bf) > 0:
+        # initialize balance 2d list
+        balance = [[' ' for j in range(len(destination_bf)+1)] for i in range(len(source_bf)+1)]
+        
+        # 1rst line and row for headers
+        for i in range(len(source_bf)):
+            balance[i+1][0] = source_bf[i]
+        
+        for j in range(len(destination_bf)):
+            balance[0][j+1] = destination_bf[j]
+        
+
+        for rel in relations:
+            src_idx = source_bf.index(rel[0])+1
+            dst_idx = destination_bf.index(rel[1])+1
+            balance[src_idx][dst_idx] = 'X'
+    
+
+    return  {
+        'balance': balance
+    }
 
 

@@ -203,6 +203,7 @@ def includeme(config):
     config.add_route('operateur_notes_maj', '/infolica/api/operateur_notes_maj')
     #External ressources
     config.add_route('guichet_rf_saisie_pm', '/infolica/api/guichet_rf_saisie_pm')
+    config.add_route('balance_from_affaire_id', '/infolica/api/balance_from_affaire_id')
     #External services
     config.add_route('service_externe_preavis', '/infolica/api/service_externe_preavis')
     config.add_route('service_externe_affaire', '/infolica/api/service_externe_affaire')
