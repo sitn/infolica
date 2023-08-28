@@ -276,8 +276,11 @@ class TableauEmoluments(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     domaine = Column(Text, nullable=False)
     categorie = Column(Text, nullable=False)
+    categorie_id = Column(Integer)
     sous_categorie = Column(Text, nullable=False)
+    sous_categorie_id = Column(Integer)
     nom = Column(Text, nullable=False)
+    nom_auto = Column(Boolean)
     unite = Column(Text, nullable=False)
     montant = Column(Float, default=0.0, nullable=False)
     date_entree = Column(Date)
@@ -289,6 +292,8 @@ class TableauEmoluments(Base):
     batiment = Column(Boolean)
     bien_fonds = Column(Boolean)
     code = Column(String(8))
+    champ_editable = Column(Boolean)
+    calcul_auto = Column(Text)
 
 
 class EmolumentAffaire(Base):
