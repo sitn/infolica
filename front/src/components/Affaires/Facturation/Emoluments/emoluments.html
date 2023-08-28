@@ -1200,7 +1200,7 @@
                   <td class="tg-0lax position">{{ form_detail.travauxBureau28.nom }}</td>
                   <td class="tg-0lax alignCenter unite">{{ form_detail.travauxBureau28.unite }}</td>
                   <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxBureau28.prix_unitaire }} CHF</td>
-                  <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled || !form_general.utilise" v-model="form_detail.travauxBureau28.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxBureau28.nombre)>0, hideNulls: Number(form_detail.travauxBureau28.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
+                  <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxBureau28.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxBureau28.nombre)>0, hideNulls: Number(form_detail.travauxBureau28.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                   <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxBureau28.montant>0)">{{ form_detail.travauxBureau28.montant }} CHF</span></td>
                   <template v-for="i in form_general.nb_batiments">
                     <td class="tg-0lax nombre batiment-separator notEditable"></td>
@@ -1308,7 +1308,7 @@
                   <td class="tg-0lax position">{{ form_detail.travauxBureau37.nom }}</td>
                   <td class="tg-0lax alignCenter unite">{{ form_detail.travauxBureau37.unite }}</td>
                   <td class="tg-0lax alignRight prix_unitaire">{{ form_detail.travauxBureau37.prix_unitaire }} CHF</td>
-                  <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled || !form_general.utilise" v-model="form_detail.travauxBureau37.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxBureau37.nombre)>0, hideNulls: Number(form_detail.travauxBureau37.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
+                  <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="form_detail.travauxBureau37.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.travauxBureau37.nombre)>0, hideNulls: Number(form_detail.travauxBureau37.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                   <td class="tg-0lax montant alignRight"><span v-if="Number(form_detail.travauxBureau37.montant>0)">{{ form_detail.travauxBureau37.montant }} CHF</span></td>
                   <template v-for="i in form_general.nb_batiments">
                     <td class="tg-0lax nombre batiment-separator notEditable"></td>

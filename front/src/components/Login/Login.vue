@@ -33,15 +33,15 @@ export default {
             headers: {"Accept": "application/json"}
           }
         )
-        .then(response =>{
+        .then(response => {
           if(response && response.data && response.data.id){
-            this.processLogin(response.data);
-
-            if (process.env.VUE_APP_SERVICE_MO === response.data.service) {
-              this.$router.push(this.$route.query.redirect || { name: "Cockpit"});
-            } else {
-              this.$router.push(this.$route.query.redirect || { name: "Preavis"});
-            }
+            this.processLogin(response.data).then(() => {
+              if (process.env.VUE_APP_SERVICE_MO === response.data.service) {
+                this.$router.push(this.$route.query.redirect || { name: "Cockpit"});
+              } else {
+                this.$router.push(this.$route.query.redirect || { name: "Preavis"});
+              }
+            });
           } else {
             this.showProgess = false;
             this.$refs.userpass.value = "";
@@ -78,20 +78,23 @@ export default {
       /**
        * Process login
        */
-      processLogin (data) {
-        localStorage.setItem('infolica_user', JSON.stringify(data));
-        setCurrentUserFunctions().then(() => {
-          this.$root.$emit("notesMaj_hasAdminRights");
+      async processLogin (data) {
+        return new Promise((resolve) => {
+          localStorage.setItem('infolica_user', JSON.stringify(data));
+          setCurrentUserFunctions().then(() => {
+            this.$root.$emit("notesMaj_hasAdminRights");
+          });
+          this.$root.$emit('infolica_user_logged_in', data);
+          localStorage.removeItem('infolica_cockpit_searchParams');
+          resolve();
         });
-        this.$root.$emit('infolica_user_logged_in', data);
-        localStorage.removeItem('infolica_cockpit_searchParams');
       },
 
       /**
        * Process logout
        */
       processLogout () {
-        localStorage.setItem('infolica_user', null);
+        localStorage.removeItem('infolica_user');
         this.$root.$emit('notesMaj_set_default_params');
         this.$root.$emit('infolica_user_logged_out');
 

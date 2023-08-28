@@ -5,15 +5,7 @@ const moment = require('moment')
  * Check if the user is logged in
  */
 export const checkLogged = function () {
-    var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
-    
-    //Set current user functions
-    if(session_user){
-        setCurrentUserFunctions();
-    } else {
-        alert("Veuillez vous connecter pour continuer");
-    }
-    
+    let  session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
     return session_user !== null;
 };
 
@@ -22,7 +14,7 @@ export const checkLogged = function () {
  * Check permission
  */
 export const checkPermission = function (fonction) {
-    var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+    let session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
 
     if(session_user && session_user.fonctions && session_user.fonctions.indexOf(fonction) > -1){
         return true;
@@ -36,7 +28,7 @@ export const checkPermission = function (fonction) {
  * Get current user role id
  */
 export const getCurrentUserRoleId = function () {
-    var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+    let session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
     return (session_user && session_user.role_id) ? session_user.role_id : null;
 };
 
@@ -52,8 +44,8 @@ export const setCurrentUserFunctions = async function () {
             })
             .then(response =>{
                 if(response && response.data){
-                    var session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
-        
+                    let session_user = JSON.parse(localStorage.getItem('infolica_user')) || null;
+
                     if(session_user){
                         session_user.fonctions = response.data.fonctions;
                         session_user.role_id = response.data.role_id;
