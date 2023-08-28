@@ -12,8 +12,14 @@ export const handleException = function (error, component) {
     }
     //Not authorized
     else if(code === 403){
-        let a = component.$router.push({name: "Login", query: { redirect: component.$router.currentRoute.path }});
-        a.then(() => { component.$root.$emit("ShowError", "Veuillez vous connecter pour continuer") });
+        const currentRoute = component.$router.currentRoute;
+        if (currentRoute.name !== 'Login') {
+            const a = component.$router.push({name: "Login", query: { redirect: currentRoute.path }});
+            a.then(() => {
+                localStorage.removeItem('infolica_user');
+                component.$root.$emit("ShowError", "Veuillez vous connecter pour continuer") ;
+            });
+        }
     }
     //Custom error
     else if(error && error.msg){

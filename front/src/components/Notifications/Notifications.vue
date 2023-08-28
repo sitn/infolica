@@ -41,7 +41,7 @@ export default {
       this.msg = msg;
       this.isError = true;
       this.showSnackbar = true;
-      this.duration = 10000;
+      this.duration = 7500;
     });
 
     //Show Alert Dialog
