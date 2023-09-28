@@ -86,16 +86,25 @@ def numeros_relations_new_view(request, params=None):
     conditions.append(NumeroRelation.numero_id_associe == params['numero_id_associe'])
     conditions.append(NumeroRelation.relation_type_id == params['relation_type_id'])
     conditions.append(NumeroRelation.affaire_id == params['affaire_id'])
+
+    active_relation = False
+    if params['active_relation'] == 'true':
+        active_relation = True
+
     rel = request.dbsession.query(NumeroRelation).filter(*conditions).first()
-    if not rel is None:
+
+    if (rel is None and active_relation is False) or (rel is not None and active_relation is True):
         return None
-    
-    # Get numeros_relations instance
-    model = Utils.set_model_record(NumeroRelation(), params)
 
-    request.dbsession.add(model)
+    elif (rel is not None and active_relation is False):
+        request.dbsession.delete(rel)
+        return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(NumeroRelation.__tablename__))
 
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroRelation.__tablename__))
+    else:
+        # Get numeros_relations instance
+        model = Utils.set_model_record(NumeroRelation(), params)
+        request.dbsession.add(model)
+        return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroRelation.__tablename__))
 
 
 @view_config(route_name='numeros_relations', request_method='PUT', renderer='json')
