@@ -24,6 +24,7 @@
                 </md-card-content>
 
                 <md-card-actions v-if="editionBalance">
+                    <md-button class="md-accent md-elevation-3" @click="getNumerosRelations(); editionBalance = false">Annuler</md-button>
                     <md-button class="md-primary md-elevation-3" @click="saveBalance">Enregistrer</md-button>
                 </md-card-actions>
             </md-card>

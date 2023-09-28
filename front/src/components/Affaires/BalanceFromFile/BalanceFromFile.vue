@@ -234,6 +234,7 @@ export default {
           this.tableau_balance = this.constructTableauBalance(relation);
 
           this.showBalanceMenu = false;
+          this.editionBalance = true;
         }
       }).catch(err => handleException(err, this));
     },
@@ -526,23 +527,21 @@ export default {
         for (let newBF_i in oldBF_i.newBF) {
           
           // append relation
-          if (oldBF_i.newBF[newBF_i]) {
-            // Old number + check DP
-            if (oldBF_i.oldBF.toLowerCase().includes("dp")) {
-              numero_id_base = process.env.VUE_APP_NUMERO_DP_ID;
-            } else {
-              numero_id_base = checkBF.oldBF.filter(x => [x.cadastre_id, x.numero].join("_") === oldBF_i.oldBF)[0].id;
-            }
-            
-            // New number + check DP
-            if (newBF_i.toLowerCase().includes("dp")) {
-              numero_id_associe = process.env.VUE_APP_NUMERO_DP_ID;
-            } else {
-              numero_id_associe = checkBF.newBF.filter(x => [x.cadastre_id, x.numero].join("_") === newBF_i)[0].id;
-            }
-
-            promises.push( this.postNumerosRelation(numero_id_base, numero_id_associe) );
+          // Old number + check DP
+          if (oldBF_i.oldBF.toLowerCase().includes("dp")) {
+            numero_id_base = process.env.VUE_APP_NUMERO_DP_ID;
+          } else {
+            numero_id_base = checkBF.oldBF.filter(x => [x.cadastre_id, x.numero].join("_") === oldBF_i.oldBF)[0].id;
           }
+          
+          // New number + check DP
+          if (newBF_i.toLowerCase().includes("dp")) {
+            numero_id_associe = process.env.VUE_APP_NUMERO_DP_ID;
+          } else {
+            numero_id_associe = checkBF.newBF.filter(x => [x.cadastre_id, x.numero].join("_") === newBF_i)[0].id;
+          }
+
+          promises.push( this.postNumerosRelation(numero_id_base, numero_id_associe, process.env.VUE_APP_RELATION_TYPE_MUTATION_ID, oldBF_i.newBF[newBF_i]) );
         }
       });
       
@@ -557,12 +556,13 @@ export default {
     /**
      * Post numero_relation
      */
-    async postNumerosRelation(numero_id_base, numero_id_associe, relation_type_id=null) {
+    async postNumerosRelation(numero_id_base, numero_id_associe, relation_type_id=process.env.VUE_APP_RELATION_TYPE_MUTATION_ID, active_relation=true) {
       return new Promise((resolve, reject) => {
         let formData = new FormData();
         formData.append("numero_id_base", numero_id_base);
         formData.append("numero_id_associe", numero_id_associe);
-        formData.append("relation_type_id", relation_type_id? relation_type_id: Number(process.env.VUE_APP_RELATION_TYPE_MUTATION_ID));
+        formData.append("relation_type_id", relation_type_id);
+        formData.append("active_relation", active_relation);
         formData.append("affaire_id", this.affaire.id);
 
         this.$http.post(
