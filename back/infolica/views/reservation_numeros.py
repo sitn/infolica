@@ -85,7 +85,7 @@ def reservation_numeros_new_view(request):
         numeros_etat_histo_new_view(request, params)
         # enregistrer le numéro sur un bien-fonds de base si nécessaire
         if numero_base_id:
-            params = Utils._params(numero_id_base=numero_base_id, numero_id_associe=numero_id, relation_type_id=relation_type_id, affaire_id=affaire_id)
+            params = Utils._params(numero_id_base=numero_base_id, numero_id_associe=numero_id, relation_type_id=relation_type_id, affaire_id=affaire_id, active_relation='true')
             numeros_relations_new_view(request, params)
 
 
