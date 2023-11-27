@@ -1357,8 +1357,13 @@ export default {
         });
 
       } else {
-        // set all facture repartitions to 0, it should be entered manually
-        this.factures_repartition.forEach(x => x.emolument_repartition = 0);
+        // get facture repartitions if existing
+        let sum_check = 0;
+        this.factures_repartition.forEach(x => sum_check += x.emolument_repartition);
+        if (sum_check <= 0){
+          // set all facture repartitions to 0, it should be entered manually
+          this.factures_repartition.forEach(x => x.emolument_repartition = 0);
+        }
       }
 
     },
