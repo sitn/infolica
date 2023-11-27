@@ -8,7 +8,7 @@ from pyramid.response import Response
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import Facture, Numero, TableauEmoluments, VAffaire, VNumerosAffaires
-from infolica.models.models import EmolumentAffaire, Emolument, EmolumentAffaireRepartition
+from infolica.models.models import EmolumentAffaire, Emolument, EmolumentAffaireRepartition, FactureParametres
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 import json
@@ -18,6 +18,29 @@ import requests
 ###########################################################
 # EMOLUMENTS
 ###########################################################
+
+
+@view_config(route_name='facture_parametres', request_method='GET', renderer='json')
+def tableau_facture_parametres_view(request):
+    """
+    Return actual parameters and values
+    """
+    # Check connected
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+    
+    today = datetime.date.today()
+    results = request.dbsession.query(FactureParametres).filter(
+        FactureParametres.valable_de <= today,
+        FactureParametres.valable_a >= today,
+    ).all()
+
+    params = {}
+    for result in results:
+        if not result.nom in params.keys():
+            params[result.nom] = result.valeur
+
+    return { 'facture_parametres': params }
 
 
 @view_config(route_name='tableau_emoluments', request_method='GET', renderer='json')

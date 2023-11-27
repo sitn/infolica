@@ -38,6 +38,10 @@ export default {
         emolumentsGeneral_list: [],
         emolument_priorite: true,
         emolumentsUnits: [],
+        facture_parametres : {
+          indice_application: null,
+          tva_pc: null,
+        },
         factures_repartition: [],
         form_general: {}, //général
         form_detail: {}, //emoluments sans bâtiment
@@ -59,6 +63,7 @@ export default {
           relations_autres_services: 102,
           forfait_rf: 103
         },
+        isPageReady: false,
         // ####################################################################################
         // SI LE TABLEAU DES EMOLUMENTS EST MODIFIE, APPORTER LES MODIFICATIONS ICI !      STOP
         // ####################################################################################
@@ -289,7 +294,7 @@ export default {
 
 
     initForm(form_general=true) {
-      
+
       if (form_general) {
         this.form_general = {
           id: null,
@@ -299,8 +304,8 @@ export default {
           trafic_pc: 0,
           zi: 1,
           nb_batiments: 0,
-          indice_application: 1.23,
-          tva_pc: 7.7, // %
+          indice_application: this.facture_parametres.indice_application,
+          tva_pc: this.facture_parametres.tva_pc, // %
           remarque: "",
           facture_type_id: 1,
           numeros: [],
@@ -1743,11 +1748,31 @@ export default {
           });
         }
       }, 100);
-    }
+    },
 
+    /**
+     * Get facture parametres
+     */
+     async getFactureParametres() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_PARAMETRES_ENDPOINT,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if(response && response.data) {
+          this.facture_parametres  = response.data.facture_parametres;
+          this.isPageReady = true;
+        }
+      })
+      .catch(err => handleException(this, err)); 
+    }
   },
 
   mounted: function(){
+    this.getFactureParametres();
+    
     this.getEmolumentsUnit().then(() => {
       this.getEmolumentsGeneral();
     });
