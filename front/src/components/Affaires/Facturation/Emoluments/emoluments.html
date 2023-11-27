@@ -1,4 +1,4 @@
-<div class="emoluments" v-if="emolumentsUnits.length > 0 && Object.keys(form_detail).length > 0">
+<div class="emoluments" v-if="isPageReady && emolumentsUnits.length > 0 && Object.keys(form_detail).length > 0">
 
     <md-dialog id="emolumentsDialog" :md-active.sync="showEmolumentsDialog" :md-click-outside-to-close="false" :md-close-on-esc="false">
       <md-dialog-title class="justifyTitleBtn">
