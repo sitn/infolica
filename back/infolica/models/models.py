@@ -249,6 +249,16 @@ class FactureType(Base):
     nom = Column(Text, nullable=False)
 
 
+class FactureParametres(Base):
+    __tablename__ = 'facture_parametres'
+    __table_args__ = {'schema': 'infolica'}
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    nom = Column(Text, nullable=False)
+    valeur = Column(Float, nullable=False)
+    valable_de = Column(Date, nullable=False)
+    valable_a = Column(Date, nullable=True)
+
+
 class Facture(Base):
     __tablename__ = 'facture'
     __table_args__ = {'schema': 'infolica'}
