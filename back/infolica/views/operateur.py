@@ -7,10 +7,10 @@ from infolica.models.constant import Constant
 from infolica.models.models import Operateur, EtapeMailer
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
-from datetime import datetime
+from datetime import datetime, date
 
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy import BigInteger, func
+from sqlalchemy import BigInteger, func, or_
 
 import json
 
@@ -237,3 +237,58 @@ def operateurs_delete_view(request):
     model.sortie = datetime.utcnow()
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Operateur.__tablename__))
+
+
+@view_config(route_name='search_operateur_aggregated', request_method='GET', renderer='json')
+def search_operateur_aggregated(request):
+    """
+    Search operateur(s) aggregated
+    """
+    # Check connected
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+
+    inactive_operateurs = True
+    if 'inactive_operateurs' in request.params and request.params['inactive_operateurs'] == 'false':
+        inactive_operateurs = False
+    operateur_id = int(request.params['operateur_id']) if 'operateur_id' in request.params else None
+
+    now = date.today()
+
+    results = request.dbsession.query(
+        Operateur
+    ).filter(
+        Operateur.chef_equipe == True
+    )
+    
+    if inactive_operateurs == False:
+        results = results.filter(
+            or_(
+                Operateur.sortie > now,
+                Operateur.sortie == None
+            )
+        )
+    
+    if operateur_id is not None and operateur_id > 0:
+        results = results.filter(
+            Operateur.id == operateur_id
+        )
+
+    results = results.order_by(Operateur.prenom.asc(), Operateur.nom.asc()).all()
+
+    operateur_liste = {
+        'active': [],
+        'inactive': [],
+    }
+    for res in results:
+        type_operateur = 'active'
+        if res.sortie is not None and res.sortie < now:
+            # operateur inactif
+            type_operateur = 'inactive'
+            
+        operateur_liste[type_operateur].append({
+            'id': res.id,
+            'prenom_nom': ' '.join([res.prenom, res.nom]),
+        })
+
+    return operateur_liste
