@@ -295,7 +295,7 @@ class TableauEmoluments(Base):
     montant = Column(Float, default=0.0, nullable=False)
     date_entree = Column(Date)
     date_sortie = Column(Date)
-    remplace = Column(BigInteger)
+    remplace = Column(Text)
     priorite = Column(Boolean)
     ordre = Column(Integer)
     id_html = Column(Text)

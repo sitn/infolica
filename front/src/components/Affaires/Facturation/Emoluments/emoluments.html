@@ -86,7 +86,7 @@
                 </table>
             </div>
 
-              <div class="md-layout-item" id="zi">
+              <!-- <div class="md-layout-item" id="zi">
                 <md-field class="formField">
                   <label>Pente [%]</label>
                   <md-input :disabled="disabled" v-model="form_general.pente_pc" @keyup="computeZi()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>
@@ -117,7 +117,7 @@
                   <label>Zi</label>
                   <md-input :disabled="disabled" v-model="form_general.zi" readonly></md-input>
                 </md-field>
-              </div>
+              </div> -->
 
             </div>
 
@@ -192,7 +192,33 @@
                 </tr>
               </thead>
               <tbody class="customTableBody">
-                <tr class="rowChapterDistinction" id="form_detail.mandat1">
+                <template v-for="category in tableauEmolumentsNew">
+                  <template v-for="scategory in category">
+                    <tr v-for="position in scategory" class="rowChapterDistinction" id="form_detail.mandat1">
+                      <td v-if="position.id === category[0][0].id && (!emolument_priorite || position.priorite)" class="chapter" :rowspan="category.map(a => (emolument_priorite? a.filter(x => x.priorite).length: a.length)).reduce((a,b) => a + b)+1" style="background-color: rgba(34, 139, 34, 0.5);">{{ position.categorie_id }}. {{ position.categorie }}</td>
+                      <td class="tg-0lax code">{{ position.code }}</td>
+                      <td class="tg-0lax position">{{ position.nom }}</td>
+                      <td class="tg-0lax alignCenter unite">{{ position.unite }}</td>
+                      <td class="tg-0lax alignRight prix_unitaire">{{ position.montant }} CHF</td>
+                      <td class="tg-0lax nombre"><input class="nbInput" type="number" min="0" step="0.01" :id="position.id_html" @keyup="updateMontant(position)"></td>
+                      <!-- <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.mandat1.nombre)>0, hideNulls: Number(form_detail.mandat1.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td> -->
+                      <td class="tg-0lax montant alignRight"><span v-if="Number(position.montant>0)">{{ position.montant }} CHF</span></td>
+                      <template v-for="i in form_general.nb_batiments">
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
+                    </tr>
+                  </template>
+                  <tr>
+                    <td class="tg-0lax" colspan="5"><b>Sous-total</b></td>
+                    <td class="tg-0lax alignRight prix_unitaire"><b>{{  }} CHF</b></td>
+                    <template v-for="i in form_general.nb_batiments">
+                      <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                      <td class="tg-0lax montant notEditable"></td>
+                    </template>
+                </tr>
+              </template>
+                <!-- <tr class="rowChapterDistinction" id="form_detail.mandat1">
                   <td v-if="!emolument_priorite || form_detail.mandat1.priorite" class="chapter" :rowspan="chapters.find(item => item.nom === 'mandat').nb_rows" style="background-color: rgba(34, 139, 34, 0.5);">1. Mandat</td>
                   <td class="tg-0lax code">{{ form_detail.code }}</td>
                   <td class="tg-0lax position">{{ form_detail.mandat1.nom }}</td>
@@ -1650,7 +1676,7 @@
                     <td class="tg-0lax nombre batiment-separator notEditable"></td>
                     <td class="tg-0lax montant notEditable"></td>
                   </template>
-                </tr>
+                </tr> -->
               </tbody>
             </table>
           </md-tab>

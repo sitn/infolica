@@ -71,7 +71,9 @@ export default {
         showEmolumentsDialog: false,
         showProgressBar: false,
         showSendValuesToFacture: false,
-        total: {}
+        total: {},
+        tableauEmolumentsNew: [],
+        tableauEmolumentsNew_bk: [],
       }
   },
 
@@ -1681,13 +1683,13 @@ export default {
         tableau_recapitulatif_html = tableau_recapitulatif_html.replaceAll(new RegExp(`<input.*(${input[0]}).*?>`, 'g'), '<div class="alignCenter">' + document.getElementById(input[0]).value + '</div>');
       }
       tableau_recapitulatif_html = tableau_recapitulatif_html.replaceAll(/<\/div>%/g, " %</div>");
-
+      
       let formData = new FormData();
       formData.append('tableau_emoluments_id', this.form_general.id);
       formData.append('affaire_id', this.affaire.id);
       formData.append('tableau_emoluments_html', tableau_emoluments_html);
       formData.append('tableau_recapitulatif_html', tableau_recapitulatif_html);
-
+      
       this.$http.post(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_EXPORT_EMOLUMENTS_PDF_ENDPOINT,
         formData,
@@ -1696,7 +1698,7 @@ export default {
           headers: {"Accept": "application/json"},
           responseType: "blob"
         }
-      ).then((response) => {
+        ).then((response) => {
         let fileURL = window.URL.createObjectURL(new Blob([response.data]));
         let fileLink = document.createElement('a');
       
@@ -1719,7 +1721,7 @@ export default {
         this.emolument_priorite = last_emolument_priorite;
       });
     },
-
+    
     /**
      * update emolument_affaire used
      */
@@ -1727,14 +1729,22 @@ export default {
       this.fixEmolumentDefinitively(this.form_general.id, this.form_general.utilise);
       this.disabled = this.form_general.utilise;
     },
-
+    
+    updateChapter(){
+      this.tableauEmolumentsNew = JSON.parse(JSON.stringify(this.tableauEmolumentsNew_bk));
+      if (this.emolument_priorite === true) {
+        console.log('toto')
+        this.tableauEmolumentsNew = this.tableauEmolumentsNew.map(cat => cat.map(scat => scat.filter(x => x.priorite === true)));
+      }
+    },
+    /*
     updateChapter(){
       setTimeout(() => {
         let collection = document.getElementById('tableau_emoluments').getElementsByTagName('tr');
         this.chapters.forEach(x => {
           x['nb_rows'] = 0;
         });
-  
+        
         let _id = '';
         let _style = null;
         for (let i = 0; i < collection.length; i++) {
@@ -1749,28 +1759,67 @@ export default {
         }
       }, 100);
     },
-
-    /**
+    */
+   
+   /**
+    * Get facture parametres
+    */
+   async getFactureParametres() {
+     this.$http.get(
+       process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_PARAMETRES_ENDPOINT,
+       {
+         withCredentials: true,
+         headers: {"Accept": "application/json"}
+        }
+        ).then(response => {
+          if(response && response.data) {
+            this.facture_parametres  = response.data.facture_parametres;
+            this.isPageReady = true;
+          }
+        })
+        .catch(err => handleException(this, err)); 
+      },
+      /**
      * Get facture parametres
      */
-     async getFactureParametres() {
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_PARAMETRES_ENDPOINT,
-        {
-          withCredentials: true,
-          headers: {"Accept": "application/json"}
-        }
-      ).then(response => {
-        if(response && response.data) {
-          this.facture_parametres  = response.data.facture_parametres;
-          this.isPageReady = true;
-        }
+    async getTableauEmolumentsNew() {
+       this.$http.get(
+         process.env.VUE_APP_API_URL + "/tableau_emoluments_new",
+         {
+           withCredentials: true,
+           headers: {"Accept": "application/json"}
+          }
+          ).then(response => {
+            if(response && response.data) {
+              this.tableauEmolumentsNew_bk = response.data;
+              this.tableauEmolumentsNew = JSON.parse(JSON.stringify(this.tableauEmolumentsNew_bk));
+            }
       })
       .catch(err => handleException(this, err)); 
+    },
+
+    updateMontant(position) {
+      let quantity = Number(document.getElementById(position.id_html).value) | 0;
+      let prix_unitaire = null;
+      let tmp = undefined
+      this.tableauEmolumentsNew.forEach(cat => {
+        cat.forEach(scat => {
+          tmp = scat.filter(x => x.id === position.id);
+          if (tmp.length >= 1 && prix_unitaire === null) {
+            prix_unitaire = Number(tmp[0].montant);
+            console.log('a', prix_unitaire)
+          }
+        });
+      });
+      console.log("quantity", quantity)
+      console.log("prix_unitaire", prix_unitaire)
+      let montant = quantity * prix_unitaire;
+      console.log(montant)
     }
   },
-
+  
   mounted: function(){
+    this.getTableauEmolumentsNew();
     this.getFactureParametres();
     
     this.getEmolumentsUnit().then(() => {

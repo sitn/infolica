@@ -3,6 +3,7 @@ from sqlalchemy.sql.elements import and_
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 from pyramid.response import Response
+from sqlalchemy import or_
 
 
 from infolica.exceptions.custom_error import CustomError
@@ -505,6 +506,64 @@ def emolument_affaire_repartiton_delete_view(request):
 
     for record in records:
         request.dbsession.delete(record)
+
+
+
+@view_config(route_name='tableau_emoluments_new', request_method='GET', renderer='json')
+def tableau_emoluments_new_view(request):
+    """
+    Get tableau of emoluments
+    """
+    # Check authorization
+    # if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+    #     raise exc.HTTPForbidden()
+
+    today = datetime.date.today()
+    print(today)
+
+    # get active emoluments
+    table = request.dbsession.query(
+        TableauEmoluments
+    ).filter(
+        TableauEmoluments.date_entree <= today,
+        or_(
+            TableauEmoluments.date_sortie > today,
+            TableauEmoluments.date_sortie == None
+        )
+    ).order_by(TableauEmoluments.categorie_id, TableauEmoluments.sous_categorie_id, TableauEmoluments.ordre).all()
+
+    result = []
+    c = 0
+    last_categorie_id = ""
+    last_sous_categorie_id = ""
+    categorie = []
+    sous_categorie = []
+    for position in table:
+        # if last_categorie_id != position.categorie_id:
+        #     result[position.categorie] = []
+        # if last_sous_categorie_id != position.sous_categorie_id:
+        #     result[position.categorie][position.sous_categorie] = []
+        
+        # result[position.categorie][position.sous_categorie].append(Utils.serialize_one(position))
+        c += 1
+        if c > 1:
+            if last_sous_categorie_id != position.sous_categorie_id:
+                categorie.append(sous_categorie)
+                sous_categorie = []
+            if last_categorie_id != position.categorie_id:
+                result.append(categorie)
+                categorie = []
+
+        sous_categorie.append(Utils.serialize_one(position))
+
+        last_categorie_id = position.categorie_id
+        last_sous_categorie_id = position.sous_categorie_id
+
+    categorie.append(sous_categorie)
+    result.append(categorie)
+
+    return result
+
 
 
 @view_config(route_name='export_emoluments_pdf', request_method='POST')
