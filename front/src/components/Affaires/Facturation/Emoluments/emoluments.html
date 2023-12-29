@@ -200,12 +200,25 @@
                       <td class="tg-0lax position">{{ position.nom }}</td>
                       <td class="tg-0lax alignCenter unite">{{ position.unite }}</td>
                       <td class="tg-0lax alignRight prix_unitaire">{{ position.montant }} CHF</td>
-                      <td class="tg-0lax nombre"><input class="nbInput" type="number" min="0" step="0.01" :id="position.id_html" @keyup="updateMontant(position)"></td>
-                      <!-- <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(form_detail.mandat1.nombre)>0, hideNulls: Number(form_detail.mandat1.nombre)==0 }" @keyup="updateMontants()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td> -->
-                      <td class="tg-0lax montant alignRight"><span v-if="Number(position.montant>0)">{{ position.montant }} CHF</span></td>
+                      
+                      <template v-if="position.bien_fonds===true">
+                        <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.nombre[0]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[0])>0, hideNulls: Number(position.nombre[0])==0 }" @keyup="updateMontant(position, 0)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
+                        <td class="tg-0lax montant alignRight"><span v-if="Number(position.prix[0]>0)">{{ position.prix[0] }} CHF</span></td>
+                      </template>
+                      <template v-else>
+                          <td class="tg-0lax nombre notEditable"></td>
+                          <td class="tg-0lax nombre notEditable"></td>
+                      </template>
+                      
                       <template v-for="i in form_general.nb_batiments">
-                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
-                        <td class="tg-0lax montant notEditable"></td>
+                        <template v-if="position.batiment===true">
+                          <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.nombre[i+1]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[i+1])>0, hideNulls: Number(position.nombre[i+1])==0 }" @keyup="updateMontant(position, i+1)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
+                          <td class="tg-0lax montant alignRight"><span v-if="Number(position.prix[i+1]>0)">{{ position.prix[i+1] }} CHF</span></td>
+                        </template>
+                        <template v-else>
+                          <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                          <td class="tg-0lax montant notEditable"></td>
+                        </template>
                       </template>
                     </tr>
                   </template>

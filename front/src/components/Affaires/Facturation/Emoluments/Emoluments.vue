@@ -1779,7 +1779,8 @@ export default {
         })
         .catch(err => handleException(this, err)); 
       },
-      /**
+
+    /**
      * Get facture parametres
      */
     async getTableauEmolumentsNew() {
@@ -1791,30 +1792,27 @@ export default {
           }
           ).then(response => {
             if(response && response.data) {
-              this.tableauEmolumentsNew_bk = response.data;
+              let tmp = response.data;
+              tmp.forEach(cat => {
+                cat.forEach(scat => {
+                  scat.forEach(pos => {
+                    // pos.prix = 0;
+                    // pos.nombre = 0;
+                    pos.prix = new Array(4).fill(0);
+                    pos.nombre = new Array(4).fill(0);
+                  })
+                })
+            });
+              
+              this.tableauEmolumentsNew_bk = tmp;
               this.tableauEmolumentsNew = JSON.parse(JSON.stringify(this.tableauEmolumentsNew_bk));
             }
       })
       .catch(err => handleException(this, err)); 
     },
 
-    updateMontant(position) {
-      let quantity = Number(document.getElementById(position.id_html).value) | 0;
-      let prix_unitaire = null;
-      let tmp = undefined
-      this.tableauEmolumentsNew.forEach(cat => {
-        cat.forEach(scat => {
-          tmp = scat.filter(x => x.id === position.id);
-          if (tmp.length >= 1 && prix_unitaire === null) {
-            prix_unitaire = Number(tmp[0].montant);
-            console.log('a', prix_unitaire)
-          }
-        });
-      });
-      console.log("quantity", quantity)
-      console.log("prix_unitaire", prix_unitaire)
-      let montant = quantity * prix_unitaire;
-      console.log(montant)
+    updateMontant(position, idx) {
+      return position.prix[idx] = Number(position.nombre[idx]) * Number(position.montant);
     }
   },
   
