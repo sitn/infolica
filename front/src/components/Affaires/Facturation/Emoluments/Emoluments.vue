@@ -55,6 +55,9 @@ export default {
         tableauEmolumentsNew: [],
         tableauEmolumentsNew_bk: [],
         isPageReady: false,
+        montants_matdiff: [],
+        id_matdiff: [],
+        divers_tarif_horaire: []
       }
   },
 
@@ -376,7 +379,26 @@ export default {
      * postFormular (main)
      */
     async postEmolument() {
+      
       console.log('postEmolument | ')
+      this.showProgressBar = true;
+
+      let formData = new FormData();
+      formData.append('affaire_id', this.affaire.id);
+      formData.append('form_general', JSON.stringify(this.form_general));
+      formData.append('emoluments', JSON.stringify(this.tableauEmolumentsNew));
+      this.$http.post(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => console.log('postEmolument | success ', response))
+      .catch(err => handleException(err, this))
+      .finally(() => this.showProgressBar = false);
+      
+
     //   return new Promise((resolve) => {
     //     // show progressbar
     //     this.showProgressBar = true;
@@ -1052,43 +1074,31 @@ export default {
               tmp.forEach(cat => {
                 cat.forEach(scat => {
                   scat.forEach(pos => {
-                    // pos.prix = 0;
-                    // pos.nombre = 0;
                     pos.prix = [0];
                     pos.nombre = [0];
-                    // pos.prix = new Array(1).fill(0);
-                    // pos.nombre = new Array(1).fill(0);
-                    // pos.nombre = new Array(this.form_general.nb_batiments + 1).fill(0);
-                    // pos.prix = new Array(this.form_general.nb_batiments + 1).fill(0);
-                    // pos.prix = new Array(this.form_general.nb_batiments + 1).fill(0);
-                    // pos.nombre = new Array(this.form_general.nb_batiments + 1).fill(0);
                   })
                 })
             });
               
-              this.tableauEmolumentsNew_bk = tmp;
-              this.tableauEmolumentsNew = JSON.parse(JSON.stringify(this.tableauEmolumentsNew_bk));
-            }
+            this.tableauEmolumentsNew_bk = tmp;
+            this.tableauEmolumentsNew = JSON.parse(JSON.stringify(this.tableauEmolumentsNew_bk));
+
+            // this.divers_tarif_horaire = 
+
+          }
       })
       .catch(err => handleException(this, err)); 
     },
 
     updateMontant(position, idx) {
       let f = 1;
-      console.log('idx', idx)
-      console.log('this.form_general.batiment_f', this.form_general.batiment_f)
       if (idx > 0) {
         f = Number(this.form_general.batiment_f[idx-1]);
       }
-      console.log('f', f)
-      // console.log(`Number(position.nombre[${idx}])`, Number(position.nombre[idx]))
-      console.log(`position.nombre`, position.nombre)
-      // console.log('Number(position.montant)', Number(position.montant))
-      console.log(`position.prix[${idx}]`, f * Number(position.nombre[idx]) * Number(position.montant))
       return position.prix[idx] = f * Number(position.nombre[idx]) * Number(position.montant);
     }
   },
-  
+
   mounted: function(){
     this.getEmolumentsGeneral();
     this.getTableauEmolumentsNew();
