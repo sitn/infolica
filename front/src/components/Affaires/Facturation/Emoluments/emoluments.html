@@ -1,4 +1,4 @@
-<div class="emoluments" v-if="isPageReady && emolumentsUnits.length > 0 && Object.keys(form_detail).length > 0">
+<div class="emoluments" v-if="isPageReady && tableauEmolumentsNew.length > 0">
 
     <md-dialog id="emolumentsDialog" :md-active.sync="showEmolumentsDialog" :md-click-outside-to-close="false" :md-close-on-esc="false">
       <md-dialog-title class="justifyTitleBtn">
@@ -84,41 +84,7 @@
                     </tr>
                   </tbody>
                 </table>
-            </div>
-
-              <!-- <div class="md-layout-item" id="zi">
-                <md-field class="formField">
-                  <label>Pente [%]</label>
-                  <md-input :disabled="disabled" v-model="form_general.pente_pc" @keyup="computeZi()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>
-                  <span style="margin-left: 3px;">%</span>
-                </md-field>
-
-                <md-field class="formField">
-                  <label>Diff. visibilité</label>
-                  <md-select :disabled="disabled" v-model="form_general.diff_visibilite_pc" md-dense @md-selected="computeZi()">
-                    <md-option :value="0">0%</md-option>
-                    <md-option :value="10">10%</md-option>
-                    <md-option :value="20">20%</md-option>
-                  </md-select>
-                </md-field>
-
-                <md-field class="formField">
-                  <label>Trafic</label>
-                  <md-select :disabled="disabled" v-model="form_general.trafic_pc" md-dense @md-selected="computeZi()">
-                    <md-option :value="0">0%</md-option>
-                    <md-option :value="10">10%</md-option>
-                    <md-option :value="20">20%</md-option>
-                    <md-option :value="30">30%</md-option>
-                    <md-option :value="40">40%</md-option>
-                  </md-select>
-                </md-field>
-
-                <md-field class=formField>
-                  <label>Zi</label>
-                  <md-input :disabled="disabled" v-model="form_general.zi" readonly></md-input>
-                </md-field>
-              </div> -->
-
+              </div>
             </div>
 
             
@@ -194,7 +160,7 @@
               <tbody class="customTableBody">
                 <template v-for="category in tableauEmolumentsNew">
                   <template v-for="scategory in category">
-                    <tr v-for="position in scategory" class="rowChapterDistinction" id="form_detail.mandat1">
+                    <tr v-for="position in scategory" class="rowChapterDistinction" id="">
                       <td v-if="position.id === category[0][0].id && (!emolument_priorite || position.priorite)" class="chapter" :rowspan="category.map(a => (emolument_priorite? a.filter(x => x.priorite).length: a.length)).reduce((a,b) => a + b)+1" style="background-color: rgba(34, 139, 34, 0.5);">{{ position.categorie_id }}. {{ position.categorie }}</td>
                       <td class="tg-0lax code">{{ position.code }}</td>
                       <td class="tg-0lax position">{{ position.nom }}</td>
@@ -212,8 +178,8 @@
                       
                       <template v-for="i in form_general.nb_batiments">
                         <template v-if="position.batiment===true">
-                          <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.nombre[i+1]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[i+1])>0, hideNulls: Number(position.nombre[i+1])==0 }" @keyup="updateMontant(position, i+1)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
-                          <td class="tg-0lax montant alignRight"><span v-if="Number(position.prix[i+1]>0)">{{ position.prix[i+1] }} CHF</span></td>
+                          <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.nombre[i]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[i])>0, hideNulls: Number(position.nombre[i])==0 }" @keyup="updateMontant(position, i)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
+                          <td class="tg-0lax montant alignRight"><span v-if="Number(position.prix[i]>0)">{{ position.prix[i] }} CHF</span></td>
                         </template>
                         <template v-else>
                           <td class="tg-0lax nombre batiment-separator notEditable"></td>
@@ -1767,10 +1733,14 @@
                   <md-card-content>
                     Calcul du montant au point 3.4:
                     <ul style="margin: 0px;">
-                      <li>De 1 à 5 points:  prix_unitaire {{ form_detail.travauxMaterialisation15.prix_unitaire }} CHF / PCE</li>
+                      <li>De 1 à 5 points:  prix_unitaire TO BE COMPLETED CHF / PCE</li>
+                      <li>De 6 à 10 points:  prix_unitaire TO BE COMPLETED CHF / PCE</li>
+                      <li>De 11 à 15 points:  prix_unitaire TO BE COMPLETED CHF / PCE</li>
+                      <li>Plus de 16 points:  prix_unitaire TO BE COMPLETED CHF / PCE</li>
+                      <!-- <li>De 1 à 5 points:  prix_unitaire {{ form_detail.travauxMaterialisation15.prix_unitaire }} CHF / PCE</li>
                       <li>De 6 à 10 points:  prix_unitaire {{ form_detail.travauxMaterialisation16.prix_unitaire }} CHF / PCE</li>
                       <li>De 11 à 15 points:  prix_unitaire {{ form_detail.travauxMaterialisation17.prix_unitaire }} CHF / PCE</li>
-                      <li>Plus de 16 points:  prix_unitaire {{ form_detail.travauxMaterialisation18.prix_unitaire }} CHF / PCE</li>
+                      <li>Plus de 16 points:  prix_unitaire {{ form_detail.travauxMaterialisation18.prix_unitaire }} CHF / PCE</li> -->
                     </ul>
                   </md-card-content>
                 </md-card>
