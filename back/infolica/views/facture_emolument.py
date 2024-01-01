@@ -3,7 +3,7 @@ from sqlalchemy.sql.elements import and_
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 from pyramid.response import Response
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 
 
 from infolica.exceptions.custom_error import CustomError
@@ -141,65 +141,145 @@ def emolument_view(request):
     """
     Return emoluments of emoluments_affaire 
     """
-    # Check connected
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    # get TableauEmoluments
-    tableauEmoluments = request.dbsession.query(
-        TableauEmoluments
-    ).filter(
-        TableauEmoluments.date_sortie == None
-    ).all()
+    today = datetime.date.today()
 
-    tableauEmoluments = Utils.serialize_many(tableauEmoluments)
-
-    # get emolumentsAffaire saved with emolument_affaire_id
     emolument_affaire_id = request.params['emolument_affaire_id'] if 'emolument_affaire_id' in request.params else None
 
-    emolumentsAffaire = request.dbsession.query(
-        Emolument
-    ).filter(
-        Emolument.emolument_affaire_id == emolument_affaire_id
-    ).all()
-
-    emolumentsAffaire = Utils.serialize_many(emolumentsAffaire)
-
-    # check if emolumentAffaire is used
-    emolumentAffaireUsed = request.dbsession.query(
-        EmolumentAffaire.utilise
-    ).filter(
-        EmolumentAffaire.id == emolument_affaire_id
+    emol_affaire = request.dbsession.query(EmolumentAffaire).filter(
+        EmolumentAffaire.id==emolument_affaire_id
+    ).first()
+    form_general = Utils.serialize_one(emol_affaire)
+    
+    nb_batiments = request.dbsession.query(func.max(Emolument.batiment)).filter(
+        Emolument.emolument_affaire_id==emolument_affaire_id
     ).scalar()
 
-    for ea in emolumentsAffaire:
-        for te in tableauEmoluments:
-            if ea['tableau_emolument_id'] == te['id'] and not emolumentAffaireUsed and not te['montant'] == 0:
-                ea['prix_unitaire'] = te['montant']
-                ea['montant'] = ea['nombre'] * ea['prix_unitaire'] * ea['batiment_f']
 
-    return emolumentsAffaire
+    existing_emoluments_query = request.dbsession.query(Emolument).filter(
+        Emolument.emolument_affaire_id==emolument_affaire_id
+    )
+
+    # emoluments
+    table = request.dbsession.query(
+        TableauEmoluments
+    ).filter(
+        TableauEmoluments.date_entree <= today,
+        or_(
+            TableauEmoluments.date_sortie > today,
+            TableauEmoluments.date_sortie == None
+        )
+    ).order_by(TableauEmoluments.categorie_id, TableauEmoluments.sous_categorie_id, TableauEmoluments.ordre).all()
+
+    emoluments = []
+    c = 0
+    last_categorie_id = ""
+    last_sous_categorie_id = ""
+    categorie = []
+    sous_categorie = []
+    batiments_f = [0]*nb_batiments
+    for position in table:
+        c += 1
+        if c > 1:
+            if last_sous_categorie_id != position.sous_categorie_id:
+                # New category
+                categorie.append(sous_categorie)
+                sous_categorie = []
+            if last_categorie_id != position.categorie_id:
+                # New subcategory
+                emoluments.append(categorie)
+                categorie = []
+
+        position_ = Utils.serialize_one(position)
+        position_['nombre'] = [0]*(nb_batiments +1)
+        position_['prix'] = [0]*(nb_batiments +1)
+        
+        # check if emolument already exists un database
+        existing_emoluments = existing_emoluments_query.filter(Emolument.tableau_emolument_id==int(position_['id'])).all()
+        for ee in existing_emoluments:
+            position_['nombre'][0] = ee.nombre
+            position_['prix'][0] = ee.montant
+            if ee.batiment > 0 and batiments_f[ee.batiment-1] == 0:
+                batiments_f[ee.batiment-1] = ee.batiment_f
+
+        sous_categorie.append(position_)
+
+        last_categorie_id = position.categorie_id
+        last_sous_categorie_id = position.sous_categorie_id
+
+    categorie.append(sous_categorie)
+    emoluments.append(categorie)
+
+    form_general['batiment_f'] = batiments_f
+
+    return {'emoluments': json.dumps(emoluments), 'form_general': json.dumps(form_general)}
+
+# @view_config(route_name='emolument', request_method='GET', renderer='json')
+# def emolument_view(request):
+#     """
+#     Return emoluments of emoluments_affaire 
+#     """
+#     # Check connected
+#     if not check_connected(request):
+#         raise exc.HTTPForbidden()
+
+#     # get TableauEmoluments
+#     tableauEmoluments = request.dbsession.query(
+#         TableauEmoluments
+#     ).filter(
+#         TableauEmoluments.date_sortie == None
+#     ).all()
+
+#     tableauEmoluments = Utils.serialize_many(tableauEmoluments)
+
+#     # get emolumentsAffaire saved with emolument_affaire_id
+#     emolument_affaire_id = request.params['emolument_affaire_id'] if 'emolument_affaire_id' in request.params else None
+
+#     emolumentsAffaire = request.dbsession.query(
+#         Emolument
+#     ).filter(
+#         Emolument.emolument_affaire_id == emolument_affaire_id
+#     ).all()
+
+#     emolumentsAffaire = Utils.serialize_many(emolumentsAffaire)
+
+#     # check if emolumentAffaire is used
+#     emolumentAffaireUsed = request.dbsession.query(
+#         EmolumentAffaire.utilise
+#     ).filter(
+#         EmolumentAffaire.id == emolument_affaire_id
+#     ).scalar()
+
+#     for ea in emolumentsAffaire:
+#         for te in tableauEmoluments:
+#             if ea['tableau_emolument_id'] == te['id'] and not emolumentAffaireUsed and not te['montant'] == 0:
+#                 ea['prix_unitaire'] = te['montant']
+#                 ea['montant'] = ea['nombre'] * ea['prix_unitaire'] * ea['batiment_f']
+
+#     return emolumentsAffaire
 
 
-@view_config(route_name='emolument_affaire', request_method='POST', renderer='json')
-def emolument_affaire_new_view(request):
-    """
-    Add new emolument_affaire
-    """
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
-        raise exc.HTTPForbidden()
+# @view_config(route_name='emolument_affaire', request_method='POST', renderer='json')
+# def emolument_affaire_new_view(request):
+#     """
+#     Add new emolument_affaire
+#     """
+#     # Check authorization
+#     if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+#         raise exc.HTTPForbidden()
 
-    params = request.params
-    data = json.loads(params["data"])
+#     params = request.params
+#     data = json.loads(params["data"])
 
-    record = EmolumentAffaire()
-    record = Utils.set_model_record(record, data)
+#     record = EmolumentAffaire()
+#     record = Utils.set_model_record(record, data)
 
-    request.dbsession.add(record)
-    request.dbsession.flush()
+#     request.dbsession.add(record)
+#     request.dbsession.flush()
 
-    return {"emolument_affaire_id": record.id}
+#     return {"emolument_affaire_id": record.id}
 
 
 @view_config(route_name='emolument', request_method='POST', renderer='json')
@@ -211,7 +291,6 @@ def emolument_new_view(request):
     if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise exc.HTTPForbidden()
 
-    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     form_general = json.loads(request.params['form_general']) if 'form_general' in request.params else None
     emoluments = json.loads(request.params['emoluments']) if 'emoluments' in request.params else None
 
@@ -267,7 +346,6 @@ def emolument_new_view(request):
 
 
 
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Emolument.__tablename__))
 
 # @view_config(route_name='emolument', request_method='POST', renderer='json')
 # def emolument_new_view(request):
@@ -304,27 +382,27 @@ def emolument_new_view(request):
 #     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Emolument.__tablename__))
 
 
-@view_config(route_name='emolument_affaire', request_method='PUT', renderer='json')
-def update_emolument_affaire_view(request):
-    """
-    Update emolument_affaire
-    """
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
-        raise exc.HTTPForbidden()
+# @view_config(route_name='emolument_affaire', request_method='PUT', renderer='json')
+# def update_emolument_affaire_view(request):
+#     """
+#     Update emolument_affaire
+#     """
+#     # Check authorization
+#     if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+#         raise exc.HTTPForbidden()
 
-    params = request.params
-    data = json.loads(params["data"])
+#     params = request.params
+#     data = json.loads(params["data"])
 
-    record_id = request.params['emolument_affaire_id'] if 'emolument_affaire_id' in request.params else None   
+#     record_id = request.params['emolument_affaire_id'] if 'emolument_affaire_id' in request.params else None   
 
-    record = request.dbsession.query(EmolumentAffaire).filter(
-        EmolumentAffaire.id == record_id
-    ).first()
+#     record = request.dbsession.query(EmolumentAffaire).filter(
+#         EmolumentAffaire.id == record_id
+#     ).first()
 
-    record = Utils.set_model_record(record, data)
+#     record = Utils.set_model_record(record, data)
 
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentAffaire.__tablename__))
+#     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentAffaire.__tablename__))
 
 
 @view_config(route_name='emolument_affaire_freeze', request_method='PUT', renderer='json')
@@ -349,82 +427,82 @@ def update_emolument_affaire_freeze_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentAffaire.__tablename__))
 
 
-@view_config(route_name='emolument', request_method='PUT', renderer='json')
-def update_emolument_view(request):
-    """
-    Update emolument
-    """
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
-        raise exc.HTTPForbidden()
+# @view_config(route_name='emolument', request_method='PUT', renderer='json')
+# def update_emolument_view(request):
+#     """
+#     Update emolument
+#     """
+#     # Check authorization
+#     if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+#         raise exc.HTTPForbidden()
 
-    params = request.params
-    data = json.loads(params['data'])
-    emolument_affaire_id = params['emolument_affaire_id']
+#     params = request.params
+#     data = json.loads(params['data'])
+#     emolument_affaire_id = params['emolument_affaire_id']
 
-    # Query existing data
-    query = request.dbsession.query(Emolument).filter(
-        Emolument.emolument_affaire_id == emolument_affaire_id
-    )
+#     # Query existing data
+#     query = request.dbsession.query(Emolument).filter(
+#         Emolument.emolument_affaire_id == emolument_affaire_id
+#     )
 
-    emoluments = query.all()
+#     emoluments = query.all()
 
-    for batiment_i in data:
-        for emolument_i in batiment_i:
-            record = None
-            for index, item in enumerate(emoluments):
-                if (item.batiment == batiment_i[emolument_i]['batiment'] and 
-                    item.tableau_emolument_id == batiment_i[emolument_i]['tableau_emolument_id']):
-                    record = emoluments.pop(index)
-                    break
+#     for batiment_i in data:
+#         for emolument_i in batiment_i:
+#             record = None
+#             for index, item in enumerate(emoluments):
+#                 if (item.batiment == batiment_i[emolument_i]['batiment'] and 
+#                     item.tableau_emolument_id == batiment_i[emolument_i]['tableau_emolument_id']):
+#                     record = emoluments.pop(index)
+#                     break
             
 
-            if not record is None:
-                # comparer les valeurs enregistrées
-                if (not float(record.montant) == float(batiment_i[emolument_i]['montant']) \
-                    or not record.position == batiment_i[emolument_i]['nom'] \
-                    or not float(record.prix_unitaire) == float(batiment_i[emolument_i]['prix_unitaire']) \
-                    or not float(record.nombre) == float(batiment_i[emolument_i]['nombre']) \
-                    or not float(record.batiment_f) == float(batiment_i[emolument_i]['batiment_f'])):
+#             if not record is None:
+#                 # comparer les valeurs enregistrées
+#                 if (not float(record.montant) == float(batiment_i[emolument_i]['montant']) \
+#                     or not record.position == batiment_i[emolument_i]['nom'] \
+#                     or not float(record.prix_unitaire) == float(batiment_i[emolument_i]['prix_unitaire']) \
+#                     or not float(record.nombre) == float(batiment_i[emolument_i]['nombre']) \
+#                     or not float(record.batiment_f) == float(batiment_i[emolument_i]['batiment_f'])):
 
-                    # Mettre à jour les données si le nouveau montant n'est pas nul
-                    if float(batiment_i[emolument_i]['montant']) > 0:
-                        params = Utils._params(
-                            position=batiment_i[emolument_i]['nom'],
-                            prix_unitaire=float(batiment_i[emolument_i]['prix_unitaire']),
-                            nombre=float(batiment_i[emolument_i]['nombre']),
-                            batiment_f=float(batiment_i[emolument_i]['batiment_f']),
-                            montant=float(batiment_i[emolument_i]['montant'])
-                        )
+#                     # Mettre à jour les données si le nouveau montant n'est pas nul
+#                     if float(batiment_i[emolument_i]['montant']) > 0:
+#                         params = Utils._params(
+#                             position=batiment_i[emolument_i]['nom'],
+#                             prix_unitaire=float(batiment_i[emolument_i]['prix_unitaire']),
+#                             nombre=float(batiment_i[emolument_i]['nombre']),
+#                             batiment_f=float(batiment_i[emolument_i]['batiment_f']),
+#                             montant=float(batiment_i[emolument_i]['montant'])
+#                         )
 
-                        record = Utils.set_model_record(record, params)
-                    else:
-                        # supprimer l'émolument
-                        request.dbsession.delete(record)
+#                         record = Utils.set_model_record(record, params)
+#                     else:
+#                         # supprimer l'émolument
+#                         request.dbsession.delete(record)
                     
-            else:
-                if float(batiment_i[emolument_i]['montant']) > 0 and float(batiment_i[emolument_i]['nombre']) > 0:
-                    params = Utils._params(
-                        emolument_affaire_id=int(emolument_affaire_id),
-                        tableau_emolument_id=int(batiment_i[emolument_i]['tableau_emolument_id']),
-                        position=batiment_i[emolument_i]['nom'],
-                        prix_unitaire=float(batiment_i[emolument_i]['prix_unitaire']),
-                        nombre=float(batiment_i[emolument_i]['nombre']),
-                        batiment=int(batiment_i[emolument_i]['batiment']),
-                        batiment_f=float(batiment_i[emolument_i]['batiment_f']),
-                        montant=float(batiment_i[emolument_i]['montant'])
-                    )
+#             else:
+#                 if float(batiment_i[emolument_i]['montant']) > 0 and float(batiment_i[emolument_i]['nombre']) > 0:
+#                     params = Utils._params(
+#                         emolument_affaire_id=int(emolument_affaire_id),
+#                         tableau_emolument_id=int(batiment_i[emolument_i]['tableau_emolument_id']),
+#                         position=batiment_i[emolument_i]['nom'],
+#                         prix_unitaire=float(batiment_i[emolument_i]['prix_unitaire']),
+#                         nombre=float(batiment_i[emolument_i]['nombre']),
+#                         batiment=int(batiment_i[emolument_i]['batiment']),
+#                         batiment_f=float(batiment_i[emolument_i]['batiment_f']),
+#                         montant=float(batiment_i[emolument_i]['montant'])
+#                     )
 
-                    record = Emolument()
-                    record = Utils.set_model_record(record, params)
+#                     record = Emolument()
+#                     record = Utils.set_model_record(record, params)
 
-                    request.dbsession.add(record)
+#                     request.dbsession.add(record)
 
-    # delete all remaining emoluments
-    for item in emoluments:
-        request.dbsession.delete(item)
+#     # delete all remaining emoluments
+#     for item in emoluments:
+#         request.dbsession.delete(item)
 
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Emolument.__tablename__))
+#     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Emolument.__tablename__))
 
 
 @view_config(route_name='emolument_affaire', request_method='DELETE', renderer='json')
@@ -582,11 +660,10 @@ def tableau_emoluments_new_view(request):
     Get tableau of emoluments
     """
     # Check authorization
-    # if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
-    #     raise exc.HTTPForbidden()
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+        raise exc.HTTPForbidden()
 
     today = datetime.date.today()
-    print(today)
 
     # get active emoluments
     table = request.dbsession.query(
@@ -606,12 +683,6 @@ def tableau_emoluments_new_view(request):
     categorie = []
     sous_categorie = []
     for position in table:
-        # if last_categorie_id != position.categorie_id:
-        #     result[position.categorie] = []
-        # if last_sous_categorie_id != position.sous_categorie_id:
-        #     result[position.categorie][position.sous_categorie] = []
-        
-        # result[position.categorie][position.sous_categorie].append(Utils.serialize_one(position))
         c += 1
         if c > 1:
             if last_sous_categorie_id != position.sous_categorie_id:

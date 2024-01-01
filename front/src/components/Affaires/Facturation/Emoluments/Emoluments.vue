@@ -83,7 +83,9 @@ export default {
   
           // Bâtiments
           batiment_f: [],
+
         };
+        this.getTableauEmolumentsNew();
       }
     },
 
@@ -384,7 +386,6 @@ export default {
       this.showProgressBar = true;
 
       let formData = new FormData();
-      formData.append('affaire_id', this.affaire.id);
       formData.append('form_general', JSON.stringify(this.form_general));
       formData.append('emoluments', JSON.stringify(this.tableauEmolumentsNew));
       this.$http.post(
@@ -749,16 +750,21 @@ export default {
     },
 
 
-    openEmolumentDialog(emolument_affaire_id) {
-      this.getEmolumentAffaireRepartition(emolument_affaire_id).then(response => {
-        if (response && response.data) {
-          this.initFactureRepartition(response.data);
-          this.updateFactureRepartition();
-        }
-      }).catch(err => handleException(err, this));
+    async openEmolumentDialog(emolument_affaire_id) {
+      console.log('openEmolumentDialog | emolument_affaire_id', emolument_affaire_id)
+      await this.getEmolument(emolument_affaire_id);
+      this.updateChapter();
+      console.log('openEmolumentDialog | do something with getEmolumentAffaireRepartition')
+      // this.getEmolumentAffaireRepartition(emolument_affaire_id).then(response => {
+      //   if (response && response.data) {
+      //     this.initFactureRepartition(response.data);
+      //     this.updateFactureRepartition();
+      //   }
+      // }).catch(err => handleException(err, this));
 
       this.emolument_priorite = true;
       // this.getEmolumentsDetail(emolument_affaire_id);
+      this.showEmolumentsDialog = true;
     },
 
     /**
@@ -1033,6 +1039,7 @@ export default {
     },
     
     updateChapter(){
+      console.log('updateChapter()')
       this.tableauEmolumentsNew = JSON.parse(JSON.stringify(this.tableauEmolumentsNew_bk));
       if (this.emolument_priorite === true) {
         this.tableauEmolumentsNew = this.tableauEmolumentsNew.map(cat => cat.map(scat => scat.filter(x => x.priorite === true)));
@@ -1059,7 +1066,7 @@ export default {
       },
 
     /**
-     * Get facture parametres
+     * Get empty table of emoluments
      */
     async getTableauEmolumentsNew() {
        this.$http.get(
@@ -1088,6 +1095,33 @@ export default {
           }
       })
       .catch(err => handleException(this, err)); 
+    },
+
+    /**
+     * Get emoluments
+     */
+    async getEmolument(emolument_affaire_id) {
+       return this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT + '?emolument_affaire_id=' + emolument_affaire_id,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+        ).then(response => {
+          if (response && response.data) {
+            
+            this.form_general = JSON.parse(response.data.form_general);
+            this.tableauEmolumentsNew_bk = JSON.parse(response.data.emoluments);
+            this.tableauEmolumentsNew = JSON.parse(JSON.stringify(this.tableauEmolumentsNew_bk));
+
+          // this.initFactureRepartition(response.data);
+          // this.updateFactureRepartition();
+
+            // this.divers_tarif_horaire = 
+            console.log('getEmoluments | this.tableauEmolumentsNew', this.tableauEmolumentsNew)
+          }
+      })
+      .catch(err => handleException(this, err));
     },
 
     updateMontant(position, idx) {
