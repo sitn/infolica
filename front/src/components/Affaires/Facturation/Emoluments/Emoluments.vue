@@ -57,12 +57,19 @@ export default {
         isPageReady: false,
         montants_matdiff: [],
         id_matdiff: [],
-        divers_tarif_horaire: []
+        divers_tarif_horaire: [],
+        divers_tarif_horaire_unit: {
+          nom: null,
+          nombre: 1,
+          montant: null,
+          prix: null,
+        },
+        test: null,
       }
   },
 
   methods:{
-    initForm(form_general=true) {
+    async initForm(form_general=true) {
 
       if (form_general) {
         this.form_general = {
@@ -85,7 +92,7 @@ export default {
           batiment_f: [],
 
         };
-        this.getTableauEmolumentsNew();
+        return await this.getTableauEmolumentsNew();
       }
     },
 
@@ -388,6 +395,8 @@ export default {
       let formData = new FormData();
       formData.append('form_general', JSON.stringify(this.form_general));
       formData.append('emoluments', JSON.stringify(this.tableauEmolumentsNew));
+      formData.append('divers_tarifhoraire', JSON.stringify(this.divers_tarif_horaire));
+
       this.$http.post(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT,
         formData,
@@ -753,6 +762,7 @@ export default {
     async openEmolumentDialog(emolument_affaire_id) {
       console.log('openEmolumentDialog | emolument_affaire_id', emolument_affaire_id)
       await this.getEmolument(emolument_affaire_id);
+      this.emolument_priorite = true;
       this.updateChapter();
       console.log('openEmolumentDialog | do something with getEmolumentAffaireRepartition')
       // this.getEmolumentAffaireRepartition(emolument_affaire_id).then(response => {
@@ -762,7 +772,6 @@ export default {
       //   }
       // }).catch(err => handleException(err, this));
 
-      this.emolument_priorite = true;
       // this.getEmolumentsDetail(emolument_affaire_id);
       this.showEmolumentsDialog = true;
     },
@@ -1062,14 +1071,14 @@ export default {
             this.isPageReady = true;
           }
         })
-        .catch(err => handleException(this, err)); 
+        .catch(err => handleException(err, this)); 
       },
 
     /**
      * Get empty table of emoluments
      */
     async getTableauEmolumentsNew() {
-       this.$http.get(
+       return this.$http.get(
          process.env.VUE_APP_API_URL + "/tableau_emoluments_new",
          {
            withCredentials: true,
@@ -1094,7 +1103,7 @@ export default {
 
           }
       })
-      .catch(err => handleException(this, err)); 
+      .catch(err => handleException(err, this)); 
     },
 
     /**
@@ -1113,15 +1122,15 @@ export default {
             this.form_general = JSON.parse(response.data.form_general);
             this.tableauEmolumentsNew_bk = JSON.parse(response.data.emoluments);
             this.tableauEmolumentsNew = JSON.parse(JSON.stringify(this.tableauEmolumentsNew_bk));
+            this.divers_tarif_horaire = JSON.parse(response.data.divers_tarifhoraire);
 
-          // this.initFactureRepartition(response.data);
-          // this.updateFactureRepartition();
+            // this.initFactureRepartition(response.data);
+            // this.updateFactureRepartition();
 
-            // this.divers_tarif_horaire = 
             console.log('getEmoluments | this.tableauEmolumentsNew', this.tableauEmolumentsNew)
           }
       })
-      .catch(err => handleException(this, err));
+      .catch(err => handleException(err, this));
     },
 
     updateMontant(position, idx) {
@@ -1129,7 +1138,12 @@ export default {
       if (idx > 0) {
         f = Number(this.form_general.batiment_f[idx-1]);
       }
-      return position.prix[idx] = f * Number(position.nombre[idx]) * Number(position.montant);
+      return position.prix[idx] = this.round(f * Number(position.nombre[idx]) * Number(position.montant), 0.05);
+    },
+
+    addDivers() {
+      console.log('add divers')
+      this.divers_tarif_horaire.push(JSON.parse(JSON.stringify(this.divers_tarif_horaire_unit)));
     }
   },
 
@@ -1137,6 +1151,8 @@ export default {
     this.getEmolumentsGeneral();
     this.getTableauEmolumentsNew();
     this.getFactureParametres();
+
+    this.addDivers();
     
     // this.getEmolumentsUnit().then(() => {
     //   this.getEmolumentsGeneral();

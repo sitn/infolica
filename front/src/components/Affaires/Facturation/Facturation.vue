@@ -618,11 +618,11 @@ export default {
     /**
      * open emolument dialog
      */
-    openEmolumentsDialog() {
-      this.$refs.emoluments.initForm();
+    async openEmolumentsDialog() {
+      await this.$refs.emoluments.initForm();
       this.$refs.emoluments.initFactureRepartition([]);
-      this.$refs.emoluments.updateChapter();
       this.$refs.emoluments.emolument_priorite = true;
+      this.$refs.emoluments.updateChapter();
       this.$refs.emoluments.showEmolumentsDialog = true;
     },
 
