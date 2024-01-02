@@ -183,7 +183,7 @@
                       
                       <!-- nombre et montant (BF) -->
                       <template v-if="position.bien_fonds===true">
-                        <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.nombre[0]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[0])>0, hideNulls: Number(position.nombre[0])==0 }" @keyup="updateMontant(position, 0)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
+                        <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled || id_matdiff.slice(1,id_matdiff.length).includes(position.id)" v-model="position.nombre[0]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[0])>0, hideNulls: Number(position.nombre[0])==0 }" @keyup="updateMontant(position, 0)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)" @focusout="updateMatDiffNumber(position)"></md-input></md-field></td>
                         <td class="tg-0lax montant alignRight"><span v-if="Number(position.prix[0]>0)">{{ position.prix[0].toFixed(2) }} CHF</span></td>
                       </template>
                       <template v-else>
@@ -1783,16 +1783,19 @@
                   </md-card-header>
                   <md-card-content>
                     Calcul du montant au point 3.4:
-                    <ul style="margin: 0px;">
-                      <li>De 1 à 5 points:  prix_unitaire TO BE COMPLETED CHF / PCE</li>
+                    <p>
+                      Il s'agit d'indiquer le nombre de points dans la première case (de 1 à 5 points). Le programme répartit ensuite le nombre de points dans chaque tranche de montants.
+                    </p>
+                    <!-- <ul style="margin: 0px;"> -->
+                      <!-- <li>De 1 à 5 points:  prix_unitaire {{ this.tableauEmolumentsNew.forEach(cat => cat.forEach(scat => scat.forEach(pos => {if (pos.id == id_matdiff) return pos.montant }))) }} CHF / PCE</li>
                       <li>De 6 à 10 points:  prix_unitaire TO BE COMPLETED CHF / PCE</li>
                       <li>De 11 à 15 points:  prix_unitaire TO BE COMPLETED CHF / PCE</li>
-                      <li>Plus de 16 points:  prix_unitaire TO BE COMPLETED CHF / PCE</li>
+                      <li>Plus de 16 points:  prix_unitaire TO BE COMPLETED CHF / PCE</li> -->
                       <!-- <li>De 1 à 5 points:  prix_unitaire {{ form_detail.travauxMaterialisation15.prix_unitaire }} CHF / PCE</li>
                       <li>De 6 à 10 points:  prix_unitaire {{ form_detail.travauxMaterialisation16.prix_unitaire }} CHF / PCE</li>
                       <li>De 11 à 15 points:  prix_unitaire {{ form_detail.travauxMaterialisation17.prix_unitaire }} CHF / PCE</li>
                       <li>Plus de 16 points:  prix_unitaire {{ form_detail.travauxMaterialisation18.prix_unitaire }} CHF / PCE</li> -->
-                    </ul>
+                    <!-- </ul> -->
                   </md-card-content>
                 </md-card>
               </div>

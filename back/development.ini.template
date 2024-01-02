@@ -146,7 +146,6 @@ affaire_premiere_etape_defaut_id = 13
 # Facture type
 facture_type_facture_id = 1
 # emoluments
-emoluments_matdiff_id = 122,123,124,125
 emoluments_divers_tarifhoraire_id = 101
 
 # Client cadastration

@@ -55,8 +55,7 @@ export default {
         tableauEmolumentsNew: [],
         tableauEmolumentsNew_bk: [],
         isPageReady: false,
-        montants_matdiff: [],
-        id_matdiff: [],
+        id_matdiff: process.env.VUE_APP_TABLEAUEMOLUMENTS_MATDIFF_ID.split(',').map(Number),
         divers_tarif_horaire: [],
         divers_tarif_horaire_unit: {
           nom: null,
@@ -92,6 +91,9 @@ export default {
           batiment_f: [],
 
         };
+
+        this.divers_tarif_horaire = [].push(this.divers_tarif_horaire_unit);
+
         return await this.getTableauEmolumentsNew();
       }
     },
@@ -1144,6 +1146,48 @@ export default {
     addDivers() {
       console.log('add divers')
       this.divers_tarif_horaire.push(JSON.parse(JSON.stringify(this.divers_tarif_horaire_unit)));
+    },
+
+    updateMatDiffNumber(position) {
+      if (position.id == this.id_matdiff[0]) {
+        let tmp = Number(position.nombre);
+
+        let tmp_5 = 0;
+        let tmp_10 = 0;
+        let tmp_15 = 0;
+        let tmp_gt15 = 0;
+        let c = 1;
+        while (tmp > 0) {
+          if (c <= 5) {
+            // de 1 à 5 points
+            tmp_5 += 1;
+          } else if (c <= 10) {
+            // de 6 à 10 points
+            tmp_10 += 1;
+          } else if (c <= 15) {
+            // de 11 à 15 points
+            tmp_15 += 1;
+          } else {
+            // plus de 16 points
+            tmp_gt15 += 1;
+          }
+
+          tmp -= 1;
+          c += 1;
+        }
+
+        this.tableauEmolumentsNew.forEach(cat => {
+          cat.forEach(scat => {
+            scat.forEach(pos => {
+              if (pos.id === this.id_matdiff[0]) {pos.nombre[0] = tmp_5; this.updateMontant(pos, 0)}
+              if (pos.id === this.id_matdiff[1]) {pos.nombre[0] = tmp_10; this.updateMontant(pos, 0)}
+              if (pos.id === this.id_matdiff[2]) {pos.nombre[0] = tmp_15; this.updateMontant(pos, 0)}
+              if (pos.id === this.id_matdiff[3]) {pos.nombre[0] = tmp_gt15; this.updateMontant(pos, 0)}
+            })
+          })
+        });
+
+      }
     }
   },
 
