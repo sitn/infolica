@@ -22,7 +22,6 @@ export default {
   data: function () {
       return {
         cadastrationFactureNumerosId_old: [],
-        chapters: [],
         confirmationRemoveDialog: {
           title: "Demande de confirmation",
           msg: "Confirmez-vous la suppression de l'émolument?",
@@ -33,24 +32,17 @@ export default {
           onCancel: () => {},
         },
         disabled: false,
-        divers: [],
         emolument_facture_repartition_ctrl: false,
         emolumentsGeneral_list: [],
         emolument_priorite: true,
-        // emolumentsUnits: [],
         facture_parametres : {
           indice_application: null,
           tva_pc: null,
         },
         factures_repartition: [],
         form_general: {}, //général
-        form_detail: {}, //emoluments sans bâtiment
-        form_detail_batiment: [], //emoluments avec bâtiments
-        n_divers: 8,
-        pointsMatDiff_nombre: 0,
         showEmolumentsDialog: false,
         showProgressBar: false,
-        showSendValuesToFacture: false,
         total: {
           montant_recapitulatif_mandat: 0,
           montant_recapitulatif_somme1: 0,
@@ -70,7 +62,6 @@ export default {
           montant_recapitulatif_total: 0,
         },
         tableauEmolumentsNew: [],
-        tableauEmolumentsNew_bk: [],
         isPageReady: false,
         id_matdiff: process.env.VUE_APP_TABLEAUEMOLUMENTS_MATDIFF_ID.split(',').map(Number),
         divers_tarif_horaire: [],
@@ -131,17 +122,12 @@ export default {
           })
         })
       });
-      
-      console.log('this.tableauEmolumentsNew', this.tableauEmolumentsNew)
-      console.log('this.tableauEmolumentsNew[0][0][0].nombre', this.tableauEmolumentsNew[0][0][0].nombre)
     },
 
     /**
      * Remove batiment
      */
     removeBatiment(batiment_i) {
-      console.log(`removeBatiment(${batiment_i})`)
-      
       let tmp = JSON.parse(JSON.stringify(this.tableauEmolumentsNew));
       tmp.forEach(cat => {
         cat.forEach(scat => {
@@ -164,141 +150,17 @@ export default {
     /**
      * Update batimentCorrectionFactor
      */
-    updateBatimentCorrectionFactor() {
-      for (let i=0; i<Number(this.form_general.nb_batiments); i++) {
-        console.log('updateBatimentCorrectionFactor | still need to be done')
-      }
-
-      // this.updateMontants();
+    updateBatimentCorrectionFactor(idx) {
+      let tmp = JSON.parse(JSON.stringify(this.tableauEmolumentsNew));
+      tmp.forEach(cat=> {
+        cat.forEach(scat => {
+          scat.forEach(pos => {
+            this.updateMontant(pos, idx);
+          })
+        })
+      });
+      this.tableauEmolumentsNew = tmp;
     },
-
-
-    // /** Autocompletion terrain-bureau */
-    // terrainBureau_autocompletion(value=true) {
-    //   if (this.form_general.utilise || this.disabled) {
-    //     return
-    //   }
-
-    //   // 2.29 = 2.23 + ... + 2.28
-    //   this.form_detail.travauxTerrain25.nombre = 
-    //     Number(this.form_detail.travauxTerrain19.nombre) +
-    //     Number(this.form_detail.travauxTerrain20.nombre) +
-    //     Number(this.form_detail.travauxTerrain21.nombre) +
-    //     Number(this.form_detail.travauxTerrain22.nombre) +
-    //     Number(this.form_detail.travauxTerrain23.nombre) +
-    //     Number(this.form_detail.travauxTerrain24.nombre);
-     
-        
-    //   // 3.31 = 3.11 + 3.115
-    //   this.form_detail.travauxMaterialisation9.nombre =
-    //     Number(this.form_detail.travauxMaterialisation1.nombre) +
-    //     Number(this.form_detail.travauxMaterialisation2.nombre);
-      
-    //   // 3.33 = 3.18
-    //   this.form_detail.travauxMaterialisation11.nombre =
-    //     Number(this.form_detail.travauxMaterialisation8.nombre);
-      
-    //   // 3.34 = 3.115
-    //   this.form_detail.travauxMaterialisation12.nombre =
-    //     Number(this.form_detail.travauxMaterialisation2.nombre);
-      
-    //   // 3.35 = 3.11
-    //   this.form_detail.travauxMaterialisation13.nombre =
-    //     Number(this.form_detail.travauxMaterialisation1.nombre);
-      
-    //   // 3.36 = 3.17
-    //   this.form_detail.travauxMaterialisation14.nombre =
-    //     Number(this.form_detail.travauxMaterialisation7.nombre);
-      
-   
-    //   // 4.11 = 2.17 + 2.110 + 2.111 **bat
-    //   this.form_detail.travauxBureau1.nombre =
-    //     Number(this.form_detail.travauxTerrain9.nombre) +
-    //     Number(this.form_detail.travauxTerrain12.nombre) +
-    //     Number(this.form_detail.travauxTerrain13.nombre);
-
-    //   // 4.15 = 2.110 **bat
-    //   this.form_detail.travauxBureau6.nombre =
-    //     Number(this.form_detail.travauxTerrain12.nombre);
-      
-    //   // 4.31 = 2.31 **bat
-    //   if (value===true) {
-    //     this.form_detail.travauxBureau13.nombre =
-    //       Number(this.form_detail.travauxTerrain15.nombre);
-    //   }
-      
-    //   // 4.32 = 2.32 **bat
-    //   this.form_detail.travauxBureau14.nombre =
-    //     Number(this.form_detail.travauxTerrain16.nombre);
-        
-    //   // 4.36 = 4.31 + 4.32 **bat
-    //   this.form_detail.travauxBureau18.nombre =
-    //     Number(this.form_detail.travauxBureau13.nombre) +
-    //     Number(this.form_detail.travauxBureau14.nombre);
-        
-    //   // 4.21 = 2.23 + 2.24
-    //   this.form_detail.travauxBureau28.nombre =
-    //     Number(this.form_detail.travauxTerrain19.nombre) +
-    //     Number(this.form_detail.travauxTerrain20.nombre);
-      
-    //   // 4.23 = 2.25 + 2.28
-    //   this.form_detail.travauxBureau31.nombre =
-    //     Number(this.form_detail.travauxTerrain21.nombre) +
-    //     Number(this.form_detail.travauxTerrain24.nombre);
-
-    //   // 4.26 = 2.27
-    //   if (value===true) {
-    //     this.form_detail.travauxBureau34.nombre =
-    //       Number(this.form_detail.travauxTerrain23.nombre);
-    //   }
-
-    //   // 4.29 = 2.27
-    //   this.form_detail.travauxBureau37.nombre =
-    //     Number(this.form_detail.travauxTerrain23.nombre);
-
-    //   // 4.210 = 2.27
-    //   if (value===true) {
-    //     this.form_detail.travauxBureau38.nombre =
-    //       Number(this.form_detail.travauxTerrain23.nombre);
-    //   }
-
-    //   // 4.213 = 4.23 + 4.26
-    //   this.form_detail.travauxBureau41.nombre =
-    //     Number(this.form_detail.travauxBureau31.nombre) +
-    //     Number(this.form_detail.travauxBureau34.nombre);
-      
-
-
-    //   // Update nombres avec bâtiments
-    //   for (let j=0; j<Number(this.form_general.nb_batiments); j++) {
-    //     // 4.11 = 2.17 + 2.110 + 2.111 **bat
-    //     this.form_detail_batiment[j].travauxBureau1.nombre =
-    //       Number(this.form_detail_batiment[j].travauxTerrain9.nombre) +
-    //       Number(this.form_detail_batiment[j].travauxTerrain12.nombre) +
-    //       Number(this.form_detail_batiment[j].travauxTerrain13.nombre);
-        
-    //     // 4.15 = 2.110 **bat
-    //     this.form_detail_batiment[j].travauxBureau6.nombre =
-    //       Number(this.form_detail_batiment[j].travauxTerrain12.nombre);
-
-    //     // 4.31 = 2.31 **bat
-    //     if (value===true) {
-    //       this.form_detail_batiment[j].travauxBureau13.nombre =
-    //         Number(this.form_detail_batiment[j].travauxTerrain15.nombre);
-    //     }
-        
-    //     // 4.32 = 2.32 **bat
-    //     this.form_detail_batiment[j].travauxBureau14.nombre =
-    //       Number(this.form_detail_batiment[j].travauxTerrain16.nombre);
-          
-    //     // 4.36 = 2.31 + 2.32 **bat
-    //     this.form_detail_batiment[j].travauxBureau18.nombre =
-    //       Number(this.form_detail_batiment[j].travauxBureau13.nombre) +
-    //       Number(this.form_detail_batiment[j].travauxBureau14.nombre);
-    //   }
-      
-    // },
-
 
 
     /**
@@ -315,8 +177,6 @@ export default {
      * postFormular (main)
      */
     async postEmolument() {
-      
-      console.log('postEmolument | ')
       this.showProgressBar = true;
 
       let formData = new FormData();
@@ -331,7 +191,7 @@ export default {
           withCredentials: true,
           headers: {"Accept": "application/json"}
         }
-      ).then(response => console.log('postEmolument | success ', response))
+      ).then(() => this.$root.$emit("ShowMessage", "L'émolument a bien été enregistré"))
       .catch(err => handleException(err, this))
       .finally(() => this.showProgressBar = false);
     },
@@ -516,7 +376,6 @@ export default {
 
 
     async openEmolumentDialog(emolument_affaire_id) {
-      console.log('openEmolumentDialog | emolument_affaire_id', emolument_affaire_id)
       await this.getEmolument(emolument_affaire_id);
       this.emolument_priorite = true;
       console.log('openEmolumentDialog | do something with getEmolumentAffaireRepartition')
@@ -852,8 +711,7 @@ export default {
                 })
             });
               
-            this.tableauEmolumentsNew_bk = tmp;
-            this.tableauEmolumentsNew = JSON.parse(JSON.stringify(this.tableauEmolumentsNew_bk));
+            this.tableauEmolumentsNew = tmp;
             
           }
       })
@@ -874,14 +732,13 @@ export default {
           if (response && response.data) {
             
             this.form_general = JSON.parse(response.data.form_general);
-            this.tableauEmolumentsNew_bk = JSON.parse(response.data.emoluments);
-            this.tableauEmolumentsNew = JSON.parse(JSON.stringify(this.tableauEmolumentsNew_bk));
+            this.tableauEmolumentsNew = JSON.parse(response.data.emoluments);
             this.divers_tarif_horaire = JSON.parse(response.data.divers_tarifhoraire);
 
             // this.initFactureRepartition(response.data);
             // this.updateFactureRepartition();
 
-            console.log('getEmoluments | this.tableauEmolumentsNew', this.tableauEmolumentsNew)
+            console.log('getEmoluments | do something with initFactureRepartition and updateFactureRepartition')
 
             this.update_sommesPartielles();
           }
@@ -1027,11 +884,8 @@ export default {
     },
 
     updateMatDiffNumber(position) {
-      console.log('updateMatDiffNumber | position', position)
       if (position.id == this.id_matdiff[0]) {
-        console.log('updateMatDiffNumber | position is matdiff', position)
         let tmp = Number(position.nombre[0]);
-        console.log('tmp', tmp)
 
         let tmp_5 = 0;
         let tmp_10 = 0;
@@ -1056,8 +910,6 @@ export default {
           tmp -= 1;
           c += 1;
         }
-
-        console.log('matdiff | tmp_5', tmp_5, 'tmp_10', tmp_10, 'tmp_15', tmp_15, 'tmp_gt15', tmp_gt15)
 
         this.tableauEmolumentsNew.forEach(cat => {
           cat.forEach(scat => {

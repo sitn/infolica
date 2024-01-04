@@ -44,7 +44,7 @@
                       <td class="tg-0lax alignCenter">{{ i }}</td>
                       <td class="tg-0lax">
                         <md-field class="nbField">
-                          <md-select :disabled="disabled" v-model="form_general.batiment_f[i-1]" md-dense @md-selected="updateBatimentCorrectionFactor()">
+                          <md-select :disabled="disabled" v-model="form_general.batiment_f[i-1]" md-dense @md-selected="updateBatimentCorrectionFactor(i)">
                             <md-option :value="1.5">1.5 (>1000m2)</md-option>
                             <md-option :value="1.4">1.4 (751-1000m2)</md-option>
                             <md-option :value="1.3">1.3 (501-750m2)</md-option>
