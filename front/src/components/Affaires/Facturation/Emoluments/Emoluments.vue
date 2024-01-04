@@ -140,22 +140,24 @@ export default {
      * Remove batiment
      */
     removeBatiment(batiment_i) {
-      // let tmp = [];
-      // let c = 1; // renumérotation bâtiment
-      // for (let i=0; i<this.form_general.nb_batiments; i++) {
-      //   if (this.form_detail_batiment[i]['mandat1'].batiment !== batiment_i) {
-      //     for (let key in this.form_detail_batiment[i]) {
-      //       this.form_detail_batiment[i][key].batiment = c;
-      //     }
-      //     tmp.push(this.form_detail_batiment[i]);
-      //     c += 1;
-      //   }
-      // }
-      // this.form_detail_batiment = JSON.parse(JSON.stringify(tmp));
+      console.log(`removeBatiment(${batiment_i})`)
+      
+      let tmp = JSON.parse(JSON.stringify(this.tableauEmolumentsNew));
+      tmp.forEach(cat => {
+        cat.forEach(scat => {
+          scat.forEach(pos => {
+            pos.nombre.splice(batiment_i, 1);
+            pos.prix.splice(batiment_i, 1);
+          })
+        })
+      })
+      
+      this.tableauEmolumentsNew = tmp;
+      
       this.form_general.batiment_f.splice(batiment_i-1,1);
       this.form_general.nb_batiments -= 1;
-      this.initForm(false);
-      // this.updateMontants();
+
+      this.update_sommesPartielles();
     },
 
 
