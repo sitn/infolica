@@ -934,11 +934,7 @@ export default {
     this.getTableauEmolumentsNew();
     this.getFactureParametres();
 
-    this.addDivers();
-    
-    // this.getEmolumentsUnit().then(() => {
-    //   this.getEmolumentsGeneral();
-    // });
+    this.addDivers();    
 
     this.$root.$on("getEmolumentsGeneral", () => this.getEmolumentsGeneral());
   }

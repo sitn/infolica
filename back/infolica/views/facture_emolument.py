@@ -149,6 +149,7 @@ def emolument_view(request):
     nb_batiments = request.dbsession.query(func.max(Emolument.batiment)).filter(
         Emolument.emolument_affaire_id==emolument_affaire_id
     ).scalar()
+    if nb_batiments is None: nb_batiments = 0
 
 
     existing_emoluments_query = request.dbsession.query(Emolument).filter(
