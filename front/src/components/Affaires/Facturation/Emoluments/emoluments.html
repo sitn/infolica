@@ -132,14 +132,14 @@
               <thead class="customTableHead">
                 <template v-if="form_general.nb_batiments > 0">
                   <tr>
-                    <th class="tg-0lax alignCenter" colspan="7"></th>
+                    <th class="tg-0lax alignCenter" colspan="6"></th>
                     <template v-for="i in form_general.nb_batiments">
                       <th class="tg-0lax batiment-separator alignCenter" colspan="2">Bâtiment {{i}} (f = {{ form_general.batiment_f[i-1] }})</th>
                     </template>
                   </tr>
                 </template>
                 <tr>
-                  <th class="chapter"></th>
+                  <!-- <th class="chapter"></th> -->
                   <th class="tg-0lax alignCenter code">Code</th>
                   <th class="tg-0lax alignCenter position">Position</th>
                   <th class="tg-0lax alignCenter unite">Unité</th>
@@ -154,14 +154,14 @@
               </thead>
               <tbody class="customTableBody">
                 <template v-for="(category, index) in tableauEmolumentsNew">
+                  <!-- CHAPTER TITLE -->
+                  <tr>
+                    <td class="" :colspan="6+2*form_general.nb_batiments" style="background-color: rgba(34, 139, 34, 0.5);">{{ category[0][0].categorie_id }}. {{ category[0][0].categorie }}</td>
+                  </tr>
                   <template v-for="scategory in category">
                     <tr v-for="position in scategory" class="rowChapterDistinction" id="" :class="{'selected': (position.id == selectedHighlightRow)}" @click="highlithtSelectedRow(position.id)">
-                      <!-- chapitre -->
-                      <td v-if="position.id === category[0][0].id && (!emolument_priorite || position.priorite)" class="chapter" :rowspan="category.map(a => (emolument_priorite? a.filter(x => x.priorite).length: a.length)).reduce((a,b) => a + b)" style="background-color: rgba(34, 139, 34, 0.5);">{{ position.categorie_id }}. {{ position.categorie }}</td>
-                      <!-- <td v-if="position.id === category[0][0].id && (!emolument_priorite || position.priorite)" class="chapter" :rowspan="category.map(a => (emolument_priorite? a.filter(x => x.priorite).length: a.length)).reduce((a,b) => a + b)+1" style="background-color: rgba(34, 139, 34, 0.5);">{{ position.categorie_id }}. {{ position.categorie }}</td> -->
-                      
                       <!-- code -->
-                      <td class="tg-0lax code">{{ position.code }}</td>
+                      <td class="tg-0lax code">{{ [position.categorie_id, position.code].join('') }}</td>
 
                       <!-- nom de la position -->
                       <td class="tg-0lax position">{{ position.nom }}</td>
@@ -220,10 +220,11 @@
 
                 <!-- DIVERS -->
                 <template>
+                  <!-- CHAPTER TITLE -->
+                  <tr>
+                    <td class="" :colspan="6+2*form_general.nb_batiments" style="background-color: rgba(34, 139, 34, 0.5);">Divers <a @click="addDivers" title="Ajouter un nouvel élément">[+]</a></td>
+                  </tr>
                   <tr class="rowChapterDistinction" id="" v-for="(tdh, index) in divers_tarif_horaire">
-                    <!-- chapitre -->
-                    <td class="chapter" :rowspan="divers_tarif_horaire.length" style="background-color: rgba(34, 139, 34, 0.5);" v-if="index==0">Divers <a @click="addDivers" title="Ajouter un nouvel élément">[+]</a></td>
-                    
                     <!-- code -->
                     <!-- <td class="tg-0lax code">XXX</td> -->
 
