@@ -33,7 +33,10 @@ def tableau_facture_parametres_view(request):
     today = datetime.date.today()
     results = request.dbsession.query(FactureParametres).filter(
         FactureParametres.valable_de <= today,
-        FactureParametres.valable_a >= today,
+        or_(
+            FactureParametres.valable_a >= today,
+            FactureParametres.valable_a == None,
+        )
     ).all()
 
     params = {}
@@ -197,7 +200,7 @@ def emolument_view(request):
 
         c += 1
         if c > 1:
-            if last_sous_categorie_id != position.sous_categorie_id:
+            if last_sous_categorie_id != position.sous_categorie_id or (last_sous_categorie_id == position.sous_categorie_id and last_categorie_id != position.categorie_id):
                 # New category
                 categorie.append(sous_categorie)
                 sous_categorie = []
@@ -277,16 +280,16 @@ def emolument_new_view(request):
         for scategory in category:
             for position in scategory:
                 for i in range(len(position['nombre'])):
-                    if int(position['nombre'][i]) > 0 or position['prix'][i] > 0:
+                    if int(position['nombre'][i] or '0') > 0 or float(position['prix'][i] or '0') > 0:
                         params = Utils._params(
                             emolument_affaire_id=emol_affaire.id,
                             tableau_emolument_id=int(position['id']),
                             position=position['nom'],
-                            prix_unitaire=float(position['montant']),
-                            nombre=int(position['nombre'][i]),
+                            prix_unitaire=float(position['montant'] or '0'),
+                            nombre=int(position['nombre'][i] or '0'),
                             batiment=i,
                             batiment_f=1 if i == 0 else float(form_general['batiment_f'][i-1]),
-                            montant=float(position['prix'][i])
+                            montant=float(position['prix'][i] or '0')
                         )
 
                         # save emolument
@@ -528,7 +531,7 @@ def tableau_emoluments_new_view(request):
     for position in table:
         c += 1
         if c > 1:
-            if last_sous_categorie_id != position.sous_categorie_id:
+            if last_sous_categorie_id != position.sous_categorie_id or (last_sous_categorie_id == position.sous_categorie_id and last_categorie_id != position.categorie_id):
                 categorie.append(sous_categorie)
                 sous_categorie = []
             if last_categorie_id != position.categorie_id:

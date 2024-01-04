@@ -51,7 +51,24 @@ export default {
         showEmolumentsDialog: false,
         showProgressBar: false,
         showSendValuesToFacture: false,
-        total: {},
+        total: {
+          montant_recapitulatif_mandat: 0,
+          montant_recapitulatif_somme1: 0,
+          montant_recapitulatif_terrain_materialisation_deplacements: 0,
+          montant_recapitulatif_somme2: 0,
+          montant_recapitulatif_bureau: 0,
+          montant_recapitulatif_somme3: 0,
+          montant_recapitulatif_indice_application: 0,
+          montant_recapitulatif_somme4: 0,
+          montant_recapitulatif_materiel_divers: 0,
+          montant_recapitulatif_somme5: 0,
+          montant_recapitulatif_matdiff: 0,
+          montant_recapitulatif_somme6: 0,
+          montant_recapitulatif_tva: 0,
+          montant_recapitulatif_somme7: 0,
+          montant_recapitulatif_registre_foncier: 0,
+          montant_recapitulatif_total: 0,
+        },
         tableauEmolumentsNew: [],
         tableauEmolumentsNew_bk: [],
         isPageReady: false,
@@ -61,9 +78,10 @@ export default {
           nom: null,
           nombre: 1,
           montant: null,
-          prix: null,
+          prix: 0,
         },
         category_sommepartielle: [],
+        selectedHighlightRow: null,
       }
   },
 
@@ -281,38 +299,6 @@ export default {
     //   }
       
     // },
-
-
-    // updateRecapitulatif() {
-    //   let mandat_batiment = (this.form_general.nb_batiments > 0)? Number(this.total.montant_mandat_batiment_total_f.reduce((a, b) => Number(a) + Number(b))): 0
-    //   this.total.montant_recapitulatif_mandat = Number(this.total.montant_mandat_total) + mandat_batiment;
-    //   this.total.montant_recapitulatif_somme1 = Number(this.total.montant_recapitulatif_mandat)
-
-    //   this.total.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.total.montant_travauxTerrain_total_zi) + Number(this.total.montant_31_32_std_compl) + Number(this.total.montant_5_depl_debours) + Number(this.total.montant_travauxTerrain_batiment_total_f_somme_zi);
-    //   this.total.montant_recapitulatif_somme2 = Number(this.total.montant_recapitulatif_somme1) + Number(this.total.montant_recapitulatif_terrain_materialisation_deplacements);
-
-    //   this.total.montant_recapitulatif_bureau = Number(this.total.montant_travauxBureau_total) + Number(this.total.montant_travauxBureau_batiment_total_f_somme);
-    //   this.total.montant_recapitulatif_somme3 = Number(this.total.montant_recapitulatif_somme2) + Number(this.total.montant_recapitulatif_bureau);
-
-    //   this.total.montant_recapitulatif_indice_application = this.round( Number(this.total.montant_recapitulatif_somme3) * (Number(this.form_general.indice_application) - 1));
-    //   this.total.montant_recapitulatif_somme4 = Number(this.total.montant_recapitulatif_somme3) + Number(this.total.montant_recapitulatif_indice_application);
-
-    //   this.total.montant_recapitulatif_materiel_divers = Number(this.total.montant_33_materiel) + Number(this.total.montant_divers_total);
-    //   this.total.montant_recapitulatif_somme5 = Number(this.total.montant_recapitulatif_somme4) + Number(this.total.montant_recapitulatif_materiel_divers);
-
-    //   this.total.montant_recapitulatif_matdiff = this.round( Number(this.total.montant_34_matdiff) * Number(this.form_general.indice_application));
-    //   this.total.montant_recapitulatif_somme6 = Number(this.total.montant_recapitulatif_somme5) + Number(this.total.montant_recapitulatif_matdiff);
-
-    //   this.total.montant_recapitulatif_tva = this.round(Number(this.total.montant_recapitulatif_somme5) * Number(this.form_general.tva_pc) / 100, 0.05) + this.round(Number(this.total.montant_recapitulatif_matdiff) * Number(this.form_general.tva_pc) / 100, 0.05);
-    //   this.total.montant_recapitulatif_somme7 = this.total.montant_recapitulatif_somme6 + Number(this.total.montant_recapitulatif_tva);
-
-    //   this.total.montant_recapitulatif_registre_foncier = Number(this.total.montant_rf_total);
-
-    //   this.total.montant_recapitulatif_total = Number(this.total.montant_recapitulatif_somme7) + Number(this.total.montant_recapitulatif_registre_foncier);
-
-    //   this.setComptabiliteFormat();
-    // },
-
 
 
 
@@ -858,6 +844,17 @@ export default {
       }
     },
    
+
+
+
+// ================================================================================================================================================
+// ================================================================================================================================================
+//                  NEW EMOLUMENTS
+// ================================================================================================================================================
+// ================================================================================================================================================
+
+
+
    /**
     * Get facture parametres
     */
@@ -903,7 +900,6 @@ export default {
             this.category_sommepartielle = new Array(this.tableauEmolumentsNew_bk.length).fill([0]);
             this.tableauEmolumentsNew = JSON.parse(JSON.stringify(this.tableauEmolumentsNew_bk));
             
-            // this.divers_tarif_horaire = 
           }
       })
       .catch(err => handleException(err, this)); 
@@ -950,6 +946,7 @@ export default {
     },
 
     update_sommesPartielles() {
+      //sommes partielles montrées sur la page des émoluments
       let tmp = new Array(this.tableauEmolumentsNew.length).fill(0);
       let tmp_sommepartielle = new Array(this.form_general.nb_batiments+1).fill(0);
       let c = -1;
@@ -967,6 +964,83 @@ export default {
       });
       console.log('update_sommesPartielles | tmp =', tmp)
       this.category_sommepartielle = tmp;
+
+      //sommes partielles du tableau récapitulatif
+      this.total.montant_recapitulatif_mandat = 0;
+      this.total.montant_recapitulatif_somme1 = 0;
+      this.total.montant_recapitulatif_terrain_materialisation_deplacements = 0;
+      this.total.montant_recapitulatif_somme2 = 0;
+      this.total.montant_recapitulatif_bureau = 0;
+      this.total.montant_recapitulatif_somme3 = 0;
+      this.total.montant_recapitulatif_indice_application = 0;
+      this.total.montant_recapitulatif_somme4 = 0;
+      this.total.montant_recapitulatif_materiel_divers = 0;
+      this.total.montant_recapitulatif_somme5 = 0;
+      this.total.montant_recapitulatif_matdiff = 0;
+      this.total.montant_recapitulatif_somme6 = 0;
+      this.total.montant_recapitulatif_tva = 0;
+      this.total.montant_recapitulatif_somme7 = 0;
+      this.total.montant_recapitulatif_registre_foncier = 0;
+
+      // let pos_cat_scat = ''
+      this.tableauEmolumentsNew.forEach(cat => {
+        cat.forEach(scat => {
+          scat.forEach(pos => {
+            // mandat (cat 1)
+            if (pos.categorie_id === 1) {
+              this.total.montant_recapitulatif_mandat += pos.prix.reduce((partialSum, a) => partialSum + a, 0);
+              return;
+            }
+
+            // travaux terrain (cat 2 + cat 3.1, 3.2, 3.5)
+            if ([2, 5].includes(pos.categorie_id) || (pos.categorie_id === 3 && [1, 2, 5].includes(pos.sous_categorie_id))) {
+              this.total.montant_recapitulatif_terrain_materialisation_deplacements += pos.prix.reduce((partialSum, a) => partialSum + a, 0);
+              return;
+            }
+
+            // travaux bureau (cat 4)
+            if (pos.categorie_id === 4) {
+              this.total.montant_recapitulatif_bureau += pos.prix.reduce((partialSum, a) => partialSum + a, 0);
+              return;
+            }
+
+            // matériel (cat 3.3)
+            if ((pos.categorie_id === 3 && pos.sous_categorie_id === 3) || pos.categorie_id === 6) {
+              this.total.montant_recapitulatif_materiel_divers += pos.prix.reduce((partialSum, a) => partialSum + a, 0);
+              return;
+            }
+
+            // mat diff (cat 3.4)
+            if (pos.categorie_id === 3 && pos.sous_categorie_id === 4) {
+              this.total.montant_recapitulatif_matdiff += pos.prix.reduce((partialSum, a) => partialSum + a, 0);
+              return;
+            }
+
+            // RF (cat 7)
+            if (pos.categorie_id === 7) {
+              this.total.montant_recapitulatif_registre_foncier += pos.prix.reduce((partialSum, a) => partialSum + a, 0);
+              return;
+            }
+
+            // pos not used if any ?
+            console.error(` ${pos.id} - ${pos.id_html} - ${pos.nom} /!\\  update_sommesPartielles | not used position: pos=`, pos);
+          })
+        })
+      });
+
+      // add divers_tarif_horaire to corresponding sum
+      this.total.montant_recapitulatif_materiel_divers += this.divers_tarif_horaire.reduce((partialSum, a) => partialSum + a.prix, 0);
+      this.total.montant_recapitulatif_somme1 = this.total.montant_recapitulatif_mandat;
+      this.total.montant_recapitulatif_somme2 = this.total.montant_recapitulatif_somme1 + this.total.montant_recapitulatif_terrain_materialisation_deplacements;
+      this.total.montant_recapitulatif_somme3 = this.total.montant_recapitulatif_somme2 + this.total.montant_recapitulatif_bureau;
+      this.total.montant_recapitulatif_indice_application = this.round(this.total.montant_recapitulatif_somme3 * (this.form_general.indice_application-1), 0.05);
+      this.total.montant_recapitulatif_somme4 = this.total.montant_recapitulatif_somme3 + this.total.montant_recapitulatif_indice_application;
+      this.total.montant_recapitulatif_somme5 = this.total.montant_recapitulatif_somme4 + this.total.montant_recapitulatif_materiel_divers;
+      this.total.montant_recapitulatif_somme6 = this.total.montant_recapitulatif_somme5 + this.total.montant_recapitulatif_matdiff;
+      this.total.montant_recapitulatif_tva = this.round(this.total.montant_recapitulatif_somme6 * this.form_general.tva_pc/100, 0.05);
+      this.total.montant_recapitulatif_somme7 = this.total.montant_recapitulatif_somme6 + this.total.montant_recapitulatif_tva;
+      this.total.montant_recapitulatif_total = this.total.montant_recapitulatif_somme7 + this.total.montant_recapitulatif_registre_foncier;
+
     },
 
     addDivers() {
@@ -1017,6 +1091,10 @@ export default {
           })
         });
       }
+    },
+    
+    highlithtSelectedRow(position_id) {
+      this.selectedHighlightRow = position_id;
     }
   },
 

@@ -155,30 +155,37 @@
               <tbody class="customTableBody">
                 <template v-for="(category, index) in tableauEmolumentsNew">
                   <template v-for="scategory in category">
-                    <tr v-for="position in scategory" class="rowChapterDistinction" id="">
+                    <tr v-for="position in scategory" class="rowChapterDistinction" id="" :class="{'selected': (position.id == selectedHighlightRow)}" @click="highlithtSelectedRow(position.id)">
                       <!-- chapitre -->
-                      <td v-if="position.id === category[0][0].id && (!emolument_priorite || position.priorite)" class="chapter" :rowspan="category.map(a => (emolument_priorite? a.filter(x => x.priorite).length: a.length)).reduce((a,b) => a + b)+1" style="background-color: rgba(34, 139, 34, 0.5);">{{ position.categorie_id }}. {{ position.categorie }}</td>
+                      <td v-if="position.id === category[0][0].id && (!emolument_priorite || position.priorite)" class="chapter" :rowspan="category.map(a => (emolument_priorite? a.filter(x => x.priorite).length: a.length)).reduce((a,b) => a + b)" style="background-color: rgba(34, 139, 34, 0.5);">{{ position.categorie_id }}. {{ position.categorie }}</td>
+                      <!-- <td v-if="position.id === category[0][0].id && (!emolument_priorite || position.priorite)" class="chapter" :rowspan="category.map(a => (emolument_priorite? a.filter(x => x.priorite).length: a.length)).reduce((a,b) => a + b)+1" style="background-color: rgba(34, 139, 34, 0.5);">{{ position.categorie_id }}. {{ position.categorie }}</td> -->
                       
                       <!-- code -->
                       <td class="tg-0lax code">{{ position.code }}</td>
 
                       <!-- nom de la position -->
-                      <template v-if="position.champ_editable===true">
-                        <td class="tg-0lax position_divers"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.nom" class="inputText" @focus="$event.target.select()"></md-input></md-field></td>
-                      </template>
-                      <template v-else>
-                        <td class="tg-0lax position">{{ position.nom }}</td>
-                      </template>
+                      <td class="tg-0lax position">{{ position.nom }}</td>
                       
                       <!-- unité -->
                       <td class="tg-0lax alignCenter unite">{{ position.unite }}</td>
 
                       <!-- prix unitaire -->
-                      <td class="tg-0lax alignRight prix_unitaire">{{ position.montant.toFixed(2) }} CHF</td>
-                      
+                      <template v-if="position.champ_editable===true">
+                        <td class="tg-0lax alignRight prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.montant" class="inputMontant" @keyup="Number(position.montant)>0? position.nombre[0]=1: position.nombre[0]=0; position.prix[0] = round(Number(position.nombre[0]) * Number(position.montant), 0.05); update_sommesPartielles()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
+                      </template>
+                      <template v-else>
+                        <td class="tg-0lax alignRight prix_unitaire">{{ position.montant.toFixed(2) }} CHF</td>
+                      </template>
+
                       <!-- nombre et montant (BF) -->
                       <template v-if="position.bien_fonds===true">
-                        <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled || id_matdiff.slice(1,id_matdiff.length).includes(position.id)" v-model="position.nombre[0]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[0])>0, hideNulls: Number(position.nombre[0])==0 }" @keyup="updateMontant(position, 0)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)" v-on:focusout="position.id == id_matdiff[0]? updateMatDiffNumber(position): null"></md-input></md-field></td>
+                        <template v-if="position.champ_editable===true">
+                          <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled || id_matdiff.slice(1,id_matdiff.length).includes(position.id) || position.champ_editable" v-model="position.nombre[0]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[0])>0, hideNulls: Number(position.nombre[0])==0 }" @keyup="updateMontant(position, 0)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)" v-on:focusout="position.id == id_matdiff[0]? updateMatDiffNumber(position): null"></md-input></md-field></td>
+                        </template>
+                        <template v-else>
+                          <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled || id_matdiff.slice(1,id_matdiff.length).includes(position.id)" v-model="position.nombre[0]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[0])>0, hideNulls: Number(position.nombre[0])==0 }" @keyup="updateMontant(position, 0)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)" v-on:focusout="position.id == id_matdiff[0]? updateMatDiffNumber(position): null"></md-input></md-field></td>
+                        </template>
+
                         <td class="tg-0lax montant alignRight"><span v-if="Number(position.prix[0]>0)">{{ position.prix[0].toFixed(2) }} CHF</span></td>
                       </template>
                       <template v-else>
@@ -201,14 +208,14 @@
                   </template>
 
                   <!-- total intermédiaire -->
-                  <tr>
+                  <!-- <tr>
                     <td class="tg-0lax" colspan="5"><b>Sous-total</b></td>
                     <td class="tg-0lax alignRight montant"><b>{{ category_sommepartielle[index][0].toFixed(2) }} CHF</b></td>
                     <template v-for="i in form_general.nb_batiments">
                       <td class="tg-0lax nombre batiment-separator notEditable"></td>
                       <td class="tg-0lax alignRight montant"><b>{{ category_sommepartielle[index][i].toFixed(2) }} CHF</b></td>
                     </template>
-                  </tr>
+                  </tr> -->
                 </template>
 
                 <!-- DIVERS -->
@@ -227,10 +234,10 @@
                     <td class="tg-0lax alignCenter unite">Heure</td>
                     
                     <!-- prix unitaire -->
-                    <td class="tg-0lax alignRight prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="tdh.montant" class="inputMontant" @keyup="tdh.prix = round(Number(tdh.nombre) * Number(tdh.montant), 0.05)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
+                    <td class="tg-0lax alignRight prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="tdh.montant" class="inputMontant" @keyup="tdh.prix = round(Number(tdh.nombre) * Number(tdh.montant), 0.05); update_sommesPartielles()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
                     
                     <!-- nombre et montant (BF) -->
-                    <td class="tg-0lax nombre alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="tdh.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(tdh.nombre)>0, hideNulls: Number(tdh.nombre)==0 }" @keyup="tdh.prix = round(Number(tdh.nombre) * Number(tdh.montant), 0.05)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
+                    <td class="tg-0lax nombre alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="tdh.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(tdh.nombre)>0, hideNulls: Number(tdh.nombre)==0 }" @keyup="tdh.prix = round(Number(tdh.nombre) * Number(tdh.montant), 0.05); update_sommesPartielles()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                     <td class="tg-0lax montant alignRight"><span v-if="Number(tdh.prix>0)">{{ tdh.prix.toFixed(2) }} CHF</span></td>
                     
                     <!-- nombre et montant (bat) -->
@@ -262,49 +269,49 @@
               <tbody class="customTableBody">
                 <tr>
                   <td class="tg-0lax" colspan="2">Mandat</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_mandat }} CHF</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme1 }} CHF</td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_mandat.toFixed(2) }} CHF</td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme1.toFixed(2) }} CHF</td>
                 </tr>
                 <tr>
                   <td class="tg-0lax" colspan="2">Travaux de terrain. matérialisation, déplacements et débours</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_terrain_materialisation_deplacements }} CHF</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme2 }} CHF</td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_terrain_materialisation_deplacements.toFixed(2) }} CHF</td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme2.toFixed(2) }} CHF</td>
                 </tr>
                 <tr>
                   <td class="tg-0lax" colspan="2">Travaux de bureau</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_bureau }} CHF</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme3 }} CHF</td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_bureau.toFixed(2) }} CHF</td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme3.toFixed(2) }} CHF</td>
                 </tr>
                 <tr>
                   <td class="tg-0lax position_recapitulatif">Indice d'application</td>
-                  <td class="tg-0lax number"><md-field class="nbField"><md-input :disabled="disabled || !permission.editEmolumentIndiceApplication" class="nbInput" v-model="form_general.indice_application" @keyup="updateRecapitulatif()"></md-input></md-field></td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_indice_application }} CHF</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme4 }} CHF</td>
+                  <td class="tg-0lax number"><md-field class="nbField"><md-input :disabled="disabled || !permission.editEmolumentIndiceApplication" class="nbInput" v-model="form_general.indice_application" @keyup="update_sommesPartielles()"></md-input></md-field></td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_indice_application.toFixed(2) }} CHF</td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme4.toFixed(2) }} CHF</td>
                 </tr>
                 <tr>
                   <td class="tg-0lax" colspan="2">Matériel, travaux selon le temps consacré et relations avec d'autres services</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_materiel_divers }} CHF</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme5 }} CHF</td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_materiel_divers.toFixed(2) }} CHF</td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme5.toFixed(2) }} CHF</td>
                 </tr>
                 <tr>
                   <td class="tg-0lax" colspan="2">Matérialisation différée des limites y compris indice d'application</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_matdiff }} CHF</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme6 }} CHF</td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_matdiff.toFixed(2) }} CHF</td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme6.toFixed(2) }} CHF</td>
                 </tr>
                 <tr>
                   <td class="tg-0lax position_recapitulatif">TVA</td>
-                  <td class="tg-0lax number"><md-field class="nbField"><md-input :disabled="disabled || !permission.editEmolumentTva" class="nbInput" v-model="form_general.tva_pc" @keyup="updateRecapitulatif()"></md-input>%</md-field></td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_tva }} CHF</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme7 }} CHF</td>
+                  <td class="tg-0lax number"><md-field class="nbField"><md-input :disabled="disabled || !permission.editEmolumentTva" class="nbInput" v-model="form_general.tva_pc" @keyup="update_sommesPartielles()"></md-input>%</md-field></td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_tva.toFixed(2) }} CHF</td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme7.toFixed(2) }} CHF</td>
                 </tr>
                 <tr>
                   <td class="tg-0lax" colspan="2">Inscription au registre foncier</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_registre_foncier }} CHF</td>
+                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_registre_foncier.toFixed(2) }} CHF</td>
                   <td class="tg-0lax montant notEditable"></td>
                 </tr>
                 <tr>
                   <td class="tg-0pky" colspan="3">Montant total du mandat</td>
-                  <td class="tg-0pky montant montantTotal alignRight">{{ total.montant_recapitulatif_total }} CHF</td>
+                  <td class="tg-0pky montant montantTotal alignRight">{{ total.montant_recapitulatif_total.toFixed(2) }} CHF</td>
                 </tr>
               </tbody>
             </table>
