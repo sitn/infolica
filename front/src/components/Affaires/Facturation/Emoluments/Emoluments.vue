@@ -80,7 +80,6 @@ export default {
           montant: null,
           prix: 0,
         },
-        category_sommepartielle: [],
         selectedHighlightRow: null,
       }
   },
@@ -897,7 +896,6 @@ export default {
             });
               
             this.tableauEmolumentsNew_bk = tmp;
-            this.category_sommepartielle = new Array(this.tableauEmolumentsNew_bk.length).fill([0]);
             this.tableauEmolumentsNew = JSON.parse(JSON.stringify(this.tableauEmolumentsNew_bk));
             
           }
@@ -928,7 +926,6 @@ export default {
 
             console.log('getEmoluments | this.tableauEmolumentsNew', this.tableauEmolumentsNew)
 
-            // this.category_sommepartielle = new Array(this.tableauEmolumentsNew.length).fill(0);
             this.update_sommesPartielles();
           }
       })
@@ -946,25 +943,6 @@ export default {
     },
 
     update_sommesPartielles() {
-      //sommes partielles montrées sur la page des émoluments
-      let tmp = new Array(this.tableauEmolumentsNew.length).fill(0);
-      let tmp_sommepartielle = new Array(this.form_general.nb_batiments+1).fill(0);
-      let c = -1;
-      this.tableauEmolumentsNew.forEach(cat => {
-        c += 1;
-        cat.forEach(scat => {
-          scat.forEach(pos => {
-            for (let i=0; i<this.form_general.nb_batiments+1; i++) {
-              tmp_sommepartielle[i] += pos.prix[i];
-            }
-          })
-        })
-        tmp[c] = tmp_sommepartielle;
-        tmp_sommepartielle = new Array(this.form_general.nb_batiments+1).fill(0);
-      });
-      console.log('update_sommesPartielles | tmp =', tmp)
-      this.category_sommepartielle = tmp;
-
       //sommes partielles du tableau récapitulatif
       this.total.montant_recapitulatif_mandat = 0;
       this.total.montant_recapitulatif_somme1 = 0;
