@@ -47,17 +47,6 @@ def tableau_facture_parametres_view(request):
     return { 'facture_parametres': params }
 
 
-@view_config(route_name='tableau_emoluments', request_method='GET', renderer='json')
-def tableau_emoluments_view(request):
-    """
-    Return table of emoluments 
-    """
-    # Check connected
-    if not check_connected(request):
-        raise exc.HTTPForbidden()
-
-    query = request.dbsession.query(TableauEmoluments).order_by(TableauEmoluments.id).all()
-    return Utils.serialize_many(query)
 
 
 @view_config(route_name='emolument_affaire', request_method='GET', renderer='json')
@@ -251,12 +240,6 @@ def emolument_new_view(request):
     emoluments = json.loads(request.params['emoluments']) if 'emoluments' in request.params else None
     divers_tarifhoraire = json.loads(request.params['divers_tarifhoraire']) if 'divers_tarifhoraire' in request.params else None
 
-    # print('==========================================')
-    # print('form_general', form_general)
-    # print('------------------------------------------')
-    # print('emoluments', emoluments)
-    # print('==========================================')
-
     # save form_general
     if form_general['id'] is None:
         emol_affaire = EmolumentAffaire()
@@ -322,6 +305,32 @@ def emolument_new_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Emolument.__tablename__))
 
 
+@view_config(route_name='emolument', request_method='DELETE', renderer='json')
+def emolument_delete_view(request):
+    """
+    Delete emolument
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
+        raise exc.HTTPForbidden()
+
+    emolument_affaire_id = request.params['emolument_affaire_id'] if 'emolument_affaire_id' in request.params else None
+
+    # get emolument affaire
+    emol_affaire = request.dbsession.query(EmolumentAffaire).filter(EmolumentAffaire.id==emolument_affaire_id).first()
+
+    # delete linked emoluments
+    existing_emoluments = request.dbsession.query(Emolument).filter(
+        Emolument.emolument_affaire_id==emol_affaire.id
+    ).all()
+    for emol in existing_emoluments:
+        request.dbsession.delete(emol)
+
+    # finally delete emolument affaire
+    request.dbsession.delete(emol_affaire)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(EmolumentAffaire.__tablename__))
+
 
 
 @view_config(route_name='emolument_affaire_freeze', request_method='PUT', renderer='json')
@@ -344,46 +353,6 @@ def update_emolument_affaire_freeze_view(request):
     record = Utils.set_model_record(record, params)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(EmolumentAffaire.__tablename__))
-
-
-
-
-@view_config(route_name='emolument_affaire', request_method='DELETE', renderer='json')
-def emolument_affaire_delete_view(request):
-    """
-    Delete emolument_affaire
-    """
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
-        raise exc.HTTPForbidden()
-
-    emolument_affaire_id = request.params['emolument_affaire_id'] if "emolument_affaire_id" in request.params else None
-    affaire_id = request.params['affaire_id'] if "affaire_id" in request.params else None
-
-
-    # Remove from Emolument
-    records = request.dbsession.query(Emolument).filter(
-        Emolument.emolument_affaire_id == emolument_affaire_id
-    ).all()
-
-    for record in records:
-        request.dbsession.delete(record)
-
-
-    # Remove from EmolumentAffaire
-    record = request.dbsession.query(EmolumentAffaire).filter(
-        EmolumentAffaire.id == emolument_affaire_id
-    ).filter(
-        EmolumentAffaire.affaire_id == affaire_id
-    ).first()
-
-    if not record:
-        raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(EmolumentAffaire.__tablename__, emolument_affaire_id))
-
-    request.dbsession.delete(record)
-
-    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Emolument.__tablename__))
 
 
 #######################################

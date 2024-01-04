@@ -6,7 +6,7 @@
         <div>
           <md-switch v-model="form_general.utilise" @change="updateUsed" class="md-accent" title="Bloquer l'émolument" :disabled="!permission.editEmolumentFreeze" v-if="form_general && form_general.id"><md-icon class="material-icons-outlined md-accent">{{ form_general.utilise===true? 'lock': 'lock_open' }}</md-icon></md-switch>
           <md-button class="md-primary md-elevation-2" v-if="form_general.id" @click="downloadEmoluments()" title="Génère le tableau des émoluments en PDF"><md-icon>file_download</md-icon> Télécharger le PDF</md-button>
-          <md-button class="md-accent md-raised" :disabled="disabled || !form_general.id" @click="onRemoveEmolumentAffaire(form_general.id)" title="Supprime définitivement l'émolument"><md-icon>delete</md-icon> Supprimer</md-button>
+          <md-button class="md-accent md-raised" :disabled="disabled || !form_general.id" @click="confirmDelete(form_general.id)" title="Supprime définitivement l'émolument"><md-icon>delete</md-icon> Supprimer</md-button>
         </div>
       </md-dialog-title>
       <md-dialog-content>

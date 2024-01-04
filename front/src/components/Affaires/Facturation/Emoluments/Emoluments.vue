@@ -509,42 +509,10 @@ export default {
     
 
 
-    /**
-     * Supprimer l'émolument (général + detail !)
-     */
-    removeEmolumentAffaire(emolument_affaire_id) {
-      this.$http.delete(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id + "&affaire_id=" + this.affaire.id,
-        {
-          withCredentials: true,
-          headers: {"Accept": "application/json"}
-        }
-      ).then(response => {
-        if (response && response.data) {
-          this.showEmolumentsDialog = false;
-          this.getEmolumentsGeneral();
-        }
-      }).catch(err => handleException(err, this));
-    },
 
-    /**
-     * on remove emolument
-     */
-    onRemoveEmolumentAffaire(emolument_affaire_id) {
-      this.confirmationRemoveDialog.show = true;
-      this.confirmationRemoveDialog.onConfirm = () => {
-        this.deleteEmolumentAffaireRepartition(emolument_affaire_id).then(() => {
-          this.removeEmolumentAffaire(emolument_affaire_id);
-          this.confirmationRemoveDialog.onConfirm = () => {};
-          this.confirmationRemoveDialog.onCancel = () => {};
-        })
-      };
-      this.confirmationRemoveDialog.onCancel = () => {
-        this.confirmationRemoveDialog.show = false;
-        this.confirmationRemoveDialog.onConfirm = () => {};
-        this.confirmationRemoveDialog.onCancel = () => {};
-      };
-    },
+
+
+    
 
 
     async openEmolumentDialog(emolument_affaire_id) {
@@ -919,6 +887,27 @@ export default {
           }
       })
       .catch(err => handleException(err, this));
+    },
+
+    confirmDelete(emolument_affaire_id) {
+      this.confirmationRemoveDialog.show = true;
+      this.confirmationRemoveDialog.onConfirm = () => this.deleteEmolument(emolument_affaire_id);
+    },
+
+    async deleteEmolument(emolument_affaire_id) {
+      return this.$http.delete(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT + '?emolument_affaire_id=' + emolument_affaire_id,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+        ).then(response => {
+          if (response && response.data) {
+            this.getEmolumentsGeneral();
+            this.showEmolumentsDialog = false;
+          }
+        })
+        .catch(err => handleException(err, this));
     },
 
     updateMontant(position, idx) {
