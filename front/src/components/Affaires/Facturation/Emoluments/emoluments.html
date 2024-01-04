@@ -127,7 +127,7 @@
 
           
           <md-tab md-label="Tableau des émoluments" ref="tabRecapitulatif">
-            <md-switch v-model="emolument_priorite" @change="updateChapter()">Afficher le tableau restreint</md-switch>
+            <md-switch v-model="emolument_priorite">Afficher le tableau restreint</md-switch>
             <table class="tg customTable" id="tableau_emoluments">
               <thead class="customTableHead">
                 <template v-if="form_general.nb_batiments > 0">
@@ -161,14 +161,14 @@
                   </tr>
                   <template v-for="scategory in category">
                     <!-- CHAPTER SUBTITLE -->
-                    <tr v-if="scategory.length>0 && category.length>1">
+                    <tr v-if="scategory.length>0 && category.length>1 && scategory.length>1">
                       <td colspan="5" style="background-color: rgba(34, 139, 34, 0.2);">{{ [scategory[0].categorie_id, scategory[0].sous_categorie_id].join('.') }}. {{ scategory[0].sous_categorie }}</td>
                       <td class="alignRight" style="background-color: rgba(34, 139, 34, 0.2);"><b>{{ scategory.reduce((partialSum, a) => partialSum + a.prix[0], 0).toFixed(2) }} CHF</b></td>
                       <template v-for="i in form_general.nb_batiments">
                         <td class="alignRight batiment-separator" colspan="2" style="background-color: rgba(34, 139, 34, 0.2);"><b>{{ scategory.reduce((partialSum, a) => partialSum + a.prix[i], 0).toFixed(2) }} CHF</b></td>
                       </template>
                     </tr>
-                    <tr v-for="position in scategory" id="" :class="{'selected': (position.id == selectedHighlightRow)}" @click="highlithtSelectedRow(position.id)">
+                    <tr v-for="position in scategory" id="" :class="{'selected': (position.id == selectedHighlightRow)}" @click="highlithtSelectedRow(position.id)" v-show="emolument_priorite? position.priorite===true: position">
                       <!-- code -->
                       <td class="tg-0lax code">{{ [position.categorie_id, position.code].join('') }}</td>
 

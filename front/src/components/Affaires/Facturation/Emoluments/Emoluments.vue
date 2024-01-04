@@ -134,8 +134,6 @@ export default {
       
       console.log('this.tableauEmolumentsNew', this.tableauEmolumentsNew)
       console.log('this.tableauEmolumentsNew[0][0][0].nombre', this.tableauEmolumentsNew[0][0][0].nombre)
-
-      this.updateChapter();
     },
 
     /**
@@ -551,7 +549,6 @@ export default {
       console.log('openEmolumentDialog | emolument_affaire_id', emolument_affaire_id)
       await this.getEmolument(emolument_affaire_id);
       this.emolument_priorite = true;
-      this.updateChapter();
       console.log('openEmolumentDialog | do something with getEmolumentAffaireRepartition')
       // this.getEmolumentAffaireRepartition(emolument_affaire_id).then(response => {
       //   if (response && response.data) {
@@ -834,16 +831,6 @@ export default {
       this.fixEmolumentDefinitively(this.form_general.id, this.form_general.utilise);
       this.disabled = this.form_general.utilise;
     },
-    
-    updateChapter(){
-      console.log('updateChapter()')
-      this.tableauEmolumentsNew = JSON.parse(JSON.stringify(this.tableauEmolumentsNew_bk));
-      if (this.emolument_priorite === true) {
-        this.tableauEmolumentsNew = this.tableauEmolumentsNew.map(cat => cat.map(scat => scat.filter(x => x.priorite === true)));
-      }
-    },
-   
-
 
 
 // ================================================================================================================================================
