@@ -189,10 +189,10 @@
                       <!-- nombre et montant (BF) -->
                       <template v-if="position.bien_fonds===true">
                         <template v-if="position.champ_editable===true">
-                          <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled || id_matdiff.slice(1,id_matdiff.length).includes(position.id) || position.champ_editable" v-model="position.nombre[0]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[0])>0, hideNulls: Number(position.nombre[0])==0 }" @keyup="updateMontant(position, 0)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)" v-on:focusout="position.id == id_matdiff[0]? updateMatDiffNumber(position): null"></md-input></md-field></td>
+                          <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled || id_matdiff.slice(1,id_matdiff.length).includes(position.id) || position.champ_editable" v-model="position.nombre[0]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[0])>0, hideNulls: Number(position.nombre[0])==0 }" @keyup="handleUpdateEmolument(position, 0)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)" v-on:focusout="position.id == id_matdiff[0]? updateMatDiffNumber(position): null"></md-input></md-field></td>
                         </template>
                         <template v-else>
-                          <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled || id_matdiff.slice(1,id_matdiff.length).includes(position.id)" v-model="position.nombre[0]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[0])>0, hideNulls: Number(position.nombre[0])==0 }" @keyup="updateMontant(position, 0)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)" v-on:focusout="position.id == id_matdiff[0]? updateMatDiffNumber(position): null"></md-input></md-field></td>
+                          <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled || id_matdiff.slice(1,id_matdiff.length).includes(position.id)" v-model="position.nombre[0]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[0])>0, hideNulls: Number(position.nombre[0])==0 }" @keyup="handleUpdateEmolument(position, 0)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)" v-on:focusout="position.id == id_matdiff[0]? updateMatDiffNumber(position): null"></md-input></md-field></td>
                         </template>
 
                         <td class="tg-0lax montant alignRight"><span v-if="Number(position.prix[0]>0)">{{ position.prix[0].toFixed(2) }} CHF</span></td>
@@ -205,7 +205,7 @@
                       <!-- nombre et montant (bat) -->
                       <template v-for="i in form_general.nb_batiments">
                         <template v-if="position.batiment===true">
-                          <td class="tg-0lax nombre batiment-separator"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.nombre[i]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[i])>0, hideNulls: Number(position.nombre[i])==0 }" @keyup="updateMontant(position, i)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
+                          <td class="tg-0lax nombre batiment-separator"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.nombre[i]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[i])>0, hideNulls: Number(position.nombre[i])==0 }" @keyup="handleUpdateEmolument(position, i)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
                           <td class="tg-0lax montant alignRight"><span v-if="Number(position.prix[i]>0)">{{ position.prix[i].toFixed(2) }} CHF</span></td>
                         </template>
                         <template v-else>

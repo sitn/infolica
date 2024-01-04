@@ -910,14 +910,37 @@ export default {
         .catch(err => handleException(err, this));
     },
 
+    handleUpdateEmolument(position, idx) {
+      this.updateMontant(position, idx);
+      this.automaticUpdateNombres();
+      this.update_sommesPartielles();
+    },
+
+
     updateMontant(position, idx) {
       let f = 1;
       if (idx > 0) {
         f = Number(this.form_general.batiment_f[idx-1]);
       }
       position.prix[idx] = this.round(f * Number(position.nombre[idx]) * Number(position.montant), 0.05);
+    },
 
-      this.update_sommesPartielles();
+    automaticUpdateNombres() {
+      let base = [];
+      let tmp = JSON.parse(JSON.stringify(this.tableauEmolumentsNew));
+      this.tableauEmolumentsNew.forEach(cat=> {
+        cat.forEach(scat => {
+          scat.forEach(pos => {
+            if (pos.calcul_auto) {
+              base = pos.calcul_auto.split('+');
+              for (let i=0; i<this.form_general.nb_batiments+1; i++) {
+                pos.nombre[i] = tmp.reduce((partialSum, a) => partialSum + a.reduce((partialSum, a) => partialSum + a.reduce((partialSum, a) => partialSum + (base.includes(a.id_html)? Number(a.nombre[i]): 0), 0), 0), 0);
+                this.updateMontant(pos, i);
+              }
+            }
+          })
+        })
+      })
     },
 
     update_sommesPartielles() {
