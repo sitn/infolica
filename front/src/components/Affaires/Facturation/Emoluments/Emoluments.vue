@@ -4,7 +4,7 @@
 
 <script>
 import { handleException } from '@/services/exceptionsHandler';
-import { logAffaireEtape } from '@/services/helper';
+// import { logAffaireEtape } from '@/services/helper';
 const numeral = require("numeral");
 const moment = require('moment');
 
@@ -22,7 +22,6 @@ export default {
   data: function () {
       return {
         cadastrationFactureNumerosId_old: [],
-        chapters: [],
         confirmationRemoveDialog: {
           title: "Demande de confirmation",
           msg: "Confirmez-vous la suppression de l'émolument?",
@@ -33,1259 +32,51 @@ export default {
           onCancel: () => {},
         },
         disabled: false,
-        divers: [],
         emolument_facture_repartition_ctrl: false,
         emolumentsGeneral_list: [],
         emolument_priorite: true,
-        emolumentsUnits: [],
         facture_parametres : {
           indice_application: null,
           tva_pc: null,
         },
         factures_repartition: [],
         form_general: {}, //général
-        form_detail: {}, //emoluments sans bâtiment
-        form_detail_batiment: [], //emoluments avec bâtiments
-        n_divers: 8,
-        pointsMatDiff_nombre: 0,
-
-        // ####################################################################################
-        // SI LE TABLEAU DES EMOLUMENTS EST MODIFIE, APPORTER LES MODIFICATIONS ICI !     START
-        // ####################################################################################
-        indexFromDB: {
-          mandat: [1,2,3,4,5,6],
-          travauxTerrain: [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
-          travauxMaterialisation: [32,33,34,35,36,37,38,104,39,40,41,42,43,44,45,46,47,48],
-          deplacementDebours: [49],
-          travauxBureau: [50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95],
-          registreFoncier: [96,97,98,99,100],
-          divers: 101,
-          relations_autres_services: 102,
-          forfait_rf: 103
-        },
-        isPageReady: false,
-        // ####################################################################################
-        // SI LE TABLEAU DES EMOLUMENTS EST MODIFIE, APPORTER LES MODIFICATIONS ICI !      STOP
-        // ####################################################################################
-
         showEmolumentsDialog: false,
         showProgressBar: false,
-        showSendValuesToFacture: false,
-        total: {}
+        total: {
+          montant_recapitulatif_mandat: 0,
+          montant_recapitulatif_somme1: 0,
+          montant_recapitulatif_terrain_materialisation_deplacements: 0,
+          montant_recapitulatif_somme2: 0,
+          montant_recapitulatif_bureau: 0,
+          montant_recapitulatif_somme3: 0,
+          montant_recapitulatif_indice_application: 0,
+          montant_recapitulatif_somme4: 0,
+          montant_recapitulatif_materiel_divers: 0,
+          montant_recapitulatif_somme5: 0,
+          montant_recapitulatif_matdiff: 0,
+          montant_recapitulatif_somme6: 0,
+          montant_recapitulatif_tva: 0,
+          montant_recapitulatif_somme7: 0,
+          montant_recapitulatif_registre_foncier: 0,
+          montant_recapitulatif_total: 0,
+        },
+        tableauEmolumentsNew: [],
+        isPageReady: false,
+        id_matdiff: process.env.VUE_APP_TABLEAUEMOLUMENTS_MATDIFF_ID.split(',').map(Number),
+        divers_tarif_horaire: [],
+        divers_tarif_horaire_unit: {
+          nom: null,
+          nombre: 1,
+          montant: null,
+          prix: 0,
+        },
+        selectedHighlightRow: null,
       }
   },
 
   methods:{
-    /**
-     * Get emoluments units from DB
-     */
-    async getEmolumentsUnit() {
-      return new Promise((resolve, reject) => {
-        this.$http.get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_TABLEAU_EMOLUMENTS_ENDPOINT,
-          {
-            withCredentials: true,
-            headers: {"Accept": "application/json"}
-          }
-        ).then(response => {
-          if (response && response.data) {
-            let tmp = response.data;
-            tmp.forEach(x => x.montant = Number(x.montant));
-  
-            // Mandat
-            let i = 1;
-            this.indexFromDB.mandat.forEach(x => {
-              this.form_detail["mandat" + String(i)] = {
-                tableau_emolument_id: x,
-                nom: tmp[x-1].nom,
-                unite: tmp[x-1].unite,
-                prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
-                nombre: 0,
-                batiment: 0,
-                batiment_f: 1,
-                montant: numeral(0).format("0.00"),
-                priorite: tmp[x-1].priorite,
-                code: tmp[x-1].code,
-              }
-              i = i+1;
-            });
-
-            this.chapters.push({
-              'nom': 'mandat',
-              'nb_rows': 0
-            });
-  
-            // Travaux terrain
-            i = 1;
-            this.indexFromDB.travauxTerrain.forEach(x => {
-              this.form_detail["travauxTerrain" + String(i)] = {
-                tableau_emolument_id: x,
-                nom: tmp[x-1].nom,
-                unite: tmp[x-1].unite,
-                prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
-                nombre: 0,
-                batiment: 0,
-                batiment_f: 1,
-                montant: numeral(0).format("0.00"),
-                priorite: tmp[x-1].priorite,
-                code: tmp[x-1].code,
-              }
-              i = i+1;
-            });
-
-            this.chapters.push({
-              'nom': 'travauxTerrain',
-              'nb_rows': 0
-            });
-  
-            // Travaux matérialisation
-            i = 1;
-            this.indexFromDB.travauxMaterialisation.forEach(x => {
-              this.form_detail["travauxMaterialisation" + String(i)] = {
-                tableau_emolument_id: x,
-                nom: tmp[x-1].nom,
-                unite: tmp[x-1].unite,
-                prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
-                nombre: 0,
-                batiment: 0,
-                batiment_f: 1,
-                montant: numeral(0).format("0.00"),
-                priorite: tmp[x-1].priorite,
-                code: tmp[x-1].code,
-              }
-              i = i+1;
-            });
-
-            this.chapters.push({
-              'nom': 'travauxMaterialisation',
-              'nb_rows': 0
-            });
-  
-            // Déplacements et débours
-            i = 1;
-            this.indexFromDB.deplacementDebours.forEach(x => {
-              this.form_detail["deplacementDebours" + String(i)] = {
-                tableau_emolument_id: x,
-                nom: tmp[x-1].nom,
-                unite: tmp[x-1].unite,
-                prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
-                nombre: 0,
-                batiment: 0,
-                batiment_f: 1,
-                montant: numeral(0).format("0.00"),
-                priorite: tmp[x-1].priorite,
-                code: tmp[x-1].code,
-              }
-              i = i+1;
-            });
-
-            this.chapters.push({
-              'nom': 'deplacementDebours',
-              'nb_rows': 0
-            });
-  
-            // Travaux bureau
-            i = 1;
-            this.indexFromDB.travauxBureau.forEach(x => {
-              this.form_detail["travauxBureau" + String(i)] = {
-                tableau_emolument_id: x,
-                nom: tmp[x-1].nom,
-                unite: tmp[x-1].unite,
-                prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
-                nombre: 0,
-                batiment: 0,
-                batiment_f: 1,
-                montant: numeral(0).format("0.00"),
-                priorite: tmp[x-1].priorite,
-                code: tmp[x-1].code,
-              }
-              i = i+1;
-            });
-
-            this.chapters.push({
-              'nom': 'travauxBureau',
-              'nb_rows': 0
-            });
-  
-            // RF
-            i = 1;
-            this.indexFromDB.registreFoncier.forEach(x => {
-              this.form_detail["registreFoncier" + String(i)] = {
-                tableau_emolument_id: x,
-                nom: tmp[x-1].nom,
-                unite: tmp[x-1].unite,
-                prix_unitaire: numeral(tmp[x-1].montant).format("0.00"),
-                nombre: 0,
-                batiment: 0,
-                batiment_f: 1,
-                montant: numeral(0).format("0.00"),
-                priorite: tmp[x-1].priorite,
-                code: tmp[x-1].code,
-              }
-              i = i+1;
-            });
-
-            this.chapters.push({
-              'nom': 'registreFoncier',
-              'nb_rows': 0
-            });
-  
-            // Divers
-            for (let i=0; i<this.n_divers; i++) {
-              this.form_detail["divers" + String(i+1)] = {
-                tableau_emolument_id: this.indexFromDB.divers,
-                nom: null,
-                unite: "Heure",
-                prix_unitaire: null,
-                nombre: 0,
-                batiment: 0,
-                batiment_f: 1,
-                montant: numeral(0).format("0.00"),
-                priorite: true,
-                code: null,
-              }
-            }
-            
-            this.chapters.push({
-              'nom': 'divers',
-              'nb_rows': 0
-            });
-  
-            //relations avec autres services
-            this.form_detail["relations_autres_services1"] = {
-              tableau_emolument_id: this.indexFromDB.relations_autres_services,
-              nom: "Relations avec d'autres services (de 50.00 à 200.00 CHF)",
-              unite: "-",
-              prix_unitaire: numeral(0).format("0.00"),
-              nombre: 1,
-              batiment: 0,
-              batiment_f: 1,
-              montant: numeral(0).format("0.00"),
-              priorite: true,
-              code: null,
-            }
-  
-            //forfait RF
-            this.form_detail["forfait_rf1"] = {
-              tableau_emolument_id: this.indexFromDB.forfait_rf,
-              nom: "Forfait RF",
-              unite: "-",
-              prix_unitaire: numeral(0).format("0.00"),
-              nombre: 1,
-              batiment: 0,
-              batiment_f: 1,
-              montant: numeral(0).format("0.00"),
-              priorite: true,
-              code: null,
-            }
-
-            this.emolumentsUnits = tmp;
-            resolve(tmp);
-  
-            this.initForm();
-  
-          }
-        }).catch(err => {
-          handleException(err, this);
-          reject(err);
-        });
-      });
-    },
-
-
-    initForm(form_general=true) {
-
-      if (form_general) {
-        this.form_general = {
-          id: null,
-          affaire_id: this.affaire.id,
-          pente_pc: 0,
-          diff_visibilite_pc: 0,
-          trafic_pc: 0,
-          zi: 1,
-          nb_batiments: 0,
-          indice_application: this.facture_parametres.indice_application,
-          tva_pc: this.facture_parametres.tva_pc, // %
-          remarque: "",
-          facture_type_id: 1,
-          numeros: [],
-          numeros_id: [],
-          utilise: false,
-  
-          // Bâtiments
-          batiment_f: [],
-        };
-
-
-        for (const emol in this.form_detail) {
-          this.form_detail[emol].nombre = 0;
-          this.form_detail[emol].montant = numeral(0).format("0.00");
-        }
-
-        //relations avec autres services
-        this.form_detail["relations_autres_services1"].prix_unitaire = numeral(0).format("0.00"),
-        this.form_detail["relations_autres_services1"].nombre = 1,
-        this.form_detail["relations_autres_services1"].montant = numeral(0).format("0.00"),
-
-        //forfait RF
-        this.form_detail["forfait_rf1"].prix_unitaire = numeral(0).format("0.00");
-        this.form_detail["forfait_rf1"].nombre = 1;
-        this.form_detail["forfait_rf1"].montant = numeral(0).format("0.00");
-
-        //init form-detail to 0
-        for (let i=0; i<this.n_divers; i++) {
-          this.form_detail["divers" + String(i+1)] = {
-            tableau_emolument_id: this.indexFromDB.divers,
-            nom: null,
-            unite: "Heure",
-            prix_unitaire: null,
-            nombre: 0,
-            batiment: 0,
-            batiment_f: 1,
-            montant: numeral(0).format("0.00"),
-            priorite: true,
-            code: null,
-          }
-        }
-        
-        // empty form_detail_batiment
-        this.form_detail_batiment= [];
-      }
-
-
-      this.total = {
-        montant_mandat_total: 0,
-        montant_mandat_batiment_total: this.form_general.nb_batiments>0? new Array(Number(this.form_general.nb_batiments)).fill(0): [],
-        montant_mandat_batiment_total_f: this.form_general.nb_batiments>0? new Array(Number(this.form_general.nb_batiments)).fill(0): [],
-        montant_21pfp: 0,
-        montant_23sit: 0,
-        montant_22pl: 0,
-        montant_travauxTerrain_total: 0,
-        montant_travauxTerrain_total_zi: 0,
-        montant_travauxTerrain_batiment_total: this.form_general.nb_batiments>0? new Array(Number(this.form_general.nb_batiments)).fill(0): [],
-        montant_travauxTerrain_batiment_total_f: this.form_general.nb_batiments>0? new Array(Number(this.form_general.nb_batiments)).fill(0): [],
-        montant_travauxTerrain_batiment_total_f_somme: 0,
-        montant_travauxTerrain_batiment_total_f_somme_zi: 0,
-        montant_31_32_std_compl: 0,
-        montant_31_32_std_compl_zi: 0,
-        montant_33_materiel: 0,
-        montant_34_matdiff: 0,
-        montant_5_depl_debours: 0,
-        montant_travauxMaterialisation_total: 0,
-        montant_41pfp: 0,
-        montant_43sit: 0,
-        montant_44surf: 0,
-        montant_42pl: 0,
-        montant_travauxBureau_total: 0,
-        montant_travauxBureau_batiment_total: this.form_general.nb_batiments>0? new Array(Number(this.form_general.nb_batiments)).fill(0): [],
-        montant_travauxBureau_batiment_total_f: this.form_general.nb_batiments>0? new Array(Number(this.form_general.nb_batiments)).fill(0): [],
-        montant_travauxBureau_batiment_total_f_somme: 0,
-        montant_divers_total: 0,
-        montant_rf_total: 0,
-        montant_recapitulatif_mandat: 0,
-        montant_recapitulatif_somme1: 0,
-        montant_recapitulatif_terrain_materialisation_deplacements: 0,
-        montant_recapitulatif_somme2: 0,
-        montant_recapitulatif_bureau: 0,
-        montant_recapitulatif_somme3: 0,
-        montant_recapitulatif_indice_application: 0,
-        montant_recapitulatif_somme4: 0,
-        montant_recapitulatif_materiel_divers: 0,
-        montant_recapitulatif_somme5: 0,
-        montant_recapitulatif_matdiff: 0,
-        montant_recapitulatif_somme6: 0,
-        montant_recapitulatif_tva: 0,
-        montant_recapitulatif_somme7: 0,
-        montant_recapitulatif_registre_foncier: 0,
-        montant_recapitulatif_total: 0,
-        montant_divers_total_with_5_depl_debours: 0,
-      };
-
-      this.disabled = false;
-      this.computeZi();
-      this.updateMontants();
-    },
-
-    /**
-     * set form for nb of batiment
-     */
-    setFormDetail() {
-      this.form_detail_batiment = [];
-      for (let i=0; i<Number(this.form_general.nb_batiments); i++)  {
-        this.form_detail_batiment.push( JSON.parse( JSON.stringify(this.form_detail)) );
-        for (let key in this.form_detail_batiment[i]) {
-          this.form_detail_batiment[i][key].batiment = i+1;
-          this.form_detail_batiment[i][key].montant = numeral(0).format("0.00");
-          this.form_detail_batiment[i][key].nombre = 0;
-          this.form_detail_batiment[i][key].batiment_f = this.form_general.batiment_f[i];
-        }
-      }
-    },
-
-    /**
-     * Add batiment
-     */
-    addBatiment() {
-      this.form_general.nb_batiments += 1;
-
-      let tmp = JSON.parse( JSON.stringify(this.form_detail));
-      for (const key in tmp) {
-        tmp[key].batiment = this.form_general.nb_batiments;
-        tmp[key].montant = numeral(0).format("0.00");
-        tmp[key].nombre = 0;
-        tmp[key].batiment_f = this.form_general.batiment_f[this.form_general.nb_batiments];
-      }
-      this.form_detail_batiment.push(tmp);
-      this.updateChapter();
-    },
-
-    /**
-     * Remove batiment
-     */
-    removeBatiment(batiment_i) {
-      let tmp = [];
-      let c = 1; // renumérotation bâtiment
-      for (let i=0; i<this.form_general.nb_batiments; i++) {
-        if (this.form_detail_batiment[i]['mandat1'].batiment !== batiment_i) {
-          for (let key in this.form_detail_batiment[i]) {
-            this.form_detail_batiment[i][key].batiment = c;
-          }
-          tmp.push(this.form_detail_batiment[i]);
-          c += 1;
-        }
-      }
-      this.form_detail_batiment = JSON.parse(JSON.stringify(tmp));
-      this.form_general.batiment_f.splice(batiment_i-1,1);
-      this.form_general.nb_batiments -= 1;
-      this.initForm(false);
-      this.updateMontants();
-    },
-
-
-    /**
-     * Update batimentCorrectionFactor
-     */
-    updateBatimentCorrectionFactor() {
-      for (let i=0; i<Number(this.form_general.nb_batiments); i++) {
-        for (let key in this.form_detail_batiment[i]) {
-          this.form_detail_batiment[i][key].batiment_f = Number(this.form_general.batiment_f[i]);
-        }
-      }
-
-      this.updateMontants();
-    },
-
-
-    /**
-     * Update value of zi
-     */
-    computeZi() {
-      this.form_general.zi = numeral(
-        1 + 
-        Number(this.form_general.pente_pc) / 100 +
-        Number(this.form_general.diff_visibilite_pc) / 100 + 
-        Number(this.form_general.trafic_pc) / 100
-      ).format("0.00");
-    },
-
-
-    /** Autocompletion terrain-bureau */
-    terrainBureau_autocompletion(value=true) {
-      if (this.form_general.utilise || this.disabled) {
-        return
-      }
-
-      // 2.29 = 2.23 + ... + 2.28
-      this.form_detail.travauxTerrain25.nombre = 
-        Number(this.form_detail.travauxTerrain19.nombre) +
-        Number(this.form_detail.travauxTerrain20.nombre) +
-        Number(this.form_detail.travauxTerrain21.nombre) +
-        Number(this.form_detail.travauxTerrain22.nombre) +
-        Number(this.form_detail.travauxTerrain23.nombre) +
-        Number(this.form_detail.travauxTerrain24.nombre);
-     
-        
-      // 3.31 = 3.11 + 3.115
-      this.form_detail.travauxMaterialisation9.nombre =
-        Number(this.form_detail.travauxMaterialisation1.nombre) +
-        Number(this.form_detail.travauxMaterialisation2.nombre);
-      
-      // 3.33 = 3.18
-      this.form_detail.travauxMaterialisation11.nombre =
-        Number(this.form_detail.travauxMaterialisation8.nombre);
-      
-      // 3.34 = 3.115
-      this.form_detail.travauxMaterialisation12.nombre =
-        Number(this.form_detail.travauxMaterialisation2.nombre);
-      
-      // 3.35 = 3.11
-      this.form_detail.travauxMaterialisation13.nombre =
-        Number(this.form_detail.travauxMaterialisation1.nombre);
-      
-      // 3.36 = 3.17
-      this.form_detail.travauxMaterialisation14.nombre =
-        Number(this.form_detail.travauxMaterialisation7.nombre);
-      
-   
-      // 4.11 = 2.17 + 2.110 + 2.111 **bat
-      this.form_detail.travauxBureau1.nombre =
-        Number(this.form_detail.travauxTerrain9.nombre) +
-        Number(this.form_detail.travauxTerrain12.nombre) +
-        Number(this.form_detail.travauxTerrain13.nombre);
-
-      // 4.15 = 2.110 **bat
-      this.form_detail.travauxBureau6.nombre =
-        Number(this.form_detail.travauxTerrain12.nombre);
-      
-      // 4.31 = 2.31 **bat
-      if (value===true) {
-        this.form_detail.travauxBureau13.nombre =
-          Number(this.form_detail.travauxTerrain15.nombre);
-      }
-      
-      // 4.32 = 2.32 **bat
-      this.form_detail.travauxBureau14.nombre =
-        Number(this.form_detail.travauxTerrain16.nombre);
-        
-      // 4.36 = 4.31 + 4.32 **bat
-      this.form_detail.travauxBureau18.nombre =
-        Number(this.form_detail.travauxBureau13.nombre) +
-        Number(this.form_detail.travauxBureau14.nombre);
-        
-      // 4.21 = 2.23 + 2.24
-      this.form_detail.travauxBureau28.nombre =
-        Number(this.form_detail.travauxTerrain19.nombre) +
-        Number(this.form_detail.travauxTerrain20.nombre);
-      
-      // 4.23 = 2.25 + 2.28
-      this.form_detail.travauxBureau31.nombre =
-        Number(this.form_detail.travauxTerrain21.nombre) +
-        Number(this.form_detail.travauxTerrain24.nombre);
-
-      // 4.26 = 2.27
-      if (value===true) {
-        this.form_detail.travauxBureau34.nombre =
-          Number(this.form_detail.travauxTerrain23.nombre);
-      }
-
-      // 4.29 = 2.27
-      this.form_detail.travauxBureau37.nombre =
-        Number(this.form_detail.travauxTerrain23.nombre);
-
-      // 4.210 = 2.27
-      if (value===true) {
-        this.form_detail.travauxBureau38.nombre =
-          Number(this.form_detail.travauxTerrain23.nombre);
-      }
-
-      // 4.213 = 4.23 + 4.26
-      this.form_detail.travauxBureau41.nombre =
-        Number(this.form_detail.travauxBureau31.nombre) +
-        Number(this.form_detail.travauxBureau34.nombre);
-      
-
-
-      // Update nombres avec bâtiments
-      for (let j=0; j<Number(this.form_general.nb_batiments); j++) {
-        // 4.11 = 2.17 + 2.110 + 2.111 **bat
-        this.form_detail_batiment[j].travauxBureau1.nombre =
-          Number(this.form_detail_batiment[j].travauxTerrain9.nombre) +
-          Number(this.form_detail_batiment[j].travauxTerrain12.nombre) +
-          Number(this.form_detail_batiment[j].travauxTerrain13.nombre);
-        
-        // 4.15 = 2.110 **bat
-        this.form_detail_batiment[j].travauxBureau6.nombre =
-          Number(this.form_detail_batiment[j].travauxTerrain12.nombre);
-
-        // 4.31 = 2.31 **bat
-        if (value===true) {
-          this.form_detail_batiment[j].travauxBureau13.nombre =
-            Number(this.form_detail_batiment[j].travauxTerrain15.nombre);
-        }
-        
-        // 4.32 = 2.32 **bat
-        this.form_detail_batiment[j].travauxBureau14.nombre =
-          Number(this.form_detail_batiment[j].travauxTerrain16.nombre);
-          
-        // 4.36 = 2.31 + 2.32 **bat
-        this.form_detail_batiment[j].travauxBureau18.nombre =
-          Number(this.form_detail_batiment[j].travauxBureau13.nombre) +
-          Number(this.form_detail_batiment[j].travauxBureau14.nombre);
-      }
-      
-    },
-
-
-    /**
-     * Update montants
-     */
-    updateMontants() {
-      //update form_detail.relations_autres_services1
-      if (this.form_detail.relations_autres_services1 && this.form_detail.relations_autres_services1.prix_unitaire) {
-        if (Number(this.form_detail.relations_autres_services1.prix_unitaire) > 0) {
-          this.form_detail.relations_autres_services1.nombre = 1;
-        } else {
-          this.form_detail.relations_autres_services1.nombre = 0;
-        }
-      } else {
-        this.form_detail.relations_autres_services1.nombre = 0;
-        this.form_detail.relations_autres_services1.prix_unitaire = numeral(0).format("0.00");
-      }
-      
-      //update form_detail.forfait_rf1.prix_unitaire
-      if (this.form_detail.forfait_rf1.prix_unitaire) {
-        if (Number(this.form_detail.forfait_rf1.prix_unitaire) > 0) {
-          this.form_detail.forfait_rf1.nombre = 1;
-        } else {
-          this.form_detail.forfait_rf1.nombre = 0;
-        }
-      } else {
-        this.form_detail.forfait_rf1.nombre = 0;
-      }
-
-      // set number of pces matdiff
-      this.pointsMatDiff_nombre = 
-        this.form_detail.travauxMaterialisation15.nombre +
-        this.form_detail.travauxMaterialisation16.nombre +
-        this.form_detail.travauxMaterialisation17.nombre +
-        this.form_detail.travauxMaterialisation18.nombre;
-
-      //form_detail
-      for (let key in this.form_detail) {
-        this.form_detail[key].montant = numeral(this.round(Number(this.form_detail[key].nombre) * Number(this.form_detail[key].prix_unitaire))).format("0.00");
-      }
-      //form_detail_batiment
-      for (let i=0; i<Number(this.form_general.nb_batiments); i++) {
-        for (let key in this.form_detail_batiment[i]) {
-          this.form_detail_batiment[i][key].montant = numeral(this.round(Number(this.form_detail_batiment[i][key].nombre) * Number(this.form_detail_batiment[i][key].prix_unitaire))).format("0.00");
-        }
-      }
-      
-      // cas particuliers relations_autres_services et forfait_rf
-      this.form_detail.relations_autres_services1.prix_unitaire = numeral(this.round(this.form_detail.relations_autres_services1.prix_unitaire)).format("0.00");
-      this.form_detail.forfait_rf1.prix_unitaire = numeral(this.form_detail.forfait_rf1.prix_unitaire).format("0.00");
-      
-      // update montant_total par categorie
-      //Montants totaux Mandat
-      this.total.montant_mandat_total = 
-        Number(this.form_detail.mandat1.montant) +
-        Number(this.form_detail.mandat2.montant) +
-        Number(this.form_detail.mandat3.montant) +
-        Number(this.form_detail.mandat4.montant) +
-        Number(this.form_detail.mandat5.montant) +
-        Number(this.form_detail.mandat6.montant);
-
-      for (let j=0; j<Number(this.form_general.nb_batiments); j++) {
-        // Mandat
-        this.total.montant_mandat_batiment_total[j] = 
-          Number(this.form_detail_batiment[j].mandat1.montant) +
-          Number(this.form_detail_batiment[j].mandat2.montant) +
-          Number(this.form_detail_batiment[j].mandat3.montant) +
-          Number(this.form_detail_batiment[j].mandat4.montant) +
-          Number(this.form_detail_batiment[j].mandat5.montant) +
-          Number(this.form_detail_batiment[j].mandat6.montant);
-
-        this.total.montant_mandat_batiment_total_f[j] =
-          this.round(Number(this.total.montant_mandat_batiment_total[j]) * Number(this.form_general.batiment_f[j]));
-      
-        // Travaux terrain
-        this.total.montant_travauxTerrain_batiment_total[j] =
-          Number(this.form_detail_batiment[j].travauxTerrain1.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain2.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain3.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain4.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain5.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain6.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain7.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain8.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain9.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain10.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain11.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain12.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain13.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain14.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain15.montant) +
-          Number(this.form_detail_batiment[j].travauxTerrain16.montant);
-
-        this.total.montant_travauxTerrain_batiment_total_f[j] =
-          this.round(Number(this.total.montant_travauxTerrain_batiment_total[j]) * Number(this.form_general.batiment_f[j]));
-
-        // Travaux bureau
-        this.total.montant_travauxBureau_batiment_total[j] =
-          Number(this.form_detail_batiment[j].travauxBureau1.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau2.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau3.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau4.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau5.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau6.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau7.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau8.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau9.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau10.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau11.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau12.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau13.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau14.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau15.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau16.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau17.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau18.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau19.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau20.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau21.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau22.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau23.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau24.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau25.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau26.montant) +
-          Number(this.form_detail_batiment[j].travauxBureau27.montant);
-
-        this.total.montant_travauxBureau_batiment_total_f[j] =
-          this.round(Number(this.total.montant_travauxBureau_batiment_total[j]) * Number(this.form_general.batiment_f[j]));
-      }
-
-      //Montants totaux TravauxTerrain
-      this.total.montant_21pfp = 
-        Number(this.form_detail.travauxTerrain1.montant) +
-        Number(this.form_detail.travauxTerrain2.montant) +
-        Number(this.form_detail.travauxTerrain3.montant) +
-        Number(this.form_detail.travauxTerrain4.montant) +
-        Number(this.form_detail.travauxTerrain5.montant) +
-        Number(this.form_detail.travauxTerrain6.montant) +
-        Number(this.form_detail.travauxTerrain7.montant) +
-        Number(this.form_detail.travauxTerrain8.montant) +
-        Number(this.form_detail.travauxTerrain9.montant) +
-        Number(this.form_detail.travauxTerrain10.montant) +
-        Number(this.form_detail.travauxTerrain11.montant) +
-        Number(this.form_detail.travauxTerrain12.montant) +
-        Number(this.form_detail.travauxTerrain13.montant) +
-        Number(this.form_detail.travauxTerrain14.montant);
-      
-      this.total.montant_23sit = 
-        Number(this.form_detail.travauxTerrain15.montant) +
-        Number(this.form_detail.travauxTerrain16.montant);
-      
-      this.total.montant_22pl = 
-        Number(this.form_detail.travauxTerrain17.montant) +
-        Number(this.form_detail.travauxTerrain18.montant) +
-        Number(this.form_detail.travauxTerrain19.montant) +
-        Number(this.form_detail.travauxTerrain20.montant) +
-        Number(this.form_detail.travauxTerrain21.montant) +
-        Number(this.form_detail.travauxTerrain22.montant) +
-        Number(this.form_detail.travauxTerrain23.montant) +
-        Number(this.form_detail.travauxTerrain24.montant) +
-        Number(this.form_detail.travauxTerrain25.montant);
-      
-      this.total.montant_travauxTerrain_total = 
-        Number(this.total.montant_21pfp) +
-        Number(this.total.montant_23sit) +
-        Number(this.total.montant_22pl);
-
-      this.total.montant_travauxTerrain_total_zi =
-        this.round(Number(this.total.montant_travauxTerrain_total) * Number(this.form_general.zi));
-
-      this.total.montant_travauxTerrain_batiment_total_f_somme =
-        this.form_general.nb_batiments>0? this.round(Number(this.total.montant_travauxTerrain_batiment_total_f.reduce((a, b) => Number(a) + Number(b)))): 0;
-
-      this.total.montant_travauxTerrain_batiment_total_f_somme_zi =
-        this.round(Number(this.total.montant_travauxTerrain_batiment_total_f_somme) * Number(this.form_general.zi));
-
-      //Montants totaux TravauxMatérialisation
-      this.total.montant_31_32_std_compl = 
-        Number(this.form_detail.travauxMaterialisation1.montant) +
-        Number(this.form_detail.travauxMaterialisation2.montant) +
-        Number(this.form_detail.travauxMaterialisation3.montant) +
-        Number(this.form_detail.travauxMaterialisation4.montant) +
-        Number(this.form_detail.travauxMaterialisation5.montant) +
-        Number(this.form_detail.travauxMaterialisation6.montant) +
-        Number(this.form_detail.travauxMaterialisation7.montant);
-      
-      this.total.montant_31_32_std_compl_zi = 
-        this.total.montant_31_32_std_compl * Number(this.form_general.zi);
-
-      this.total.montant_33_materiel = 
-        Number(this.form_detail.travauxMaterialisation8.montant) +
-        Number(this.form_detail.travauxMaterialisation9.montant) +
-        Number(this.form_detail.travauxMaterialisation10.montant) +
-        Number(this.form_detail.travauxMaterialisation11.montant) +
-        Number(this.form_detail.travauxMaterialisation12.montant) +
-        Number(this.form_detail.travauxMaterialisation13.montant);
-      
-      this.total.montant_5_depl_debours = 
-        Number(this.form_detail.deplacementDebours1.montant);
-
-      this.total.montant_34_matdiff = 
-        Number(this.form_detail.travauxMaterialisation15.montant) +
-        Number(this.form_detail.travauxMaterialisation16.montant) +
-        Number(this.form_detail.travauxMaterialisation17.montant) +
-        Number(this.form_detail.travauxMaterialisation18.montant);
-      
-      this.total.montant_travauxMaterialisation_total = 
-        Number(this.total.montant_31_32_std_compl_zi) +
-        Number(this.total.montant_33_materiel) +
-        Number(this.total.montant_34_matdiff);
-
-      //Montants totaux TravauxBureau
-      this.total.montant_41pfp = 
-        Number(this.form_detail.travauxBureau1.montant) +
-        Number(this.form_detail.travauxBureau2.montant) +
-        Number(this.form_detail.travauxBureau3.montant) +
-        Number(this.form_detail.travauxBureau4.montant) +
-        Number(this.form_detail.travauxBureau5.montant) +
-        Number(this.form_detail.travauxBureau6.montant) +
-        Number(this.form_detail.travauxBureau7.montant) +
-        Number(this.form_detail.travauxBureau8.montant) +
-        Number(this.form_detail.travauxBureau9.montant) +
-        Number(this.form_detail.travauxBureau10.montant) +
-        Number(this.form_detail.travauxBureau11.montant) +
-        Number(this.form_detail.travauxBureau12.montant);
-      
-      this.total.montant_43sit = 
-        Number(this.form_detail.travauxBureau13.montant) +
-        Number(this.form_detail.travauxBureau14.montant) +
-        Number(this.form_detail.travauxBureau15.montant) +
-        Number(this.form_detail.travauxBureau16.montant) +
-        Number(this.form_detail.travauxBureau17.montant) +
-        Number(this.form_detail.travauxBureau18.montant) +
-        Number(this.form_detail.travauxBureau19.montant) +
-        Number(this.form_detail.travauxBureau20.montant) +
-        Number(this.form_detail.travauxBureau21.montant) +
-        Number(this.form_detail.travauxBureau22.montant);
-      
-      this.total.montant_44surf = 
-        Number(this.form_detail.travauxBureau23.montant) +
-        Number(this.form_detail.travauxBureau24.montant) +
-        Number(this.form_detail.travauxBureau25.montant) +
-        Number(this.form_detail.travauxBureau26.montant) +
-        Number(this.form_detail.travauxBureau27.montant);
-      
-      this.total.montant_42pl = 
-        Number(this.form_detail.travauxBureau28.montant) +
-        Number(this.form_detail.travauxBureau29.montant) +
-        Number(this.form_detail.travauxBureau30.montant) +
-        Number(this.form_detail.travauxBureau31.montant) +
-        Number(this.form_detail.travauxBureau32.montant) +
-        Number(this.form_detail.travauxBureau33.montant) +
-        Number(this.form_detail.travauxBureau34.montant) +
-        Number(this.form_detail.travauxBureau35.montant) +
-        Number(this.form_detail.travauxBureau36.montant) +
-        Number(this.form_detail.travauxBureau37.montant) +
-        Number(this.form_detail.travauxBureau38.montant) +
-        Number(this.form_detail.travauxBureau39.montant) +
-        Number(this.form_detail.travauxBureau40.montant) +
-        Number(this.form_detail.travauxBureau41.montant) +
-        Number(this.form_detail.travauxBureau42.montant) +
-        Number(this.form_detail.travauxBureau43.montant) +
-        Number(this.form_detail.travauxBureau44.montant) +
-        Number(this.form_detail.travauxBureau45.montant) +
-        Number(this.form_detail.travauxBureau46.montant);
-
-      this.total.montant_travauxBureau_total = 
-        Number(this.total.montant_41pfp) +
-        Number(this.total.montant_43sit) +
-        Number(this.total.montant_44surf) +
-        Number(this.total.montant_42pl);
-
-      this.total.montant_travauxBureau_batiment_total_f_somme = 
-        this.form_general.nb_batiments>0? this.round(Number(this.total.montant_travauxBureau_batiment_total_f.reduce((a, b) => Number(a) + Number(b)))): 0;
-
-      //Divers
-      this.total.montant_divers_total = 0;
-      for (let i=0; i<this.n_divers; i++) {
-        this.total.montant_divers_total += Number(this.form_detail["divers" + String(i+1)].montant);
-      }
-      this.total.montant_divers_total += Number(this.form_detail.relations_autres_services1.montant);
-
-      //Registre foncier
-      this.total.montant_rf_total =
-        Number(this.form_detail.registreFoncier1.montant) +
-        Number(this.form_detail.registreFoncier2.montant) +
-        Number(this.form_detail.registreFoncier3.montant) +
-        Number(this.form_detail.registreFoncier4.montant) +
-        Number(this.form_detail.registreFoncier5.montant) +
-        Number(this.form_detail.forfait_rf1.montant);
-
-
-      this.updateRecapitulatif();
-    },
-
-
-    updateRecapitulatif() {
-      let mandat_batiment = (this.form_general.nb_batiments > 0)? Number(this.total.montant_mandat_batiment_total_f.reduce((a, b) => Number(a) + Number(b))): 0
-      this.total.montant_recapitulatif_mandat = Number(this.total.montant_mandat_total) + mandat_batiment;
-      this.total.montant_recapitulatif_somme1 = Number(this.total.montant_recapitulatif_mandat)
-
-      this.total.montant_recapitulatif_terrain_materialisation_deplacements = Number(this.total.montant_travauxTerrain_total_zi) + Number(this.total.montant_31_32_std_compl) + Number(this.total.montant_5_depl_debours) + Number(this.total.montant_travauxTerrain_batiment_total_f_somme_zi);
-      this.total.montant_recapitulatif_somme2 = Number(this.total.montant_recapitulatif_somme1) + Number(this.total.montant_recapitulatif_terrain_materialisation_deplacements);
-
-      this.total.montant_recapitulatif_bureau = Number(this.total.montant_travauxBureau_total) + Number(this.total.montant_travauxBureau_batiment_total_f_somme);
-      this.total.montant_recapitulatif_somme3 = Number(this.total.montant_recapitulatif_somme2) + Number(this.total.montant_recapitulatif_bureau);
-
-      this.total.montant_recapitulatif_indice_application = this.round( Number(this.total.montant_recapitulatif_somme3) * (Number(this.form_general.indice_application) - 1));
-      this.total.montant_recapitulatif_somme4 = Number(this.total.montant_recapitulatif_somme3) + Number(this.total.montant_recapitulatif_indice_application);
-
-      this.total.montant_recapitulatif_materiel_divers = Number(this.total.montant_33_materiel) + Number(this.total.montant_divers_total);
-      this.total.montant_recapitulatif_somme5 = Number(this.total.montant_recapitulatif_somme4) + Number(this.total.montant_recapitulatif_materiel_divers);
-
-      this.total.montant_recapitulatif_matdiff = this.round( Number(this.total.montant_34_matdiff) * Number(this.form_general.indice_application));
-      this.total.montant_recapitulatif_somme6 = Number(this.total.montant_recapitulatif_somme5) + Number(this.total.montant_recapitulatif_matdiff);
-
-      this.total.montant_recapitulatif_tva = this.round(Number(this.total.montant_recapitulatif_somme5) * Number(this.form_general.tva_pc) / 100, 0.05) + this.round(Number(this.total.montant_recapitulatif_matdiff) * Number(this.form_general.tva_pc) / 100, 0.05);
-      this.total.montant_recapitulatif_somme7 = this.total.montant_recapitulatif_somme6 + Number(this.total.montant_recapitulatif_tva);
-
-      this.total.montant_recapitulatif_registre_foncier = Number(this.total.montant_rf_total);
-
-      this.total.montant_recapitulatif_total = Number(this.total.montant_recapitulatif_somme7) + Number(this.total.montant_recapitulatif_registre_foncier);
-
-      this.setComptabiliteFormat();
-    },
-
-
-    /** Set nombre points mat_diff */
-    updateMatDiff() {
-      // répartir les points dans les bons émoluments
-      this.form_detail.travauxMaterialisation15.nombre = 0;
-      this.form_detail.travauxMaterialisation16.nombre = 0;
-      this.form_detail.travauxMaterialisation17.nombre = 0;
-      this.form_detail.travauxMaterialisation18.nombre = 0;
-
-      let tmp = Number(this.pointsMatDiff_nombre);
-      let c = 1;
-      while (tmp > 0) {
-        if (c <= 5) {
-          // de 1 à 5 points
-          this.form_detail.travauxMaterialisation15.nombre += 1;
-        } else if (c <= 10) {
-          // de 6 à 10 points
-          this.form_detail.travauxMaterialisation16.nombre += 1;
-        } else if (c <= 15) {
-          // de 11 à 15 points
-          this.form_detail.travauxMaterialisation17.nombre += 1;
-        } else {
-          // plus de 16 points
-          this.form_detail.travauxMaterialisation18.nombre += 1;
-        }
-
-        tmp -= 1;
-        c += 1;
-      }
-
-      this.updateMontants();
-    },
-
-    /** Set format for comptabilité: 0.00 CHF */
-    setComptabiliteFormat() {
-      Object.keys(this.total).forEach(x => {
-        if (Array.isArray(this.total[x])) {
-          for (let i=0; i<this.form_general.nb_batiments; i++) {
-            this.total[x][i] = numeral(this.total[x][i]).format("0.00");
-          }
-        } else {
-          this.total[x] = numeral(this.total[x]).format("0.00");
-        }
-      });
-    },
-
-    /**
-     * Round numbers
-     */
-    round(num, multiple=0.1) {
-      num = Number(num);
-      multiple = Number(multiple);
-      return Math.round(num / multiple) * multiple;
-    },
-
-
-    /**
-     * postFormular (main)
-     */
-    async postEmolument() {
-      return new Promise((resolve) => {
-        // show progressbar
-        this.showProgressBar = true;
-        this.disabled = true;
-  
-        if (this.form_general.id) {
-          // update form
-          this.putEmolumentsGeneral().then(response => {
-            if (response && response.data) {
-              this.putEmolumentsDetail(this.form_general.id).then(response => {
-                if (response && response.data) {
-                  this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
-
-                  //Log edition facture
-                  logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_EMOLUMENTS_ID), "Edition de l'émolument no " + String(this.form_general.id));
-
-                  this.postEmolumentAffaireRepartition(this.form_general.id);
-                  // refresh emoluments_general_list
-                  this.$root.$emit("searchAffaireFactures");
-                  resolve(this.form_general.id);
-
-                  // hide progressbar
-                  this.showProgressBar = false;
-                  this.disabled = false;
-                }
-              }).catch(err => handleException(err, this));
-            }
-          }).catch(err => handleException(err, this));
-        } else {
-          // create form
-          this.postEmolumentsGeneral().then(response => {
-            if (response && response.data) {
-              let emolument_affaire_id = response.data.emolument_affaire_id;
-              this.postEmolumentsDetail(emolument_affaire_id).then(response => {
-                if (response && response.data) {
-  
-                  this.$root.$emit("ShowMessage", "Le formulaire a été enregistré correctement");
-
-                  //Log edition facture
-                  logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_EMOLUMENTS_ID), "Edition de l'émolument no " + String(emolument_affaire_id));
-                  
-                  this.postEmolumentAffaireRepartition(emolument_affaire_id);
-                  // refresh emoluments_general_list
-                  this.form_general.id = emolument_affaire_id;
-                  this.$root.$emit("searchAffaireFactures");
-                  resolve(emolument_affaire_id);
-
-                  // hide progressbar
-                  this.showProgressBar = false;
-                  this.disabled = false;
-                }
-              }).catch(err => {
-                handleException(err, this);
-                // hide progressbar
-                this.showProgressBar = false;
-                this.disabled = false;
-              });
-            }
-          }).catch(err => {
-            handleException(err, this);
-            // hide progressbar
-            this.showProgressBar = false;
-            this.disabled = false;
-          });
-        }
-      })
-    },
-
-
-    async postEmolumentsGeneral() {
-      let formData = new FormData();
-      formData.append("data", JSON.stringify(this.form_general));
-
-      return new Promise((resolve, reject) => {
-        this.$http.post(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: {"Accept": "application/json"}
-          }
-        ).then(response => resolve(response))
-        .catch(err => reject(err)); 
-      });
-    },
-
-    async postEmolumentsDetail(emolument_affaire_id) {
-      let form = JSON.parse(JSON.stringify(this.form_detail_batiment));
-      form.push(this.form_detail)
-
-      let formData = new FormData();
-      formData.append("data", JSON.stringify(form));
-      formData.append("emolument_affaire_id", emolument_affaire_id);
-
-      return new Promise((resolve, reject) => {
-        this.$http.post(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: {"Accept": "application/json"}
-          }
-        ).then(response => resolve(response))
-        .catch(err => reject(err)); 
-      });
-    },
-
-
-    async putEmolumentsGeneral() {
-      let formData = new FormData();
-      formData.append("data", JSON.stringify(this.form_general));
-      formData.append("emolument_affaire_id", this.form_general.id);
-
-      return new Promise((resolve, reject) => {
-        this.$http.put(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: {"Accept": "application/json"}
-          }
-        ).then(response => resolve(response))
-        .catch(err => reject(err)); 
-      });
-    },
-
-    async putEmolumentsDetail(emolument_affaire_id) {
-      let form = JSON.parse(JSON.stringify(this.form_detail_batiment));
-      form.push(this.form_detail)
-
-      let formData = new FormData();
-      formData.append("data", JSON.stringify(form));
-      formData.append("emolument_affaire_id", emolument_affaire_id);
-
-      return new Promise((resolve, reject) => {
-        this.$http.put(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT,
-          formData,
-          {
-            withCredentials: true,
-            headers: {"Accept": "application/json"}
-          }
-        ).then(response => resolve(response))
-        .catch(err => reject(err)); 
-      });
-    },
-
-    /**
-     * Get emoluments affaire - general
-     */
-    async getEmolumentsGeneral() {
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_ENDPOINT + "?affaire_id=" + this.affaire.id,
-        {
-          withCredentials: true,
-          headers: {"Accept": "application/json"}
-        }
-      ).then(response => {
-        if (response && response.data) {
-          this.initForm();
-
-          this.emolumentsGeneral_list = new Array(response.data.lenght);
-          for (let j=0; j<response.data.length; j++) {
-            this.emolumentsGeneral_list[j] = JSON.parse(JSON.stringify(this.form_general));
-          }
-          for (const [i, form_gen_i] of response.data.entries()) {
-            // Parcourir les form_gen
-
-            for (const key in this.form_general){
-              // Set parameters
-
-              if (key in form_gen_i) {
-                this.emolumentsGeneral_list[i][key] = form_gen_i[key];
-              }
-            }
-          }
-          this.initForm(false); // ddd
-        }
-      }).catch(err => handleException(err, this));
-    },
-
-    /**
-     * Get emoluments
-     */
-    async getEmolumentsDetail(emolument_affaire_id) {
-      // set form_general
-      this.form_general = this.emolumentsGeneral_list.filter(x => x.id === emolument_affaire_id)[0];
-      this.disabled = this.form_general.utilise;
-
-      this.setFormDetail();
-
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id,
-        {
-          withCredentials: true,
-          headers: {'Accept': 'application/json'}
-        }
-      ).then(response => {
-        if (response && response.data) {
-
-          // Prepare divers
-          for (let i=0; i<this.n_divers; i++) {
-            this.form_detail["divers" + String(i+1)] = {
-              tableau_emolument_id: this.indexFromDB.divers,
-              nom: null,
-              unite: "Heure",
-              prix_unitaire: null,
-              nombre: 0,
-              batiment: 0,
-              batiment_f: 1,
-              montant: numeral(0).format("0.00"),
-              priorite: true,
-              code: null,
-            }
-          }
-
-          let divers_counter = 1;
-          for (const emol of response.data) {
-            // iterate through response
-            if (emol.batiment === 0) {
-              // No building
-              for (let form_emol in this.form_detail) {
-                // iterate through form_detail to fill values
-                if (this.form_detail[form_emol].tableau_emolument_id === emol.tableau_emolument_id) {
-                  if (this.form_detail[form_emol].tableau_emolument_id === this.indexFromDB.divers) {
-                    this.form_detail["divers" + String(divers_counter)]["nom"] = emol.position;
-                    this.form_detail["divers" + String(divers_counter)]["prix_unitaire"] = numeral(emol.prix_unitaire).format("0.00");
-                    this.form_detail["divers" + String(divers_counter)]["nombre"] = emol.nombre;
-                    this.form_detail["divers" + String(divers_counter)]["montant"] = numeral(emol.montant).format("0.00");
-                    divers_counter += 1;
-                  } else {
-                    this.form_detail[form_emol]["nom"] = emol.position;
-                    this.form_detail[form_emol]["prix_unitaire"] = numeral(emol.prix_unitaire).format("0.00");
-                    this.form_detail[form_emol]["nombre"] = emol.nombre;
-                    this.form_detail[form_emol]["montant"] = numeral(emol.montant).format("0.00");
-                  }
-                  break;
-                }
-              }
-            } else {
-              // Buildings
-              for (let form_emol in this.form_detail_batiment[emol.batiment-1]) {
-                //update batiment_f order in form_general
-                this.form_general.batiment_f[emol.batiment-1] = emol.batiment_f;
-
-                // iterate this.form_detail_batiment to fill values
-                if (this.form_detail_batiment[emol.batiment-1][form_emol].tableau_emolument_id === emol.tableau_emolument_id) {
-                  this.form_detail_batiment[emol.batiment-1][form_emol]["nom"] = emol.position;
-                  this.form_detail_batiment[emol.batiment-1][form_emol]["prix_unitaire"] = numeral(emol.prix_unitaire).format("0.00");
-                  this.form_detail_batiment[emol.batiment-1][form_emol]["nombre"] = emol.nombre;
-                  this.form_detail_batiment[emol.batiment-1][form_emol]["montant"] = numeral(emol.montant).format("0.00");
-                  break;
-                }
-              }
-            }
-          }
-
-          this.updateChapter();
-          this.updateMontants();
-          this.updateFactureRepartition();
-          this.showEmolumentsDialog = true;
-
-
-          // if cadastration, load numeros concerned by emoluments
-          if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
-            this.form_general.numeros = [];
-            if (this.form_general.numeros_id.length > 0) {
-              this.form_general.numeros_id.forEach(x => {
-                if (this.numeros_references.length > 0) {
-                  this.form_general.numeros.push(this.numeros_references.filter(y => y.numero_id === x)[0]);
-                }
-              });
-            }
-          }
-        }
-      }).catch(err => handleException(err, this));
-    },
-
-    /**
-     * Cancel formular edition
-     */
-    onCancel() {
-      this.showEmolumentsDialog = false;
-      this.getEmolumentsGeneral();
-    },
-
+    
     /**
      * on select BF reference (cadastration)
      */
@@ -1373,6 +164,238 @@ export default {
 
     },
 
+    
+
+
+    
+
+    
+
+   
+    // /**
+    //  * Delete emolument_affaire_repartition
+    //  */
+    // async deleteEmolumentAffaireRepartition(emolument_affaire_id) {
+    //   return new Promise ((resolve, reject) => {
+    //     this.$http.delete(
+    //       process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_REPARTITION_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id,
+    //       {
+    //         withCredentials: true,
+    //         headers: {Accept: "appication/json"}
+    //       }
+    //     ).then(response => resolve(response))
+    //     .catch(err => reject(err));
+    //   });
+    // },
+
+    
+
+    
+    
+    /**
+     * update emolument_affaire used
+     */
+    updateUsed() {
+      this.fixEmolumentDefinitively(this.form_general.id, this.form_general.utilise);
+      this.disabled = this.form_general.utilise;
+    },
+
+
+    // ================================================================================================================================================
+    // ================================================================================================================================================
+    //                  NEW EMOLUMENTS
+    // ================================================================================================================================================
+    // ================================================================================================================================================
+    
+    
+    // ================================================================================================================================================
+    // EMOLUMENT DIALOG
+    // ================================================================================================================================================
+    async openEmolumentDialog(emolument_affaire_id) {
+      await this.getEmolument(emolument_affaire_id);
+      this.emolument_priorite = true;
+      this.getEmolumentAffaireRepartition(emolument_affaire_id).then(response => {
+        if (response && response.data) {
+          this.initFactureRepartition(response.data);
+          this.updateFactureRepartition();
+        }
+      }).catch(err => handleException(err, this));
+      
+      this.showEmolumentsDialog = true;
+    },
+    
+    /**
+     * Cancel formular edition
+     */
+    onCancel() {
+      this.showEmolumentsDialog = false;
+      this.getEmolumentsGeneral();
+    },
+    
+
+    async initForm(form_general=true) {
+
+      if (form_general) {
+        this.form_general = {
+          id: null,
+          affaire_id: this.affaire.id,
+          pente_pc: 0,
+          diff_visibilite_pc: 0,
+          trafic_pc: 0,
+          zi: 1,
+          nb_batiments: 0,
+          indice_application: this.facture_parametres.indice_application,
+          tva_pc: this.facture_parametres.tva_pc, // %
+          remarque: "",
+          facture_type_id: 1,
+          numeros: [],
+          numeros_id: [],
+          utilise: false,
+    
+          // Bâtiments
+          batiment_f: [],
+
+        };
+
+        this.divers_tarif_horaire = [];
+        this.divers_tarif_horaire.push(JSON.parse(JSON.stringify(this.divers_tarif_horaire_unit)));
+
+        return await this.getTableauEmolumentsNew();
+      }
+    },
+
+
+    // ================================================================================================================================================
+    // HANDLE BATIMENTS IN EMOLUMENTS
+    // ================================================================================================================================================
+    /**
+     * Add batiment
+     */
+    addBatiment() {
+      this.form_general.nb_batiments += 1;
+
+      this.tableauEmolumentsNew.forEach(cat => {
+        cat.forEach(scat => {
+          scat.forEach(pos => {
+            pos.nombre.push(0);
+            pos.prix.push(0);
+          })
+        })
+      });
+    },
+
+    /**
+    * Remove batiment
+    */
+   removeBatiment(batiment_i) {
+     let tmp = JSON.parse(JSON.stringify(this.tableauEmolumentsNew));
+     tmp.forEach(cat => {
+       cat.forEach(scat => {
+         scat.forEach(pos => {
+           pos.nombre.splice(batiment_i, 1);
+           pos.prix.splice(batiment_i, 1);
+          })
+        })
+      })
+      
+      this.tableauEmolumentsNew = tmp;
+      
+      this.form_general.batiment_f.splice(batiment_i-1,1);
+      this.form_general.nb_batiments -= 1;
+
+      this.update_sommesPartielles();
+    },
+
+
+    /**
+     * Update batimentCorrectionFactor
+    */
+   updateBatimentCorrectionFactor(idx) {
+      let tmp = JSON.parse(JSON.stringify(this.tableauEmolumentsNew));
+      tmp.forEach(cat=> {
+        cat.forEach(scat => {
+          scat.forEach(pos => {
+            this.updateMontant(pos, idx);
+          })
+        })
+      });
+      this.tableauEmolumentsNew = tmp;
+    },
+
+    // ================================================================================================================================================
+    // EMOLUMENTS + EMOLUMENT_AFFAIRE
+    // ================================================================================================================================================
+
+    /**
+     * Get emoluments affaire - general
+     */
+    async getEmolumentsGeneral() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_ENDPOINT + "?affaire_id=" + this.affaire.id,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.initForm();
+
+          this.emolumentsGeneral_list = new Array(response.data.lenght);
+          for (let j=0; j<response.data.length; j++) {
+            this.emolumentsGeneral_list[j] = JSON.parse(JSON.stringify(this.form_general));
+          }
+          for (const [i, form_gen_i] of response.data.entries()) {
+            // Parcourir les form_gen
+
+            for (const key in this.form_general){
+              // Set parameters
+
+              if (key in form_gen_i) {
+                this.emolumentsGeneral_list[i][key] = form_gen_i[key];
+              }
+            }
+          }
+          this.initForm(false); // ddd
+          return
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+
+    /**
+     * post
+     */
+    async postEmolument() {
+      this.showProgressBar = true;
+
+      let formData = new FormData();
+      formData.append('form_general', JSON.stringify(this.form_general));
+      formData.append('emoluments', JSON.stringify(this.tableauEmolumentsNew));
+      formData.append('divers_tarifhoraire', JSON.stringify(this.divers_tarif_horaire));
+
+      return new Promise ((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+        ).then((response) => {
+          if (response && response.data) {
+            this.postEmolumentAffaireRepartition(response.data.emolument_affaire_id);
+            this.$root.$emit("ShowMessage", "L'émolument a bien été enregistré");
+            resolve(response);
+          }
+        })
+        .catch(err => {
+          handleException(err, this);
+          reject(err);
+        })
+        .finally(() => this.showProgressBar = false);
+      });
+    },
+
     /**
      * fix emolument definitively
      */
@@ -1391,123 +414,112 @@ export default {
       ).then(() => {})
       .catch(err => handleException(err, this));
     },
-    
-    
-    /**
-     * Set prix unitaire divers format
-     */
-    setPrixUnitaireFormat() {
-      for (let i=0; i<this.n_divers; i++) {
-        if (this.form_detail["divers" + String(i+1)].prix_unitaire && Number(this.form_detail["divers" + String(i+1)].prix_unitaire) > 0) {
-          this.form_detail["divers" + String(i+1)].prix_unitaire = numeral(Number(this.form_detail["divers" + String(i+1)].prix_unitaire)).format("0.00");
-        } else {
-          this.form_detail["divers" + String(i+1)].prix_unitaire = null;
-        }
-      }
-    },
-
+ 
 
     /**
-     * Supprimer l'émolument (général + detail !)
+     * Get facture parametres
      */
-    removeEmolumentAffaire(emolument_affaire_id) {
-      this.$http.delete(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id + "&affaire_id=" + this.affaire.id,
+    async getFactureParametres() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_PARAMETRES_ENDPOINT,
         {
           withCredentials: true,
           headers: {"Accept": "application/json"}
         }
-      ).then(response => {
-        if (response && response.data) {
-          this.showEmolumentsDialog = false;
-          this.getEmolumentsGeneral();
-        }
-      }).catch(err => handleException(err, this));
-    },
-
-    /**
-     * on remove emolument
-     */
-    onRemoveEmolumentAffaire(emolument_affaire_id) {
-      this.confirmationRemoveDialog.show = true;
-      this.confirmationRemoveDialog.onConfirm = () => {
-        this.deleteEmolumentAffaireRepartition(emolument_affaire_id).then(() => {
-          this.removeEmolumentAffaire(emolument_affaire_id);
-          this.confirmationRemoveDialog.onConfirm = () => {};
-          this.confirmationRemoveDialog.onCancel = () => {};
-        })
-      };
-      this.confirmationRemoveDialog.onCancel = () => {
-        this.confirmationRemoveDialog.show = false;
-        this.confirmationRemoveDialog.onConfirm = () => {};
-        this.confirmationRemoveDialog.onCancel = () => {};
-      };
-    },
-
-
-    openEmolumentDialog(emolument_affaire_id) {
-      this.getEmolumentAffaireRepartition(emolument_affaire_id).then(response => {
-        if (response && response.data) {
-          this.initFactureRepartition(response.data);
-          this.updateFactureRepartition();
-        }
-      }).catch(err => handleException(err, this));
-
-      this.emolument_priorite = true;
-      this.getEmolumentsDetail(emolument_affaire_id);
-    },
-
-    /**
-     * get emolument_affaire_repartition
-     */
-    async getEmolumentAffaireRepartition(emolument_affaire_id) {
-      return new Promise ((resolve, reject) => {
-        this.$http.get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_REPARTITION_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id,
-          {
-            withCredentials: true,
-            headers: {Accept: "appication/json"}
+        ).then(response => {
+          if(response && response.data) {
+            this.facture_parametres  = response.data.facture_parametres;
+            this.isPageReady = true;
           }
-        ).then(response => resolve(response))
-        .catch(err => reject(err));
-      })
+        })
+        .catch(err => handleException(err, this)); 
     },
 
     /**
-     * save emolument_affaire_repartition
+     * Get empty table of emoluments
      */
-    async postEmolumentAffaireRepartition(emolument_affaire_id) {
-      let formData = new FormData();
-      formData.append("emolument_affaire_id", emolument_affaire_id);
-      formData.append("emolument_facture_repartition", JSON.stringify(this.factures_repartition));
-
-      this.$http.post(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_REPARTITION_ENDPOINT,
-        formData,
+    async getTableauEmolumentsNew() {
+      return this.$http.get(
+        process.env.VUE_APP_API_URL + "/tableau_emoluments_new",
         {
           withCredentials: true,
-          headers: {Accept: "appication/json"}
+          headers: {"Accept": "application/json"}
         }
-      ).then(() => {})
+        ).then(response => {
+          if(response && response.data) {
+            let tmp = response.data;
+            tmp.forEach(cat => {
+              cat.forEach(scat => {
+                scat.forEach(pos => {
+                  pos.prix = [0];
+                  pos.nombre = [0];
+                })
+              })
+          });
+
+          this.tableauEmolumentsNew = tmp;
+
+        }
+      })
+      .catch(err => handleException(err, this)); 
+    },
+
+    /**
+     * Get emoluments
+     */
+    async getEmolument(emolument_affaire_id) {
+      return this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT + '?emolument_affaire_id=' + emolument_affaire_id,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+        ).then(response => {
+          if (response && response.data) {
+          
+            this.form_general = JSON.parse(response.data.form_general);
+            this.tableauEmolumentsNew = JSON.parse(response.data.emoluments);
+            this.divers_tarif_horaire = JSON.parse(response.data.divers_tarifhoraire);
+            
+            this.initFactureRepartition(response.data);
+            this.updateFactureRepartition();
+            
+            this.update_sommesPartielles();
+          }
+      })
       .catch(err => handleException(err, this));
     },
 
-    /**
-     * Delete emolument_affaire_repartition
-     */
-    async deleteEmolumentAffaireRepartition(emolument_affaire_id) {
-      return new Promise ((resolve, reject) => {
-        this.$http.delete(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_REPARTITION_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id,
-          {
-            withCredentials: true,
-            headers: {Accept: "appication/json"}
-          }
-        ).then(response => resolve(response))
-        .catch(err => reject(err));
-      });
+    confirmDelete(emolument_affaire_id) {
+      this.confirmationRemoveDialog.show = true;
+      this.confirmationRemoveDialog.onConfirm = () => this.deleteEmolument(emolument_affaire_id);
     },
 
+    async deleteEmolument(emolument_affaire_id) {
+      return this.$http.delete(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT + '?emolument_affaire_id=' + emolument_affaire_id,
+          {
+            withCredentials: true,
+            headers: {"Accept": "application/json"}
+          }
+          ).then(response => {
+            if (response && response.data) {
+              this.getEmolumentsGeneral();
+              this.showEmolumentsDialog = false;
+            }
+        })
+        .catch(err => handleException(err, this));
+    },
+      
+    handleUpdateEmolument(position, idx) {
+      this.updateMontant(position, idx);
+      this.automaticUpdateNombres();
+      this.update_sommesPartielles();
+    },
+
+    // ================================================================================================================================================
+    // HANDLE FACTURES
+    // ================================================================================================================================================
     /**
      * init facture repartition
      */
@@ -1574,28 +586,30 @@ export default {
      * Save factures relative to emolument repartitions
      */
     async saveToFactures() {
-      this.postEmolument().then((response_id) => {
-        this.form_general.id = response_id;
+      this.postEmolument().then((response) => {
+        if (response && response.data) {
+          this.form_general.id = response.data.emolument_affaire_id;
 
-        let promises = [];
-        this.factures_repartition.forEach(x => {
-          if (Number(x.emolument_repartition) > 0) {
-            promises.push(this.putFacture(x));
+          let promises = [];
+          this.factures_repartition.forEach(x => {
+            if (Number(x.emolument_repartition) > 0) {
+              promises.push(this.putFacture(x));
+            }
+          });
+          
+          let successMessage = "La facture a été mise à jour avec succès."
+          if (promises.length > 1) {
+            successMessage = "Les factures ont été mises à jour avec succès."
           }
-        });
-        
-        let successMessage = "La facture a été mise à jour avec succès."
-        if (promises.length > 1) {
-          successMessage = "Les factures ont été mises à jour avec succès."
+    
+          Promise.all(promises).then(() => {
+            this.showEmolumentsDialog = false;
+            this.fixEmolumentDefinitively(this.form_general.id, true);
+            this.$root.$emit("searchAffaireFactures");
+            this.$root.$emit("ShowMessage", successMessage);
+            this.getEmolumentsGeneral();
+          }).catch(err => handleException(err, this));
         }
-  
-        Promise.all(promises).then(() => {
-          this.showEmolumentsDialog = false;
-          this.fixEmolumentDefinitively(response_id, true);
-          this.$root.$emit("searchAffaireFactures");
-          this.$root.$emit("ShowMessage", successMessage);
-          this.getEmolumentsGeneral();
-        }).catch(err => handleException(err, this));
       });
     },
 
@@ -1643,6 +657,52 @@ export default {
       this.confirmationRemoveDialog.show = true;
     },
 
+
+
+
+    // ==================================================================================================
+    // EMOLUMENT - FACTURE REPARTITION
+    // ==================================================================================================
+    /**
+     * get emolument_affaire_repartition
+     */
+    async getEmolumentAffaireRepartition(emolument_affaire_id) {
+      return new Promise ((resolve, reject) => {
+        this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_REPARTITION_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id,
+          {
+            withCredentials: true,
+            headers: {Accept: "appication/json"}
+          }
+          ).then(response => resolve(response))
+          .catch(err => reject(err));
+        });
+    }, 
+
+    /**
+     * save emolument_affaire_repartition
+     */
+    async postEmolumentAffaireRepartition(emolument_affaire_id) {
+      let formData = new FormData();
+      formData.append("emolument_affaire_id", emolument_affaire_id);
+      formData.append("emolument_facture_repartition", JSON.stringify(this.factures_repartition));
+      
+      return new Promise((resolve, reject) => {
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_REPARTITION_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "appication/json"}
+          }
+          ).then((response) => resolve(response))
+          .catch(err => reject(err));
+        });
+      },
+
+    // ==================================================================================================
+    // DOWNLOAD EMOLUMENT AS PDF
+    // ==================================================================================================
     /**
      * Download emoluments pdf
      */
@@ -1666,9 +726,7 @@ export default {
           tableau_emoluments_html = tableau_emoluments_html.replaceAll(new RegExp(`<input.*(${input[0]}).*?>`, 'g'), '<div class="alignCenter">' + value + '</div>');
         }
       }
-      // remove 1st column with chapter name, adapt colspan of headers and correct display when 'CHF' is located after end of div
-      tableau_emoluments_html = tableau_emoluments_html.replaceAll(/<(t[dh][^<>]+?chapter.*?)>*<\/t[dh]>/g, "");
-      tableau_emoluments_html = tableau_emoluments_html.replaceAll('colspan="7"', 'colspan="6"');
+      // fix display when 'CHF' is located after end of div
       tableau_emoluments_html = tableau_emoluments_html.replaceAll(/<\/div>CHF/g, "CHF</div>");
       tableau_emoluments_html = tableau_emoluments_html.replaceAll('<div class="alignCenter">CHF</div>', '<div class="alignCenter"></div>');
       tableau_emoluments_html = tableau_emoluments_html.replaceAll('Nombre', 'Qté');
@@ -1681,13 +739,13 @@ export default {
         tableau_recapitulatif_html = tableau_recapitulatif_html.replaceAll(new RegExp(`<input.*(${input[0]}).*?>`, 'g'), '<div class="alignCenter">' + document.getElementById(input[0]).value + '</div>');
       }
       tableau_recapitulatif_html = tableau_recapitulatif_html.replaceAll(/<\/div>%/g, " %</div>");
-
+      
       let formData = new FormData();
       formData.append('tableau_emoluments_id', this.form_general.id);
       formData.append('affaire_id', this.affaire.id);
       formData.append('tableau_emoluments_html', tableau_emoluments_html);
       formData.append('tableau_recapitulatif_html', tableau_recapitulatif_html);
-
+      
       this.$http.post(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_EXPORT_EMOLUMENTS_PDF_ENDPOINT,
         formData,
@@ -1696,10 +754,10 @@ export default {
           headers: {"Accept": "application/json"},
           responseType: "blob"
         }
-      ).then((response) => {
+        ).then((response) => {
         let fileURL = window.URL.createObjectURL(new Blob([response.data]));
         let fileLink = document.createElement('a');
-      
+
         fileLink.href = fileURL;
         let header_content_type = response.headers['content-type'];
         let filename = undefined;
@@ -1719,63 +777,184 @@ export default {
         this.emolument_priorite = last_emolument_priorite;
       });
     },
+    
 
-    /**
-     * update emolument_affaire used
-     */
-    updateUsed() {
-      this.fixEmolumentDefinitively(this.form_general.id, this.form_general.utilise);
-      this.disabled = this.form_general.utilise;
+  // ==================================================================================================
+  // UTILS
+  // ==================================================================================================
+  /**
+    * Round numbers
+    */
+    round(num, multiple=0.1) {
+      num = Number(num);
+      multiple = Number(multiple);
+      return Math.round(num / multiple) * multiple;
     },
 
-    updateChapter(){
-      setTimeout(() => {
-        let collection = document.getElementById('tableau_emoluments').getElementsByTagName('tr');
-        this.chapters.forEach(x => {
-          x['nb_rows'] = 0;
-        });
-  
-        let _id = '';
-        let _style = null;
-        for (let i = 0; i < collection.length; i++) {
-          _id = collection[i].id;
-          _style = collection[i].style;
-          
-          this.chapters.forEach(x => {
-            if (_id.startsWith('form_detail.' + x['nom']) && _style.display!=="none") {
-              x['nb_rows'] += 1;
+    updateMontant(position, idx) {
+      let f = 1;
+      if (idx > 0) {
+        f = Number(this.form_general.batiment_f[idx-1]);
+      }
+      position.prix[idx] = this.round(f * Number(position.nombre[idx]) * Number(position.montant), 0.05);
+    },
+
+    automaticUpdateNombres() {
+      let base = [];
+      let tmp = JSON.parse(JSON.stringify(this.tableauEmolumentsNew));
+      this.tableauEmolumentsNew.forEach(cat=> {
+        cat.forEach(scat => {
+          scat.forEach(pos => {
+            if (pos.calcul_auto) {
+              base = pos.calcul_auto.split('+');
+              for (let i=0; i<this.form_general.nb_batiments+1; i++) {
+                if (Number(pos.nombre[i])===0) {
+                  pos.nombre[i] = tmp.reduce((partialSum, a) => partialSum + a.reduce((partialSum, a) => partialSum + a.reduce((partialSum, a) => partialSum + (base.includes(a.id_html)? Number(a.nombre[i]): 0), 0), 0), 0);
+                  this.updateMontant(pos, i);
+                }
+              }
             }
-          });
-        }
-      }, 100);
+          })
+        })
+      })
     },
 
-    /**
-     * Get facture parametres
-     */
-     async getFactureParametres() {
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_FACTURE_PARAMETRES_ENDPOINT,
-        {
-          withCredentials: true,
-          headers: {"Accept": "application/json"}
+    update_sommesPartielles() {
+      //sommes partielles du tableau récapitulatif
+      this.total.montant_recapitulatif_mandat = 0;
+      this.total.montant_recapitulatif_somme1 = 0;
+      this.total.montant_recapitulatif_terrain_materialisation_deplacements = 0;
+      this.total.montant_recapitulatif_somme2 = 0;
+      this.total.montant_recapitulatif_bureau = 0;
+      this.total.montant_recapitulatif_somme3 = 0;
+      this.total.montant_recapitulatif_indice_application = 0;
+      this.total.montant_recapitulatif_somme4 = 0;
+      this.total.montant_recapitulatif_materiel_divers = 0;
+      this.total.montant_recapitulatif_somme5 = 0;
+      this.total.montant_recapitulatif_matdiff = 0;
+      this.total.montant_recapitulatif_somme6 = 0;
+      this.total.montant_recapitulatif_tva = 0;
+      this.total.montant_recapitulatif_somme7 = 0;
+      this.total.montant_recapitulatif_registre_foncier = 0;
+
+      // let pos_cat_scat = ''
+      this.tableauEmolumentsNew.forEach(cat => {
+        cat.forEach(scat => {
+          scat.forEach(pos => {
+            // mandat (cat 1)
+            if (pos.categorie_id === 1) {
+              this.total.montant_recapitulatif_mandat += pos.prix.reduce((partialSum, a) => partialSum + a, 0);
+              return;
+            }
+
+            // travaux terrain (cat 2 + cat 3.1, 3.2, 3.5)
+            if ([2, 5].includes(pos.categorie_id) || (pos.categorie_id === 3 && [1, 2, 5].includes(pos.sous_categorie_id))) {
+              this.total.montant_recapitulatif_terrain_materialisation_deplacements += pos.prix.reduce((partialSum, a) => partialSum + a, 0);
+              return;
+            }
+
+            // travaux bureau (cat 4)
+            if (pos.categorie_id === 4) {
+              this.total.montant_recapitulatif_bureau += pos.prix.reduce((partialSum, a) => partialSum + a, 0);
+              return;
+            }
+
+            // matériel (cat 3.3)
+            if ((pos.categorie_id === 3 && pos.sous_categorie_id === 3) || pos.categorie_id === 6) {
+              this.total.montant_recapitulatif_materiel_divers += pos.prix.reduce((partialSum, a) => partialSum + a, 0);
+              return;
+            }
+
+            // mat diff (cat 3.4)
+            if (pos.categorie_id === 3 && pos.sous_categorie_id === 4) {
+              this.total.montant_recapitulatif_matdiff += pos.prix.reduce((partialSum, a) => partialSum + a, 0);
+              return;
+            }
+
+            // RF (cat 7)
+            if (pos.categorie_id === 7) {
+              this.total.montant_recapitulatif_registre_foncier += pos.prix.reduce((partialSum, a) => partialSum + a, 0);
+              return;
+            }
+
+            // pos not used if any ?
+            console.error(` ${pos.id} - ${pos.id_html} - ${pos.nom} /!\\  update_sommesPartielles | not used position: pos=`, pos);
+          })
+        })
+      });
+
+      // add divers_tarif_horaire to corresponding sum
+      this.total.montant_recapitulatif_materiel_divers += this.divers_tarif_horaire.reduce((partialSum, a) => partialSum + a.prix, 0);
+      this.total.montant_recapitulatif_somme1 = this.total.montant_recapitulatif_mandat;
+      this.total.montant_recapitulatif_somme2 = this.total.montant_recapitulatif_somme1 + this.total.montant_recapitulatif_terrain_materialisation_deplacements;
+      this.total.montant_recapitulatif_somme3 = this.total.montant_recapitulatif_somme2 + this.total.montant_recapitulatif_bureau;
+      this.total.montant_recapitulatif_indice_application = this.round(this.total.montant_recapitulatif_somme3 * (this.form_general.indice_application-1), 0.05);
+      this.total.montant_recapitulatif_somme4 = this.total.montant_recapitulatif_somme3 + this.total.montant_recapitulatif_indice_application;
+      this.total.montant_recapitulatif_somme5 = this.total.montant_recapitulatif_somme4 + this.total.montant_recapitulatif_materiel_divers;
+      this.total.montant_recapitulatif_somme6 = this.total.montant_recapitulatif_somme5 + this.total.montant_recapitulatif_matdiff;
+      this.total.montant_recapitulatif_tva = this.round(this.total.montant_recapitulatif_somme6 * this.form_general.tva_pc/100, 0.05);
+      this.total.montant_recapitulatif_somme7 = this.total.montant_recapitulatif_somme6 + this.total.montant_recapitulatif_tva;
+      this.total.montant_recapitulatif_total = this.total.montant_recapitulatif_somme7 + this.total.montant_recapitulatif_registre_foncier;
+
+    },
+
+    addDivers() {
+      this.divers_tarif_horaire.push(JSON.parse(JSON.stringify(this.divers_tarif_horaire_unit)));
+    },
+
+    updateMatDiffNumber(position) {
+      if (position.id == this.id_matdiff[0]) {
+        let tmp = Number(position.nombre[0]);
+
+        let tmp_5 = 0;
+        let tmp_10 = 0;
+        let tmp_15 = 0;
+        let tmp_gt15 = 0;
+        let c = 1;
+        while (tmp > 0) {
+          if (c <= 5) {
+            // de 1 à 5 points
+            tmp_5 += 1;
+          } else if (c <= 10) {
+            // de 6 à 10 points
+            tmp_10 += 1;
+          } else if (c <= 15) {
+            // de 11 à 15 points
+            tmp_15 += 1;
+          } else {
+            // plus de 16 points
+            tmp_gt15 += 1;
+          }
+
+          tmp -= 1;
+          c += 1;
         }
-      ).then(response => {
-        if(response && response.data) {
-          this.facture_parametres  = response.data.facture_parametres;
-          this.isPageReady = true;
-        }
-      })
-      .catch(err => handleException(this, err)); 
+
+        this.tableauEmolumentsNew.forEach(cat => {
+          cat.forEach(scat => {
+            scat.forEach(pos => {
+              if (pos.id === this.id_matdiff[0]) {pos.nombre[0] = tmp_5; this.updateMontant(pos, 0)}
+              if (pos.id === this.id_matdiff[1]) {pos.nombre[0] = tmp_10; this.updateMontant(pos, 0)}
+              if (pos.id === this.id_matdiff[2]) {pos.nombre[0] = tmp_15; this.updateMontant(pos, 0)}
+              if (pos.id === this.id_matdiff[3]) {pos.nombre[0] = tmp_gt15; this.updateMontant(pos, 0)}
+            })
+          })
+        });
+      }
+    },
+
+    
+    highlithtSelectedRow(position_id) {
+      this.selectedHighlightRow = position_id;
     }
   },
 
   mounted: function(){
+    this.getEmolumentsGeneral();
+    this.getTableauEmolumentsNew();
     this.getFactureParametres();
-    
-    this.getEmolumentsUnit().then(() => {
-      this.getEmolumentsGeneral();
-    });
+
+    this.addDivers();    
 
     this.$root.$on("getEmolumentsGeneral", () => this.getEmolumentsGeneral());
   }

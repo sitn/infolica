@@ -146,7 +146,8 @@
 
 #emolumentsDialog .customTable .customTableBody {
   overflow-y: scroll;
-  max-height: 610px;
+  max-height: calc(92vh - 200px);
+  /* max-height: 610px; */
 }
 
 #emolumentsDialog th, #emolumentsDialog td {
@@ -202,4 +203,8 @@
 
 #emolumentsDialog .rowChapterDistinction {
   border-top: 3px solid;
+}
+
+#tableau_emoluments tr:hover, .selected {
+  background-color: #FFCF8B;
 }
