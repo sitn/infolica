@@ -214,7 +214,6 @@ export default {
     async openEmolumentDialog(emolument_affaire_id) {
       await this.getEmolument(emolument_affaire_id);
       this.emolument_priorite = true;
-      console.log('openEmolumentDialog | do something with getEmolumentAffaireRepartition')
       this.getEmolumentAffaireRepartition(emolument_affaire_id).then(response => {
         if (response && response.data) {
           this.initFactureRepartition(response.data);
@@ -367,7 +366,6 @@ export default {
      * post
      */
     async postEmolument() {
-      console.log('postEmilument | do something with répartition facture !!')
       this.showProgressBar = true;
 
       let formData = new FormData();
@@ -485,8 +483,6 @@ export default {
             
             this.initFactureRepartition(response.data);
             this.updateFactureRepartition();
-            
-            console.log('getEmoluments | do something with initFactureRepartition and updateFactureRepartition')
             
             this.update_sommesPartielles();
           }
@@ -812,8 +808,10 @@ export default {
             if (pos.calcul_auto) {
               base = pos.calcul_auto.split('+');
               for (let i=0; i<this.form_general.nb_batiments+1; i++) {
-                pos.nombre[i] = tmp.reduce((partialSum, a) => partialSum + a.reduce((partialSum, a) => partialSum + a.reduce((partialSum, a) => partialSum + (base.includes(a.id_html)? Number(a.nombre[i]): 0), 0), 0), 0);
-                this.updateMontant(pos, i);
+                if (Number(pos.nombre[i])===0) {
+                  pos.nombre[i] = tmp.reduce((partialSum, a) => partialSum + a.reduce((partialSum, a) => partialSum + a.reduce((partialSum, a) => partialSum + (base.includes(a.id_html)? Number(a.nombre[i]): 0), 0), 0), 0);
+                  this.updateMontant(pos, i);
+                }
               }
             }
           })
