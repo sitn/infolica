@@ -109,7 +109,7 @@
                       <md-input v-model ="item.emolument_repartition"
                         class="nbInput"
                         onkeypress="return /[0-9]|[.]/g.test(event.key)"
-                        :onkeyup="updateFactureRepartition"
+                        @keyup="updateFactureRepartition"
                         v-bind:class="{ repartitionFaux: emolument_facture_repartition_ctrl === true, repartitionJuste: emolument_facture_repartition_ctrl === false }"
                         :disabled="disabled"></md-input>
                       <span class="md-suffix" style="line-height: 20px;">%</span>

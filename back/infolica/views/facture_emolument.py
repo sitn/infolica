@@ -303,7 +303,7 @@ def emolument_new_view(request):
 
             request.dbsession.add(record)
 
-    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Emolument.__tablename__))
+    return {'emolument_affaire_id': emol_affaire.id}
 
 
 @view_config(route_name='emolument', request_method='DELETE', renderer='json')
