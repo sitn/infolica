@@ -260,6 +260,8 @@ export default {
         this.divers_tarif_horaire = [];
         this.divers_tarif_horaire.push(JSON.parse(JSON.stringify(this.divers_tarif_horaire_unit)));
 
+        this.disabled = false;
+
         return await this.getTableauEmolumentsNew();
       }
     },

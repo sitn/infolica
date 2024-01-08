@@ -221,7 +221,7 @@
                 <template>
                   <!-- CHAPTER TITLE -->
                   <tr>
-                    <td class="" :colspan="5+2*form_general.nb_batiments" style="background-color: rgba(34, 139, 34, 0.5);">Divers <a @click="addDivers" title="Ajouter un nouvel élément">[+]</a></td>
+                    <td class="" :colspan="5+2*form_general.nb_batiments" style="background-color: rgba(34, 139, 34, 0.5);">Divers <a @click="addDivers" title="Ajouter un nouvel élément" v-if="disabled===false">[+]</a></td>
                     <td class="alignRight" style="background-color: rgba(34, 139, 34, 0.5);"><b>{{ divers_tarif_horaire.reduce((partialSum, a) => partialSum + a.prix, 0).toFixed(2) }} CHF</b></td>
                   </tr>
                   <tr class="rowChapterDistinction" id="" v-for="(tdh, index) in divers_tarif_horaire">
@@ -230,7 +230,7 @@
                     <!-- <td class="tg-0lax code">XXX</td> -->
 
                     <!-- nom de la position -->
-                    <td class="tg-0lax position_divers" colspan="2"><md-field class="nbField"><md-input :disabled="disabled" v-model="tdh.nom" class="inputText" @focus="$event.target.select()"></md-input><a @click="divers_tarif_horaire.splice(divers_tarif_horaire.indexOf(tdh), 1)" title="Supprimer cet élément" v-if="divers_tarif_horaire.length>1">[-]</a></md-field></td>
+                    <td class="tg-0lax position_divers" colspan="2"><md-field class="nbField"><md-input :disabled="disabled" v-model="tdh.nom" class="inputText" @focus="$event.target.select()"></md-input><a @click="divers_tarif_horaire.splice(divers_tarif_horaire.indexOf(tdh), 1)" title="Supprimer cet élément" v-if="divers_tarif_horaire.length>1 && disabled===false">[-]</a></md-field></td>
 
                     <!-- unité -->
                     <td class="tg-0lax alignCenter unite">Heure</td>
