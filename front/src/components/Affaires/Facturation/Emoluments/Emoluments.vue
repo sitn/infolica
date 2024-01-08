@@ -383,6 +383,7 @@ export default {
           }
         ).then((response) => {
           if (response && response.data) {
+            this.form_general.id = response.data.emolument_affaire_id;
             this.postEmolumentAffaireRepartition(response.data.emolument_affaire_id);
             this.$root.$emit("ShowMessage", "L'émolument a bien été enregistré");
             resolve(response);
