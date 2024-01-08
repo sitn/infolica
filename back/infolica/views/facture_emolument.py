@@ -6,19 +6,23 @@ from pyramid.response import Response
 from sqlalchemy import or_, func
 
 
-from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import Facture, Numero, TableauEmoluments, VAffaire, VNumerosAffaires
+from infolica.models.models import Affaire, Facture, Numero, TableauEmoluments, VAffaire, VNumerosAffaires
 from infolica.models.models import EmolumentAffaire, Emolument, EmolumentAffaireRepartition, FactureParametres
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 import json
 import datetime
 import requests
+import math
 
 ###########################################################
 # EMOLUMENTS
 ###########################################################
+
+
+def _round_nearest(x, a=0.05):
+    return round(round(x / a) * a, -int(math.floor(math.log10(a))))
 
 
 @view_config(route_name='facture_parametres', request_method='GET', renderer='json')
@@ -145,6 +149,9 @@ def emolument_view(request):
         EmolumentAffaire.id==emolument_affaire_id
     ).first()
     form_general = Utils.serialize_one(emol_affaire)
+
+    if emol_affaire.utilise is True:
+        today = request.dbsession.query(Affaire.date_envoi).filter(Affaire.id == emol_affaire.affaire_id).scalar()
     
     nb_batiments = request.dbsession.query(func.max(Emolument.batiment)).filter(
         Emolument.emolument_affaire_id==emolument_affaire_id
@@ -269,11 +276,11 @@ def emolument_new_view(request):
                             emolument_affaire_id=emol_affaire.id,
                             tableau_emolument_id=int(position['id']),
                             position=position['nom'],
-                            prix_unitaire=float(position['montant'] or '0'),
+                            prix_unitaire=float(_round_nearest(position['montant']) or '0'),
                             nombre=int(position['nombre'][i] or '0'),
                             batiment=i,
                             batiment_f=1 if i == 0 else float(form_general['batiment_f'][i-1]),
-                            montant=float(position['prix'][i] or '0')
+                            montant=float(_round_nearest(position['prix'][i]) or '0')
                         )
 
                         # save emolument
@@ -294,7 +301,7 @@ def emolument_new_view(request):
                 nombre=int(dth['nombre']),
                 batiment=0,
                 batiment_f=1,
-                montant=float(dth['prix'])
+                montant=float(_round_nearest(dth['prix']))
             )
 
             # save emolument
