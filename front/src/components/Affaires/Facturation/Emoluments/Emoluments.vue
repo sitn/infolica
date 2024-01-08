@@ -482,6 +482,8 @@ export default {
             this.tableauEmolumentsNew = JSON.parse(response.data.emoluments);
             this.divers_tarif_horaire = JSON.parse(response.data.divers_tarifhoraire);
             
+            this.disabled = this.form_general.utilise;
+
             this.initFactureRepartition(response.data);
             this.updateFactureRepartition();
             
