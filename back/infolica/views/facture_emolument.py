@@ -151,8 +151,13 @@ def emolument_view(request):
     form_general = Utils.serialize_one(emol_affaire)
 
     if emol_affaire.utilise is True:
-        today = request.dbsession.query(Affaire.date_envoi).filter(Affaire.id == emol_affaire.affaire_id).scalar()
-    
+        today_last = today
+        today = request.dbsession.query(Facture.date).join(EmolumentAffaireRepartition).filter(EmolumentAffaireRepartition.emolument_affaire_id == emol_affaire.id).scalar()
+        if today is None:
+            today = request.dbsession.query(Affaire.date_envoi).filter(Affaire.id == emol_affaire.affaire_id).scalar()
+        if today is None:
+            today = today_last
+
     nb_batiments = request.dbsession.query(func.max(Emolument.batiment)).filter(
         Emolument.emolument_affaire_id==emolument_affaire_id
     ).scalar()
@@ -277,7 +282,7 @@ def emolument_new_view(request):
                             tableau_emolument_id=int(position['id']),
                             position=position['nom'],
                             prix_unitaire=float(_round_nearest(position['montant']) or '0'),
-                            nombre=int(position['nombre'][i] or '0'),
+                            nombre=float(position['nombre'][i] or '0'),
                             batiment=i,
                             batiment_f=1 if i == 0 else float(form_general['batiment_f'][i-1]),
                             montant=float(_round_nearest(position['prix'][i]) or '0')
@@ -298,7 +303,7 @@ def emolument_new_view(request):
                 tableau_emolument_id=emoluments_divers_tarifhoraire_id,
                 position=dth['nom'],
                 prix_unitaire=float(dth['montant']),
-                nombre=int(dth['nombre']),
+                nombre=float(dth['nombre']),
                 batiment=0,
                 batiment_f=1,
                 montant=float(_round_nearest(dth['prix']))
