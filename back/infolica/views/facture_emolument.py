@@ -277,7 +277,7 @@ def emolument_new_view(request):
         for scategory in category:
             for position in scategory:
                 for i in range(len(position['nombre'])):
-                    if int(position['nombre'][i] or '0') > 0 or float(position['prix'][i] or '0') > 0:
+                    if float(position['nombre'][i] or 0) > 0 or float(position['prix'][i] or 0) > 0:
                         params = Utils._params(
                             emolument_affaire_id=emol_affaire.id,
                             tableau_emolument_id=int(position['id']),
