@@ -277,16 +277,16 @@ def emolument_new_view(request):
         for scategory in category:
             for position in scategory:
                 for i in range(len(position['nombre'])):
-                    if int(position['nombre'][i] or '0') > 0 or float(position['prix'][i] or '0') > 0:
+                    if float(position['nombre'][i] or 0) > 0 or float(position['prix'][i] or 0) > 0:
                         params = Utils._params(
                             emolument_affaire_id=emol_affaire.id,
                             tableau_emolument_id=int(position['id']),
                             position=position['nom'],
-                            prix_unitaire=_round_nearest(float(position['montant'])) or 0,
+                            prix_unitaire=_round_nearest(float(position['montant']) or 0),
                             nombre=float(position['nombre'][i] or '0'),
                             batiment=i,
                             batiment_f=1 if i == 0 else float(form_general['batiment_f'][i-1]),
-                            montant=_round_nearest(float(position['prix'][i])) or 0
+                            montant=_round_nearest(float(position['prix'][i]) or 0)
                         )
 
                         # save emolument
@@ -298,16 +298,17 @@ def emolument_new_view(request):
 
     # save divers tarif horaire
     for dth in divers_tarifhoraire:
-        if dth['nom'] is not None and dth['nombre'] is not None and dth['montant'] is not None:
+        if dth['nom'] is not None and dth['nombre'] is not None and dth['montant'] is not None and \
+            dth['nom'] != '' and dth['nombre'] != '' and dth['montant'] != '':
             params = Utils._params(
                 emolument_affaire_id=emol_affaire.id,
                 tableau_emolument_id=emoluments_divers_tarifhoraire_id,
                 position=dth['nom'],
-                prix_unitaire=float(dth['montant']),
+                prix_unitaire=_round_nearest(float(dth['montant']) or 0),
                 nombre=float(dth['nombre']),
                 batiment=0,
                 batiment_f=1,
-                montant=_round_nearest(float(dth['prix'])) or 0
+                montant=_round_nearest(float(dth['prix']) or 0)
             )
 
             # save emolument
