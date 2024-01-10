@@ -152,7 +152,8 @@ def emolument_view(request):
 
     if emol_affaire.utilise is True:
         today_last = today
-        today = request.dbsession.query(Facture.date).join(EmolumentAffaireRepartition).filter(EmolumentAffaireRepartition.emolument_affaire_id == emol_affaire.id).scalar()
+        fact = request.dbsession.query(Facture).join(EmolumentAffaireRepartition).filter(EmolumentAffaireRepartition.emolument_affaire_id == emol_affaire.id).first()
+        today = fact.date
         if today is None:
             today = request.dbsession.query(Affaire.date_envoi).filter(Affaire.id == emol_affaire.affaire_id).scalar()
         if today is None:
@@ -281,11 +282,11 @@ def emolument_new_view(request):
                             emolument_affaire_id=emol_affaire.id,
                             tableau_emolument_id=int(position['id']),
                             position=position['nom'],
-                            prix_unitaire=float(_round_nearest(position['montant']) or '0'),
+                            prix_unitaire=_round_nearest(float(position['montant'])) or 0,
                             nombre=float(position['nombre'][i] or '0'),
                             batiment=i,
                             batiment_f=1 if i == 0 else float(form_general['batiment_f'][i-1]),
-                            montant=float(_round_nearest(position['prix'][i]) or '0')
+                            montant=_round_nearest(float(position['prix'][i])) or 0
                         )
 
                         # save emolument
@@ -306,7 +307,7 @@ def emolument_new_view(request):
                 nombre=float(dth['nombre']),
                 batiment=0,
                 batiment_f=1,
-                montant=float(_round_nearest(dth['prix']))
+                montant=_round_nearest(float(dth['prix'])) or 0
             )
 
             # save emolument
