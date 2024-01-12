@@ -516,10 +516,11 @@ export default {
         .catch(err => handleException(err, this));
     },
       
-    handleUpdateEmolument(position, idx) {
+    async handleUpdateEmolument(position, idx) {
       this.updateMontant(position, idx);
-      this.automaticUpdateNombres();
+      await this.automaticUpdateNombres(position);
       this.update_sommesPartielles();
+      return;
     },
 
     // ================================================================================================================================================
@@ -802,27 +803,33 @@ export default {
         f = Number(this.form_general.batiment_f[idx-1]);
       }
       position.prix[idx] = this.round(f * Number(position.nombre[idx]) * Number(position.montant), 0.05);
+      return;
     },
 
-    automaticUpdateNombres() {
+    async automaticUpdateNombres(current_position) {
       let base = [];
-      let tmp = JSON.parse(JSON.stringify(this.tableauEmolumentsNew));
-      this.tableauEmolumentsNew.forEach(cat=> {
+      let base_second = []
+      this.tableauEmolumentsNew.forEach(cat => {
         cat.forEach(scat => {
           scat.forEach(pos => {
             if (pos.calcul_auto) {
               base = pos.calcul_auto.split('+');
-              for (let i=0; i<this.form_general.nb_batiments+1; i++) {
-                if (Number(pos.nombre[i])===0) {
-                  pos.nombre[i] = tmp.reduce((partialSum, a) => partialSum + a.reduce((partialSum, a) => partialSum + a.reduce((partialSum, a) => partialSum + (base.includes(a.id_html)? Number(a.nombre[i]): 0), 0), 0), 0);
+              base_second.filter(x => x !== pos.id_html);
+              if (base.includes(current_position.id_html) || base_second.some(x => base.includes(x))) {
+                for (let i=0; i<this.form_general.nb_batiments+1; i++) {
+                  pos.nombre[i] = this.tableauEmolumentsNew.reduce((partialSum, a) => partialSum + a.reduce((partialSum, a) => partialSum + a.reduce((partialSum, a) => partialSum + (base.includes(a.id_html)? Number(a.nombre[i]): 0), 0), 0), 0);
+                  base_second.push(pos.id_html);
                   this.updateMontant(pos, i);
                 }
               }
             }
-          })
-        })
-      })
+          });
+        });
+      });
+
+      return;
     },
+
 
     update_sommesPartielles() {
       //sommes partielles du tableau récapitulatif
@@ -901,6 +908,7 @@ export default {
       this.total.montant_recapitulatif_somme7 = this.total.montant_recapitulatif_somme6 + this.total.montant_recapitulatif_tva;
       this.total.montant_recapitulatif_total = this.total.montant_recapitulatif_somme7 + this.total.montant_recapitulatif_registre_foncier;
 
+      return;
     },
 
     addDivers() {
