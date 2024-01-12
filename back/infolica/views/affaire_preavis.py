@@ -986,20 +986,20 @@ def preavis_print_view(request):
     html += "<br>"
     html += "<p><em>Détail:</em></p><p style='white-space: pre-line;'><em>" +\
         "<div class='title'>Contexte et situation</div>" +\
-        (liste_decisions[-1]['remarque_contexte'] or '-') +\
+        "<div style='white-space: pre-line;'>" + (liste_decisions[-1]['remarque_contexte'] or '-') + "</div>" +\
         "<br><br><hr><hr><br>" +\
         "<div class='title'>Servitude(s) / mention(s)</div>" +\
         "<div class='subtitle'>Limite fictive de gabarits</div>" +\
-        (liste_decisions[-1]['remarque_limite_fictive_gabarits'] or '-') +\
+        "<div style='white-space: pre-line;'>" + (liste_decisions[-1]['remarque_limite_fictive_gabarits'] or '-') + "</div>" +\
         "<br><br><br>" +\
         "<div class='subtitle'>Transfert de droits à bâtir</div>" +\
-        (liste_decisions[-1]['remarque_transfert_droit_batir'] or '-') +\
+        "<div style='white-space: pre-line;'>" + (liste_decisions[-1]['remarque_transfert_droit_batir'] or '-') + "</div>" +\
         "<br><br><br>" +\
         "<div class='subtitle'>Place de stationnement (Article 29 RELConstr.)</div>" +\
-        (liste_decisions[-1]['remarque_stationnement_art29'] or '-') +\
+        "<div style='white-space: pre-line;'>" + (liste_decisions[-1]['remarque_stationnement_art29'] or '-') + "</div>" +\
         "<br><br><br>" +\
         "<div class='subtitle'>Autres servitudes et mentions</div>" +\
-        (liste_decisions[-1]['remarque_autre'] or '-') +\
+        "<div style='white-space: pre-line;'>" + (liste_decisions[-1]['remarque_autre'] or '-') + "</div>" +\
         "</em></p>"
 
     if len(liste_decisions)>1:
@@ -1015,20 +1015,20 @@ def preavis_print_view(request):
             html += "<br>"
             html += "<p><em>Détail:</em></p><p style='white-space: pre-line;'><em>" +\
                 "<div class='title'>Contexte et situation</div>" +\
-                (decision['remarque_contexte'] or '-') +\
+                "<div style='white-space: pre-line;'>" + (decision['remarque_contexte'] or '-') + "</div>" +\
                 "<br><br><hr><hr><br>" +\
                 "<div class='title'>Servitude(s) / mention(s)</div>" +\
                 "<div class='subtitle'>Limite fictive de gabarits</div>" +\
-                (decision['remarque_limite_fictive_gabarits'] or '-') +\
+                "<div style='white-space: pre-line;'>" + (decision['remarque_limite_fictive_gabarits'] or '-') + "</div>" +\
                 "<br><br><br>" +\
                 "<div class='subtitle'>Transfert de droits à bâtir</div>" +\
-                (decision['remarque_transfert_droit_batir'] or '-') +\
+                "<div style='white-space: pre-line;'>" + (decision['remarque_transfert_droit_batir'] or '-') + "</div>" +\
                 "<br><br><br>" +\
                 "<div class='subtitle'>Place de stationnement (Article 29 RELConstr.)</div>" +\
-                (decision['remarque_stationnement_art29'] or '-') +\
+                "<div style='white-space: pre-line;'>" + (decision['remarque_stationnement_art29'] or '-') + "</div>" +\
                 "<br><br><br>" +\
                 "<div class='subtitle'>Autres servitudes et mentions</div>" +\
-                (decision['remarque_autre'] or '-') +\
+                "<div style='white-space: pre-line;'>" + (decision['remarque_autre'] or '-') + "</div>" +\
                 "</em></p>"
 
 
