@@ -146,8 +146,7 @@
 
 #emolumentsDialog .customTable .customTableBody {
   overflow-y: scroll;
-  max-height: calc(92vh - 200px);
-  /* max-height: 610px; */
+  max-height: calc(94vh - 200px);
 }
 
 #emolumentsDialog th, #emolumentsDialog td {

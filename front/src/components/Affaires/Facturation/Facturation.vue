@@ -621,7 +621,6 @@ export default {
     async openEmolumentsDialog() {
       await this.$refs.emoluments.initForm();
       this.$refs.emoluments.initFactureRepartition([]);
-      this.$refs.emoluments.emolument_priorite = true;
       this.$refs.emoluments.showEmolumentsDialog = true;
     },
 

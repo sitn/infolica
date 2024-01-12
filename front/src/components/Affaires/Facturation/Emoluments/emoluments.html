@@ -127,7 +127,6 @@
 
           
           <md-tab md-label="Tableau des émoluments" ref="tabRecapitulatif">
-            <md-switch v-model="emolument_priorite">Afficher le tableau restreint</md-switch>
             <table class="tg customTable" id="tableau_emoluments">
               <thead class="customTableHead">
                 <template v-if="form_general.nb_batiments > 0">
@@ -168,7 +167,7 @@
                         <td class="alignRight batiment-separator" colspan="2" style="background-color: rgba(34, 139, 34, 0.2);"><b>{{ scategory.reduce((partialSum, a) => partialSum + a.prix[i], 0).toFixed(2) }} CHF</b></td>
                       </template>
                     </tr>
-                    <tr v-for="position in scategory" id="" :class="{'selected': (position.id == selectedHighlightRow)}" @click="highlithtSelectedRow(position.id)" v-show="emolument_priorite? position.priorite===true: position">
+                    <tr v-for="position in scategory" id="" :class="{'selected': (position.id == selectedHighlightRow)}" @click="highlithtSelectedRow(position.id)">
                       <!-- code -->
                       <td class="tg-0lax code">{{ [position.categorie_id, position.code].join('') }}</td>
 

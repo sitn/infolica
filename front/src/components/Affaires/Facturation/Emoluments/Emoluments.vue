@@ -34,7 +34,6 @@ export default {
         disabled: false,
         emolument_facture_repartition_ctrl: false,
         emolumentsGeneral_list: [],
-        emolument_priorite: true,
         facture_parametres : {
           indice_application: null,
           tva_pc: null,
@@ -213,7 +212,6 @@ export default {
     // ================================================================================================================================================
     async openEmolumentDialog(emolument_affaire_id) {
       await this.getEmolument(emolument_affaire_id);
-      this.emolument_priorite = true;
       this.getEmolumentAffaireRepartition(emolument_affaire_id).then(response => {
         if (response && response.data) {
           this.initFactureRepartition(response.data);
@@ -713,13 +711,6 @@ export default {
      * Download emoluments pdf
      */
     async downloadEmoluments() {
-      // show the entire table
-      let last_emolument_priorite = false;
-      if (this.emolument_priorite === true) {
-        last_emolument_priorite = true;
-        this.emolument_priorite = false;
-      }
-
       // tableau emoluments
       let tableau_emoluments_html = JSON.parse(JSON.stringify(document.getElementById("tableau_emoluments").outerHTML));
       let inputs = tableau_emoluments_html.matchAll(/(md-input-)\w+/g);
@@ -779,8 +770,6 @@ export default {
         fileLink.click();
       }).catch(err => {
         handleException(err, this);
-      }).finally(() => {
-        this.emolument_priorite = last_emolument_priorite;
       });
     },
     
