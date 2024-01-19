@@ -1,393 +1,377 @@
 <div class="emoluments" v-if="isPageReady && tableauEmolumentsNew.length > 0">
 
-    <md-dialog id="emolumentsDialog" :md-active.sync="showEmolumentsDialog" :md-click-outside-to-close="false" :md-close-on-esc="false">
-      <md-dialog-title class="justifyTitleBtn">
-        <div class="md-title">Émoluments <span v-if="form_general && form_general.id"> (id: {{ form_general.id }})</span></div>
-        <div>
-          <md-switch v-model="form_general.utilise" @change="updateUsed" class="md-accent" title="Bloquer l'émolument" :disabled="!permission.editEmolumentFreeze" v-if="form_general && form_general.id"><md-icon class="material-icons-outlined md-accent">{{ form_general.utilise===true? 'lock': 'lock_open' }}</md-icon></md-switch>
-          <md-button class="md-primary md-elevation-2" v-if="form_general.id" @click="downloadEmoluments()" title="Génère le tableau des émoluments en PDF"><md-icon>file_download</md-icon> Télécharger le PDF</md-button>
-          <md-button class="md-accent md-raised" :disabled="disabled || !form_general.id" @click="confirmDelete(form_general.id)" title="Supprime définitivement l'émolument"><md-icon>delete</md-icon> Supprimer</md-button>
-        </div>
-      </md-dialog-title>
-      <md-dialog-content>
-        <md-progress-bar md-mode="indeterminate" v-if="showProgressBar"></md-progress-bar>
+  <md-dialog id="emolumentsDialog" :md-active.sync="showEmolumentsDialog" :md-click-outside-to-close="false" :md-close-on-esc="false">
+    <md-dialog-title class="justifyTitleBtn">
+      <div class="md-title">Émoluments <span v-if="form_general && form_general.id"> (id: {{ form_general.id }})</span></div>
+      <div>
+        <md-switch v-model="form_general.utilise" @change="updateUsed" class="md-accent" title="Bloquer l'émolument" :disabled="!permission.editEmolumentFreeze" v-if="form_general && form_general.id"><md-icon class="material-icons-outlined md-accent">{{ form_general.utilise===true? 'lock': 'lock_open' }}</md-icon></md-switch>
+        <md-button class="md-primary md-elevation-2" v-if="form_general.id" @click="downloadEmoluments()" title="Génère le tableau des émoluments en PDF"><md-icon>file_download</md-icon> Télécharger le PDF</md-button>
+        <md-button class="md-accent md-raised" :disabled="disabled || !form_general.id" @click="confirmDelete(form_general.id)" title="Supprime définitivement l'émolument"><md-icon>delete</md-icon> Supprimer</md-button>
+      </div>
+    </md-dialog-title>
+    <md-dialog-content>
+      <md-progress-bar md-mode="indeterminate" v-if="showProgressBar"></md-progress-bar>
 
-        <md-tabs md-dynamic-height>
-          <md-tab md-label="Général">
-            <div class="md-gutter md-layout md-alignment-top-space-between">
-              <div class="md-layout-item" style="width: 400px;">
-                <md-field class="formField">
-                  <label>Type d'émolument</label>
-                  <md-select :disabled="disabled" v-model="form_general.facture_type_id" md-dense>
-                    <md-option v-for="item in factureTypes" :value="item.id">{{ item.nom }}</md-option>
-                  </md-select>
-                </md-field>
+      <md-tabs md-dynamic-height>
+        <md-tab md-label="Général">
+          <div class="md-gutter md-layout md-alignment-top-space-between">
+            <div class="md-layout-item" style="width: 400px;">
+              <md-field class="formField">
+                <label>Type d'émolument</label>
+                <md-select :disabled="disabled" v-model="form_general.facture_type_id" md-dense>
+                  <md-option v-for="item in factureTypes" :value="item.id">{{ item.nom }}</md-option>
+                </md-select>
+              </md-field>
 
-                <br>
+              <br>
 
-                <h3>Bâtiments</h3>
-                <table class="tg" style="width: 200px;">
-                  <thead v-if="form_general.nb_batiments>0">
-                    <tr>
-                      <th colspan="2" class="overHead">
-                        <md-icon>warning</md-icon>
-                        Indiquer les surfaces des bâtiments dans l'ordre du plus grand au plus petit.
-                      </th>
-                    </tr>
-                    <tr>
-                      <th class="tg-0lax alignCenter">Bâtiment</th>
-                      <th class="tg-0lax alignCenter">Facteur correctif</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="i in form_general.nb_batiments">
-                      <td class="tg-0lax alignCenter">{{ i }}</td>
-                      <td class="tg-0lax">
-                        <md-field class="nbField">
-                          <md-select :disabled="disabled" v-model="form_general.batiment_f[i-1]" md-dense @md-selected="updateBatimentCorrectionFactor(i)">
-                            <md-option :value="1.5">1.5 (>1000m2)</md-option>
-                            <md-option :value="1.4">1.4 (751-1000m2)</md-option>
-                            <md-option :value="1.3">1.3 (501-750m2)</md-option>
-                            <md-option :value="1.2">1.2 (401-500m2)</md-option>
-                            <md-option :value="1.1">1.1 (301-400m2)</md-option>
-                            <md-option :value="1.0">1.0 (251-300m2)</md-option>
-                            <md-option :value="0.9">0.9 (201-250m2)</md-option>
-                            <md-option :value="0.8">0.8 (151-200m2)</md-option>
-                            <md-option :value="0.7">0.7 (101-150m2)</md-option>
-                            <md-option :value="0.6">0.6 (51-100m2)</md-option>
-                            <md-option :value="0.5">0.5 (1-50m2)</md-option>
-                          </md-select>
-                        </md-field>
-                      </td>
-                      <td class="tg-0lax alignCenter" v-if="!disabled">
-                        <md-button class="md-dense md-accent" style="min-width: auto;" title="Supprimer le bâtiment" @click="removeBatiment(i)"><md-icon>delete</md-icon></md-button>
-                      </td>
-                    </tr>
-                    <tr v-if="!disabled">
-                      <td class="tg-0lax alignRight" style="border: 0px" colspan="3"><em>Ajouter un bâtiment</em> <md-button style="min-width: auto;" class="md-dense md-primary" @click="addBatiment" title="Ajouter un bâtiment"><md-icon>add</md-icon></md-button></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="md-layout-item" v-if="affaire.type_id === typesAffaires_conf.cadastration" style="width: 400px;">
-                <h3>Bien-fonds</h3>
-
-                  <md-table v-model="numeros_references" md-card @md-selected="onSelectBFReferences" :md-selected-value.sync="form_general.numeros" >
-                    <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" md-auto-select>
-                      <md-table-cell md-label="Cadastre">{{ item.numero_cadastre }}</md-table-cell>
-                      <md-table-cell md-label="Numéro">{{ item.numero }}</md-table-cell>
-                    </md-table-row>
-                  </md-table>
-              </div>
+              <h3>Bâtiments</h3>
+              <table class="tg" style="width: 200px;">
+                <thead v-if="form_general.nb_batiments>0">
+                  <tr>
+                    <th colspan="2" class="overHead">
+                      <md-icon>warning</md-icon>
+                      Indiquer les surfaces des bâtiments dans l'ordre du plus grand au plus petit.
+                    </th>
+                  </tr>
+                  <tr>
+                    <th class="tg-0lax alignCenter">Bâtiment</th>
+                    <th class="tg-0lax alignCenter">Facteur correctif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="i in form_general.nb_batiments">
+                    <td class="tg-0lax alignCenter">{{ i }}</td>
+                    <td class="tg-0lax">
+                      <md-field class="nbField">
+                        <md-select :disabled="disabled" v-model="form_general.batiment_f[i-1]" md-dense @md-selected="updateBatimentCorrectionFactor(i)">
+                          <md-option :value="1.5">1.5 (>1000m2)</md-option>
+                          <md-option :value="1.4">1.4 (751-1000m2)</md-option>
+                          <md-option :value="1.3">1.3 (501-750m2)</md-option>
+                          <md-option :value="1.2">1.2 (401-500m2)</md-option>
+                          <md-option :value="1.1">1.1 (301-400m2)</md-option>
+                          <md-option :value="1.0">1.0 (251-300m2)</md-option>
+                          <md-option :value="0.9">0.9 (201-250m2)</md-option>
+                          <md-option :value="0.8">0.8 (151-200m2)</md-option>
+                          <md-option :value="0.7">0.7 (101-150m2)</md-option>
+                          <md-option :value="0.6">0.6 (51-100m2)</md-option>
+                          <md-option :value="0.5">0.5 (1-50m2)</md-option>
+                        </md-select>
+                      </md-field>
+                    </td>
+                    <td class="tg-0lax alignCenter" v-if="!disabled">
+                      <md-button class="md-dense md-accent" style="min-width: auto;" title="Supprimer le bâtiment" @click="removeBatiment(i)"><md-icon>delete</md-icon></md-button>
+                    </td>
+                  </tr>
+                  <tr v-if="!disabled">
+                    <td class="tg-0lax alignRight" style="border: 0px" colspan="3"><em>Ajouter un bâtiment</em> <md-button style="min-width: auto;" class="md-dense md-primary" @click="addBatiment" title="Ajouter un bâtiment"><md-icon>add</md-icon></md-button></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
-            
-              <!-- Définition de répartition des factures -->
-            <div v-if="form_general.facture_type_id === configFactureTypeID.facture">
-              <h3>Répartition des émoluments dans les factures</h3>
-              <div v-if="emolument_facture_repartition_ctrl" style="color: red;"><em>
-                Vérifier la répartition dans les factures, dont le total ne vaut pas 100%.<br>
-                Si les parts impliquent des nombres à virgule, écrire une approximation à 2 chiffres après la virgule (33.33% et 66.66% par exemple). 
-              </em></div>
+            <div class="md-layout-item" v-if="affaire.type_id === typesAffaires_conf.cadastration" style="width: 400px;">
+              <h3>Bien-fonds</h3>
 
-              <md-table v-model="factures_repartition" md-card>
-                <md-table-empty-state
-                  md-label="Aucune facture trouvée"
-                  md-description="Enregistrer d'abord la facture vide avant de récupérer les montants des émoluments" />
-                <md-table-row slot="md-table-row" slot-scope="{ item }">
-                  <md-table-cell md-label="Client">{{ item.adresse_facturation_ }}</md-table-cell>
-                  <md-table-cell md-label="Bien-fonds" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
-                  <md-table-cell md-label="MO">{{ item.montant_mo }} CHF</md-table-cell>
-                  <md-table-cell md-label="Mat Diff">{{ item.montant_mat_diff }} CHF</md-table-cell>
-                  <md-table-cell md-label="RF">{{ item.montant_rf }} CHF</md-table-cell>
-                  <md-table-cell md-label="TVA">{{ item.montant_tva }} CHF</md-table-cell>
-                  <md-table-cell md-label="Total">{{ item.montant_total }} CHF</md-table-cell>
-                  <md-table-cell md-label="Remarque" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.remarque? item.remarque: "—" }}</md-table-cell>
-                  <md-table-cell md-label="Répartition">
-                    <md-field class="nbField" style="width: 50px;">
-                      <md-input v-model ="item.emolument_repartition"
-                        class="nbInput"
-                        onkeypress="return /[0-9]|[.]/g.test(event.key)"
-                        @keyup="updateFactureRepartition"
-                        v-bind:class="{ repartitionFaux: emolument_facture_repartition_ctrl === true, repartitionJuste: emolument_facture_repartition_ctrl === false }"
-                        :disabled="disabled"></md-input>
-                      <span class="md-suffix" style="line-height: 20px;">%</span>
-                    </md-field>
-                  </md-table-cell>
+              <md-table v-model="numeros_references" md-card @md-selected="onSelectBFReferences" :md-selected-value.sync="form_general.numeros">
+                <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" md-auto-select>
+                  <md-table-cell md-label="Cadastre">{{ item.numero_cadastre }}</md-table-cell>
+                  <md-table-cell md-label="Numéro">{{ item.numero }}</md-table-cell>
                 </md-table-row>
               </md-table>
-
-              <div v-if="permission.showEmolumentRepartition_saveToFactures_btn">
-                <md-button @click="onSaveEmolumentsRepartitions" class="md-raised md-accent" title="Cette action enregistre les montants dans les factures et clôt le tableau des émoluments de manière définitive.">Transférer les montants vers les factures (secrétariat)</md-button>
-              </div>
             </div>
-          </md-tab>
+          </div>
 
 
-          
-          <md-tab md-label="Tableau des émoluments" ref="tabRecapitulatif">
-            <table class="tg customTable" id="tableau_emoluments">
-              <thead class="customTableHead">
-                <template v-if="form_general.nb_batiments > 0">
-                  <tr>
-                    <th class="tg-0lax alignCenter" colspan="6"></th>
-                    <template v-for="i in form_general.nb_batiments">
-                      <th class="tg-0lax batiment-separator alignCenter" colspan="2">Bâtiment {{i}} (f = {{ form_general.batiment_f[i-1] }})</th>
-                    </template>
-                  </tr>
-                </template>
+          <!-- Définition de répartition des factures -->
+          <div v-if="form_general.facture_type_id === configFactureTypeID.facture">
+            <h3>Répartition des émoluments dans les factures</h3>
+            <div v-if="emolument_facture_repartition_ctrl" style="color: red;"><em>
+                Vérifier la répartition dans les factures, dont le total ne vaut pas 100%.<br>
+                Si les parts impliquent des nombres à virgule, écrire une approximation à 2 chiffres après la virgule (33.33% et 66.66% par exemple).
+              </em></div>
+
+            <md-table v-model="factures_repartition" md-card>
+              <md-table-empty-state
+                                    md-label="Aucune facture trouvée"
+                                    md-description="Enregistrer d'abord la facture vide avant de récupérer les montants des émoluments" />
+              <md-table-row slot="md-table-row" slot-scope="{ item }">
+                <md-table-cell md-label="Client">{{ item.adresse_facturation_ }}</md-table-cell>
+                <md-table-cell md-label="Bien-fonds" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
+                <md-table-cell md-label="MO">{{ item.montant_mo }} CHF</md-table-cell>
+                <md-table-cell md-label="Mat Diff">{{ item.montant_mat_diff }} CHF</md-table-cell>
+                <md-table-cell md-label="RF">{{ item.montant_rf }} CHF</md-table-cell>
+                <md-table-cell md-label="TVA">{{ item.montant_tva }} CHF</md-table-cell>
+                <md-table-cell md-label="Total">{{ item.montant_total }} CHF</md-table-cell>
+                <md-table-cell md-label="Remarque" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.remarque? item.remarque: "—" }}</md-table-cell>
+                <md-table-cell md-label="Répartition">
+                  <md-field class="nbField" style="width: 50px;">
+                    <md-input v-model="item.emolument_repartition"
+                              class="nbInput"
+                              onkeypress="return /[0-9]|[.]/g.test(event.key)"
+                              @keyup="updateFactureRepartition"
+                              v-bind:class="{ repartitionFaux: emolument_facture_repartition_ctrl === true, repartitionJuste: emolument_facture_repartition_ctrl === false }"
+                              :disabled="disabled"></md-input>
+                    <span class="md-suffix" style="line-height: 20px;">%</span>
+                  </md-field>
+                </md-table-cell>
+              </md-table-row>
+            </md-table>
+
+            <div v-if="permission.showEmolumentRepartition_saveToFactures_btn">
+              <md-button @click="onSaveEmolumentsRepartitions" class="md-raised md-accent" title="Cette action enregistre les montants dans les factures et clôt le tableau des émoluments de manière définitive.">Transférer les montants vers les factures (secrétariat)</md-button>
+            </div>
+          </div>
+        </md-tab>
+
+
+
+        <md-tab md-label="Tableau des émoluments" ref="tabRecapitulatif">
+          <table class="tg customTable" id="tableau_emoluments">
+            <thead class="customTableHead">
+              <template v-if="form_general.nb_batiments > 0">
                 <tr>
-                  <!-- <th class="chapter"></th> -->
-                  <th class="tg-0lax alignCenter code">Code</th>
-                  <th class="tg-0lax alignCenter position">Position</th>
-                  <th class="tg-0lax alignCenter unite">Unité</th>
-                  <th class="tg-0lax alignCenter prix_unitaire">Prix unit.</th>
-                  <th class="tg-0lax alignCenter nombre">Nombre</th>
-                  <th class="tg-0lax alignCenter montant">Montant</th>
+                  <th class="tg-0lax alignCenter" colspan="6"></th>
                   <template v-for="i in form_general.nb_batiments">
-                    <th class="tg-0lax batiment-separator alignCenter nombre">Nombre</th>
-                    <th class="tg-0lax alignCenter montant">Montant</th>
+                    <th class="tg-0lax batiment-separator alignCenter" colspan="2">Bâtiment {{i}} (f = {{ form_general.batiment_f[i-1] }})</th>
                   </template>
                 </tr>
-              </thead>
-              <tbody class="customTableBody">
-                <template v-for="(category, index) in tableauEmolumentsNew">
-                  <!-- CHAPTER TITLE -->
-                  <tr class="rowChapterDistinction">
-                    <td class="" :colspan="5+2*form_general.nb_batiments" style="background-color: rgba(34, 139, 34, 0.5);">{{ category[0][0].categorie_id }}. {{ category[0][0].categorie }}</td>
-                    <td class="alignRight" style="background-color: rgba(34, 139, 34, 0.5);"><b>{{ category.reduce((partialSum, a) => partialSum + a.reduce((partialSum, a) => partialSum + a.prix.reduce((partialSum, a) => partialSum + a, 0), 0), 0).toFixed(2) }} CHF</b></td>
-                  </tr>
-                  <template v-for="scategory in category">
-                    <!-- CHAPTER SUBTITLE -->
-                    <tr v-if="scategory.length>0 && category.length>1 && scategory.length>1">
-                      <td colspan="5" style="background-color: rgba(34, 139, 34, 0.2);">{{ [scategory[0].categorie_id, scategory[0].sous_categorie_id].join('.') }}. {{ scategory[0].sous_categorie }}</td>
-                      <td class="alignRight" style="background-color: rgba(34, 139, 34, 0.2);"><b>{{ scategory.reduce((partialSum, a) => partialSum + a.prix[0], 0).toFixed(2) }} CHF</b></td>
-                      <template v-for="i in form_general.nb_batiments">
-                        <td class="alignRight batiment-separator" colspan="2" style="background-color: rgba(34, 139, 34, 0.2);"><b>{{ scategory.reduce((partialSum, a) => partialSum + a.prix[i], 0).toFixed(2) }} CHF</b></td>
-                      </template>
-                    </tr>
-                    <tr v-for="position in scategory" id="" :class="{'selected': (position.id == selectedHighlightRow)}" @click="highlithtSelectedRow(position.id)">
-                      <!-- code -->
-                      <td class="tg-0lax code">{{ [position.categorie_id, position.code].join('') }}</td>
-
-                      <!-- nom de la position -->
-                      <td class="tg-0lax position">{{ position.nom }}</td>
-                      
-                      <!-- unité -->
-                      <td class="tg-0lax alignCenter unite">{{ position.unite }}</td>
-
-                      <!-- prix unitaire -->
-                      <template v-if="position.champ_editable===true">
-                        <td class="tg-0lax alignRight prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.montant" class="inputMontant" @keyup="Number(position.montant)>0? position.nombre[0]=1: position.nombre[0]=0; position.prix[0] = round(Number(position.nombre[0]) * Number(position.montant), 0.05); update_sommesPartielles()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
-                      </template>
-                      <template v-else>
-                        <td class="tg-0lax alignRight prix_unitaire">{{ position.montant.toFixed(2) }} CHF</td>
-                      </template>
-
-                      <!-- nombre et montant (BF) -->
-                      <template v-if="position.bien_fonds===true">
-                        <template v-if="position.champ_editable===true">
-                          <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled || id_matdiff.slice(1,id_matdiff.length).includes(position.id) || position.champ_editable" v-model="position.nombre[0]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[0])>0, hideNulls: Number(position.nombre[0])==0 }" @keyup="handleUpdateEmolument(position, 0)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)" v-on:focusout="position.id == id_matdiff[0]? updateMatDiffNumber(position): null"></md-input></md-field></td>
-                        </template>
-                        <template v-else>
-                          <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled || id_matdiff.slice(1,id_matdiff.length).includes(position.id)" v-model="position.nombre[0]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[0])>0, hideNulls: Number(position.nombre[0])==0 }" @keyup="handleUpdateEmolument(position, 0)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)" v-on:focusout="position.id == id_matdiff[0]? updateMatDiffNumber(position): null"></md-input></md-field></td>
-                        </template>
-
-                        <td class="tg-0lax montant alignRight"><span v-if="Number(position.prix[0]>0)">{{ position.prix[0].toFixed(2) }} CHF</span></td>
-                      </template>
-                      <template v-else>
-                          <td class="tg-0lax nombre notEditable"></td>
-                          <td class="tg-0lax nombre notEditable"></td>
-                      </template>
-                      
-                      <!-- nombre et montant (bat) -->
-                      <template v-for="i in form_general.nb_batiments">
-                        <template v-if="position.batiment===true">
-                          <td class="tg-0lax nombre batiment-separator"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.nombre[i]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[i])>0, hideNulls: Number(position.nombre[i])==0 }" @keyup="handleUpdateEmolument(position, i)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
-                          <td class="tg-0lax montant alignRight"><span v-if="Number(position.prix[i]>0)">{{ position.prix[i].toFixed(2) }} CHF</span></td>
-                        </template>
-                        <template v-else>
-                          <td class="tg-0lax nombre batiment-separator notEditable"></td>
-                          <td class="tg-0lax montant notEditable"></td>
-                        </template>
-                      </template>
-                    </tr>
-                  </template>
+              </template>
+              <tr>
+                <!-- <th class="chapter"></th> -->
+                <th class="tg-0lax alignCenter code">Code</th>
+                <th class="tg-0lax alignCenter position">Position</th>
+                <th class="tg-0lax alignCenter unite">Unité</th>
+                <th class="tg-0lax alignCenter prix_unitaire">Prix unit.</th>
+                <th class="tg-0lax alignCenter nombre">Nombre</th>
+                <th class="tg-0lax alignCenter montant">Montant</th>
+                <template v-for="i in form_general.nb_batiments">
+                  <th class="tg-0lax batiment-separator alignCenter nombre">Nombre</th>
+                  <th class="tg-0lax alignCenter montant">Montant</th>
                 </template>
-
-                <!-- DIVERS -->
-                <template>
-                  <!-- CHAPTER TITLE -->
-                  <tr>
-                    <td class="" :colspan="5+2*form_general.nb_batiments" style="background-color: rgba(34, 139, 34, 0.5);">Divers <a @click="addDivers" title="Ajouter un nouvel élément" v-if="disabled===false">[+]</a></td>
-                    <td class="alignRight" style="background-color: rgba(34, 139, 34, 0.5);"><b>{{ divers_tarif_horaire.reduce((partialSum, a) => partialSum + a.prix, 0).toFixed(2) }} CHF</b></td>
+              </tr>
+            </thead>
+            <tbody class="customTableBody">
+              <template v-for="(category, index) in tableauEmolumentsNew">
+                <!-- CHAPTER TITLE -->
+                <tr class="rowChapterDistinction">
+                  <td class="" :colspan="5+2*form_general.nb_batiments" style="background-color: rgba(34, 139, 34, 0.5);">{{ category[0][0].categorie_id }}. {{ category[0][0].categorie }}</td>
+                  <td class="alignRight" style="background-color: rgba(34, 139, 34, 0.5);"><b>{{ category.reduce((partialSum, a) => partialSum + a.reduce((partialSum, a) => partialSum + a.prix.reduce((partialSum, a) => partialSum + a, 0), 0), 0).toFixed(2) }} CHF</b></td>
+                </tr>
+                <template v-for="scategory in category">
+                  <!-- CHAPTER SUBTITLE -->
+                  <tr v-if="scategory.length>0 && category.length>1 && scategory.length>1">
+                    <td colspan="5" style="background-color: rgba(34, 139, 34, 0.2);">{{ [scategory[0].categorie_id, scategory[0].sous_categorie_id].join('.') }}. {{ scategory[0].sous_categorie }}</td>
+                    <td class="alignRight" style="background-color: rgba(34, 139, 34, 0.2);"><b>{{ scategory.reduce((partialSum, a) => partialSum + a.prix[0], 0).toFixed(2) }} CHF</b></td>
+                    <template v-for="i in form_general.nb_batiments">
+                      <td class="alignRight batiment-separator" colspan="2" style="background-color: rgba(34, 139, 34, 0.2);"><b>{{ scategory.reduce((partialSum, a) => partialSum + a.prix[i], 0).toFixed(2) }} CHF</b></td>
+                    </template>
                   </tr>
-                  <tr class="rowChapterDistinction" id="" v-for="(tdh, index) in divers_tarif_horaire">
-                  <!-- <tr class="rowChapterDistinction" id="" v-for="(tdh, index) in divers_tarif_horaire"> -->
+                  <tr v-for="position in scategory" id="" :class="{'selected': (position.id == selectedHighlightRow)}" @click="highlithtSelectedRow(position.id)">
                     <!-- code -->
-                    <!-- <td class="tg-0lax code">XXX</td> -->
+                    <td class="tg-0lax code">{{ [position.categorie_id, position.code].join('') }}</td>
 
                     <!-- nom de la position -->
-                    <td class="tg-0lax position_divers" colspan="2"><md-field class="nbField"><md-input :disabled="disabled" v-model="tdh.nom" class="inputText" @focus="$event.target.select()"></md-input><a @click="divers_tarif_horaire.splice(divers_tarif_horaire.indexOf(tdh), 1)" title="Supprimer cet élément" v-if="divers_tarif_horaire.length>1 && disabled===false">[-]</a></md-field></td>
+                    <td class="tg-0lax position">{{ position.nom }}</td>
 
                     <!-- unité -->
-                    <td class="tg-0lax alignCenter unite">Heure</td>
-                    
+                    <td class="tg-0lax alignCenter unite">{{ position.unite }}</td>
+
                     <!-- prix unitaire -->
-                    <td class="tg-0lax alignRight prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="tdh.montant" class="inputMontant" @keyup="tdh.prix = round(Number(tdh.nombre) * Number(tdh.montant), 0.05); update_sommesPartielles()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
-                    
+                    <template v-if="position.champ_editable===true">
+                      <td class="tg-0lax alignRight prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.montant" class="inputMontant" @keyup="Number(position.montant)>0? position.nombre[0]=1: position.nombre[0]=0; position.prix[0] = round(Number(position.nombre[0]) * Number(position.montant), 0.05); update_sommesPartielles()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
+                    </template>
+                    <template v-else>
+                      <td class="tg-0lax alignRight prix_unitaire">{{ position.montant.toFixed(2) }} CHF</td>
+                    </template>
+
                     <!-- nombre et montant (BF) -->
-                    <td class="tg-0lax nombre alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="tdh.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(tdh.nombre)>0, hideNulls: Number(tdh.nombre)==0 }" @keyup="tdh.prix = round(Number(tdh.nombre) * Number(tdh.montant), 0.05); update_sommesPartielles()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
-                    <td class="tg-0lax montant alignRight"><span v-if="Number(tdh.prix>0)">{{ tdh.prix.toFixed(2) }} CHF</span></td>
-                    
+                    <template v-if="position.bien_fonds===true">
+                      <template v-if="position.champ_editable===true">
+                        <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled || id_matdiff.slice(1,id_matdiff.length).includes(position.id) || position.champ_editable" v-model="position.nombre[0]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[0])>0, hideNulls: Number(position.nombre[0])==0 }" @keyup="handleUpdateEmolument(position, 0)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)" v-on:focusout="position.id == id_matdiff[0]? updateMatDiffNumber(position): null"></md-input></md-field></td>
+                      </template>
+                      <template v-else>
+                        <td class="tg-0lax nombre"><md-field class="nbField"><md-input :disabled="disabled || id_matdiff.slice(1,id_matdiff.length).includes(position.id)" v-model="position.nombre[0]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[0])>0, hideNulls: Number(position.nombre[0])==0 }" @keyup="handleUpdateEmolument(position, 0)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)" v-on:focusout="position.id == id_matdiff[0]? updateMatDiffNumber(position): null"></md-input></md-field></td>
+                      </template>
+
+                      <td class="tg-0lax montant alignRight"><span v-if="Number(position.prix[0]>0)">{{ position.prix[0].toFixed(2) }} CHF</span></td>
+                    </template>
+                    <template v-else>
+                      <td class="tg-0lax nombre notEditable"></td>
+                      <td class="tg-0lax nombre notEditable"></td>
+                    </template>
+
                     <!-- nombre et montant (bat) -->
                     <template v-for="i in form_general.nb_batiments">
-                      <td class="tg-0lax nombre batiment-separator notEditable"></td>
-                      <td class="tg-0lax montant notEditable"></td>
+                      <template v-if="position.batiment===true">
+                        <td class="tg-0lax nombre batiment-separator"><md-field class="nbField"><md-input :disabled="disabled" v-model="position.nombre[i]" class="nbInput" v-bind:class="{ highlightEmolument: Number(position.nombre[i])>0, hideNulls: Number(position.nombre[i])==0 }" @keyup="handleUpdateEmolument(position, i)" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
+                        <td class="tg-0lax montant alignRight"><span v-if="Number(position.prix[i]>0)">{{ position.prix[i].toFixed(2) }} CHF</span></td>
+                      </template>
+                      <template v-else>
+                        <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                        <td class="tg-0lax montant notEditable"></td>
+                      </template>
                     </template>
-                    
-                    <!-- <td style="width: fit-content !important;"><a @click="addDivers">+</a></td> -->
-                    
                   </tr>
                 </template>
-                
-              </tbody>
-            </table>
-          </md-tab>
+              </template>
 
-          <!-- TABLEAU RECAPITULATIF -->
-          <md-tab md-label="Récapitulatif" ref="tabRecapitulatif">
-            <table class="tg customTable" id="tableau_recapitulatif_form">
-              <thead class="customTableHead">
+              <!-- DIVERS -->
+              <template>
+                <!-- CHAPTER TITLE -->
                 <tr>
-                  <th class="tg-0lax alignCenter position_recapitulatif">Domaine</th>
-                  <th class="tg-0lax alignCenter number">Indice</th>
-                  <th class="tg-0lax alignCenter montant">Montant</th>
-                  <th class="tg-0lax alignCenter montant">Total</th>
+                  <td class="" :colspan="5+2*form_general.nb_batiments" style="background-color: rgba(34, 139, 34, 0.5);">Divers <a @click="addDivers" title="Ajouter un nouvel élément" v-if="disabled===false">[+]</a></td>
+                  <td class="alignRight" style="background-color: rgba(34, 139, 34, 0.5);"><b>{{ divers_tarif_horaire.reduce((partialSum, a) => partialSum + a.prix, 0).toFixed(2) }} CHF</b></td>
                 </tr>
-              </thead>
-              <tbody class="customTableBody">
-                <tr>
-                  <td class="tg-0lax" colspan="2">Mandat</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_mandat.toFixed(2) }} CHF</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme1.toFixed(2) }} CHF</td>
+                <tr class="rowChapterDistinction" id="" v-for="(tdh, index) in divers_tarif_horaire">
+                  <!-- <tr class="rowChapterDistinction" id="" v-for="(tdh, index) in divers_tarif_horaire"> -->
+                  <!-- code -->
+                  <!-- <td class="tg-0lax code">XXX</td> -->
+
+                  <!-- nom de la position -->
+                  <td class="tg-0lax position_divers" colspan="2"><md-field class="nbField"><md-input :disabled="disabled" v-model="tdh.nom" class="inputText" @focus="$event.target.select()"></md-input><a @click="divers_tarif_horaire.splice(divers_tarif_horaire.indexOf(tdh), 1)" title="Supprimer cet élément" v-if="divers_tarif_horaire.length>1 && disabled===false">[-]</a></md-field></td>
+
+                  <!-- unité -->
+                  <td class="tg-0lax alignCenter unite">Heure</td>
+
+                  <!-- prix unitaire -->
+                  <td class="tg-0lax alignRight prix_unitaire"><md-field class="nbField"><md-input :disabled="disabled" v-model="tdh.montant" class="inputMontant" @keyup="tdh.prix = round(Number(tdh.nombre) * Number(tdh.montant), 0.05); update_sommesPartielles()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input>CHF</md-field></td>
+
+                  <!-- nombre et montant (BF) -->
+                  <td class="tg-0lax nombre alignRight"><md-field class="nbField"><md-input :disabled="disabled" v-model="tdh.nombre" class="nbInput" v-bind:class="{ highlightEmolument: Number(tdh.nombre)>0, hideNulls: Number(tdh.nombre)==0 }" @keyup="tdh.prix = round(Number(tdh.nombre) * Number(tdh.montant), 0.05); update_sommesPartielles()" @focus="$event.target.select()" onkeypress="return /[0-9]|[.]/g.test(event.key)"></md-input></md-field></td>
+                  <td class="tg-0lax montant alignRight"><span v-if="Number(tdh.prix>0)">{{ tdh.prix.toFixed(2) }} CHF</span></td>
+
+                  <!-- nombre et montant (bat) -->
+                  <template v-for="i in form_general.nb_batiments">
+                    <td class="tg-0lax nombre batiment-separator notEditable"></td>
+                    <td class="tg-0lax montant notEditable"></td>
+                  </template>
+
+                  <!-- <td style="width: fit-content !important;"><a @click="addDivers">+</a></td> -->
+
                 </tr>
-                <tr>
-                  <td class="tg-0lax" colspan="2">Travaux de terrain. matérialisation, déplacements et débours</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_terrain_materialisation_deplacements.toFixed(2) }} CHF</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme2.toFixed(2) }} CHF</td>
-                </tr>
-                <tr>
-                  <td class="tg-0lax" colspan="2">Travaux de bureau</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_bureau.toFixed(2) }} CHF</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme3.toFixed(2) }} CHF</td>
-                </tr>
-                <tr>
-                  <td class="tg-0lax position_recapitulatif">Indice d'application</td>
-                  <td class="tg-0lax number"><md-field class="nbField"><md-input :disabled="disabled || !permission.editEmolumentIndiceApplication" class="nbInput" v-model="form_general.indice_application" @keyup="update_sommesPartielles()"></md-input></md-field></td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_indice_application.toFixed(2) }} CHF</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme4.toFixed(2) }} CHF</td>
-                </tr>
-                <tr>
-                  <td class="tg-0lax" colspan="2">Matériel, travaux selon le temps consacré et relations avec d'autres services</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_materiel_divers.toFixed(2) }} CHF</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme5.toFixed(2) }} CHF</td>
-                </tr>
-                <tr>
-                  <td class="tg-0lax" colspan="2">Matérialisation différée des limites y compris indice d'application</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_matdiff.toFixed(2) }} CHF</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme6.toFixed(2) }} CHF</td>
-                </tr>
-                <tr>
-                  <td class="tg-0lax position_recapitulatif">TVA</td>
-                  <td class="tg-0lax number"><md-field class="nbField"><md-input :disabled="disabled || !permission.editEmolumentTva" class="nbInput" v-model="form_general.tva_pc" @keyup="update_sommesPartielles()"></md-input>%</md-field></td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_tva.toFixed(2) }} CHF</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme7.toFixed(2) }} CHF</td>
-                </tr>
-                <tr>
-                  <td class="tg-0lax" colspan="2">Inscription au registre foncier</td>
-                  <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_registre_foncier.toFixed(2) }} CHF</td>
-                  <td class="tg-0lax montant notEditable"></td>
-                </tr>
-                <tr>
-                  <td class="tg-0pky" colspan="3">Montant total du mandat</td>
-                  <td class="tg-0pky montant montantTotal alignRight">{{ total.montant_recapitulatif_total.toFixed(2) }} CHF</td>
-                </tr>
-              </tbody>
-            </table>
-          </md-tab>
+              </template>
+
+            </tbody>
+          </table>
+        </md-tab>
+
+        <!-- TABLEAU RECAPITULATIF -->
+        <md-tab md-label="Récapitulatif" ref="tabRecapitulatif">
+          <table class="tg customTable" id="tableau_recapitulatif_form">
+            <thead class="customTableHead">
+              <tr>
+                <th class="tg-0lax alignCenter position_recapitulatif">Domaine</th>
+                <th class="tg-0lax alignCenter number">Indice</th>
+                <th class="tg-0lax alignCenter montant">Montant</th>
+                <th class="tg-0lax alignCenter montant">Total</th>
+              </tr>
+            </thead>
+            <tbody class="customTableBody">
+              <tr>
+                <td class="tg-0lax" colspan="2">Mandat</td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_mandat.toFixed(2) }} CHF</td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme1.toFixed(2) }} CHF</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax" colspan="2">Travaux de terrain. matérialisation, déplacements et débours</td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_terrain_materialisation_deplacements.toFixed(2) }} CHF</td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme2.toFixed(2) }} CHF</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax" colspan="2">Travaux de bureau</td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_bureau.toFixed(2) }} CHF</td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme3.toFixed(2) }} CHF</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax position_recapitulatif">Indice d'application</td>
+                <td class="tg-0lax number"><md-field class="nbField"><md-input :disabled="disabled || !permission.editEmolumentIndiceApplication" class="nbInput" v-model="form_general.indice_application" @keyup="update_sommesPartielles()"></md-input></md-field></td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_indice_application.toFixed(2) }} CHF</td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme4.toFixed(2) }} CHF</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax" colspan="2">Matériel, travaux selon le temps consacré et relations avec d'autres services</td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_materiel_divers.toFixed(2) }} CHF</td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme5.toFixed(2) }} CHF</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax" colspan="2">Matérialisation différée des limites y compris indice d'application</td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_matdiff.toFixed(2) }} CHF</td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme6.toFixed(2) }} CHF</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax position_recapitulatif">TVA</td>
+                <td class="tg-0lax number"><md-field class="nbField"><md-input :disabled="disabled || !permission.editEmolumentTva" class="nbInput" v-model="form_general.tva_pc" @keyup="update_sommesPartielles()"></md-input>%</md-field></td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_tva.toFixed(2) }} CHF</td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_somme7.toFixed(2) }} CHF</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax" colspan="2">Inscription au registre foncier</td>
+                <td class="tg-0lax montant alignRight">{{ total.montant_recapitulatif_registre_foncier.toFixed(2) }} CHF</td>
+                <td class="tg-0lax montant notEditable"></td>
+              </tr>
+              <tr>
+                <td class="tg-0pky" colspan="3">Montant total du mandat</td>
+                <td class="tg-0pky montant montantTotal alignRight">{{ total.montant_recapitulatif_total.toFixed(2) }} CHF</td>
+              </tr>
+            </tbody>
+          </table>
+        </md-tab>
 
 
-          <md-tab md-label="Memento" ref="tabMemento">
-            <div class="md-layout md-gutter md-alignment-top-left">
-              <div class="md-layout-item md-size-50">
-                <md-card>
-                  <md-card-header>
-                    <div class="md-title">Montant mat diff</div>
-                  </md-card-header>
-                  <md-card-content>
-                    Calcul du montant au point 3.4:
-                    <p>
-                      Il s'agit d'indiquer le nombre de points dans la première case (de 1 à 5 points). Le programme répartit ensuite le nombre de points dans chaque tranche de montants.
-                    </p>
-                  </md-card-content>
-                </md-card>
-              </div>
-              <div class="md-layout-item md-size-50">
-                <md-card>
-                  <md-card-header>
-                    <div class="md-title">Tarif horaire</div>
-                  </md-card-header>
-                  <md-card-content>
-                    Tarif horaire selon le titre (pour les divers):
-                    <ul style="margin: 0px;">
-                      <li>182 CHF - Géomètre cantonal·e</li>
-                      <li>157 CHF - Ingénieur·e en géomatique</li>
-                      <li>133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</li>
-                      <li>111 CHF - Géomaticien·ne</li>
-                      <li>101 CHF - Collaborateur·rice technique</li>
-                      <li>97 CHF - Personnel de secrétariat</li>
-                      <li>73 CHF - Apprenant·e</li>
-                    </ul>
-                  </md-card-content>
-                </md-card>
-              </div>
+        <md-tab md-label="Memento" ref="tabMemento">
+          <div class="md-layout md-gutter md-alignment-top-left">
+            <div class="md-layout-item md-size-50">
+              <md-card>
+                <md-card-header>
+                  <div class="md-title">Montant mat diff</div>
+                </md-card-header>
+                <md-card-content>
+                  Calcul du montant au point 3.4:
+                  <p>
+                    Il s'agit d'indiquer le nombre de points dans la première case (de 1 à 5 points). Le programme répartit ensuite le nombre de points dans chaque tranche de montants.
+                  </p>
+                </md-card-content>
+              </md-card>
             </div>
-            <div class="md-layout md-gutter md-alignment-top-left">
-              <div class="md-layout-item md-size-50">
-                <md-card>
-                  <md-card-header>
-                    <div class="md-title">Rétablissement</div>
-                  </md-card-header>
-                  <md-card-content>
-                    Montant par type de point:
-                    <ul style="margin: 0px;">
-                      <li>PFP3 : 352.85CHF / PCE</li>
-                      <li>PL : 278.55CHF / PCE</li>
-                    </ul>
-                  </md-card-content>
-                </md-card>
-              </div>
+            <div class="md-layout-item md-size-50">
+              <md-card>
+                <md-card-header>
+                  <div class="md-title">Tarif horaire</div>
+                </md-card-header>
+                <md-card-content>
+                  Tarif horaire selon le titre (pour les divers):
+                  <ul style="margin: 0px;">
+                    <li>182 CHF - Géomètre cantonal·e</li>
+                    <li>157 CHF - Ingénieur·e en géomatique</li>
+                    <li>133 CHF - Technicien·ne en géomatique / spécialiste qualifié·e</li>
+                    <li>111 CHF - Géomaticien·ne</li>
+                    <li>101 CHF - Collaborateur·rice technique</li>
+                    <li>97 CHF - Personnel de secrétariat</li>
+                    <li>73 CHF - Apprenant·e</li>
+                  </ul>
+                </md-card-content>
+              </md-card>
             </div>
-          </md-tab>
-        </md-tabs>
+          </div>
+        </md-tab>
+      </md-tabs>
 
-      </md-dialog-content>
+    </md-dialog-content>
 
-      <md-dialog-actions>
-        <md-button class="md-elevation-3 md-accent" @click="onCancel">Fermer</md-button>
-        <md-button class="md-elevation-3 md-primary" @click="postEmolument" :disabled="disabled">Enregistrer</md-button>
-      </md-dialog-actions>
-    </md-dialog>
+    <md-dialog-actions>
+      <md-button class="md-elevation-3 md-accent" @click="onCancel">Fermer</md-button>
+      <md-button class="md-elevation-3 md-primary" @click="postEmolument" :disabled="disabled">Enregistrer</md-button>
+    </md-dialog-actions>
+  </md-dialog>
 
 
-    <md-dialog-confirm
-      :md-active.sync="confirmationRemoveDialog.show"
-      :md-title="confirmationRemoveDialog.title"
-      :md-content="confirmationRemoveDialog.msg"
-      :md-confirm-text="confirmationRemoveDialog.confirmBtn"
-      :md-cancel-text="confirmationRemoveDialog.cancelBtn"
-      @md-cancel="confirmationRemoveDialog.onCancel"
-      @md-confirm="confirmationRemoveDialog.onConfirm" />
+  <md-dialog-confirm
+                     :md-active.sync="confirmationRemoveDialog.show"
+                     :md-title="confirmationRemoveDialog.title"
+                     :md-content="confirmationRemoveDialog.msg"
+                     :md-confirm-text="confirmationRemoveDialog.confirmBtn"
+                     :md-cancel-text="confirmationRemoveDialog.cancelBtn"
+                     @md-cancel="confirmationRemoveDialog.onCancel"
+                     @md-confirm="confirmationRemoveDialog.onConfirm" />
 </div>
