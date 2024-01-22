@@ -494,8 +494,15 @@ export default {
     },
 
     confirmDelete(emolument_affaire_id) {
-      this.confirmationRemoveDialog.show = true;
-      this.confirmationRemoveDialog.onConfirm = () => this.deleteEmolument(emolument_affaire_id);
+      this.confirmationRemoveDialog = {
+        title: "Demande de confirmation",
+        msg: "Confirmez-vous la suppression de l'émolument?",
+        confirmBtn: "Confirmer",
+        cancelBtn: "Annuler",
+        show: true,
+        onConfirm: () => this.deleteEmolument(emolument_affaire_id),
+        onCancel: () => { },
+      }
     },
 
     async deleteEmolument(emolument_affaire_id) {
@@ -508,6 +515,7 @@ export default {
       ).then(response => {
         if (response && response.data) {
           this.getEmolumentsGeneral();
+          this.$root.$emit("searchAffaireFactures");
           this.showEmolumentsDialog = false;
         }
       })

@@ -45,7 +45,7 @@ def tableau_facture_parametres_view(request):
 
     params = {}
     for result in results:
-        if not result.nom in params.keys():
+        if result.nom not in params.keys():
             params[result.nom] = result.valeur
 
     return { 'facture_parametres': params }
@@ -66,7 +66,7 @@ def emolument_affaire_view(request):
 
     query = request.dbsession.query(EmolumentAffaire)
     
-    if not affaire_id is None:
+    if affaire_id is not None:
         query = query.filter(EmolumentAffaire.affaire_id == affaire_id)
     
     emolument_affaire = query.all()
@@ -162,7 +162,8 @@ def emolument_view(request):
     nb_batiments = request.dbsession.query(func.max(Emolument.batiment)).filter(
         Emolument.emolument_affaire_id==emolument_affaire_id
     ).scalar()
-    if nb_batiments is None: nb_batiments = 0
+    if nb_batiments is None:
+        nb_batiments = 0
 
 
     existing_emoluments_query = request.dbsession.query(Emolument).filter(
@@ -341,6 +342,13 @@ def emolument_delete_view(request):
     for emol in existing_emoluments:
         request.dbsession.delete(emol)
 
+    # get emolument_affaire_repartition and delete them if exist
+    ear = request.dbsession.query(EmolumentAffaireRepartition).filter(EmolumentAffaireRepartition.emolument_affaire_id==emolument_affaire_id).all()
+    for ear_i in ear:
+        request.dbsession.delete(ear_i)
+
+    request.dbsession.flush()
+
     # finally delete emolument affaire
     request.dbsession.delete(emol_affaire)
 
@@ -427,7 +435,7 @@ def emolument_affaire_repartiton_new_view(request):
                 record = emolumentAffaireRepartition.pop(idx)
                 break
             
-        if not record is None:
+        if record is not None:
             if float(record.repartition) != float(efr_i['emolument_repartition']):
                 if float(efr_i['emolument_repartition']) == 0:
                     # supprimer l'entrée car la répartition est nulle
