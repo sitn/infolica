@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*--
-from pyramid.view import view_config
 import pyramid.httpexceptions as exc
-
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import NumeroRelation, VNumerosRelations
-from infolica.scripts.utils import Utils
+from infolica.models.models import (AffaireNumero, Numero, NumeroRelation,
+                                    VNumerosRelations)
 from infolica.scripts.authentication import check_connected
+from infolica.scripts.utils import Utils
+from pyramid.view import view_config
 from sqlalchemy import and_
 
 
@@ -116,7 +116,7 @@ def numeros_relations_update_view(request):
     # Check authorization
     if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
         raise exc.HTTPForbidden()
-    
+
     model = request.dbsession.query(NumeroRelation)
 
     # get instance
@@ -135,7 +135,7 @@ def numeros_relations_update_view(request):
         ))
 
     model = model.first()
-    
+
     # update instance
     if model != None and "affaire_new_id" in request.params:
         model.affaire_id = request.params["affaire_new_id"] if "affaire_new_id" in request.params else None
@@ -176,3 +176,82 @@ def numeros_relations_delete_view(request):
     request.dbsession.delete(model)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(NumeroRelation.__tablename__))
+
+###########################################################
+# CONSTITUTION DDP
+###########################################################
+
+
+@view_config(route_name="new_ddp", request_method="POST", renderer="json")
+def numero_differe_view(request):
+    """
+    Post new ddp
+    """
+    # Check authorization
+    if not Utils.has_permission(
+        request, request.registry.settings["affaire_numero_edition"]
+    ):
+        raise exc.HTTPForbidden()
+
+    numero_type_ddp_id = request.registry.settings["numero_ddp_id"]
+    numero_relation_type_ddp_id = request.registry.settings["numero_relation_ddp_id"]
+    affaire_numero_type_ancien_id = request.registry.settings[
+        "affaire_numero_type_ancien_id"
+    ]
+
+    affaire_id = (
+        request.params["affaire_id"] if "affaire_id" in request.params else None
+    )
+    ddp_id = request.params["ddp"] if "ddp" in request.params else None
+    base_id = request.params["base"] if "base" in request.params else None
+
+    if ddp_id is not None and base_id is not None:
+        # update type of ddp
+        ddp = request.dbsession.query(Numero).get(ddp_id)
+        ddp.type_id = numero_type_ddp_id
+
+        # create / update numero_relation
+        num_rel = (
+            request.dbsession.query(NumeroRelation)
+            .filter(
+                NumeroRelation.numero_id_base == base_id,
+                NumeroRelation.numero_id_associe == ddp_id,
+                NumeroRelation.affaire_id == affaire_id,
+            )
+            .first()
+        )
+
+        if num_rel is not None:
+            num_rel.relation_type_id = numero_relation_type_ddp_id
+        else:
+            num_rel = NumeroRelation()
+            num_rel.affaire_id = affaire_id
+            num_rel.numero_id_base = base_id
+            num_rel.numero_id_associe = ddp_id
+            num_rel.relation_type_id = numero_relation_type_ddp_id
+            request.dbsession.add(num_rel)
+
+        # create / update affaire_numero base
+        aff_num_base = (
+            request.dbsession.query(AffaireNumero)
+            .filter(
+                AffaireNumero.affaire_id == affaire_id,
+                AffaireNumero.numero_id == base_id,
+            )
+            .first()
+        )
+
+        if aff_num_base is not None:
+            aff_num_base.type_id = affaire_numero_type_ancien_id
+            aff_num_base.actif = True
+        else:
+            aff_num_base = AffaireNumero()
+            aff_num_base.affaire_id = affaire_id
+            aff_num_base.numero_id = base_id
+            aff_num_base.type_id = affaire_numero_type_ancien_id
+            aff_num_base.actif = True
+            request.dbsession.add(aff_num_base)
+
+    return Utils.get_data_save_response(
+        Constant.SUCCESS_SAVE.format(NumeroRelation.__tablename__)
+    )
