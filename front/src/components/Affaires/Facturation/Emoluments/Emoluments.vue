@@ -71,125 +71,12 @@ export default {
         prix: 0,
       },
       selectedHighlightRow: null,
+      numeros: [],
+      numeros_selection: [],
     }
   },
 
   methods: {
-
-    /**
-     * on select BF reference (cadastration)
-     */
-    onSelectBFReferences(items) {
-      this.form_general.numeros = items;
-      this.form_general.numeros_id = [];
-      items.forEach(x => {
-        this.form_general.numeros_id.push(x.numero_id);
-      });
-
-
-      // get facture id and check if there are other BF in facture
-      let factures = [];
-      let numeros_id = [];
-      let numeros_id_arr = [];
-      this.factures_repartition.filter(x => {
-        if (x.numeros_id.some(y => this.form_general.numeros_id.includes(y))) {
-          factures.push(x);
-          numeros_id_arr.push(x.numeros_id);
-          numeros_id.push(...x.numeros_id);
-        }
-      });
-
-
-      // rajouter/retirer les numéros des biens-fonds
-      let disappear = this.cadastrationFactureNumerosId_old.filter(y => !this.form_general.numeros_id.includes(y)); // left comparison, shows what disappears
-      if (disappear.length > 0) {
-        let tmp = [];
-        numeros_id_arr.filter(y => {
-          if (!y.includes(disappear[0])) {
-            tmp.push(...y);
-          }
-        });
-
-        // update form_general.numeros and form_general.numeros_id
-        this.form_general.numeros = [];
-        tmp.forEach(y => {
-          if (this.numeros_references.length > 0) {
-            this.form_general.numeros.push(this.numeros_references.filter(z => z.numero_id === y)[0]);
-          }
-        });
-        this.form_general.numeros_id = tmp;
-        numeros_id = tmp;
-
-        // update factures
-        factures = factures.filter(y => !y.numeros_id.includes(disappear[0]));
-      }
-
-      let appear = this.form_general.numeros_id.filter(y => !this.cadastrationFactureNumerosId_old.includes(y)); // left comparison, shows what appears
-      if (appear.length > 0) {
-        let tmp = [];
-        if (this.numeros_references.length > 0) {
-          numeros_id.forEach(x => tmp.push(this.numeros_references.filter(y => y.numero_id === x)[0]));
-        }
-        this.form_general.numeros = tmp;
-      }
-
-
-      // update numeros_id_old
-      this.cadastrationFactureNumerosId_old = numeros_id;
-
-
-      // if only one facture selected, set emolument_repartition 100% automatically
-      if (factures.length === 1) {
-        let facture = factures[0];
-
-        // set facture repartition to 100%
-        this.factures_repartition.forEach(x => {
-          if (x.numeros_id === facture.numeros_id) {
-            x.emolument_repartition = 100;
-          } else {
-            x.emolument_repartition = 0;
-          }
-        });
-
-      } else {
-        // get facture repartitions if existing
-        let sum_check = 0;
-        this.factures_repartition.forEach(x => sum_check += x.emolument_repartition);
-        if (sum_check <= 0) {
-          // set all facture repartitions to 0, it should be entered manually
-          this.factures_repartition.forEach(x => x.emolument_repartition = 0);
-        }
-      }
-
-    },
-
-
-
-
-
-
-
-
-
-    // /**
-    //  * Delete emolument_affaire_repartition
-    //  */
-    // async deleteEmolumentAffaireRepartition(emolument_affaire_id) {
-    //   return new Promise ((resolve, reject) => {
-    //     this.$http.delete(
-    //       process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_AFFAIRE_REPARTITION_ENDPOINT + "?emolument_affaire_id=" + emolument_affaire_id,
-    //       {
-    //         withCredentials: true,
-    //         headers: {Accept: "appication/json"}
-    //       }
-    //     ).then(response => resolve(response))
-    //     .catch(err => reject(err));
-    //   });
-    // },
-
-
-
-
 
     /**
      * update emolument_affaire used
@@ -254,6 +141,8 @@ export default {
           batiment_f: [],
 
         };
+
+        this.numeros_selection = [];
 
         this.divers_tarif_horaire = [];
         this.divers_tarif_horaire.push(JSON.parse(JSON.stringify(this.divers_tarif_horaire_unit)));
@@ -441,14 +330,15 @@ export default {
      */
     async getTableauEmolumentsNew() {
       return this.$http.get(
-        process.env.VUE_APP_API_URL + "/tableau_emoluments_new",
+        process.env.VUE_APP_API_URL + "/tableau_emoluments_new?affaire_id=" + this.affaire.id,
         {
           withCredentials: true,
           headers: { "Accept": "application/json" }
         }
       ).then(response => {
         if (response && response.data) {
-          let tmp = response.data;
+          this.numeros = response.data.numeros;
+          let tmp = response.data.emoluments;
           tmp.forEach(cat => {
             cat.forEach(scat => {
               scat.forEach(pos => {
@@ -469,6 +359,7 @@ export default {
      * Get emoluments
      */
     async getEmolument(emolument_affaire_id) {
+      console.log('getEmolument | emolument_affaire_id', emolument_affaire_id)
       return this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT + '?emolument_affaire_id=' + emolument_affaire_id,
         {
@@ -481,6 +372,9 @@ export default {
           this.form_general = JSON.parse(response.data.form_general);
           this.tableauEmolumentsNew = JSON.parse(response.data.emoluments);
           this.divers_tarif_horaire = JSON.parse(response.data.divers_tarifhoraire);
+          this.numeros = JSON.parse(response.data.numeros);
+
+          this.numeros_selection = this.numeros.filter(x => x.emolument_affaire_id === this.form_general.id);
 
           this.disabled = this.form_general.utilise;
 
@@ -956,7 +850,17 @@ export default {
 
     highlithtSelectedRow(position_id) {
       this.selectedHighlightRow = position_id;
-    }
+    },
+
+    /**
+    * on select BF reference (cadastration)
+    */
+    onSelectBFReferences(items) {
+      let numeros_id = [];
+      items.forEach(x => numeros_id.push(x.numero_id));
+
+      this.form_general.numeros_id = numeros_id;
+    },
   },
 
   mounted: function () {

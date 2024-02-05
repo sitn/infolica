@@ -73,9 +73,9 @@
             <div class="md-layout-item" v-if="affaire.type_id === typesAffaires_conf.cadastration" style="width: 400px;">
               <h3>Bien-fonds</h3>
 
-              <md-table v-model="numeros_references" md-card @md-selected="onSelectBFReferences" :md-selected-value.sync="form_general.numeros">
-                <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" md-auto-select>
-                  <md-table-cell md-label="Cadastre">{{ item.numero_cadastre }}</md-table-cell>
+              <md-table v-model="numeros" md-card @md-selected="onSelectBFReferences" :md-selected-value.sync="numeros_selection">
+                <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" :md-disabled="item.emolument_affaire_id && item.emolument_affaire_id !== form_general.id" md-auto-select>
+                  <md-table-cell md-label="Cadastre">{{ item.cadastre }}</md-table-cell>
                   <md-table-cell md-label="Numéro">{{ item.numero }}</md-table-cell>
                 </md-table-row>
               </md-table>
