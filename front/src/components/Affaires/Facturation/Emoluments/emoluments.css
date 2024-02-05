@@ -207,3 +207,8 @@
 #tableau_emoluments tr:hover, .selected {
   background-color: #FFCF8B;
 }
+
+#emolumentsDialog .bfInOtherAffaire {
+  color: lightgrey;
+  font-style: italic;
+}

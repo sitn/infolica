@@ -1,4 +1,4 @@
-<div class="emoluments" v-if="isPageReady && tableauEmolumentsNew.length > 0">
+<div class="emoluments" v-if="isPageReady && tableauEmolumentsNew.length > 0 && factureTypes.length > 0">
 
   <md-dialog id="emolumentsDialog" :md-active.sync="showEmolumentsDialog" :md-click-outside-to-close="false" :md-close-on-esc="false">
     <md-dialog-title class="justifyTitleBtn">
@@ -74,7 +74,7 @@
               <h3>Bien-fonds</h3>
 
               <md-table v-model="numeros" md-card @md-selected="onSelectBFReferences" :md-selected-value.sync="numeros_selection">
-                <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" :md-disabled="item.emolument_affaire_id && item.emolument_affaire_id !== form_general.id" md-auto-select>
+                <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" v-bind:class="{ bfInOtherAffaire: (item.emolument_affaire_id && item.emolument_affaire_id !== form_general.id) }" :md-disabled="(form_general.utilise === true) || (item.emolument_affaire_id && item.emolument_affaire_id !== form_general.id)" md-auto-select>
                   <md-table-cell md-label="Cadastre">{{ item.cadastre }}</md-table-cell>
                   <md-table-cell md-label="Numéro">{{ item.numero }}</md-table-cell>
                 </md-table-row>

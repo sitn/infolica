@@ -359,7 +359,6 @@ export default {
      * Get emoluments
      */
     async getEmolument(emolument_affaire_id) {
-      console.log('getEmolument | emolument_affaire_id', emolument_affaire_id)
       return this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_EMOLUMENT_ENDPOINT + '?emolument_affaire_id=' + emolument_affaire_id,
         {
@@ -846,7 +845,6 @@ export default {
         });
       }
     },
-
 
     highlithtSelectedRow(position_id) {
       this.selectedHighlightRow = position_id;

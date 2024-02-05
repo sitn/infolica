@@ -166,7 +166,7 @@ def emolument_view(request):
     if emol_affaire.utilise is True:
         today_last = today
         fact = request.dbsession.query(Facture).join(EmolumentAffaireRepartition).filter(EmolumentAffaireRepartition.emolument_affaire_id == emol_affaire.id).first()
-        today = fact.date
+        today = getattr(fact, "date", None)
         if today is None:
             today = request.dbsession.query(Affaire.date_envoi).filter(Affaire.id == emol_affaire.affaire_id).scalar()
         if today is None:
@@ -232,6 +232,9 @@ def emolument_view(request):
 
     categorie.append(sous_categorie)
     emoluments.append(categorie)
+
+    form_general["batiment_f"] = batiments_f
+    form_general["nb_batiments"] = len(batiments_f)
 
     numeros = _numeros_emoluments_affaire(request, form_general["affaire_id"])
 
