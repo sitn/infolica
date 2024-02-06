@@ -99,12 +99,14 @@ export default {
     // ================================================================================================================================================
     async openEmolumentDialog(emolument_affaire_id) {
       await this.getEmolument(emolument_affaire_id);
-      this.getEmolumentAffaireRepartition(emolument_affaire_id).then(response => {
+      await this.getEmolumentAffaireRepartition(emolument_affaire_id).then(response => {
         if (response && response.data) {
           this.initFactureRepartition(response.data);
           this.updateFactureRepartition();
         }
       }).catch(err => handleException(err, this));
+
+      this.numeros.sort((a, b) => a.emolument_affaire_id === emolument_affaire_id? -1: b.emolument_affaire_id === emolument_affaire_id? 1: a.emolument_affaire_id - b.emolument_affaire_id);
 
       this.showEmolumentsDialog = true;
     },
@@ -112,9 +114,9 @@ export default {
     /**
      * Cancel formular edition
      */
-    onCancel() {
+    async onCancel() {
+      await this.getEmolumentsGeneral();
       this.showEmolumentsDialog = false;
-      this.getEmolumentsGeneral();
     },
 
 

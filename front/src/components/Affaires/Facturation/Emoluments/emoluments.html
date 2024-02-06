@@ -74,9 +74,17 @@
               <h3>Bien-fonds</h3>
 
               <md-table v-model="numeros" md-card @md-selected="onSelectBFReferences" :md-selected-value.sync="numeros_selection">
-                <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="multiple" v-bind:class="{ bfInOtherAffaire: (item.emolument_affaire_id && item.emolument_affaire_id !== form_general.id) }" :md-disabled="(form_general.utilise === true) || (item.emolument_affaire_id && item.emolument_affaire_id !== form_general.id)" md-auto-select>
+                <md-table-row slot="md-table-row"
+                              slot-scope="{ item }"
+                              md-selectable="multiple"
+                              v-bind:class="{
+                                  bfInOtherAffaire: (form_general.utilise === false && item.emolument_affaire_id && item.emolument_affaire_id !== form_general.id) || (form_general.utilise === true && (item.emolument_affaire_id === null || item.emolument_affaire_id !== form_general.id)),
+                                }"
+                              :md-disabled="(form_general.utilise === true) || (item.emolument_affaire_id && item.emolument_affaire_id !== form_general.id)"
+                              md-auto-select>
                   <md-table-cell md-label="Cadastre">{{ item.cadastre }}</md-table-cell>
                   <md-table-cell md-label="Numéro">{{ item.numero }}</md-table-cell>
+                  <md-table-cell md-label="Emolument">{{ item.emolument_affaire_id }}</md-table-cell>
                 </md-table-row>
               </md-table>
             </div>
