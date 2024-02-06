@@ -1,7 +1,7 @@
 <div class="ddp">
 
     <md-dialog :md-active.sync="showDDPDialog" md-confirm-text="Enregistrer" md-cancel-text="Annuler"
-        md-title="Création de DDP" :md-close-on-esc="true" :md-click-outside-to-close="true">
+               md-title="Création de DDP" :md-close-on-esc="true" :md-click-outside-to-close="true">
         <md-dialog-title>Création de DDP</md-dialog-title>
 
         <md-dialog-content>
@@ -20,7 +20,7 @@
                         <md-input v-model="numero.numero" readonly></md-input>
                     </md-field>
                 </div>
-                
+
                 <!-- Numéro de base (recherche) -->
                 <div class="md-layout-item md-size-50">
                     <md-field>
@@ -31,7 +31,7 @@
                     </md-field>
                 </div>
                 <!-- Numéro de base correspondant à la recherche -->
-                <div class="md-layout-item md-size-50" >
+                <div class="md-layout-item md-size-50">
                     <md-field md-clearable>
                         <label>Bien-fonds de base sélectionné</label>
                         <md-input style="font-style: italic" v-model="form.numeroBase" :disabled="!(form.numeroBase && form.numeroBase.nom)"></md-input>
@@ -48,5 +48,5 @@
 
         </md-dialog-content>
     </md-dialog>
-    
+
 </div>

@@ -317,7 +317,7 @@ class Utils(object):
             PreavisRemarque.lu_operateur_id == None,
         )
         
-        if not service_id is None:
+        if service_id is not None:
             preavis_remarques = preavis_remarques.filter(Preavis.service_id == service_id)
         
         preavis_remarques = preavis_remarques.all()

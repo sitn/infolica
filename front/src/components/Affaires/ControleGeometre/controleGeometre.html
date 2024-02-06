@@ -19,19 +19,19 @@
                 <md-card-content v-bind:class="{ disabledElement: !permission.editControleGeometreAllowed }">
 
                     <p v-if="controleGeometre.date" style="margin-top: 0px;">Dernier contrôle effectué le {{controleGeometre.date}} par {{controleGeometre.operateur_prenom_nom}}</p>
-                    
+
                     <div v-if="controleGeometre.id">
                         <div class="md-gutter md-layout">
-                            <div class="md-layout-item md-size-50 md-size-medium-100" 
-                                v-if="[typesAffaires_conf.mutation,
+                            <div class="md-layout-item md-size-50 md-size-medium-100"
+                                 v-if="[typesAffaires_conf.mutation,
                                        typesAffaires_conf.modification,
                                        typesAffaires_conf.modification_mutation].includes(affaire.type_id)">
-                                
+
                                 <md-card>
                                     <md-card-header>
                                         <div class="md-title">Contrôle juridique</div>
                                     </md-card-header>
-                                    
+
                                     <md-card-content>
                                         <table>
                                             <thead>
@@ -53,7 +53,7 @@
                                                     <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="1"></md-radio></td>
                                                     <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.info_gen_referencement_affaire" :value="2"></md-radio></td>
                                                 </tr>
-                                                
+
                                                 <tr>
                                                     <td colspan="3" class="ctrl_title">Aspects juridiques</td>
                                                 </tr>
@@ -82,7 +82,7 @@
                                                     <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_servitudes" :value="1"></md-radio></td>
                                                     <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.asp_jur_servitudes" :value="2"></md-radio></td>
                                                 </tr>
-                                                
+
                                                 <tr>
                                                     <td colspan="3" class="ctrl_title">Factures</td>
                                                 </tr>
@@ -172,13 +172,13 @@
                                     </md-card-content>
                                 </md-card>
                             </div>
-                            
+
                             <div class="md-layout-item md-size-50 md-size-medium-100">
                                 <md-card>
                                     <md-card-header>
                                         <div class="md-title">Signature</div>
                                     </md-card-header>
-                                    
+
                                     <md-card-content>
                                         <div v-if="typesAffaires_conf.mutation === affaire.type_id">
                                             <table>
@@ -450,7 +450,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        
+
                                         <div v-if="affaire.type_id === typesAffaires_conf.modification_duplicata">
                                             <table>
                                                 <thead>
@@ -560,7 +560,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        
+
                                         <div v-if="affaire.type_id === typesAffaires_conf.servitude">
                                             <table>
                                                 <thead>
@@ -637,7 +637,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        
+
                                         <div v-if="affaire.type_id === typesAffaires_conf.art35">
                                             <table>
                                                 <thead>
@@ -670,7 +670,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        
+
                                         <div v-if="affaire.type_id === typesAffaires_conf.retablissement_pfp3">
                                             <table>
                                                 <thead>
@@ -719,7 +719,7 @@
                                                         <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="2"></md-radio></td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="ctrl_label">Prix total ~380.- par PFP</td>
+                                                        <td class="ctrl_label">Prix total ~460.- par PFP</td>
                                                         <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_pfp" :value="1"></md-radio></td>
                                                         <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_pfp" :value="2"></md-radio></td>
                                                     </tr>
@@ -742,7 +742,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        
+
                                         <div v-if="affaire.type_id === typesAffaires_conf.revision_abornement">
                                             <table>
                                                 <thead>
@@ -791,7 +791,7 @@
                                                         <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_unitaire_prix_total" :value="2"></md-radio></td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="ctrl_label">Prix total ~300.- par PL</td>
+                                                        <td class="ctrl_label">Prix total ~365- par PL</td>
                                                         <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_pl" :value="1"></md-radio></td>
                                                         <td class="ctrl_radiobtn"><md-radio v-model="controleGeometre.fact_prix_pl" :value="2"></md-radio></td>
                                                     </tr>
@@ -814,7 +814,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        
+
                                         <div v-if="affaire.type_id === typesAffaires_conf.cadastration">
                                             <table>
                                                 <thead>
@@ -980,7 +980,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        
+
                                         <div v-if="[typesAffaires_conf.ppe, typesAffaires_conf.modification_ppe].includes(affaire.type_id)">
                                             <table>
                                                 <thead>
@@ -1090,10 +1090,10 @@
                                 </md-card>
                             </div>
                         </div>
-                        
+
                         <br>
 
-                        
+
                         <div class="md-layout md-gutter  md-alignment-bottom-right">
                             <div class="md-layout-item md-size-75 md-small-size-100">
                                 <md-field>
@@ -1106,14 +1106,14 @@
                                     <md-button class="md-raised md-accent" @click="searchControleGeometre()">Annuler</md-button>
                                     <md-button class="md-raised md-primary" @click="updateControleGeometre()">Enregistrer</md-button>
                                 </div>
-                            </div>   
+                            </div>
                         </div>
                     </div>
 
                     <div v-else>
                         <em>Aucun contrôle</em>
                     </div>
-                    
+
                 </md-card-content>
             </md-card-expand-content>
         </md-card-expand>

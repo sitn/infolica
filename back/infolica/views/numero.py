@@ -1,25 +1,35 @@
 # -*- coding: utf-8 -*--
-from pyramid.view import view_config
-import pyramid.httpexceptions as exc
-
-from sqlalchemy import and_, func, Integer, BigInteger
-from sqlalchemy.dialects.postgresql import ARRAY, aggregate_order_by
-
-from infolica.exceptions.custom_error import CustomError
-from infolica.models.constant import Constant
-from infolica.models.models import AffaireNumero, Numero, NumeroDiffere, NumeroEtat
-from infolica.models.models import NumeroEtatHisto, NumeroType, VNumeros
-from infolica.models.models import VNumerosAffaires, Affaire, Facture
-from infolica.models.models import Cadastre
-from infolica.scripts.utils import Utils
-from infolica.scripts.authentication import check_connected
+import json
+import os
+import re
+import shutil
 from datetime import datetime
 
-import os
-import shutil
 import openpyxl
-import re
-import json
+import pyramid.httpexceptions as exc
+from infolica.exceptions.custom_error import CustomError
+from infolica.models.constant import Constant
+from infolica.models.models import (Affaire, AffaireNumero, Cadastre, Facture,
+                                    Numero, NumeroDiffere, NumeroEtat,
+                                    NumeroEtatHisto, NumeroType, VNumeros,
+                                    VNumerosAffaires)
+from infolica.scripts.authentication import check_connected
+from infolica.scripts.utils import Utils
+from pyramid.view import view_config
+from sqlalchemy import BigInteger, Integer, and_, func
+from sqlalchemy.dialects.postgresql import ARRAY, aggregate_order_by
+
+
+def _update_numero_etat(request, numero_id, etat_id):
+    num = request.dbsession.query(Numero).get(numero_id)
+    num.etat_id = etat_id
+
+    num_histo = NumeroEtatHisto()
+    num_histo.numero_id = numero_id
+    num_histo.numero_etat_id = etat_id
+    num_histo.date = datetime.today()
+    return num
+
 
 
 @view_config(route_name='numeros', request_method='GET', renderer='json')
@@ -38,7 +48,7 @@ def numeros_view(request):
     etat_id = [int(a) for a in request.params['etat_id'].split(",")] if 'etat_id' in request.params else None
 
     query = request.dbsession.query(VNumeros)
-    
+
     if numero:
         query = query.filter(VNumeros.numero == numero)
     if cadastre_id:
@@ -263,7 +273,7 @@ def numeros_etat_histo_new_view(request, params=None):
         NumeroEtatHisto.numero_etat_id == params['numero_etat_id']
     ).first()
 
-    if not numEtatHisto is None:
+    if numEtatHisto is not None:
         return
 
     # nouveau numero
@@ -414,7 +424,7 @@ def affaire_numero_new_view(request, params=None):
         AffaireNumero.type_id == params['type_id']
     ).first()
 
-    if not affaireNumero is None:
+    if affaireNumero is not None:
         return
 
     # nouveau affaire_numero
@@ -485,7 +495,7 @@ def numero_differe_view(request):
         VNumeros.diff_req_ref,
         numeros_vigueur_check
     )
-    
+
     if role == "mo":
         user_id = request.params['user_id'] if 'user_id' in request.params else None
 
@@ -496,23 +506,23 @@ def numero_differe_view(request):
             VNumeros.diff_entree.isnot(None),
             VNumeros.diff_sortie == None
         ))
-    
+
     elif role == "secr":
         query = query.filter(and_(
             VNumeros.diff_req_radiation.isnot(True),
             VNumeros.diff_sortie.isnot(None),
-            VNumeros.etat_id.in_((numero_projet_id, numero_vigueur_id)) 
+            VNumeros.etat_id.in_((numero_projet_id, numero_vigueur_id))
         ))
-    
+
     elif role == "coord":
         user_id = request.params['user_id'] if 'user_id' in request.params else None
-        
+
         if user_id is not None:
             query = query.filter(VNumeros.diff_operateur_id == user_id)
-        
+
         query = query.filter(and_(
             VNumeros.diff_sortie.isnot(None),
-            VNumeros.diff_controle == None 
+            VNumeros.diff_controle == None
         ))
 
     result = query.group_by(
@@ -597,7 +607,7 @@ def numero_differe_update_view(request):
     if "numero_diff_id" in request.params:
         numdiff_id = request.params["numero_diff_id"]
         record = request.dbsession.query(NumeroDiffere).filter(NumeroDiffere.id == numdiff_id).first()
-    
+
     if "numero_id" in request.params:
         num_id = request.params["numero_id"]
         record = request.dbsession.query(NumeroDiffere).filter(NumeroDiffere.numero_id == num_id).first()
@@ -655,7 +665,7 @@ def _getCadastre(request, cadastre_id):
 
 def _getAffairesIdFromNumeroId(request, numero_id, numero_type_id):
     affaires_id_agg = func.array_agg(AffaireNumero.affaire_id, type_=ARRAY(BigInteger))
-    
+
     affaires_id = request.dbsession.query(
         affaires_id_agg
     ).filter(
@@ -677,7 +687,7 @@ def loadfile_bf_rp(request):
 
     affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
     file = request.params["file"] if "file" in request.params else None
-    
+
     if file is None:
         return exc.HTTPError('Le fichier est vide')
 
@@ -688,7 +698,7 @@ def loadfile_bf_rp(request):
 
     if os.path.exists(file_path):
         os.remove(file_path)
-    
+
     with open(file_path, 'wb') as output_file:
         shutil.copyfileobj(file.file, output_file)
 
@@ -702,10 +712,10 @@ def loadfile_bf_rp(request):
     # =============================
     sheet = 'Infolica'
     ws = wb[sheet]
-    
+
     numero_id_agg = func.array_agg(Numero.id, type_=ARRAY(BigInteger))
     numero_numero_agg = func.array_agg(aggregate_order_by(Numero.numero, Numero.numero.asc()), type_=ARRAY(BigInteger))
-    
+
     # prepare query to search Number
     data_query = request.dbsession.query(
         numero_id_agg,
@@ -725,7 +735,7 @@ def loadfile_bf_rp(request):
         if numero_id is not None:
             data_id.append(numero_id)
             row_i += 1
-        
+
         else:
             results = data_query.filter(
                 Numero.id.in_(data_id)
@@ -759,14 +769,14 @@ def loadfile_bf_rp(request):
                     'cadastre_id': result[1],
                     'liste_numeros': liste_numeros
                 })
-             
+
             data.append({
                 'source': sheet,
                 'data': tmp
             })
-            
+
             break
-    
+
     # ===========================
     # Let's focus on Terris sheet
     # ===========================
@@ -777,7 +787,7 @@ def loadfile_bf_rp(request):
     row_i = 2
     while row_i < 1000:
         cadastre_id = ws.cell(row=row_i, column=2).value
-        
+
 
         if cadastre_id is not None:
             numero = re.split('\D', str(ws.cell(row=row_i, column=3).value))[0]
@@ -812,7 +822,7 @@ def loadfile_bf_rp(request):
                 'cadastre': cadastre,
                 'sheet': sheet,
                 'font_color': font_color,
-                'error': error 
+                'error': error
             }
 
             cadastre_id_already_exists = False
@@ -828,9 +838,9 @@ def loadfile_bf_rp(request):
                     'cadastre_id': cadastre_id,
                     'liste_numeros': [numero_]
                 })
-            
+
             row_i += 1
-        
+
         else:
 
             for tmp_ln in tmp: # parcourir les cadastres
@@ -840,12 +850,12 @@ def loadfile_bf_rp(request):
                 'source': sheet,
                 'data': tmp
             })
-            
+
             break
-    
+
     if os.path.exists(file_path):
         os.remove(file_path)
-    
+
     return data
 
 
@@ -858,7 +868,7 @@ def __save_bf_rp(request, affaire_id, data, numero_type_id, numero_etat_id, nume
     for num_cad in data:
         # on parcourt les cadastres
         for numero_obj in num_cad['liste_numeros']:
-            
+
             numero = str(numero_obj['numero']).split(' ')[0]
 
             num = num_req.filter(
@@ -898,7 +908,7 @@ def __save_bf_rp(request, affaire_id, data, numero_type_id, numero_etat_id, nume
                     )
 
                     request.dbsession.add(neh)
-            
+
             # log dans table affaire_numero if not already exists
             an = an_req.filter(
                 AffaireNumero.affaire_id == affaire_id,
@@ -930,14 +940,14 @@ def save_bf_rp(request):
     affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
     num_projet = json.loads(request.params["num_projet"]) if "num_projet" in request.params else None
     num_vigueur = json.loads(request.params["num_vigueur"]) if "num_vigueur" in request.params else None
-    
+
     affaire_numero_type_ancien_id = request.registry.settings['affaire_numero_type_ancien_id']
     affaire_numero_type_nouveau_id = request.registry.settings['affaire_numero_type_nouveau_id']
     numero_projet_id = request.registry.settings['numero_projet_id']
     numero_vigueur_id = request.registry.settings['numero_vigueur_id']
     numero_bf_id = request.registry.settings['numero_bf_id']
-    
+
     __save_bf_rp(request, affaire_id, num_projet, numero_bf_id, numero_projet_id, affaire_numero_type_nouveau_id)
     __save_bf_rp(request, affaire_id, num_vigueur, numero_bf_id, numero_vigueur_id, affaire_numero_type_ancien_id)
-    
+
     return exc.HTTPOk()
