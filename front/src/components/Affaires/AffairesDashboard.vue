@@ -217,7 +217,7 @@ export default {
 
               obj.urgent_echeance_reste = null;
               if (obj.urgent_echeance !== null) {
-                obj.urgent_echeance_reste = Math.ceil(Math.max(0, moment(obj.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT)-new Date())/1000/3600/24)+1;
+                obj.urgent_echeance_reste = Math.ceil(Math.max(0, moment(obj.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT).add(1, 'd') -new Date())/1000/3600/24);
               }
 
               // reset emptyPage
@@ -277,7 +277,7 @@ export default {
 
           //Check role_id
           let role_id = getCurrentUserRoleId();
-          
+
           // Secrétariat peut modifier des factures à tout moment, éditer les informations des affaires et référencer des numéros à l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)) {
             _this.permission.editAffaireAllowed = true;
@@ -297,14 +297,14 @@ export default {
             _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
-          
+
           // Opérateur ppe peut modifier les informations générales de l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_PPE_ROLE_ID)) {
             _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
             _this.permission.affaireCloture = [ _this.typesAffaires_conf.ppe, _this.typesAffaires_conf.modification_ppe].includes(_this.affaire.type_id);
           }
-          
+
           // Opérateur mo_ppe peut modifier les informations générales de l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_MO_PPE_ROLE_ID)) {
             _this.permission.editFactureAllowed = _this.permission.editFactureAllowed && _this.affaire.type_id === _this.typesAffaires_conf.cadastration;
@@ -312,7 +312,7 @@ export default {
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
             _this.permission.affaireCloture = [ _this.typesAffaires_conf.ppe, _this.typesAffaires_conf.modification_ppe].includes(_this.affaire.type_id);
           }
-          
+
           // Opérateur responsable peut référencer des numéros
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)) {
             _this.permission.editEmolumentIndiceApplication = true;
@@ -480,7 +480,7 @@ export default {
         ).catch(err => reject(err));
       });
     },
-    
+
     /**
      * post numeros etat histo
      */
@@ -502,7 +502,7 @@ export default {
         ).catch(err => reject(err));
       });
     },
-    
+
     /**
      * Open Theme SITN
      */
@@ -557,7 +557,7 @@ export default {
         mail: x.client_co_id === null? x.client_mail: x.client_co_mail,
         facture: [x.sap !== null? x.sap: "-", String((Number(x.montant_mo) + Number(x.montant_rf)).toFixed(2)), x.montant_mat_diff, x.montant_tva, x.montant_total].join("\n")
       }));
-      
+
       let factures = [];
       for (let i = 0; i < 3; i++) {
         if (i < tmp.length) {
@@ -573,7 +573,7 @@ export default {
         }
 
       }
-      
+
       let formData = new FormData();
       formData.append("template", "Commande");
       formData.append("values", JSON.stringify({
@@ -609,7 +609,7 @@ export default {
         "NUMEROS_RESERVES": this.$refs.numeros.affaire_numeros_nouveaux.map(x => x.numero).sort((a, b) => a-b).join(", "),
         "CADASTRE": this.affaire.cadastre,
         "DESCRIPTION": this.affaire.nom,
-        "SPECIFICITES": this.affaire.information, 
+        "SPECIFICITES": this.affaire.information,
         "DATE": moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_CLIENT),
         "DATE_ENVOI_SCAT": this.affaire.preavis_scat_date_demande !== null? this.affaire.preavis_scat_date_demande: null,
         "DATE_RETOUR_SCAT": this.affaire.preavis_scat_date_reponse !== null? this.affaire.preavis_scat_date_reponse: null,
@@ -624,7 +624,7 @@ export default {
       }));
 
       return formData;
-    
+
     },
 
     /**
