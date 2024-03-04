@@ -787,6 +787,9 @@ export default {
         })
       });
 
+      // update total.montant_recapitulatif_matdiff with indice_application
+      this.total.montant_recapitulatif_matdiff = this.round(this.total.montant_recapitulatif_matdiff * this.form_general.indice_application, 0.05);
+
       // add divers_tarif_horaire to corresponding sum
       this.total.montant_recapitulatif_materiel_divers += this.divers_tarif_horaire.reduce((partialSum, a) => partialSum + a.prix, 0);
       this.total.montant_recapitulatif_somme1 = this.total.montant_recapitulatif_mandat;
