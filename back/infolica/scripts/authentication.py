@@ -28,7 +28,7 @@ def check_connected(request, services=None):
 
     if user is None:
         return False
-    
+
     operateur = request.dbsession.query(Operateur).filter(
         func.lower(Operateur.login) == user
     ).first()
@@ -40,7 +40,7 @@ def check_connected(request, services=None):
 
 
 def get_user_functions(request):
-    
+
     results = {}
 
     operateur = request.dbsession.query(Operateur).filter(
@@ -52,5 +52,5 @@ def get_user_functions(request):
         results['role_id'] = operateur.role.id
         results['role_name'] = operateur.role.nom
         results['fonctions'] = [x.nom for x in fonctions]
-    
+
     return results

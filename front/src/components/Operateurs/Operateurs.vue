@@ -102,7 +102,7 @@ export default {
      */
     callEditOperateur (op) {
       this.divEditUser.title = "Modifier un·e opérateur·rice existant·e";
-      
+
       this.getOperateur(op.id);
       this.getAffaireEtapesAll();
 
@@ -327,11 +327,11 @@ export default {
       })
       .catch(err => handleException(err, this));
     },
-    
+
     textUpperCase() {
       this.form.ldap_domain = this.form.ldap_domain.toUpperCase();
     },
-    
+
     /**
      * get Affaire Etapes
      */
@@ -354,8 +354,8 @@ export default {
       })
       .catch(err => handleException(err, this));
     },
-    
-    
+
+
     /**
      * get Operateur for update
      */

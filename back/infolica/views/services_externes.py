@@ -7,6 +7,9 @@ from infolica.models.constant import Constant
 from infolica.models.models import Cadastre, Service
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
+from sqlalchemy import or_
+from datetime import datetime
+
 ###########################################################
 # SERVICES EXTERNES
 ###########################################################
@@ -40,6 +43,8 @@ def services_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
+    now = datetime.now()
+
     cadastre_id = request.params['cadastre_id'] if 'cadastre_id' in request.params else None
 
     if cadastre_id is not None:
@@ -47,12 +52,18 @@ def services_view(request):
         service_at_id = cadastre.service_at_id
 
         # filtrer le service de l'aménagement du territoire
-        records = request.dbsession.query(Service).filter(Service.ordre != 1).union(
-            request.dbsession.query(Service).filter(Service.id == service_at_id)
-        ).order_by(Service.ordre.asc()).all()
+        records = request.dbsession.query(Service).filter(Service.ordre >= 20).union(
+            request.dbsession.query(Service).filter(Service.id == service_at_id))
 
     else:
-        records = request.dbsession.query(Service).order_by(Service.ordre.asc()).all()
+        records = request.dbsession.query(Service)
+
+    records = records.filter(
+        or_(
+            Service.date_sortie == None,
+            Service.date_sortie > now,
+        )
+    ).order_by(Service.ordre.asc()).all()
 
     return Utils.serialize_many(records)
 

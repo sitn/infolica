@@ -127,8 +127,8 @@ def affaire_cockpit_view(request):
     affaires = []
     for affaire in query:
         urgent_echeance = None
-        if not affaire.urgent_echeance is None \
-            and not affaire.etape_id in [int(settings['affaire_etape_validation_bd_id']), int(settings['affaire_etape_signature_art35_id']), int(settings['affaire_etape_fin_processus_id'])]:
+        if affaire.urgent_echeance is not None \
+            and affaire.etape_id not in [int(settings['affaire_etape_validation_bd_id']), int(settings['affaire_etape_signature_art35_id']), int(settings['affaire_etape_fin_processus_id'])]:
             urgent_echeance = datetime.strftime(affaire.urgent_echeance, '%d.%m.%Y')
 
         nom_affaire = (affaire.no_access if affaire.no_access else str(affaire.id)) + (" / " + urgent_echeance if urgent_echeance else "") + (" / " + affaire.attribution if affaire.attribution else "")
@@ -237,10 +237,10 @@ def affaires_search_view(request):
         ))
 
     # filtrer les affaires par critères temporels
-    if not date_from is None:
+    if date_from is not None:
         query = query.filter(VAffaire.date_ouverture >= date_from)
 
-    if not date_to is None:
+    if date_to is not None:
         query = query.filter(VAffaire.date_ouverture <= date_to)
 
 
@@ -411,7 +411,7 @@ def affaires_new_view(request):
     model.chemin = str(model.id) # chemin relatif
 
     # Copier le dossier __template pour une nouvelle affaire
-    if not affaire_chemin_full_path is None:
+    if affaire_chemin_full_path is not None:
         if model.type_id == request.registry.settings['affaire_type_mpd_id']:
             Utils.create_affaire_folder(request.registry.settings['affaireTemplateDir_mpd'], affaire_chemin_full_path)
         else:
@@ -878,7 +878,7 @@ def guichet_rf_saisie_pm_view(request):
         if affaire.date_envoi is not None:
             plan_date = datetime.strftime(affaire.date_envoi, "%d.%m.%Y")
             detail = "date d'envoi"
-        elif affaire.date_cloture:
+        elif affaire.date_cloture is not None:
             plan_date = datetime.strftime(affaire.date_cloture, "%d.%m.%Y")
             detail = "date de clôture"
 
