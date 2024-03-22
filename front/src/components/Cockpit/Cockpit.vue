@@ -44,7 +44,7 @@ export default {
         },
         search: {
             operateur_id: -1,
-            type_id: -1,
+            type_id: [],
             showFinProcessus: false,
             showOnlyAffairesUrgentes: false,
             current_sort: "id",
@@ -64,18 +64,18 @@ export default {
     getPermissions() {
         // set time out of 0.5 seconds. If not, local storage has not time to memorize user allowed functions
         setTimeout(() => {
-            
+
             this.newAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_PPE_EDITION) ||
                                      checkPermission(process.env.VUE_APP_AFFAIRE_REVISION_ABORNEMENT_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_CADASTRATION_EDITION) ||
                                      checkPermission(process.env.VUE_APP_AFFAIRE_RETABLISSEMENT_PFP3_EDITION) || checkPermission(process.env.VUE_APP_AFFAIRE_PCOP_EDITION) ||
                                      checkPermission(process.env.VUE_APP_AFFAIRE_AUTRE_EDITION);
-            
+
             //Check if role secretaire
             let role_id = getCurrentUserRoleId();
             if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.secretaire || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
                 this.showMatdiff_secr = true;
-            } 
-            
+            }
+
             //Check if role MO
             if ( role_id && !isNaN(role_id) && Number(role_id) === this.role.mo || checkPermission(process.env.VUE_APP_FONCTION_ADMIN) ) {
                 this.showMatdiff_mo = true;
@@ -91,8 +91,8 @@ export default {
                 // this.showMatdiff_secr = true;
                 this.showMatdiff_mo = true;
                 this.showMatdiff_ctrl = true;
-            } 
-            
+            }
+
         }, 500);
     },
 
@@ -172,7 +172,7 @@ export default {
         ).then(response => {
             if (response && response.data) {
                 let tmp = response.data;
-                
+
                 this.affaireTypes = stringifyAutocomplete(tmp);
             }
         }).catch(err => handleException(err, this));
@@ -189,15 +189,15 @@ export default {
         if (this.search.operateur_id > 0) {
             query.push("operateur_id=" + this.search.operateur_id);
         }
-        if (this.search.type_id > 0) {
-            query.push("type_id=" + this.search.type_id);
+        if (this.search.type_id.length > 0) {
+            query.push("type_id=" + this.search.type_id.join(','));
         }
         query.push("showFinProcessus=" + this.search.showFinProcessus);
         query.push("showOnlyAffairesUrgentes=" + this.search.showOnlyAffairesUrgentes);
         // query.push("sort_by=" + this.current_sort);
         // query.push("sort_order=" + this.current_sort_order);
         query.push('ts=' + Date.now());
-        
+
         query = "?" + query.join('&');
 
         return query;
@@ -213,16 +213,16 @@ export default {
                 if (response && response.data) {
                     let tmp = response.data;
                     tmp = tmp.filter(x => x.chef_equipe);
-    
+
                     // set operateur by default if he is chef_equipe
                     let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
                     let currentUserRoleID = getCurrentUserRoleId();
                     if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe) && (currentUserRoleID && [this.role.mo, this.role.ppe, this.role.mo_ppe].includes(currentUserRoleID))) {
                         this.search.operateur_id = Number(currentUserID);
                     }
-    
+
                     tmp = stringifyAutocomplete2(tmp, "prenom_nom", null, "prenom_nom");
-    
+
                     this.operateurs = tmp;
                     resolve(tmp);
                 }
@@ -287,6 +287,19 @@ export default {
         this.search.current_sort = this.current_sort;
         this.search.current_sort_order = this.current_sort_order;
         localStorage.setItem("infolica_cockpit_searchParams", JSON.stringify(this.search));
+    },
+
+    updateSelection(mode) {
+        if (mode==='tout'){
+            let tmp = [];
+            this.affaireTypes.forEach(x => {
+                tmp.push(x.id);
+            })
+            this.search.type_id = tmp;
+        }
+        if (mode==='aucun'){
+            this.search.type_id = [];
+        }
     }
 
   },
@@ -308,7 +321,7 @@ export default {
         this.snow.newYear = newYear;
     }
   },
-  
+
   created() {
     this.getSearchParams().then(() => {
         this.refreshAffaire = setInterval(this.getAffaire, 60000); // Recharge le tableau toutes les minutes

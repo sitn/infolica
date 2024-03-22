@@ -70,7 +70,7 @@ def affaire_cockpit_view(request):
 
     settings = request.registry.settings
 
-    type_id = request.params['type_id'] if 'type_id' in request.params else None
+    type_id = request.params['type_id'].split(',') if 'type_id' in request.params else []
     etape_id = request.params['etape_id'].split(',') if 'etape_id' in request.params else None
     searchTerm = request.params['searchTerm'] if 'searchTerm' in request.params else None
     operateur_id = request.params['operateur_id'] if 'operateur_id' in request.params else None
@@ -89,8 +89,8 @@ def affaire_cockpit_view(request):
     if etape_id is not None:
         query = query.filter(VAffaire.etape_id.in_(etape_id))
     # recherche par type
-    if type_id is not None:
-        query = query.filter(VAffaire.type_id == type_id)
+    if len(type_id) > 0:
+        query = query.filter(VAffaire.type_id.in_(type_id))
     # recherche par opérateur
     if operateur_id is not None:
         query = query.filter(VAffaire.technicien_id == operateur_id)
