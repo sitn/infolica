@@ -58,6 +58,7 @@ export default {
     showDialogAddNewContact: false,
     types_clients_list: [],
     npa_localite_list: [],
+    existingClient: {},
   }),
 
   // Validations
@@ -67,7 +68,7 @@ export default {
       mail: { email }
     }
   },
-  
+
   methods: {
 
     /**
@@ -129,14 +130,14 @@ export default {
         handleException(err, this);
       });
     },
-    
+
     /**
      * Save data
      */
     saveData () {
       this.sending = true;
       var formData = this.initPostData();
-      
+
       var url = process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT;
 
       if(this.mode === 'new'){
@@ -166,7 +167,7 @@ export default {
       else{
         let client_id = this.$route.params.id;
         formData.append("id", client_id);
-        
+
         this.$http.put(
           url,
           formData,
@@ -250,7 +251,7 @@ export default {
         this.saveData()
       }
     },
-    
+
     /**
      * Cancel edit
      */
@@ -263,12 +264,12 @@ export default {
         this.$router.push({name: "Clients"});
       }
     },
-    
+
     /**
      * Init edit data
      */
     initEditData (id) {
-      
+
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT + '/' + id,
         {
@@ -347,6 +348,19 @@ export default {
       if (this.mode !== 'new' && this.form.type_client === this.clientTypes_conf.personne_morale) {
         this.showDialogAddNewContact = true;
       }
+    },
+
+    updateClientType() {
+      // remove first and lastname if client type set to personne_morale or remove entreprise if type set to personne_physique
+      if (this.form.type_client === this.clientTypes_conf.personne_morale) {
+        this.form.nom = null;
+        this.form.prenom = null;
+      } else {
+        this.form.entreprise = null;
+      }
+      this.existingClient = {
+        error: false
+      };
     },
 
     /**
@@ -453,19 +467,59 @@ export default {
           }
         });
         tmp = tmp.splice(0,10);
-        
+
         this.npa_localite_list = stringifyAutocomplete2(tmp, "nom");
       } else {
         this.npa_localite_list = [];
       }
     },
-    
+
     setNPALocalite(data){
       setTimeout(() => {
         this.form.npa = data.id;
         this.form.localite = data.nom;
       }, 100);
     },
+
+    checkExistingClient() {
+      if (!((this.form.nom && this.form.prenom) || this.form.entreprise)) {
+        return;
+      }
+
+      let search = '';
+      if (this.form.type_client===this.clientTypes_conf.personne_morale) {
+        search += `?entreprise=${this.form.entreprise}`
+        if (this.$route.params.id) {
+          search += `&client_id=${this.$route.params.id}`;
+        }
+      } else {
+        search += `?firstname=${this.form.prenom}&lastname=${this.form.nom}`
+        if (this.$route.params.id) {
+          search += `&client_id=${this.$route.params.id}`;
+        }
+      }
+
+      this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_CHECK_EXISTING_ENDPOINT + search,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then((response) => {
+        if (response && response.data) {
+          console.log('response.data',response.data)
+          this.existingClient = response.data;
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+    seturl(client) {
+      let routedata = this.$router.resolve({ name: 'ClientsEdit', params: { id: client.id } });
+      return routedata.href;
+    },
+
+    testInactiveClient(client) {
+      return client.sortie !== null && new Date(client.sortie) < new Date();
+    }
 
   },
 

@@ -15,7 +15,7 @@
         <div class="md-layout-item md-small-size-100 md-size-50">
           <md-field :class="getValidationClass('type_client')">
             <label for="type_client">Type client</label>
-            <md-select name="type_client" id="type_client" v-model="form.type_client" md-dense :disabled="sending || !permission.client_edit || !editMode" required md-selected="openContactDialog" >
+            <md-select name="type_client" id="type_client" v-model="form.type_client" md-dense :disabled="sending || !permission.client_edit || !editMode" required @md-selected="updateClientType" >
               <md-option v-for="item in types_clients_list" :key="item.id" :value="item.id">{{ item.nom }}</md-option>
             </md-select>
             <span class="md-error" v-if="!$v.form.type_client.required">Le type client est obligatoire</span>
@@ -28,7 +28,7 @@
         <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.type_client === clientTypes_conf.personne_morale">
           <md-field>
             <label for="entreprise">Nom de l'entreprise</label>
-            <md-input name="entreprise" id="entreprise" v-model="form.entreprise" :disabled="sending || !permission.client_edit || !editMode"  />
+            <md-input name="entreprise" id="entreprise" v-model="form.entreprise" :disabled="sending || !permission.client_edit || !editMode" @keyup="checkExistingClient" />
           </md-field>
         </div>
         <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.type_client === clientTypes_conf.personne_physique">
@@ -48,16 +48,24 @@
         <div class="md-layout-item md-small-size-100 md-size-50">
           <md-field :class="getValidationClass('nom')">
             <label for="nom">Nom</label>
-            <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending || !permission.client_edit || !editMode"  />
+            <md-input name="nom" id="nom" v-model="form.nom" :disabled="sending || !permission.client_edit || !editMode" @keyup="checkExistingClient" />
           </md-field>
         </div>
 
         <div class="md-layout-item md-small-size-100 md-size-50">
           <md-field :class="getValidationClass('prenom')">
             <label for="prenom">Prénom</label>
-            <md-input name="prenom" id="prenom" v-model="form.prenom" :disabled="sending || !permission.client_edit || !editMode"  />
+            <md-input name="prenom" id="prenom" v-model="form.prenom" :disabled="sending || !permission.client_edit || !editMode" @keyup="checkExistingClient" />
           </md-field>
         </div>
+
+      </div>
+
+      <div v-if="existingClient.error" style="border: 2px solid red; border-radius: 15px; padding: 1em;">
+        <p style="color: red; font-style: italic;">{{ existingClient.message }}</p>
+        <ul>
+          <li v-for="client in existingClient.clients" :class="{inactiveClient: testInactiveClient(client)}"><a :href="seturl(client)">{{ [client.entreprise, client.nom, client.prenom].filter(Boolean).join(' ') }} (id: {{ client.id }}) <span v-if="testInactiveClient(client)"> - désactivé</span></a></li>
+        </ul>
       </div>
 
       <div class="md-layout md-gutter">
@@ -86,7 +94,7 @@
             </template>
           </md-autocomplete>
         </div>
-        
+
         <div class="md-layout-item md-small-size-100 md-size-35">
           <md-autocomplete v-model="form.localite" :md-options="npa_localite_list" @md-changed="searchLocalite" @md-selected="setNPALocalite" md-dense :disabled="sending || !permission.client_edit || !editMode">
             <label>Localité</label>
@@ -116,7 +124,7 @@
             <span class="md-helper-text">Format: 032 123 45 67</span>
           </md-field>
         </div>
-        
+
         <div class="md-layout-item md-small-size-100 md-size-50">
           <md-field>
             <label for="tel_portable">Téléphone portable/autre</label>
@@ -153,7 +161,7 @@
           </md-field>
         </div>
       </div>
-      
+
       <!-- Need v-ref facture -->
       <div class="md-layout md-gutter">
         <div class="md-layout-item md-small-size-100 md-size-50">
@@ -181,7 +189,7 @@
         </div>
       </div>
     </md-card-header>
-    
+
     <md-card-content>
       <md-table v-model="client_moral_personnes" md-sort="nom" md-sort-order="asc" md-fixed-header v-if="client_moral_personnes.length > 0">
         <md-table-row slot="md-table-row" slot-scope="{ item }">
