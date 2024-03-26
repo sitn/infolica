@@ -38,7 +38,7 @@ npm run serve
 ```
 
 #### Database
-> :warning: Infolica is based on PG Database and depends on some geographical components. Make sure to add the `postgis` extension to your database schema.
+> :warning: Infolica is based on PG Database and depends on some geographical components. Make sure to add the `postgis` and `pg_trgm` extensions to your database schema.
 
 
 
