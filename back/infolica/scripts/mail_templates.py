@@ -29,7 +29,7 @@ class MailTemplates(object):
                 VEtapesAffaires.etape_priorite == int(request.registry.settings['affaire_etape_priorite_1_id'])
             )
         ).order_by(VEtapesAffaires.next_datetime.desc()).all()
-        
+
         # set affaire_nom
         affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
 
@@ -46,7 +46,7 @@ class MailTemplates(object):
                 mail = next((op.mail for op in operateur if op.id == em_i.operateur_id), None)
                 if mail:
                     mail_list.append(mail)
-        
+
         # Send mail only if step prio is 1 and if mail_list not empty
         if affaire_etape_index.priorite == int(request.registry.settings['affaire_etape_priorite_1_id']) and len(mail_list)>0:
             lastSteps_html = "".join(["<tr><td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
@@ -54,13 +54,13 @@ class MailTemplates(object):
                                 <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
                                 <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
                                 </tr>".format(
-                                    i.etape, 
-                                    i.next_operateur_prenom if i.next_operateur_prenom else "", 
-                                    i.next_operateur_nom if i.next_operateur_nom else "", 
-                                    i.next_datetime.strftime("%d.%m.%Y - %H:%M") if i.next_datetime else "", 
+                                    i.etape,
+                                    i.next_operateur_prenom if i.next_operateur_prenom else "",
+                                    i.next_operateur_nom if i.next_operateur_nom else "",
+                                    i.next_datetime.strftime("%d.%m.%Y - %H:%M") if i.next_datetime else "",
                                     i.next_remarque if i.next_remarque else ""
                                     ) for i in lastSteps])
-            
+
             text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(v_affaire.id)) + "'>" + str(v_affaire.id) + affaire_nom + "</a></b>" + (" (avec mention urgente)" if v_affaire.urgent else "") + " est en attente pour l'étape <b>"+ affaire_etape_index.nom +"</b>."
             text += "<br><br>Cadastre: " + str(v_affaire.cadastre)
             text += "<br>Description: " + str(v_affaire.nom)
@@ -74,7 +74,7 @@ class MailTemplates(object):
                     </tr>" + lastSteps_html + "</table>") if lastSteps_html != "" else ""
             subject = "Infolica - affaire " + str(v_affaire.id) + (" - URGENT" if v_affaire.urgent else "")
             send_mail(request, mail_list, "", subject, html=text)
-        
+
         return (lastSteps, affaire_etape_index)
 
 
@@ -130,7 +130,8 @@ class MailTemplates(object):
             return
 
         #Contrôle que le client habite hors canton et que son numéros SAP est null
-        if cl.no_sap is None and int(cl.npa) not in request.registry.settings['npa_NE']:
+        cl_npa = int(cl.npa) if cl.npa is not None else -1
+        if cl.no_sap is None and cl_npa not in request.registry.settings['npa_NE']:
             operateur_secretariat = request.registry.settings["operateur_secretariat"].split(",")
             mail_list = request.dbsession.query(Operateur.mail).filter(Operateur.id.in_(operateur_secretariat)).all()
             mail_list = [mail[0] for mail in mail_list]
@@ -139,13 +140,13 @@ class MailTemplates(object):
             html += "<p>Un client hors canton et sans numéro SAP a été référencé dans la facturation de l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire_id)) + "'>" + str(affaire_id) + affaire_nom + "</a></b>.</p>"
             html += "<ul><li>" + ", ".join([
                 cl.entreprise if cl.entreprise is not None else " ".join([
-                    cl.titre if cl.titre is not None else "", 
-                    cl.prenom if cl.prenom is not None else "", 
+                    cl.titre if cl.titre is not None else "",
+                    cl.prenom if cl.prenom is not None else "",
                     cl.nom if cl.nom is not None else ""
-                ]), 
-                cl.adresse if cl.adresse is not None else "", 
+                ]),
+                cl.adresse if cl.adresse is not None else "",
                 " ".join([
-                        cl.npa if cl.npa is not None else "", 
+                        cl.npa if cl.npa is not None else "",
                         cl.localite if cl.localite is not None else ""
                     ])
                 ]) + " &#8594; <a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'clients/edit', str(cl.id)) + "'>Lien sur la fiche du client</a>"+ "</li></ul>"
@@ -168,9 +169,9 @@ class MailTemplates(object):
     def sendMailPreavisReponse(cls, request, preavis_id):
         preavis = request.dbsession.query(VAffairesPreavis).filter(VAffairesPreavis.id == preavis_id).first()
         affaire = request.dbsession.query(Affaire).filter(Affaire.id == preavis.affaire_id).first()
-        
+
         affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
-        
+
         operateur_coordinateur_projets = request.registry.settings["operateur_coordinateur_projets"].split(",")
         mail_list = request.dbsession.query(Operateur.mail).filter(Operateur.id.in_(operateur_coordinateur_projets)).all()
         mail_list = [mail[0] for mail in mail_list]
@@ -178,7 +179,7 @@ class MailTemplates(object):
         html = "<h3>Un nouveau préavis a été saisi</h3>"
         html += "<p>Le préavis du " + preavis.service + " a été saisi pour l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(preavis.affaire_id)) + "'>" + str(preavis.affaire_id) + affaire_nom + "</a></b>.<br/>"
         html += "Il peut être consulté dans l'onglet Préavis de l'affaire, en cliquant sur le préavis en question dans le tableau.</p>"
-        
+
         send_mail(request, mail_list, "", "Infolica - Préavis saisi", html=html)
         return
 
@@ -194,12 +195,12 @@ class MailTemplates(object):
             em = etape_mailer.filter(EtapeMailer.operateur_id == op.id).first()
             if em is not None and em.sendmail is True:
                 mail_list.append(op.mail)
-        
+
         if len(mail_list) > 0:
             preavis = request.dbsession.query(VAffairesPreavis).filter(VAffairesPreavis.id == preavis_id).first()
             affaire = request.dbsession.query(Affaire).filter(Affaire.id == preavis.affaire_id).first()
             cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == affaire.cadastre_id).first().nom
-            
+
             affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
             link = str(os.path.join(request.registry.settings['infolica_url_base'], 'preavis/edit', str(preavis_id))).replace('\\', '/')
 
@@ -224,7 +225,7 @@ class MailTemplates(object):
                 html += "<li>Remarque: " + message + "</li>"
             html += "</ul>"
             html += "</p>"
-            
+
             send_mail(request, mail_list, "", "Infolica - Demande de préavis" + subject_suffix, html=html, signature="Le service de la géomatique et du registre foncier")
             return
 
