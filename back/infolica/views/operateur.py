@@ -4,7 +4,7 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import Operateur, EtapeMailer
+from infolica.models.models import Operateur, EtapeMailer, Service, NotesMAJ, Role
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 from datetime import datetime
@@ -25,11 +25,11 @@ def _updateOperateurNotifications(request, operateur_id, etapesMailerList):
     ).group_by(
         EtapeMailer.operateur_id
     ).first()
-    
+
     tmp = []
     if aem_old is not None:
         tmp = aem_old.affaire_etapes_mailer
-    
+
     aem_old = set(tmp)
 
     aem2create = etapesMailerList.difference(aem_old)
@@ -76,7 +76,7 @@ def operateurs_view(request):
 
     for op in operateurs:
         op['prenom_nom'] = ' '.join([op['prenom'], op['nom']])
-    
+
     return operateurs
 
 
@@ -129,9 +129,9 @@ def operateur_update_view(request):
     tmp = []
     if operateur_etapes_mailer is not None:
         tmp = operateur_etapes_mailer.affaire_etapes_mailer
-    
+
     operateur['affaire_etapes_mailer'] = tmp
-    
+
     return operateur
 
 
@@ -171,6 +171,10 @@ def operateurs_new_view(request):
     # Get operateur instance
     model = Utils.set_model_record(Operateur(), request.params)
 
+    model.service = request.dbsession.query(Service.abreviation).filter(Service.id == model.service_id).scalar() if model.service_id else None
+    model.last_notemaj_id = request.dbsession.query(func.max(NotesMAJ.id)).scalar()
+    model.role = request.dbsession.query(Role).filter(Role.id == model.role_id).first()
+
     request.dbsession.add(model)
     request.dbsession.flush()
 
@@ -204,7 +208,7 @@ def operateurs_update_view(request):
 
     # Read params operateur
     model = Utils.set_model_record(model, request.params)
-    
+
     if 'affaire_etapes_mailer' in request.params:
         aem_new = set(json.loads(request.params['affaire_etapes_mailer']))
         _updateOperateurNotifications(request, id_operateur, aem_new)

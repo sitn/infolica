@@ -5,6 +5,7 @@
             <md-card-header class="justifyTitleBtn" style="padding-bottom: 0px;">
                 <div class="md-title"><b>Information</b></div>
                 <div>
+                    <md-button style="min-width: auto; width: auto;" title="Recharger la page en vidant le cache" @click="reloadWithoutCache" class="md-dense"><md-icon>replay</md-icon></md-button>
                     <md-button style="min-width: auto; width: auto;" title="Ajouter une note de mise à jour" @click="openNewNote" class="md-dense" v-if="permissions.admin"><md-icon>add</md-icon></md-button>
                     <md-button style="min-width: auto; width: auto;" title="Fermer la fenêtre d'informations" @click="closeInfobulle" class="md-dense"><md-icon>close</md-icon></md-button>
                 </div>

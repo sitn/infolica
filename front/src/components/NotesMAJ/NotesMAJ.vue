@@ -276,6 +276,13 @@ export default {
       this.showNotesMAJ = false;
       //set main_div height
       this.updateMainDivHeight();
+    },
+
+    /**
+     * Reload without cache
+     */
+    reloadWithoutCache() {
+      location.reload(true);
     }
 
   },
@@ -283,7 +290,7 @@ export default {
   mounted: function(){
     this.getVersion();
     this.getPermissions();
-    
+
     if (JSON.parse(localStorage.getItem("infolica_user")) && JSON.parse(localStorage.getItem("infolica_user")).id) {
       this.compareOperateurVersionWithCurrentVersion();
     }

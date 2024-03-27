@@ -59,6 +59,8 @@ class Service(Base):
     mail = Column(Text)
     ordre = Column(BigInteger)
     relpath = Column(Text)
+    date_entree = Column(Date)
+    date_sortie = Column(Date)
 
 class Operateur(Base):
     __tablename__ = 'operateur'
@@ -840,8 +842,8 @@ class NumeroType(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
-    
-    
+
+
 class NumeroEtat(Base):
     __tablename__ = 'numero_etat'
     __table_args__ = {'schema': 'infolica'}
@@ -1066,7 +1068,7 @@ class ControleEtapeTypeAffaire(Base):
 
 
 # ======================== VUES ========================
-# Ajouter l'information 'info': dict(is_view=True) aux vues 
+# Ajouter l'information 'info': dict(is_view=True) aux vues
 # pour qu'elles ne soient pas prises en compte dans les migrations par Alembic
 
 
@@ -1290,7 +1292,7 @@ class VAffairesPreavis(Base):
     operateur_service_id = Column(BigInteger)
     operateur_service_prenom = Column(Text)
     operateur_service_nom = Column(Text)
-    
+
 
 class VTableauBord(Base):
     __tablename__ = 'v_tableau_de_bord'

@@ -8,7 +8,7 @@ from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 import json
 from datetime import datetime
-from sqlalchemy import cast, or_, String
+from sqlalchemy import cast, or_, String, func
 import re
 
 
@@ -25,7 +25,7 @@ def _set_client_aggregated_name(client, sep=', '):
 
     if client.sortie is not None:
         nom_ = '(ancien client) ' + nom_
-    
+
     return nom_
 
 
@@ -63,9 +63,9 @@ def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, sear
                     # cast(Client.no_access, String).ilike(term),
                 )
             )
-    
+
     results = query.limit(search_limit).all()
-    
+
     return results
 
 
@@ -95,7 +95,7 @@ def clients_view(request):
 
     if client_id:
         query = query.filter(Client.id == client_id)
-    
+
     query = query.filter(Client.sortie == None).all()
     return Utils.serialize_many(query)
 
@@ -127,7 +127,7 @@ def client_aggregated_by_id_view(request):
     id = request.matchdict['id']
     result = request.dbsession.query(Client).filter(
         Client.id == id).first()
-    
+
     client = {
         'id': result.id,
         'nom': _set_client_aggregated_name(result),
@@ -161,7 +161,7 @@ def clients_search_view(request):
     query = request.dbsession.query(
         Client
     ).order_by(
-        Client.nom, 
+        Client.nom,
         Client.prenom
     ).filter(
         *conditions
@@ -169,7 +169,7 @@ def clients_search_view(request):
 
     if not old_clients:
         query = query.filter(Client.sortie == None)
-    
+
     query = query.limit(search_limit).all()
     return Utils.serialize_many(query)
 
@@ -187,7 +187,7 @@ def clients_search_by_term_view(request):
     old_clients = request.params['old_clients'] == 'true' if 'old_clients' in request.params else False
 
     clients = _multipleAttributesClientSearch(request, searchTerm, old_clients=old_clients)
-    
+
     return Utils.serialize_many(clients)
 
 
@@ -214,7 +214,7 @@ def clients_aggregated_search_by_term_view(request):
             'nom': nom_,
             'type_client': client.type_client
         })
-    
+
     return liste_clients
 
 
@@ -370,3 +370,47 @@ def client_moral_personnes_delete_view(request):
     request.dbsession.delete(model)
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Client.__tablename__))
+
+
+@view_config(route_name='client_check_existing', request_method='GET', renderer='json')
+def client_check_existing_view(request):
+    """
+    Check if client already exists
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['client_edition']):
+        raise exc.HTTPForbidden()
+
+    entreprise = request.params['entreprise'] if 'entreprise' in request.params else None
+    firstname = request.params['firstname'] if 'firstname' in request.params else None
+    lastname = request.params['lastname'] if 'lastname' in request.params else None
+    client_id = request.params['client_id'] if 'client_id' in request.params else None
+
+    clients = request.dbsession.query(Client)
+
+    if entreprise is not None:
+        clients = clients.filter(
+            func.similarity(Client.entreprise, entreprise) > 0.6
+        )
+    else:
+        clients = clients.filter(
+            func.similarity(Client.prenom, firstname) > 0.6,
+            func.similarity(Client.nom, lastname) > 0.6
+        )
+
+    if client_id is not None:
+        clients = clients.filter(Client.id != client_id)
+
+    clients = clients.all()
+
+    nom = []
+    nom.append(entreprise) if entreprise is not None else ''
+    nom.append(f'{lastname} {firstname}') if lastname is not None and firstname is not None else ''
+    nom = ' - '.join(nom)
+    response = {
+        'error': len(clients) > 0,
+        'message': f'{nom} semble déjà exister dans la base de données.' if len(clients) > 0 else '',
+        'clients': Utils.serialize_many(clients)
+    }
+
+    return response

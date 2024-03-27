@@ -70,7 +70,7 @@ def affaire_cockpit_view(request):
 
     settings = request.registry.settings
 
-    type_id = request.params['type_id'] if 'type_id' in request.params else None
+    type_id = request.params['type_id'].split(',') if 'type_id' in request.params else []
     etape_id = request.params['etape_id'].split(',') if 'etape_id' in request.params else None
     searchTerm = request.params['searchTerm'] if 'searchTerm' in request.params else None
     operateur_id = request.params['operateur_id'] if 'operateur_id' in request.params else None
@@ -80,7 +80,7 @@ def affaire_cockpit_view(request):
     affaire_etape_client_id = int(request.registry.settings['affaire_etape_client_id'])
 
     etape_finProcessus_id = request.registry.settings["affaire_etape_fin_processus_id"]
-    
+
     query = request.dbsession.query(VAffaire)
 
     # Filtrer les affaires abandonnées
@@ -89,8 +89,8 @@ def affaire_cockpit_view(request):
     if etape_id is not None:
         query = query.filter(VAffaire.etape_id.in_(etape_id))
     # recherche par type
-    if type_id is not None:
-        query = query.filter(VAffaire.type_id == type_id)
+    if len(type_id) > 0:
+        query = query.filter(VAffaire.type_id.in_(type_id))
     # recherche par opérateur
     if operateur_id is not None:
         query = query.filter(VAffaire.technicien_id == operateur_id)
@@ -118,7 +118,7 @@ def affaire_cockpit_view(request):
                 VAffaire.no_access.ilike("%" + searchTerm + "%")
             )
         )
-    
+
     query = query.all()
 
     # get affaire etapes
@@ -127,16 +127,16 @@ def affaire_cockpit_view(request):
     affaires = []
     for affaire in query:
         urgent_echeance = None
-        if not affaire.urgent_echeance is None \
-            and not affaire.etape_id in [int(settings['affaire_etape_validation_bd_id']), int(settings['affaire_etape_signature_art35_id']), int(settings['affaire_etape_fin_processus_id'])]:
+        if affaire.urgent_echeance is not None \
+            and affaire.etape_id not in [int(settings['affaire_etape_validation_bd_id']), int(settings['affaire_etape_signature_art35_id']), int(settings['affaire_etape_fin_processus_id'])]:
             urgent_echeance = datetime.strftime(affaire.urgent_echeance, '%d.%m.%Y')
-        
+
         nom_affaire = (affaire.no_access if affaire.no_access else str(affaire.id)) + (" / " + urgent_echeance if urgent_echeance else "") + (" / " + affaire.attribution if affaire.attribution else "")
         etape_datetime = datetime.strftime(affaire.etape_datetime, '%Y-%m-%d %H:%M:%S')
         etape_days_elapsed = (datetime.now().date() - affaire.etape_datetime.date()).days
         etape_days_elapsed_text = "aujourd'hui" if etape_days_elapsed == 0 else ("hier" if etape_days_elapsed == 1 else str(etape_days_elapsed) + " jours")
         title = affaire.technicien_initiales + " — Affaire " + str(affaire.id) + " — " + affaire.cadastre + " — " + (affaire.nom if affaire.nom is not None else "~ Aucune description ~") + " — Dans cette étape depuis " + etape_days_elapsed_text
-        
+
         nb_preavis = request.dbsession.query(func.count(Preavis.affaire_id)).filter(Preavis.affaire_id == affaire.id).scalar()
         nb_closed_preavis = request.dbsession.query(func.count(Preavis.affaire_id)).filter(Preavis.affaire_id == affaire.id, Preavis.date_reponse != None).scalar()
         preavis_status = None
@@ -172,7 +172,7 @@ def affaire_cockpit_view(request):
 
         if affaire.etape_id == affaire_etape_devis_id:
             # Si l'affaire est à l'étape devis, la basculer dans l'étape client du tableau cockpit
-            for etape in ae:    
+            for etape in ae:
                 tmp['dashboard_' + str(etape.id)] = nom_affaire if etape.id == affaire_etape_client_id else None
         else:
             for etape in ae:
@@ -195,7 +195,7 @@ def affaires_search_view(request):
 
     settings = request.registry.settings
     search_limit = int(settings['search_limit'])
-    
+
     params_affaires = {}
     client_id = None
     date_from = None
@@ -215,7 +215,7 @@ def affaires_search_view(request):
                 limitNbResults = False
         else:
             params_affaires[key] = request.params[key]
-    
+
     # Chercher les affaires par les clients de facture
     affaires_id_by_clients_facture = []
     if client_id is not None:
@@ -224,7 +224,7 @@ def affaires_search_view(request):
         # Récupérer la liste des id des affaires retenues
         for facture in query_facture:
             affaires_id_by_clients_facture.append(int(facture.affaire_id))
-    
+
     # Chercher les affaires par les conditions (sauf client_facture)
     conditions = Utils.get_search_conditions(VAffaire, params_affaires)
     query = request.dbsession.query(VAffaire).filter(*conditions)
@@ -237,13 +237,13 @@ def affaires_search_view(request):
         ))
 
     # filtrer les affaires par critères temporels
-    if not date_from is None:
+    if date_from is not None:
         query = query.filter(VAffaire.date_ouverture >= date_from)
-    
-    if not date_to is None:
+
+    if date_to is not None:
         query = query.filter(VAffaire.date_ouverture <= date_to)
-    
-    
+
+
     if limitNbResults:
         query = query.limit(search_limit)
 
@@ -295,7 +295,7 @@ def affaire_mpd_view(request):
         if re.search(regexp, aff.nom) is not None:
             affaire = aff
             break
-    
+
     return Utils.serialize_one(affaire)
 
 
@@ -306,7 +306,7 @@ def affaire_dashboard_layout_view(request):
     """
     if not check_connected(request):
         raise exc.HTTPForbidden()
-        
+
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     affaire_type_id = request.params['affaire_type_id'] if 'affaire_type_id' in request.params else None
 
@@ -411,7 +411,7 @@ def affaires_new_view(request):
     model.chemin = str(model.id) # chemin relatif
 
     # Copier le dossier __template pour une nouvelle affaire
-    if not affaire_chemin_full_path is None:
+    if affaire_chemin_full_path is not None:
         if model.type_id == request.registry.settings['affaire_type_mpd_id']:
             Utils.create_affaire_folder(request.registry.settings['affaireTemplateDir_mpd'], affaire_chemin_full_path)
         else:
@@ -421,16 +421,16 @@ def affaires_new_view(request):
     # Créer les formulaires de contrôle
     params = {'affaire_id': model.id}
     affaireType = request.dbsession.query(AffaireType).filter(AffaireType.id == affaire_type).first()
-    
+
     if affaireType.affaire_section_ctrl_chefprojet_mo is True:
         Utils.addNewRecord(request, ControleMutation, params)
-    
+
     if affaireType.affaire_section_ctrl_chefprojet_ppe is True:
         Utils.addNewRecord(request, ControlePPE, params)
-    
+
     if affaireType.affaire_section_ctrl_coordprojets is True:
         Utils.addNewRecord(request, SuiviMandat, params)
-    
+
     if affaireType.affaire_section_ctrl_geometre is True:
         Utils.addNewRecord(request, ControleGeometre, params)
 
@@ -441,7 +441,7 @@ def affaires_new_view(request):
     if tmp and tmp.logique_processus:
         if len(tmp.logique_processus) > 0:
             params['etape_id'] = tmp.logique_processus[0]
-    
+
     params['operateur_id'] = request.params['operateur_id'] if 'operateur_id' in request.params else None
     params['datetime'] = datetime.now()
     Utils.addNewRecord(request, AffaireEtape, params)
@@ -532,12 +532,12 @@ def affaires_update_view(request):
     if "chemin" in params:
         affaires_directory_baseName = request.registry.settings["affaires_directory_full_path"]
         chemin_affaire = params["chemin"]
-        
+
         if not chemin_affaire.lower().startswith(affaires_directory_baseName.lower()):
             raise CustomError(CustomError.DIRECTORY_WRONG_BASE.format(chemin_affaire, affaires_directory_baseName))
         else:
             relpath =  os.path.relpath(chemin_affaire, affaires_directory_baseName)
-            
+
             if os.path.exists(os.path.join(request.registry.settings['affaires_directory'], relpath)):
                 params["chemin"] = relpath
             else:
@@ -560,7 +560,7 @@ def affaire_cloture_view(request):
     # Check connected
     if not check_connected(request):
         raise exc.HTTPForbidden()
-    
+
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     remarque = request.params['remarque'] if 'remarque' in request.params else None
 
@@ -828,21 +828,21 @@ def affaire_attribution_change_state_update_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
 
 
-@view_config(route_name="guichet_rf_saisie_pm", request_method="GET", renderer='jsonp')
+@view_config(route_name="guichet_rf_saisie_pm", request_method="GET", renderer="jsonp")
 def guichet_rf_saisie_pm_view(request):
     """
     Get date_envoi for guichet_rf saisie_pm
     """
-    affaire_id = request.params['infolica_affaire_id'] if "infolica_affaire_id" in request.params else None
+    affaire_id = request.params["infolica_affaire_id"] if "infolica_affaire_id" in request.params else None
 
     if affaire_id is None:
         result = {
-            'search_term': None,
-            'infolica_affaire_id': None,
-            'infolica_affaire_nom': None,
-            'plan_date': None,
-            'status': 'error',
-            'detail': "Le numéro/nom de l'affaire est manquant dans la requête"
+            "search_term": None,
+            "infolica_affaire_id": None,
+            "infolica_affaire_nom": None,
+            "plan_date": None,
+            "status": "error",
+            "detail": "Le numéro/nom de l'affaire est manquant dans la requête"
         }
         return result
 
@@ -854,33 +854,41 @@ def guichet_rf_saisie_pm_view(request):
         ).first()
     else:
         # tester si le nom entré est dans l'ancien format N_1234_0
-        affaire_id2 = re.split('(\d+)', affaire_id)
-        if len(affaire_id2) == 2 or (len(affaire_id2) == 3 and affaire_id2[2] == ''):
+        affaire_id2 = re.split("(\d+)", affaire_id)
+        if len(affaire_id2) == 2 or (len(affaire_id2) == 3 and affaire_id2[2] == ""):
             affaire_id2 = affaire_id2[0] + "_" + affaire_id2[1] + "_0"
 
             affaire = request.dbsession.query(VAffaire).filter(
                 func.lower(VAffaire.no_access) == func.lower(affaire_id2)
             ).first()
-    
 
-    if affaire is None :
+    if affaire is None:
         result = {
-            'search_term': affaire_id,
-            'infolica_affaire_id': None,
-            'infolica_affaire_nom': None,
-            'plan_date': None,
-            'status': 'error',
-            'detail': "Aucune affaire trouvée avec la référence donnée : infolica_affaire_id = " + affaire_id
+            "search_term": affaire_id,
+            "infolica_affaire_id": None,
+            "infolica_affaire_nom": None,
+            "plan_date": None,
+            "status": "error",
+            "detail": "Aucune affaire trouvée avec la référence donnée : infolica_affaire_id = " + affaire_id
         }
 
     else:
+        plan_date = None
+        detail = "pas de date d'envoi ni de date de clôture"
+        if affaire.date_envoi is not None:
+            plan_date = datetime.strftime(affaire.date_envoi, "%d.%m.%Y")
+            detail = "date d'envoi"
+        elif affaire.date_cloture is not None:
+            plan_date = datetime.strftime(affaire.date_cloture, "%d.%m.%Y")
+            detail = "date de clôture"
+
         result = {
-            'search_term': affaire_id,
-            'infolica_affaire_id': affaire.id,
-            'infolica_affaire_nom': affaire.no_access,
-            'plan_date': datetime.strftime(affaire.date_envoi, "%d.%m.%Y"),
-            'status': 'success',
-            'detail': 'Affaire trouvée'
+            "search_term": affaire_id,
+            "infolica_affaire_id": affaire.id,
+            "infolica_affaire_nom": affaire.no_access,
+            "plan_date": plan_date,
+            "status": "success",
+            "detail": f"Affaire trouvée ({detail})"
         }
 
     return result

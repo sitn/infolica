@@ -14,7 +14,7 @@
             :showMatdiff_mo="showMatdiff_mo"
             :showMatdiff_ctrl="showMatdiff_ctrl"></Matdiff>
     </div>
-    
+
     <md-card>
         <md-card-content>
             <div class="md-layout md-gutter md-alignment-center-space-between">
@@ -24,7 +24,7 @@
                         <md-input v-model="searchTerm" placeholder="Numéro d'affaire" v-on:keyup="getAffaire"></md-input>
                         <md-icon>search</md-icon>
                     </md-field>
-    
+
                     <md-field style="margin-left: 50px; width: 250px !important;">
                         <label for="operateur">Opérateur·rice</label>
                         <md-select v-model="search.operateur_id" name="operateur" id="operateur" @md-selected="getAffaire" md-dense>
@@ -32,15 +32,22 @@
                           <md-option v-for="item in operateurs" :value="item.id">{{ item.prenom_nom }}</md-option>
                         </md-select>
                     </md-field>
-                    
+
                     <md-field style="margin-left: 50px; width: 250px !important;">
                         <label>Type(s) d'affaire</label>
-                        <md-select v-model="search.type_id" @md-selected="getAffaire" md-dense>
-                            <md-option :value="-1">Tous</md-option>
+                        <md-select v-model="search.type_id" @md-selected="getAffaire" md-dense multiple>
+                            <div>
+                                <div style="float: left;">
+                                    <md-button class="md-elevation-2 md-primary" style="width: 45%; margin-left: 20px;" @click="updateSelection('tout')">Tout</md-button>
+                                </div>
+                                <div style="float: left;">
+                                    <md-button class="md-elevation-2 md-accent" style="width: 45%; margin-left: 20px;" @click="updateSelection('aucun')">Aucun</md-button>
+                                </div>
+                            </div>
                             <md-option v-for="item in affaireTypes" :value="item.id">{{ item.nom }}</md-option>
                         </md-select>
                     </md-field>
-    
+
                     <md-checkbox v-model="search.showFinProcessus" @change="getAffaire" style="margin-left: 50px; margin-top:25px;">Afficher l'étape fin de processus</md-checkbox>
                     <md-checkbox v-model="search.showOnlyAffairesUrgentes" @change="getAffaire" style="margin-left: 50px; margin-top:25px;">N'afficher que les affaires urgentes</md-checkbox>
                 </div>
@@ -56,7 +63,7 @@
                 <md-table-empty-state
                     md-label="Aucune affaire">
                 </md-table-empty-state>
-                
+
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell md-sort-by="affaire_type" md-label="Type d'affaire">{{ item.affaire_type }}</md-table-cell>
                     <md-table-cell md-sort-by="dashboard_13" md-label="Coordination"><div v-if="item.preavis_unread_remarks > 0"><md-badge class="md-primary" :md-content="item.preavis_unread_remarks" md-position="top" v-if="item.dashboard_13" md-dense><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent, preavis_ok: item.preavis_status === 'ok', pending_preavis: item.preavis_status === 'pending' }" :title="item.title" :to="{ name: 'AffairesDashboard', params: { id: item.id } }" style="margin-top: 4px !important;"  v-if="item.dashboard_13" >{{ item.dashboard_13 }}</md-button></md-badge></div><div v-else><md-button class="affBtn md-raised" v-bind:class="{ urgent: item.urgent, preavis_ok: item.preavis_status === 'ok', pending_preavis: item.preavis_status === 'pending' }" :title="item.title" :to="{ name: 'AffairesDashboard', params: { id: item.id } }" v-if="item.dashboard_13">{{ item.dashboard_13 }}</md-button></div></md-table-cell>

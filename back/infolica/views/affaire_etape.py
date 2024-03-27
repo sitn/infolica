@@ -114,16 +114,16 @@ def etapes_new_view(request):
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     chef_equipe_id = request.params['chef_equipe_id'] if 'chef_equipe_id' in request.params else None
     operateur_id = request.params['operateur_id'] if 'operateur_id' in request.params else None
-    
+
     # Add new step
     model = Utils.addNewRecord(request, AffaireEtape)
 
     # # send mail
     (lastSteps, affaire_etape_index) = MailTemplates.sendMailAffaireEtape(request, model, chef_equipe_id, operateur_id)
-    
+
     # update chef d'équipe in affaire
     affaire = request.dbsession.query(Affaire).filter(Affaire.id == model.affaire_id).first()
-    if not affaire.technicien_id == chef_equipe_id and chef_equipe_id is not None:
+    if chef_equipe_id is not None and not affaire.technicien_id == chef_equipe_id:
         affaire.technicien_id = chef_equipe_id
 
     # Finally erase attribution on affaire if etape_priority == 1 and if last etape was different
@@ -145,7 +145,7 @@ def etapes_new_view(request):
 
     # If last step was treatment & client_facture is outside of canton and has no SAP number, send mail to secretariat
     etape_traitement_id = int(request.registry.settings['affaire_etape_traitement_id'])
-    
+
     if (len(lastSteps) > 1 and lastSteps[1].etape_id == etape_traitement_id):
         # get clients_facture
         clients_factures_id = request.dbsession.query(Facture.client_id).filter(Facture.affaire_id == affaire_id).all()
@@ -256,7 +256,7 @@ def etape_index_all_view(request):
     # Check connected
     if not check_connected(request):
         raise exc.HTTPForbidden()
-    
+
     affaire_etape_priorite_1_id = int(request.registry.settings['affaire_etape_priorite_1_id'])
 
     aei = request.dbsession.query(

@@ -35,7 +35,7 @@ export const getCurrentUserRoleId = function () {
 /*
  * Set current user functions
  */
-export const setCurrentUserFunctions = async function () {    
+export const setCurrentUserFunctions = async function () {
     return new Promise ((resolve, reject) => {
         axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CURRENT_USERS_FUNCTIONS_ENDPOINT,
             {
@@ -160,9 +160,9 @@ export const setClientsAdresse_ = function(clients, sep=", ") {
     let isArray = true;
     if (!Array.isArray(clients)) {
         isArray = false;
-        clients = [clients];        
+        clients = [clients];
     }
-    
+
     clients.forEach(x => {
         x.adresse_ = [
             x.entreprise,
@@ -244,17 +244,17 @@ export const stringifyAutocomplete2 = function(liste, keys=["nom"], sep=", ", ne
     }
 
     if (Array.isArray(liste) === true) {
-    
+
         // Here are treated objects in lists
         liste.forEach(x => {
             let nom_ = [];
             keys.forEach(key => nom_.push(x[key]));
-    
+
             x[new_key] = nom_.filter(Boolean).join(sep);
             x.toLowerCase = () => String(x[new_key]).toLowerCase();
             x.toString = () => String(x[new_key]);
         });
-    
+
     } else {
 
         // Here are treated objects solo
@@ -345,7 +345,7 @@ export const deleteGeneratedDocument = async function(filename) {
             .then(response => resolve(response))
             .catch(err => reject(err));
         });
-    });    
+    });
 };
 
 /**
@@ -380,7 +380,7 @@ export const filterList = function(list, searchTerm, nLetters=0) {
 };
 
 /**
- * Set date format 
+ * Set date format
  */
 export const setDateFormatClient = function(obj) {
     // test dates to set them to client format
