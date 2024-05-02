@@ -9,3 +9,4 @@ env.local
 env.dev
 env.prepub
 env.prod
+env.test
