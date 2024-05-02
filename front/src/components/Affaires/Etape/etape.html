@@ -3,19 +3,19 @@
     <div class="md-layout md-gutter" style="width: 96%;">
         <div class="md-layout-item md-size-100">
             <p style="display: flex; align-items: flex-end; margin-top: 0px;">
-                Étape : 
+                Étape :
                 <md-field style="width: 350px; margin-top: 0px; margin-bottom: -5px; margin-left: 10px;"><md-input v-model="affaire.etape" readonly></md-input></md-field>
                 <md-button @click="openNewStateDialog"
-                            class="md-elevation-3 md-dense" 
-                            style="min-width: 40px; margin-bottom: -5px;" 
+                            class="md-elevation-3 md-dense"
+                            style="min-width: 40px; margin-bottom: -5px;"
                             title="Mettre à jour"
-                            v-if="affaire.etape_id !== etapes_affaire_conf.fin_processus || isAdmin">
+                            v-if="affaire.etape_id !== etapes_affaire_conf.fin_processus && permission.editEmolumentAllowed || isAdmin">
                     <md-icon>double_arrow</md-icon>
                 </md-button>
             </p>
         </div>
     </div>
-  
+
 
     <!-- Dialog pour la création de nouvelle étape dans l'affaire -->
     <md-dialog :md-active.sync="etapeAffaire.showDialog" class="etapeDialog">
@@ -25,9 +25,9 @@
             <div class="md-layout md-gutter md-alignment-top-space-between">
                 <div class="md-layout-item md-size-100">
 
-                    <NewStepSetter 
-                        :affaire_id="affaire.id" 
-                        @new-step-selected="setNewStepId" 
+                    <NewStepSetter
+                        :affaire_id="affaire.id"
+                        @new-step-selected="setNewStepId"
                         @next-step-authorization="getNextStepAuthorization" />
 
                 </div>
@@ -53,14 +53,14 @@
                     <md-checkbox v-model="joursHorsSGRF.show" class="md-primary">Correction: ajouter une période chez le client</md-checkbox>
 
                     <div v-if="joursHorsSGRF.show">
-                        
+
                         <DateRangePicker
                             :dateperiod_start="dateperiod_start"
                             :showPeriodInfo="true"
                             ref="DateRangePicker"/>
                     </div>
                 </div>
-                
+
                 <div class="md-layout-item"
                     v-if="affaire.type_id === typesAffaires_conf.art35 && affaire.etape_id === etapes_affaire_conf.travaux_chef_equipe">
                     <h3>Sélectionner le type d'article 35</h3>

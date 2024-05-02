@@ -25,14 +25,15 @@ export default {
     affaire: Object,
     chefs_equipe_list: Array,
     etapes_affaire_conf: Object,
-    typesAffaires_conf: Object
+    permission: Object,
+    typesAffaires_conf: Object,
   },
   data: () => ({
     affaireEtapes: [],
     allowSaveNewStep: {
       ctrl_etape: false,
       logique_processus: false,
-    },    
+    },
     art35Radio: "",
     cloreAffaire: false,
     controleEtape : [],
@@ -73,15 +74,15 @@ export default {
 
       let now_datetime = (new Date()).getTime();
       let etape_datetime = (new Date(moment(this.affaire.etape_datetime, process.env.VUE_APP_DATEFORMAT_CLIENT))).getTime();
-      
+
       this.etapeAffaire.nb_jours_etape = Math.floor((now_datetime - etape_datetime)/3600000/24) + 1;
-      
+
 
       // if step "chez le client" next step is "operateur_travail"
       if (this.affaire.etape_id === this.etapes_affaire_conf.chez_client) {
         this.etapeAffaire.prochaine_id = this.etapes_affaire_conf.travaux_chef_equipe;
-      } 
-      
+      }
+
       const etapes_jours_clients = [
         this.etapes_affaire_conf.coordination,
         this.etapes_affaire_conf.controle_technique,
@@ -163,7 +164,7 @@ export default {
 
       // fix value of this.etapeAffaire.chef_equipe_id to null if another step is selected
       this.etapeAffaire.chef_equipe_id = this.etapeAffaire.prochaine_id === this.etapes_affaire_conf.travaux_chef_equipe? this.etapeAffaire.chef_equipe_id: null;
-      
+
       logAffaireEtape(this.affaire.id, this.etapeAffaire.prochaine_id, this.etapeAffaire.remarque, this.etapeAffaire.chef_equipe_id, this.joursHorsSGRF.date_from, this.joursHorsSGRF.date_to)
       .then(() => {
         this.$root.$emit("ShowMessage", "L'étape a bien été mise à jour");
@@ -244,9 +245,9 @@ export default {
     saveDatesDiv() {
       this.updateAffaireDate.show = (
         [this.etapes_affaire_conf.envoi, this.etapes_affaire_conf.validation].includes(this.affaire.etape_id) && this.affaire.type_id !== this.typesAffaires_conf.pcop) ||
-        (this.etapes_affaire_conf.envoi_pcop === this.affaire.etape_id && this.affaire.type_id === this.typesAffaires_conf.pcop) || 
+        (this.etapes_affaire_conf.envoi_pcop === this.affaire.etape_id && this.affaire.type_id === this.typesAffaires_conf.pcop) ||
         this.etapeAffaire.prochaine_id === this.etapes_affaire_conf.fin_processus && this.affaire.type_id === this.typesAffaires_conf.cadastration;
-      
+
       if (this.etapeAffaire.prochaine_id) {
         this.setNewEtapeParameters();
       }

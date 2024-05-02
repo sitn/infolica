@@ -868,7 +868,6 @@ export default {
 
   mounted: function () {
     this.getEmolumentsGeneral();
-    this.getTableauEmolumentsNew();
     this.getFactureParametres();
 
     this.addDivers();
