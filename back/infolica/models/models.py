@@ -45,6 +45,7 @@ class Service(Base):
     relpath = Column(Text)
     date_entree = Column(Date)
     date_sortie = Column(Date)
+    service_principal = Column(Boolean)
 
 
 class Operateur(Base):
@@ -73,7 +74,7 @@ class Cadastre(Base):
     __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
-    service_at_id = Column(BigInteger, ForeignKey(Service.id))
+    service_urbanisme_id = Column(BigInteger, ForeignKey(Service.id))
 
 
 class ClientType(Base):

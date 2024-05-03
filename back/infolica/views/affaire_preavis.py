@@ -57,7 +57,7 @@ def affaire_preavis_view(request):
 
     for p in preavis:
         p['unread_remarks'] = Utils.check_unread_preavis_remarks(request, affaire_id, service_id=p['service_id'])
-    
+
     return preavis
 
 
@@ -74,6 +74,14 @@ def preavis_new_view(request):
     model = Preavis()
     model = Utils.set_model_record(model, request.params)
 
+    # add preavis folder if not exists
+    affaires_directory = request.registry.settings['affaires_directory']
+    service = request.dbsession.query(Service).filter(Service.id == model.service_id).first()
+    affaire = request.dbsession.query(Affaire).filter(Affaire.id == model.affaire_id).first()
+    preavis_service_path = os.path.join(affaires_directory, affaire.chemin, service.relpath)
+    if not os.path.exists(preavis_service_path):
+        os.makedirs(preavis_service_path)
+
     request.dbsession.add(model)
     request.dbsession.flush()
 
@@ -87,7 +95,7 @@ def preavis_new_view(request):
             'date': datetime.strftime(datetime.now(), '%Y-%m-%d')
         }
         Utils.addNewRecord(request, PreavisRemarque, _params)
-    
+
     # Send mail to external service for a new preavis demand
     MailTemplates.sendMailPreavisDemande(request, model.id, model.service_id, message=remarque_conversation)
 
@@ -165,7 +173,7 @@ def strongAuthentication(request, preavis_id):
     if check_connected(request, [request.registry.settings['service_mo'].replace(' ', '')]):
         operateur = Utils.getOperateurFromUser(request)
         return operateur
-    
+
     if not check_connected(request, request.registry.settings['preavis_services_externes'].replace(' ', '').split(',')):
         raise exc.HTTPForbidden()
 
@@ -173,7 +181,7 @@ def strongAuthentication(request, preavis_id):
     operateur = Utils.getOperateurFromUser(request)
     if operateur.service_id is None:
          exc.HTTPForbidden(detail="Opérateur non autorisé à accéder à ce contenu")
-    
+
     if preavis_id is None:
         exc.HTTPInternalServerError(detail="L'identidifiant du préavis est manquant")
 
@@ -240,7 +248,7 @@ def service_externe_preavis_view(request):
             VAffaire.date_envoi == None,
             VAffaire.date_cloture == None
         )
-    
+
     if search is not None:
         search = search.split(' ')
         for s in search:
@@ -253,7 +261,7 @@ def service_externe_preavis_view(request):
             )
 
     query = query.order_by(Preavis.date_reponse.desc()) if status == "closed" else query.order_by(Preavis.date_demande.desc())
-    
+
     if status is not None and status == "closed":
         query = query.limit(request.registry.settings['search_limit'])
 
@@ -291,7 +299,7 @@ def service_externe_preavis_view(request):
             'priorite': priorite,
             'remarque': remarque
         })
-        
+
         if status == 'open':
             results = sorted(results, key=lambda x: x['priorite_idx'], reverse=False)
 
@@ -385,7 +393,7 @@ def service_externe_affaire_view(request):
 def service_externe_documents_view(request):
     """
     GET documents of preavis_id for service externe
-    """ 
+    """
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     operateur = strongAuthentication(request, affaire_id)
 
@@ -396,7 +404,7 @@ def service_externe_documents_view(request):
     courriers_courriels_rel_path = request.registry.settings['courriers_courriels_rel_path']
     documents = []
     for rel_path in [service_relpath, courriers_courriels_rel_path]:
-        
+
         affaire_rel_path = os.path.join(affaire_chemin, rel_path)
 
         affaire_path = os.path.join(request.registry.settings['affaires_directory'], affaire_rel_path)
@@ -418,7 +426,7 @@ def service_externe_documents_view(request):
                 file_i['creation'] = datetime.fromtimestamp(file_i['creation_sort']).strftime("%d.%m.%Y")
                 file_i['modification'] = datetime.fromtimestamp(file_i['modification_sort']).strftime("%d.%m.%Y")
                 documents.append(file_i)
-    
+
     return documents
 
 
@@ -429,7 +437,7 @@ def service_externe_conversation_view(request):
     """
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
     strongAuthentication(request, preavis_id)
-    
+
     results = []
 
     query = request.dbsession.query(
@@ -475,13 +483,13 @@ def service_externe_conversation_new_view(request):
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
     commentaire = request.params['commentaire'] if 'commentaire' in request.params else None
     operateur = strongAuthentication(request, preavis_id)
-    
+
     preavis = request.dbsession.query(Preavis).filter(
         Preavis.id == preavis_id
     ).first()
 
     rp = PreavisRemarque()
-    
+
     params = {
         'preavis_id': preavis.id,
         'remarque': commentaire,
@@ -516,7 +524,7 @@ def service_externe_liste_decision_view(request):
     """
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
     strongAuthentication(request, preavis_id)
-    
+
     result = request.dbsession.query(
         PreavisDecision.id,
         PreavisDecision.date,
@@ -542,7 +550,7 @@ def service_externe_liste_decision_view(request):
     liste_decisions = []
     for res in result:
         liste_decisions.append(
-            {   
+            {
                 'preavisDecision_id': res.id,
                 'date': datetime.strftime(res.date, "%d.%m.%Y"),
                 'version': res.version,
@@ -568,7 +576,7 @@ def service_externe_decision_view(request):
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
 
     strongAuthentication(request, preavis_id)
-    
+
     res = request.dbsession.query(
         PreavisDecision.preavis_type_id,
         PreavisDecision.remarque_contexte,
@@ -589,7 +597,7 @@ def service_externe_decision_view(request):
     ).first()
 
     if res is not None:
-        result = { 
+        result = {
             'preavis_type_id': res.preavis_type_id,
             'remarque_contexte': res.remarque_contexte,
             'remarque_limite_fictive_gabarits': res.remarque_limite_fictive_gabarits,
@@ -622,11 +630,11 @@ def service_externe_decision_new_view(request):
     remarque_autre = request.params['remarque_autre'] if 'remarque_autre' in request.params else None
     definitif = request.params['definitif'] == 'true' if 'definitif' in request.params else False
     operateur = strongAuthentication(request, preavis_id)
-    
+
     rp = PreavisDecision()
     max_version = request.dbsession.query(func.max(PreavisDecision.version)).filter(PreavisDecision.preavis_id == preavis_id).scalar()
     max_version = 0 if max_version is None else max_version
-    
+
     params = {
         'preavis_id': preavis_id,
         'preavis_type_id': preavis_type_id,
@@ -657,7 +665,7 @@ def service_externe_decision_new_view(request):
         preavis.remarque = '\n\n'.join(filter(None, [remarque_contexte, remarque_limite_fictive_gabarits, remarque_transfert_droit_batir, remarque_stationnement_art29, remarque_autre]))
 
         MailTemplates.sendMailPreavisReponse(request, preavis_id)
-        
+
         # log step
         service = request.dbsession.query(Service).filter(Service.id == preavis.service_id).first().abreviation
         Utils.newAffaireEtape(
@@ -686,9 +694,9 @@ def service_externe_decision_update_view(request):
     remarque_autre = request.params['remarque_autre'] if 'remarque_autre' in request.params else None
     definitif = request.params['definitif'] == 'true' if 'definitif' in request.params else False
     operateur = strongAuthentication(request, preavis_id)
-    
+
     result = request.dbsession.query(PreavisDecision).filter(PreavisDecision.id == preavis_decision_id).first()
-    
+
     result.preavis_type_id = preavis_type_id
     result.operateur_id = operateur.id
     result.remarque_contexte = remarque_contexte
@@ -711,7 +719,7 @@ def service_externe_decision_update_view(request):
 
         # send mail to SGRF project managers
         MailTemplates.sendMailPreavisReponse(request, preavis_id)
-        
+
         # log step
         service = request.dbsession.query(Service).filter(Service.id == preavis.service_id).first().abreviation
         Utils.newAffaireEtape(
@@ -732,7 +740,7 @@ def service_externe_preavis_attribution_update_view(request):
     """
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
     operateur = strongAuthentication(request, preavis_id)
-    
+
     preavis = request.dbsession.query(Preavis).filter(Preavis.id == preavis_id).first()
 
     preavis.operateur_service_id = operateur.id
@@ -747,7 +755,7 @@ def service_externe_save_documents_new_view(request):
     """
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     operateur = strongAuthentication(request, affaire_id)
-    
+
     service = request.dbsession.query(Service).filter(
         Service.id == operateur.service_id
     ).first()
@@ -792,7 +800,7 @@ def service_externe_glossaire_view(request):
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
 
     operateur = strongAuthentication(request, preavis_id)
-    
+
     results = request.dbsession.query(
         PreavisGlossaire.chapitre,
         func.array_agg(aggregate_order_by(PreavisGlossaire.texte, PreavisGlossaire.ordre.asc())).label('textes')
@@ -807,7 +815,7 @@ def service_externe_glossaire_view(request):
     glossaire = {}
     for res in results:
         glossaire[res[0]] = res[1]
-    
+
     return glossaire
 
 
@@ -817,7 +825,7 @@ def preavis_print_view(request):
     GET PDF of specified preavis
     """
     preavis_id = request.params['preavis_id'] if 'preavis_id' in request.params else None
-    
+
     data = request.dbsession.query(
         Preavis.affaire_id,
         Service.service,
@@ -872,7 +880,7 @@ def preavis_print_view(request):
     for res in preavis_decisions:
         preavis_version_max = res.version if res.version > preavis_version_max else preavis_version_max
         liste_decisions.append(
-            {   
+            {
                 'preavisDecision_id': res.id,
                 'date': datetime.strftime(res.date, "%d.%m.%Y"),
                 'version': res.version,
@@ -944,7 +952,7 @@ def preavis_print_view(request):
             padding-right: 10px;
             padding-left: 5px;
         }}
-        """ 
+        """
 
     html += ppp.format(**d)
     html += "</style></head>"
@@ -959,19 +967,19 @@ def preavis_print_view(request):
     html += "<h1>Préavis du " + data.service + "</h1>"
     if data.service_telephone is not None or data.service_mail is not None:
         html += "<p>Contact: "
-        
+
         contacts = []
         if data.service_telephone is not None:
             contacts.append(data.service_telephone)
-        
+
         if data.service_mail is not None:
             contacts.append(
                 "<a href=\"mailto:" + data.service_mail + "?subject=Préavis de l'affaire: " + str(data.affaire_id) + " du cadastre: " + data.cadastre + "\">" + data.service_mail + "</a>"
             )
-        
+
         html += " / ".join(contacts) + "</p>"
 
-        
+
     html += "<p>Affaire n° " + str(data.affaire_id) + "<br>" + "Cadastre: " + data.cadastre + "</p>"
     html += "<p>Description de l'affaire: " + data.affaire_description + "</p>"
     html += "<p>Date de la demande de préavis: " + str(data.date_demande.strftime("%d.%m.%Y")) + "</p>"
