@@ -483,6 +483,7 @@ class ControleMutation(Base):
     od_3 = Column(Boolean)  # Contrôler que les bâtiments souterrains ont les bons numéros et une désignation.
     od_4 = Column(Boolean)  # Modifier les attributs (raison, identification) dans les propriétés du bâtiment projeté
     od_5 = Column(Boolean)  # Contrôler que l'attribut « Objets_divers => SymboleElement_surfacique » est rempli pour les piscines.
+    od_6 = Column(Boolean)  # Suppression du point SATAC dans la couche MO édition
     bat_1 = Column(Boolean)  # Contrôler dans la table « Adresses_des_batiments => Mise_a_jourBAT » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.
     bat_2 = Column(Boolean)  # Contrôler dans la table « Adresses_des_batiments => PosNumero_maison » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.assez_petite).
     bat_3 = Column(Boolean)  # Contrôler que les points adresses sont dans les géométries.

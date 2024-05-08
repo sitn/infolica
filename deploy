@@ -8,7 +8,7 @@ import subprocess
 import sys
 import shutil
 
-ALLOWED_INSTANCES = ["prepub", "prod", "dev", "local"]
+ALLOWED_INSTANCES = ["prepub", "prod", "dev", "local", "test"]
 
 def load_env(env_file):
     with open(env_file) as f:
