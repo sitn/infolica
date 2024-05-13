@@ -17,7 +17,7 @@
             <md-card-expand-content>
                 <md-card-content v-bind:class="{ disabledElement: !permission.editAffaireAllowed }">
 
-                    <div style="height: 50px;">
+                    <div style="height: 50px;" v-if="permission.editEmolumentAllowed">
                         <p v-if="controleMutation.date" style="margin-top: 0px; float: left;">Dernier contrôle effectué le {{controleMutation.date}} par {{controleMutation.operateur_prenom_nom}}</p>
                         <md-button class="md-primary md-raised" style="float: right" md-dense @click="launchCtrlGeos"><md-icon style="margin-right: 5px; margin-bottom: 4px;">checklist</md-icon> Contrôles GEOMEDIA</md-button>
                     </div>
@@ -31,7 +31,7 @@
                                         <md-card-content>
                                             <div class="md-title">Général</div>
 
-                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('gen_')">Tout cocher</md-button>
+                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('gen_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
                                             <div id="gen_">
                                                 <md-checkbox class="md-primary" v-model="controleMutation.gen_1">Fichier PDF après MPD figurant les travaux en couleur</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.gen_2">Scan du croquis terrain</md-checkbox>
@@ -49,7 +49,7 @@
                                         <md-card-content>
                                             <div class="md-title">COUVERTURE DU SOL</div>
 
-                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('cs_')">Tout cocher</md-button>
+                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('cs_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
                                             <div id="cs_">
                                                 <md-checkbox class="md-primary" v-model="controleMutation.cs_6">Réservation des numéros de points particuliers (660)</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.cs_7">Réservation des numéros de bâtiments</md-checkbox>
@@ -69,7 +69,7 @@
                                         <md-card-content>
                                             <div class="md-title">OBJETS DIVERS</div>
 
-                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('od_')">Tout cocher</md-button>
+                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('od_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
                                             <div id="od_">
                                                 <md-checkbox class="md-primary" v-model="controleMutation.od_1">Tous les points de constructions "760" sont supprimés</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.od_2">Contrôler les nouveaux éléments créés dans votre affaire et qu'il n'y a pas d'objets divers sans géométrie</md-checkbox>
@@ -88,7 +88,7 @@
                                         <md-card-content>
                                             <div class="md-title">ADRESSES DES BATIMENTS</div>
 
-                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('bat_')">Tout cocher</md-button>
+                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('bat_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
                                             <div id="bat_">
                                                 <md-checkbox class="md-primary" v-model="controleMutation.bat_1">Contrôler dans la table « Adresses_des_batiments => Mise_a_jourBAT » qu'il y a bien que les nouveaux éléments que vous avez créés dans votre affaire</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.bat_2">Contrôler dans la table « Adresses_des_batiments => PosNumero_maison » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.assez_petite)</md-checkbox>
@@ -107,7 +107,7 @@
                                         <md-card-content>
                                             <div class="md-title">PRODUCTION</div>
 
-                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('suivi_')">Tout cocher</md-button>
+                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('suivi_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
                                             <div id="suivi_">
                                                 <md-checkbox class="md-primary" v-model="controleMutation.suivi_1" :value="setTrueValue('suivi_1')">Création de la mutation dans la BD</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.suivi_2" :value="setTrueValue('suivi_2')">Contrôles de cohérences e.o</md-checkbox>
@@ -128,7 +128,7 @@
                                         <md-card-content>
                                             <div class="md-title">BIENS-FONDS</div>
 
-                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('bf_')">Tout cocher</md-button>
+                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('bf_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
                                             <div id="bf_">
                                                 <md-checkbox class="md-primary" v-model="controleMutation.bf_1">Contrôler les numéros des points limites ainsi que la valeur, la précision et la fiabilité des points sont en adéquations avec le niveau de tolérance de la zone de travail</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.bf_2">Contrôler dans la table « Bien_fonds => Mise_a_jourBF » qu'il y que les nouveaux biens-fonds créés dans votre affaire et qu'il n'y a pas de biens-fonds sans géométrie</md-checkbox>
@@ -145,7 +145,7 @@
                                         <md-card-content>
                                             <div class="md-title">COUVERTURE DU SOL</div>
 
-                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('cs_')">Tout cocher</md-button>
+                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('cs_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
                                             <div id="cs_">
                                                 <md-checkbox class="md-primary" v-model="controleMutation.cs_1">Contrôler les numéros des points particuliers "660" ainsi que la valeur, la précision et la fiabilité des points sont en adéquations avec le niveau de tolérance de la zone de travail</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.cs_2">Contrôler dans la table « Couverture_du_sol => Mise_a_jourCS » qu'il y a que les nouvelles surfaces créées dans votre affaire qu'il n'y a pas de surfaces sans géométrie</md-checkbox>
@@ -164,8 +164,8 @@
                                         <md-card-content>
                                             <div class="md-title">OBJETS DIVERS</div>
 
-                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('od_')">Tout cocher</md-button><div id="od_">
-                                                <md-checkbox class="md-primary" v-model="controleMutation.od_1">Tous les points de constructions "760" sont supprimés</md-checkbox>
+                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('od_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button><div id="od_">
+                                                <md-checkbox class="md-primary" v-model="controleMutation.od_1">Tous les points de constructions "760" sont supprimés.</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.od_2">Contrôler les nouveaux éléments créés dans votre affaire et qu'il n'y a pas d'objets divers sans géométrie</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.od_3">Contrôler que les bâtiments souterrains ont les bons numéros et une désignation</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.od_4">Modifier les attributs (raison, identification) dans les propriétés du bâtiment projeté</md-checkbox>
@@ -182,11 +182,11 @@
                                         <md-card-content>
                                             <div class="md-title">ADRESSES DES BATIMENTS</div>
 
-                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('bat_')">Tout cocher</md-button><div id="bat_">
-                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_1">Contrôler dans la table « Adresses_des_batiments => Mise_a_jourBAT » qu'il y a bien que les nouveaux éléments que vous avez créés dans votre affaire</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_2">Contrôler dans la table « Adresses_des_batiments => PosNumero_maison » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.assez_petite)</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_3">Contrôler que les points adresses sont dans les géométries</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_4">Contrôler les bâtiments IMVO (bâtiments sans numéros)</md-checkbox>
+                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('bat_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button><div id="bat_">
+                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_1">Contrôler dans la table « Adresses_des_batiments => Mise_a_jourBAT » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_2">Contrôler dans la table « Adresses_des_batiments => PosNumero_maison » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.assez_petite).</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_3">Contrôler que les points adresses sont dans les géométries.</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.bat_4">Contrôler les bâtiments IMVO (bâtiments sans numéros).</md-checkbox>
                                             </div>
                                         </md-card-content>
                                     </md-card>
@@ -198,9 +198,9 @@
                                         <md-card-content>
                                             <div class="md-title">SERVITUDES</div>
 
-                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('serv_')">Tout cocher</md-button><div id="serv_">
-                                                <md-checkbox class="md-primary" v-model="controleMutation.serv_1">Contrôler dans la table « Servitudes => Mise_a_jourSE » qu'il y a bien que les nouveaux éléments que vous avez créés dans votre affaire</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.serv_2">Contrôler dans la table « Servitudes => Servitude_surface » ou « Servitudes => Servitude_ligne » ou « Servitudes => Servitude_point » que l'attribut « Validite » est en_projet pour les nouvelles servitudes</md-checkbox>
+                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('serv_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button><div id="serv_">
+                                                <md-checkbox class="md-primary" v-model="controleMutation.serv_1">Contrôler dans la table « Servitudes => Mise_a_jourSE » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.serv_2">Contrôler dans la table « Servitudes => Servitude_surface » ou « Servitudes => Servitude_ligne » ou « Servitudes => Servitude_point » que l’attribut « Validite » est en_projet pour les nouvelles servitudes</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.serv_3">Contrôler dans la table « Servitudes => PosNumero_de_servitude » que les éléments suivants sont corrects (Hali=Left, Vali=Base, Grandeur= -)</md-checkbox>
                                             </div>
                                         </md-card-content>
@@ -224,7 +224,7 @@
                                         <md-card-content>
                                             <div class="md-title">STATUT MUTATION</div>
 
-                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('suiv_mut_')">Tout cocher</md-button><div id="suiv_mut_">
+                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('suiv_mut_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button><div id="suiv_mut_">
                                                 <md-checkbox class="md-primary" v-model="controleMutation.suiv_mut_1">Supprimer dans la gestion des mutations les « Topic » qui ne sont pas utilisés</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.suiv_mut_2">Mutation "En cours/Libérée"</md-checkbox>
                                             </div>
@@ -238,9 +238,9 @@
                                         <md-card-content>
                                             <div class="md-title">DIVERS</div>
 
-                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('div_')">Tout cocher</md-button><div id="div_">
-                                                <md-checkbox class="md-primary" v-model="controleMutation.div_1">Épurations des fichiers dans le répertoire de l'affaire</md-checkbox>
-                                                <md-checkbox class="md-primary" v-model="controleMutation.div_2">Contrôler que vous avez bien saisi le dernier numéro de point de l'affaire concernée dans le programme « Réservation des numéros »</md-checkbox>
+                                            <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('div_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button><div id="div_">
+                                                <md-checkbox class="md-primary" v-model="controleMutation.div_1">Épurations des fichiers dans le répertoire de l’affaire</md-checkbox>
+                                                <md-checkbox class="md-primary" v-model="controleMutation.div_2">Contrôler que vous avez bien saisi le dernier numéro de point de l’affaire concernée dans le programme « Réservation des numéros »</md-checkbox>
                                                 <md-checkbox class="md-primary" v-model="controleMutation.div_3">Contrôler rigoureusement les désignations, la balance ainsi que les observations pour le registre foncier</md-checkbox>
                                             </div>
                                         </md-card-content>
