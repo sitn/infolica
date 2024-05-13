@@ -252,8 +252,8 @@ export default {
           client_id: tmp.client_id,
         }
       }
-      
-      
+
+
       if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
         this.selectedFacture.numeros_id = [];
         tmp.numeros_id.forEach(x => this.selectedFacture.numeros_obj.push(this.numeros_references.filter(y => y.numero_id === x)[0]));
@@ -557,15 +557,15 @@ export default {
         this.$root.$emit("ShowMessage", "Le fichier '" + response + "' se trouve dans le dossier 'Téléchargement'")
       }).catch(err => handleException(err, this));
     },
-    
-    
+
+
     /**
      * Générer lettre d'accompagnement (rétablissement de PFP)
      */
     async generateLettrePFP(facture) {
       let formData = new FormData();
       formData.append('facture_id', facture.id);
-      
+
       this.$http.post(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_COURRIER_TEMPLATE_PFP_ENDPOINT,
         formData,
@@ -583,9 +583,9 @@ export default {
               .catch(err => handleException(err, this));
           }).catch(err => handleException(err, this));
         }
-      }).catch(err => handleException(err, this));  
-        
-        
+      }).catch(err => handleException(err, this));
+
+
     },
 
     /**
@@ -619,6 +619,7 @@ export default {
      * open emolument dialog
      */
     async openEmolumentsDialog() {
+      await this.$refs.emoluments.getTableauEmolumentsNew();
       await this.$refs.emoluments.initForm();
       this.$refs.emoluments.initFactureRepartition([]);
       this.$refs.emoluments.showEmolumentsDialog = true;

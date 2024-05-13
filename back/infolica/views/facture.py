@@ -67,15 +67,15 @@ def factures_new_view(request):
     """
     Add new facture
     """
-    # Check connected
-    if not check_connected(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise exc.HTTPForbidden()
 
     params = {}
     for key in request.params:
         if key == "numeros":
             params[key] = json.loads(request.params[key])
-        else: 
+        else:
             params[key] = request.params[key]
 
     Utils.addNewRecord(request, Facture, params)
@@ -101,8 +101,8 @@ def factures_update_view(request):
     """
     Update facture
     """
-    # Check connected
-    if not check_connected(request):
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_facture_edition']):
         raise exc.HTTPForbidden()
 
     # id_facture
@@ -122,7 +122,7 @@ def factures_update_view(request):
     for key in request.params:
         if key == "numeros":
             params[key] = json.loads(request.params[key])
-        else: 
+        else:
             params[key] = request.params[key]
 
     if not facture_record:
