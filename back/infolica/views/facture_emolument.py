@@ -466,7 +466,7 @@ def tableau_emoluments_new_view(request):
     Get tableau of emoluments
     """
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings["affaire_facture_edition"]):
+    if not check_connected(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
