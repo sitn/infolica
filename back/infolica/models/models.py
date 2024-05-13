@@ -1,19 +1,4 @@
-from sqlalchemy import (
-    Column,
-    Integer,
-    BigInteger,
-    Float,
-    Text,
-    String,
-    Date,
-    DateTime,
-    Boolean,
-    ARRAY,
-    ForeignKey,
-    UniqueConstraint,
-    Table,
-    text
-)
+from sqlalchemy import Column, Integer, BigInteger, Float, Text, String, Date, DateTime, Boolean, ARRAY, ForeignKey, UniqueConstraint, Table, text
 
 from sqlalchemy.orm import relationship
 
@@ -23,28 +8,27 @@ import datetime
 from .constant import Constant
 from .meta import Base
 
-association_fonction_role = Table('fonction_role', Base.metadata,
-    Column('id', primary_key=True),
-    Column('role_id', ForeignKey('role.id'), nullable=False),
-    Column('fonction_id', ForeignKey('fonction.id'), nullable=False)
-)
+association_fonction_role = Table("fonction_role", Base.metadata, Column("id", primary_key=True), Column("role_id", ForeignKey("role.id"), nullable=False), Column("fonction_id", ForeignKey("fonction.id"), nullable=False))
+
 
 class Role(Base):
-    __tablename__ = 'role'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "role"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     fonctions = relationship("Fonction", secondary=association_fonction_role)
 
+
 class Fonction(Base):
-    __tablename__ = 'fonction'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "fonction"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
 
+
 class Service(Base):
-    __tablename__ = 'service'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "service"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     service = Column(Text, nullable=False)
     abreviation = Column(Text, nullable=False)
@@ -61,10 +45,12 @@ class Service(Base):
     relpath = Column(Text)
     date_entree = Column(Date)
     date_sortie = Column(Date)
+    service_principal = Column(Boolean)
+
 
 class Operateur(Base):
-    __tablename__ = 'operateur'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "operateur"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     prenom = Column(Text, nullable=False)
@@ -82,24 +68,25 @@ class Operateur(Base):
     ldap_domain = Column(String(5))
     role = relationship("Role", uselist=False)
 
+
 class Cadastre(Base):
-    __tablename__ = 'cadastre'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "cadastre"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
-    service_at_id = Column(BigInteger, ForeignKey(Service.id))
+    service_urbanisme_id = Column(BigInteger, ForeignKey(Service.id))
 
 
 class ClientType(Base):
-    __tablename__ = 'client_type'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "client_type"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
 
 
 class Client(Base):
-    __tablename__ = 'client'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "client"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     type_client = Column(BigInteger, ForeignKey(ClientType.id), nullable=False)
     entreprise = Column(Text)
@@ -125,8 +112,8 @@ class Client(Base):
 
 
 class ClientMoralPersonne(Base):
-    __tablename__ = 'client_moral_personne'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "client_moral_personne"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     client_id = Column(BigInteger, ForeignKey(Client.id), nullable=False)
     titre = Column(Text)
@@ -135,8 +122,8 @@ class ClientMoralPersonne(Base):
 
 
 class Plan(Base):
-    __tablename__ = 'mo_distr_plan'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "mo_distr_plan"
+    __table_args__ = {"schema": "infolica"}
     idobj = Column(Text, primary_key=True)
     id_obj2 = Column(Text)
     planno = Column(Text)
@@ -151,28 +138,28 @@ class Plan(Base):
 
 
 class AffaireType(Base):
-    __tablename__ = 'affaire_type'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "affaire_type"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
     reservation_numeros_types_id = Column(ARRAY(BigInteger))
     modif_affaire_type_id_vers = Column(ARRAY(BigInteger))
     logique_processus = Column(ARRAY(BigInteger))
-    affaire_section_suivi = Column(Boolean, server_default=text('true'))
-    affaire_section_preavis = Column(Boolean, server_default=text('false'))
-    affaire_section_numeros = Column(Boolean, server_default=text('true'))
-    affaire_section_facture = Column(Boolean, server_default=text('false'))
-    affaire_section_ctrl_chefprojet_mo = Column(Boolean, server_default=text('false'))
-    affaire_section_ctrl_chefprojet_ppe = Column(Boolean, server_default=text('false'))
-    affaire_section_ctrl_coordprojets = Column(Boolean, server_default=text('false'))
-    affaire_section_ctrl_geometre = Column(Boolean, server_default=text('false'))
-    affaire_section_documents = Column(Boolean, server_default=text('true'))
+    affaire_section_suivi = Column(Boolean, server_default=text("true"))
+    affaire_section_preavis = Column(Boolean, server_default=text("false"))
+    affaire_section_numeros = Column(Boolean, server_default=text("true"))
+    affaire_section_facture = Column(Boolean, server_default=text("false"))
+    affaire_section_ctrl_chefprojet_mo = Column(Boolean, server_default=text("false"))
+    affaire_section_ctrl_chefprojet_ppe = Column(Boolean, server_default=text("false"))
+    affaire_section_ctrl_coordprojets = Column(Boolean, server_default=text("false"))
+    affaire_section_ctrl_geometre = Column(Boolean, server_default=text("false"))
+    affaire_section_documents = Column(Boolean, server_default=text("true"))
 
 
 class Affaire(Base):
-    __tablename__ = 'affaire'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "affaire"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     no_access = Column(Text)
     nom = Column(Text)
@@ -200,8 +187,8 @@ class Affaire(Base):
 
 
 class AffaireEtapeIndex(Base):
-    __tablename__ = 'affaire_etape_index'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "affaire_etape_index"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
@@ -209,8 +196,8 @@ class AffaireEtapeIndex(Base):
 
 
 class AffaireEtape(Base):
-    __tablename__ = 'affaire_etape'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "affaire_etape"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
@@ -223,8 +210,8 @@ class AffaireEtape(Base):
 
 
 class ModificationAffaireType(Base):
-    __tablename__ = 'modification_affaire_type'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "modification_affaire_type"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
@@ -234,26 +221,25 @@ class ModificationAffaireType(Base):
 
 
 class ModificationAffaire(Base):
-    __tablename__ = 'modification_affaire'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "modification_affaire"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id_mere = Column(Integer, ForeignKey(Affaire.id), nullable=False)
     affaire_id_fille = Column(Integer, ForeignKey(Affaire.id), nullable=False)
-    type_id = Column(BigInteger, ForeignKey(
-        ModificationAffaireType.id), nullable=False)
+    type_id = Column(BigInteger, ForeignKey(ModificationAffaireType.id), nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
 class FactureType(Base):
-    __tablename__ = 'facture_type'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "facture_type"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
 
 
 class FactureParametres(Base):
-    __tablename__ = 'facture_parametres'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "facture_parametres"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     valeur = Column(Float, nullable=False)
@@ -262,8 +248,8 @@ class FactureParametres(Base):
 
 
 class Facture(Base):
-    __tablename__ = 'facture'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "facture"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     type_id = Column(BigInteger, ForeignKey(FactureType.id), nullable=False)
     sap = Column(Text)
@@ -283,8 +269,8 @@ class Facture(Base):
 
 
 class TableauEmoluments(Base):
-    __tablename__ = 'tableau_emoluments'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "tableau_emoluments"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     domaine = Column(Text, nullable=False)
     categorie = Column(Text, nullable=False)
@@ -309,8 +295,8 @@ class TableauEmoluments(Base):
 
 
 class EmolumentAffaire(Base):
-    __tablename__ = 'emolument_affaire'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "emolument_affaire"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
     pente_pc = Column(Integer)
@@ -326,16 +312,16 @@ class EmolumentAffaire(Base):
 
 
 class EmolumentAffaireRepartition(Base):
-    __tablename__ = 'emolument_affaire_repartition'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "emolument_affaire_repartition"
+    __table_args__ = {"schema": "infolica"}
     emolument_affaire_id = Column(BigInteger, ForeignKey(EmolumentAffaire.id), primary_key=True, nullable=False)
     facture_id = Column(BigInteger, ForeignKey(Facture.id), primary_key=True, nullable=False)
     repartition = Column(Float, nullable=False)
 
 
 class Emolument(Base):
-    __tablename__ = 'emolument'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "emolument"
+    __table_args__ = {"schema": "infolica"}
     emolument_affaire_id = Column(BigInteger, ForeignKey(EmolumentAffaire.id), primary_key=True)
     tableau_emolument_id = Column(BigInteger, ForeignKey(TableauEmoluments.id), primary_key=True)
     position = Column(Text, primary_key=True)
@@ -347,8 +333,8 @@ class Emolument(Base):
 
 
 class SuiviMandat(Base):
-    __tablename__ = 'suivi_mandat'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "suivi_mandat"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     av_11 = Column(Boolean)  # CREATION DE L’AFFAIRE DANS INFOLICA
@@ -451,8 +437,8 @@ class SuiviMandat(Base):
 
 
 class ControleMutation(Base):
-    __tablename__ = 'controle_mutation'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "controle_mutation"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     terrain_1 = Column(Date)  # Terrain - Levés préliminaires
@@ -486,16 +472,18 @@ class ControleMutation(Base):
     cs_1 = Column(Boolean)  # Contrôler les numéros des points particuliers "660" ainsi que la valeur, la précision et la fiabilité des points sont en adéquations avec le niveau de tolérance de la zone de travail.
     cs_2 = Column(Boolean)  # Contrôler dans la table « Couverture_du_sol => Mise_a_jourCS » qu’il y a que les nouvelles surfaces créées dans votre affaire qu'il n'y a pas de surfaces sans géométrie.
     cs_3 = Column(Boolean)  # Contrôler dans la table « Couverture_du_sol => PosNumero_de_batiment » que les éléments suivants sont corrects (Hali=Center, Vali=Base, Grandeur=Petite.tres_petite).
-    cs_4 = Column(Boolean)  # Insérer les points dans la base Acces des bâtiments projets (voir Processus)
+    cs_4 = Column(Boolean)  # Modifier les attributs (raison, identification) dans les propriétés du bâtiment projeté
     cs_5 = Column(Boolean)  # Contrôler la géométrie des EGID (01.01.2012).
     cs_6 = Column(Boolean)  # Réservation des numéros de points particuliers (660).
     cs_7 = Column(Boolean)  # Réservation des numéros de bâtiments.
     cs_8 = Column(Boolean)  # Désignation des bâtiments et bâtiments souterrains.
+    cs_9 = Column(Boolean)  # Suppression du point SATAC dans la couche MO édition.
     od_1 = Column(Boolean)  # Tous les points de constructions "760" sont supprimés.
     od_2 = Column(Boolean)  # Contrôler les nouveaux éléments créés dans votre affaire et qu'il n'y a pas d'objets divers sans géométrie.
     od_3 = Column(Boolean)  # Contrôler que les bâtiments souterrains ont les bons numéros et une désignation.
-    od_4 = Column(Boolean)  # Insérer les points dans la base Acces des bâtiments projets (voir Processus)
+    od_4 = Column(Boolean)  # Modifier les attributs (raison, identification) dans les propriétés du bâtiment projeté
     od_5 = Column(Boolean)  # Contrôler que l'attribut « Objets_divers => SymboleElement_surfacique » est rempli pour les piscines.
+    od_6 = Column(Boolean)  # Suppression du point SATAC dans la couche MO édition
     bat_1 = Column(Boolean)  # Contrôler dans la table « Adresses_des_batiments => Mise_a_jourBAT » qu’il y a bien que les nouveaux éléments que vous avez créés dans votre affaire.
     bat_2 = Column(Boolean)  # Contrôler dans la table « Adresses_des_batiments => PosNumero_maison » que les éléments suivants sont corrects (Hali=Center, Vali=Half, Grandeur=Petite.assez_petite).
     bat_3 = Column(Boolean)  # Contrôler que les points adresses sont dans les géométries.
@@ -514,8 +502,8 @@ class ControleMutation(Base):
 
 
 class ControlePPE(Base):
-    __tablename__ = 'controle_ppe'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "controle_ppe"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
@@ -677,8 +665,8 @@ class ControlePPE(Base):
 
 
 class ControleGeometre(Base):
-    __tablename__ = 'controle_geometre'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "controle_geometre"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id))
@@ -761,8 +749,8 @@ class ControleGeometre(Base):
 
 
 class ControleGeometre_old(Base):
-    __tablename__ = 'controle_geometre_old'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "controle_geometre_old"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     check_1 = Column(Boolean)  # Nom du cadastre et n° de bien-fonds corrects (cf extrait RF) et identiques sur tous les documents
@@ -837,23 +825,23 @@ class ControleGeometre_old(Base):
 
 
 class NumeroType(Base):
-    __tablename__ = 'numero_type'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "numero_type"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
     ordre = Column(BigInteger)
 
 
 class NumeroEtat(Base):
-    __tablename__ = 'numero_etat'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "numero_etat"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
 
 
 class Numero(Base):
-    __tablename__ = 'numero'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "numero"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
     type_id = Column(BigInteger, ForeignKey(NumeroType.id), nullable=False)
@@ -866,8 +854,8 @@ class Numero(Base):
 
 
 class ReservationNumerosMO(Base):
-    __tablename__ = 'reservation_numeros'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "reservation_numeros"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     cadastre_id = Column(BigInteger, ForeignKey(Cadastre.id), nullable=False)
@@ -883,22 +871,20 @@ class ReservationNumerosMO(Base):
 
 
 class NumeroEtatHisto(Base):
-    __tablename__ = 'numero_etat_histo'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "numero_etat_histo"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     numero_id = Column(BigInteger, ForeignKey(Numero.id), nullable=False)
-    numero_etat_id = Column(BigInteger, ForeignKey(
-        NumeroEtat.id), nullable=False)
+    numero_etat_id = Column(BigInteger, ForeignKey(NumeroEtat.id), nullable=False)
     date = Column(Date, default=datetime.datetime.utcnow, nullable=False)
 
 
 class NumeroDiffere(Base):
-    __tablename__ = 'numero_differe'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "numero_differe"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     numero_id = Column(BigInteger, ForeignKey(Numero.id), nullable=False)
-    date_entree = Column(
-        Date, default=datetime.datetime.utcnow, nullable=False)
+    date_entree = Column(Date, default=datetime.datetime.utcnow, nullable=False)
     date_sortie = Column(Date)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
     req_radiation = Column(Boolean)
@@ -907,35 +893,34 @@ class NumeroDiffere(Base):
 
 
 class NumeroRelationType(Base):
-    __tablename__ = 'numero_relation_type'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "numero_relation_type"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
 
 
 class NumeroRelation(Base):
-    __tablename__ = 'numero_relation'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "numero_relation"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     numero_id_base = Column(Integer, ForeignKey(Numero.id), nullable=False)
     numero_id_associe = Column(Integer, ForeignKey(Numero.id), nullable=False)
-    relation_type_id = Column(BigInteger, ForeignKey(
-        NumeroRelationType.id), nullable=False)
+    relation_type_id = Column(BigInteger, ForeignKey(NumeroRelationType.id), nullable=False)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id))
 
     UniqueConstraint(numero_id_base, numero_id_associe, relation_type_id, affaire_id)
 
 
 class AffaireNumeroType(Base):
-    __tablename__ = 'affaire_numero_type'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "affaire_numero_type"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
 
 
 class AffaireNumero(Base):
-    __tablename__ = 'affaire_numero'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "affaire_numero"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     numero_id = Column(BigInteger, ForeignKey(Numero.id), nullable=False)
@@ -945,15 +930,15 @@ class AffaireNumero(Base):
 
 
 class PreavisType(Base):
-    __tablename__ = 'preavis_type'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "preavis_type"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     nom = Column(Text, nullable=False)
 
 
 class Preavis(Base):
-    __tablename__ = 'preavis'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "preavis"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     affaire_id = Column(BigInteger, ForeignKey(Affaire.id), nullable=False)
     service_id = Column(BigInteger, ForeignKey(Service.id), nullable=False)
@@ -967,8 +952,8 @@ class Preavis(Base):
 
 
 class PreavisDecision(Base):
-    __tablename__ = 'preavis_decision'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "preavis_decision"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
     preavis_type_id = Column(BigInteger, ForeignKey(PreavisType.id))
@@ -984,8 +969,8 @@ class PreavisDecision(Base):
 
 
 class PreavisRemarque(Base):
-    __tablename__ = 'preavis_remarque'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "preavis_remarque"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     preavis_id = Column(BigInteger, ForeignKey(Preavis.id), nullable=False)
     remarque = Column(Text, nullable=False)
@@ -995,8 +980,8 @@ class PreavisRemarque(Base):
 
 
 class PreavisGlossaire(Base):
-    __tablename__ = 'preavis_glossaire'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "preavis_glossaire"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     service_id = Column(BigInteger, ForeignKey(Service.id), nullable=False)
     ordre = Column(Integer)
@@ -1006,8 +991,8 @@ class PreavisGlossaire(Base):
 
 
 class GeosBalance(Base):
-    __tablename__ = 'geos_balance'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "geos_balance"
+    __table_args__ = {"schema": "infolica"}
     idobj = Column(String(40), primary_key=True)
     base = Column(String(50))
     numero_new = Column(String(50))
@@ -1027,12 +1012,12 @@ class GeosBalance(Base):
     gid_geom_old = Column(String(50))
     gid_numero_old = Column(String(50))
     gid_mutation = Column(String(50))
-    geom = Column(Geometry('POINT'))
+    geom = Column(Geometry("POINT"))
 
 
 class EtapeMailer(Base):
-    __tablename__ = 'etape_mailer'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "etape_mailer"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     etape_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id), nullable=False)
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
@@ -1040,8 +1025,8 @@ class EtapeMailer(Base):
 
 
 class NotesMAJ(Base):
-    __tablename__ = 'notes_maj'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "notes_maj"
+    __table_args__ = {"schema": "infolica"}
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     operateur_id = Column(BigInteger, ForeignKey(Operateur.id), nullable=False)
     version = Column(Text, nullable=False)
@@ -1052,8 +1037,8 @@ class NotesMAJ(Base):
 
 
 class ControleEtape(Base):
-    __tablename__ = 'controle_etape'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "controle_etape"
+    __table_args__ = {"schema": "infolica"}
     nom = Column(String(40), primary_key=True)
     etape_id = Column(BigInteger, ForeignKey(AffaireEtapeIndex.id))
     force = Column(String(15))
@@ -1061,8 +1046,8 @@ class ControleEtape(Base):
 
 
 class ControleEtapeTypeAffaire(Base):
-    __tablename__ = 'controle_etape_type_affaire'
-    __table_args__ = {'schema': 'infolica'}
+    __tablename__ = "controle_etape_type_affaire"
+    __table_args__ = {"schema": "infolica"}
     affaire_type_id = Column(BigInteger, ForeignKey(AffaireType.id), primary_key=True)
     controle_etape_nom = Column(String(40), ForeignKey(ControleEtape.nom), primary_key=True)
 
@@ -1073,9 +1058,8 @@ class ControleEtapeTypeAffaire(Base):
 
 
 class VNumeros(Base):
-    __tablename__ = 'v_numeros'
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __tablename__ = "v_numeros"
+    __table_args__ = {"schema": "infolica", "info": dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     cadastre = Column(Text)
     cadastre_id = Column(BigInteger)
@@ -1100,9 +1084,8 @@ class VNumeros(Base):
 
 
 class VNumerosAffaires(Base):
-    __tablename__ = 'v_numeros_affaires'
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __tablename__ = "v_numeros_affaires"
+    __table_args__ = {"schema": "infolica", "info": dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     numero_id = Column(BigInteger)
     affaire_id = Column(BigInteger)
@@ -1140,9 +1123,8 @@ class VNumerosAffaires(Base):
 
 
 class VAffaire(Base):
-    __tablename__ = 'v_affaires'
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __tablename__ = "v_affaires"
+    __table_args__ = {"schema": "infolica", "info": dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     no_access = Column(Text)
     nom = Column(Text)
@@ -1229,9 +1211,8 @@ class VAffaire(Base):
 
 
 class VEnvois(Base):
-    __tablename__ = 'v_envois'
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __tablename__ = "v_envois"
+    __table_args__ = {"schema": "infolica", "info": dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger)
     affaire_nom = Column(Text)
@@ -1247,9 +1228,8 @@ class VEnvois(Base):
 
 
 class VEtapesAffaires(Base):
-    __tablename__ = 'v_etapes_affaires'
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __tablename__ = "v_etapes_affaires"
+    __table_args__ = {"schema": "infolica", "info": dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger)
     etape_id = Column(BigInteger, primary_key=True)
@@ -1273,9 +1253,8 @@ class VEtapesAffaires(Base):
 
 
 class VAffairesPreavis(Base):
-    __tablename__ = 'v_affaires_preavis'
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __tablename__ = "v_affaires_preavis"
+    __table_args__ = {"schema": "infolica", "info": dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger)
     service = Column(Text)
@@ -1295,9 +1274,8 @@ class VAffairesPreavis(Base):
 
 
 class VTableauBord(Base):
-    __tablename__ = 'v_tableau_de_bord'
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __tablename__ = "v_tableau_de_bord"
+    __table_args__ = {"schema": "infolica", "info": dict(is_view=True)}
     affaire_id = Column(BigInteger, primary_key=True)
     affaire_nom = Column(Text)
     delai = Column(Integer)
@@ -1316,9 +1294,8 @@ class VTableauBord(Base):
 
 
 class VEmolumentsFactures(Base):
-    __tablename__ = 'v_emoluments_factures'
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __tablename__ = "v_emoluments_factures"
+    __table_args__ = {"schema": "infolica", "info": dict(is_view=True)}
     facture_id = Column(BigInteger, primary_key=True)
     domaine = Column(Text)
     categorie = Column(Text)
@@ -1333,9 +1310,8 @@ class VEmolumentsFactures(Base):
 
 
 class VNumerosRelations(Base):
-    __tablename__ = 'v_numeros_relations'
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __tablename__ = "v_numeros_relations"
+    __table_args__ = {"schema": "infolica", "info": dict(is_view=True)}
     affaire_id = Column(BigInteger)
     numero_relation_id = Column(BigInteger, primary_key=True)
     numero_base_id = Column(BigInteger)
@@ -1361,9 +1337,8 @@ class VNumerosRelations(Base):
 
 
 class VDocumentsAffaires(Base):
-    __tablename__ = 'v_documents_affaires'
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __tablename__ = "v_documents_affaires"
+    __table_args__ = {"schema": "infolica", "info": dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     nom = Column(Text)
     chemin = Column(Text)
@@ -1373,9 +1348,8 @@ class VDocumentsAffaires(Base):
 
 
 class VFactures(Base):
-    __tablename__ = 'v_factures'
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __tablename__ = "v_factures"
+    __table_args__ = {"schema": "infolica", "info": dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger)
     affaire_vref = Column(Text)
@@ -1416,8 +1390,7 @@ class VFactures(Base):
 
 class VReservationNumerosMO(Base):
     __tablename__ = "v_reservation_numeros_mo"
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __table_args__ = {"schema": "infolica", "info": dict(is_view=True)}
     id = Column(BigInteger, primary_key=True)
     affaire_id = Column(BigInteger)
     cadastre_id = Column(BigInteger)
@@ -1442,10 +1415,10 @@ class VReservationNumerosMO(Base):
     plan_idrepplan = Column(String(length=40))
     plan_base = Column(String(length=50))
 
+
 class VPlan(Base):
-    __tablename__ = 'v_plans_mo'
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __tablename__ = "v_plans_mo"
+    __table_args__ = {"schema": "infolica", "info": dict(is_view=True)}
     idobj = Column(Text, primary_key=True)
     id_obj2 = Column(Text)
     cadastre_id = Column(BigInteger)
@@ -1459,10 +1432,10 @@ class VPlan(Base):
     idrepplan = Column(Text)
     base = Column(Text)
 
+
 class VProchainNumeroDisponible(Base):
-    __tablename__ = 'v_prochain_numero_disponible'
-    __table_args__ = {'schema': 'infolica',
-                      'info': dict(is_view=True)}
+    __tablename__ = "v_prochain_numero_disponible"
+    __table_args__ = {"schema": "infolica", "info": dict(is_view=True)}
     cadastre_id = Column(BigInteger, primary_key=True)
     cadastre = Column(Text)
     plan = Column(Integer, primary_key=True)

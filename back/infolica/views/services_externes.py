@@ -47,23 +47,21 @@ def services_view(request):
 
     cadastre_id = request.params['cadastre_id'] if 'cadastre_id' in request.params else None
 
-    if cadastre_id is not None:
-        cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == cadastre_id).first()
-        service_at_id = cadastre.service_at_id
-
-        # filtrer le service de l'aménagement du territoire
-        records = request.dbsession.query(Service).filter(Service.ordre >= 20).union(
-            request.dbsession.query(Service).filter(Service.id == service_at_id))
-
-    else:
-        records = request.dbsession.query(Service)
-
-    records = records.filter(
+    records = request.dbsession.query(Service).filter(
+        Service.service_principal == True,
         or_(
             Service.date_sortie == None,
             Service.date_sortie > now,
         )
-    ).order_by(Service.ordre.asc()).all()
+    )
+
+    if cadastre_id is not None:
+        cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == cadastre_id).first()
+
+        if cadastre.service_urbanisme_id is not None:
+            records = records.union(request.dbsession.query(Service).filter(Service.id == cadastre.service_urbanisme_id))
+
+    records = records.order_by(Service.ordre.asc()).all()
 
     return Utils.serialize_many(records)
 
