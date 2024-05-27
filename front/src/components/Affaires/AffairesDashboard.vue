@@ -241,20 +241,27 @@ export default {
           _this.affaire = obj;
           _this.affaireLoaded = true;
 
-          _this.parentAffaireReadOnly = ((_this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined) || (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined));
+          _this.affaireEnvoyee = _this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined;
+          _this.affaireValidee = _this.affaire.date_validation !== null && _this.affaire.date_validation !== undefined;
+          _this.affaireCloturee = _this.affaire.date_cloture !== null && _this.affaire.date_cloture !== undefined;
+          _this.affairePasCloturee = _this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined;
+
+          _this.parentAffaireReadOnly = (_this.affaireCloturee || _this.affaireEnvoyee);
+
           _this.permission.admin_permissions = false;
-          _this.permission.abandonAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined);
-          _this.permission.cloreAffaireEnabled = (_this.affaire.date_cloture === null || _this.affaire.date_cloture === undefined) && (_this.affaire.date_envoi !== null && _this.affaire.date_envoi !== undefined);
+          _this.permission.abandonAffaireEnabled = _this.affairePasCloturee;
+          _this.permission.cloreAffaireEnabled = _this.affairePasCloturee && _this.affaireEnvoyee;
           _this.permission.editNumerosAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_NUMERO_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editNumerosMOAllowed = checkPermission(process.env.VUE_APP_NUMERO_MO_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editControleGeometreAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_CONTROLE_GEOMETRE_EDITION) && !_this.parentAffaireReadOnly;
-          _this.permission.editSuiviMandatAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_SUIVI_EDITION) && !(_this.affaire.date_validation !== null && _this.affaire.date_validation !== undefined);
+          _this.permission.editSuiviMandatAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_SUIVI_EDITION) && !_this.affaireValidee;
           _this.permission.editEmolumentAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editFactureAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.affaireCloture = checkPermission(process.env.VUE_APP_AFFAIRE_CLOTURE);
           _this.permission.affaireReactivation = checkPermission(process.env.VUE_APP_AFFAIRE_REACTIVATION);
           _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION) && !_this.parentAffaireReadOnly;
+          _this.permission.editAffaireEtapeAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
 
 
           if (_this.affaire.type_id === _this.typesAffaires_conf.ppe) {
