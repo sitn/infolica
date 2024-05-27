@@ -216,7 +216,9 @@ export default {
     async updateAffaire(attr) {
       let formData = new FormData();
       formData.append('id_affaire', this.affaire.id);
-      formData.append(attr, moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
+      attr.split(",").forEach(x => {
+        formData.append(x, moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
+      })
 
       this.$http.put(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
@@ -287,6 +289,14 @@ export default {
             text: "Mettre à jour la date d'envoi de l'affaire",
             value: true,
             date_type: "date_envoi",
+            show: true
+          };
+          this.cloreAffaire = false;
+        } else if (this.affaire.type_id === this.typesAffaires_conf.modification_duplicata) {
+          this.updateAffaireDate = {
+            text: "Mettre à jour les dates d'envoi et de validation de l'affaire",
+            value: true,
+            date_type: "date_envoi,date_validation",
             show: true
           };
           this.cloreAffaire = false;
