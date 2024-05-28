@@ -130,7 +130,7 @@
                                             <div class="md-layout md-gutter">
                                                 <div id="plan" class="md-layout-item md-size-50" v-if="affaire.type_id === typesAffaires_conf.cadastration">
                                                     <div class="md-subhead">Contrôles du plan</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('plan_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('plan_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                     <div id="plan_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.plan_cadastre">Nom du cadastre</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.plan_titre">Titre</md-checkbox>
@@ -144,7 +144,7 @@
                                                     <br>
 
                                                     <div class="md-subhead">Contrôles de la base de données</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('geos_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('geos_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                     <div id="geos_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_couvsol_numerotation_pt_particuliers">Contrôler que la numérotation des nouveaux points particulier "660" ont été reservés dans l'affaire</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_couvsol_numerotation_bat">Contrôler que la numérotation des nouveaux numéros de bâtiments ont été reservés dans l'affaire</md-checkbox>
@@ -160,7 +160,7 @@
 
                                                 <div class="md-layout-item md-size-50" v-if="affaire.type_id === typesAffaires_conf.cadastration">
                                                     <div class="md-subhead">Contrôles des désignations</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('desbal_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('desbal_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                     <div id="desbal_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.desbal_cadastre">Nom du cadastre</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.desbal_titre">Titre</md-checkbox>
@@ -190,7 +190,7 @@
                                                     <br>
 
                                                     <div class="md-subhead">Contrôles du tableau des émoluments</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('emol_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('emol_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                     <div id="emol_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.emol_frais_cad">Frais cadastration (1 seul bâtiment)</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.emol_frais_rf">Frais RF</md-checkbox>
@@ -215,7 +215,7 @@
                                             <div class="md-layout md-gutter">
                                                 <div class="md-layout-item md-size-50">
                                                     <div class="md-subhead">Respect des directives du SCAT, SAGR ou service de l'urbanisme</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('preavis_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('preavis_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                     <div id="preavis_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.preavis_exhaustivite_demandes">Toutes les autorisations on été demandées</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.preavis_respect_sat_sagr">Remarques de SAT et SAGR respectées</md-checkbox>
@@ -229,7 +229,7 @@
 
                                                 <div class="md-layout-item md-size-50">
                                                     <div class="md-subhead">Contrôle du plan</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('plan_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('plan_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                     <div id="plan_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.plan_cadastre">Nom du cadastre</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.plan_titre">Titre</md-checkbox>
@@ -245,7 +245,7 @@
 
                                                 <div class="md-layout-item md-size-50">
                                                     <div class="md-subhead">Contrôle des désignations et de la balance</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('desbal_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('desbal_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                     <div id="desbal_">
                                                         <div class="md-subhead"> - Désignations</div>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.desbal_cadastre">Nom du cadastre</md-checkbox>
@@ -294,7 +294,7 @@
                                                     <br>
 
                                                     <div class="md-subhead">Contrôle du tableau des émoluments</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('emol_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('emol_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                     <div id="emol_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.emol_frais_division">Frais division de base saisie</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.emol_frais_materialisation">Frais de matérialisation</md-checkbox>
@@ -311,7 +311,7 @@
 
                                                 <div class="md-layout-item md-size-50">
                                                     <div class="md-subhead">Contrôle de la base de données</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('geos_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('geos_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                     <div id="geos_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_bf_val_pt">Contrôler la valeurs des points.</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_bf_egris_egrid">Contrôler que l'attribut "EGRIS_EGRID" dans la table "Immeuble" a bien été effacé pour les nouveaux biens-fonds et les nouveaux domaines pulics.</md-checkbox>
@@ -360,7 +360,7 @@
                                             <div class="md-layout md-gutter">
                                                 <div class="md-layout-item md-size-30">
                                                     <div class="md-subhead">Général</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('ctrl_coord-mpd-gen_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('ctrl_coord-mpd-gen_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                     <div id="ctrl_coord-mpd-gen_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.ap_21">Répertoire de travail (bon endroit, bonne structure)</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.gen_pdf_travaux">Fichier PDF après MPD figurant les travaux en couleur</md-checkbox>
@@ -372,7 +372,7 @@
 
                                                 <div class="md-layout-item md-size-30">
                                                     <div class="md-subhead">Base de données</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('ctrl_coord-mpd-geos_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('ctrl_coord-mpd-geos_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                     <div id="ctrl_coord-mpd-geos_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_couleur_pastilles">Toutes les pastilles sont vertes ou grises</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.geos_couvsol_numerotation_pt_particuliers">Réservation des numéros de points particuliers (660)</md-checkbox>
@@ -385,7 +385,7 @@
 
                                                 <div class="md-layout-item md-size-30">
                                                     <div class="md-subhead">Normes</div>
-                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('ctrl_coord-mpd-normes_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                    <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('ctrl_coord-mpd-normes_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                     <div id="ctrl_coord-mpd-normes_">
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.normes_respect_petits_objects">Les objets du type : balcons, petits bâtiments, petites surfaces de nature respectent les normes (ne pas en saisir trop)</md-checkbox>
                                                         <md-checkbox class="md-primary" v-model="suiviMandat.normes_bat_couv_digitalises">Pas de bâtiments ni de couverts digitalisés</md-checkbox>
@@ -407,7 +407,7 @@
                                         <div class="md-layout md-gutter md-alignment-top-space-between">
                                             <div class="md-layout-item md-size-30">
                                                 <div class="md-subhead">Plan</div>
-                                                <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('plan_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('plan_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                 <div id="plan_">
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.plan_cadastre">Nom du cadastre</md-checkbox>
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.plan_titre">Titre</md-checkbox>
@@ -419,7 +419,7 @@
                                             </div>
                                             <div class="md-layout-item md-size-30">
                                                 <div class="md-subhead">Contrôle calcul réseau et base de données</div>
-                                                <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('pfp3_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('pfp3_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                 <div id="pfp3_">
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.pfp3_ctrl_calcul">Contrôle du calcul (WI, NABLA, ZI, etc...)</md-checkbox>
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.pfp3_ctrl_fiabilite">Contrôle de la fiabilité des nouveaux points</md-checkbox>
@@ -435,7 +435,7 @@
 
                                             <div class="md-layout-item md-size-30">
                                                 <div class="md-subhead">Facture</div>
-                                                <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('fact_')" v-if="permission.editEmolumentAllowed">Tout cocher</md-button>
+                                                <md-button style="margin-left: 30px; background-color: lightgrey;" class="md-raised md-dense" @click="selectAll('fact_')" v-if="permission.editSuiviMandatAllowed">Tout cocher</md-button>
                                                 <div id="fact_">
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.fact_forfait">Forfait de 380 (TTC) par point (mettre 352 dans le tableau des émoluments)</md-checkbox>
                                                     <md-checkbox class="md-primary" v-model="suiviMandat.fact_adresse_correcte">Adresse de facturation correcte (en principe pas SGRF)</md-checkbox>

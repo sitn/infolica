@@ -69,7 +69,6 @@ export default {
         editAffaireTypeAllowed: false,
         editClientAllowed: false,
         editControleGeometreAllowed: false,
-        editEmolumentAllowed: false,
         editFactureAllowed: false,
         editNumerosReferencesAllowed: false,
         editNumerosAllowed: false,
@@ -80,6 +79,7 @@ export default {
         editEmolumentFreeze: false,
         showRemaniementParcellaireLoadingBtn: false,
         showEmolumentRepartition_saveToFactures_btn: false,
+        editAffaireEtapeAllowed: false,
       },
       showConfirmAbandonAffaireDialog: false,
       showConfirmAbandonErrorAffaireDialog: false,
@@ -255,13 +255,12 @@ export default {
           _this.permission.editNumerosMOAllowed = checkPermission(process.env.VUE_APP_NUMERO_MO_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editControleGeometreAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_CONTROLE_GEOMETRE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editSuiviMandatAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_SUIVI_EDITION) && !_this.affaireValidee;
-          _this.permission.editEmolumentAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editFactureAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_FACTURE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.affaireCloture = checkPermission(process.env.VUE_APP_AFFAIRE_CLOTURE);
           _this.permission.affaireReactivation = checkPermission(process.env.VUE_APP_AFFAIRE_REACTIVATION);
           _this.permission.editAffaireAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION) && !_this.parentAffaireReadOnly;
           _this.permission.editClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION) && !_this.parentAffaireReadOnly;
-          _this.permission.editAffaireEtapeAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_EDITION);
+          _this.permission.editAffaireEtapeAllowed = checkPermission(process.env.VUE_APP_AFFAIRE_ETAPE_EDITION);
 
 
           if (_this.affaire.type_id === _this.typesAffaires_conf.ppe) {
@@ -289,7 +288,6 @@ export default {
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID)) {
             _this.permission.editAffaireAllowed = true;
             _this.permission.editFactureAllowed = true;
-            _this.permission.editEmolumentAllowed = true;
             _this.permission.editClientAllowed = true;
             _this.permission.cloreEmolumentEnabled = true;
             _this.permission.editEmolumentTva = true;
@@ -300,7 +298,6 @@ export default {
 
           // Opérateur MO peut modifier les informations générales de l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_MO_ROLE_ID)) {
-            _this.permission.editFactureAllowed = _this.permission.editFactureAllowed && _this.affaire.type_id === _this.typesAffaires_conf.cadastration;
             _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
           }
@@ -314,7 +311,6 @@ export default {
 
           // Opérateur mo_ppe peut modifier les informations générales de l'affaire
           if(role_id && !isNaN(role_id) && Number(role_id) === Number(process.env.VUE_APP_MO_PPE_ROLE_ID)) {
-            _this.permission.editFactureAllowed = _this.permission.editFactureAllowed && _this.affaire.type_id === _this.typesAffaires_conf.cadastration;
             _this.permission.editNumerosReferencesAllowed = !_this.parentAffaireReadOnly;
             _this.permission.editAffaireAllowed = !_this.parentAffaireReadOnly;
             _this.permission.affaireCloture = [ _this.typesAffaires_conf.ppe, _this.typesAffaires_conf.modification_ppe].includes(_this.affaire.type_id);
