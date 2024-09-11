@@ -11,8 +11,8 @@ from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
 from infolica.models.models import (Affaire, AffaireNumero, Cadastre, Facture,
                                     Numero, NumeroDiffere, NumeroEtat,
-                                    NumeroEtatHisto, NumeroType, VNumeros,
-                                    VNumerosAffaires)
+                                    NumeroEtatHisto, NumeroType, NumeroRelation,
+                                    VNumeros, VNumerosAffaires)
 from infolica.scripts.authentication import check_connected
 from infolica.scripts.utils import Utils
 from pyramid.view import view_config
@@ -219,6 +219,62 @@ def numeros_update_view(request):
             numeros_etat_histo_new_view(request, params)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Numero.__tablename__))
+
+
+@view_config(route_name='delete_numero', request_method='DELETE', renderer='json')
+def numeros_delete_view(request):
+    """
+    Delete numeros
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+
+    # Get numero id
+    # id = request.params['id'] if 'id' in request.params else None
+    numero_id = request.matchdict['id']
+    affaire_id = request.params.get("affaire_id")
+
+    # get affaire to check if it is already sent
+    aff = request.dbsession.query(Affaire).get(affaire_id)
+    if aff.date_envoi is not None:
+        raise CustomError(CustomError.SENT_AFFAIRE_EXCEPTION.format(affaire_id))
+
+    # get numero_relation and remove it
+    nr = request.dbsession.query(NumeroRelation).filter(
+        NumeroRelation.numero_id_associe==numero_id,
+    ).all()
+    for tmp in nr:
+        request.dbsession.delete(tmp)
+
+    # get numero_differe and remove it
+    nd = request.dbsession.query(NumeroDiffere).filter(
+        NumeroDiffere.numero_id==numero_id,
+    ).all()
+    for tmp in nd:
+        request.dbsession.delete(tmp)
+
+    # get numero_etat_histo and remove it
+    neh = request.dbsession.query(NumeroEtatHisto).filter(
+        NumeroEtatHisto.numero_id==numero_id
+    ).all()
+    for tmp in neh:
+        request.dbsession.delete(tmp)
+
+    # get numero_affaire and remove it
+    an = request.dbsession.query(AffaireNumero).filter(
+        AffaireNumero.numero_id==numero_id
+    ).all()
+    for tmp in an:
+        request.dbsession.delete(tmp)
+
+    # get numero and remove it
+    num = request.dbsession.query(Numero).filter(
+        Numero.id==numero_id
+    ).first()
+    request.dbsession.delete(num)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Numero.__tablename__))
 
 
 @view_config(route_name='numero_by_id', request_method='DELETE', renderer='json')
