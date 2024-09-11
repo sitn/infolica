@@ -240,6 +240,16 @@ def numeros_delete_view(request):
     if aff.date_envoi is not None:
         raise CustomError(CustomError.SENT_AFFAIRE_EXCEPTION.format(affaire_id))
 
+    # make sure that bf to delete is reserved in current affaire
+    check_reserved_bf = request.dbsession.query(AffaireNumero).filter(
+        AffaireNumero.numero_id==numero_id,
+        AffaireNumero.affaire_id==affaire_id,
+        AffaireNumero.type_id==request.registry.settings['affaire_numero_type_nouveau_id'],
+    ).first()
+    if check_reserved_bf is None:
+        raise CustomError(f"Impossible de supprimer le numéro {numero_id}, il ne figure pas dans la liste des biens-fonds réservés pour l'affaire {affaire_id}")
+
+
     # get numero_relation and remove it
     nr = request.dbsession.query(NumeroRelation).filter(
         NumeroRelation.numero_id_associe==numero_id,
