@@ -23,21 +23,21 @@ def reservation_numeros_mo_by_affaire_id_view(request):
     cadastre_id = request.params["cadastre_id"] if "cadastre_id" in request.params else None
     startDate = request.params["startDate"] if "startDate" in request.params else None
     endDate = request.params["endDate"] if "endDate" in request.params else None
-    
+
     query = request.dbsession.query(VReservationNumerosMO).filter(VReservationNumerosMO.affaire_id == affaire_id).order_by(VReservationNumerosMO.id.desc())
 
     if not cadastre_id is None:
         query = query.filter(VReservationNumerosMO.cadastre_id == cadastre_id)
-    
+
     if not startDate is None:
         query = query.filter(VReservationNumerosMO.date >= startDate)
-    
+
     if not endDate is None:
         query = query.filter(VReservationNumerosMO.date <= endDate)
-    
+
     if request.params == {} or (cadastre_id is None and startDate is None):
         query = query.limit(searchLimit)
-    
+
     query = query.all()
 
     return Utils.serialize_many(query)
@@ -59,7 +59,7 @@ def reservation_numeros_mo_new_view(request):
     cadastres_BrotPlamboz_Plamboz_id = [int(i) for i in request.registry.settings['cadastres_BrotPlamboz_Plamboz_id'].split(",")]
     cadastres_Neuchatel_Coudre_id = [int(i) for i in request.registry.settings['cadastres_Neuchatel_Coudre_id'].split(",")]
     cadastres_Sauge_StAubin_id = [int(i) for i in request.registry.settings['cadastres_Sauge_StAubin_id'].split(",")]
-    
+
     # get request params
     cadastre_id = int(request.params["cadastre_id"])
     type_id = int(request.params["type_id"])
@@ -131,7 +131,57 @@ def numero_mo_next_view(request):
         query = query.filter(VProchainNumeroDisponible.numero_type_id == type_id)
     if plan:
         query = query.filter(VProchainNumeroDisponible.plan == plan)
-    
+
     query = query.all()
-        
+
     return Utils.serialize_many(query)
+
+
+@view_config(route_name='affaire_numero_mo', request_method='GET', renderer='json')
+def affaire_numero_mo_view(request):
+    """
+    Return all numeros MO and linked affaires par cadastre, type et plan
+    """
+    # Check connected
+    if not check_connected(request):
+        raise exc.HTTPForbidden()
+
+    numero = request.params['numero'] if 'numero' in request.params else None
+    type_id = request.params['type_id'] if 'type_id' in request.params else None
+    cadastre_id = request.params['cadastre_id'] if 'cadastre_id' in request.params else None
+    plan = request.params['plan'] if 'plan' in request.params else None
+
+    searchLimit = int(request.registry.settings['search_limit'])
+
+    query = request.dbsession.query(VReservationNumerosMO)
+    if numero:
+        query = query.filter(
+            VReservationNumerosMO.numero_de <= numero,
+            VReservationNumerosMO.numero_a >= numero,
+        )
+    if cadastre_id:
+        query = query.filter(VReservationNumerosMO.cadastre_id == cadastre_id)
+    if type_id:
+        query = query.filter(VReservationNumerosMO.type_id == type_id)
+    if plan:
+        query = query.filter(VReservationNumerosMO.plan == plan)
+
+    query = query.order_by(
+        VReservationNumerosMO.cadastre.asc(),
+        VReservationNumerosMO.type_numero.asc(),
+        VReservationNumerosMO.plan_no.asc(),
+        VReservationNumerosMO.numero_de.asc()
+    )
+
+    limitStatus = "false"
+    if query.count() > searchLimit:
+        query = query.limit(searchLimit)
+        limitStatus = "true"
+
+    query = query.all()
+
+    result = {
+        "data": Utils.serialize_many(query),
+        "limitStatus": limitStatus,
+    }
+    return result

@@ -1,21 +1,21 @@
 <div class="numeros">
     <md-toolbar class="justifyTitleBtn">
-        <h1>Immeubles et numéros</h1> 
+        <h1>Immeubles et numéros</h1>
     </md-toolbar>
 
     <div class="md-layout md-gutter md-alignment-top-space-between">
         <!-- Immeubles -->
         <div class="md-layout-item md-size-50 md-small-size-100">
-            
+
             <div class="numerosResults">
-                
+
                 <md-card>
                     <!-- Search -->
                     <!-- Search Header -->
                     <md-card-header>
                         <div class="md-title">Immeubles</div>
                     </md-card-header>
-                    
+
                     <!-- Search Content -->
                     <md-card-content>
                         <div class="md-layout md-gutter">
@@ -38,7 +38,7 @@
                                 <md-checkbox v-model="search.matDiff" class="md-primary">Matérialisation différée</md-checkbox>
                             </div>
                         </div>
-                        
+
                         <div class="md-layout md-gutter">
                             <!-- Cadastre -->
                             <div class="md-layout-item md-small-size-30">
@@ -68,7 +68,7 @@
                                 </md-autocomplete>
                             </div>
                         </div>
-                        
+
                         <!-- Search Actions -->
                         <md-card-actions>
                             <md-button class="md-raised" v-bind:disabled="!numeros.length>0 && !search.matDiff && !search.numero && !search.suffixe && !search.cadastre && !search.type && !search.etat" v-on:click="clearForm">Réinitialiser</md-button>
@@ -106,13 +106,96 @@
                         </div>
                     </md-card-content>
                 </md-card>
-        
+
             </div>
         </div>
-        
-        <!-- Numéros de la MO -->
+
+        <!-- Numéros de détail de la MO -->
         <div class="md-layout-item md-size-50 md-small-size-100">
 
+            <!-- Affaire liée -->
+            <div>
+                <md-card>
+                    <md-card-header>
+                        <div class="md-title">Numéro de la MO - Affaire liée</div>
+                    </md-card-header>
+                    <md-card-content>
+                        <div class="md-layout md-gutter">
+                            <div class="md-layout-item">
+                                <!-- Numéro -->
+                                <md-field>
+                                    <label>Numéro</label>
+                                    <md-input v-model="searchAffaireNumeroMO.numero"></md-input>
+                                </md-field>
+                            </div>
+                            <div class="md-layout-item">
+                                <!-- Type -->
+                                <md-autocomplete v-model="searchAffaireNumeroMO.type" :md-options="types_numeros_mo" md-dense>
+                                    <label>Type</label>
+                                    <template slot="md-autocomplete-item" slot-scope="{ item }">
+                                        {{ item.nom }}
+                                    </template>
+                                </md-autocomplete>
+                            </div>
+                            <div class="md-layout-item">
+                                <!-- Cadastre -->
+                                <md-autocomplete v-model="searchAffaireNumeroMO.cadastre" :md-options="cadastre_liste" md-dense>
+                                    <label>Cadastre</label>
+                                    <template slot="md-autocomplete-item" slot-scope="{ item }">
+                                        {{ item.nom }}
+                                    </template>
+                                </md-autocomplete>
+                            </div>
+                            <div class="md-layout-item">
+                                <!-- Plan -->
+                                <md-field>
+                                    <label>Plan</label>
+                                    <md-input v-model="searchAffaireNumeroMO.plan"></md-input>
+                                </md-field>
+                            </div>
+                        </div>
+                        <md-card-actions>
+                            <md-button @click="clearAffaireNumerosMOForm" :disabled="!searchAffaireNumeroMO.numero && !searchAffaireNumeroMO.cadastre && !searchAffaireNumeroMO.type && !searchAffaireNumeroMO.plan" class="md-raised">Réinitialiser</md-button>
+                            <md-button @click="getAffaireNumeroMO" class="md-raised md-primary">Rechercher</md-button>
+                        </md-card-actions>
+
+
+                        <div v-if="affaireNumerosMO.length>0">
+                            <md-table v-model="affaireNumerosMO" class="md-card">
+                                <md-table-toolbar>
+                                    <h1 class="md-title">Résultat</h1>
+                                    <div style="width: 70%; float: right;" v-if="affaireNumerosMO_limitStatus">
+                                        <span style="float: right; color: red"><em>La liste a été tronquée à 20 résultats. Affiner la recherche pour trouver le résultat souhaité.</em></span>
+                                    </div>
+                                </md-table-toolbar>
+                                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                                    <md-table-cell md-label="Type" md-sort-by="type_numero">{{ item.type_numero }}</md-table-cell>
+                                    <md-table-cell md-label="Plage de déservation" md-sort-by="numero_de">{{ [item.numero_de, item.numero_a].join(" - ") }}</md-table-cell>
+                                    <md-table-cell md-label="Cadastre" md-sort-by="cadastre">{{ item.cadastre }}</md-table-cell>
+                                    <md-table-cell md-label="Plan" md-sort-by="plan">{{ item.plan? item.plan: 0 }}</md-table-cell>
+                                    <md-table-cell md-label="Affaire" md-sort-by="plan">
+                                        {{ item.affaire_id }}
+                                        <md-button class="md-icon-button md-primary" :to="{ name: 'AffairesDashboard', params: { id: item.affaire_id } }">
+                                            <md-icon>open_in_new</md-icon>
+                                        </md-button>
+                                    </md-table-cell>
+                                  </md-table-row>
+                            </md-table>
+                        </div>
+                        <div v-else-if="emptyResultAffaireNumerosMO">
+                            <br><br>
+                            <md-empty-state
+                                md-icon="sports_handball"
+                                md-label="Aucun numéro trouvé"
+                                md-description="Aucun résultat ne correspond à la recherche.">
+                            </md-empty-state>
+                        </div>
+
+                    </md-card-content>
+                </md-card>
+            </div>
+
+            <!-- Premiers numéros disponibles -->
             <div>
                 <md-card>
                     <md-card-header>
@@ -131,7 +214,7 @@
                             </div>
                             <div class="md-layout-item">
                                 <!-- Type -->
-                                <md-autocomplete v-model="searchNumeroMO.type" :md-options="types_numeros_mo" md-dense>
+                                <md-autocomplete v-model="searchNumeroMO.type" :md-options="types_numeros_mo_bf" md-dense>
                                     <label>Type</label>
                                     <template slot="md-autocomplete-item" slot-scope="{ item }">
                                         {{ item.nom }}
@@ -144,7 +227,7 @@
                                     <label>Plan</label>
                                     <md-input v-model="searchNumeroMO.plan"></md-input>
                                 </md-field>
-                            </div>    
+                            </div>
                         </div>
                         <md-card-actions>
                             <md-button @click="clearNumerosMOForm" :disabled="!searchNumeroMO.cadastre && !searchNumeroMO.type && !searchNumeroMO.plan" class="md-raised">Réinitialiser</md-button>
@@ -177,12 +260,12 @@
                                 md-description="Aucun résultat ne correspond à la recherche.">
                             </md-empty-state>
                         </div>
-        
+
                     </md-card-content>
                 </md-card>
             </div>
         </div>
     </div>
-    
+
 
 </div>

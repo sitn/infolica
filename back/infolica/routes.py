@@ -201,6 +201,7 @@ def includeme(config):
     config.add_route('plans_mo', '/infolica/api/plans_mo')
     #Numéro MO next available
     config.add_route('numero_mo_next', '/infolica/api/numero_mo_next')
+    config.add_route('affaire_numero_mo', '/infolica/api/affaire_numero_mo')
     config.add_route('types_numeros_mo', '/infolica/api/types_numeros_mo')
     #Notes de mise à jour
     config.add_route('notes_maj', '/infolica/api/notes_maj')
