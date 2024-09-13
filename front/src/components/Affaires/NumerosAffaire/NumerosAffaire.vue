@@ -859,7 +859,7 @@ export default {
       this.confirmDialog = {
         show: true,
         title: "Confirmer la suppression d'un numéro de bien-fonds",
-        content: `En cliquant sur "confirmer", le bien-fonds ${item.numero} (cadastre: ${item.numero_cadastre}) sera définitivement supprimé.`,
+        content: `En cliquant sur "confirmer", le bien-fonds ${item.numero} (cadastre: ${item.numero_cadastre}) sera retiré de la balance (si déjà saisie) et définitivement supprimé.`,
         onConfirm: () => this.deleteReservedNumber(item),
       }
     },

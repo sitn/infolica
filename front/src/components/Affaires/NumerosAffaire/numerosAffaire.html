@@ -118,8 +118,8 @@
                                                         </md-button>
                                                     </div>
                                                 </md-table-cell>
-                                                <md-table-cell md-label="Supprimer " class="removecolumn">
-                                                    <md-button v-if="affaire.date_envoi === null"  @click="confirmDeleteReservedNumber(item)"
+                                                <md-table-cell md-label="Supprimer " class="removecolumn" v-if="affaire.date_envoi === null">
+                                                    <md-button @click="confirmDeleteReservedNumber(item)"
                                                         class="md-accent  md-icon-button md-dense" title="Supprimer le bien-fonds réservé">
                                                         <md-icon>delete</md-icon>
                                                     </md-button>
