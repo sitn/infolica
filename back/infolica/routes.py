@@ -104,6 +104,7 @@ def includeme(config):
     # config.add_route('numeros_relations_by_numeroBase_s','/infolica/api/numeros_relations_by_numeroBase_id/')
     config.add_route('numeros_differes','/infolica/api/numeros_differes')
     config.add_route('numeros_differes_s','/infolica/api/numeros_differes/')
+    config.add_route('delete_numero','/infolica/api/delete_numero/{id}')
     #Référence de numéros
     config.add_route('reference_numeros','/infolica/api/reference_numeros')
     config.add_route('reference_numeros_s','/infolica/api/reference_numeros/')

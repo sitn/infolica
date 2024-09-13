@@ -408,10 +408,10 @@ export default {
     //   return new Promise((resolve, reject) => {
     //     // Récupère la liste des id des numéros référencés
     //     let numeros_base_id_list = this.affaire_numeros_anciens.map(x => x.numero_id);
-  
+
     //     let formData = new FormData();
     //     formData.append("numeros_base_id_list", JSON.stringify(numeros_base_id_list));
-  
+
     //     this.$http.post(
     //       process.env.VUE_APP_API_URL +
     //       process.env.VUE_APP_NUMEROS_RELATIONS_BY_NUMEROSBASEID_ENDPOINT,
@@ -505,15 +505,15 @@ export default {
         this.typesAffaires_conf.modification_ppe,
         this.typesAffaires_conf.modification_retour_etat_juridique,
       ];
-      
+
       this.show = {
         numeros_reserves_card: typeAffaire_modification_all.concat([
-          this.typesAffaires_conf.mutation, 
-          this.typesAffaires_conf.ppe, 
+          this.typesAffaires_conf.mutation,
+          this.typesAffaires_conf.ppe,
           this.typesAffaires_conf.pcop,
           this.typesAffaires_conf.remaniement_parcellaire
         ]).includes(this.affaire.type_id),
-        
+
         numeros_references_card: [
           this.typesAffaires_conf.cadastration,
           this.typesAffaires_conf.pcop,
@@ -536,7 +536,7 @@ export default {
         ].includes(this.affaire.type_id),
 
         reservation_numeros_mo: [
-          this.typesAffaires_conf.mutation, 
+          this.typesAffaires_conf.mutation,
           this.typesAffaires_conf.autre,
           this.typesAffaires_conf.cadastration,
           this.typesAffaires_conf.revision_abornement,
@@ -563,8 +563,8 @@ export default {
           this.typesAffaires_conf.mpd,
           this.typesAffaires_conf.modification_abandon_partiel
         ].includes(this.affaire.type_id)
-          && role_id && !isNaN(role_id) && Number(process.env.VUE_APP_ADMIN_ROLE_ID) === Number(role_id),
-        
+          && role_id && !isNaN(role_id),
+
         updateReferencedNumberBtn: [
           this.typesAffaires_conf.ppe,
           this.typesAffaires_conf.pcop
@@ -603,7 +603,7 @@ export default {
 
 
     /**
-     * Fonction appelée lorsque des numéros sont référencés à l'affaire 
+     * Fonction appelée lorsque des numéros sont référencés à l'affaire
      */
     async saveReferenceNumeros(numeros) {
       let numeros_ = numeros.map(x => ({
@@ -635,7 +635,7 @@ export default {
 
 
     /**
-     * Fonction appelée lorsque des numéros référencés sont modifiés 
+     * Fonction appelée lorsque des numéros référencés sont modifiés
      */
     async saveModifReferenceNumeros(data) {
       let formData = new FormData();
@@ -678,12 +678,12 @@ export default {
           content: "Le numéro " + item.numero + " du cadastre de " + item.numero_cadastre + " est utilisé comme bien-fonds de base pour des numéros dans cette affaire."
         });
       } else {
-        
+
         let content = "Confirmer la suppression du lien entre le numéro "  + item.numero + " du cadastre de " + item.numero_cadastre + " et l'affaire " + this.affaire.id + "."
         if (this.affaire.type_id === this.typesAffaires_conf.cadastration) {
           content += " Les factures liées à ce numéro seront également supprimée automatiquement."
         }
-        
+
         this.$root.$emit("ShowConfirmation", {
           title: "Demande de confirmation",
           content: content,
@@ -713,8 +713,8 @@ export default {
         }
       }).catch(err => handleException(err, this));
     },
-    
-    
+
+
     /**
      * Modifier numéro de base (PPE/PCOP)
      */
@@ -731,7 +731,7 @@ export default {
       return false;
     },
 
-    
+
     async saveNumerosFromExcel_remaniementParcellaire(data){
       let formData = new FormData();
       formData.append('affaire_id', this.affaire.id);
@@ -766,7 +766,7 @@ export default {
       let file = document.getElementById('inputFile').files[0];
       let test = this.checkFile(file, '.xlsx');
       let allowConfirm = true;
-      
+
       if(test===false){
         return;
       }
@@ -785,7 +785,7 @@ export default {
         )
         .then(response => {
           let content = "";
-          
+
           response.data.forEach(x => {
             // source Infolica or Terris
             content += "<h3>" + x.source + "</h3>";
@@ -795,7 +795,7 @@ export default {
                 content += "<tr>";
                 content += "<td style='width: 100px;'>" + y.cadastre + "</td>";
                 content += "<td style='width: 1000px;'>"
-                
+
                 let sep = '';
                 y.liste_numeros.forEach(z => {
                   // parcourir liste_numeros
@@ -809,10 +809,10 @@ export default {
                 content += "<tr>";
               });
             content += "</tbody></table>";
-            
+
           });
           content += "<p style='font-style: italic;'>Les numéros de biens-fonds en <span style='color: green;'>vert</span> sont ceux qui ont déjà été réservés dans l'affaire, ceux en <span style='color: blue;'>bleu</span> ont été réservés dans une autre affaire et ceux en <span style='color: red;'>rouge</span> seront créés en cliquant sur 'confimer'.</p>";
-          
+
           if (allowConfirm) {
             this.confirmDialog= {
               show: true,
@@ -822,7 +822,7 @@ export default {
             };
           } else {
             content += "<p style='font-weight: bold; color: blue;'>Les numéros réservés dans une autre affaire ou les DDP doivent être manuellement supprimés dans le fichier Excel afin de valider le processus.</p>";
-            
+
             this.alertDialog= {
               show: true,
               title: 'Biens-fonds chargés',
@@ -852,7 +852,35 @@ export default {
         onConfirm: () => { this.onConfirmLoadNumerosFromExcel_remaniementParcellaire() }
       };
 
-    }
+    },
+
+    // confirm delete reserved number
+    confirmDeleteReservedNumber(item) {
+      this.confirmDialog = {
+        show: true,
+        title: "Confirmer la suppression d'un numéro de bien-fonds",
+        content: `En cliquant sur "confirmer", le bien-fonds ${item.numero} (cadastre: ${item.numero_cadastre}) sera définitivement supprimé.`,
+        onConfirm: () => this.deleteReservedNumber(item),
+      }
+    },
+
+    // delete reserved number
+    async deleteReservedNumber(item) {
+      this.numerosLoading = true;
+      this.$http.delete(process.env.VUE_APP_API_URL + process.env.VUE_APP_DELETE_NUMERO_ENDPOINT + item.numero_id + "?affaire_id=" + this.affaire.id,
+        {
+          withCredentials: true,
+          headers: { Accept: "application/json" }
+        }
+      ).then(() => {
+        this.$root.$emit("ShowMessage", "Le bien-fonds a été correctement supprimé.")
+        this.$root.$emit("searchAffaireNumeros");
+      }).catch(err => {
+        handleException(err, this);
+      }).finally(() => {
+        this.numerosLoading = false;
+      });
+    },
 
 
   },
