@@ -16,10 +16,13 @@ export default {
   props: {},
   data: () => ({
     numeros: [],
+    affaireNumerosMO: [],
+    affaireNumerosMO_limitStatus: false,
     numerosMO: [],
     cadastre_liste: [],
     types_numeros: [],
     types_numeros_mo: [],
+    types_numeros_mo_bf: [],
     etats_numeros: [],
     search: {
       numero: null,
@@ -34,8 +37,15 @@ export default {
       type: null,
       plan: null
     },
+    searchAffaireNumeroMO: {
+      numero: null,
+      type: null,
+      cadastre: null,
+      plan: null
+    },
     emptyResultNumeros: false,
     emptyResultNumerosMO: false,
+    emptyResultAffaireNumerosMO: false,
   }),
 
   methods: {
@@ -194,11 +204,63 @@ export default {
           headers: {"Accept": "application/json"}
         }
       ).then(response => {
-        if (response && response.data && response.data.length > 0) {
-          this.numerosMO = response.data;
-          this.emptyResultNumerosMO = false;
-        } else {
-          this.emptyResultNumerosMO = true;
+        if (response && response.data){
+          if (response.data.length > 0) {
+            this.numerosMO = response.data;
+            this.emptyResultNumerosMO = false;
+          } else {
+            this.numerosMO = [];
+            this.emptyResultNumerosMO = true;
+          }
+        }
+      }).catch(err => handleException(err, this));
+    },
+
+
+    /**
+     * Get liked affaire from number of MO
+     */
+    async getAffaireNumeroMO() {
+      let searchParams = [];
+      if (this.searchAffaireNumeroMO.numero) {
+        searchParams.push('numero=' + this.searchAffaireNumeroMO.numero);
+      } else {
+        alert(`Le champ "numéro" doit être renseigné`);
+        return;
+      }
+      if (this.searchAffaireNumeroMO.type && this.searchAffaireNumeroMO.type.id) {
+        searchParams.push('type_id=' + this.searchAffaireNumeroMO.type.id);
+      }
+      if (this.searchAffaireNumeroMO.cadastre && this.searchAffaireNumeroMO.cadastre.id) {
+        searchParams.push('cadastre_id=' + this.searchAffaireNumeroMO.cadastre.id);
+      }
+      if (this.searchAffaireNumeroMO.plan) {
+        searchParams.push('plan=' + this.searchAffaireNumeroMO.plan);
+      }
+
+      if (searchParams.length === 0) {
+        alert("Il faut renseigner au moins un des quatre champs: numero, type, cadastre, ou plan");
+        return;
+      }
+
+      searchParams = "?" + searchParams.join("&");
+
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_NUMERO_MO_ENDPOINT + searchParams,
+        {
+          withCredentials: true,
+          headers: {"Accept": "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          if (response.data.data.length > 0) {
+            this.affaireNumerosMO = response.data.data;
+            this.affaireNumerosMO_limitStatus = response.data.limitStatus==="true"? true: false;
+            this.emptyResultAffaireNumerosMO = false;
+          } else {
+            this.affaireNumerosMO = [];
+            this.emptyResultAffaireNumerosMO = true;
+          }
         }
       }).catch(err => handleException(err, this));
     },
@@ -216,8 +278,9 @@ export default {
       ).then(response => {
         if (response && response.data) {
           let tmp = response.data;
-          tmp.push({id: 1, nom: "Bien-fonds", ordre: 1, toLowerCase: () => "bien-fonds", toString: () => "Bien-fonds"});
           this.types_numeros_mo = stringifyAutocomplete(tmp).sort((a,b) => (a.nom > b.nom) ? 1 : ((b.nom > a.nom) ? -1 : 0));
+          tmp.push({id: 1, nom: "Bien-fonds", ordre: 1, toLowerCase: () => "bien-fonds", toString: () => "Bien-fonds"});
+          this.types_numeros_mo_bf = stringifyAutocomplete(tmp).sort((a,b) => (a.nom > b.nom) ? 1 : ((b.nom > a.nom) ? -1 : 0));
         }
       }).catch(err => handleException(err, this));
     },
@@ -234,6 +297,18 @@ export default {
 
       this.numerosMO = [];
       this.emptyResultNumerosMO = false;
+    },
+
+    clearAffaireNumerosMOForm() {
+      this.searchAffaireNumeroMO = {
+        numero: null,
+        type: null,
+        cadastre: null,
+        plan: null,
+      };
+
+      this.affaireNumerosMO = [];
+      this.emptyResultAffaireNumerosMO = false;
     }
 
   },

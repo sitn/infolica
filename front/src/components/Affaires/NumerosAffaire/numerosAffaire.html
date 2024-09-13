@@ -20,10 +20,10 @@
                             <md-button class="md-raised md-primary" v-on:click="loadNumerosFromExcel_remaniementParcellaire"><md-icon>description</md-icon> Importer les numéros de biens-fonds depuis le fichier excel</md-button>
                             <md-progress-bar md-mode="indeterminate" v-if="numerosLoading"></md-progress-bar>
                         </div>
-                        
+
                         <!-- NUMEROS VALIDES CONCERNES (anciens numéros) -->
                         <div class="md-layout-item md-size-45" v-if="show.numeros_references_card || affaire_numeros_anciens.length > 0">
-                    
+
                             <md-card>
                                 <md-card-header>
                                     <div class="justifyTitleBtn">
@@ -62,14 +62,14 @@
                                 </md-card-content>
                             </md-card>
                         </div>
-                        
+
                         <!-- NUMEROS RESERVES (nouveaux numéros) -->
-                        <div class="md-layout-item md-size-45" v-if="show.numeros_reserves_card">   
+                        <div class="md-layout-item md-size-45" v-if="show.numeros_reserves_card">
                             <md-card>
                                 <md-card-header>
                                     <div class="justifyTitleBtn">
                                         <div class="md-title">Immeubles réservés</div>
-                                        
+
                                         <div>
                                             <md-button class="md-primary" @click="doQuittanceNumerosReserves" v-if="affaire_numeros_nouveaux.length > 0">Quittance</md-button>
                                             <md-button class="md-primary" @click="callOpenQuittancePCOPDialog" v-if="affaire.type_id === typesAffaires_conf.pcop && affaire_numeros_nouveaux.length > 0">Quittance PCOP</md-button>
@@ -77,7 +77,7 @@
                                         </div>
                                     </div>
                                 </md-card-header>
-                                
+
                                 <md-card-content>
                                     <!-- Tableau des numéros réservés dans l'affaire -->
                                     <div v-if="affaire_numeros_nouveaux[0]">
@@ -98,7 +98,7 @@
                                                 <md-table-cell md-label="Mat diff" class="actionsColumn" v-if="typesAffaires_conf.mutation === affaire.type_id || affaire.type_id === typesAffaires_conf.modification_mutation">
                                                     <!-- Si le numéro est différé -->
                                                     <div v-if="item.numero_diff_entree && item.numero_diff_sortie === null && editMatDiffAllowed">
-                                                        <md-button v-if="item.numero_type_id===types_numeros.bf || item.numero_type_id===types_numeros.ddp"  @click="confirmCreateDiffererNumero(item, 'sortie')" 
+                                                        <md-button v-if="item.numero_type_id===types_numeros.bf || item.numero_type_id===types_numeros.ddp"  @click="confirmCreateDiffererNumero(item, 'sortie')"
                                                             class="md-accent md-raised md-icon-button md-dense" title="Retirer la mention Mat Diff du BF (le BF est matérialisé)">
                                                             <md-icon>access_time</md-icon>
                                                         </md-button>
@@ -118,72 +118,78 @@
                                                         </md-button>
                                                     </div>
                                                 </md-table-cell>
+                                                <md-table-cell md-label="Supprimer " class="removecolumn">
+                                                    <md-button v-if="affaire.date_envoi === null"  @click="confirmDeleteReservedNumber(item)"
+                                                        class="md-accent  md-icon-button md-dense" title="Supprimer le bien-fonds réservé">
+                                                        <md-icon>delete</md-icon>
+                                                    </md-button>
+                                                </md-table-cell>
                                             </md-table-row>
                                         </md-table>
                                     </div>
                                     <div v-else>
                                         <em>Aucun numéro</em>
                                     </div>
-                                    
+
                                 </md-card-content>
                             </md-card>
-        
-            
+
+
                         </div>
                     </div>
-                    
-                    
-                    <div class="md-layout md-gutter">    
+
+
+                    <div class="md-layout md-gutter">
                         <div class="md-layout-item md-size-60" v-if="show.reservation_numeros_mo">
-                            
+
                             <!-- Numéros de la MO -->
                             <ReservationNumerosMO :affaire="affaire" :types_numeros="types_numeros" :permission="permission"></ReservationNumerosMO>
-                            
+
                         </div>
                     </div>
-                    
+
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item" v-if="show.balance">
                             <!-- Balance des biens-fonds -->
-                            <BalanceFromFile :numeros_nouveaux_bk="affaire_numeros_nouveaux" 
-                                :numeros_anciens_bk="affaire_numeros_anciens" 
-                                :affaire="affaire" 
-                                :types_numeros="types_numeros" 
-                                :numerosBaseListe="numerosBaseListe" 
+                            <BalanceFromFile :numeros_nouveaux_bk="affaire_numeros_nouveaux"
+                                :numeros_anciens_bk="affaire_numeros_anciens"
+                                :affaire="affaire"
+                                :types_numeros="types_numeros"
+                                :numerosBaseListe="numerosBaseListe"
                                 :etatNumeros_conf="etatNumeros_conf" />
                         </div>
                     </div>
-                    
+
                     </md-card-content>
             </md-card-expand-content>
         </md-card-expand>
     </md-card>
 
     <!-- Référence de numéros -->
-    <ReferenceNumeros ref="formReference" 
+    <ReferenceNumeros ref="formReference"
                       id="test1"
                       :affaire_numeros_anciens="affaire_numeros_anciens"
                       :cadastre_id="affaire.cadastre_id"
                       :saveNumerosReferences="saveReferenceNumeros" />
-    
-    <ReferenceNumeros ref="formModifReference" 
+
+    <ReferenceNumeros ref="formModifReference"
                       id="test2"
                       dialogTitle="test"
                       selectionType="single"
                       :affaire_numeros_anciens="affaire_numeros_anciens"
                       :cadastre_id="affaire.cadastre_id"
                       :saveNumerosReferences="saveModifReferenceNumeros" />
-    
+
     <!-- Réservation de numéros -->
     <ReservationNumeros ref="formReservation"
-                        :affaire="affaire" 
-                        :numerosBaseListe="affaire_numeros_anciens" 
+                        :affaire="affaire"
+                        :numerosBaseListe="affaire_numeros_anciens"
                         :typesAffaires_conf="typesAffaires_conf"
                         :types_numeros="types_numeros" />
 
     <!-- Quittance pour les numéros de parts de copropriété réservés -->
-    <QuittancePCOP :affaire="affaire" 
-                   :affaire_numeros_anciens="affaire_numeros_anciens" 
+    <QuittancePCOP :affaire="affaire"
+                   :affaire_numeros_anciens="affaire_numeros_anciens"
                    :affaire_numeros_nouveaux="affaire_numeros_nouveaux"
                    ref="formQuittancePCOP"/>
 
