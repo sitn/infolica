@@ -412,7 +412,7 @@ export const logAffaireEtape = async function(affaire_id, etape_id, remarque=nul
     formData.append("datetime", moment(new Date()).format(process.env.VUE_APP_DATETIMEFORMAT_WS));
 
     if (remarque) {
-        formData.append("remarque", remarque + ' // ' + remarque_);
+        formData.append("remarque", remarque + (remarque_===''? '': ' // ' + remarque_));
     } else if (remarque_) {
         formData.append("remarque", remarque_);
     }

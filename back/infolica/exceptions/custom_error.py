@@ -14,3 +14,4 @@ class CustomError(Exception):
     DIRECTORY_NOT_FOUND = "Le dossier '{}' n'existe pas"
     NUMBER_REGISTRATION_FAILED = "Le numéro {} du cadastre {} dépasse le max + 1 autorisé (dernier numéro: {})"
     SENT_AFFAIRE_EXCEPTION = "L'opération n'a pas pu être exécutée, car l'affaire {} est déjà envoyée"
+    CADASTRE_NOT_FOUND_IN_FILE = "Le cadastre n'a pas pu être déterminé à partir du document {}"

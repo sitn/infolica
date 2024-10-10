@@ -126,11 +126,11 @@ export default {
         .then(response => {
           if (response && response.data) {
             let numeros_relations = [];
-            
+
             // Récupère toutes les relations de type mutation
             response.data.forEach(x => {
               if (x.numero_relation_type_id === Number(process.env.VUE_APP_RELATION_TYPE_MUTATION_ID)) {
-                
+
                 // Check DP in oldBF
                 if (x.numero_base_id === this.numero_DP_id){
                   oldBF = "DP";
@@ -230,7 +230,7 @@ export default {
             response_data.push(...response_i.data)
           })
 
-          let relation = this.initRelationArray(response_data);
+          let relation = response_data;
           this.tableau_balance = this.constructTableauBalance(relation);
 
           this.showBalanceMenu = false;
@@ -246,7 +246,8 @@ export default {
       return new Promise((resolve, reject) => {
         let formData = new FormData();
         formData.append("filepath", file.filepath);
-  
+        formData.append("affaire_id", this.affaire.id);
+
         this.$http.post(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_FROM_FILE_ENDPOINT,
           formData,
@@ -259,30 +260,9 @@ export default {
       });
     },
 
-    /**
-     * init relation array
-     */
-    initRelationArray(data) {
-      let relation = [];
-      data.forEach(x => {
-        // prepare relation array
-        x.relation_old = [this.affaire.cadastre_id, x.old].join("_");
-        if (String(x.old).toLowerCase().includes("dp")) {
-          x.relation_old = "DP";
-        }
-        
-        x.relation_new = [this.affaire.cadastre_id, x.new].join("_");
-        if (String(x.new).toLowerCase().includes("dp")) {
-          x.relation_new = "DP";
-        }
-        // keep relation
-        relation.push([x.relation_old, x.relation_new]);
-      });
-      return relation;
-    },
 
     /**
-     * Generate "balance" in case of immatriculation 
+     * Generate "balance" in case of immatriculation
      * Reservation de numéros must be done previously
      */
     getBalanceImmatriculationBF() {
@@ -297,7 +277,7 @@ export default {
       this.numeros_nouveaux.forEach(x => relation.push(["DP", [x.numero_cadastre_id, x.numero].join("_")]));
       this.tableau_balance = this.constructTableauBalance(relation);
     },
-   
+
    /**
      * Référencer des numéros pour l'exmatriculation
      * This operation need to reference numbers
@@ -308,7 +288,7 @@ export default {
     },
 
    /**
-     * Generate "balance" in case of exmatriculation 
+     * Generate "balance" in case of exmatriculation
      * This operation need to reference numbers first
      */
     getBalanceExmatriculationBF() {
@@ -319,13 +299,13 @@ export default {
         this.$root.$emit("ShowError", "Aucun BF n'a été référencé à l'affaire!")
         return;
       }
-      
+
       let relation = [];
       this.numeros_anciens.forEach(x => relation.push([[x.numero_cadastre_id, x.numero].join("_"), "DP"]));
       this.tableau_balance = this.constructTableauBalance(relation);
 
     },
-    
+
     /**
      * Construct tableau balance
      */
@@ -358,7 +338,7 @@ export default {
       return tableau;
     },
 
-    /** 
+    /**
      * transpose matrix
      */
     transpose(m) {
@@ -381,8 +361,8 @@ export default {
                     <p>La balance n'est pas enregistrée.\n</p>"
         }
         return;
-      } 
-      
+      }
+
       await this.postBalance(checkBF);
 
       // Ask what to do with supplementary reserved numbers
@@ -425,7 +405,7 @@ export default {
       let newBF_obj = [];
       this.numeros_nouveaux.forEach(x => {
         reservedBF.push([x.numero_cadastre_id, x.numero].join("_"));
-        
+
         // Save newBF as number objects
         newBF_obj.push({
           id: x.numero_id,
@@ -498,7 +478,7 @@ export default {
       let formData = new FormData();
       formData.append("affaire_id", this.affaire.id);
       formData.append("oldBF", JSON.stringify(oldBF));
-      
+
       return new Promise((resolve, reject) => {
         this.$http.post(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_BALANCE_CHECK_EXISTING_OLDBF_ENDPOINT,
@@ -525,7 +505,7 @@ export default {
 
         // Go through new BF
         for (let newBF_i in oldBF_i.newBF) {
-          
+
           // append relation
           // Old number + check DP
           if (oldBF_i.oldBF.toLowerCase().includes("dp")) {
@@ -533,7 +513,7 @@ export default {
           } else {
             numero_id_base = checkBF.oldBF.filter(x => [x.cadastre_id, x.numero].join("_") === oldBF_i.oldBF)[0].id;
           }
-          
+
           // New number + check DP
           if (newBF_i.toLowerCase().includes("dp")) {
             numero_id_associe = process.env.VUE_APP_NUMERO_DP_ID;
@@ -544,7 +524,7 @@ export default {
           promises.push( this.postNumerosRelation(numero_id_base, numero_id_associe, process.env.VUE_APP_RELATION_TYPE_MUTATION_ID, oldBF_i.newBF[newBF_i]) );
         }
       });
-      
+
       Promise.all(promises)
       .then(() => {
         this.editionBalance = false;
@@ -614,7 +594,7 @@ export default {
         if (response && response.data) {
           this.$root.$emit("searchAffaireNumeros");
           this.initBFArrays();
-          
+
           this.removeCurrentDDPpotential(numero);
 
           this.$root.$emit("ShowMessage", "Le numéro " + numero.numero + " du cadastre de " + numero.numero_cadastre + " a bien été abandonné.");
