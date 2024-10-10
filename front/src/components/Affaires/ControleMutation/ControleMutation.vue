@@ -39,7 +39,7 @@ export default {
         .then(response => {
           if (response && response.data) {
             this.controleMutation = response.data;
-            
+
             // set dates to client format
             this.controleMutation = setDateFormatClient(this.controleMutation);
 
@@ -106,7 +106,7 @@ export default {
 
     /**
      * Save
-     */  
+     */
     onConfirmEditControleMutation() {
       var formData = new FormData();
       formData.append("id", this.controleMutation.id);
@@ -135,11 +135,13 @@ export default {
       formData.append("cs_6", this.controleMutation.cs_6);
       formData.append("cs_7", this.controleMutation.cs_7);
       formData.append("cs_8", this.controleMutation.cs_8);
+      formData.append("cs_9", this.controleMutation.cs_9);
       formData.append("od_1", this.controleMutation.od_1);
       formData.append("od_2", this.controleMutation.od_2);
       formData.append("od_3", this.controleMutation.od_3);
       formData.append("od_4", this.controleMutation.od_4);
       formData.append("od_5", this.controleMutation.od_5);
+      formData.append("od_6", this.controleMutation.od_6);
       formData.append("bat_1", this.controleMutation.bat_1);
       formData.append("bat_2", this.controleMutation.bat_2);
       formData.append("bat_3", this.controleMutation.bat_3);
@@ -159,7 +161,7 @@ export default {
       formData.append("gen_4", this.controleMutation.gen_4);
       formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
       formData.append("visa", JSON.parse(localStorage.getItem("infolica_user")).id);
-      
+
       this.$http
         .put(
           process.env.VUE_APP_API_URL +
