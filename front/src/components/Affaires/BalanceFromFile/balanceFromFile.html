@@ -2,10 +2,10 @@
     <md-card>
         <md-card-header>
             <div class="md-title">Balance</div>
-            
+
             <md-button @click="openBalanceMenu" class="md-raised" title="Créer la balance - immatriculation/exmatriculation de DP - constitution/suppression de DDP">Éditer la balance</md-button>
         </md-card-header>
-        
+
         <md-card-content>
             <md-card v-if="tableau_balance.length>0" style="width: auto;">
                 <md-card-content>
@@ -28,7 +28,7 @@
                     <md-button class="md-primary md-elevation-3" @click="saveBalance">Enregistrer</md-button>
                 </md-card-actions>
             </md-card>
-                
+
 
         </md-card-content>
 
@@ -57,7 +57,7 @@
                                 </md-table-row>
                             </md-table>
 
-                            <md-button @click="uploadBalance" class="md-dense md-primary md-elevation-2"><md-icon>file_upload</md-icon> Charger les balances</md-button>
+                            <md-button @click="uploadBalance" class="md-dense md-primary md-elevation-2" :disabled="selectedBalanceFiles.length < 1"><md-icon>file_upload</md-icon> Charger les balances</md-button>
                         </div>
                         <div v-else>
                             <p style="color: red;"><em>Aucune désignation n'a été trouvée dans le dossier de l'affaire</em></p>
@@ -84,7 +84,7 @@
                     <md-card-content>
                         <p>Les biens-fonds partent dans le DP. Cette action nécessite de (1) référencer des biens-fonds avant de (2) créer l'exmatriculation.</p>
                         <md-button class="md-primary md-elevation-2" @click="referencerNumeros">(1) Référencer des biens-fonds</md-button>
-                        
+
                         <div v-if="numeros_anciens.length > 0">
                             <md-table v-model="numeros_anciens" md-sort="numero" md-sort-order="asc" md-fixed-header md-dense md-card>
                                 <md-table-row slot="md-table-row" slot-scope="{ item }">
@@ -95,7 +95,7 @@
                         </div>
                         <br>
                         <md-button class="md-primary md-elevation-2" @click="getBalanceExmatriculationBF" :disabled="!numeros_anciens.length > 0">(2) Exmatriculation des biens-fonds</md-button>
-                        
+
                     </md-card-content>
                 </div>
             </div>
@@ -129,7 +129,7 @@
                     <md-card-content>
                         <p>Référencer les DDP à supprimer lorsque l'affaire sera clôturée..</p>
                         <md-button class="md-primary md-elevation-2" @click="referenceDDP">Référencer des DDP</md-button>
-                        
+
                         <div v-if="numeros_ddp_old.length > 0">
                             <md-table v-model="numeros_ddp_old" md-sort="numero"
                                 md-sort-order="asc" md-fixed-header md-dense md-card>
@@ -147,7 +147,7 @@
             <md-button class="md-accent" @click="showBalanceMenu = false">Fermer</md-button>
         </md-dialog-actions>
     </md-dialog>
-    
+
     <!-- Dialog to ask for DDP creation or continue saving balances -->
     <md-dialog :md-active.sync="showAskDDPCreation && DDPpotential.length>0"  @md-clicked-outside="showAskDDPCreation = false">
         <md-dialog-title>
@@ -168,7 +168,7 @@
                     </md-table-cell>
                 </md-table-row>
             </md-table>
-            
+
         </md-dialog-content>
         <md-dialog-actions>
             <md-button class="md-accent" @click="showAskDDPCreation = false">Fermer</md-button>
@@ -183,16 +183,16 @@
 
 
     <!-- Référence de numéros -->
-    <ReferenceNumeros ref="formReference" 
-        :affaire_numeros_anciens="numeros_anciens" 
-        :cadastre_id="affaire.cadastre_id" 
+    <ReferenceNumeros ref="formReference"
+        :affaire_numeros_anciens="numeros_anciens"
+        :cadastre_id="affaire.cadastre_id"
         :saveNumerosReferences="saveReferenceNumeros" />
 
     <!-- DDP -->
     <DDP ref="DDPDialog"
-        :affaire="affaire" 
-        :numero="currentNumeroDDP" 
-        :numeroBaseListe="numerosBaseListe" 
+        :affaire="affaire"
+        :numero="currentNumeroDDP"
+        :numeroBaseListe="numerosBaseListe"
         :types_numeros="types_numeros" />
 
     <!-- Custom Alert dialog -->

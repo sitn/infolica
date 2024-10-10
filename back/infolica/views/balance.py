@@ -123,23 +123,46 @@ def get_balance_files_view(request):
 
     # Get affaire path and search file
     query = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
-    path = os.path.normcase(os.path.join(affaires_directory, query.chemin, balance_file_rel_path))
+    relpath = os.path.normcase(os.path.join(query.chemin, balance_file_rel_path))
+    path = os.path.normcase(os.path.join(affaires_directory, relpath))
 
     files = []
     for filename in os.listdir(path):
         if filename.startswith(balance_filename_prefix) and (filename.endswith(".doc") or filename.endswith(".docx")):
-            files.append({"filename": filename, "filepath": os.path.join(path, filename)})
+            files.append({"filename": filename, "filepath": os.path.join(relpath, filename)})
 
     return files
 
 
-def _formatNumeroBalance(cadastre_id, number):
+def _format_numero_balance(cadastre_id, number):
     result = None
     if number.isnumeric():
         result = f"{cadastre_id}_{number}"
     elif "dp" in number.lower():
         result = "DP"
     return result
+
+
+def _find_keyword_in_header(file_path, keyword):
+    # open word document
+    doc = Document(file_path)
+
+    # go through sections to access headers
+    for section in doc.sections:
+        header = section.header  # get header
+
+        # go through paragraphs
+        for para in header.paragraphs:
+            text = para.text.lower()
+            # search keyword
+            if keyword.lower() in text:
+                # extract cadastre
+                test = re.match("(cadastre ((de)|(du) )?)", text)
+                cadastre_ = text[test.span()[1] :].strip()
+
+                return cadastre_
+
+    raise CustomError(CustomError.CADASTRE_NOT_FOUND_IN_FILE.format(input_file))
 
 
 @view_config(route_name="balance_from_file", request_method="POST", renderer="json")
@@ -154,30 +177,28 @@ def balance_from_file_view(request):
     input_file = request.params["filepath"] if "filepath" in request.params else None
     affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
 
-    ## Open balance file and get cadastre and table of balance
-    doc = Document(input_file)
+    # Build complete filepath
+    input_filepath = os.path.join(request.registry.settings["affaires_directory"], input_file)
 
-    # get cadastre from affaire
-    cadastre = request.dbsession.query(Cadastre).join(Affaire, Affaire.cadastre_id == Cadastre.id).filter(Affaire.id == affaire_id).first()
+
     # get cadastre from balance file if exists
-    for p in doc.sections[0].header.paragraphs:
-        text = p.text.lower()
-        if text.startswith("cadastre"):
-            test = re.match("(cadastre (de|du) )", text.lower())
+    try:
+        cadastre_ = _find_keyword_in_header(input_filepath, "cadastre")
 
-            cadastre_ = text[test.span()[1] :]
+        result = request.dbsession.query(
+            Cadastre,
+            func.similarity(Cadastre.nom, cadastre_).label("similarity")
+        ).order_by(desc("similarity")).limit(1).first()
 
-            cadastre = request.dbsession.query(
-                Cadastre,
-                func.similarity(Cadastre.nom, cadastre_).label("similarity")
-            ).order_by(desc("similarity")).limit(1).first()
+        cadastre = result[0]
 
-            if cadastre is not None:
-                cadastre = cadastre[0]
-
-            break
+    except:
+        # get cadastre from affaire
+        cadastre = request.dbsession.query(Cadastre).join(Affaire, Affaire.cadastre_id == Cadastre.id).filter(Affaire.id == affaire_id).first()
 
     # get balance table
+    doc = Document(input_filepath)
+
     table = None
     for table in doc.tables:
         if "ancien" in table.rows[0].cells[0].text:
@@ -195,8 +216,8 @@ def balance_from_file_view(request):
 
         for j, text_i in enumerate(text):
             if j >= 2 and text_i.isnumeric() and not text[0] == "":
-                old_bf = _formatNumeroBalance(cadastre.id, text[0])
-                new_bf = _formatNumeroBalance(cadastre.id, lastBF[j])
+                old_bf = _format_numero_balance(cadastre.id, text[0])
+                new_bf = _format_numero_balance(cadastre.id, lastBF[j])
                 balance.append([old_bf, new_bf])
 
     return balance
