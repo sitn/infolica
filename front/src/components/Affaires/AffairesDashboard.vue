@@ -217,7 +217,7 @@ export default {
 
               obj.urgent_echeance_reste = null;
               if (obj.urgent_echeance !== null) {
-                obj.urgent_echeance_reste = Math.ceil(Math.max(0, moment(obj.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT).add(1, 'd') -new Date())/1000/3600/24);
+                obj.urgent_echeance_reste = Math.ceil(Math.max(0, moment(obj.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT) -new Date())/1000/3600/24);
               }
 
               // reset emptyPage
