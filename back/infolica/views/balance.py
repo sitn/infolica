@@ -178,7 +178,7 @@ def balance_from_file_view(request):
     affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
 
     # Build complete filepath
-    input_filepath = os.path.join(request.registry.settings["affaires_directory"], input_file)
+    input_filepath = os.path.normcase(os.path.join(request.registry.settings["affaires_directory"], input_file))
 
 
     # get cadastre from balance file if exists
