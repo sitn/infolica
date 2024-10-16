@@ -44,7 +44,7 @@
                                                 <md-table-cell md-label="Repris par" md-sort-by="affaire_destination_id">
                                                     <a v-bind:href="item.affaire_destination_href">{{item.affaire_destination_id }}</a>
                                                 </md-table-cell>
-                                                <md-table-cell md-label="Action" v-if="show.deleteReferencedNumberBtn || show.updateReferencedNumberBtn">
+                                                <md-table-cell md-label="Action" v-if="permission.editNumerosAllowed && (show.deleteReferencedNumberBtn || show.updateReferencedNumberBtn)">
                                                     <md-button class="md-icon-button md-accent md-dense" @click="onRemoveNumeroReference(item)" title="Délier l'immeuble de l'affaire" v-if="show.deleteReferencedNumberBtn">
                                                         <md-icon>delete</md-icon>
                                                     </md-button>
@@ -118,7 +118,7 @@
                                                         </md-button>
                                                     </div>
                                                 </md-table-cell>
-                                                <md-table-cell md-label="Supprimer " class="removecolumn" v-if="affaire.date_envoi === null">
+                                                <md-table-cell md-label="Supprimer " class="removecolumn" v-if="permission.editNumerosAllowed && affaire.date_envoi === null">
                                                     <md-button @click="confirmDeleteReservedNumber(item)"
                                                         class="md-accent  md-icon-button md-dense" title="Supprimer le bien-fonds réservé">
                                                         <md-icon>delete</md-icon>
