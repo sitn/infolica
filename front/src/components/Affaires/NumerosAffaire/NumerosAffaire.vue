@@ -872,9 +872,16 @@ export default {
           withCredentials: true,
           headers: { Accept: "application/json" }
         }
-      ).then(() => {
-        this.$root.$emit("ShowMessage", "Le bien-fonds a été correctement supprimé.")
-        this.$root.$emit("searchAffaireNumeros");
+      ).then((response) => {
+        if (response && response.data) {
+          this.alertDialog = {
+            show: true,
+            title: "Numéro correctement délié de l'affaire",
+            content: response.data.message,
+          }
+          this.$root.$emit("ShowMessage", "Modification enregistrée avec succès.");
+          this.$root.$emit("searchAffaireNumeros");
+        }
       }).catch(err => {
         handleException(err, this);
       }).finally(() => {
