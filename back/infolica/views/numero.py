@@ -295,7 +295,7 @@ def numeros_delete_view(request):
 
     else:
         an_ = an.all()
-        message = f"Le numéro {num.numero} (cadastre: {cadastre}) a été correctement délié de l'affaire.\nIl reste lié aux affaires suivantes: {', '.join([str(an.affaire_id) for an in an_])}."
+        message = f"Le numéro {num.numero} (cadastre: {cadastre}) a été correctement délié de l'affaire.<br>Il reste lié aux affaires suivantes: {', '.join([str(an.affaire_id) for an in an_])}."
 
 
     return {"message": message}

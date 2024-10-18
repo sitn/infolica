@@ -859,7 +859,7 @@ export default {
       this.confirmDialog = {
         show: true,
         title: "Confirmer la suppression d'un numéro de bien-fonds",
-        content: `En cliquant sur "confirmer", le bien-fonds ${item.numero} (cadastre: ${item.numero_cadastre}) sera retiré de la balance (si déjà saisie) et définitivement supprimé.`,
+        content: `En cliquant sur "confirmer", le bien-fonds ${item.numero} (cadastre: ${item.numero_cadastre}) sera retiré de la balance (si déjà saisie) et délié de l'affaire. <br> S'il n'est lié à aucune autre affaire, il sera définitivement supprimé.`,
         onConfirm: () => this.deleteReservedNumber(item),
       }
     },
@@ -881,6 +881,7 @@ export default {
           }
           this.$root.$emit("ShowMessage", "Modification enregistrée avec succès.");
           this.$root.$emit("searchAffaireNumeros");
+          this.$root.$emit("getNumerosRelations");
         }
       }).catch(err => {
         handleException(err, this);
