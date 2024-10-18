@@ -249,42 +249,56 @@ def numeros_delete_view(request):
     if check_reserved_bf is None:
         raise CustomError(f"Impossible de supprimer le numéro {numero_id}, il ne figure pas dans la liste des biens-fonds réservés pour l'affaire {affaire_id}")
 
+    cadastre = request.dbsession.query(Cadastre).join(Numero).filter(Numero.id==numero_id).first()
+    cadastre = cadastre.nom if cadastre is not None else None
 
     # get numero_relation and remove it
     nr = request.dbsession.query(NumeroRelation).filter(
         NumeroRelation.numero_id_associe==numero_id,
+        NumeroRelation.affaire_id==affaire_id
     ).all()
     for tmp in nr:
         request.dbsession.delete(tmp)
 
-    # get numero_differe and remove it
-    nd = request.dbsession.query(NumeroDiffere).filter(
-        NumeroDiffere.numero_id==numero_id,
-    ).all()
-    for tmp in nd:
-        request.dbsession.delete(tmp)
-
-    # get numero_etat_histo and remove it
-    neh = request.dbsession.query(NumeroEtatHisto).filter(
-        NumeroEtatHisto.numero_id==numero_id
-    ).all()
-    for tmp in neh:
-        request.dbsession.delete(tmp)
-
-    # get numero_affaire and remove it
     an = request.dbsession.query(AffaireNumero).filter(
-        AffaireNumero.numero_id==numero_id
-    ).all()
-    for tmp in an:
+        AffaireNumero.numero_id==numero_id,
+    )
+    nb_affaires = an.count()
+
+    affnum = an.filter(AffaireNumero.affaire_id==affaire_id).all()
+    for tmp in affnum:
         request.dbsession.delete(tmp)
 
-    # get numero and remove it
     num = request.dbsession.query(Numero).filter(
-        Numero.id==numero_id
+            Numero.id==numero_id
     ).first()
-    request.dbsession.delete(num)
 
-    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Numero.__tablename__))
+    if nb_affaires == 1:
+        # get numero_etat_histo and remove it
+        neh = request.dbsession.query(NumeroEtatHisto).filter(
+            NumeroEtatHisto.numero_id==numero_id
+        ).all()
+        for tmp in neh:
+            request.dbsession.delete(tmp)
+
+        # get numero_differe and remove it
+        nd = request.dbsession.query(NumeroDiffere).filter(
+            NumeroDiffere.numero_id==numero_id,
+        ).all()
+        for tmp in nd:
+            request.dbsession.delete(tmp)
+
+        # remove numero
+        request.dbsession.delete(num)
+
+        message = f"Le numéro {num.numero} (cadastre: {cadastre}) a été correctement délié de l'affaire et supprimé, car il n'était lié à aucune autre affaire."
+
+    else:
+        an_ = an.all()
+        message = f"Le numéro {num.numero} (cadastre: {cadastre}) a été correctement délié de l'affaire.<br>Il reste lié aux affaires suivantes: {', '.join([str(an.affaire_id) for an in an_])}."
+
+
+    return {"message": message}
 
 
 @view_config(route_name='numero_by_id', request_method='DELETE', renderer='json')

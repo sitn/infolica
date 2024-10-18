@@ -679,6 +679,7 @@ export default {
     setTimeout(() => { this.initBFArrays(); }, 1000);
     this.$root.$on("searchAffaireNumeros", () => { setTimeout(() => { this.initBFArrays(); }, 1000); });
     this.$root.$on("removeCurrentDDPpotential", numero => { this.removeCurrentDDPpotential(numero) })
+    this.$root.$on("getNumerosRelations", () => { this.getNumerosRelations() })
   }
 };
 </script>
