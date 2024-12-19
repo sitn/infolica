@@ -1003,7 +1003,7 @@ def preavis_print_view(request):
         "<div class='subtitle'>Transfert de droits à bâtir</div>" +\
         "<div style='white-space: pre-line;'>" + (liste_decisions[-1]['remarque_transfert_droit_batir'] or '-') + "</div>" +\
         "<br><br><br>" +\
-        "<div class='subtitle'>Place de stationnement (Article 29 RELConstr.)</div>" +\
+        "<div class='subtitle'>Place de stationnement (Article 26 RELConstr.)</div>" +\
         "<div style='white-space: pre-line;'>" + (liste_decisions[-1]['remarque_stationnement_art29'] or '-') + "</div>" +\
         "<br><br><br>" +\
         "<div class='subtitle'>Autres servitudes et mentions</div>" +\
@@ -1032,7 +1032,7 @@ def preavis_print_view(request):
                 "<div class='subtitle'>Transfert de droits à bâtir</div>" +\
                 "<div style='white-space: pre-line;'>" + (decision['remarque_transfert_droit_batir'] or '-') + "</div>" +\
                 "<br><br><br>" +\
-                "<div class='subtitle'>Place de stationnement (Article 29 RELConstr.)</div>" +\
+                "<div class='subtitle'>Place de stationnement (Article 26 RELConstr.)</div>" +\
                 "<div style='white-space: pre-line;'>" + (decision['remarque_stationnement_art29'] or '-') + "</div>" +\
                 "<br><br><br>" +\
                 "<div class='subtitle'>Autres servitudes et mentions</div>" +\
