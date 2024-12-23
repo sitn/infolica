@@ -40,6 +40,15 @@ export default {
         title: "",
         content: ""
       },
+      confirmDialog: {
+        show: false,
+        title: "",
+        content: "",
+        confirmButton: "Confirmer",
+        cancelButton: "Annuler",
+        onCancel: ()=>{},
+        onConfirm: ()=>{},
+      },
       currentNumeroDDP: {},
       DDPpotential: [],
       editionBalance: false,
@@ -354,12 +363,22 @@ export default {
 
       // Raise error if more newBF than reserved numbers
       if (checkBF.newBF_not_in_numeros_reserves.length > 0) {
-        this.checkBFBalance = {
+        let content = "";
+        content = checkBF.newBF_not_in_numeros_reserves.length === 1? "<p>Le numéro " + checkBF.newBF_not_in_numeros_reserves[0] + " ne figure": "<p>Les numéros " + checkBF.newBF_not_in_numeros_reserves.join(", ") + " ne figurent"
+
+        this.confirmDialog = {
           show: true,
           title: "Balance incorrecte !",
-          content: "<p>Les numéros " + checkBF.newBF_not_in_numeros_reserves.join(", ") + " ne figurent pas dans les biens-fonds réservés.</p>\
-                    <p>La balance n'est pas enregistrée.\n</p>"
-        }
+          content: content + " pas dans les biens-fonds réservés.</p>\
+                   <p>Voulez-vous les référencer à l'affaire ?</p>",
+          onCancel: () => { this.confirmDialog.show=false; return; },
+          onConfirm: async () => {
+            await this.addAffaireNumeros(checkBF.newBF_not_in_numeros_reserves);
+          },
+          confirmButton: "Confirmer",
+          cancelButton: "Annuler",
+        };
+
         return;
       }
 
@@ -371,6 +390,32 @@ export default {
         this.DDPpotential = this.convertCadNumToNumObj(checkBF.ddp);
       }
 
+
+    },
+
+    /**
+     * Add affaire_numeros
+     */
+    async addAffaireNumeros(newBF) {
+      return new Promise((resolve, reject) => {
+        let formData = new FormData();
+        formData.append("numeros", JSON.stringify(newBF));
+        formData.append("affaire_id", this.affaire.id);
+
+        this.$http.post(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_ADD_AFFAIRE_NUMERO_ENDPOINT,
+          formData,
+          {
+            withCredentials: true,
+            headers: {Accept: "application/json"}
+          }
+        ).then(response => {
+          this.$root.$emit('searchAffaireNumeros');
+          this.$root.$emit("ShowMessage", "Le(s) numéro(s) ont bien été liés à l'affaire")
+          resolve(response)
+        })
+        .catch(err => reject(err));
+      });
 
     },
 
@@ -425,7 +470,9 @@ export default {
       newBF.forEach(x => {
         if (x.toLowerCase() !== "dp") {
           if (!reservedBF.includes(x)) {
-            newBF_not_in_numeros_reserves.push(x);
+            if (!newBF_not_in_numeros_reserves.includes(x)) {
+              newBF_not_in_numeros_reserves.push(x);
+            }
           }
         }
       });

@@ -516,6 +516,67 @@ def affaire_numero_new_view(request, params=None):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireNumero.__tablename__))
 
 
+@view_config(route_name='add_affaire_numero', request_method='POST', renderer='json')
+def add_affaire_numero_view(request):
+    """
+    Add new affaire-numeros
+    """
+    # Check authorization
+    if not Utils.has_permission(request, request.registry.settings['affaire_numero_edition']):
+        raise exc.HTTPForbidden()
+
+    numeros = json.loads(request.params["numeros"]) if "numeros" in request.params else None
+    affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
+
+    numeros.sort(reverse=False, key=lambda x: int(x.split("_")[1]))
+
+    for num in numeros:
+        cadastre_id, numero_bf = [int(a) for a in num.split("_")]
+
+        # check if numero already exists in DB
+        numero = request.dbsession.query(Numero).filter(Numero.cadastre_id==cadastre_id, Numero.numero==numero_bf).first()
+        # get actual max number of cadastre
+        actual_max_number = request.dbsession.query(func.max(Numero.numero)).filter(Numero.cadastre_id==cadastre_id).scalar()
+
+        if numero is None and numero_bf <= (actual_max_number + 1):
+            # create numero
+            numero_bf_id = request.registry.settings["numero_bf_id"]
+            numero_projet_id = request.registry.settings["numero_projet_id"]
+            params = {
+                "cadastre_id": cadastre_id,
+                "numero": numero_bf,
+                "type_id": numero_bf_id,
+                "etat_id": numero_projet_id,
+            }
+            numero = Utils.addNewRecord(request, Numero, params)
+
+            # create numero_etat
+            params = {
+                "numero_id": numero.id,
+                "numero_etat_id": numero_projet_id,
+                "date": datetime.now().date(),
+            }
+            Utils.addNewRecord(request, NumeroEtatHisto, params)
+
+        elif numero_bf > (actual_max_number + 1):
+            raise f"Le numero de BF candidat ({numero_bf}) dépasse le prochain numéro disponible ({actual_max_number + 1}) pour le cadastre n° {cadastre_id}"
+
+
+        # check if affaire-numero already exists in DB
+        affaire_numero_type_nouveau_id = request.registry.settings["affaire_numero_type_nouveau_id"]
+        affaire_numero = request.dbsession.query(AffaireNumero).filter(AffaireNumero.numero_id==numero.id, AffaireNumero.affaire_id==affaire_id, AffaireNumero.type_id==affaire_numero_type_nouveau_id).first()
+        if affaire_numero is None:
+            params = {
+                "affaire_id": affaire_id,
+                "numero_id": numero.id,
+                "type_id": affaire_numero_type_nouveau_id,
+                "actif": True,
+            }
+            affaire_numero = Utils.addNewRecord(request, AffaireNumero, params)
+
+    return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireNumero.__tablename__))
+
+
 ###########################################################
 # NUMERO- AFFAIRE
 ###########################################################
