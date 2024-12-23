@@ -201,4 +201,14 @@
         :md-title="alertDialog.title"
         :md-content="alertDialog.content" />
 
+    <!-- Custom Confirm dialog -->
+    <md-dialog-confirm
+        :md-active.sync="confirmDialog.show"
+        :md-title=confirmDialog.title
+        :md-content=confirmDialog.content
+        :md-confirm-text=confirmDialog.confirmButton
+        :md-cancel-text=confirmDialog.cancelButton
+        @md-cancel="confirmDialog.onCancel"
+        @md-confirm="confirmDialog.onConfirm" />
+
 </div>

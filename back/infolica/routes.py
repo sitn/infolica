@@ -119,6 +119,7 @@ def includeme(config):
     config.add_route('affaire_numeros_MO_by_affaire_id', '/infolica/api/numeros_mo_affaire/{id}')
     config.add_route('desactiver_numeros_affaires','/infolica/api/desactiver_numeros_affaires')
     config.add_route('desactiver_numeros_affaires_s','/infolica/api/desactiver_numeros_affaires/')
+    config.add_route('add_affaire_numero','/infolica/api/add_affaire_numero')
     #Historique numéros
     config.add_route('numeros_etat_histo','/infolica/api/numeros_etat_histo')
     config.add_route('numeros_etat_histo_s','/infolica/api/numeros_etat_histo/')
