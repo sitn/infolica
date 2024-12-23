@@ -15,7 +15,7 @@
                         <label>Type</label>
                         <md-input v-model="affaire.type_affaire" readonly></md-input>
                     </md-field>
-                    
+
                     <md-autocomplete v-model="form.typeAffaire" :md-options="typesAffairesListe" required md-dense v-else>
                         <label><strong style="color: blue;">Type</strong></label>
                     </md-autocomplete>
@@ -118,7 +118,7 @@
                         <div class="md-layout-item md-size-50 md-small-size-100">
                             <!-- select pour le client facture à afficher -->
                             <md-field>
-                                <label>Client à afficher pour la facture ({{ clientsFacture.selectList.length }})</label>
+                                <label>Facturer à ({{ clientsFacture.selectList.length }})</label>
                                 <md-select v-model="clientsFacture.selected_id" md-dense @md-selected="updateClientFactureAdresse">
                                     <md-option v-for="item in clientsFacture.selectList" :key="item.id" :value="item.id">{{ item.nom }}</md-option>
                                 </md-select>
@@ -154,7 +154,7 @@
                                 :permission_createClient="permission.editClientAllowed"
                                 :old_clients="false"
                                 validation_error_msg="Le client qui qui a commandé l'affaire doit être renseigné ici"
-                                label="Commandé par" 
+                                label="Commandé par"
                                 ref="ref_client_commande"/>
                         </div>
                         <div class="md-layout-item md-size-50 md-small-size-100"  v-if="form.client_commande_type_id === clientTypes_conf.moral">
@@ -183,7 +183,7 @@
                                 :permission_createClient="permission.editClientAllowed"
                                 :old_clients="false"
                                 validation_error_msg="Le client qui qui a commandé l'affaire doit être renseigné ici"
-                                label="Envoyer à" 
+                                label="Envoyer à"
                                 ref="ref_client_envoi"/>
                         </div>
                         <div class="md-layout-item md-size-50 md-small-size-100" v-if="form.client_envoi_type_id === clientTypes_conf.moral">
