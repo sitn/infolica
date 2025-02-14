@@ -108,18 +108,18 @@ def download_affaire_document_view(request):
 ###########################################################
 
 
-@view_config(route_name="spch_document", request_method="GET")
+@view_config(route_name="externe_document", request_method="GET")
 def download_affaire_document_view(request):
     """
     Download document for SPCH
     """
 
-    affaire_id = request.params["affaire_id"]
+    affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
     affaire = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
-    uuid = request.registry.settings["uuid"]
+    uuid = request.params["uuid"] if "uuid" in request.params else None
 
     # Check token
-    if not uuid == affaire.uuid:
+    if not str(uuid) == str(affaire.uuid):
         raise exc.HTTPForbidden()
 
     affaires_directory = request.registry.settings["affaires_directory"]
