@@ -107,9 +107,7 @@ def emolument_affaire_view(request):
             .filter(Emolument.emolument_affaire_id == emolument_affaire_i.id)
             .filter(Emolument.batiment > 0)
             .group_by(Emolument.batiment, Emolument.batiment_f)
-            .order_by(
-                Emolument.batiment.asc()  # Really important with respect to implementation of loading form_detail_batiment in front !!
-            )
+            .order_by(Emolument.batiment.asc())  # Really important with respect to implementation of loading form_detail_batiment in front !!
             .all()
         )
 
@@ -551,7 +549,7 @@ def export_emoluments_pdf_view(request):
 
     d = {"now": now.strftime("%d.%m.%Y, %H:%M:%S")}
 
-    header_str = "<html><head><style>"
+    header_str = '<html><head><meta charset="utf-8"><style>'
 
     ppp = """
         .logo {{
