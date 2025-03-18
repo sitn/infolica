@@ -156,7 +156,7 @@ def includeme(config):
     config.add_route('courrier_retablissement_pfp', '/infolica/api/courrier_retablissement_pfp')
     config.add_route('delete_affaire_document', '/infolica/api/delete_affaire_document')
     config.add_route('save_document', '/infolica/api/save_document')
-    config.add_route('spch_document', '/infolica/api/spch/document')
+    config.add_route('externe_document', '/infolica/api/externe/document')
     #Emoluments facture
     config.add_route('emolument_facture_by_id','/infolica/api/emolument_facture/{id}')
     config.add_route('emolument_facture','/infolica/api/emolument_facture')
