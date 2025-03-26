@@ -2,13 +2,20 @@
 
   <md-toolbar class="justifyTitleBtn">
     <h1>Edition de clients</h1>
-    <div v-if="!editMode && permission.client_edit">
+    <div v-if="!editMode && permission.client_edit && form.sortie===null">
       <md-button class="md-primary md-elevation-1" @click="editMode = true">Modifier les données du client</md-button>
     </div>
   </md-toolbar>
 
   <md-card class="md-size-100 md-small-size-100">
     <md-card-content>
+
+      <!-- Activation/désactivation de client -->
+      <div class="md-layout md-gutter" v-if="mode === 'edit'">
+        <div class="md-layout-item md-small-size-100">
+          <md-switch class="md-primary" style="padding-top: 0px;" v-model="form.sortie===null" @change="updateClientSortie" title="Activer/désactiver un client" :disabled="!permission.client_edit">{{ form.sortie===null? "Actif": "Désactivé" }}</md-switch>
+        </div>
+      </div>
 
       <!-- Type de client -->
       <div class="md-layout md-gutter">

@@ -5,7 +5,7 @@
 <script>
 import {handleException} from '@/services/exceptionsHandler';
 import {checkPermission,
-        getClients,
+        // getClients,
         filterList } from '@/services/helper';
 
 import moment from "moment";
@@ -69,7 +69,7 @@ export default {
           }
 
           this.$http.post(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_ENDPOINT, 
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_ENDPOINT,
             formData,
             {
               withCredentials: true,
@@ -81,9 +81,9 @@ export default {
               this.clients = this.setDateformat(response.data);
             }
           })
-          //Error 
+          //Error
           .catch(err => {
-            handleException(err, this); 
+            handleException(err, this);
           })
         },
 
@@ -99,41 +99,25 @@ export default {
           this.search.mail = null;
         },
 
+
         /**
-         * Call delete client
-         */
-        callDeleteClient (id, nom, prenom, entreprise) {
-          this.currentDeleteId = id;
-
-          if(prenom && nom)
-            this.deleteMessage = prenom + ' ' + nom;
-          else if(nom)
-            this.deleteMessage = nom;
-          else
-            this.deleteMessage = "-";
-
-          if(entreprise){
-            this.deleteMessage = entreprise;
+        * Update client
+        */
+        updateClient (client) {
+          if (client.sortie === null){
+            client.sortie = (new Date()).toLocaleDateString('fr-CH');
+          } else {
+            client.sortie = null;
           }
 
-          this.deleteMessage = "Confirmer la suppression du client '<strong>" + this.deleteMessage + "<strong>' ?";
+          let formData = new FormData();
+          formData.append("id", client.id);
+          formData.append("sortie", client.sortie);
 
-          this.deleteClientActive = true;
-        },
 
-
-        /**
-        * Delete client
-        */
-        onConfirmDelete () {
-
-          var formData = new FormData();
-          
-          if(this.currentDeleteId)
-            formData.append("id", this.currentDeleteId);
-
-          this.$http.delete(
-            process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT + "?id=" +  this.currentDeleteId, 
+          this.$http.put(
+            process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
+            formData,
             {
               withCredentials: true,
               headers: {"Accept": "application/json"}
@@ -141,28 +125,30 @@ export default {
           )
           .then(response =>{
             if(response && response.data){
-              this.searchClients();
+              this.searchClientsByTerm();
+              // this.searchClients();
             }
           })
-          //Error 
+          //Error
           .catch(err => {
             handleException(err, this);
-          })
+          });
         },
 
-        /**
-        * Cancel delete client
-        */
-        onCancelDelete () {
-          this.currentDeleteId = null;
-        },
+
 
     /*
      * Init clients list (for search input in form)
      */
     async initClientsSearchList() {
-      getClients()
-      .then(response => {
+      let params = '?old_clients=' + this.searchOldClientMode + '&searchTerm=' + this.searchTerm;
+      this.$http.get(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_BY_TERM_ENDPOINT + params,
+        {
+          withCredentials: true,
+          headers: {"accept": "application/json"}
+        }
+      ).then(response => {
         if (response && response.data) {
           this.clients_list = response.data.map(x => ({
             id: x.id,
@@ -187,10 +173,10 @@ export default {
      * search Client by term
      */
     async searchClientsByTerm() {
-      this.clearForm();
+      // this.clearForm();
 
       let params = '?old_clients=' + this.searchOldClientMode + '&searchTerm=' + this.searchTerm;
-      
+
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_CLIENTS_BY_TERM_ENDPOINT + params,
         {
@@ -221,10 +207,10 @@ export default {
 
   },
 
-  mounted: function(){    
+  mounted: function(){
     this.editClientClientAllowed = checkPermission(process.env.VUE_APP_CLIENT_EDITION);
+    this.searchClientsByTerm();
     this.initClientsSearchList();
-    this.searchClients();
   }
 }
 </script>

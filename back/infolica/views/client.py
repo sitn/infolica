@@ -34,6 +34,9 @@ def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, sear
         search_limit = int(request.registry.settings['search_limit'])
 
     searchTerms = re.split(r'\s|\,|\:|\-|SAP|BDP/BDEE', searchTerm.strip())
+    indices = [i for i, val in enumerate(searchTerms) if val == "null"]
+    for idx in indices:
+        searchTerms[idx] = None
     searchTerms = list(filter(None, searchTerms))
 
     query = request.dbsession.query(Client)
@@ -64,7 +67,7 @@ def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, sear
                 )
             )
 
-    results = query.limit(search_limit).all()
+    results = query.order_by(Client.entreprise, Client.nom, Client.prenom).limit(search_limit).all()
 
     return results
 
@@ -264,30 +267,30 @@ def clients_update_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Client.__tablename__))
 
 
-@view_config(route_name='clients', request_method='DELETE', renderer='json')
-@view_config(route_name='clients_s', request_method='DELETE', renderer='json')
-def clients_delete_view(request):
-    """
-    Delete client
-    """
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['client_edition']):
-        raise exc.HTTPForbidden()
+# @view_config(route_name='clients', request_method='DELETE', renderer='json')
+# @view_config(route_name='clients_s', request_method='DELETE', renderer='json')
+# def clients_delete_view(request):
+#     """
+#     Delete client
+#     """
+#     # Check authorization
+#     if not Utils.has_permission(request, request.registry.settings['client_edition']):
+#         raise exc.HTTPForbidden()
 
-    # Get client_id
-    id_client = request.params['id'] if 'id' in request.params else None
+#     # Get client_id
+#     id_client = request.params['id'] if 'id' in request.params else None
 
-    model = request.dbsession.query(Client).filter(
-        Client.id == id_client).first()
+#     model = request.dbsession.query(Client).filter(
+#         Client.id == id_client).first()
 
-    # If result is empty
-    if not model:
-        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
-            Client.__tablename__, id_client))
+#     # If result is empty
+#     if not model:
+#         raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
+#             Client.__tablename__, id_client))
 
-    model.sortie = datetime.utcnow()
+#     model.sortie = datetime.utcnow()
 
-    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Client.__tablename__))
+#     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Client.__tablename__))
 
 
 # ClientMoralPersonnes

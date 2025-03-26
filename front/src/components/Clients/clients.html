@@ -20,7 +20,6 @@
 
                 <div class="md-layout-item">
                     <div style="float: right; display: flex;">
-                        <md-checkbox v-model="searchOldClientMode" @change="searchClientsByTerm" style="width: 370px; margin-top: 30px;">Rechercher également dans les anciens clients</md-checkbox>
                         <md-field style="width: 400px;">
                             <label>Client</label>
                             <md-input id="client" v-model="searchTerm" @keyup="searchClientsByTerm"></md-input>
@@ -121,7 +120,11 @@
         <md-card>
             <!-- Results Header -->
             <md-card-header>
-                <div class="md-title">Résultats</div>
+                <div class="justifyTitleBtn">
+                    <div class="md-title">Résultats</div>
+                    <md-checkbox v-model="searchOldClientMode" @change="searchClientsByTerm" style="width: 370px; margin-top: 30px;">Afficher les anciens clients</md-checkbox>
+                </div>
+
             </md-card-header>
 
             <!-- Results Content -->
@@ -132,22 +135,22 @@
                         :md-description="`Aucun client ne correspond à la recherche. Entrer un nouveau terme de recherche ou créer le client.`">
                     </md-table-empty-state>
 
-                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                    <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{disabledTableRow: item.sortie!==null}">
                         <md-table-cell width="100px" md-label="Entreprise" md-sort-by="entreprise">{{ item.entreprise }}</md-table-cell>
                         <md-table-cell width="50px" md-label="Titre" md-sort-by="titre">{{ item.titre }}</md-table-cell>
                         <md-table-cell width="100px" md-label="Prénom" md-sort-by="prenom">{{ item.prenom }}</md-table-cell>
                         <md-table-cell width="100px" md-label="Nom" md-sort-by="nom">{{ item.nom }}</md-table-cell>
                         <md-table-cell width="150px" md-label="Adresse">{{ item.adresse }}</md-table-cell>
                         <md-table-cell width="50px" md-label="Localité">{{ item.npa }} {{ item.localite }}</md-table-cell>
-                        <md-table-cell width="80px" md-label="Client supprimé le" md-sort-by="sortie_sort">{{ item.sortie }}</md-table-cell>
+                        <md-table-cell width="80px" md-label="Client désactivé le" md-sort-by="sortie_sort">{{ item.sortie }}</md-table-cell>
                         <md-table-cell width="50px" md-label="Actions" class="actionsColumn">
-                            <md-button class="md-icon-button md-primary" :to="{ name: 'ClientsEdit', params: { id: item.id } }">
+                            <md-switch class="md-primary" style="padding-top: 0px;" v-model="item.sortie===null" @change="updateClient(item)" title="Activer/désactiver un client" :disabled="!editClientClientAllowed"></md-switch>
+
+                            <md-button class="md-icon-button md-primary" :to="{ name: 'ClientsEdit', params: { id: item.id } }" title="Ouvrir la page d'édition du client">
                                 <md-icon>open_in_new</md-icon>
                             </md-button>
 
-                            <md-button class="md-icon-button md-accent" v-on:click="callDeleteClient(item.id, item.nom, item.prenom, item.entreprise)" v-if="editClientClientAllowed">
-                                <md-icon>delete</md-icon>
-                            </md-button>
+
                         </md-table-cell>
                     </md-table-row>
                 </md-table>
@@ -157,6 +160,5 @@
     </div>
 
     <div>
-        <md-dialog-confirm :md-active.sync="deleteClientActive" md-title="Supprimer le client" :md-content="deleteMessage" md-confirm-text="Confirmer" md-cancel-text="Annuler" @md-confirm="onConfirmDelete" @md-cancel="onCancelDelete" />
     </div>
 </div>
