@@ -29,7 +29,7 @@ def _set_client_aggregated_name(client, sep=', '):
     return nom_
 
 
-def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, search_limit='default'):
+def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, search_limit='default', filter_type=[]):
     if search_limit == 'default':
         search_limit = int(request.registry.settings['search_limit'])
 
@@ -42,6 +42,9 @@ def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, sear
     query = request.dbsession.query(Client)
     if not old_clients:
         query = query.filter(Client.sortie == None)
+
+    if len(filter_type) > 0:
+        query = query.filter(Client.type_client.in_(filter_type))
 
     if len(searchTerms) > 0:
         for term in searchTerms:
@@ -202,18 +205,34 @@ def clients_aggregated_search_by_term_view(request):
 
     searchTerm = request.params["searchTerm"] if "searchTerm" in request.params else None
     old_clients = request.params['old_clients'] == 'true' if 'old_clients' in request.params else False
+    filter_type = json.loads(request.params['filter_type']) if 'filter_type' in request.params else []
 
-    query = _multipleAttributesClientSearch(request, searchTerm, old_clients=old_clients)
+    query = _multipleAttributesClientSearch(request, searchTerm, old_clients=old_clients, filter_type=filter_type)
 
     liste_clients = []
     for client in query:
         nom_ = _set_client_aggregated_name(client)
+        type_client_nom = request.dbsession.query(ClientType).filter(ClientType.id==client.type_client).first()
+        type_client_nom = type_client_nom.nom if type_client_nom else ""
+
+        # if client.type_client not in liste_clients.keys():
+        #     liste_clients[type_client_nom] = []
+
+        # liste_clients[type_client_nom].append({
+        #     'id': client.id,
+        #     'nom': nom_,
+        #     'type_client': client.type_client,
+        #     # 'type_client_nom':type_client_nom
+        # })
 
         liste_clients.append({
             'id': client.id,
             'nom': nom_,
-            'type_client': client.type_client
+            'type_client': client.type_client,
+            'type_client_nom':type_client_nom
         })
+
+    liste_clients.sort(key=lambda x: x["type_client"])
 
     return liste_clients
 

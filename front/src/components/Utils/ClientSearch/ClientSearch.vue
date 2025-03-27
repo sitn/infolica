@@ -11,9 +11,9 @@ import { validationMixin } from 'vuelidate'
 import { required } from 'vuelidate/lib/validators'
 
 export default {
-  
+
   name: "ClientSearch",
-  
+
   mixins: [validationMixin],
 
   props: {
@@ -44,24 +44,28 @@ export default {
     validation_error_msg: {
       type: String,
       default: 'Le client est obligatoire'
-    }
+    },
+    filter_type: {
+      type: Array,
+      default: () => []
+    },
   },
 
   emits: [
     'update:client_id'
   ],
-  
+
   data: () => {
     return {
       client: null,
       liste_clients: [],
     };
   },
-  
+
   validations: {
       client: { required }
   },
-  
+
   methods: {
     /**
      * searchClient
@@ -69,7 +73,8 @@ export default {
     async searchClient(searchTerm) {
       let conditions = {
         'searchTerm': searchTerm,
-        'old_clients': this.old_clients
+        'old_clients': this.old_clients,
+        'filter_type': JSON.stringify(this.filter_type),
       };
 
       this.getClientsByTerm(conditions)
@@ -88,12 +93,12 @@ export default {
               params.push(property + "=" + conditions[property]);
           }
       }
-      
+
       if (params.length > 0) {
           params = "?" + params.join("&");
       } else {
           params = "";
-      } 
+      }
 
       return new Promise((resolve, reject) => {
           this.$http.get(
@@ -123,7 +128,7 @@ export default {
         }
       ).then(response => {
           if (response && response.data) {
-            
+
             this.client = stringifyAutocomplete2(response.data, ["nom"], ", ", "nom");
           }
         }).catch(err => handleException(err, this));
@@ -179,7 +184,7 @@ export default {
         this.client = '';
       }
     },
-    
+
     client: function() {
       if (this.client && this.client.id) {
         this.$emit('update:client_id', this.client.id);

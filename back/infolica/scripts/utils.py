@@ -120,7 +120,6 @@ class Utils(object):
                     conditions.append(getattr(model, param) == tmp)
                 else:
                     conditions.append(func.lower(getattr(model, param)).like("%" + func.lower(params[param].replace('"', "")) + "%"))
-        print ("conditions", conditions)
         return conditions
 
     @classmethod

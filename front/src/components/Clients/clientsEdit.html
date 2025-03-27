@@ -38,7 +38,7 @@
             <md-input name="entreprise" id="entreprise" v-model="form.entreprise" :disabled="sending || !permission.client_edit || !editMode" @keyup="checkExistingClient" />
           </md-field>
         </div>
-        <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.type_client === clientTypes_conf.personne_physique">
+        <div class="md-layout-item md-small-size-100 md-size-50" v-if="[clientTypes_conf.personne_physique, clientTypes_conf.personne_facture].includes(form.type_client)">
           <md-field>
             <label>Titre</label>
             <md-select v-model="form.titre" :disabled="sending || !permission.client_edit || !editMode">
@@ -51,7 +51,7 @@
       </div>
 
       <!-- Nom et Prénom -->
-      <div class="md-layout md-gutter" v-if="form.type_client === clientTypes_conf.personne_physique">
+      <div class="md-layout md-gutter" v-if="[clientTypes_conf.personne_physique, clientTypes_conf.personne_facture].includes(form.type_client)">
         <div class="md-layout-item md-small-size-100 md-size-50">
           <md-field :class="getValidationClass('nom')">
             <label for="nom">Nom</label>
@@ -169,12 +169,17 @@
         </div>
       </div>
 
-      <!-- Need v-ref facture -->
       <div class="md-layout md-gutter">
+        <!-- Need v-ref facture -->
         <div class="md-layout-item md-small-size-100 md-size-50">
           <md-checkbox class="md-primary" v-model="form.besoin_vref_facture" :disabled="sending || !permission.client_edit || !editMode">Le client demande une référence dans la facture</md-checkbox>
         </div>
+        <!-- Need client facture -->
+        <div v-if="[clientTypes_conf.personne_physique, clientTypes_conf.personne_morale].includes(form.type_client)" class="md-layout-item md-small-size-100 md-size-50">
+          <md-checkbox class="md-primary" v-model="form.besoin_client_facture" :disabled="sending || !permission.client_edit || !editMode">Le client demande d'envoyer la facture à une adresse particulière</md-checkbox>
+        </div>
       </div>
+
 
     </md-card-content>
 

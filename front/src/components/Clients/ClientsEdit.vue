@@ -21,7 +21,8 @@ export default {
     client_moral_personnes: [],
     clientTypes_conf: {
       personne_physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID),
-      personne_morale: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID)
+      personne_morale: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID),
+      personne_facture: Number(process.env.VUE_APP_TYPE_CLIENT_FACTURE_ID),
     },
     contact_form: {
       titre: "Monsieur", //default
@@ -49,6 +50,7 @@ export default {
       no_bdp_bdee: null,
       co: null,
       besoin_vref_facture: false,
+      besoin_client_facture: false,
       sortie: null,
     },
     lastRecord: null,
@@ -108,6 +110,7 @@ export default {
       this.form.no_bdp_bdee = null;
       this.form.co = null;
       this.form.besoin_vref_facture = false;
+      this.form.besoin_client_facture = false;
       this.form.sortie = null;
     },
 
@@ -225,6 +228,7 @@ export default {
       formData.append("no_sap", this.form.no_sap || null);
       formData.append("no_bdp_bdee", this.form.no_bdp_bdee || null);
       formData.append("besoin_vref_facture", this.form.besoin_vref_facture);
+      formData.append("besoin_client_facture", this.form.besoin_client_facture);
       formData.append("sortie", this.form.sortie || null);
 
       return formData;
@@ -299,6 +303,7 @@ export default {
             this.form.no_sap = response.data.no_sap;
             this.form.no_bdp_bdee = response.data.no_bdp_bdee;
             this.form.besoin_vref_facture = response.data.besoin_vref_facture;
+            this.form.besoin_client_facture = response.data.besoin_client_facture;
             this.form.sortie = response.data.sortie;
           }
         })
