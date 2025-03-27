@@ -159,13 +159,10 @@ def clients_search_view(request):
     conditions = [] if not conditions or len(
         conditions) == 0 else conditions
 
-    conditions.append(Client.sortie == None)
+    # conditions.append(Client.sortie == None)
 
     query = request.dbsession.query(
         Client
-    ).order_by(
-        Client.nom,
-        Client.prenom
     ).filter(
         *conditions
     )
@@ -173,7 +170,7 @@ def clients_search_view(request):
     if not old_clients:
         query = query.filter(Client.sortie == None)
 
-    query = query.limit(search_limit).all()
+    query = query.order_by(Client.entreprise, Client.nom, Client.prenom).limit(search_limit).all()
     return Utils.serialize_many(query)
 
 

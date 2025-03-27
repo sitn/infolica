@@ -14,33 +14,7 @@ import json
 import os
 import time
 
-unite_ppe_list = [
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'J',
-    'K',
-    'L',
-    'M',
-    'N',
-    'O',
-    'P',
-    'Q',
-    'R',
-    'S',
-    'T',
-    'U',
-    'V',
-    'W',
-    'X',
-    'Y',
-    'Z'
-]
+unite_ppe_list = ["A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
 
 class Utils(object):
@@ -56,7 +30,7 @@ class Utils(object):
         d = _query.__dict__
         item = {}
         for n in d.keys():
-            if n != '_sa_instance_state' and n != 'geom':
+            if n != "_sa_instance_state" and n != "geom":
                 if isinstance(d[n], (datetime, date)):
                     item[n] = d[n].isoformat()
                 else:
@@ -77,7 +51,7 @@ class Utils(object):
             d = u.__dict__
             item = {}
             for n in d.keys():
-                if n != '_sa_instance_state' and n != 'geom':
+                if n != "_sa_instance_state" and n != "geom":
                     if isinstance(d[n], (datetime, date)):
                         item[n] = d[n].isoformat()
                     else:
@@ -90,7 +64,7 @@ class Utils(object):
         """
         Return model record parameters
         """
-        return [a for a in dir(record) if not (a == 'id' or a.startswith('_'))] if record else []
+        return [a for a in dir(record) if not (a == "id" or a.startswith("_"))] if record else []
 
     @classmethod
     def set_model_record(cls, record, params):
@@ -100,13 +74,13 @@ class Utils(object):
         atts = cls.get_model_record_attributes(record)
 
         for att in atts:
-            if att != 'affaire_doc_file':
+            if att != "affaire_doc_file":
                 val = params[att] if att in params else getattr(record, att)
 
                 # Check boolean
-                if val == 'true':
+                if val == "true":
                     val = True
-                if val == 'false':
+                if val == "false":
                     val = False
                 if val == "null" or val == "":
                     val = None
@@ -120,7 +94,7 @@ class Utils(object):
         """
         Get data save response
         """
-        return {'message': message}
+        return {"message": message}
 
     @classmethod
     def get_search_conditions(cls, model, params):
@@ -130,23 +104,23 @@ class Utils(object):
         conditions = list()
 
         for param in params:
-            if param == 'matDiff':
+            if param == "matDiff" or param == "old_clients":
                 continue
-            if param.startswith('_'):
+            if param.startswith("_"):
                 # pour les conditions NOT IN, p. ex. référencement numéros à affaire
                 param = param[1:]
-                conditions.append(~getattr(model, param).in_(json.loads(params["_"+param])))
-            elif param.startswith('%'):
+                conditions.append(~getattr(model, param).in_(json.loads(params["_" + param])))
+            elif param.startswith("%"):
                 # pour les conditions numérique qui contiennent un sous ensemble (p.ex. 101 est contenu dans 2101)
                 param = param[1:]
-                conditions.append(cast(getattr(model, param), String).like("%" + params["%"+param] + "%"))
+                conditions.append(cast(getattr(model, param), String).like("%" + params["%" + param] + "%"))
             else:
-                if params[param].isdigit() and not param == 'npa' and not param == 'no_access':
+                if params[param].isdigit() and not param == "npa" and not param == "no_access":
                     tmp = int(params[param])
                     conditions.append(getattr(model, param) == tmp)
                 else:
-                    conditions.append(func.lower(getattr(model, param)).like(
-                        '%' + func.lower(params[param].replace('"', '')) + '%'))
+                    conditions.append(func.lower(getattr(model, param)).like("%" + func.lower(params[param].replace('"', "")) + "%"))
+        print ("conditions", conditions)
         return conditions
 
     @classmethod
@@ -158,16 +132,12 @@ class Utils(object):
         if not isinstance(type_id, list):
             type_id = [type_id]
         # Filter by type and cadastre
-        query = request.dbsession.query(Numero).filter(
-            and_(Numero.type_id.in_(type_id), Numero.cadastre_id == cadastre_id)
-        )
+        query = request.dbsession.query(Numero).filter(and_(Numero.type_id.in_(type_id), Numero.cadastre_id == cadastre_id))
         # If plan_id is specified, also filter by plan
         if plan_id:
             query = query.filter(Numero.plan_id == plan_id)
         if affaire_id:
-            query = query.filter(
-                and_(AffaireNumero.affaire_id == affaire_id, AffaireNumero.numero_id == Numero.id)
-            )
+            query = query.filter(and_(AffaireNumero.affaire_id == affaire_id, AffaireNumero.numero_id == Numero.id))
         result = query.order_by(desc(Numero.numero)).limit(1).first()
         numero = result.numero if result else 0
         return numero
@@ -177,15 +147,12 @@ class Utils(object):
         """
         Return last number MO taking into account twin cadastres
         """
-        query = request.dbsession.query(func.max(ReservationNumerosMO.numero_a)).filter(and_(
-            ReservationNumerosMO.cadastre_id == cadastre_id,
-            ReservationNumerosMO.type_id == type_id
-        ))
+        query = request.dbsession.query(func.max(ReservationNumerosMO.numero_a)).filter(and_(ReservationNumerosMO.cadastre_id == cadastre_id, ReservationNumerosMO.type_id == type_id))
 
         if plan_id:
             plan = request.dbsession.query(Plan).filter(Plan.idobj == plan_id).first()
-            _, plan_no = plan.id_obj2.split('_')
-            
+            _, plan_no = plan.id_obj2.split("_")
+
             query = query.filter(ReservationNumerosMO.plan == plan_no)
 
         return 0 if query.first()[0] is None else query.first()[0]
@@ -211,8 +178,8 @@ class Utils(object):
             n = len(unite_ppe_list)
             unite = ""
             c = 0
-            while idx: 
-                idx, idx_ = divmod(idx-c, n)
+            while idx:
+                idx, idx_ = divmod(idx - c, n)
                 unite = unite_ppe_list[idx_] + unite
                 c = 1
         return unite
@@ -242,10 +209,7 @@ class Utils(object):
         functions = role.fonctions
 
         for function in functions:
-             results.append({
-                'id': function.id,
-                'nom': function.nom
-            })
+            results.append({"id": function.id, "nom": function.nom})
 
         return results
 
@@ -253,18 +217,17 @@ class Utils(object):
     def has_permission(cls, request, fonction_name):
         if not check_connected(request):
             return False
-        
+
         user_functions = get_user_functions(request)
 
-        if fonction_name in user_functions['fonctions']:
+        if fonction_name in user_functions["fonctions"]:
             return True
 
         return False
 
     @classmethod
     def get_role_id_by_name(cls, request, role_name):
-        query = request.dbsession.query(Role).filter(
-            Role.nom == role_name).first()
+        query = request.dbsession.query(Role).filter(Role.nom == role_name).first()
 
         if query:
             return query.id
@@ -274,11 +237,11 @@ class Utils(object):
     @classmethod
     def create_affaire_folder(cls, template_path, affaire_path):
         if not os.path.isdir(affaire_path):
-            copytree(template_path, affaire_path, ignore=ignore_patterns('Thumbs.db'))
+            copytree(template_path, affaire_path, ignore=ignore_patterns("Thumbs.db"))
             settime = time.time()
             os.utime(affaire_path, times=(settime, settime))
         return
-    
+
     @classmethod
     def addNewRecord(cls, request, Model, params=None):
         """
@@ -288,38 +251,34 @@ class Utils(object):
         """
         if params is None:
             params = request.params
-        
+
         record = Model()
         record = cls.set_model_record(record, params)
         request.dbsession.add(record)
         request.dbsession.flush()
         return record
 
-
     @classmethod
     def getOperateurFromUser(cls, request):
-        user = request.authenticated_userid    
-        operateur = request.dbsession.query(Operateur).filter(
-            func.lower(Operateur.login) == user
-        ).first()
+        user = request.authenticated_userid
+        operateur = request.dbsession.query(Operateur).filter(func.lower(Operateur.login) == user).first()
         return operateur
 
-    
     @classmethod
     def check_unread_preavis_remarks(cls, request, affaire_id, service_id=None):
-        
-        preavis_remarques = request.dbsession.query(
-            PreavisRemarque.operateur_id
-        ).join(
-            Preavis, Preavis.id == PreavisRemarque.preavis_id, isouter=True
-        ).filter(
-            Preavis.affaire_id == affaire_id,
-            PreavisRemarque.lu_operateur_id == None,
+
+        preavis_remarques = (
+            request.dbsession.query(PreavisRemarque.operateur_id)
+            .join(Preavis, Preavis.id == PreavisRemarque.preavis_id, isouter=True)
+            .filter(
+                Preavis.affaire_id == affaire_id,
+                PreavisRemarque.lu_operateur_id == None,
+            )
         )
-        
+
         if service_id is not None:
             preavis_remarques = preavis_remarques.filter(Preavis.service_id == service_id)
-        
+
         preavis_remarques = preavis_remarques.all()
 
         connectedUser = cls.getOperateurFromUser(request)
@@ -331,20 +290,18 @@ class Utils(object):
                 pr_remark_user = pr_remark_user_query.filter(Operateur.id == pr[0]).first()
                 if not connectedUser.service_id == pr_remark_user.service_id:
                     unread += 1
-        
+
         return unread
-    
-    
+
     @classmethod
     def generate_file_from_template(cls, request, template, data, output_file_name, timeout=5):
         settings = request.registry.settings
-        mails_templates_directory = settings['mails_templates_directory']
-        temporary_directory = settings['temporary_directory']
-
+        mails_templates_directory = settings["mails_templates_directory"]
+        temporary_directory = settings["temporary_directory"]
 
         # Set output file name
         date_time = datetime.now().strftime("%Y%m%d%H%M%S")
-        filename = output_file_name + "_" + date_time + '.docx'
+        filename = output_file_name + "_" + date_time + ".docx"
         file_path = os.path.join(temporary_directory, filename)
 
         # Set context
@@ -364,60 +321,50 @@ class Utils(object):
         # Replace values by keywords and save
         doc.render(data)
         doc.save(file_path)
-        
+
         return filename
-    
 
     @classmethod
     def newAffaireEtape(cls, request, affaire_id, etape_id, remarque=None, operateur_id=None, datetime_=datetime.now()):
-        
+
         if operateur_id is None:
-            operateur_id = cls.getOperateurFromUser(request).id,
-        
-        params = Utils._params(
-            affaire_id = affaire_id,
-            etape_id = etape_id,
-            operateur_id = operateur_id,
-            datetime = datetime_,
-            remarque = remarque
-        )
+            operateur_id = (cls.getOperateurFromUser(request).id,)
+
+        params = Utils._params(affaire_id=affaire_id, etape_id=etape_id, operateur_id=operateur_id, datetime=datetime_, remarque=remarque)
 
         record = AffaireEtape()
         record = Utils.set_model_record(record, params)
         request.dbsession.add(record)
-        
-        return
 
+        return
 
     @classmethod
     def affaireUpdatePermission(cls, request, affaire_type):
-        permission = request.registry.settings['affaire_edition']
+        permission = request.registry.settings["affaire_edition"]
 
         # Affaire de cadastration
-        if affaire_type == request.registry.settings['affaire_type_cadastration_id']:
-            permission = request.registry.settings['affaire_cadastration_edition']
+        if affaire_type == request.registry.settings["affaire_type_cadastration_id"]:
+            permission = request.registry.settings["affaire_cadastration_edition"]
         # Affaire de PPE
-        elif affaire_type == request.registry.settings['affaire_type_ppe_id']:
-            permission = request.registry.settings['affaire_ppe_edition']
+        elif affaire_type == request.registry.settings["affaire_type_ppe_id"]:
+            permission = request.registry.settings["affaire_ppe_edition"]
         # Affaire de révision d'abornement
-        elif affaire_type == request.registry.settings['affaire_type_revision_abornement_id']:
-            permission = request.registry.settings['affaire_revision_abornement_edition']
+        elif affaire_type == request.registry.settings["affaire_type_revision_abornement_id"]:
+            permission = request.registry.settings["affaire_revision_abornement_edition"]
         # Affaire de rétablissement de PFP3
-        elif affaire_type == request.registry.settings['affaire_type_retablissement_pfp3_id']:
-            permission = request.registry.settings['affaire_retablissement_pfp3_edition']
+        elif affaire_type == request.registry.settings["affaire_type_retablissement_pfp3_id"]:
+            permission = request.registry.settings["affaire_retablissement_pfp3_edition"]
         # Affaire pcop
-        elif affaire_type == request.registry.settings['affaire_type_part_copropriete_id']:
-            permission = request.registry.settings['affaire_pcop_edition']
+        elif affaire_type == request.registry.settings["affaire_type_part_copropriete_id"]:
+            permission = request.registry.settings["affaire_pcop_edition"]
         # Affaire mpd
-        elif affaire_type == request.registry.settings['affaire_type_mpd_id']:
-            permission = request.registry.settings['affaire_mpd_edition']
+        elif affaire_type == request.registry.settings["affaire_type_mpd_id"]:
+            permission = request.registry.settings["affaire_mpd_edition"]
         # Affaire autre
-        elif affaire_type == request.registry.settings['affaire_type_autre_id']:
-            permission = request.registry.settings['affaire_autre_edition']
+        elif affaire_type == request.registry.settings["affaire_type_autre_id"]:
+            permission = request.registry.settings["affaire_autre_edition"]
         # Affaire affaire_type_remaniement_parcellaire_id
-        elif affaire_type == request.registry.settings['affaire_type_remaniement_parcellaire_id']:
-            permission = request.registry.settings['affaire_remaniement_parcellaire_edition']
+        elif affaire_type == request.registry.settings["affaire_type_remaniement_parcellaire_id"]:
+            permission = request.registry.settings["affaire_remaniement_parcellaire_edition"]
 
         return permission
-
-    

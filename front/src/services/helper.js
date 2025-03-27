@@ -104,6 +104,21 @@ export const getTypesAffaires = async function () {
 };
 
 /*
+ * Get Types Clients
+ */
+export const getClientTypes = async function () {
+    return new Promise((resolve, reject) => {
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_TYPES_CLIENTS_ENDPOINT,
+            {
+              withCredentials: true,
+              headers: {"Accept": "application/json"}
+            })
+            .then(response => resolve(response))
+            .catch(() => reject);
+    });
+};
+
+/*
  * Get Etats Numeros
  */
 export const getEtatsNumeros = async function () {
