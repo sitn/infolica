@@ -38,20 +38,23 @@
             <md-card-expand-content>
                 <md-card-content>
                     <div class="md-layout md-gutter">
-                        <!-- id -->
-                        <div class="md-layout-item md-size-25 md-small-size-50">
-                            <md-field>
-                                <label>ID affaire</label>
-                                <md-input type="number" v-model="search.id" @input="searchAffaires"></md-input>
-                            </md-field>
-                        </div>
+                        <div class="md-layout-item md-size-25 md-small-size-50 md-layout justifyTitleBtn">
+                            <!-- id -->
+                            <div class="md-layout-item md-size-40 md-small-size-40">
+                                <md-field>
+                                    <label>ID affaire</label>
+                                    <md-input type="number" v-model="search.id" @input="searchAffaires"></md-input>
+                                </md-field>
 
-                        <!-- nom -->
-                        <div class="md-layout-item md-size-25 md-small-size-50">
-                            <md-field>
-                                <label>Référence ACCESS (p.ex.CF_1492)</label>
-                                <md-input v-model="search.nom" @input="searchAffaires"></md-input>
-                            </md-field>
+                            </div>
+                            <!-- nom -->
+                            <div class="md-layout-item md-size-50 md-small-size-50">
+                                <md-field>
+                                    <label>par ex. CF_1492</label>
+                                    <md-input v-model="search.nom" placeholder="Référence ACCESS" @input="searchAffaires"></md-input>
+                                </md-field>
+                            </div>
+
                         </div>
 
                         <!-- Opétateur -->
@@ -66,6 +69,17 @@
                             <md-autocomplete md-dense v-model="search.etape" :md-options="etapes_liste" @md-changed="searchAffaires">
                                 <label>Étape</label>
                             </md-autocomplete>
+                        </div>
+
+                        <!-- Dates création affaire -->
+                        <div class="md-layout-item md-size-25 md-small-size-50" style="display: flex;">
+                            <md-datepicker v-model="search.dateFrom" :md-disabled-dates="disabledStartDates" md-immediately>
+                                <label>Depuis</label>
+                            </md-datepicker>
+
+                            <md-datepicker style="margin-left: 20px;" v-model="search.dateTo" :md-disabled-dates="disabledEndDates" md-immediately>
+                                <label>Jusqu'au</label>
+                            </md-datepicker>
                         </div>
                     </div>
 
@@ -88,23 +102,7 @@
                                 </template>
                             </md-autocomplete>
                         </div>
-                        <!-- Date de -->
-                        <div class="md-layout-item md-size-25 md-small-size-50" style="display: flex;">
-                            <md-datepicker v-model="search.dateFrom" :md-disabled-dates="disabledStartDates" md-immediately>
-                                <label>Depuis</label>
-                            </md-datepicker>
-
-                            <md-datepicker style="margin-left: 20px;" v-model="search.dateTo" :md-disabled-dates="disabledEndDates" md-immediately>
-                                <label>Jusqu'au</label>
-                            </md-datepicker>
-                        </div>
-
-                        <div class="md-layout-item md-size25 md-small-size-50">
-                            <md-checkbox v-model="search.limitNbResults" class="md-primary" @change="searchAffaires">Limiter la recherche aux 20 premiers résultats (pour des raisons de performances).</md-checkbox>
-                        </div>
-                    </div>
-
-                    <div class="md-layout md-gutter">
+                        <!-- search by client -->
                         <div class="md-layout-item md-size-50">
                             <ClientSearch
                                 :client_id="search.client_id"
@@ -133,7 +131,7 @@
             <!-- Results Header -->
             <md-card-header class="justifyTitleBtn">
                 <div class="md-title">Résultats</div>
-                <div>({{ affaires.length }} affaire<span v-if="affaires.length >= 2">s</span> affichée<span v-if="affaires.length >= 2">s</span>)</div>
+                <div>({{ affaires.length }} affaire<span v-if="affaires.length >= 2">s</span> affichée<span v-if="affaires.length >= 2">s</span> / {{ nb_affaires_total }} résultat<span v-if="affaires.length >= 2">s</span>)</div>
             </md-card-header>
 
             <!-- Results Content -->
@@ -169,6 +167,11 @@
                         </md-table-cell>
                     </md-table-row>
                 </md-table>
+
+                <div class="md-layout md-gutter md-alignment-center-center" v-if="affaires.length < nb_affaires_total">
+                    <md-button class="md-primary md-dense md-raised" @click="searchAffaires('addResults')">Afficher les 20 résultats suivants</md-button>
+                </div>
+
             </md-card-content>
         </md-card>
 

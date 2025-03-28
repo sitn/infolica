@@ -24,6 +24,7 @@ export default {
   props: {},
   data: () => ({
     affaires: [],
+    nb_affaires_total: 0,
     clients: [],
     searchPanel_expanded: false,
     operateurs_liste: [],
@@ -40,7 +41,6 @@ export default {
       dateFrom: null,
       dateTo: null,
       etape: null,
-      limitNbResults: true,
     },
     showProgressBar: false,
     types_affaires: []
@@ -138,7 +138,6 @@ export default {
       this.search.type = "";
       this.search.dateFrom = null;
       this.search.dateTo = null;
-      this.search.limitNbResults = true;
       this.search.client_id = null;
       this.searchAffaires();
     },
@@ -146,12 +145,14 @@ export default {
     /*
      * SEARCH AFFAIRE
      */
-    async searchAffaires() {
+    async searchAffaires(data="") {
       this.showProgressBar = true;
 
       let formData = new FormData();
 
-      formData.append("limitNbResults", this.search.limitNbResults);
+      if (data === "addResults") {
+        formData.append("addResults", this.affaires.length);
+      }
 
       if (this.search.id) {
         formData.append("id", this.search.id);
@@ -200,7 +201,7 @@ export default {
           }
         ).then(response => {
           if (response && response.data) {
-            let tmp = response.data;
+            let tmp = response.data.affaires;
             tmp.forEach(x => {
               if (x.client_commande_id) {
                 x.client_commande_ = x.client_commande_entreprise ? x.client_commande_entreprise : [x.client_commande_titre, x.client_commande_prenom, x.client_commande_nom].filter(Boolean).join(" ");
@@ -218,6 +219,7 @@ export default {
             });
 
             this.affaires = tmp;
+            this.nb_affaires_total = Number(response.data.nb_affaires_total);
             this.showProgressBar = false;
           }
         }).catch(err => {
