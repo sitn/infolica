@@ -42,7 +42,7 @@
                         <div class="md-layout-item md-size-25 md-small-size-50">
                             <md-field>
                                 <label>ID affaire</label>
-                                <md-input type="number" v-model="search.id"></md-input>
+                                <md-input type="number" v-model="search.id" @input="searchAffaires"></md-input>
                             </md-field>
                         </div>
 
@@ -50,21 +50,21 @@
                         <div class="md-layout-item md-size-25 md-small-size-50">
                             <md-field>
                                 <label>Référence ACCESS (p.ex.CF_1492)</label>
-                                <md-input v-model="search.nom"></md-input>
+                                <md-input v-model="search.nom" @input="searchAffaires"></md-input>
                             </md-field>
                         </div>
 
                         <!-- Opétateur -->
                         <div class="md-layout-item md-size-25 md-small-size-50">
-                            <md-autocomplete md-dense v-model="search.operateur" :md-options="operateurs_liste" >
-                            <label>Opérateur</label>
+                            <md-autocomplete md-dense v-model="search.operateur" :md-options="operateurs_liste" @md-changed="searchAffaires" >
+                                <label>Opérateur</label>
                             </md-autocomplete>
                         </div>
 
                         <!-- Etape -->
                         <div class="md-layout-item md-size-25 md-small-size-50">
-                            <md-autocomplete md-dense v-model="search.etape" :md-options="etapes_liste" >
-                            <label>Étape</label>
+                            <md-autocomplete md-dense v-model="search.etape" :md-options="etapes_liste" @md-changed="searchAffaires">
+                                <label>Étape</label>
                             </md-autocomplete>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                     <div class="md-layout md-gutter">
                         <!-- Cadastre -->
                         <div class="md-layout-item md-size-25 md-small-size-50">
-                            <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste" md-dense>
+                            <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste" md-dense @md-changed="searchAffaires">
                                 <label>Cadastre</label>
                                 <template slot="md-autocomplete-item" slot-scope="{ item }">
                                     {{ item.nom }}
@@ -81,7 +81,7 @@
                         </div>
                         <!-- Type -->
                         <div class="md-layout-item md-size-25 md-small-size-50">
-                            <md-autocomplete v-model="search.type" :md-options="types_affaires" md-dense>
+                            <md-autocomplete v-model="search.type" :md-options="types_affaires" md-dense @md-changed="searchAffaires" >
                                 <label>Type</label>
                                 <template slot="md-autocomplete-item" slot-scope="{ item }">
                                     {{ item.nom }}
@@ -93,14 +93,14 @@
                             <md-datepicker v-model="search.dateFrom" :md-disabled-dates="disabledStartDates" md-immediately>
                                 <label>Depuis</label>
                             </md-datepicker>
-            
+
                             <md-datepicker style="margin-left: 20px;" v-model="search.dateTo" :md-disabled-dates="disabledEndDates" md-immediately>
                                 <label>Jusqu'au</label>
                             </md-datepicker>
                         </div>
 
                         <div class="md-layout-item md-size25 md-small-size-50">
-                            <md-checkbox v-model="search.limitNbResults" class="md-primary">Limiter la recherche aux 20 premiers résultats (pour des raisons de performances).</md-checkbox>
+                            <md-checkbox v-model="search.limitNbResults" class="md-primary" @change="searchAffaires">Limiter la recherche aux 20 premiers résultats (pour des raisons de performances).</md-checkbox>
                         </div>
                     </div>
 
@@ -108,16 +108,15 @@
                         <div class="md-layout-item md-size-50">
                             <ClientSearch
                                 :client_id="search.client_id"
-                                @update:client_id="value => search.client_id = value"/>
+                                @update:client_id="value => { search.client_id = value }"
+                                />
                         </div>
                     </div>
 
                     <!-- Search Actions -->
                     <md-card-actions>
-                        <md-button class="md-raised"
-                            v-bind:disabled="!search.id && !search.nom && !search.cadastre && !search.type && !search.client_id"
-                            v-on:click="clearForm">Réinitialiser</md-button>
-                        <md-button class="md-raised md-primary" v-on:click="searchAffaires">Rechercher</md-button>
+                        <md-button class="md-raised" v-on:click="clearForm">Réinitialiser</md-button>
+                        <!-- <md-button class="md-raised md-primary" v-on:click="searchAffaires">Rechercher</md-button> -->
                     </md-card-actions>
                 </md-card-content>
             </md-card-expand-content>
