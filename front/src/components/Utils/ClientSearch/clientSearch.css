@@ -1,3 +1,23 @@
 #clientSearch .inputWidth {
     width: 280px;
 }
+
+.custom-option {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center; /* Centre verticalement */
+}
+
+.detail {
+    color: gray;
+    font-size: 0.7em;
+    margin-left: auto;
+    text-align: right;
+}
+
+.detailPastille {
+    background-color: lightgrey;
+    padding: 4pt;
+    border-radius: 3pt;
+}

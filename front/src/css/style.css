@@ -82,8 +82,12 @@ input[type=number] {
 .md-table {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
-} 
+}
 
 .devMode {
     background-color: lightcoral;
+}
+
+.disabledTableRow {
+    color: #aba5a5;
 }

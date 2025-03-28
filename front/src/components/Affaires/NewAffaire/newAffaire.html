@@ -23,7 +23,7 @@
                             obligatoire</span>
                         </md-autocomplete>
                     </div>
-                    
+
                     <div class="md-layout-item md-small-size-100 md-size-50">
                         <md-field :class="getValidationClass($v.form.technicien_id)">
                             <label for="technicien_id">Opérateur·rice</label>
@@ -71,19 +71,19 @@
                         </md-autocomplete>
                     </div>
                 </div>
-                
+
                 <div class="md-layout md-gutter" v-if="type_modification_bool">
                     <div class="md-layout-item md-small-size-100 md-size-50">
                         <md-field>
                             <label>Affaire de base</label>
                             <md-input v-model="form.affaire_base_id" required />
-                            
+
                             <md-button class="md-primary md-icon-button modifAffaireActionBtn" title="Sélectionner cette affaire"
                                 v-if="type_modification_bool && this.form.affaire_base_id"
                                 @click="doSelectAffaireModification()">
                             <md-icon>file_download</md-icon>
                         </md-button>
-                        
+
                         <md-button class="md-primary md-icon-button modifAffaireActionBtn" title="Afficher cette affaire"
                             v-if="type_modification_bool && this.form.affaire_base_id"
                             @click="doOpenAffaireModification()">
@@ -92,13 +92,13 @@
                     </md-field>
                 </div>
             </div>
-            
+
             <!-- No_access de l'affaire -->
             <div class="md-gutter md-layout" v-if="form.type && (form.type.id === typesAffaires_conf.mpd)">
                 <div class="md-layout-item md-size-50">
                     <md-field>
                         <label>Plan</label>
-                        <md-select v-model="form.plan" md-dense 
+                        <md-select v-model="form.plan" md-dense
                             :disabled="!(form.cadastre && form.cadastre.id) || sending"
                             @md-selected="updateAffaireName">
                             <md-option v-for="item in plansMOListe_cadastre" :value="item.nom">{{ item.nom }}</md-option>
@@ -122,7 +122,7 @@
                     </md-field>
                 </div>
             </div>
-            
+
             <!-- Si type d'affaire est "modification, afficher la zone de de sélection des biens-fonds" -->
             <div class="md-layout md-gutter" v-if="type_modification_bool">
                 <md-card class="immeublesSelectDiv">
@@ -130,13 +130,13 @@
                     <md-card-header>
                         <div class="md-title">Sélection d'immeubles</div>
                     </md-card-header>
-                
+
                     <md-card-expand-trigger>
                         <md-button class="md-icon-button expandCollapseBtn" ref="expandCollapseBtn">
                             <md-icon>keyboard_arrow_down</md-icon>
                         </md-button>
                     </md-card-expand-trigger>
-                
+
                     <!-- Search Content -->
                     <md-card-expand>
                         <md-card-expand-content>
@@ -195,7 +195,7 @@
                     </md-card-expand>
                 </md-card>
             </div>
-            
+
             <br>
 
             <!-- Information -->
@@ -208,7 +208,7 @@
                     </md-field>
                 </div>
             </div>
-            
+
             <!-- Urgence -->
             <div v-if="showUrgentCB" class="md-layout md-gutter md-alignment-center-space-between" style="padding-bottom: 20px;">
                 <div class="md-layout-item md-small-size-100 md-size-25">
@@ -225,7 +225,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div v-if="showClientsForm">
                 <!-- Client DEMANDEUR et ligne complément -->
                 <div class="md-layout md-gutter md-alignment-center-left">
@@ -236,10 +236,11 @@
                             @update:client_id="client_id => selectedClient(client_id, 'client_commande')"
                             :permission_createClient="permission.editClientAllowed"
                             :old_clients="false"
+                            :filter_type="[clients_types_config.personne_physique, clients_types_config.personne_morale]"
                             validation_error_msg="Le client qui a commandé l'affaire doit être renseigné ici"
-                            label="Commandé par" 
+                            label="Commandé par"
                             ref="ref_client_commande"/>
-                        
+
                     </div>
 
                     <div class="md-layout-item md-size-50 md-small-size-100" v-if="form.client_commande_type_id && form.client_commande_type_id === clients_types_config.personne_morale">
@@ -253,10 +254,10 @@
                         </md-autocomplete>
                     </div>
                 </div>
-                
+
                 <br>
                 <md-divider style="background-color: blue;"></md-divider>
-                
+
                 <!-- Client ENVOI et ligne complément -->
                 <div class="md-layout md-gutter md-alignment-center-left">
                     <div class="md-layout-item md-small-size-100 md-size-100">
@@ -265,11 +266,12 @@
                             @update:client_id="client_id => selectedClient(client_id, 'client_envoi')"
                             :permission_createClient="permission.editClientAllowed"
                             :old_clients="false"
+                            :filter_type="[clients_types_config.personne_physique, clients_types_config.personne_morale]"
                             validation_error_msg="Le client à qui l'on doit envoyer les documents doit être renseigné ici"
-                            label="Envoyer à" 
+                            label="Envoyer à"
                             ref="ref_client_envoi"/>
                     </div>
-                    
+
                     <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.client_envoi_type_id && form.client_envoi_type_id === clients_types_config.personne_morale">
                         <md-autocomplete v-model="form.client_envoi_complement"
                             :md-options="client_moral_personnes.envoi"
@@ -281,21 +283,21 @@
                         </md-autocomplete>
                     </div>
                 </div>
-                
-                
+
+
                 <!-- Client FACTURE et ligne complément -->
                 <div v-if="this.affaireTypeRequirements && this.affaireTypeRequirements.section_facture">
                     <br>
                     <md-divider style="background-color: blue;"></md-divider>
                     <div class="md-layout md-gutter md-alignment-center-left" v-if="this.affaireTypeRequirements && this.affaireTypeRequirements.section_facture">
-    
+
                         <div class="md-layout-item md-small-size-100 md-size-50">
                             <md-field>
                                 <label>Hoirie... / PPE... (optionnel)</label>
                                 <md-input v-model="client_facture_premiere_ligne" />
                             </md-field>
                         </div>
-    
+
                         <div class="md-layout-item md-small-size-100 md-size-100">
                             <ClientSearch id="client_facture"
                                 :client_id="client_facture_id"
@@ -303,17 +305,17 @@
                                 :permission_createClient="permission.editClientAllowed"
                                 :old_clients="false"
                                 validation_error_msg="Le client à qui sera adressée la facture de l'affaire doit être renseigné ici"
-                                label="Facturer à" 
+                                label="Facturer à"
                                 ref="ref_client_facture"/>
                         </div>
                     </div>
-                    
-                    
+
+
                     <md-divider style="background-color: blue;"></md-divider>
                     <br />
                 </div>
             </div>
-            
+
             <!-- Dates -->
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-small-size-50 md-size-25">
@@ -329,12 +331,12 @@
             <!-- Numéros concernés par l'affaire -->
             <div v-if="showReferenceNumeros">
                 <md-button class="md-raised md-primary" v-on:click="callOpenReferenceDialog">Lier des numéros à l'affaire</md-button>
-    
+
                 <md-table v-model="numerosReferences" v-if="numerosReferences.length>0" md-card>
                     <md-table-toolbar>
                         <div class="md-toolbar-section-start"><div class="md-title">Numéros liés à l'affaire</div></div>
                     </md-table-toolbar>
-    
+
                     <md-table-row slot="md-table-row" slot-scope=" { item }">
                         <md-table-cell md-label="Cadastre">{{ item.cadastre }}</md-table-cell>
                         <md-table-cell md-label="Numéro">{{ item.numero_sitn }}</md-table-cell>
@@ -384,9 +386,9 @@
     </md-card>
 
     <md-snackbar :md-active.sync="dataSaved">L'affaire {{ lastRecord }} a été enregistrée avec succès</md-snackbar>
-    
+
     <!-- Référence de numéros -->
-    <ReferenceNumeros ref="formReference" 
+    <ReferenceNumeros ref="formReference"
                       :affaire_numeros_anciens="numerosReferences"
                       :cadastre_id="form.cadastre.id"
                       :saveNumerosReferences="referenceNumeros" />

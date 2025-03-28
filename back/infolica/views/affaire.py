@@ -200,7 +200,6 @@ def affaires_search_view(request):
     client_id = None
     date_from = None
     date_to = None
-    limitNbResults = True
     for key in request.params.keys():
         if "client" in key:
             client_id = request.params[key]
@@ -208,11 +207,8 @@ def affaires_search_view(request):
             date_from = datetime.strptime(request.params[key], '%Y-%m-%d')
         elif "date_to" in key:
             date_to = datetime.strptime(request.params[key], '%Y-%m-%d')
-        elif "limitNbResults" in key:
-            if request.params[key] == "true":
-                limitNbResults = True
-            else:
-                limitNbResults = False
+        elif "addResults" in key:
+            search_limit += int(request.params[key])
         else:
             params_affaires[key] = request.params[key]
 
@@ -243,9 +239,10 @@ def affaires_search_view(request):
     if date_to is not None:
         query = query.filter(VAffaire.date_ouverture <= date_to)
 
+    nb_affaires_total = query.with_entities(func.count(VAffaire.id)).scalar()
 
-    if limitNbResults:
-        query = query.limit(search_limit)
+    # limit results
+    query = query.limit(search_limit)
 
     query = query.all()
 
@@ -265,7 +262,12 @@ def affaires_search_view(request):
 
         results[i]["client_facture"] = [{'entreprise': x[0], 'titre': x[1], 'nom': x[2], 'prenom': x[3]} for x in clients_facture]
 
-    return results
+    response = {
+        "affaires": results,
+        "nb_affaires_total": nb_affaires_total,
+    }
+
+    return response
 
 @view_config(route_name='affaire_mpd', request_method='GET', renderer='json')
 def affaire_mpd_view(request):

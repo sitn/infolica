@@ -109,6 +109,7 @@ class Client(Base):
     no_bdp_bdee = Column(Text)
     no_access = Column(Text)
     besoin_vref_facture = Column(Boolean)
+    besoin_client_facture = Column(Boolean)
 
 
 class ClientMoralPersonne(Base):
