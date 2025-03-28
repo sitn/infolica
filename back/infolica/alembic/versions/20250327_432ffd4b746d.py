@@ -1,7 +1,7 @@
 """update client
 
 Revision ID: 432ffd4b746d
-Revises: 6620a34e9d5c
+Revises: 518b2bdc53d6
 Create Date: 2025-03-27 12:03:48.861798
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '432ffd4b746d'
-down_revision = '6620a34e9d5c'
+down_revision = '518b2bdc53d6'
 branch_labels = None
 depends_on = None
 
