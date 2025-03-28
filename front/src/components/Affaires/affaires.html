@@ -59,14 +59,14 @@
 
                         <!-- Opétateur -->
                         <div class="md-layout-item md-size-25 md-small-size-50">
-                            <md-autocomplete md-dense v-model="search.operateur" :md-options="operateurs_liste" @md-changed="searchAffaires" >
+                            <md-autocomplete md-dense v-model="search.operateur" :md-options="operateurs_liste" @md-selected="searchAffaires" >
                                 <label>Opérateur</label>
                             </md-autocomplete>
                         </div>
 
                         <!-- Etape -->
                         <div class="md-layout-item md-size-25 md-small-size-50">
-                            <md-autocomplete md-dense v-model="search.etape" :md-options="etapes_liste" @md-changed="searchAffaires">
+                            <md-autocomplete md-dense v-model="search.etape" :md-options="etapes_liste" @md-selected="searchAffaires">
                                 <label>Étape</label>
                             </md-autocomplete>
                         </div>
@@ -86,7 +86,7 @@
                     <div class="md-layout md-gutter">
                         <!-- Cadastre -->
                         <div class="md-layout-item md-size-25 md-small-size-50">
-                            <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste" md-dense @md-changed="searchAffaires">
+                            <md-autocomplete v-model="search.cadastre" :md-options="cadastre_liste" md-dense @md-selected="searchAffaires">
                                 <label>Cadastre</label>
                                 <template slot="md-autocomplete-item" slot-scope="{ item }">
                                     {{ item.nom }}
@@ -95,7 +95,7 @@
                         </div>
                         <!-- Type -->
                         <div class="md-layout-item md-size-25 md-small-size-50">
-                            <md-autocomplete v-model="search.type" :md-options="types_affaires" md-dense @md-changed="searchAffaires" >
+                            <md-autocomplete v-model="search.type" :md-options="types_affaires" md-dense @md-selected="searchAffaires" >
                                 <label>Type</label>
                                 <template slot="md-autocomplete-item" slot-scope="{ item }">
                                     {{ item.nom }}
