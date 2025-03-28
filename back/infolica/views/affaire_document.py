@@ -114,7 +114,11 @@ def download_affaire_document_view(request):
     Download document for SPCH
     """
 
-    affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
+    if not "affaire_id" in request.params:
+        raise exc.HTTPInternalServerError("Primary key affaire_id is missing.")
+
+    affaire_id = request.params["affaire_id"]
+
     affaire = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
     uuid = request.params["uuid"] if "uuid" in request.params else None
 
