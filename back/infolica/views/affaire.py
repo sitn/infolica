@@ -208,7 +208,7 @@ def affaires_search_view(request):
         elif "date_to" in key:
             date_to = datetime.strptime(request.params[key], '%Y-%m-%d')
         elif "addResults" in key:
-            search_limit = int(request.params[key]) + search_limit
+            search_limit += int(request.params[key])
         else:
             params_affaires[key] = request.params[key]
 
