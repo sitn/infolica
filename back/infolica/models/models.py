@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, BigInteger, Float, Text, String, Date, DateTime, Boolean, ARRAY, ForeignKey, UniqueConstraint, Table, text
+from sqlalchemy import Column, Integer, BigInteger, Float, Text, String, Date, DateTime, Boolean, ARRAY, ForeignKey, UniqueConstraint, Table, text, Uuid
 
 from sqlalchemy.orm import relationship
 
@@ -184,6 +184,8 @@ class Affaire(Base):
     urgent = Column(Boolean)
     urgent_echeance = Column(Date)
     attribution = Column(Text)
+    uuid = Column(Uuid)
+    last_changed_uuid = Column(Date)
 
 
 class AffaireEtapeIndex(Base):
