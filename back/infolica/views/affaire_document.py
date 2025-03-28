@@ -108,23 +108,27 @@ def download_affaire_document_view(request):
 ###########################################################
 
 
-@view_config(route_name="spch_document", request_method="GET")
+@view_config(route_name="externe_document", request_method="GET")
 def download_affaire_document_view(request):
     """
     Download document for SPCH
     """
-    t_request = request.params["t"] if "t" in request.params else None
-    t_config = request.registry.settings["spch_token"]
+
+    if not "affaire_id" in request.params:
+        raise exc.HTTPInternalServerError("Primary key affaire_id is missing.")
+
+    affaire_id = request.params["affaire_id"]
+
+    affaire = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
+    uuid = request.params["uuid"] if "uuid" in request.params else None
 
     # Check token
-    if not t_request == t_config:
+    if not str(uuid) == str(affaire.uuid):
         raise exc.HTTPForbidden()
 
     affaires_directory = request.registry.settings["affaires_directory"]
-    affaire_id = request.params["affaire_id"]
     relpath = request.params["relpath"]
     filename = request.params["filename"]
-    affaire = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
     affaire_chemin = affaire.chemin
 
     file_path = os.path.normcase(os.path.join(affaires_directory, affaire_chemin, relpath, filename))
