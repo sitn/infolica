@@ -104,6 +104,21 @@ export const getTypesAffaires = async function () {
 };
 
 /*
+ * Get Types Clients
+ */
+export const getClientTypes = async function () {
+    return new Promise((resolve, reject) => {
+        axios.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_TYPES_CLIENTS_ENDPOINT,
+            {
+              withCredentials: true,
+              headers: {"Accept": "application/json"}
+            })
+            .then(response => resolve(response))
+            .catch(() => reject);
+    });
+};
+
+/*
  * Get Etats Numeros
  */
 export const getEtatsNumeros = async function () {
@@ -405,7 +420,7 @@ export const logAffaireEtape = async function(affaire_id, etape_id, remarque=nul
     if (hors_sgrf_from !== null && hors_sgrf_to !== null) {
         formData.append("hors_sgrf_de", moment(hors_sgrf_from).format(process.env.VUE_APP_DATEFORMAT_WS));
         formData.append("hors_sgrf_a", moment(hors_sgrf_to).format(process.env.VUE_APP_DATEFORMAT_WS));
-        remarque_ = 'Affaire chez le client du ' + moment(hors_sgrf_from).format(process.env.VUE_APP_DATEFORMAT_CLIENT) + ' au ' + moment(hors_sgrf_from).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+        remarque_ = 'Affaire chez le client du ' + moment(hors_sgrf_from).format(process.env.VUE_APP_DATEFORMAT_CLIENT) + ' au ' + moment(hors_sgrf_to).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
     }
 
     formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);

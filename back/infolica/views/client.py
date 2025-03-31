@@ -29,16 +29,22 @@ def _set_client_aggregated_name(client, sep=', '):
     return nom_
 
 
-def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, search_limit='default'):
+def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, search_limit='default', filter_type=[]):
     if search_limit == 'default':
         search_limit = int(request.registry.settings['search_limit'])
 
     searchTerms = re.split(r'\s|\,|\:|\-|SAP|BDP/BDEE', searchTerm.strip())
+    indices = [i for i, val in enumerate(searchTerms) if val == "null"]
+    for idx in indices:
+        searchTerms[idx] = None
     searchTerms = list(filter(None, searchTerms))
 
     query = request.dbsession.query(Client)
     if not old_clients:
         query = query.filter(Client.sortie == None)
+
+    if len(filter_type) > 0:
+        query = query.filter(Client.type_client.in_(filter_type))
 
     if len(searchTerms) > 0:
         for term in searchTerms:
@@ -64,7 +70,7 @@ def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, sear
                 )
             )
 
-    results = query.limit(search_limit).all()
+    results = query.order_by(Client.entreprise, Client.nom, Client.prenom).limit(search_limit).all()
 
     return results
 
@@ -156,13 +162,10 @@ def clients_search_view(request):
     conditions = [] if not conditions or len(
         conditions) == 0 else conditions
 
-    conditions.append(Client.sortie == None)
+    # conditions.append(Client.sortie == None)
 
     query = request.dbsession.query(
         Client
-    ).order_by(
-        Client.nom,
-        Client.prenom
     ).filter(
         *conditions
     )
@@ -170,7 +173,7 @@ def clients_search_view(request):
     if not old_clients:
         query = query.filter(Client.sortie == None)
 
-    query = query.limit(search_limit).all()
+    query = query.order_by(Client.entreprise, Client.nom, Client.prenom).limit(search_limit).all()
     return Utils.serialize_many(query)
 
 
@@ -202,18 +205,34 @@ def clients_aggregated_search_by_term_view(request):
 
     searchTerm = request.params["searchTerm"] if "searchTerm" in request.params else None
     old_clients = request.params['old_clients'] == 'true' if 'old_clients' in request.params else False
+    filter_type = json.loads(request.params['filter_type']) if 'filter_type' in request.params else []
 
-    query = _multipleAttributesClientSearch(request, searchTerm, old_clients=old_clients)
+    query = _multipleAttributesClientSearch(request, searchTerm, old_clients=old_clients, filter_type=filter_type)
 
     liste_clients = []
     for client in query:
         nom_ = _set_client_aggregated_name(client)
+        type_client_nom = request.dbsession.query(ClientType).filter(ClientType.id==client.type_client).first()
+        type_client_nom = type_client_nom.nom if type_client_nom else ""
+
+        # if client.type_client not in liste_clients.keys():
+        #     liste_clients[type_client_nom] = []
+
+        # liste_clients[type_client_nom].append({
+        #     'id': client.id,
+        #     'nom': nom_,
+        #     'type_client': client.type_client,
+        #     # 'type_client_nom':type_client_nom
+        # })
 
         liste_clients.append({
             'id': client.id,
             'nom': nom_,
-            'type_client': client.type_client
+            'type_client': client.type_client,
+            'type_client_nom':type_client_nom
         })
+
+    liste_clients.sort(key=lambda x: x["type_client"])
 
     return liste_clients
 
@@ -264,30 +283,30 @@ def clients_update_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Client.__tablename__))
 
 
-@view_config(route_name='clients', request_method='DELETE', renderer='json')
-@view_config(route_name='clients_s', request_method='DELETE', renderer='json')
-def clients_delete_view(request):
-    """
-    Delete client
-    """
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['client_edition']):
-        raise exc.HTTPForbidden()
+# @view_config(route_name='clients', request_method='DELETE', renderer='json')
+# @view_config(route_name='clients_s', request_method='DELETE', renderer='json')
+# def clients_delete_view(request):
+#     """
+#     Delete client
+#     """
+#     # Check authorization
+#     if not Utils.has_permission(request, request.registry.settings['client_edition']):
+#         raise exc.HTTPForbidden()
 
-    # Get client_id
-    id_client = request.params['id'] if 'id' in request.params else None
+#     # Get client_id
+#     id_client = request.params['id'] if 'id' in request.params else None
 
-    model = request.dbsession.query(Client).filter(
-        Client.id == id_client).first()
+#     model = request.dbsession.query(Client).filter(
+#         Client.id == id_client).first()
 
-    # If result is empty
-    if not model:
-        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
-            Client.__tablename__, id_client))
+#     # If result is empty
+#     if not model:
+#         raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
+#             Client.__tablename__, id_client))
 
-    model.sortie = datetime.utcnow()
+#     model.sortie = datetime.utcnow()
 
-    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Client.__tablename__))
+#     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Client.__tablename__))
 
 
 # ClientMoralPersonnes

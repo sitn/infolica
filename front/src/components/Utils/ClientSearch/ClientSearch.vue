@@ -11,9 +11,9 @@ import { validationMixin } from 'vuelidate'
 import { required } from 'vuelidate/lib/validators'
 
 export default {
-  
+
   name: "ClientSearch",
-  
+
   mixins: [validationMixin],
 
   props: {
@@ -44,24 +44,28 @@ export default {
     validation_error_msg: {
       type: String,
       default: 'Le client est obligatoire'
-    }
+    },
+    filter_type: {
+      type: Array,
+      default: () => []
+    },
   },
 
   emits: [
     'update:client_id'
   ],
-  
+
   data: () => {
     return {
       client: null,
       liste_clients: [],
     };
   },
-  
+
   validations: {
-      client: { required }
+    client: { required }
   },
-  
+
   methods: {
     /**
      * searchClient
@@ -69,40 +73,41 @@ export default {
     async searchClient(searchTerm) {
       let conditions = {
         'searchTerm': searchTerm,
-        'old_clients': this.old_clients
+        'old_clients': this.old_clients,
+        'filter_type': JSON.stringify(this.filter_type),
       };
 
       this.getClientsByTerm(conditions)
-      .then(response => {
-        if (response && response.data) {
-          this.liste_clients = stringifyAutocomplete2(response.data);
-        }
-      }).catch(err => handleException(err, this));
+        .then(response => {
+          if (response && response.data) {
+            this.liste_clients = stringifyAutocomplete2(response.data);
+          }
+        }).catch(err => handleException(err, this));
     },
 
 
     async getClientsByTerm(conditions) {
       let params = [];
       if (conditions && typeof conditions === 'object') {
-          for (const property in conditions) {
-              params.push(property + "=" + conditions[property]);
-          }
+        for (const property in conditions) {
+          params.push(property + "=" + conditions[property]);
+        }
       }
-      
+
       if (params.length > 0) {
-          params = "?" + params.join("&");
+        params = "?" + params.join("&");
       } else {
-          params = "";
-      } 
+        params = "";
+      }
 
       return new Promise((resolve, reject) => {
-          this.$http.get(
-              process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_AGGREGATED_ENDPOINT + params,
-              {
-                  withCredentials: true,
-                  headers: {"accept": "application/json"}
-              }
-          )
+        this.$http.get(
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_AGGREGATED_ENDPOINT + params,
+          {
+            withCredentials: true,
+            headers: { "accept": "application/json" }
+          }
+        )
           .then(response => resolve(response))
           .catch(err => reject(err));
       });
@@ -119,14 +124,14 @@ export default {
         process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_AGGREGATED_BY_ID_ENDPOINT + '/' + client_id,
         {
           withCredentials: true,
-          headers: {"Accept": "application/json"}
+          headers: { "Accept": "application/json" }
         }
       ).then(response => {
-          if (response && response.data) {
-            
-            this.client = stringifyAutocomplete2(response.data, ["nom"], ", ", "nom");
-          }
-        }).catch(err => handleException(err, this));
+        if (response && response.data) {
+
+          this.client = stringifyAutocomplete2(response.data, ["nom"], ", ", "nom");
+        }
+      }).catch(err => handleException(err, this));
     },
 
 
@@ -141,7 +146,7 @@ export default {
     /**
      * Validations
      */
-    getValidationClass (fieldName) {
+    getValidationClass(fieldName) {
       const field = this.$v[fieldName];
 
       if (field) {
@@ -151,7 +156,7 @@ export default {
       }
     },
 
-    validator () {
+    validator() {
       this.$v.$touch();
 
       if (!this.$v.$invalid) {
@@ -162,7 +167,7 @@ export default {
 
   },
 
-  mounted: function() {
+  mounted: function () {
     if (this.initial_client_id !== null) {
       this.getClientById(this.initial_client_id);
     }
@@ -172,19 +177,18 @@ export default {
   },
 
   watch: {
-    client_id: function() {
+    client_id: function () {
       if (this.client_id !== null) {
         this.getClientById(this.client_id);
       } else {
         this.client = '';
       }
     },
-    
-    client: function() {
+
+    client: function () {
       if (this.client && this.client.id) {
         this.$emit('update:client_id', this.client.id);
       } else {
-        this.client_id = null;
         this.$emit('update:client_id', null);
       }
     }
