@@ -10,6 +10,7 @@ import json
 from datetime import datetime
 from sqlalchemy import cast, or_, String, func
 import re
+from unidecode import unidecode
 
 
 def _set_client_aggregated_name(client, sep=', '):
@@ -33,46 +34,53 @@ def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, sear
     if search_limit == 'default':
         search_limit = int(request.registry.settings['search_limit'])
 
+    # Découpage du searchTerm en mots-clés
     searchTerms = re.split(r'\s|\,|\:|\-|SAP|BDP/BDEE', searchTerm.strip())
-    indices = [i for i, val in enumerate(searchTerms) if val == "null"]
-    for idx in indices:
-        searchTerms[idx] = None
-    searchTerms = list(filter(None, searchTerms))
+    searchTerms = [term.strip().lower() for term in searchTerms if term and term.lower() != "null"]
 
+    # Base query avec filtres globaux
     query = request.dbsession.query(Client)
+
     if not old_clients:
         query = query.filter(Client.sortie == None)
 
-    if len(filter_type) > 0:
+    if filter_type:
         query = query.filter(Client.type_client.in_(filter_type))
 
-    if len(searchTerms) > 0:
+    # Si pas de mots-clés, retourne simplement la base query ordonnée
+    if searchTerms:
+
+        # Sous-requêtes pour chaque mot-clé
+        subqueries = []
         for term in searchTerms:
-            term = '%' + str(term) + '%'
-            query = query.filter(
+            # Crée l'expression de recherche pour chaque terme
+            term_expr = unidecode(str(term).lower())
+
+
+            # Ajoute la sous-requête en calculant la similarité pour chaque champ
+            q = query.filter(
                 or_(
-                    Client.entreprise.ilike(term),
-                    Client.titre.ilike(term),
-                    Client.nom.ilike(term),
-                    Client.prenom.ilike(term),
-                    Client.co.ilike(term),
-                    Client.adresse.ilike(term),
-                    # cast(Client.npa, String).ilike(term),
-                    # Client.localite.ilike(term),
-                    # cast(Client.case_postale, String).ilike(term),
-                    # cast(Client.tel_fixe, String).ilike(term),
-                    # cast(Client.fax, String).ilike(term),
-                    # cast(Client.tel_portable, String).ilike(term),
-                    # Client.mail.ilike(term),
-                    cast(Client.no_sap, String).ilike(term),
-                    cast(Client.no_bdp_bdee, String).ilike(term),
-                    # cast(Client.no_access, String).ilike(term),
+                    func.unaccent(func.lower(Client.entreprise)).like(f'%{term_expr}%'),
+                    func.unaccent(func.lower(Client.titre)).like(f'%{term_expr}%'),
+                    func.unaccent(func.lower(Client.nom)).like(f'%{term_expr}%'),
+                    func.unaccent(func.lower(Client.prenom)).like(f'%{term_expr}%'),
+                    func.unaccent(func.lower(Client.co)).like(f'%{term_expr}%'),
+                    func.unaccent(func.lower(Client.adresse)).like(f'%{term_expr}%'),
+                    func.unaccent(func.lower(cast(Client.no_sap, String))).like(f'%{term_expr}%'),
+                    func.unaccent(func.lower(cast(Client.no_bdp_bdee, String))).like(f'%{term_expr}%')
                 )
             )
+            subqueries.append(q)
 
-    results = query.order_by(Client.entreprise, Client.nom, Client.prenom).limit(search_limit).all()
+        # Union de toutes les sous-requêtes
+        query = subqueries[0]
+        for q in subqueries[1:]:
+            query = query.intersect(q)
 
-    return results
+    # Limiter les résultats et obtenir les objets Client
+    client_results = query.order_by(Client.entreprise, Client.nom, Client.prenom).limit(search_limit).all()
+
+    return client_results
 
 
 @view_config(route_name='types_clients', request_method='GET', renderer='json')
@@ -229,7 +237,8 @@ def clients_aggregated_search_by_term_view(request):
             'id': client.id,
             'nom': nom_,
             'type_client': client.type_client,
-            'type_client_nom':type_client_nom
+            'type_client_nom': type_client_nom,
+            'active': True if client.sortie is None else False
         })
 
     liste_clients.sort(key=lambda x: x["type_client"])
@@ -408,13 +417,21 @@ def client_check_existing_view(request):
     clients = request.dbsession.query(Client)
 
     if entreprise is not None:
+        normalized_entreprise = func.unaccent(func.lower(Client.entreprise))
+        normalized_entreprise_search = func.unaccent(func.lower(entreprise))
+
         clients = clients.filter(
-            func.similarity(Client.entreprise, entreprise) > 0.6
+            normalized_entreprise.op('%')(normalized_entreprise_search),
         )
     else:
+        normalized_firstname = func.unaccent(func.lower(Client.prenom))
+        normalized_firstname_search = func.unaccent(func.lower(firstname))
+        normalized_lastname = func.unaccent(func.lower(Client.nom))
+        normalized_lastname_search = func.unaccent(func.lower(lastname))
+
         clients = clients.filter(
-            func.similarity(Client.prenom, firstname) > 0.6,
-            func.similarity(Client.nom, lastname) > 0.6
+            normalized_firstname.op('%')(normalized_firstname_search),
+            normalized_lastname.op('%')(normalized_lastname_search)
         )
 
     if client_id is not None:
