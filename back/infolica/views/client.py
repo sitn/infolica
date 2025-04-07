@@ -8,7 +8,7 @@ from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 import json
 from datetime import datetime
-from sqlalchemy import cast, or_, String, func
+from sqlalchemy import cast, or_, Text, func
 import re
 from unidecode import unidecode
 
@@ -60,14 +60,14 @@ def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, sear
             # Ajoute la sous-requête en calculant la similarité pour chaque champ
             q = query.filter(
                 or_(
-                    func.unaccent(func.lower(Client.entreprise)).like(f'%{term_expr}%'),
-                    func.unaccent(func.lower(Client.titre)).like(f'%{term_expr}%'),
-                    func.unaccent(func.lower(Client.nom)).like(f'%{term_expr}%'),
-                    func.unaccent(func.lower(Client.prenom)).like(f'%{term_expr}%'),
-                    func.unaccent(func.lower(Client.co)).like(f'%{term_expr}%'),
-                    func.unaccent(func.lower(Client.adresse)).like(f'%{term_expr}%'),
-                    func.unaccent(func.lower(cast(Client.no_sap, String))).like(f'%{term_expr}%'),
-                    func.unaccent(func.lower(cast(Client.no_bdp_bdee, String))).like(f'%{term_expr}%')
+                    func.unaccent(func.lower(Client.entreprise)).like(f"{term_expr}%"),
+                    func.unaccent(func.lower(Client.titre)).like(f"{term_expr}%"),
+                    func.unaccent(func.lower(Client.nom)).like(f"{term_expr}%"),
+                    func.unaccent(func.lower(Client.prenom)).like(f"{term_expr}%"),
+                    func.unaccent(func.lower(Client.co)).like(f"{term_expr}%"),
+                    func.unaccent(func.lower(Client.adresse)).like(f"{term_expr}%"),
+                    func.unaccent(func.lower(cast(Client.no_sap, Text))).like(f"{term_expr}%"),
+                    func.unaccent(func.lower(cast(Client.no_bdp_bdee, Text))).like(f"{term_expr}%")
                 )
             )
             subqueries.append(q)
@@ -238,7 +238,7 @@ def clients_aggregated_search_by_term_view(request):
             'nom': nom_,
             'type_client': client.type_client,
             'type_client_nom': type_client_nom,
-            'active': True if client.sortie is None else False
+            'active': True if client.sortie is None else False,
         })
 
     liste_clients.sort(key=lambda x: x["type_client"])
@@ -417,21 +417,21 @@ def client_check_existing_view(request):
     clients = request.dbsession.query(Client)
 
     if entreprise is not None:
-        normalized_entreprise = func.unaccent(func.lower(Client.entreprise))
-        normalized_entreprise_search = func.unaccent(func.lower(entreprise))
+        normalized_entreprise = cast(func.unaccent(func.lower(Client.entreprise)), Text)
+        normalized_entreprise_search = unidecode(str(entreprise).lower())
 
         clients = clients.filter(
-            normalized_entreprise.op('%')(normalized_entreprise_search),
+            normalized_entreprise.like(f"{normalized_entreprise_search}%"),
         )
     else:
         normalized_firstname = func.unaccent(func.lower(Client.prenom))
-        normalized_firstname_search = func.unaccent(func.lower(firstname))
         normalized_lastname = func.unaccent(func.lower(Client.nom))
-        normalized_lastname_search = func.unaccent(func.lower(lastname))
+        normalized_firstname_search = unidecode(str(firstname).lower())
+        normalized_lastname_search = unidecode(str(lastname).lower())
 
         clients = clients.filter(
-            normalized_firstname.op('%')(normalized_firstname_search),
-            normalized_lastname.op('%')(normalized_lastname_search)
+            normalized_firstname.like(f"{normalized_firstname_search}%"),
+            normalized_lastname.like(f"{normalized_lastname_search}%")
         )
 
     if client_id is not None:
