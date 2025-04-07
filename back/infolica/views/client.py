@@ -60,14 +60,14 @@ def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, sear
             # Ajoute la sous-requête en calculant la similarité pour chaque champ
             q = query.filter(
                 or_(
-                    func.unaccent(func.lower(Client.entreprise)).like(f"{term_expr}%"),
-                    func.unaccent(func.lower(Client.titre)).like(f"{term_expr}%"),
-                    func.unaccent(func.lower(Client.nom)).like(f"{term_expr}%"),
-                    func.unaccent(func.lower(Client.prenom)).like(f"{term_expr}%"),
-                    func.unaccent(func.lower(Client.co)).like(f"{term_expr}%"),
-                    func.unaccent(func.lower(Client.adresse)).like(f"{term_expr}%"),
-                    func.unaccent(func.lower(cast(Client.no_sap, Text))).like(f"{term_expr}%"),
-                    func.unaccent(func.lower(cast(Client.no_bdp_bdee, Text))).like(f"{term_expr}%")
+                    func.unaccent(func.lower(Client.entreprise)).like(f"%{term_expr}%"),
+                    func.unaccent(func.lower(Client.titre)).like(f"%{term_expr}%"),
+                    func.unaccent(func.lower(Client.nom)).like(f"%{term_expr}%"),
+                    func.unaccent(func.lower(Client.prenom)).like(f"%{term_expr}%"),
+                    func.unaccent(func.lower(Client.co)).like(f"%{term_expr}%"),
+                    func.unaccent(func.lower(Client.adresse)).like(f"%{term_expr}%"),
+                    func.unaccent(func.lower(cast(Client.no_sap, Text))).like(f"%{term_expr}%"),
+                    func.unaccent(func.lower(cast(Client.no_bdp_bdee, Text))).like(f"%{term_expr}%")
                 )
             )
             subqueries.append(q)
