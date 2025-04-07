@@ -12,7 +12,7 @@
 
         <template slot="md-autocomplete-item" slot-scope="{ item }">
             <div class="custom-option">
-                <span>{{ item.nom }}</span>
+                <span class="textOverflowEllipsis" :class="{ oldClient: !item.active }" :title="item.nom">{{ item.nom }}</span>
                 <div class="detailPastille"><span class="details">{{ item.type_client_nom }}</span></div>
             </div>
         </template>

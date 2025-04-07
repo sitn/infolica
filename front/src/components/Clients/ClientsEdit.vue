@@ -524,6 +524,7 @@ export default {
 
     checkExistingClient() {
       if (!((this.form.nom && this.form.prenom) || this.form.entreprise)) {
+        this.existingClient.error = false;
         return;
       }
 
