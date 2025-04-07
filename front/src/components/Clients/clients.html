@@ -9,9 +9,9 @@
         <!-- Search Header -->
         <md-card-header>
             <div class="md-layout md-gutter md-alignment-center-space-between">
-                <div class="md-layout-item md-title">
+                <div class="md-layout-item md-title" @click="onExpand">
                     <md-card-expand-trigger>
-                        <md-button class="md-icon-button ">
+                        <md-button class="md-icon-button">
                             <md-icon>keyboard_arrow_down</md-icon>
                         </md-button>
                     </md-card-expand-trigger>
@@ -20,10 +20,9 @@
 
                 <div class="md-layout-item">
                     <div style="float: right; display: flex;">
-                        <md-checkbox v-model="searchOldClientMode" @change="searchClientsByTerm" style="width: 370px; margin-top: 30px;">Rechercher également dans les anciens clients</md-checkbox>
                         <md-field style="width: 400px;">
                             <label>Client</label>
-                            <md-input id="client" v-model="searchTerm" @keyup="searchClientsByTerm"></md-input>
+                            <md-input id="client" v-model="searchTerm" @keyup="updateSearchClients" :disabled="isExpendedSearchPanel"></md-input>
                             <md-icon>search</md-icon>
                         </md-field>
                     </div>
@@ -42,21 +41,21 @@
                         <div class="md-layout-item md-size-30 md-small-size-100">
                             <md-field>
                                 <label for="prenom">Prénom</label>
-                                <md-input name="prenom" id="prenom" v-model="search.prenom" />
+                                <md-input name="prenom" id="prenom" v-model="search.prenom" @input="updateSearchClients" />
                             </md-field>
                         </div>
 
                         <div class="md-layout-item md-size-30 md-small-size-100">
                             <md-field>
                                 <label for="nom">Nom</label>
-                                <md-input name="nom" id="nom" v-model="search.nom" />
+                                <md-input name="nom" id="nom" v-model="search.nom" @input="updateSearchClients" />
                             </md-field>
                         </div>
 
                         <div class="md-layout-item md-size-30 md-small-size-100">
                             <md-field>
                                 <label for="entreprise">Entreprise</label>
-                                <md-input name="entreprise" id="entreprise" v-model="search.entreprise" />
+                                <md-input name="entreprise" id="entreprise" v-model="search.entreprise" @input="updateSearchClients" />
                             </md-field>
                         </div>
                     </div>
@@ -65,7 +64,7 @@
                         <div class="md-layout-item md-size-30 md-small-size-100">
                             <md-field>
                                 <label for="adresse">Adresse</label>
-                                <md-input name="adresse" id="adresse" v-model="search.adresse" />
+                                <md-input name="adresse" id="adresse" v-model="search.adresse" @input="updateSearchClients" />
                             </md-field>
                         </div>
 
@@ -73,14 +72,14 @@
                             <div class="md-layout-item md-size-30 md-small-size-30">
                                 <md-field>
                                     <label for="localite">npa</label>
-                                    <md-input name="npa" id="npa" v-model="search.npa" />
+                                    <md-input name="npa" id="npa" v-model="search.npa" @input="updateSearchClients" />
                                 </md-field>
                             </div>
 
                             <div class="md-layout-item md-size-70 md-small-size-70">
                                 <md-field>
                                     <label for="localite">Localité</label>
-                                    <md-input name="localite" id="localite" v-model="search.localite" />
+                                    <md-input name="localite" id="localite" v-model="search.localite" @input="updateSearchClients" />
                                 </md-field>
                             </div>
                         </div>
@@ -88,12 +87,24 @@
                         <div class="md-layout-item md-size-30 md-small-size-100">
                             <md-field>
                                 <label for="mail">Email</label>
-                                <md-input type="email" name="mail" id="mail" v-model="search.mail" />
+                                <md-input type="email" name="mail" id="mail" v-model="search.mail" @input="updateSearchClients" />
+                            </md-field>
+                        </div>
+
+                    </div>
+
+                    <div class="md-layout md-gutter md-alignment-top-space-between">
+                        <div class="md-layout-item md-size-30 md-small-size-100">
+                            <md-field>
+                                <label for="client_type">Type</label>
+                                <md-select v-model="search.client_type_id" name="client_type" id="client_type" @md-selected="updateSearchClients" md-dense>
+                                    <md-option v-for="item in client_types" :key="item.id" :value="item.id">{{ item.nom }}</md-option>
+                                </md-select>
                             </md-field>
                         </div>
                     </div>
 
-                    <div class="md-layout md-gutter md-alignment-top-space-between">
+                    <!-- <div class="md-layout md-gutter md-alignment-top-space-between">
                         <div class="md-layout-item md-size-50 md-size-30 md-small-size-100">
                             <md-autocomplete id="client" v-model="search.client_id" :md-options="search_clients_list" md-dense @md-changed="searchClientsForFormInput(search.client_id)">
                                 <label>Client</label>
@@ -102,11 +113,11 @@
                                 </template>
                             </md-autocomplete>
                         </div>
-                    </div>
+                    </div> -->
                     <!-- Search Actions -->
                     <md-card-actions>
                         <md-button class="md-raised" v-bind:disabled="!search.nom && !search.prenom && !search.entreprise && !search.adresse && !search.localite && !search.mail" v-on:click="clearForm">Réinitialiser</md-button>
-                        <md-button class="md-raised md-primary" v-on:click="searchClients">Rechercher</md-button>
+                        <!-- <md-button class="md-raised md-primary" v-on:click="searchClients">Rechercher</md-button> -->
                     </md-card-actions>
                 </md-card-content>
             </md-card-expand-content>
@@ -121,33 +132,37 @@
         <md-card>
             <!-- Results Header -->
             <md-card-header>
-                <div class="md-title">Résultats</div>
+                <div class="justifyTitleBtn">
+                    <div class="md-title">Résultats</div>
+                    <md-checkbox v-model="searchOldClientMode" @change="updateSearchClients" style="width: 370px; margin-top: 30px;">Afficher les anciens clients</md-checkbox>
+                </div>
+
             </md-card-header>
 
             <!-- Results Content -->
             <md-card-content>
                 <md-table md-height="100%" v-model="clients" md-sort="name" md-sort-order="asc" md-fixed-header>
                     <md-table-empty-state
-                        md-label="Aucun client trouvé"
-                        :md-description="`Aucun client ne correspond à la recherche. Entrer un nouveau terme de recherche ou créer le client.`">
+                                          md-label="Aucun client trouvé"
+                                          :md-description="`Aucun client ne correspond à la recherche. Entrer un nouveau terme de recherche ou créer le client.`">
                     </md-table-empty-state>
 
-                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                    <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{disabledTableRow: item.sortie!==null}">
                         <md-table-cell width="100px" md-label="Entreprise" md-sort-by="entreprise">{{ item.entreprise }}</md-table-cell>
                         <md-table-cell width="50px" md-label="Titre" md-sort-by="titre">{{ item.titre }}</md-table-cell>
                         <md-table-cell width="100px" md-label="Prénom" md-sort-by="prenom">{{ item.prenom }}</md-table-cell>
                         <md-table-cell width="100px" md-label="Nom" md-sort-by="nom">{{ item.nom }}</md-table-cell>
                         <md-table-cell width="150px" md-label="Adresse">{{ item.adresse }}</md-table-cell>
                         <md-table-cell width="50px" md-label="Localité">{{ item.npa }} {{ item.localite }}</md-table-cell>
-                        <md-table-cell width="80px" md-label="Client supprimé le" md-sort-by="sortie_sort">{{ item.sortie }}</md-table-cell>
+                        <md-table-cell width="80px" md-label="Client désactivé le" md-sort-by="sortie_sort">{{ item.sortie }}</md-table-cell>
                         <md-table-cell width="50px" md-label="Actions" class="actionsColumn">
-                            <md-button class="md-icon-button md-primary" :to="{ name: 'ClientsEdit', params: { id: item.id } }">
+                            <md-switch class="md-primary" v-model="item.sortie===null" @change="updateClient(item)" title="Activer/désactiver le client" :disabled="!editClientClientAllowed"></md-switch>
+
+                            <md-button class="md-icon-button md-primary" :to="{ name: 'ClientsEdit', params: { id: item.id } }" title="Ouvrir la page d'édition du client">
                                 <md-icon>open_in_new</md-icon>
                             </md-button>
 
-                            <md-button class="md-icon-button md-accent" v-on:click="callDeleteClient(item.id, item.nom, item.prenom, item.entreprise)" v-if="editClientClientAllowed">
-                                <md-icon>delete</md-icon>
-                            </md-button>
+
                         </md-table-cell>
                     </md-table-row>
                 </md-table>
@@ -157,6 +172,5 @@
     </div>
 
     <div>
-        <md-dialog-confirm :md-active.sync="deleteClientActive" md-title="Supprimer le client" :md-content="deleteMessage" md-confirm-text="Confirmer" md-cancel-text="Annuler" @md-confirm="onConfirmDelete" @md-cancel="onCancelDelete" />
     </div>
 </div>

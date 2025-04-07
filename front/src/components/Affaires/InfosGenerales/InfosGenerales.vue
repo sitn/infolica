@@ -40,7 +40,7 @@ export default {
       typesAffairesListe: [],
       affaires_source: [],
       affaires_destination: [],
-      clientsFacture: { 
+      clientsFacture: {
         selectList: [],
         adressList: [],
         selected_id: 0,
@@ -72,7 +72,7 @@ export default {
     openClientEditor(field_name) {
       let routedata = null;
       if (field_name.toLowerCase().includes('facture')) {
-        routedata = this.$router.resolve({name: 'ClientsEdit', params: {id: this.clientsFacture.selected_id}});        
+        routedata = this.$router.resolve({name: 'ClientsEdit', params: {id: this.clientsFacture.selected_id.split("_")[0]}});
       }else {
         routedata = this.$router.resolve({name: 'ClientsEdit', params: {id: this.affaire[field_name]}});
       }
@@ -104,7 +104,7 @@ export default {
       formData.append("type_id", this.form.typeAffaire.id);
       formData.append("information", this.affaire.information);
       formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
-      
+
       if (this.affaire.nom !== null) {
         formData.append("nom", this.affaire.nom || null);
       }
@@ -119,7 +119,7 @@ export default {
 
       if (this.affaireUrgente.urgent) {
         formData.append("urgent", this.affaireUrgente.urgent);
-        
+
         if (this.affaireUrgente.urgent_echeance !== null) {
           formData.append("urgent_echeance", moment(this.affaireUrgente.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
         }
@@ -160,12 +160,12 @@ export default {
 
       this.form.client_commande_id = this.affaire.client_commande_id;
       this.form.client_commande_complement = this.affaire.client_commande_complement;
-      
+
       this.form.client_envoi_id = this.affaire.client_envoi_id;
       this.form.client_envoi_complement = this.affaire.client_envoi_complement;
       this.infoGenReadonly = false;
       this.$emit('modify-off', false);
-      
+
       setTimeout(() => {
         this.selectedClient(this.form.client_commande_id, 'client_commande');
         this.selectedClient(this.form.client_envoi_id, 'client_envoi');
@@ -184,7 +184,7 @@ export default {
      * get cadastres
      */
     async initTypesAffairesListe() {
-      
+
         this.$http.get(
           process.env.VUE_APP_API_URL + process.env.VUE_APP_TYPES_AFFAIRES_ENDPOINT,
           {
@@ -203,7 +203,7 @@ export default {
             }
           }
         }).catch(err => handleException(err, this))
-      
+
     },
 
     /**
@@ -269,7 +269,7 @@ export default {
      * Search Clients facture
      */
     async searchClientsFacture() {
-      this.clientsFacture = { 
+      this.clientsFacture = {
         selectList: [],
         adressList: [],
         selected_id: 0,
@@ -285,11 +285,13 @@ export default {
       ).then(response => {
         if (response && response.data) {
           let tmp = response.data.filter(x => x.type_id === Number(process.env.VUE_APP_FACTURE_TYPE_FACTURE_ID));
+          let count = 0;
 
           tmp.forEach(x => {
             // construct select list
+            count += 1;
             this.clientsFacture.selectList.push({
-              id: x.client_id,
+              id: x.client_id + "_" + count,
               nom: [
                 x.client_entreprise,
                 [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" ")
@@ -321,9 +323,9 @@ export default {
 
 
 
-            
+
             this.clientsFacture.adressList.push({
-              id: x.client_id,
+              id: x.client_id + "_" + count,
               adress: adress
             });
 
@@ -390,7 +392,7 @@ export default {
     enableAffaireUrgente() {
       //Check role_id
       let role_id = getCurrentUserRoleId();
-          
+
       // Secrétariat peut modifier des factures à tout moment, éditer les informations des affaires et référencer des numéros à l'affaire
       this.affaireUrgente.disabled = this.affaireUrgente.urgent === true || ![
         Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID),
@@ -419,7 +421,7 @@ export default {
     },
 
     /**
-     * Update contact when 
+     * Update contact when
      */
      async updateContact() {
       if (this.form.client_commande_id !== null) {

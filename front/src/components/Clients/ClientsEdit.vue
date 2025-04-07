@@ -21,7 +21,8 @@ export default {
     client_moral_personnes: [],
     clientTypes_conf: {
       personne_physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID),
-      personne_morale: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID)
+      personne_morale: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID),
+      personne_facture: Number(process.env.VUE_APP_TYPE_CLIENT_FACTURE_ID),
     },
     contact_form: {
       titre: "Monsieur", //default
@@ -49,6 +50,8 @@ export default {
       no_bdp_bdee: null,
       co: null,
       besoin_vref_facture: false,
+      besoin_client_facture: false,
+      sortie: null,
     },
     lastRecord: null,
     permission: {
@@ -74,7 +77,7 @@ export default {
     /**
      * Get validation class par fieldname
      */
-    getValidationClass (fieldName) {
+    getValidationClass(fieldName) {
       const field = this.$v.form[fieldName]
 
       if (field) {
@@ -87,7 +90,7 @@ export default {
     /**
      * Clear the form
      */
-    clearForm () {
+    clearForm() {
       this.$v.$reset()
       this.form.type_client = null;
       this.form.entreprise = null;
@@ -107,6 +110,8 @@ export default {
       this.form.no_bdp_bdee = null;
       this.form.co = null;
       this.form.besoin_vref_facture = false;
+      this.form.besoin_client_facture = false;
+      this.form.sortie = null;
     },
 
     /*
@@ -117,30 +122,30 @@ export default {
         process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_TYPES_CLIENTS_ENDPOINT,
         {
           withCredentials: true,
-          headers: {"Accept": "application/json"}
+          headers: { "Accept": "application/json" }
         }
       )
-      .then(response =>{
-        if (response && response.data) {
-          this.types_clients_list = response.data;
-        }
-      })
-      //Error
-      .catch(err => {
-        handleException(err, this);
-      });
+        .then(response => {
+          if (response && response.data) {
+            this.types_clients_list = response.data;
+          }
+        })
+        //Error
+        .catch(err => {
+          handleException(err, this);
+        });
     },
 
     /**
      * Save data
      */
-    saveData () {
+    saveData() {
       this.sending = true;
       var formData = this.initPostData();
 
       var url = process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT;
 
-      if(this.mode === 'new'){
+      if (this.mode === 'new') {
         formData.append("entree", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
 
         this.$http.post(
@@ -148,23 +153,20 @@ export default {
           formData,
           {
             withCredentials: true,
-            headers: {"Accept": "application/json"}
+            headers: { "Accept": "application/json" }
           }
-        )
-        .then(response =>{
-          let client_id = JSON.parse(response.data).client_id;
-          this.$router.push({ "name": "ClientsEdit", params: {id: client_id}});
-          this.mode = 'edit';
-          this.handleSaveDataSuccess(response);
-          this.editMode = false;
-        })
-        //Error
-        .catch(err => {
-          this.sending = false
-          handleException(err, this);
-        });
+        ).then(response => {
+            let client_id = JSON.parse(response.data).client_id;
+            this.$router.push({ "name": "ClientsEdit", params: { id: client_id } });
+            this.mode = 'edit';
+            this.handleSaveDataSuccess(response);
+            this.editMode = false;
+          }).catch(err => {
+            this.sending = false
+            handleException(err, this);
+          });
       }
-      else{
+      else {
         let client_id = this.$route.params.id;
         formData.append("id", client_id);
 
@@ -173,25 +175,25 @@ export default {
           formData,
           {
             withCredentials: true,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
           }
         )
-        .then(response =>{
-          this.handleSaveDataSuccess(response);
-          this.editMode = false;
-        })
-        //Error
-        .catch(err => {
-          this.sending = false
-          handleException(err, this);
-        });
+          .then(response => {
+            this.handleSaveDataSuccess(response);
+            this.editMode = false;
+          })
+          //Error
+          .catch(err => {
+            this.sending = false
+            handleException(err, this);
+          });
       }
     },
 
     /**
     * Handle save data success
     */
-    initPostData () {
+    initPostData() {
       if (this.form.co === null || this.form.co === "") {
         this.form.co = null;
       } else {
@@ -199,6 +201,7 @@ export default {
           this.form.co = "c/o " + this.form.co;
         }
       }
+
 
       let formData = new FormData();
       formData.append("type_client", this.form.type_client);
@@ -225,6 +228,8 @@ export default {
       formData.append("no_sap", this.form.no_sap || null);
       formData.append("no_bdp_bdee", this.form.no_bdp_bdee || null);
       formData.append("besoin_vref_facture", this.form.besoin_vref_facture);
+      formData.append("besoin_client_facture", this.form.besoin_client_facture);
+      formData.append("sortie", this.form.sortie || null);
 
       return formData;
     },
@@ -232,11 +237,12 @@ export default {
     /**
     * Handle save data success
     */
-    handleSaveDataSuccess (response) {
-      if(response && response.data){
+    handleSaveDataSuccess(response) {
+      if (response && response.data) {
         this.dataSaved = true;
         this.sending = false;
         this.$root.$emit("ShowMessage", "Le client a été enregistré avec succès");
+        this.existingClient.error = false;
         // this.clearForm();
       }
     },
@@ -244,7 +250,7 @@ export default {
     /**
      * Validate form
      */
-    validateForm () {
+    validateForm() {
       this.$v.$touch()
 
       if (!this.$v.$invalid) {
@@ -255,56 +261,91 @@ export default {
     /**
      * Cancel edit
      */
-    cancelEdit () {
+    cancelEdit() {
       this.editMode = false;
 
       if (this.$route.params && this.$route.params.id) {
         this.initEditData(this.$route.params.id);
       } else {
-        this.$router.push({name: "Clients"});
+        this.$router.push({ name: "Clients" });
       }
     },
 
     /**
      * Init edit data
      */
-    initEditData (id) {
+    initEditData(id) {
 
       this.$http.get(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT + '/' + id,
         {
           withCredentials: true,
-          headers: {"Accept": "application/json"}
+          headers: { "Accept": "application/json" }
         }
       )
-      .then(response =>{
-        if(response && response.data){
-          this.form.type_client = response.data.type_client;
-          this.form.entreprise = response.data.entreprise;
-          this.form.titre = response.data.titre;
-          this.form.nom = response.data.nom;
-          this.form.prenom = response.data.prenom;
-          this.form.represente_par = response.data.represente_par;
-          this.form.co = response.data.co;
-          this.form.adresse = response.data.adresse;
-          this.form.npa = response.data.npa;
-          this.form.localite = response.data.localite;
-          this.form.case_postale = response.data.case_postale;
-          this.form.tel_fixe = response.data.tel_fixe;
-          this.form.fax = response.data.fax;
-          this.form.tel_portable = response.data.tel_portable;
-          this.form.mail = response.data.mail;
-          this.form.no_sap = response.data.no_sap;
-          this.form.no_bdp_bdee = response.data.no_bdp_bdee;
-          this.form.besoin_vref_facture = response.data.besoin_vref_facture;
-        }
-      })
-      //Error
-      .catch(err => {
-        this.sending = false
-        handleException(err, this);
-      });
+        .then(response => {
+          if (response && response.data) {
+            this.form.type_client = response.data.type_client;
+            this.form.entreprise = response.data.entreprise;
+            this.form.titre = response.data.titre;
+            this.form.nom = response.data.nom;
+            this.form.prenom = response.data.prenom;
+            this.form.represente_par = response.data.represente_par;
+            this.form.co = response.data.co;
+            this.form.adresse = response.data.adresse;
+            this.form.npa = response.data.npa;
+            this.form.localite = response.data.localite;
+            this.form.case_postale = response.data.case_postale;
+            this.form.tel_fixe = response.data.tel_fixe;
+            this.form.fax = response.data.fax;
+            this.form.tel_portable = response.data.tel_portable;
+            this.form.mail = response.data.mail;
+            this.form.no_sap = response.data.no_sap;
+            this.form.no_bdp_bdee = response.data.no_bdp_bdee;
+            this.form.besoin_vref_facture = response.data.besoin_vref_facture;
+            this.form.besoin_client_facture = response.data.besoin_client_facture;
+            this.form.sortie = response.data.sortie;
+          }
+        })
+        //Error
+        .catch(err => {
+          this.sending = false
+          handleException(err, this);
+        });
     },
+
+    /**
+     * update client sortie
+     */
+    async updateClientSortie(value) {
+      let client_sortie = null;
+      if (value === false) {
+        client_sortie = (new Date()).toLocaleDateString('fr-CH');
+      }
+
+      let formData = new FormData();
+      formData.append("id", this.$route.params.id);
+      formData.append("sortie", client_sortie);
+
+      this.$http.put(
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENTS_ENDPOINT,
+        formData,
+        {
+          withCredentials: true,
+          headers: { "Accept": "application/json" }
+        }
+      ).then(response => {
+          if (response && response.data) {
+            let id = this.$route.params.id;
+            this.initEditData(id);
+            this.initClientMoralPersonnes(id);
+          }
+        }).catch(err => {
+          handleException(err, this);
+        });
+    },
+
+
 
     /**
      * Init liste of people working in an entreprise
@@ -316,7 +357,7 @@ export default {
         client_id,
         {
           withCredentials: true,
-          headers: {Accept: "application/json"}
+          headers: { Accept: "application/json" }
         }
       ).then(response => {
         if (response && response.data) {
@@ -328,7 +369,7 @@ export default {
     /**
      * Init formulaire create new contact
      */
-    openContactDialog(data=null) {
+    openContactDialog(data = null) {
       if (data === null) {
         this.contact_form = {
           id: null,
@@ -387,7 +428,7 @@ export default {
           formData,
           {
             withCredentials: true,
-            headers: {"Accept": "application/json"}
+            headers: { "Accept": "application/json" }
           }
         );
 
@@ -399,7 +440,7 @@ export default {
           formData,
           {
             withCredentials: true,
-            headers: {"Accept": "application/json"}
+            headers: { "Accept": "application/json" }
           }
         );
 
@@ -422,7 +463,7 @@ export default {
         "?id=" + contact_id,
         {
           withCredentials: true,
-          headers: {"Accept": "application/json"}
+          headers: { "Accept": "application/json" }
         }
       ).then(() => {
         this.$root.$emit("showMessage", "Le contact a bien été supprimé");
@@ -443,11 +484,11 @@ export default {
     searchNPA(searchTerm) {
       if (searchTerm.length > 0) {
         let tmp = Object.keys(postalCodes)
-        .filter(x => x.startsWith(searchTerm));
-        tmp = tmp.splice(0,10);
+          .filter(x => x.startsWith(searchTerm));
+        tmp = tmp.splice(0, 10);
 
         let tmp2 = [];
-        tmp.forEach(x => tmp2.push({"id": x, "nom": postalCodes[x]}));
+        tmp.forEach(x => tmp2.push({ "id": x, "nom": postalCodes[x] }));
 
         this.npa_localite_list = stringifyAutocomplete2(tmp2, "id");
       } else {
@@ -462,11 +503,11 @@ export default {
       if (searchTerm.length > 0) {
         let tmp = [];
         Object.keys(postalCodes).forEach(x => {
-          if (postalCodes[x].toLowerCase().includes(searchTerm.toLowerCase())){
-            tmp.push({id: x, nom: postalCodes[x]});
+          if (postalCodes[x].toLowerCase().includes(searchTerm.toLowerCase())) {
+            tmp.push({ id: x, nom: postalCodes[x] });
           }
         });
-        tmp = tmp.splice(0,10);
+        tmp = tmp.splice(0, 10);
 
         this.npa_localite_list = stringifyAutocomplete2(tmp, "nom");
       } else {
@@ -474,7 +515,7 @@ export default {
       }
     },
 
-    setNPALocalite(data){
+    setNPALocalite(data) {
       setTimeout(() => {
         this.form.npa = data.id;
         this.form.localite = data.nom;
@@ -483,11 +524,12 @@ export default {
 
     checkExistingClient() {
       if (!((this.form.nom && this.form.prenom) || this.form.entreprise)) {
+        this.existingClient.error = false;
         return;
       }
 
       let search = '';
-      if (this.form.type_client===this.clientTypes_conf.personne_morale) {
+      if (this.form.type_client === this.clientTypes_conf.personne_morale) {
         search += `?entreprise=${this.form.entreprise}`
         if (this.$route.params.id) {
           search += `&client_id=${this.$route.params.id}`;
@@ -502,7 +544,7 @@ export default {
       this.$http.get(process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_CHECK_EXISTING_ENDPOINT + search,
         {
           withCredentials: true,
-          headers: {"Accept": "application/json"}
+          headers: { "Accept": "application/json" }
         }
       ).then((response) => {
         if (response && response.data) {
@@ -522,12 +564,12 @@ export default {
 
   },
 
-  mounted: function(){
+  mounted: function () {
     this.initTypesClientsList();
     this.initPermissions();
 
     //Mode (new or edit)
-    if(this.$router && this.$router.currentRoute && this.$router.currentRoute.name === 'ClientsNew') {
+    if (this.$router && this.$router.currentRoute && this.$router.currentRoute.name === 'ClientsNew') {
       this.mode = 'new';
       this.editMode = true;
     } else {
@@ -536,7 +578,7 @@ export default {
 
 
     //If mode = edit, get the client
-    if(this.mode === 'edit'){
+    if (this.mode === 'edit') {
       let id = this.$route.params.id;
       this.initEditData(id);
       this.initClientMoralPersonnes(id);
@@ -545,4 +587,3 @@ export default {
 }
 
 </script>
-

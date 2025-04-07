@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, BigInteger, Float, Text, String, Date, DateTime, Boolean, ARRAY, ForeignKey, UniqueConstraint, Table, text
+from sqlalchemy import Column, Integer, BigInteger, Float, Text, String, Date, DateTime, Boolean, ARRAY, ForeignKey, UniqueConstraint, Table, text, Uuid
 
 from sqlalchemy.orm import relationship
 
@@ -109,6 +109,7 @@ class Client(Base):
     no_bdp_bdee = Column(Text)
     no_access = Column(Text)
     besoin_vref_facture = Column(Boolean)
+    besoin_client_facture = Column(Boolean)
 
 
 class ClientMoralPersonne(Base):
@@ -184,6 +185,8 @@ class Affaire(Base):
     urgent = Column(Boolean)
     urgent_echeance = Column(Date)
     attribution = Column(Text)
+    uuid = Column(Uuid)
+    last_changed_uuid = Column(Date)
 
 
 class AffaireEtapeIndex(Base):

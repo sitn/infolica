@@ -30,7 +30,7 @@
                                 <div class="subtitle">Transfert de droits à bâtir</div>
                                 {{ item.remarque_transfert_droit_batir || '-' }}
                                 <br><br><br>
-                                <div class="subtitle">Place de stationnement (Article 29 RELConstr.)</div>
+                                <div class="subtitle">Place de stationnement (Article 26 RELConstr.)</div>
                                 {{ item.remarque_stationnement_art29 || '-' }}
                                 <br><br><br>
                                 <div class="subtitle">Autres servitudes et mentions</div>
@@ -91,7 +91,7 @@
                             @update:remarque="value => this.decision.remarque_transfert_droit_batir = value"
                             :disabled="false"/>
 
-                        <div class="subtitle">Place de stationnement (Article 29 RELConstr.)</div>
+                        <div class="subtitle">Place de stationnement (Article 26 RELConstr.)</div>
                         <PreavisExtComment
                             :glossaire="glossaire.__STATIONNEMENT_ART29__"
                             :remarque="decision.remarque_stationnement_art29"

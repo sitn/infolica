@@ -8,8 +8,9 @@ from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 import json
 from datetime import datetime
-from sqlalchemy import cast, or_, String, func
+from sqlalchemy import cast, or_, Text, func
 import re
+from unidecode import unidecode
 
 
 def _set_client_aggregated_name(client, sep=', '):
@@ -29,44 +30,57 @@ def _set_client_aggregated_name(client, sep=', '):
     return nom_
 
 
-def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, search_limit='default'):
+def _multipleAttributesClientSearch(request, searchTerm, old_clients=False, search_limit='default', filter_type=[]):
     if search_limit == 'default':
         search_limit = int(request.registry.settings['search_limit'])
 
+    # Découpage du searchTerm en mots-clés
     searchTerms = re.split(r'\s|\,|\:|\-|SAP|BDP/BDEE', searchTerm.strip())
-    searchTerms = list(filter(None, searchTerms))
+    searchTerms = [term.strip().lower() for term in searchTerms if term and term.lower() != "null"]
 
+    # Base query avec filtres globaux
     query = request.dbsession.query(Client)
+
     if not old_clients:
         query = query.filter(Client.sortie == None)
 
-    if len(searchTerms) > 0:
+    if filter_type:
+        query = query.filter(Client.type_client.in_(filter_type))
+
+    # Si pas de mots-clés, retourne simplement la base query ordonnée
+    if searchTerms:
+
+        # Sous-requêtes pour chaque mot-clé
+        subqueries = []
         for term in searchTerms:
-            term = '%' + str(term) + '%'
-            query = query.filter(
+            # Crée l'expression de recherche pour chaque terme
+            term_expr = unidecode(str(term).lower())
+
+
+            # Ajoute la sous-requête en calculant la similarité pour chaque champ
+            q = query.filter(
                 or_(
-                    Client.entreprise.ilike(term),
-                    Client.titre.ilike(term),
-                    Client.nom.ilike(term),
-                    Client.prenom.ilike(term),
-                    Client.co.ilike(term),
-                    Client.adresse.ilike(term),
-                    # cast(Client.npa, String).ilike(term),
-                    # Client.localite.ilike(term),
-                    # cast(Client.case_postale, String).ilike(term),
-                    # cast(Client.tel_fixe, String).ilike(term),
-                    # cast(Client.fax, String).ilike(term),
-                    # cast(Client.tel_portable, String).ilike(term),
-                    # Client.mail.ilike(term),
-                    cast(Client.no_sap, String).ilike(term),
-                    cast(Client.no_bdp_bdee, String).ilike(term),
-                    # cast(Client.no_access, String).ilike(term),
+                    func.unaccent(func.lower(Client.entreprise)).like(f"%{term_expr}%"),
+                    func.unaccent(func.lower(Client.titre)).like(f"%{term_expr}%"),
+                    func.unaccent(func.lower(Client.nom)).like(f"%{term_expr}%"),
+                    func.unaccent(func.lower(Client.prenom)).like(f"%{term_expr}%"),
+                    func.unaccent(func.lower(Client.co)).like(f"%{term_expr}%"),
+                    func.unaccent(func.lower(Client.adresse)).like(f"%{term_expr}%"),
+                    func.unaccent(func.lower(cast(Client.no_sap, Text))).like(f"%{term_expr}%"),
+                    func.unaccent(func.lower(cast(Client.no_bdp_bdee, Text))).like(f"%{term_expr}%")
                 )
             )
+            subqueries.append(q)
 
-    results = query.limit(search_limit).all()
+        # Union de toutes les sous-requêtes
+        query = subqueries[0]
+        for q in subqueries[1:]:
+            query = query.intersect(q)
 
-    return results
+    # Limiter les résultats et obtenir les objets Client
+    client_results = query.order_by(Client.entreprise, Client.nom, Client.prenom).limit(search_limit).all()
+
+    return client_results
 
 
 @view_config(route_name='types_clients', request_method='GET', renderer='json')
@@ -156,13 +170,10 @@ def clients_search_view(request):
     conditions = [] if not conditions or len(
         conditions) == 0 else conditions
 
-    conditions.append(Client.sortie == None)
+    # conditions.append(Client.sortie == None)
 
     query = request.dbsession.query(
         Client
-    ).order_by(
-        Client.nom,
-        Client.prenom
     ).filter(
         *conditions
     )
@@ -170,7 +181,7 @@ def clients_search_view(request):
     if not old_clients:
         query = query.filter(Client.sortie == None)
 
-    query = query.limit(search_limit).all()
+    query = query.order_by(Client.entreprise, Client.nom, Client.prenom).limit(search_limit).all()
     return Utils.serialize_many(query)
 
 
@@ -202,18 +213,35 @@ def clients_aggregated_search_by_term_view(request):
 
     searchTerm = request.params["searchTerm"] if "searchTerm" in request.params else None
     old_clients = request.params['old_clients'] == 'true' if 'old_clients' in request.params else False
+    filter_type = json.loads(request.params['filter_type']) if 'filter_type' in request.params else []
 
-    query = _multipleAttributesClientSearch(request, searchTerm, old_clients=old_clients)
+    query = _multipleAttributesClientSearch(request, searchTerm, old_clients=old_clients, filter_type=filter_type)
 
     liste_clients = []
     for client in query:
         nom_ = _set_client_aggregated_name(client)
+        type_client_nom = request.dbsession.query(ClientType).filter(ClientType.id==client.type_client).first()
+        type_client_nom = type_client_nom.nom if type_client_nom else ""
+
+        # if client.type_client not in liste_clients.keys():
+        #     liste_clients[type_client_nom] = []
+
+        # liste_clients[type_client_nom].append({
+        #     'id': client.id,
+        #     'nom': nom_,
+        #     'type_client': client.type_client,
+        #     # 'type_client_nom':type_client_nom
+        # })
 
         liste_clients.append({
             'id': client.id,
             'nom': nom_,
-            'type_client': client.type_client
+            'type_client': client.type_client,
+            'type_client_nom': type_client_nom,
+            'active': True if client.sortie is None else False,
         })
+
+    liste_clients.sort(key=lambda x: x["type_client"])
 
     return liste_clients
 
@@ -264,30 +292,30 @@ def clients_update_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Client.__tablename__))
 
 
-@view_config(route_name='clients', request_method='DELETE', renderer='json')
-@view_config(route_name='clients_s', request_method='DELETE', renderer='json')
-def clients_delete_view(request):
-    """
-    Delete client
-    """
-    # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['client_edition']):
-        raise exc.HTTPForbidden()
+# @view_config(route_name='clients', request_method='DELETE', renderer='json')
+# @view_config(route_name='clients_s', request_method='DELETE', renderer='json')
+# def clients_delete_view(request):
+#     """
+#     Delete client
+#     """
+#     # Check authorization
+#     if not Utils.has_permission(request, request.registry.settings['client_edition']):
+#         raise exc.HTTPForbidden()
 
-    # Get client_id
-    id_client = request.params['id'] if 'id' in request.params else None
+#     # Get client_id
+#     id_client = request.params['id'] if 'id' in request.params else None
 
-    model = request.dbsession.query(Client).filter(
-        Client.id == id_client).first()
+#     model = request.dbsession.query(Client).filter(
+#         Client.id == id_client).first()
 
-    # If result is empty
-    if not model:
-        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
-            Client.__tablename__, id_client))
+#     # If result is empty
+#     if not model:
+#         raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(
+#             Client.__tablename__, id_client))
 
-    model.sortie = datetime.utcnow()
+#     model.sortie = datetime.utcnow()
 
-    return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Client.__tablename__))
+#     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(Client.__tablename__))
 
 
 # ClientMoralPersonnes
@@ -389,13 +417,21 @@ def client_check_existing_view(request):
     clients = request.dbsession.query(Client)
 
     if entreprise is not None:
+        normalized_entreprise = cast(func.unaccent(func.lower(Client.entreprise)), Text)
+        normalized_entreprise_search = unidecode(str(entreprise).lower())
+
         clients = clients.filter(
-            func.similarity(Client.entreprise, entreprise) > 0.6
+            normalized_entreprise.like(f"{normalized_entreprise_search}%"),
         )
     else:
+        normalized_firstname = func.unaccent(func.lower(Client.prenom))
+        normalized_lastname = func.unaccent(func.lower(Client.nom))
+        normalized_firstname_search = unidecode(str(firstname).lower())
+        normalized_lastname_search = unidecode(str(lastname).lower())
+
         clients = clients.filter(
-            func.similarity(Client.prenom, firstname) > 0.6,
-            func.similarity(Client.nom, lastname) > 0.6
+            normalized_firstname.like(f"{normalized_firstname_search}%"),
+            normalized_lastname.like(f"{normalized_lastname_search}%")
         )
 
     if client_id is not None:
