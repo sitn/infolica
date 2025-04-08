@@ -49,6 +49,10 @@ export default {
       type: Array,
       default: () => []
     },
+    check_besoin_client_facture: {
+      type: Boolean,
+      default: false
+    },
   },
 
   emits: [
@@ -59,6 +63,12 @@ export default {
     return {
       client: null,
       liste_clients: [],
+      clientTypes_conf: {
+        personne_physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID),
+        personne_morale: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID),
+        personne_facture: Number(process.env.VUE_APP_TYPE_CLIENT_FACTURE_ID),
+      },
+      showHelper_besoin_client_facture: false,
     };
   },
 
@@ -128,8 +138,8 @@ export default {
         }
       ).then(response => {
         if (response && response.data) {
-
           this.client = stringifyAutocomplete2(response.data, ["nom"], ", ", "nom");
+          this.showHelper_besoin_client_facture = response.data.besoin_client_facture;
         }
       }).catch(err => handleException(err, this));
     },
@@ -182,6 +192,7 @@ export default {
         this.getClientById(this.client_id);
       } else {
         this.client = '';
+        this.showHelper_besoin_client_facture = false;
       }
     },
 

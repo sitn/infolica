@@ -22,5 +22,6 @@
         </template>
 
         <span class="md-error" v-if="!$v.client.required">{{ validation_error_msg }}</span>
+        <span class="md-helper-text" v-if="check_besoin_client_facture && showHelper_besoin_client_facture">Le client demande une adresse de facturation différente.</span>
     </md-autocomplete>
 </div>
