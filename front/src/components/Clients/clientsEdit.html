@@ -32,13 +32,13 @@
 
       <!-- Entreprise et Titre -->
       <div class="md-layout md-gutter">
-        <div class="md-layout-item md-small-size-100 md-size-50" v-if="form.type_client === clientTypes_conf.personne_morale">
+        <div class="md-layout-item md-small-size-100 md-size-50" v-if="[clientTypes_conf.personne_morale, clientTypes_conf.personne_facture].includes(form.type_client)">
           <md-field>
             <label for="entreprise">Nom de l'entreprise</label>
             <md-input name="entreprise" id="entreprise" v-model="form.entreprise" :disabled="sending || !permission.client_edit || !editMode" @keyup="checkExistingClient" />
           </md-field>
         </div>
-        <div class="md-layout-item md-small-size-100 md-size-50" v-if="[clientTypes_conf.personne_physique, clientTypes_conf.personne_facture].includes(form.type_client)">
+        <div class="md-layout-item md-small-size-100 md-size-50" v-if="[clientTypes_conf.personne_physique].includes(form.type_client)">
           <md-field>
             <label>Titre</label>
             <md-select v-model="form.titre" :disabled="sending || !permission.client_edit || !editMode">
@@ -51,7 +51,7 @@
       </div>
 
       <!-- Nom et Prénom -->
-      <div class="md-layout md-gutter" v-if="[clientTypes_conf.personne_physique, clientTypes_conf.personne_facture].includes(form.type_client)">
+      <div class="md-layout md-gutter" v-if="[clientTypes_conf.personne_physique].includes(form.type_client)">
         <div class="md-layout-item md-small-size-100 md-size-50">
           <md-field :class="getValidationClass('nom')">
             <label for="nom">Nom</label>

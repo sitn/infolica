@@ -205,7 +205,7 @@ export default {
 
       let formData = new FormData();
       formData.append("type_client", this.form.type_client);
-      if (this.form.type_client === this.clientTypes_conf.personne_morale) {
+      if ([this.clientTypes_conf.personne_morale, this.clientTypes_conf.personne_facture].includes(this.form.type_client)) {
         formData.append("titre", null);
         formData.append("nom", null);
         formData.append("prenom", null);
@@ -386,14 +386,14 @@ export default {
         };
       }
 
-      if (this.mode !== 'new' && this.form.type_client === this.clientTypes_conf.personne_morale) {
+      if (this.mode !== 'new' && [this.clientTypes_conf.personne_morale, this.clientTypes_conf.personne_facture].includes(this.form.type_client)) {
         this.showDialogAddNewContact = true;
       }
     },
 
     updateClientType() {
       // remove first and lastname if client type set to personne_morale or remove entreprise if type set to personne_physique
-      if (this.form.type_client === this.clientTypes_conf.personne_morale) {
+      if ([this.clientTypes_conf.personne_morale, this.clientTypes_conf.personne_facture].includes(this.form.type_client)) {
         this.form.nom = null;
         this.form.prenom = null;
       } else {
@@ -529,7 +529,7 @@ export default {
       }
 
       let search = '';
-      if (this.form.type_client === this.clientTypes_conf.personne_morale) {
+      if ([this.clientTypes_conf.personne_morale, this.clientTypes_conf.personne_facture].includes(this.form.type_client)) {
         search += `?entreprise=${this.form.entreprise}`
         if (this.$route.params.id) {
           search += `&client_id=${this.$route.params.id}`;
