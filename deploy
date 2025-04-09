@@ -37,18 +37,21 @@ def main():
     load_env(dotenv_file)
     shutil.copy(dotenv_file, '.env')
 
+
+    # We store DOCKER_HOST to build locally
     target_host = os.environ.get('DOCKER_HOST')
     os.environ['DOCKER_HOST'] = ''
 
     call_cmd(["docker", "compose", "build", "back"])
     call_cmd(["docker", "compose", "build", "front"])
-    call_cmd(["docker", "compose", "push"])
-
-    os.environ['DOCKER_HOST'] = target_host
 
     print('DOCKER_HOST is: {}'.format(os.environ.get('DOCKER_HOST', 'not setted')))
 
-    call_cmd(["docker", "compose", "pull"])
+    if instance != 'local':
+        call_cmd(["docker", "compose", "push"])
+        os.environ['DOCKER_HOST'] = target_host
+        call_cmd(["docker", "compose", "pull"])
+
     call_cmd(["docker", "compose", "down"])
     call_cmd(["docker", "compose", "up", "-d"])
     print('\a')

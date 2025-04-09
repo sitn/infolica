@@ -1,6 +1,6 @@
 services:
   back:
-    image: ${DOCKER_BASE}-back
+    image: ${DOCKER_BASE}-back:${DOCKER_TAG}
     build:
       context: back
       args:
@@ -18,7 +18,7 @@ services:
       - TZ=Europe/Zurich
 
   front:
-    image: ${DOCKER_BASE}-front
+    image: ${DOCKER_BASE}-front:${DOCKER_TAG}
     build:
       context: front
       args:
