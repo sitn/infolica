@@ -32,3 +32,12 @@
     font-style: italic;
     color: grey;
 }
+
+.help-checker-text {
+    line-height: 1.3em;
+    white-space: pre-line;
+    height: auto;
+    color: orange;
+    font-size: small;
+    margin: -16px 0px 16px;
+}

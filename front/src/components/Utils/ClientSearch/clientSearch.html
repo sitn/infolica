@@ -1,4 +1,4 @@
-<div id="clientSearch">
+<div id="clientSearch" style="display: flex; flex-direction: column;">
     <md-autocomplete :class="getValidationClass('client')"
         id="clientSearchAutocomplete"
         v-model="client"
@@ -22,6 +22,6 @@
         </template>
 
         <span class="md-error" v-if="!$v.client.required">{{ validation_error_msg }}</span>
-        <span class="md-helper-text" v-if="check_besoin_client_facture && showHelper_besoin_client_facture">Le client demande une adresse de facturation différente.</span>
     </md-autocomplete>
+    <span class="help-checker-text" v-if="clientRemarque">{{ clientRemarque }}</span>
 </div>

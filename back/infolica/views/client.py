@@ -139,14 +139,22 @@ def client_aggregated_by_id_view(request):
         raise exc.HTTPForbidden()
 
     id = request.matchdict['id']
+    checkers = json.loads(request.params["checkers"]) if "checkers" in request.params else []
+
     result = request.dbsession.query(Client).filter(
         Client.id == id).first()
+
+    remarque = []
+    if "ask-facture-reference" in checkers and result.besoin_vref_facture is True:
+        remarque.append("Le client demande une référence dans la facture.")
+    if "ask-other-client-facture" in checkers and result.besoin_client_facture is True:
+        remarque.append("Le client demande une adresse de facturation différente.")
 
     client = {
         'id': result.id,
         'nom': _set_client_aggregated_name(result),
         'type_client': result.type_client,
-        'besoin_client_facture': result.besoin_client_facture,
+        'remarque': "\n".join(remarque),
     }
 
     return client
@@ -240,7 +248,6 @@ def clients_aggregated_search_by_term_view(request):
             'type_client': client.type_client,
             'type_client_nom': type_client_nom,
             'active': True if client.sortie is None else False,
-            'besoin_client_facture': client.besoin_client_facture,
         })
 
     liste_clients.sort(key=lambda x: x["type_client"])

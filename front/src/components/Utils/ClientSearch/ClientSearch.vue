@@ -53,6 +53,10 @@ export default {
       type: Boolean,
       default: false
     },
+    checkers: {
+      type: Array,
+      default: () => []
+    },
   },
 
   emits: [
@@ -68,7 +72,7 @@ export default {
         personne_morale: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID),
         personne_facture: Number(process.env.VUE_APP_TYPE_CLIENT_FACTURE_ID),
       },
-      showHelper_besoin_client_facture: false,
+      clientRemarque: '',
     };
   },
 
@@ -130,16 +134,32 @@ export default {
         return;
       }
 
+      // set search params
+      let searchParams = [];
+      if (this.checkers.includes('ask-facture-reference')) {
+        searchParams.push('ask-facture-reference');
+      }
+      if (this.checkers.includes('ask-other-client-facture')) {
+        searchParams.push('ask-other-client-facture');
+      }
+
+      if (searchParams.length > 0) {
+        searchParams = '?checkers=' + JSON.stringify(searchParams);
+      } else {
+        searchParams = '';
+      }
+
       this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_AGGREGATED_BY_ID_ENDPOINT + '/' + client_id,
+        process.env.VUE_APP_API_URL + process.env.VUE_APP_CLIENT_AGGREGATED_BY_ID_ENDPOINT + '/' + client_id + searchParams,
         {
           withCredentials: true,
           headers: { "Accept": "application/json" }
         }
       ).then(response => {
         if (response && response.data) {
-          this.client = stringifyAutocomplete2(response.data, ["nom"], ", ", "nom");
-          this.showHelper_besoin_client_facture = response.data.besoin_client_facture;
+          const tmp = response.data;
+          this.client = stringifyAutocomplete2(tmp, ["nom"], ", ", "nom");
+          this.clientRemarque = tmp.remarque;
         }
       }).catch(err => handleException(err, this));
     },
@@ -192,7 +212,7 @@ export default {
         this.getClientById(this.client_id);
       } else {
         this.client = '';
-        this.showHelper_besoin_client_facture = false;
+        this.clientRemarque = '';
       }
     },
 
