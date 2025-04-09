@@ -43,7 +43,7 @@ def main():
     call_cmd(["docker", "compose", "build", "back"])
     call_cmd(["docker", "compose", "build", "front"])
     call_cmd(["docker", "compose", "push"])
-    
+
     os.environ['DOCKER_HOST'] = target_host
 
     print('DOCKER_HOST is: {}'.format(os.environ.get('DOCKER_HOST', 'not setted')))
@@ -51,7 +51,6 @@ def main():
     call_cmd(["docker", "compose", "pull"])
     call_cmd(["docker", "compose", "down"])
     call_cmd(["docker", "compose", "up", "-d"])
-
     print('\a')
 
 if __name__ == "__main__":
