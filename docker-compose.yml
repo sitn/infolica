@@ -1,8 +1,6 @@
-version: '3'
-
 services:
   back:
-    image: sitn/infolica-back
+    image: ${DOCKER_BASE}-back:${DOCKER_TAG}
     build:
       context: back
       args:
@@ -20,7 +18,7 @@ services:
       - TZ=Europe/Zurich
 
   front:
-    image: sitn/infolica-front
+    image: ${DOCKER_BASE}-front:${DOCKER_TAG}
     build:
       context: front
       args:
