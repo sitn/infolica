@@ -4,9 +4,11 @@
 
 <script>
 import {handleException} from '@/services/exceptionsHandler';
-import {stringifyAutocomplete,
-        getDocument,
-        getCurrentUserRoleId} from '@/services/helper';
+import {
+  stringifyAutocomplete,
+  getDocument,
+  getCurrentUserRoleId
+} from '@/services/helper';
 
 import ClientSearch from "@/components/Utils/ClientSearch/ClientSearch.vue";
 
@@ -40,12 +42,8 @@ export default {
       typesAffairesListe: [],
       affaires_source: [],
       affaires_destination: [],
-      clientsFacture: {
-        selectList: [],
-        adressList: [],
-        selected_id: 0,
-        selected_adress: ''
-      },
+      clientsFacture: [],
+      clientsFacture_selected_id: 1,
       client_moral_personnes: {
         commande: [],
         envoi: [],
@@ -60,7 +58,7 @@ export default {
         client_envoi_complement: null
       },
       show: {
-        clientFacture: true,
+        clientFacture: false,
       }
     };
   },
@@ -72,7 +70,7 @@ export default {
     openClientEditor(field_name) {
       let routedata = null;
       if (field_name.toLowerCase().includes('facture')) {
-        routedata = this.$router.resolve({name: 'ClientsEdit', params: {id: this.clientsFacture.selected_id.split("_")[0]}});
+        routedata = this.$router.resolve({name: 'ClientsEdit', params: {id: this.clientsFacture.filter(x => x.id === this.clientsFacture_selected_id)[0].client_id}});
       }else {
         routedata = this.$router.resolve({name: 'ClientsEdit', params: {id: this.affaire[field_name]}});
       }
@@ -173,14 +171,6 @@ export default {
     },
 
     /**
-     * openCreateClient
-     */
-    openCreateClient() {
-      let routedata = this.$router.resolve({ name: "ClientsNew" });
-      window.open(routedata.href, "_blank");
-    },
-
-    /**
      * get cadastres
      */
     async initTypesAffairesListe() {
@@ -265,95 +255,6 @@ export default {
       }).catch(err => handleException(err, this));
     },
 
-    /**
-     * Search Clients facture
-     */
-    async searchClientsFacture() {
-      this.clientsFacture = {
-        selectList: [],
-        adressList: [],
-        selected_id: 0,
-        selected_adress: ''
-      };
-
-      this.$http.get(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_FACTURES_ENDPOINT + this.affaire.id,
-        {
-          withCredentials: true,
-          headers: {Accept: "appication/json"}
-        }
-      ).then(response => {
-        if (response && response.data) {
-          let tmp = response.data.filter(x => x.type_id === Number(process.env.VUE_APP_FACTURE_TYPE_FACTURE_ID));
-          let count = 0;
-
-          tmp.forEach(x => {
-            // construct select list
-            count += 1;
-            this.clientsFacture.selectList.push({
-              id: x.client_id + "_" + count,
-              nom: [
-                x.client_entreprise,
-                [x.client_titre, x.client_nom, x.client_prenom].filter(Boolean).join(" ")
-              ].filter(Boolean).join(", ")
-            });
-
-
-            // construct adresses list
-            let adress = "";
-            if (x.client_type_id === this.clientTypes_conf.moral) {
-              adress = [
-                x.client_premiere_ligne,
-                [(x.client_premiere_ligne? "Par" : null), x.client_entreprise].filter(Boolean).join(" "),
-                x.client_co,
-                x.client_adresse,
-                x.client_case_postale,
-                [x.client_npa, x.client_localite].filter(Boolean).join(" ")
-              ].filter(Boolean).join("\n");
-            } else {
-              adress = [
-                x.client_premiere_ligne,
-                [x.client_premiere_ligne? "Par" : null, x.client_titre, x.client_prenom, x.client_nom].filter(Boolean).join(" "),
-                x.client_co,
-                x.client_adresse,
-                x.client_case_postale,
-                [x.client_npa, x.client_localite].filter(Boolean).join(" ")
-              ].filter(Boolean).join("\n");
-            }
-
-
-
-
-            this.clientsFacture.adressList.push({
-              id: x.client_id + "_" + count,
-              adress: adress
-            });
-
-          });
-
-          // stringify lists
-          this.clientsFacture.adressList = stringifyAutocomplete(this.clientsFacture.adressList, 'adress');
-          this.clientsFacture.selectList = stringifyAutocomplete(this.clientsFacture.selectList, 'nom');
-
-          //set default adress
-          if (this.clientsFacture.selectList.length > 0) {
-            this.clientsFacture.selected_adress = this.clientsFacture.adressList[this.clientsFacture.selected_id].nom;
-            this.clientsFacture.selected_id = this.clientsFacture.adressList[this.clientsFacture.selected_id].id;
-          }
-        }
-      }).catch(err => handleException(err, this));
-    },
-
-    /**
-     * Update client facture adress when selection changed
-     */
-    updateClientFactureAdresse() {
-      let tmp = this.clientsFacture.adressList.filter(x => x.id === this.clientsFacture.selected_id);
-      this.clientsFacture.selected_adress = "";
-      if (tmp.length > 0) {
-        this.clientsFacture.selected_adress = tmp[0].nom;
-      }
-    },
 
     /**
      * Open affaire "repris par" or "provient de"
@@ -436,6 +337,7 @@ export default {
      * Init liste of people working in an entreprise
      */
      async initClientMoralPersonnes(client_id, client_type) {
+
       return new Promise((resolve) => {
         if (client_id) {
           this.$http.get(
@@ -466,6 +368,24 @@ export default {
       window.open(routeData.href, "_blank");
     },
 
+    async getClientsFacture() {
+      this.$http.get(
+        process.env.VUE_APP_API_URL +
+        process.env.VUE_APP_CLIENTS_FACTURE_BY_AFFAIRE_ID_ENDPOINT +
+        this.affaire.id,
+        {
+          withCredentials: true,
+          headers: {Accept: "application/json"}
+        }
+      ).then(response => {
+        if (response && response.data) {
+          this.clientsFacture = response.data;
+        }
+      }).catch(err => handleException(this, err))
+      .finally(() => this.show.clientFacture = this.affaire.type_id !== this.typesAffaires_conf.pcop);
+
+    },
+
   },
 
   mounted: function() {
@@ -473,11 +393,10 @@ export default {
     this.initTypesAffairesListe();
     this.searchAffaireSource();
     this.searchAffaireDestination();
-    this.searchClientsFacture();
     this.setAffaireUrgente();
     this.setPermissions();
-    this.$root.$on('reloadClientFactureInfosGen', () => this.searchClientsFacture());
-    this.show.clientFacture = this.affaire.type_id !== this.typesAffaires_conf.pcop;
+    this.getClientsFacture();
+    this.$root.$on('reloadClientFactureInfosGen', () => this.getClientsFacture());
     this.enableAffaireUrgente();
   }
 };

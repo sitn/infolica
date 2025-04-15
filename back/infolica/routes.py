@@ -18,6 +18,7 @@ def includeme(config):
     config.add_route('search_clients_aggregated_by_term', '/infolica/api/search_clients_aggregated_by_term')
     config.add_route('search_client_aggregated_by_id', '/infolica/api/search_client_aggregated/{id}')
     config.add_route('client_check_existing', '/infolica/api/client_check_existing')
+    config.add_route('clients_factures_by_affaire_id', '/infolica/api/clients_factures_by_affaire_id/{id}')
     #Affaires
     config.add_route('affaires', '/infolica/api/affaires')
     config.add_route('affaires_s', '/infolica/api/affaires/')

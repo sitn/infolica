@@ -110,51 +110,10 @@ export default {
             // copy numeros_references backup to get complete liste
             this.numeros_references_restant = [...this.numeros_references_bk];
             tmp.forEach(x => {
-              x.date = x.date !== null? moment(x.date, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT): null;
-              x.montant_mo = numeral(x.montant_mo).format("0.00");
-              x.montant_mat_diff = numeral(x.montant_mat_diff).format("0.00");
-              x.montant_rf = numeral(x.montant_rf).format("0.00");
-              x.montant_tva = numeral(x.montant_tva).format("0.00");
-              x.montant_total = numeral(x.montant_total).format("0.00");
-              if (x.numeros === undefined || x.numeros === null) {
-                x.numeros_id = [];
-                x.numeros = [];
-              } else {
-                x.numeros_id = x.numeros;
-                // Met à jour les numéros restant pour la facturation
-                x.numeros_id.forEach(y => {
-                  this.numeros_references_restant = this.numeros_references_restant.filter(z => z.numero_id !== y);
-                });
-                // Récupère le numéro du BF par l'id
-                let tmp2 = [];
-                x.numeros.forEach(y => tmp2.push(this.numeros_references.filter(z => z.numero_id === y)[0].numero));
-                x.numeros = tmp2;
-              }
-
-              // Composer l'adresse de facturation
-              let adresse_ = ""
-              if (x.client_type_id === this.clientTypes_conf.moral) {
-                adresse_ = [
-                  x.client_premiere_ligne,
-                  [(x.client_premiere_ligne? "Par" : null), x.client_entreprise].filter(Boolean).join(" "),
-                  x.client_co,
-                  x.client_adresse,
-                  x.client_case_postale,
-                  [x.client_npa, x.client_localite].filter(Boolean).join(" ")
-                ].filter(Boolean);
-              } else {
-                adresse_ = [
-                  x.client_premiere_ligne,
-                  [x.client_premiere_ligne? "Par" : null, x.client_titre, x.client_prenom, x.client_nom].filter(Boolean).join(" "),
-                  x.client_co,
-                  x.client_adresse,
-                  x.client_case_postale,
-                  [x.client_npa, x.client_localite].filter(Boolean).join(" ")
-                ].filter(Boolean);
-              }
-
-              x.adresse_facturation_ = adresse_.join(", ");
-
+              // Met à jour les numéros restant pour la facturation
+              x.numeros_id.forEach(y => {
+                this.numeros_references_restant = this.numeros_references_restant.filter(z => z.numero_id !== y);
+              });
             });
 
             this.affaire_devis = tmp.filter(x => x.type_id === this.configFactureTypeID.devis);
@@ -525,7 +484,7 @@ export default {
       let formData = new FormData();
       formData.append("template", "LettreCad");
       formData.append("values", JSON.stringify({
-        "ADRESSE_PROPRIETAIRE": facture.adresse_facturation_.replace(/, /gi, "\n"),
+        "ADRESSE_PROPRIETAIRE": facture.client_compiled_adress,
         "NREF": this.affaire.id,
         "DATE_ENVOI": facture.date,
         "TITRE": "Madame, Monsieur",

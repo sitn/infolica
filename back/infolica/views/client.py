@@ -126,7 +126,14 @@ def client_by_id_view(request):
     id = request.matchdict['id']
     query = request.dbsession.query(Client).filter(
         Client.id == id).first()
-    return Utils.serialize_one(query)
+
+    remarque = Utils.clientRemarkBuilder(query)
+
+    client = Utils.serialize_one(query)
+
+    client["remarque"] = remarque
+
+    return client
 
 
 @view_config(route_name='search_client_aggregated_by_id', request_method='GET', renderer='json')
@@ -149,12 +156,13 @@ def client_aggregated_by_id_view(request):
         remarque.append("Le client demande une référence dans la facture.")
     if "ask-other-client-facture" in checkers and result.besoin_client_facture is True:
         remarque.append("Le client demande une adresse de facturation différente.")
+    remarque = "\n".join(remarque)
 
     client = {
         'id': result.id,
         'nom': _set_client_aggregated_name(result),
         'type_client': result.type_client,
-        'remarque': "\n".join(remarque),
+        'remarque': remarque,
     }
 
     return client

@@ -122,6 +122,7 @@ export default {
       clientTypes_conf: {
         physique: Number(process.env.VUE_APP_TYPE_CLIENT_PHYSIQUE_ID),
         moral: Number(process.env.VUE_APP_TYPE_CLIENT_MORAL_ID),
+        facture: Number(process.env.VUE_APP_TYPE_CLIENT_FACTURE_ID),
       },
       showMovePointComment: false,
       cssHeaderWidth: 'width: calc(100% - 80px)',
