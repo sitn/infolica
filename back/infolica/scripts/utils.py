@@ -367,3 +367,48 @@ class Utils(object):
             permission = request.registry.settings["affaire_remaniement_parcellaire_edition"]
 
         return permission
+
+    @classmethod
+    def clientAdressFormatter(cls, client, premiere_ligne="", sep=", ", shortened=False):
+        adress = ""
+
+        tmp = []
+        if shortened:
+            if client.type_client in [2, 3]:
+                tmp.append(premiere_ligne)
+                tmp.append("Par " + client.entreprise if premiere_ligne else client.entreprise)
+                adress = sep.join(filter(None, tmp))
+
+            elif client.type_client in [1]:
+                tmp.append(premiere_ligne)
+                tmp.append(" ".join(filter(None, [("Par " if premiere_ligne else None), client.titre, client.prenom, client.nom]))),
+                adress = sep.join(filter(None, tmp))
+
+        else:
+            if client.type_client in [2, 3]:
+                tmp.append(premiere_ligne)
+                tmp.append("Par " + client.entreprise if premiere_ligne else client.entreprise)
+                tmp.append(client.co)
+                tmp.append(client.adresse)
+                tmp.append(" ".join(filter(None, [client.npa, client.localite])))
+                adress = sep.join(filter(None, tmp))
+
+            elif client.type_client in [1]:
+                tmp.append(premiere_ligne)
+                tmp.append(" ".join(filter(None, [("Par " if premiere_ligne else None), client.titre, client.prenom, client.nom]))),
+                tmp.append(client.co)
+                tmp.append(client.adresse)
+                tmp.append(" ".join(filter(None, [client.npa, client.localite])))
+                adress = sep.join(filter(None, tmp))
+
+        return adress
+
+    @classmethod
+    def clientRemarkBuilder(cls, client, sep="\n", checkNeedFactureReference=True, checkNeedOtherClientFacture=True):
+        remarque = []
+        if checkNeedFactureReference is True and client.besoin_vref_facture is True:
+            remarque.append("Le client demande une référence dans la facture.")
+        if checkNeedOtherClientFacture is True and client.besoin_client_facture is True:
+            remarque.append("Le client demande une adresse de facturation différente.")
+        remarque = sep.join(remarque)
+        return remarque

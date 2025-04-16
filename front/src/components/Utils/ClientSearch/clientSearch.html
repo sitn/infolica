@@ -1,4 +1,4 @@
-<div id="clientSearch">
+<div id="clientSearch" style="display: flex; flex-direction: column;">
     <md-autocomplete :class="getValidationClass('client')"
         id="clientSearchAutocomplete"
         v-model="client"
@@ -23,4 +23,5 @@
 
         <span class="md-error" v-if="!$v.client.required">{{ validation_error_msg }}</span>
     </md-autocomplete>
+    <span class="help-checker-text" v-if="clientRemarque">{{ clientRemarque }}</span>
 </div>

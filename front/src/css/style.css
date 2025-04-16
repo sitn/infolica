@@ -91,3 +91,12 @@ input[type=number] {
 .disabledTableRow {
     color: #aba5a5;
 }
+
+.help-checker-text {
+    line-height: 1.3em;
+    white-space: pre-line;
+    height: auto;
+    color: orange;
+    font-size: small;
+    margin: -16px 0px 16px;
+}

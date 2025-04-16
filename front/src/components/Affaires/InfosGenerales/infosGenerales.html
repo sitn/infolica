@@ -85,9 +85,14 @@
                         <md-field>
                             <label>Commandé par</label>
                             <md-textarea v-model="affaire.client_commande_nom_" readonly></md-textarea>
-                            <md-button class="md-primary md-icon-button md-dense" v-if="affaire.client_commande_id !== null" title="Consulter/Modifier le client" @click="openClientEditor('client_commande_id')">
-                                <md-icon>open_in_new</md-icon>
-                            </md-button>
+
+                            <ul style="list-style: none; margin: 0px; padding-left: 0px;">
+                                <li style="text-align: center;">
+                                    <md-button class="md-primary md-icon-button md-dense" v-if="affaire.client_commande_id !== null" title="Consulter/Modifier le client" @click="openClientEditor('client_commande_id')">
+                                        <md-icon>open_in_new</md-icon>
+                                    </md-button>
+                                </li>
+                            </ul>
                         </md-field>
                     </div>
 
@@ -118,9 +123,9 @@
                         <div class="md-layout-item md-size-50 md-small-size-100">
                             <!-- select pour le client facture à afficher -->
                             <md-field>
-                                <label>Facturer à ({{ clientsFacture.selectList.length }})</label>
-                                <md-select v-model="clientsFacture.selected_id" md-dense @md-selected="updateClientFactureAdresse">
-                                    <md-option v-for="item in clientsFacture.selectList" :key="item.id" :value="item.id">{{ item.nom }}</md-option>
+                                <label>Facturer à ({{ clientsFacture.length }})</label>
+                                <md-select v-model="clientsFacture_selected_id" md-dense>
+                                    <md-option v-for="item in clientsFacture" :key="item.id" :value="item.id">{{ item.client_adresse_court }}</md-option>
                                 </md-select>
                             </md-field>
                         </div>
@@ -129,10 +134,18 @@
                             <!-- client facture à afficher -->
                             <md-field>
                                 <label>Facturer à</label>
-                                <md-textarea v-model="clientsFacture.selected_adress" readonly></md-textarea>
-                                <md-button class="md-primary md-icon-button md-dense" v-if="clientsFacture.selected_adress" title="Consulter/Modifier le client" @click="openClientEditor('clientsFacture')">
-                                    <md-icon>open_in_new</md-icon>
-                                </md-button>
+                                <md-textarea v-model="clientsFacture.filter(x => x.id === clientsFacture_selected_id)[0].client_adresse" readonly></md-textarea>
+                                <ul style="list-style: none; margin: 0px; padding-left: 0px;">
+                                    <li style="text-align: center;">
+                                        <md-button class="md-primary md-icon-button md-dense" v-if="clientsFacture_selected_id" title="Consulter/Modifier le client" @click="openClientEditor('clientsFacture')">
+                                            <md-icon>open_in_new</md-icon>
+                                        </md-button>
+                                    </li>
+
+                                    <li style="text-align: center;" v-if="clientsFacture.filter(x => x.id === clientsFacture_selected_id)[0].client_remarque">
+                                        <md-icon class="md-accent" :title="clientsFacture.filter(x => x.id === clientsFacture_selected_id)[0].client_remarque">warning</md-icon>
+                                    </li>
+                                </ul>
                             </md-field>
                         </div>
                     </div>
