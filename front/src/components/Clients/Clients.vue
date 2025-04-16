@@ -146,8 +146,7 @@ export default {
       )
         .then(response => {
           if (response && response.data) {
-            this.searchClientsByTerm();
-            // this.searchClients();
+            this.updateSearchClients();
           }
         })
         //Error

@@ -9,7 +9,7 @@
                         <md-icon>keyboard_arrow_down</md-icon>
                     </md-button>
                 </md-card-expand-trigger>
-                Préavis (SCAT, SAGR, Service de l'urbanisme des villes)
+                Préavis (SCAT, SAGR, Service de l'urbanisme des villes, SFFN)
             </div>
             <md-button class="md-primary" v-on:click="openPreavisDialog()" v-if="showNewPreavisBtn && !affaireReadonly">Nouveau préavis</md-button>
         </md-card-header>
@@ -56,7 +56,7 @@
                 </md-card-content>
             </md-card-expand-content>
         </md-card-expand>
-        
+
     </md-card>
 
 
@@ -74,7 +74,7 @@
             </div>
         </md-dialog-title>
         <md-dialog-content>
-            
+
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-50 md-small-size-100">
                     <md-autocomplete v-model="new_preavis.service" :md-options="services_liste"
@@ -101,12 +101,12 @@
                     </md-field>
                 </div>
             </div>
-    
+
         </md-dialog-content>
         <md-dialog-actions>
             <md-button class="md-accent" @click="onCancelEditPreavis">Annuler</md-button>
             <md-button class="md-primary" @click="onConfirmEditPreavis">Enregistrer</md-button>
-    
+
         </md-dialog-actions>
     </md-dialog>
 </div>
