@@ -109,7 +109,7 @@ def download_affaire_document_view(request):
 
 
 @view_config(route_name="externe_document", request_method="GET")
-def download_affaire_document_view(request):
+def download_affaire_document_from_external_view(request):
     """
     Download document for SPCH
     """
