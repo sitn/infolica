@@ -555,7 +555,7 @@ export default {
      */
     fillFormDataBordereauAffaire() {
       let tmp = this.$refs.facturation.affaire_factures.map(x => ({
-        adresse: x.adresse_facturation_.replace(/, /gi, "\n"),
+        adresse: x.client_compiled_adress.replace(/, /gi, "\n"),
         tel: x.client_co_id === null? x.client_tel_fixe: x.client_co_tel_fixe,
         tel_port: x.client_co_id === null? x.client_tel_portable: x.client_co_tel_portable,
         mail: x.client_co_id === null? x.client_mail: x.client_co_mail,
