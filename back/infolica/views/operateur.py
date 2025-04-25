@@ -162,7 +162,7 @@ def operateurs_search_view(request):
     results = Utils.serialize_many(results)
 
     for res in results:
-        res["role"] =request.dbsession.query(Role.nom).filter(Role.id==res["role_id"]).scalar()
+        res["role"] = request.dbsession.query(Role.nom).filter(Role.id==res["role_id"]).scalar()
 
     return results
 
