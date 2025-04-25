@@ -118,21 +118,21 @@
                         <div class="md-layout-item md-small-size-30">
                             <md-field>
                                 <label for="prenom">Prénom</label>
-                                <md-input name="prenom" id="prenom" v-model="search.prenom" @keyup="searchOperateurs()"/>
+                                <md-input name="prenom" id="prenom" v-model="search.prenom" @keyup="searchOperateurs()" />
                             </md-field>
                         </div>
 
                         <div class="md-layout-item md-small-size-30">
                             <md-field>
                                 <label for="nom">Nom</label>
-                                <md-input name="nom" id="nom" v-model="search.nom" @keyup="searchOperateurs()"/>
+                                <md-input name="nom" id="nom" v-model="search.nom" @keyup="searchOperateurs()" />
                             </md-field>
                         </div>
 
                         <div class="md-layout-item md-small-size-30">
                             <md-field>
                                 <label for="login">Login</label>
-                                <md-input name="login" id="login" v-model="search.login" @keyup="searchOperateurs()"/>
+                                <md-input name="login" id="login" v-model="search.login" @keyup="searchOperateurs()" />
                             </md-field>
                         </div>
                     </div>
@@ -140,9 +140,9 @@
                     <!-- Search Actions -->
                     <md-card-actions>
                         <md-button class="md-raised"
-                            v-bind:disabled="!search.nom && !search.prenom && !search.entreprise && !search.adresse && !search.localite && !search.mail"
-                            v-on:click="clearForm">Réinitialiser</md-button>
-                        <md-button class="md-raised md-primary" v-on:click="searchOperateurs">Rechercher</md-button>
+                                   v-bind:disabled="!search.nom && !search.prenom && !search.login"
+                                   v-on:click="clearForm">Réinitialiser
+                        </md-button>
                     </md-card-actions>
                 </md-card-content>
             </md-card-expand-content>
@@ -157,31 +157,32 @@
         <md-card>
             <!-- Results Header -->
             <md-card-header>
-                <div class="md-title">Résultats</div>
+                <div class="justifyTitleBtn">
+                    <div class="md-title">Résultats</div>
+                    <md-checkbox v-model="search.old_operateurs" @change="searchOperateurs" style="width: 370px; margin-top: 30px;">Afficher les anciens opérateurs</md-checkbox>
+                </div>
             </md-card-header>
 
             <!-- Results Content -->
             <md-card-content>
                 <md-table md-height="100%" v-model="operateurs" md-sort="name" md-sort-order="asc" md-fixed-header>
-                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                    <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{disabledTableRow: item.sortie!==null}">
                         <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                         <md-table-cell md-label="Prénom" md-sort-by="prenom">{{ item.prenom }}</md-table-cell>
                         <md-table-cell md-label="Nom" md-sort-by="nom">{{ item.nom }}</md-table-cell>
                         <md-table-cell md-label="Initiales" md-sort-by="nom">{{ item.initiales }}</md-table-cell>
                         <md-table-cell md-label="Login" md-sort-by="login">{{ item.login }}</md-table-cell>
                         <md-table-cell md-label="E-mail" md-sort-by="login">{{ item.mail }}</md-table-cell>
+                        <md-table-cell md-label="Rôle">{{ item.role }}</md-table-cell>
                         <md-table-cell md-label="Chef d'équipe">{{ item.chef_equipe }}</md-table-cell>
                         <md-table-cell md-label="Responsable">{{ item.responsable }}</md-table-cell>
                         <md-table-cell md-label="Entree">{{ item.entree }}</md-table-cell>
-                        <md-table-cell md-label="Actions" class="actionsColumn"  v-if="editionOperateursAllowed">
-                            <md-button class="md-icon-button md-primary"
-                                v-on:click="callEditOperateur(item)">
-                                <md-icon>edit</md-icon>
-                            </md-button>
+                        <md-table-cell md-label="Sortie">{{ item.sortie }}</md-table-cell>
+                        <md-table-cell md-label="Actions" class="actionsColumn" v-if="editionOperateursAllowed">
+                            <md-switch class="md-primary" v-model="item.sortie===null" @change="updateOperatorStatus(item)" title="Activer/désactiver l'opérateur"></md-switch>
 
-                            <md-button class="md-icon-button md-accent"
-                                v-on:click="callDeleteOperateur(item.id, item.nom, item.prenom)">
-                                <md-icon>delete</md-icon>
+                            <md-button class="md-icon-button md-primary"v-on:click="callEditOperateur(item)">
+                                <md-icon>edit</md-icon>
                             </md-button>
                         </md-table-cell>
                     </md-table-row>
@@ -189,11 +190,5 @@
             </md-card-content>
             </md-card-content>
         </md-card>
-    </div>
-
-    <div>
-        <md-dialog-confirm :md-active.sync="deleteOperateurActive" md-title="Supprimer l'opérateur·rice"
-            :md-content="deleteMessage" md-confirm-text="Confirmer" md-cancel-text="Annuler"
-            @md-confirm="onConfirmDelete" @md-cancel="onCancelDelete" />
     </div>
 </div>

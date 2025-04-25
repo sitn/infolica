@@ -104,7 +104,7 @@ class Utils(object):
         conditions = list()
 
         for param in params:
-            if param == "matDiff" or param == "old_clients":
+            if param == "matDiff" or param == "old_clients" or param == "old_operateurs":
                 continue
             if param.startswith("_"):
                 # pour les conditions NOT IN, p. ex. référencement numéros à affaire

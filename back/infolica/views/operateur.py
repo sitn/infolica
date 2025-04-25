@@ -148,14 +148,23 @@ def operateurs_search_view(request):
     settings = request.registry.settings
     search_limit = int(settings['search_limit'])
     conditions = Utils.get_search_conditions(Operateur, request.params)
+    old_operateurs = request.params["old_operateurs"]=="true" if "old_operateurs" in request.params else False
 
     # Check date_sortie is null
     conditions = [] if not conditions or len(conditions) == 0 else conditions
-    conditions.append(Operateur.sortie == None)
 
-    query = request.dbsession.query(Operateur).order_by(Operateur.nom, Operateur.prenom).filter(
+    if old_operateurs is False:
+        conditions.append(Operateur.sortie == None)
+
+    results = request.dbsession.query(Operateur).order_by(Operateur.nom, Operateur.prenom).filter(
         *conditions).limit(search_limit).all()
-    return Utils.serialize_many(query)
+
+    results = Utils.serialize_many(results)
+
+    for res in results:
+        res["role"] =request.dbsession.query(Role.nom).filter(Role.id==res["role_id"]).scalar()
+
+    return results
 
 
 @view_config(route_name='operateurs', request_method='POST', renderer='json')

@@ -12,9 +12,6 @@ export default {
   props: {},
   data: () => ({
     affaireEtapesAll: {},
-    currentDeleteId: null,
-    deleteOperateurActive: false,
-    deleteMessage: '',
     editionOperateursAllowed: false,
     form: {
       id: null,
@@ -37,7 +34,8 @@ export default {
     search: {
       nom: null,
       prenom: null,
-      login: null
+      login: null,
+      old_operateurs: false,
     },
     services: [],
     roles: [],
@@ -60,6 +58,9 @@ export default {
 
       if(this.search.login)
         formData.append("login", this.search.login);
+
+      if(this.search.old_operateurs)
+        formData.append("old_operateurs", this.search.old_operateurs);
 
       this.$http.post(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_OPERATEURS_ENDPOINT,
@@ -94,6 +95,8 @@ export default {
       this.search.nom = null;
       this.search.prenom = null;
       this.search.login = null;
+      this.search.old_operateurs = false;
+      this.searchOperateurs();
     },
 
 
@@ -109,54 +112,21 @@ export default {
       this.divEditUser.show = true;
     },
 
-    /**
-     * Call delete operateur
-     */
-    callDeleteOperateur (id, nom, prenom) {
-      this.currentDeleteId = id;
-
-      if(prenom && nom)
-        this.deleteMessage = prenom + ' ' + nom;
-      else if(nom)
-        this.deleteMessage = nom;
-      else
-        this.deleteMessage = "-";
-
-      this.deleteMessage = "Confirmer la suppression de l'operateur '<strong>" + this.deleteMessage + "<strong>' ?";
-
-      this.deleteOperateurActive = true;
-    },
 
     /**
     * Delete operateur
     */
-    onConfirmDelete () {
+    async updateOperatorStatus(operateur) {
+      if (operateur.sortie === null) {
+        operateur.sortie = (new Date()).toLocaleDateString('fr-CH');
+      } else {
+        operateur.sortie = null;
+      }
+      this.form = operateur;
 
-      this.$http.delete(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT + "?id=" +  this.currentDeleteId,
-        {
-          withCredentials: true,
-          headers: {"Accept": "application/json"}
-        }
-      )
-      .then(response =>{
-        if(response && response.data){
-          this.searchOperateurs();
-          this.$root.$emit('ShowMessage', "L'opérateur a bien été supprimé.");
-        }
-      })
-      //Error
-      .catch(err => {
-        handleException(err, this);
-      })
+      this.onSaveNewOperateur();
     },
 
-    /**
-    * Cancel Delete operateur
-    */
-    onCancelDelete () {
-      this.currentDeleteId = null;
-    },
 
     /**
      * Create user
@@ -212,6 +182,8 @@ export default {
             formData.append(elem, this.form[elem]? moment(this.form[elem], process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
           } else if (elem === 'affaire_etapes_mailer') {
             formData.append(elem, JSON.stringify(this.form[elem]));
+          } else if (elem === 'role') {
+            continue;
           } else {
             formData.append(elem, this.form[elem]);
           }
