@@ -131,7 +131,7 @@ def numeros_search_view(request):
         matDiff = True if params['matDiff'] == 'true' else False
 
     # Set conditions
-    conditions = Utils.get_search_conditions(VNumeros, params)
+    conditions = Utils.get_search_conditions(VNumeros, params, ignore_params=["matDiff"])
 
     # filter by conditions
     query = request.dbsession.query(VNumeros).order_by(

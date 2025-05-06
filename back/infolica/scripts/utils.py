@@ -97,14 +97,14 @@ class Utils(object):
         return {"message": message}
 
     @classmethod
-    def get_search_conditions(cls, model, params):
+    def get_search_conditions(cls, model, params, ignore_params=[]):
         """
         Get search conditions
         """
         conditions = list()
 
         for param in params:
-            if param == "matDiff" or param == "old_clients" or param == "old_operateurs":
+            if param in ignore_params:
                 continue
             if param.startswith("_"):
                 # pour les conditions NOT IN, p. ex. référencement numéros à affaire

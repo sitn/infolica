@@ -159,26 +159,26 @@
             <md-card-header>
                 <div class="justifyTitleBtn">
                     <div class="md-title">Résultats</div>
-                    <md-checkbox v-model="search.old_operateurs" @change="searchOperateurs" style="width: 370px; margin-top: 30px;">Afficher les anciens opérateurs</md-checkbox>
+                    <div style="overflow: hidden; white-space: nowrap; text-align: right; ">
+                        <div>({{ operateurs.length }} opérateur<span v-if="operateurs.length >= 2">s</span> affiché<span v-if="operateurs.length >= 2">s</span> / {{ nb_operateurs_total }} résultat<span v-if="operateurs.length >= 2">s</span>)</div>
+                        <md-checkbox v-model="search.old_operateurs" style="margin-right: 0px;" @change="searchOperateurs()">Afficher les anciens opérateurs</md-checkbox>
+                    </div>
                 </div>
             </md-card-header>
 
             <!-- Results Content -->
             <md-card-content>
-                <md-table md-height="100%" v-model="operateurs" md-sort="name" md-sort-order="asc" md-fixed-header>
+                <md-table md-height="100%" v-model="operateurs" md-sort="nom" md-fixed-header>
                     <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{disabledTableRow: item.sortie!==null}">
                         <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                         <md-table-cell md-label="Prénom" md-sort-by="prenom">{{ item.prenom }}</md-table-cell>
                         <md-table-cell md-label="Nom" md-sort-by="nom">{{ item.nom }}</md-table-cell>
-                        <!-- <md-table-cell md-label="Initiales" md-sort-by="nom">{{ item.initiales }}</md-table-cell> -->
-                        <!-- <md-table-cell md-label="Login" md-sort-by="login">{{ item.login }}</md-table-cell> -->
-                        <!-- <md-table-cell md-label="E-mail" md-sort-by="login">{{ item.mail }}</md-table-cell> -->
                         <md-table-cell md-label="Service" md-sort-by="service">{{ item.service }}</md-table-cell>
                         <md-table-cell md-label="Rôle" md-sort-by="role">{{ item.role }}</md-table-cell>
-                        <md-table-cell md-label="Chef d'équipe">{{ item.chef_equipe }}</md-table-cell>
-                        <md-table-cell md-label="Responsable">{{ item.responsable }}</md-table-cell>
-                        <md-table-cell md-label="Entree">{{ item.entree }}</md-table-cell>
-                        <md-table-cell md-label="Sortie">{{ item.sortie }}</md-table-cell>
+                        <md-table-cell md-label="Chef d'équipe" md-sort-by="chef_equipe">{{ item.chef_equipe }}</md-table-cell>
+                        <md-table-cell md-label="Responsable" md-sort-by="responsable">{{ item.responsable }}</md-table-cell>
+                        <md-table-cell md-label="Entree" md-sort-by="entree_sort">{{ item.entree }}</md-table-cell>
+                        <md-table-cell md-label="Sortie" md-sort-by="sortie_sort">{{ item.sortie }}</md-table-cell>
                         <md-table-cell md-label="Actions" class="actionsColumn" v-if="editionOperateursAllowed">
                             <md-switch class="md-primary" v-model="item.sortie===null" @change="updateOperatorStatus(item)" title="Activer/désactiver l'opérateur"></md-switch>
 
@@ -188,7 +188,10 @@
                         </md-table-cell>
                     </md-table-row>
                 </md-table>
-            </md-card-content>
+
+                <div class="md-layout md-gutter md-alignment-center-center" v-if="operateurs.length < nb_operateurs_total">
+                    <md-button class="md-primary md-dense md-raised" @click="searchOperateurs(true)">Afficher les 20 résultats suivants</md-button>
+                </div>
             </md-card-content>
         </md-card>
     </div>
