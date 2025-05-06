@@ -1,14 +1,14 @@
-.clients{
+.clients {
     width: 100%;
     float: left;
 }
 
-.clients .actionsColumn{
+.clients .actionsColumn {
     width: 150px !important;
     min-width: 150px !important;
 }
 
-.clients .expandCollapseBtn{
+.clients .expandCollapseBtn {
     position: absolute;
     left: 200px;
     top: 22px;
@@ -16,9 +16,10 @@
 
 .md-table .md-table-cell.md-numeric .md-table-cell-container {
     display: inline;
-  }
-  .md-table .md-table-cell[width] .md-table-cell-container {
+}
+
+.md-table .md-table-cell[width] .md-table-cell-container {
     width: inherit;
     text-overflow: ellipsis;
     overflow: hidden;
-  }
+}
