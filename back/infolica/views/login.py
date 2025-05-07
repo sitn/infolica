@@ -10,6 +10,8 @@ from infolica.scripts.authentication import do_logout
 from infolica.scripts.ldap_query import LDAPQuery
 from infolica.scripts.utils import Utils
 
+from datetime import date
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -39,6 +41,10 @@ def login_view(request):
 
     if not operateur:
         return exc.HTTPForbidden('Username {} was not found'.format(login))
+
+    if operateur.sortie is not None and date.today() >= operateur.sortie:
+        log.error('Account {} has expired'.format(login))
+        return exc.HTTPForbidden('Account {} has expired'.format(login))
 
     if 'ldap_login_skip_authentication_login' in settings and  login in settings['ldap_login_skip_authentication_login'].split(','):
         if password == settings['ldap_login_skip_authentication_password']:
