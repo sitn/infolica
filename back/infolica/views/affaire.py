@@ -73,7 +73,7 @@ def affaire_cockpit_view(request):
     type_id = request.params['type_id'].split(',') if 'type_id' in request.params else []
     etape_id = request.params['etape_id'].split(',') if 'etape_id' in request.params else None
     searchTerm = request.params['searchTerm'] if 'searchTerm' in request.params else None
-    operateur_id = request.params['operateur_id'] if 'operateur_id' in request.params else None
+    operateur_id = request.params['operateur_id'].split(',') if 'operateur_id' in request.params else []
     showFinProcessus = True if 'showFinProcessus' in request.params and request.params['showFinProcessus'] == 'true' else False
     showOnlyAffairesUrgentes = True if 'showOnlyAffairesUrgentes' in request.params and request.params['showOnlyAffairesUrgentes'] == 'true' else False
     affaire_etape_devis_id = int(request.registry.settings['affaire_etape_devis_id'])
@@ -92,8 +92,10 @@ def affaire_cockpit_view(request):
     if len(type_id) > 0:
         query = query.filter(VAffaire.type_id.in_(type_id))
     # recherche par opérateur
-    if operateur_id is not None:
-        query = query.filter(VAffaire.technicien_id == operateur_id)
+    # if operateur_id is not None:
+    #     query = query.filter(VAffaire.technicien_id == operateur_id)
+    if len(operateur_id) > 0:
+        query = query.filter(VAffaire.technicien_id.in_(operateur_id))
     # ne sélectionner que les affaires urgentes
     if showOnlyAffairesUrgentes:
         query = query.filter(VAffaire.urgent == showOnlyAffairesUrgentes)
