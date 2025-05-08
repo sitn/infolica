@@ -66,8 +66,8 @@ def operateurs_view(request):
 
     query = request.dbsession.query(
         Operateur
-    ).filter(
-        Operateur.sortie == None
+    # ).filter(
+    #     Operateur.sortie == None
     ).order_by(
         Operateur.prenom
     ).all()
