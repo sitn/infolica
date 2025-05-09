@@ -4,7 +4,7 @@ import pyramid.httpexceptions as exc
 
 from infolica.exceptions.custom_error import CustomError
 from infolica.models.constant import Constant
-from infolica.models.models import SuiviMandat
+from infolica.models.models import SuiviMandat, Operateur
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 
@@ -56,7 +56,18 @@ def affaire_suivi_mandats_by_affaire_id_view(request):
     if query is None:
         return None
 
-    return Utils.serialize_one(query)
+    suivi_mandat = Utils.serialize_one(query)
+
+    if suivi_mandat["visa"] is not None:
+        op = request.dbsession.query(Operateur).filter(Operateur.id==suivi_mandat["visa"]).first()
+
+        visa_prenom_nom = None
+        if op is not None:
+            visa_prenom_nom = f"{op.prenom} {op.nom}"
+
+    suivi_mandat["visa_prenom_nom"] = visa_prenom_nom
+
+    return suivi_mandat
 
 
 @view_config(route_name='suivi_mandats', request_method='POST', renderer='json')
