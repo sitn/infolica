@@ -4,6 +4,58 @@
         <md-button class="md-raised md-accent" @click="createUser" v-if="editionOperateursAllowed">Nouvel opérateur</md-button>
     </md-toolbar>
 
+    <!-- Search -->
+    <md-card>
+        <!-- Search Header -->
+        <md-card-header>
+            <div class="md-title">Recherche</div>
+        </md-card-header>
+
+        <md-card-expand-trigger>
+            <md-button class="md-icon-button expandCollapseBtn">
+                <md-icon>keyboard_arrow_down</md-icon>
+            </md-button>
+        </md-card-expand-trigger>
+
+        <!-- Search Content -->
+        <md-card-expand>
+            <md-card-expand-content>
+                <md-card-content>
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-small-size-30">
+                            <md-field>
+                                <label for="prenom">Prénom</label>
+                                <md-input name="prenom" id="prenom" v-model="search.prenom" @keyup="searchOperateurs()" />
+                            </md-field>
+                        </div>
+
+                        <div class="md-layout-item md-small-size-30">
+                            <md-field>
+                                <label for="nom">Nom</label>
+                                <md-input name="nom" id="nom" v-model="search.nom" @keyup="searchOperateurs()" />
+                            </md-field>
+                        </div>
+
+                        <div class="md-layout-item md-small-size-30">
+                            <md-field>
+                                <label for="login">Login</label>
+                                <md-input name="login" id="login" v-model="search.login" @keyup="searchOperateurs()" />
+                            </md-field>
+                        </div>
+                    </div>
+
+                    <!-- Search Actions -->
+                    <md-card-actions>
+                        <md-button class="md-raised"
+                                   v-bind:disabled="!search.nom && !search.prenom && !search.login"
+                                   v-on:click="clearForm">Réinitialiser
+                        </md-button>
+                    </md-card-actions>
+                </md-card-content>
+            </md-card-expand-content>
+        </md-card-expand>
+    </md-card>
+
     <div v-if="divEditUser.show">
         <md-card>
             <md-card-header>
@@ -97,60 +149,6 @@
         </md-card>
     </div>
 
-    <!-- Search -->
-    <md-card>
-        <!-- Search Header -->
-        <md-card-header>
-            <div class="md-title">Recherche</div>
-        </md-card-header>
-
-        <md-card-expand-trigger>
-            <md-button class="md-icon-button expandCollapseBtn">
-                <md-icon>keyboard_arrow_down</md-icon>
-            </md-button>
-        </md-card-expand-trigger>
-
-        <!-- Search Content -->
-        <md-card-expand>
-            <md-card-expand-content>
-                <md-card-content>
-                    <div class="md-layout md-gutter">
-                        <div class="md-layout-item md-small-size-30">
-                            <md-field>
-                                <label for="prenom">Prénom</label>
-                                <md-input name="prenom" id="prenom" v-model="search.prenom" @keyup="searchOperateurs()" />
-                            </md-field>
-                        </div>
-
-                        <div class="md-layout-item md-small-size-30">
-                            <md-field>
-                                <label for="nom">Nom</label>
-                                <md-input name="nom" id="nom" v-model="search.nom" @keyup="searchOperateurs()" />
-                            </md-field>
-                        </div>
-
-                        <div class="md-layout-item md-small-size-30">
-                            <md-field>
-                                <label for="login">Login</label>
-                                <md-input name="login" id="login" v-model="search.login" @keyup="searchOperateurs()" />
-                            </md-field>
-                        </div>
-                    </div>
-
-                    <!-- Search Actions -->
-                    <md-card-actions>
-                        <md-button class="md-raised"
-                                   v-bind:disabled="!search.nom && !search.prenom && !search.login"
-                                   v-on:click="clearForm">Réinitialiser
-                        </md-button>
-                    </md-card-actions>
-                </md-card-content>
-            </md-card-expand-content>
-        </md-card-expand>
-    </md-card>
-
-    </br>
-
     <!-- Results -->
     <div class="operateursResults">
 
@@ -182,7 +180,7 @@
                         <md-table-cell md-label="Actions" class="actionsColumn" v-if="editionOperateursAllowed">
                             <md-switch class="md-primary" v-model="item.sortie===null" @change="updateOperatorStatus(item)" title="Activer/désactiver l'opérateur"></md-switch>
 
-                            <md-button class="md-icon-button md-primary"v-on:click="callEditOperateur(item)">
+                            <md-button class="md-icon-button md-primary" v-on:click="callEditOperateur(item)">
                                 <md-icon>edit</md-icon>
                             </md-button>
                         </md-table-cell>
