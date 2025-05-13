@@ -1,5 +1,5 @@
 <div class="notifications">
-    <md-snackbar :md-active.sync="showSnackbar" :md-duration="duration" v-bind:class="{ isErrorDiv: isError, isSuccessDiv: !isError }">{{ msg }}</md-snackbar>
+    <md-snackbar :md-active.sync="showSnackbar" :md-duration="duration" v-bind:class="{ isErrorDiv: isError, isSuccessDiv: !isError }" style="white-space: pre-line">{{ msg }}</md-snackbar>
 
     <md-dialog-alert class="alert md-accent"
       :md-active.sync="alert.active"
