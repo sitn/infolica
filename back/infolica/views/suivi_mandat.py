@@ -58,10 +58,10 @@ def affaire_suivi_mandats_by_affaire_id_view(request):
 
     suivi_mandat = Utils.serialize_one(query)
 
+    visa_prenom_nom = None
     if suivi_mandat["visa"] is not None:
         op = request.dbsession.query(Operateur).filter(Operateur.id==suivi_mandat["visa"]).first()
 
-        visa_prenom_nom = None
         if op is not None:
             visa_prenom_nom = f"{op.prenom} {op.nom}"
 
