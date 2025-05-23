@@ -250,10 +250,13 @@ def clients_factures_by_affaire_view(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.matchdict["id"]
+    facture_type_facture_id = request.registry.settings["facture_type_facture_id"]
 
     results = request.dbsession.query(
         Facture,
         Client,
+    ).filter(
+        Facture.type_id == facture_type_facture_id
     ).filter(
         Facture.affaire_id == affaire_id
     ).filter(
