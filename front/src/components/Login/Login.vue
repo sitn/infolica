@@ -26,7 +26,7 @@ export default {
         formData.append("password", this.$refs.userpass.value);
 
         this.$http.post(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_LOGIN_ENDPOINT, 
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_LOGIN_ENDPOINT,
           formData,
           {
             withCredentials: true,
@@ -47,19 +47,19 @@ export default {
             this.$refs.userpass.value = "";
           }
         })
-        //Error 
+        //Error
         .catch(() => {
           this.showProgess = false;
-          this.$root.$emit('ShowError', "Le nom d'utilisateur ou le mot de passe est incorrect")
+          this.$root.$emit('ShowError', "Échec de la connexion")
         });
       },
-      
+
       /**
        * Logout
        */
       async doLogout () {
         this.$http.get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_LOGOUT_ENDPOINT, 
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_LOGOUT_ENDPOINT,
           {
             withCredentials: true,
             headers: {"Accept": "application/json"}
@@ -68,7 +68,7 @@ export default {
         .then(() =>{
           localStorage.removeItem('infolica_user');
         })
-        //Error 
+        //Error
         .catch(err => {
           handleException(err, this);
         });
@@ -123,12 +123,12 @@ export default {
 
     mounted: function(){
       //Logout
-      this.$root.$on("infolica_user_logout", () => {        
+      this.$root.$on("infolica_user_logout", () => {
         this.doLogout();
         this.processLogout();
       });
     },
-    
+
     beforeMount: function() {
       localStorage.removeItem('infolica_user');
       this.getVersion();

@@ -96,7 +96,7 @@ export default {
     async searchServices() {
       this.$http
         .get(
-          process.env.VUE_APP_API_URL + process.env.VUE_APP_SERVICES_ENDPOINT + '?cadastre_id=' + this.affaire.cadastre_id,
+          process.env.VUE_APP_API_URL + process.env.VUE_APP_SERVICES_ENDPOINT + '?onlyprincipal=true&cadastre_id=' + this.affaire.cadastre_id,
           {
             withCredentials: true,
             headers: { Accept: "application/json" }
@@ -193,13 +193,13 @@ export default {
         .then(response => {
           if (response && response.data) {
             let remarqueEtape = this.lastRecord + " - " + remarqueEtapeStatut;
-            
+
             // handle success
             this.$root.$emit("ShowMessage", "Le préavis au " + this.lastRecord + " a été enregistré avec succès");
-            
+
             // log etape
             logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_ETAPE_PREAVIS_ID), remarqueEtape);
-            
+
             this.searchAffairePreavis();
             this.clearForm();
           }
@@ -226,11 +226,11 @@ export default {
       if (this.new_preavis.id){
         formData.append("id", this.new_preavis.id);
       }
-      
+
       if (this.new_preavis.remarque_conversation){
         formData.append("remarque_conversation", this.new_preavis.remarque_conversation);
       }
-      
+
       formData.append("operateur_sgrf_id", JSON.parse(localStorage.getItem("infolica_user")).id);
       formData.append("etape", 'externe');
 
@@ -342,8 +342,8 @@ export default {
         this.$root.$emit("ShowMessage", "La demande de modification du préavis a bien été enregistrée");
       }).catch(err => handleException(err, this));
     },
-    
-    
+
+
     async onExportPreavisPDF(preavis) {
       let formData = new FormData();
       formData.append('preavis_id', preavis.id)
@@ -359,12 +359,12 @@ export default {
         ).then(response => {
           let fileURL = window.URL.createObjectURL(new Blob([response.data]));
           let fileLink = document.createElement('a');
-        
+
           fileLink.href = fileURL;
           let header_content_type = response.headers['content-type'];
           let filename = undefined;
           for (let item of header_content_type.split(';')){
-            item = item.trim(); 
+            item = item.trim();
             if (item.startsWith('filename=')) {
               filename = item.replace('filename=', '').replaceAll('"', '');
               break
@@ -384,7 +384,7 @@ export default {
     this.searchServices();
 
     this.affaireReadonly = !checkPermission(process.env.VUE_APP_AFFAIRE_PREAVIS_EDITION) || this.$parent.parentAffaireReadOnly;
-    
+
     // this.$root.$on('getPreavis', () => this.searchAffairePreavis());
     this.$root.$on('getPreavis',
       (preavis_id) => {

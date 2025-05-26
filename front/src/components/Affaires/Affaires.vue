@@ -150,8 +150,8 @@ export default {
 
       let formData = new FormData();
 
-      if (data === "addResults") {
-        formData.append("addResults", this.affaires.length);
+      if (data === "moreResults") {
+        formData.append("moreResults", this.affaires.length);
       }
 
       if (this.search.id) {
