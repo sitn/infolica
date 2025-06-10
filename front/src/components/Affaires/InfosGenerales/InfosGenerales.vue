@@ -57,6 +57,7 @@ export default {
         client_envoi_type_id: null,
         client_envoi_complement: null
       },
+      saveAllowed: true,
       show: {
         clientFacture: false,
       }
@@ -127,6 +128,12 @@ export default {
       formData.append("client_envoi_complement", this.form.client_envoi_complement || null);
       formData.append("localisation_E", this.affaire.localisation_e);
       formData.append("localisation_N", this.affaire.localisation_n);
+
+      // dates
+      formData.append("date_ouverture", this.affaire.date_ouverture? moment(this.affaire.date_ouverture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
+      formData.append("date_envoi", this.affaire.date_envoi? moment(this.affaire.date_envoi, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
+      formData.append("date_validation", this.affaire.date_validation? moment(this.affaire.date_validation, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
+      formData.append("date_cloture", this.affaire.date_cloture? moment(this.affaire.date_cloture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
 
       this.$http.put(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRES_ENDPOINT,
@@ -386,6 +393,44 @@ export default {
 
     },
 
+    async delaySaveBtn() {
+      this.saveAllowed = false;
+    },
+
+    estObjetDate(val) {
+      return val instanceof Date && !isNaN(val.getTime());
+    },
+  },
+
+  watch: {
+    'affaire.date_ouverture' (newVal, oldVal) {
+      if (newVal !== oldVal && this.estObjetDate(newVal)) {
+        this.affaire.date_ouverture = moment(this.affaire.date_ouverture).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+      } else {
+        this.saveAllowed = true;
+      }
+    },
+    'affaire.date_envoi' (newVal, oldVal) {
+      if (newVal !== oldVal && this.estObjetDate(newVal)) {
+        this.affaire.date_envoi = moment(this.affaire.date_envoi).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+      } else {
+        this.saveAllowed = true;
+      }
+    },
+    'affaire.date_validation' (newVal, oldVal) {
+      if (newVal !== oldVal && this.estObjetDate(newVal)) {
+        this.affaire.date_validation = moment(this.affaire.date_validation).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+      } else {
+        this.saveAllowed = true;
+      }
+    },
+    'affaire.date_cloture' (newVal, oldVal) {
+      if (newVal !== oldVal && this.estObjetDate(newVal)) {
+        this.affaire.date_cloture = moment(this.affaire.date_cloture).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+      } else {
+        this.saveAllowed = true;
+      }
+    },
   },
 
   mounted: function() {
