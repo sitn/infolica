@@ -4,18 +4,20 @@
 
 <script>
 import Matdiff from "@/components/Cockpit/Matdiff/Matdiff.vue";
+import OperatorSelect from "@/components/Utils/OperatorSelect/OperatorSelect.vue";
 import Snow from "@/components/Utils/Snow/Snow.vue";
 
 import { handleException } from '@/services/exceptionsHandler';
-import { checkPermission, getOperateurs, stringifyAutocomplete, stringifyAutocomplete2, getCurrentUserRoleId } from '@/services/helper';
+import { checkPermission, getOperateurs, stringifyAutocomplete, getCurrentUserRoleId } from '@/services/helper';
 
 export default {
   name: "Cockpit",
   components: {
       Matdiff,
+      OperatorSelect,
       Snow,
   },
-  data: () => {
+  data() {
     return {
         snow: {
             activate: false,
@@ -43,7 +45,7 @@ export default {
             responsable: Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)
         },
         search: {
-            operateur_id: -1,
+            operateur_id: [],
             type_id: [],
             showFinProcessus: false,
             showOnlyAffairesUrgentes: false,
@@ -186,8 +188,8 @@ export default {
         if (this.searchTerm) {
             query.push("searchTerm=" + this.searchTerm);
         }
-        if (this.search.operateur_id > 0) {
-            query.push("operateur_id=" + this.search.operateur_id);
+        if (this.search.operateur_id.length > 0) {
+            query.push("operateur_id=" + this.search.operateur_id.join(','));
         }
         if (this.search.type_id.length > 0) {
             query.push("type_id=" + this.search.type_id.join(','));
@@ -218,12 +220,8 @@ export default {
                     let currentUserID = JSON.parse(localStorage.getItem("infolica_user")).id;
                     let currentUserRoleID = getCurrentUserRoleId();
                     if (tmp.some(x => (x.id === currentUserID) && x.chef_equipe) && (currentUserRoleID && [this.role.mo, this.role.ppe, this.role.mo_ppe].includes(currentUserRoleID))) {
-                        this.search.operateur_id = Number(currentUserID);
+                        this.search.operateur_id = [Number(currentUserID)];
                     }
-
-                    tmp = stringifyAutocomplete2(tmp, "prenom_nom", null, "prenom_nom");
-
-                    this.operateurs = tmp;
                     resolve(tmp);
                 }
             }).catch(err => {

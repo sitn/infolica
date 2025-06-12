@@ -1,0 +1,20 @@
+<div id="operatorSelect" style="display: flex; flex-direction: column;">
+    <md-field style="margin-left: 50px; width: 250px !important;">
+        <label>Opérateur·rice(s)</label>
+        <md-select v-model="localOperatorId" md-dense multiple>
+            <div>
+                <div style="float: left;">
+                    <md-button class="md-elevation-2 md-primary" style="width: 45%; margin-left: 20px;" @click="updateSelection('tout')">Tout</md-button>
+                </div>
+                <div style="float: left;">
+                    <md-button class="md-elevation-2 md-accent" style="width: 45%; margin-left: 20px;" @click="updateSelection('aucun')">Aucun</md-button>
+                </div>
+            </div>
+            <template v-for="operateur_type in Object.keys(operator_list)">
+                <md-optgroup :label="`${operateur_type.replace('_', ' ')}`">
+                    <md-option v-for="item in operator_list[operateur_type]" :value="item.id" :key="item.id">{{ item.prenom_nom }}</md-option>
+                </md-optgroup>
+            </template>
+        </md-select>
+    </md-field>
+</div>

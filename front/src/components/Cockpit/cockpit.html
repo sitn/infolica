@@ -25,13 +25,8 @@
                         <md-icon>search</md-icon>
                     </md-field>
 
-                    <md-field style="margin-left: 50px; width: 250px !important;">
-                        <label for="operateur">Opérateur·rice</label>
-                        <md-select v-model="search.operateur_id" name="operateur" id="operateur" @md-selected="getAffaire" md-dense>
-                          <md-option :value="-1">Tous</md-option>
-                          <md-option v-for="item in operateurs" :value="item.id">{{ item.prenom_nom }}</md-option>
-                        </md-select>
-                    </md-field>
+                    <OperatorSelect :operator_id="search.operateur_id" @update:operator_id="val => {search.operateur_id = val; getAffaire()}" :role="role"></OperatorSelect>
+
 
                     <md-field style="margin-left: 50px; width: 250px !important;">
                         <label>Type(s) d'affaire</label>
