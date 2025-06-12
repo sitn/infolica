@@ -104,7 +104,7 @@
                                     md-label="Aucune facture trouvée"
                                     md-description="Enregistrer d'abord la facture vide avant de récupérer les montants des émoluments" />
               <md-table-row slot="md-table-row" slot-scope="{ item }">
-                <md-table-cell md-label="Client">{{ item.client_compiled_adress }}</md-table-cell>
+                <md-table-cell md-label="Client" style="white-space: pre-line">{{ item.client_compiled_adress }}</md-table-cell>
                 <md-table-cell md-label="Bien-fonds" v-if="affaire.type_id === typesAffaires_conf.cadastration">{{ item.numeros.join(", ") }}</md-table-cell>
                 <md-table-cell md-label="MO">{{ item.montant_mo }} CHF</md-table-cell>
                 <md-table-cell md-label="Mat Diff">{{ item.montant_mat_diff }} CHF</md-table-cell>

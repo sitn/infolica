@@ -80,6 +80,7 @@ export default {
         showRemaniementParcellaireLoadingBtn: false,
         showEmolumentRepartition_saveToFactures_btn: false,
         editAffaireEtapeAllowed: false,
+        affaireReactivation: false,
       },
       showConfirmAbandonAffaireDialog: false,
       showConfirmAbandonErrorAffaireDialog: false,
@@ -229,7 +230,7 @@ export default {
               this.emptyPage = true;
             }
           })
-          .catch(() => reject);
+          .catch(err => reject(err));
       });
     },
 
@@ -359,7 +360,7 @@ export default {
 
           // init params attribution affaire
           _this.initParams();
-      });
+      }).catch(err => handleException(err, this));
     },
 
 

@@ -142,6 +142,9 @@ def factures_new_view(request):
     if not Utils.has_permission(request, request.registry.settings["affaire_facture_edition"]):
         raise exc.HTTPForbidden()
 
+    type_id = request.params["type_id"] if "type_id" in request.params else None
+    facture_type_facture_id = int(request.registry.settings["facture_type_facture_id"])
+
     params = {}
     for key in request.params:
         if key == "numeros":
@@ -152,7 +155,7 @@ def factures_new_view(request):
     Utils.addNewRecord(request, Facture, params)
 
     # send mail if client is new and outside canton NE
-    if "client_id" in request.params:
+    if "client_id" in request.params and type_id == facture_type_facture_id:
         client_id = request.params["client_id"]
         affaire_id = request.params["affaire_id"]
         nb_etape_traitement = request.dbsession.query(AffaireEtape).filter(AffaireEtape.affaire_id == affaire_id).filter(AffaireEtape.etape_id == request.registry.settings["affaire_etape_traitement_id"]).count()
@@ -178,6 +181,9 @@ def factures_update_view(request):
     if "id" in request.params:
         id_facture = request.params["id"]
 
+    type_id = request.params["type_id"] if "type_id" in request.params else None
+    facture_type_facture_id = int(request.registry.settings["facture_type_facture_id"])
+
     # Get the facture
     facture_record = request.dbsession.query(Facture).filter(Facture.id == id_facture).first()
 
@@ -198,7 +204,7 @@ def factures_update_view(request):
 
     # send mail if client is new and outside canton NE
     nb_etape_traitement = request.dbsession.query(AffaireEtape).filter(AffaireEtape.affaire_id == facture_record.affaire_id).filter(AffaireEtape.etape_id == request.registry.settings["affaire_etape_traitement_id"]).count()
-    if facture_client_id_new and facture_client_id_old != facture_client_id_new and nb_etape_traitement >= 1:
+    if facture_client_id_new and facture_client_id_old != facture_client_id_new and nb_etape_traitement >= 1 and type_id == facture_type_facture_id:
         MailTemplates.sendMailClientHorsCanton(request, facture_record.client_id, facture_record.affaire_id)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Facture.__tablename__))
@@ -250,15 +256,18 @@ def clients_factures_by_affaire_view(request):
         raise exc.HTTPForbidden()
 
     affaire_id = request.matchdict["id"]
+    facture_type_facture_id = request.registry.settings["facture_type_facture_id"]
 
-    results = request.dbsession.query(
-        Facture,
-        Client,
-    ).filter(
-        Facture.affaire_id == affaire_id
-    ).filter(
-        Facture.client_id == Client.id
-    ).all()
+    results = (
+        request.dbsession.query(
+            Facture,
+            Client,
+        )
+        .filter(Facture.type_id == facture_type_facture_id)
+        .filter(Facture.affaire_id == affaire_id)
+        .filter(Facture.client_id == Client.id)
+        .all()
+    )
 
     client_list = []
     count = 0

@@ -145,10 +145,12 @@ def etapes_new_view(request):
 
     # If last step was treatment & client_facture is outside of canton and has no SAP number, send mail to secretariat
     etape_traitement_id = int(request.registry.settings['affaire_etape_traitement_id'])
+    facture_type_facture_id = int(request.registry.settings["facture_type_facture_id"])
+
 
     if (len(lastSteps) > 1 and lastSteps[1].etape_id == etape_traitement_id):
         # get clients_facture
-        clients_factures_id = request.dbsession.query(Facture.client_id).filter(Facture.affaire_id == affaire_id).all()
+        clients_factures_id = request.dbsession.query(Facture.client_id).filter(Facture.type_id == facture_type_facture_id, Facture.affaire_id == affaire_id).all()
         clients_factures_id = [cl_id[0] for cl_id in clients_factures_id]
         for cl_id in clients_factures_id:
             MailTemplates.sendMailClientHorsCanton(request, cl_id, affaire.id)
