@@ -4,6 +4,58 @@
         <md-button class="md-raised md-accent" @click="createUser" v-if="editionOperateursAllowed">Nouvel opérateur</md-button>
     </md-toolbar>
 
+    <!-- Search -->
+    <md-card>
+        <!-- Search Header -->
+        <md-card-header>
+            <div class="md-title">Recherche</div>
+        </md-card-header>
+
+        <md-card-expand-trigger>
+            <md-button class="md-icon-button expandCollapseBtn">
+                <md-icon>keyboard_arrow_down</md-icon>
+            </md-button>
+        </md-card-expand-trigger>
+
+        <!-- Search Content -->
+        <md-card-expand>
+            <md-card-expand-content>
+                <md-card-content>
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item md-small-size-30">
+                            <md-field>
+                                <label for="prenom">Prénom</label>
+                                <md-input name="prenom" id="prenom" v-model="search.prenom" @keyup="searchOperateurs()" />
+                            </md-field>
+                        </div>
+
+                        <div class="md-layout-item md-small-size-30">
+                            <md-field>
+                                <label for="nom">Nom</label>
+                                <md-input name="nom" id="nom" v-model="search.nom" @keyup="searchOperateurs()" />
+                            </md-field>
+                        </div>
+
+                        <div class="md-layout-item md-small-size-30">
+                            <md-field>
+                                <label for="login">Login</label>
+                                <md-input name="login" id="login" v-model="search.login" @keyup="searchOperateurs()" />
+                            </md-field>
+                        </div>
+                    </div>
+
+                    <!-- Search Actions -->
+                    <md-card-actions>
+                        <md-button class="md-raised"
+                                   v-bind:disabled="!search.nom && !search.prenom && !search.login"
+                                   v-on:click="clearForm">Réinitialiser
+                        </md-button>
+                    </md-card-actions>
+                </md-card-content>
+            </md-card-expand-content>
+        </md-card-expand>
+    </md-card>
+
     <div v-if="divEditUser.show">
         <md-card>
             <md-card-header>
@@ -97,103 +149,48 @@
         </md-card>
     </div>
 
-    <!-- Search -->
-    <md-card>
-        <!-- Search Header -->
-        <md-card-header>
-            <div class="md-title">Recherche</div>
-        </md-card-header>
-
-        <md-card-expand-trigger>
-            <md-button class="md-icon-button expandCollapseBtn">
-                <md-icon>keyboard_arrow_down</md-icon>
-            </md-button>
-        </md-card-expand-trigger>
-
-        <!-- Search Content -->
-        <md-card-expand>
-            <md-card-expand-content>
-                <md-card-content>
-                    <div class="md-layout md-gutter">
-                        <div class="md-layout-item md-small-size-30">
-                            <md-field>
-                                <label for="prenom">Prénom</label>
-                                <md-input name="prenom" id="prenom" v-model="search.prenom" @keyup="searchOperateurs()"/>
-                            </md-field>
-                        </div>
-
-                        <div class="md-layout-item md-small-size-30">
-                            <md-field>
-                                <label for="nom">Nom</label>
-                                <md-input name="nom" id="nom" v-model="search.nom" @keyup="searchOperateurs()"/>
-                            </md-field>
-                        </div>
-
-                        <div class="md-layout-item md-small-size-30">
-                            <md-field>
-                                <label for="login">Login</label>
-                                <md-input name="login" id="login" v-model="search.login" @keyup="searchOperateurs()"/>
-                            </md-field>
-                        </div>
-                    </div>
-
-                    <!-- Search Actions -->
-                    <md-card-actions>
-                        <md-button class="md-raised"
-                            v-bind:disabled="!search.nom && !search.prenom && !search.entreprise && !search.adresse && !search.localite && !search.mail"
-                            v-on:click="clearForm">Réinitialiser</md-button>
-                        <md-button class="md-raised md-primary" v-on:click="searchOperateurs">Rechercher</md-button>
-                    </md-card-actions>
-                </md-card-content>
-            </md-card-expand-content>
-        </md-card-expand>
-    </md-card>
-
-    </br>
-
     <!-- Results -->
     <div class="operateursResults">
 
         <md-card>
             <!-- Results Header -->
             <md-card-header>
-                <div class="md-title">Résultats</div>
+                <div class="justifyTitleBtn">
+                    <div class="md-title">Résultats</div>
+                    <div style="overflow: hidden; white-space: nowrap; text-align: right; ">
+                        <div>({{ operateurs.length }} opérateur<span v-if="operateurs.length >= 2">s</span> affiché<span v-if="operateurs.length >= 2">s</span> / {{ nb_operateurs_total }} résultat<span v-if="operateurs.length >= 2">s</span>)</div>
+                        <md-checkbox v-model="search.old_operateurs" style="margin-right: 0px;" @change="searchOperateurs()">Afficher les anciens opérateurs</md-checkbox>
+                    </div>
+                </div>
             </md-card-header>
 
             <!-- Results Content -->
             <md-card-content>
-                <md-table md-height="100%" v-model="operateurs" md-sort="name" md-sort-order="asc" md-fixed-header>
-                    <md-table-row slot="md-table-row" slot-scope="{ item }">
+                <md-table md-height="100%" v-model="operateurs" md-sort="nom" md-fixed-header>
+                    <md-table-row slot="md-table-row" slot-scope="{ item }" v-bind:class="{disabledTableRow: item.sortie!==null}">
                         <md-table-cell md-label="Id" md-sort-by="id" v-if="false">{{ item.id }}</md-table-cell>
                         <md-table-cell md-label="Prénom" md-sort-by="prenom">{{ item.prenom }}</md-table-cell>
                         <md-table-cell md-label="Nom" md-sort-by="nom">{{ item.nom }}</md-table-cell>
-                        <md-table-cell md-label="Initiales" md-sort-by="nom">{{ item.initiales }}</md-table-cell>
-                        <md-table-cell md-label="Login" md-sort-by="login">{{ item.login }}</md-table-cell>
-                        <md-table-cell md-label="E-mail" md-sort-by="login">{{ item.mail }}</md-table-cell>
-                        <md-table-cell md-label="Chef d'équipe">{{ item.chef_equipe }}</md-table-cell>
-                        <md-table-cell md-label="Responsable">{{ item.responsable }}</md-table-cell>
-                        <md-table-cell md-label="Entree">{{ item.entree }}</md-table-cell>
-                        <md-table-cell md-label="Actions" class="actionsColumn"  v-if="editionOperateursAllowed">
-                            <md-button class="md-icon-button md-primary"
-                                v-on:click="callEditOperateur(item)">
-                                <md-icon>edit</md-icon>
-                            </md-button>
+                        <md-table-cell md-label="Service" md-sort-by="service">{{ item.service }}</md-table-cell>
+                        <md-table-cell md-label="Rôle" md-sort-by="role">{{ item.role }}</md-table-cell>
+                        <md-table-cell md-label="Chef d'équipe" md-sort-by="chef_equipe">{{ item.chef_equipe }}</md-table-cell>
+                        <md-table-cell md-label="Responsable" md-sort-by="responsable">{{ item.responsable }}</md-table-cell>
+                        <md-table-cell md-label="Entree" md-sort-by="entree_sort">{{ item.entree }}</md-table-cell>
+                        <md-table-cell md-label="Sortie" md-sort-by="sortie_sort">{{ item.sortie }}</md-table-cell>
+                        <md-table-cell md-label="Actions" class="actionsColumn" v-if="editionOperateursAllowed">
+                            <md-switch class="md-primary" v-model="item.sortie===null" @change="updateOperatorStatus(item)" title="Activer/désactiver l'opérateur"></md-switch>
 
-                            <md-button class="md-icon-button md-accent"
-                                v-on:click="callDeleteOperateur(item.id, item.nom, item.prenom)">
-                                <md-icon>delete</md-icon>
+                            <md-button class="md-icon-button md-primary" v-on:click="callEditOperateur(item)">
+                                <md-icon>edit</md-icon>
                             </md-button>
                         </md-table-cell>
                     </md-table-row>
                 </md-table>
-            </md-card-content>
+
+                <div class="md-layout md-gutter md-alignment-center-center" v-if="operateurs.length < nb_operateurs_total">
+                    <md-button class="md-primary md-dense md-raised" @click="searchOperateurs(true)">Afficher les 20 résultats suivants</md-button>
+                </div>
             </md-card-content>
         </md-card>
-    </div>
-
-    <div>
-        <md-dialog-confirm :md-active.sync="deleteOperateurActive" md-title="Supprimer l'opérateur·rice"
-            :md-content="deleteMessage" md-confirm-text="Confirmer" md-cancel-text="Annuler"
-            @md-confirm="onConfirmDelete" @md-cancel="onCancelDelete" />
     </div>
 </div>

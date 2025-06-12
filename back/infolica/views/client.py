@@ -181,7 +181,7 @@ def clients_search_view(request):
     settings = request.registry.settings
     search_limit = int(settings['search_limit'])
     old_clients = request.params['old_clients'] == 'true' if 'old_clients' in request.params else False
-    conditions = Utils.get_search_conditions(Client, request.params)
+    conditions = Utils.get_search_conditions(Client, request.params, ignore_params=["old_clients"])
 
     # Check date_sortie is null
     conditions = [] if not conditions or len(

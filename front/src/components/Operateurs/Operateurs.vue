@@ -3,8 +3,8 @@
 
 
 <script>
-import {handleException} from '@/services/exceptionsHandler';
-import {checkPermission, stringifyAutocomplete2} from '@/services/helper';
+import { handleException } from '@/services/exceptionsHandler';
+import { checkPermission, stringifyAutocomplete2 } from '@/services/helper';
 const moment = require('moment');
 
 export default {
@@ -12,9 +12,6 @@ export default {
   props: {},
   data: () => ({
     affaireEtapesAll: {},
-    currentDeleteId: null,
-    deleteOperateurActive: false,
-    deleteMessage: '',
     editionOperateursAllowed: false,
     form: {
       id: null,
@@ -34,73 +31,85 @@ export default {
       affaire_etapes_mailer: []
     },
     operateurs: [],
+    nb_operateurs_total: 0,
     search: {
       nom: null,
       prenom: null,
-      login: null
+      login: null,
+      old_operateurs: false,
     },
     services: [],
     roles: [],
     divEditUser: {
       title: "",
       show: false,
-    }
+    },
   }),
   methods: {
     /**
      * Search operateurs
     */
-    async searchOperateurs () {
-      var formData = new FormData();
-      if(this.search.nom)
+    async searchOperateurs(moreResults = false) {
+      let formData = new FormData();
+
+      if (moreResults === true)
+        formData.append("moreResults", this.operateurs.length);
+
+      if (this.search.nom)
         formData.append("nom", this.search.nom);
 
-      if(this.search.prenom)
+      if (this.search.prenom)
         formData.append("prenom", this.search.prenom);
 
-      if(this.search.login)
+      if (this.search.login)
         formData.append("login", this.search.login);
+
+      if (this.search.old_operateurs)
+        formData.append("old_operateurs", this.search.old_operateurs);
 
       this.$http.post(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_SEARCH_OPERATEURS_ENDPOINT,
         formData,
         {
           withCredentials: true,
-          headers: {"Accept": "application/json"}
+          headers: { "Accept": "application/json" }
         }
       )
-      .then(response =>{
-        if(response && response.data){
-          let tmp = response.data;
+        .then(response => {
+          if (response && response.data) {
+            this.nb_operateurs_total = response.data.nb_operateurs_total;
+            let tmp = response.data.operateur_liste;
 
-          tmp.forEach(x => {
-            x.entree = x.entree === null? null: moment(x.entree, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
-            x.sortie = x.sortie === null? null: moment(x.sortie, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
-          });
+            tmp.forEach(x => {
+              x.entree = x.entree === null ? null : moment(x.entree, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+              x.sortie = x.sortie === null ? null : moment(x.sortie, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+            });
 
-          this.operateurs = tmp;
-        }
-      })
-      //Error
-      .catch(err => {
-        handleException(err, this);
-      })
+            this.operateurs = tmp;
+          }
+        })
+        //Error
+        .catch(err => {
+          handleException(err, this);
+        })
     },
 
     /**
      * Clear the form
      */
-    clearForm () {
+    clearForm() {
       this.search.nom = null;
       this.search.prenom = null;
       this.search.login = null;
+      this.search.old_operateurs = false;
+      this.searchOperateurs();
     },
 
 
     /**
      * Call edit operateur
      */
-    callEditOperateur (op) {
+    callEditOperateur(op) {
       this.divEditUser.title = "Modifier un·e opérateur·rice existant·e";
 
       this.getOperateur(op.id);
@@ -109,54 +118,21 @@ export default {
       this.divEditUser.show = true;
     },
 
-    /**
-     * Call delete operateur
-     */
-    callDeleteOperateur (id, nom, prenom) {
-      this.currentDeleteId = id;
-
-      if(prenom && nom)
-        this.deleteMessage = prenom + ' ' + nom;
-      else if(nom)
-        this.deleteMessage = nom;
-      else
-        this.deleteMessage = "-";
-
-      this.deleteMessage = "Confirmer la suppression de l'operateur '<strong>" + this.deleteMessage + "<strong>' ?";
-
-      this.deleteOperateurActive = true;
-    },
 
     /**
     * Delete operateur
     */
-    onConfirmDelete () {
+    async updateOperatorStatus(operateur) {
+      if (operateur.sortie === null) {
+        operateur.sortie = (new Date()).toLocaleDateString('fr-CH');
+      } else {
+        operateur.sortie = null;
+      }
+      this.form = operateur;
 
-      this.$http.delete(
-        process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEURS_ENDPOINT + "?id=" +  this.currentDeleteId,
-        {
-          withCredentials: true,
-          headers: {"Accept": "application/json"}
-        }
-      )
-      .then(response =>{
-        if(response && response.data){
-          this.searchOperateurs();
-          this.$root.$emit('ShowMessage', "L'opérateur a bien été supprimé.");
-        }
-      })
-      //Error
-      .catch(err => {
-        handleException(err, this);
-      })
+      this.onSaveNewOperateur();
     },
 
-    /**
-    * Cancel Delete operateur
-    */
-    onCancelDelete () {
-      this.currentDeleteId = null;
-    },
 
     /**
      * Create user
@@ -205,13 +181,15 @@ export default {
 
       let errors = [];
       for (const elem in this.form) {
-        if ( (this.form[elem] !== null && this.form[elem] !== "") || (elem !== "service_id" || elem !== "sortie")) {
+        if ((this.form[elem] !== null && this.form[elem] !== "") || (elem !== "service_id" || elem !== "sortie")) {
           if (elem === 'entree') {
             formData.append(elem, moment(this.form[elem], process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
           } else if (elem === 'sortie') {
-            formData.append(elem, this.form[elem]? moment(this.form[elem], process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
+            formData.append(elem, this.form[elem] ? moment(this.form[elem], process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS) : null);
           } else if (elem === 'affaire_etapes_mailer') {
             formData.append(elem, JSON.stringify(this.form[elem]));
+          } else if (elem === 'role') {
+            continue;
           } else {
             formData.append(elem, this.form[elem]);
           }
@@ -262,10 +240,10 @@ export default {
           formData,
           {
             withCredentials: true,
-            headers: {"Accept": "application/json"}
+            headers: { "Accept": "application/json" }
           }
         ).then(response => resolve(response))
-        .catch(err => reject(err));
+          .catch(err => reject(err));
       });
     },
 
@@ -280,10 +258,10 @@ export default {
           formData,
           {
             withCredentials: true,
-            headers: {"Accept": "application/json"}
+            headers: { "Accept": "application/json" }
           }
         ).then(response => resolve(response))
-        .catch(err => reject(err));
+          .catch(err => reject(err));
       });
     },
 
@@ -296,7 +274,7 @@ export default {
         process.env.VUE_APP_API_URL + process.env.VUE_APP_SERVICES_ENDPOINT,
         {
           withCredentials: true,
-          headers: {"Accept": "application/json"}
+          headers: { "Accept": "application/json" }
         }
       ).then(response => {
         if (response && response.data) {
@@ -304,7 +282,7 @@ export default {
           this.services = stringifyAutocomplete2(response.data, ['abreviation']);
         }
       })
-      .catch(err => handleException(err, this));
+        .catch(err => handleException(err, this));
     },
 
 
@@ -316,7 +294,7 @@ export default {
         process.env.VUE_APP_API_URL + process.env.VUE_APP_USER_ROLE_ENDPOINT,
         {
           withCredentials: true,
-          headers: {"Accept": "application/json"}
+          headers: { "Accept": "application/json" }
         }
       ).then(response => {
         if (response && response.data) {
@@ -325,7 +303,7 @@ export default {
 
         }
       })
-      .catch(err => handleException(err, this));
+        .catch(err => handleException(err, this));
     },
 
     textUpperCase() {
@@ -340,7 +318,7 @@ export default {
         process.env.VUE_APP_API_URL + process.env.VUE_APP_AFFAIRE_ETAPES_ALL_ENDPOINT,
         {
           withCredentials: true,
-          headers: {"Accept": "application/json"}
+          headers: { "Accept": "application/json" }
         }
       ).then(response => {
         if (response && response.data) {
@@ -352,7 +330,7 @@ export default {
 
         }
       })
-      .catch(err => handleException(err, this));
+        .catch(err => handleException(err, this));
     },
 
 
@@ -364,26 +342,25 @@ export default {
         process.env.VUE_APP_API_URL + process.env.VUE_APP_OPERATEUR_UPDATE_ENDPOINT + '?operateur_id=' + operateur_id,
         {
           withCredentials: true,
-          headers: {"Accept": "application/json"}
+          headers: { "Accept": "application/json" }
         }
       ).then(response => {
         if (response && response.data) {
 
           let tmp = response.data;
 
-          tmp.entree = tmp.entree === null? null: moment(tmp.entree, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
-          tmp.sortie = tmp.sortie === null? null: moment(tmp.sortie, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+          tmp.entree = tmp.entree === null ? null : moment(tmp.entree, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+          tmp.sortie = tmp.sortie === null ? null : moment(tmp.sortie, process.env.VUE_APP_DATEFORMAT_WS).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
 
           this.form = tmp;
 
         }
       })
-      .catch(err => handleException(err, this));
+        .catch(err => handleException(err, this));
     },
-
   },
 
-  mounted: function(){
+  mounted: function () {
     this.getService();
     this.getRoles();
     this.searchOperateurs();
@@ -391,4 +368,3 @@ export default {
   }
 }
 </script>
-

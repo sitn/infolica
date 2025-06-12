@@ -147,15 +147,39 @@ def operateurs_search_view(request):
 
     settings = request.registry.settings
     search_limit = int(settings['search_limit'])
-    conditions = Utils.get_search_conditions(Operateur, request.params)
+    old_operateurs = request.params["old_operateurs"]=="true" if "old_operateurs" in request.params else False
+
+    if "moreResults" in request.params.keys():
+        search_limit += int(request.params["moreResults"])
+
+    conditions = Utils.get_search_conditions(Operateur, request.params, ignore_params=["old_operateurs", "moreResults"])
+
 
     # Check date_sortie is null
     conditions = [] if not conditions or len(conditions) == 0 else conditions
-    conditions.append(Operateur.sortie == None)
 
-    query = request.dbsession.query(Operateur).order_by(Operateur.nom, Operateur.prenom).filter(
-        *conditions).limit(search_limit).all()
-    return Utils.serialize_many(query)
+    if old_operateurs is False:
+        conditions.append(Operateur.sortie == None)
+
+    query = request.dbsession.query(Operateur).filter(*conditions)
+
+    nb_operateurs_total = query.with_entities(func.count(Operateur.id)).scalar()
+
+    operateurs = query.order_by(Operateur.nom, Operateur.prenom).limit(search_limit).all()
+
+    operateurs = Utils.serialize_many(operateurs)
+
+    for op in operateurs:
+        op["role"] = request.dbsession.query(Role.nom).filter(Role.id==op["role_id"]).scalar()
+        op["entree_sort"] = datetime.strptime(op["entree"], "%Y-%m-%d").timestamp() if op["entree"] is not None else 0
+        op["sortie_sort"] = datetime.strptime(op["sortie"], "%Y-%m-%d").timestamp() if op["sortie"] is not None else 0
+
+    result = {
+        "operateur_liste": operateurs,
+        "nb_operateurs_total": nb_operateurs_total,
+    }
+
+    return result
 
 
 @view_config(route_name='operateurs', request_method='POST', renderer='json')
