@@ -16,11 +16,13 @@ def main(global_config, **settings):
         config.include('.models')
         config.include('pyramid_mako')
         config.include('.routes')
-        config.scan()
         config.add_subscriber(add_cors_headers_response_callback, NewRequest)
         config.add_renderer('jsonp', JSONP(param_name='callback'))
         # Add the "geojson" renderer
         config.add_renderer("geojson", GeoJSON())
+        config.include('pyramid_jinja2')
+        config.add_jinja2_renderer('.html')
+        config.scan()
 
         config.set_authentication_policy(
             AuthTktAuthenticationPolicy(

@@ -1,0 +1,33 @@
+{% extends "infolica:templates/emails/layout.html" %}
+
+{% block content %}
+  <!-- General informations about affaire -->
+  <p>
+     L'affaire <b><a href="{{ infolica_url_base }}/affaires/edit/{{ v_affaire.id }}">{{ v_affaire.id }}{% if v_affaire.no_access %} {{ v_affaire.no_access }}{% endif %}</a></b>{% if v_affaire.urgent %} (avec mention urgente){% endif %} est en attente pour l'étape <b>{{ affaire_etape_index.nom }}</b>.
+  </p>
+  <p>
+    Cadastre: {{ v_affaire.cadastre}}
+    <br>
+    Description: {{ v_affaire.nom }}
+  </p>
+
+  <!-- Table of steps -->
+  Historique des étapes:
+  <table class='tg'>
+    <tr style="margin: 0 10px 0 10px;">
+        <th>Étape</th>
+        <th>Réalisée par</th>
+        <th>Réalisée le</th>
+        <th>Remarque</th>
+    </tr>
+    {% for step in step_list %}
+      <tr style="margin: 0 10px 0 10px;">
+        <td>{{ step.etape if step.etape }}</td>
+        <td>{{ step.next_operateur_prenom if step.next_operateur_prenom }} {{ step.next_operateur_nom if step.next_operateur_nom }}</td>
+        <td>{{ step.next_datetime.strftime('%d.%m.%Y') if step.next_datetime }}</td>
+        <td>{{ step.next_remarque if step.next_remarque }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+{% endblock %}

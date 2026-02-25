@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*--
 from datetime import date, datetime
-from sqlalchemy import func, and_, desc
+from sqlalchemy import func, and_, or_, desc
 from sqlalchemy import String
 from sqlalchemy.sql.expression import cast
 from infolica.models.models import Preavis, PreavisRemarque, Plan
@@ -412,3 +412,17 @@ class Utils(object):
             remarque.append("Le client demande une adresse de facturation différente.")
         remarque = sep.join(remarque)
         return remarque
+
+    @classmethod
+    def getOperateursActifs(self, request):
+        """getOperateursActifs
+        Returns a SQLAlchemy ORM object
+
+        Args:
+            request
+
+        Returns:
+            SQLAlchemy ORM object
+        """
+        today = date.today()
+        return request.dbsession.query(Operateur).filter(Operateur.entree <= today, or_(Operateur.sortie == None, Operateur.sortie >= today))

@@ -7,20 +7,19 @@ from infolica.models.models import VAffaire, VAffairesPreavis, VEtapesAffaires
 from infolica.scripts.mailer import send_mail
 from infolica.scripts.utils import Utils
 from sqlalchemy import func, and_
+from pyramid.renderers import render
 
 import os
 
 
 class MailTemplates(object):
-
     @classmethod
     def sendMailAffaireEtape(cls, request, model, chef_equipe_id, operateur_id):
         # send mail
         affaire_etape_index = request.dbsession.query(AffaireEtapeIndex).filter(AffaireEtapeIndex.id == model.etape_id).first()
         etape_mailer = request.dbsession.query(EtapeMailer).filter(model.etape_id == EtapeMailer.etape_id).all()
         v_affaire = request.dbsession.query(VAffaire).filter(VAffaire.id == model.affaire_id).first()
-        affaire = request.dbsession.query(Affaire).filter(Affaire.id == model.affaire_id).first()
-        operateur = request.dbsession.query(Operateur).all()
+        operateur = Utils.getOperateursActifs(request).all()
 
         # get list of done steps
         lastSteps = request.dbsession.query(VEtapesAffaires).filter(
@@ -29,9 +28,6 @@ class MailTemplates(object):
                 VEtapesAffaires.etape_priorite == int(request.registry.settings['affaire_etape_priorite_1_id'])
             )
         ).order_by(VEtapesAffaires.next_datetime.desc()).all()
-
-        # set affaire_nom
-        affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
 
         # only when chef_equipe is specified and chef equipe is not the initiator of new step
         mail_list = []
@@ -49,30 +45,21 @@ class MailTemplates(object):
 
         # Send mail only if step prio is 1 and if mail_list not empty
         if affaire_etape_index.priorite == int(request.registry.settings['affaire_etape_priorite_1_id']) and len(mail_list)>0:
-            lastSteps_html = "".join(["<tr><td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
-                                <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{} {}</td>\
-                                <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
-                                <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
-                                </tr>".format(
-                                    i.etape,
-                                    i.next_operateur_prenom if i.next_operateur_prenom else "",
-                                    i.next_operateur_nom if i.next_operateur_nom else "",
-                                    i.next_datetime.strftime("%d.%m.%Y - %H:%M") if i.next_datetime else "",
-                                    i.next_remarque if i.next_remarque else ""
-                                    ) for i in lastSteps])
+            subject = "Infolica - Nouvelle étape - Affaire " + str(v_affaire.id) + (" - URGENT" if v_affaire.urgent else "")
 
-            text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(v_affaire.id)) + "'>" + str(v_affaire.id) + affaire_nom + "</a></b>" + (" (avec mention urgente)" if v_affaire.urgent else "") + " est en attente pour l'étape <b>"+ affaire_etape_index.nom +"</b>."
-            text += "<br><br>Cadastre: " + str(v_affaire.cadastre)
-            text += "<br>Description: " + str(v_affaire.nom)
-            text += ("<br><br><br><h4>Historique de l'affaire</h4>\
-                <table style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>\
-                    <tr>\
-                        <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Étape</th>\
-                        <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Réalisée par</th>\
-                        <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Réalisée le</th>\
-                        <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Remarque</th>\
-                    </tr>" + lastSteps_html + "</table>") if lastSteps_html != "" else ""
-            subject = "Infolica - affaire " + str(v_affaire.id) + (" - URGENT" if v_affaire.urgent else "")
+            text = render(
+                'infolica:templates/emails/etape_notification.html',
+                {
+                    'title': 'Infolica - Nouvelle étape',
+                    'admin_mail': request.registry.settings['admin_mail'],
+                    'step_list': lastSteps,
+                    'infolica_url_base': request.registry.settings['infolica_url_base'],
+                    'v_affaire': v_affaire,
+                    'affaire_etape_index': affaire_etape_index,
+                }
+            )
+
+
             send_mail(request, mail_list, "", subject, html=text)
 
         return (lastSteps, affaire_etape_index)
@@ -83,11 +70,11 @@ class MailTemplates(object):
         mail_list = []
         operateur_affaire_urgente = request.registry.settings['operateur_affaire_urgente'].split(',')
         for op_id in operateur_affaire_urgente:
-            op_mail = request.dbsession.query(Operateur).filter(Operateur.id == op_id).first().mail
+            op_mail = Utils.getOperateursActifs(request).filter(Operateur.id == op_id).first().mail
             if op_mail is not None:
                 mail_list.append(op_mail)
         # Add technicien + creator of affaire
-        technicien = request.dbsession.query(Operateur).filter(Operateur.id == model.technicien_id).first()
+        technicien = Utils.getOperateursActifs(request).filter(Operateur.id == model.technicien_id).first()
         if technicien.mail is not None:
             mail_list.append(technicien.mail)
 
@@ -133,8 +120,8 @@ class MailTemplates(object):
         cl_npa = int(cl.npa) if cl.npa is not None else -1
         if cl.no_sap is None and cl_npa not in request.registry.settings['npa_NE']:
             operateur_secretariat = request.registry.settings["operateur_secretariat"].split(",")
-            mail_list = request.dbsession.query(Operateur.mail).filter(Operateur.id.in_(operateur_secretariat)).all()
-            mail_list = [mail[0] for mail in mail_list]
+            operateurs = Utils.getOperateursActifs(request).filter(Operateur.id.in_(operateur_secretariat)).all()
+            mail_list = [op.mail for op in operateurs]
 
             html = "<h3>Vérification de client</h3>"
             html += "<p>Un client hors canton et sans numéro SAP a été référencé dans la facturation de l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire_id)) + "'>" + str(affaire_id) + affaire_nom + "</a></b>.</p>"
