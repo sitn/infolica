@@ -3,7 +3,7 @@ from email.message import EmailMessage
 from email.utils import formatdate
 
 
-def send_mail(request, mail_list, text, subject, html=None, signature="Infolica"):
+def send_mail(request, mail_list, text, subject, html=None):
     """
     mail_list: list of mail adresses (send to)
     text: Mail text. Note that mail footer is set to "Ce courrier a été généré automatiquement. Merci de ne pas y répondre."

@@ -1,0 +1,28 @@
+{% extends "infolica:templates/emails/layout.html" %}
+
+{% block content %}
+  <!-- General informations about affaire -->
+  <p>
+    Une nouvelle demande de préavis est en attente dans la centrale à préavis.
+    {% if affaire.urgent %}
+      <br>
+      <br>
+      L'affaire porte la mention <b>urgente</b>.
+      {% if affaire.urgent_echeance %}
+        <br>
+        Le délai de traitement au SGRF a été fixé au {{ affaire.urgent_echeance.strftime("%d.%m.%Y") }}.
+        <br>
+      {% endif %}
+    {% endif %}
+    <ul>
+      <li>Référence de l'affaire au SGRF: {{ affaire.id }} {% if affaire.no_access %} ({{ affaire.no_access }}){% endif %}</li>
+      <li>Cadastre: {{ cadastre }}</li>
+      <li>Description: {{ affaire.nom }}</li>
+      <li>Lien: <a href='{{ link }}'>{{ link }}</a></li>
+      {% if message %}
+        <li>Remarque: {{ message }}</li>
+      {% endif %}
+    </ul>
+  </p>
+
+{% endblock %}

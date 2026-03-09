@@ -1,0 +1,10 @@
+{% extends "infolica:templates/emails/layout.html" %}
+
+{% block content %}
+  <!-- General informations about affaire -->
+  <p>
+
+    <p>Le préavis du {{ preavis.service }} a été saisi pour l'affaire <b><a href='{{ infolica_url_base }}/affaires/edit/{{ preavis.affaire_id }}'>{{ preavis.affaire_id }}{% if affaire.no_access %} {{ affaire.no_access }}{% endif %}</a></b>.    <br/>
+    Il peut être consulté dans l'onglet Préavis de l'affaire, en cliquant sur le préavis en question dans le tableau.</p>
+
+{% endblock %}

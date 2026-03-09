@@ -164,17 +164,24 @@ class MailTemplates(object):
         preavis = request.dbsession.query(VAffairesPreavis).filter(VAffairesPreavis.id == preavis_id).first()
         affaire = request.dbsession.query(Affaire).filter(Affaire.id == preavis.affaire_id).first()
 
-        affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
+        subject = "Un nouveau préavis a été saisi"
 
         operateur_coordinateur_projets = request.registry.settings["operateur_coordinateur_projets"].split(",")
         operateurs_liste = Utils.getOperateursActifs(request).filter(Operateur.id.in_(operateur_coordinateur_projets)).all()
         mail_list = [op.mail for op in operateurs_liste]
 
-        html = "<h3>Un nouveau préavis a été saisi</h3>"
-        html += "<p>Le préavis du " + preavis.service + " a été saisi pour l'affaire <b><a href='" + os.path.join(request.registry.settings["infolica_url_base"], "affaires/edit", str(preavis.affaire_id)) + "'>" + str(preavis.affaire_id) + affaire_nom + "</a></b>.<br/>"
-        html += "Il peut être consulté dans l'onglet Préavis de l'affaire, en cliquant sur le préavis en question dans le tableau.</p>"
+        text = render(
+            "infolica:templates/emails/preavis_reponse_notification.html",
+            {
+                "title": subject,
+                "preavis": preavis,
+                "affaire": affaire,
+                "infolica_url_base": request.registry.settings["infolica_url_base"],
+            },
+        )
 
-        send_mail(request, mail_list, "", "Infolica - Préavis saisi", html=html)
+        send_mail(request, mail_list, "", subject, html=text)
+
         return
 
     @classmethod
@@ -194,30 +201,22 @@ class MailTemplates(object):
             affaire = request.dbsession.query(Affaire).filter(Affaire.id == preavis.affaire_id).first()
             cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == affaire.cadastre_id).first().nom
 
-            affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
             link = str(os.path.join(request.registry.settings["infolica_url_base"], "preavis/edit", str(preavis_id))).replace("\\", "/")
+            subject = "Infolica - Demande de préavis"
+            if affaire.urgent:
+                subject += " - affaire urgente"
 
-            subject_suffix = ""
+            text = render(
+                "infolica:templates/emails/preavis_demande_notification.html",
+                {
+                    "title": subject,
+                    "admin_mail": request.registry.settings["admin_mail"],
+                    "affaire": affaire,
+                    "cadastre": cadastre,
+                    "link": link,
+                    "message": message,
+                },
+            )
 
-            html = "<p>Bonjour,</p>"
-            html += "<p>"
-            html += "Une nouvelle demande de préavis est en attente dans la centrale à préavis."
-            if affaire.urgent is True:
-                subject_suffix = " - affaire urgente"
-                html += "<br>"
-                html += "L'affaire porte la mention <b>urgente</b>."
-                if affaire.urgent_echeance is not None:
-                    html += " Le délai de traitement au SGRF a été fixé au " + datetime.strftime(affaire.urgent_echeance, "%d.%m.%Y")
-                html += "<br>"
-            html += "<ul>"
-            html += "<li>Référence de l'affaire au SGRF: " + str(affaire.id) + affaire_nom + "</li>"
-            html += "<li>Cadastre: " + cadastre + "</li>"
-            html += "<li>Description: " + affaire.nom + "</li>"
-            html += "<li>Lien: <a href='" + link + "'>" + link + "</a></li>"
-            if message is not None:
-                html += "<li>Remarque: " + message + "</li>"
-            html += "</ul>"
-            html += "</p>"
-
-            send_mail(request, mail_list, "", "Infolica - Demande de préavis" + subject_suffix, html=html, signature="Le service de la géomatique et du registre foncier")
+            send_mail(request, mail_list, "", subject, html=text)
             return
