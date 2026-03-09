@@ -7,7 +7,6 @@ import {handleException} from '@/services/exceptionsHandler';
 import {
   stringifyAutocomplete,
   getDocument,
-  getCurrentUserRoleId
 } from '@/services/helper';
 
 import ClientSearch from "@/components/Utils/ClientSearch/ClientSearch.vue";
@@ -34,9 +33,8 @@ export default {
       affaireReadonly: true,
       typeAffaireReadonly: true,
       affaireUrgente: {
-        disabled: true,
-        urgent: false,
-        urgent_echeance: null,
+        urgent: this.affaire.urgent,
+        urgent_echeance: this.affaire.urgent_echeance,
       },
       typesAffairesListe_all: [],
       typesAffairesListe: [],
@@ -116,20 +114,18 @@ export default {
         formData.append("client_envoi_id", this.form.client_envoi_id || null);
       }
 
-      if (this.affaireUrgente.urgent) {
-        formData.append("urgent", this.affaireUrgente.urgent);
-
-        if (this.affaireUrgente.urgent_echeance !== null) {
-          formData.append("urgent_echeance", moment(this.affaireUrgente.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS));
-        }
-      }
-
       formData.append("client_commande_complement", this.form.client_commande_complement || null);
       formData.append("client_envoi_complement", this.form.client_envoi_complement || null);
       formData.append("localisation_E", this.affaire.localisation_e);
       formData.append("localisation_N", this.affaire.localisation_n);
 
+      if (this.affaireUrgente.urgent === false) {
+        this.affaireUrgente.urgent_echeance !== null;
+      }
+
       // dates
+      formData.append("urgent", this.affaireUrgente.urgent);
+      formData.append("urgent_echeance", this.affaireUrgente.urgent_echeance !== null? moment(this.affaireUrgente.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
       formData.append("date_ouverture", this.affaire.date_ouverture? moment(this.affaire.date_ouverture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
       formData.append("date_envoi", this.affaire.date_envoi? moment(this.affaire.date_envoi, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
       formData.append("date_validation", this.affaire.date_validation? moment(this.affaire.date_validation, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
@@ -147,7 +143,6 @@ export default {
           this.$emit('modify-off', true);
           this.$parent.setAffaire().then(() => {
             this.copyAffaire();
-            this.enableAffaireUrgente();
           });
         })
         //Error
@@ -271,43 +266,11 @@ export default {
       this.$router.go(0);
     },
 
-
-    /**
-     * on set echeance
-     */
-    onSetUrgentEcheance() {
-      if (this.affaireUrgente.urgent_echeance !== null) {
-        this.affaireUrgente.urgent_echeance = moment(this.affaireUrgente.urgent_echeance).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
-      } else {
-        this.affaireUrgente.urgent_echeance = null;
-      }
-    },
-
-    /**
-     * Set Affaire urgente
-     */
     setAffaireUrgente() {
       this.affaireUrgente = {
         urgent: this.affaire.urgent,
         urgent_echeance: this.affaire.urgent_echeance,
-        disabled: true,
       }
-    },
-
-    /**
-     * Enable edit Affaire Urgente
-     */
-    enableAffaireUrgente() {
-      //Check role_id
-      let role_id = getCurrentUserRoleId();
-
-      // Secrétariat peut modifier des factures à tout moment, éditer les informations des affaires et référencer des numéros à l'affaire
-      this.affaireUrgente.disabled = this.affaireUrgente.urgent === true || ![
-        Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID),
-        Number(process.env.VUE_APP_ADMIN_ROLE_ID),
-        Number(process.env.VUE_APP_PPE_ROLE_ID),
-        Number(process.env.VUE_APP_MO_PPE_ROLE_ID),
-      ].includes(role_id);
     },
 
     /**
@@ -400,6 +363,12 @@ export default {
     estObjetDate(val) {
       return val instanceof Date && !isNaN(val.getTime());
     },
+
+    updateUrgent(val) {
+      if (val===false) {
+        this.affaireUrgente.urgent_echeance = null;
+      }
+    },
   },
 
   watch: {
@@ -431,6 +400,13 @@ export default {
         this.saveAllowed = true;
       }
     },
+    'affaireUrgente.urgent_echeance' (newVal, oldVal) {
+      if (newVal !== oldVal && this.estObjetDate(newVal)) {
+        this.affaireUrgente.urgent_echeance = moment(this.affaireUrgente.urgent_echeance).format(process.env.VUE_APP_DATEFORMAT_CLIENT);
+      } else {
+        this.saveAllowed = true;
+      }
+    },
   },
 
   mounted: function() {
@@ -442,7 +418,6 @@ export default {
     this.setPermissions();
     this.getClientsFacture();
     this.$root.$on('reloadClientFactureInfosGen', () => this.getClientsFacture());
-    this.enableAffaireUrgente();
   }
 };
 </script>
