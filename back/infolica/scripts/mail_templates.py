@@ -79,15 +79,12 @@ class MailTemplates(object):
             op_mail = op.mail
             if op_mail is not None:
                 mail_list.append(op_mail)
-                print(op.nom)
 
         v_affaire = request.dbsession.query(VAffaire).filter(VAffaire.id == affaire.id).first()
 
         # Add technicien + creator of affaire
         technicien = operateur_etapeMailer.filter(Operateur.id == affaire.technicien_id).first()
-        print(">> technicien:", technicien)
         if technicien and technicien.mail is not None:
-            print("(technicien)", technicien.nom)
             mail_list.append(technicien.mail)
 
         if len(mail_list) == 0:
@@ -112,7 +109,6 @@ class MailTemplates(object):
     def sendMailClientHorsCanton(cls, request, client_id, affaire_id):
         affaire_etape_client_hors_canton_id = int(request.registry.settings["affaire_etape_client_hors_canton_id"])
         affaire = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
-        affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
         cl = request.dbsession.query(Client).filter(Client.id == client_id).first()
 
         # contrôle qu'aucune étape de demande de création du client hors canton n'ait été envoyée
@@ -135,27 +131,32 @@ class MailTemplates(object):
             operateurs = Utils.getOperateursActifs(request).filter(Operateur.id.in_(operateur_secretariat)).all()
             mail_list = [op.mail for op in operateurs]
 
-            html = "<h3>Vérification de client</h3>"
-            html += "<p>Un client hors canton et sans numéro SAP a été référencé dans la facturation de l'affaire <b><a href='" + os.path.join(request.registry.settings["infolica_url_base"], "affaires/edit", str(affaire_id)) + "'>" + str(affaire_id) + affaire_nom + "</a></b>.</p>"
-            html += (
-                "<ul><li>"
-                + ", ".join(
-                    [
-                        cl.entreprise if cl.entreprise is not None else " ".join([cl.titre if cl.titre is not None else "", cl.prenom if cl.prenom is not None else "", cl.nom if cl.nom is not None else ""]),
-                        cl.adresse if cl.adresse is not None else "",
-                        " ".join([cl.npa if cl.npa is not None else "", cl.localite if cl.localite is not None else ""]),
-                    ]
-                )
-                + " &#8594; <a href='"
-                + os.path.join(request.registry.settings["infolica_url_base"], "clients/edit", str(cl.id))
-                + "'>Lien sur la fiche du client</a>"
-                + "</li></ul>"
+            subject = "Infolica - Client hors canton à vérifier"
+            client_adress = ", ".join(
+                [
+                    cl.entreprise if cl.entreprise is not None else " ".join([cl.titre if cl.titre is not None else "", cl.prenom if cl.prenom is not None else "", cl.nom if cl.nom is not None else ""]),
+                    cl.adresse if cl.adresse is not None else "",
+                    " ".join([cl.npa if cl.npa is not None else "", cl.localite if cl.localite is not None else ""]),
+                ]
             )
-            html += "<p>Merci d'entreprendre les démarches nécessaires pour corriger le client ou pour demander sa création dans SAP.</p>"
-            send_mail(request, mail_list, "", "Infolica - Client hors canton à vérifier", html=html)
 
+            text = render(
+                "infolica:templates/emails/client_hors_canton_notification.html",
+                {
+                    "title": subject,
+                    "admin_mail": request.registry.settings["admin_mail"],
+                    "affaire": affaire,
+                    "client_adress": client_adress,
+                    "client_id": cl.id,
+                    "infolica_url_base": request.registry.settings["infolica_url_base"],
+                },
+            )
+
+            # update affaire_etape
             affaire_etape = AffaireEtape(affaire_id=affaire_id, operateur_id=Utils.getOperateurFromUser(request).id, etape_id=affaire_etape_client_hors_canton_id, datetime=datetime.now(), remarque="client_id=" + str(cl.id))
             request.dbsession.add(affaire_etape)
+
+            send_mail(request, mail_list, "", subject, html=text)
 
         return
 
@@ -164,7 +165,7 @@ class MailTemplates(object):
         preavis = request.dbsession.query(VAffairesPreavis).filter(VAffairesPreavis.id == preavis_id).first()
         affaire = request.dbsession.query(Affaire).filter(Affaire.id == preavis.affaire_id).first()
 
-        subject = "Un nouveau préavis a été saisi"
+        subject = "Infolica - Un nouveau préavis a été saisi"
 
         operateur_coordinateur_projets = request.registry.settings["operateur_coordinateur_projets"].split(",")
         operateurs_liste = Utils.getOperateursActifs(request).filter(Operateur.id.in_(operateur_coordinateur_projets)).all()
@@ -174,6 +175,7 @@ class MailTemplates(object):
             "infolica:templates/emails/preavis_reponse_notification.html",
             {
                 "title": subject,
+                "admin_mail": request.registry.settings["admin_mail"],
                 "preavis": preavis,
                 "affaire": affaire,
                 "infolica_url_base": request.registry.settings["infolica_url_base"],
