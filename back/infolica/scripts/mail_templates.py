@@ -22,17 +22,12 @@ class MailTemplates(object):
         operateur = Utils.getOperateursActifs(request).all()
 
         # get list of done steps
-        lastSteps = request.dbsession.query(VEtapesAffaires).filter(
-            and_(
-                VEtapesAffaires.affaire_id == model.affaire_id,
-                VEtapesAffaires.etape_priorite == int(request.registry.settings["affaire_etape_priorite_1_id"])
-            )
-        ).order_by(VEtapesAffaires.next_datetime.desc()).all()
+        lastSteps = request.dbsession.query(VEtapesAffaires).filter(and_(VEtapesAffaires.affaire_id == model.affaire_id, VEtapesAffaires.etape_priorite == int(request.registry.settings["affaire_etape_priorite_1_id"]))).order_by(VEtapesAffaires.next_datetime.desc()).all()
 
         # only when chef_equipe is specified and chef equipe is not the initiator of new step
         mail_list = []
         if chef_equipe_id and (not chef_equipe_id == operateur_id):
-            chef_equipe_mail = request.dbsession.query(Operateur).filter(Operateur.id == chef_equipe_id).first().mail
+            chef_equipe_mail = Utils.getOperateursActifs(request).filter(Operateur.id == chef_equipe_id).first().mail
             if chef_equipe_mail is not None:
                 mail_list.append(chef_equipe_mail)
 
@@ -72,8 +67,9 @@ class MailTemplates(object):
 
         mail_list = []
 
-        operateur_etapeMailer = request.dbsession.query(Operateur).join(EtapeMailer, EtapeMailer.operateur_id == Operateur.id).filter(EtapeMailer.sendmail == True)
+        operateur_etapeMailer = Utils.getOperateursActifs(request).join(EtapeMailer, EtapeMailer.operateur_id == Operateur.id).filter(EtapeMailer.sendmail == True)
 
+        # Check if user wants to be notified in case of PPE or other MO affaires (based on etape-mailer table)
         if affaire.type_id in (affaire_type_ppe_id, affaire_type_modification_ppe_id):
             operateur_etapeMailer = operateur_etapeMailer.filter(EtapeMailer.etape_id == affaire_etape_affaire_urgente_ppe_id)
         else:
@@ -83,12 +79,15 @@ class MailTemplates(object):
             op_mail = op.mail
             if op_mail is not None:
                 mail_list.append(op_mail)
+                print(op.nom)
 
         v_affaire = request.dbsession.query(VAffaire).filter(VAffaire.id == affaire.id).first()
 
         # Add technicien + creator of affaire
-        technicien = Utils.getOperateursActifs(request).filter(Operateur.id == affaire.technicien_id).first()
-        if technicien.mail is not None:
+        technicien = operateur_etapeMailer.filter(Operateur.id == affaire.technicien_id).first()
+        print(">> technicien:", technicien)
+        if technicien and technicien.mail is not None:
+            print("(technicien)", technicien.nom)
             mail_list.append(technicien.mail)
 
         if len(mail_list) == 0:
@@ -142,16 +141,9 @@ class MailTemplates(object):
                 "<ul><li>"
                 + ", ".join(
                     [
-                        cl.entreprise if cl.entreprise is not None else " ".join([
-                            cl.titre if cl.titre is not None else "",
-                            cl.prenom if cl.prenom is not None else "",
-                            cl.nom if cl.nom is not None else ""
-                        ]),
+                        cl.entreprise if cl.entreprise is not None else " ".join([cl.titre if cl.titre is not None else "", cl.prenom if cl.prenom is not None else "", cl.nom if cl.nom is not None else ""]),
                         cl.adresse if cl.adresse is not None else "",
-                        " ".join([
-                            cl.npa if cl.npa is not None else "",
-                            cl.localite if cl.localite is not None else ""
-                        ]),
+                        " ".join([cl.npa if cl.npa is not None else "", cl.localite if cl.localite is not None else ""]),
                     ]
                 )
                 + " &#8594; <a href='"
@@ -162,13 +154,7 @@ class MailTemplates(object):
             html += "<p>Merci d'entreprendre les démarches nécessaires pour corriger le client ou pour demander sa création dans SAP.</p>"
             send_mail(request, mail_list, "", "Infolica - Client hors canton à vérifier", html=html)
 
-            affaire_etape = AffaireEtape(
-                affaire_id=affaire_id,
-                operateur_id=Utils.getOperateurFromUser(request).id,
-                etape_id=affaire_etape_client_hors_canton_id,
-                datetime=datetime.now(),
-                remarque="client_id=" + str(cl.id)
-            )
+            affaire_etape = AffaireEtape(affaire_id=affaire_id, operateur_id=Utils.getOperateurFromUser(request).id, etape_id=affaire_etape_client_hors_canton_id, datetime=datetime.now(), remarque="client_id=" + str(cl.id))
             request.dbsession.add(affaire_etape)
 
         return
@@ -181,8 +167,8 @@ class MailTemplates(object):
         affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
 
         operateur_coordinateur_projets = request.registry.settings["operateur_coordinateur_projets"].split(",")
-        mail_list = request.dbsession.query(Operateur.mail).filter(Operateur.id.in_(operateur_coordinateur_projets)).all()
-        mail_list = [mail[0] for mail in mail_list]
+        operateurs_liste = Utils.getOperateursActifs(request).filter(Operateur.id.in_(operateur_coordinateur_projets)).all()
+        mail_list = [op.mail for op in operateurs_liste]
 
         html = "<h3>Un nouveau préavis a été saisi</h3>"
         html += "<p>Le préavis du " + preavis.service + " a été saisi pour l'affaire <b><a href='" + os.path.join(request.registry.settings["infolica_url_base"], "affaires/edit", str(preavis.affaire_id)) + "'>" + str(preavis.affaire_id) + affaire_nom + "</a></b>.<br/>"
@@ -194,7 +180,7 @@ class MailTemplates(object):
     @classmethod
     def sendMailPreavisDemande(cls, request, preavis_id, service_id, message=None):
 
-        operateurs = request.dbsession.query(Operateur).filter(Operateur.service_id == service_id).all()
+        operateurs = Utils.getOperateursActifs(request).filter(Operateur.service_id == service_id).all()
 
         mail_list = []
         etape_mailer = request.dbsession.query(EtapeMailer)
