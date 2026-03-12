@@ -500,6 +500,9 @@ def service_externe_conversation_new_view(request):
     model = Utils.set_model_record(rp, params)
     request.dbsession.add(model)
 
+    # Send mail to internal and external services at each new comment
+    MailTemplates.sendMailPreavisMessage(request, preavis, operateur, message=commentaire)
+
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(PreavisRemarque.__tablename__))
 
 

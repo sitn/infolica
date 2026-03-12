@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*--
 from datetime import datetime
 from infolica.models.models import Affaire, Cadastre, Client
-from infolica.models.models import AffaireEtape, AffaireEtapeIndex, EtapeMailer
+from infolica.models.models import AffaireEtape, AffaireEtapeIndex, EtapeMailer, Service
 from infolica.models.models import Operateur
 from infolica.models.models import VAffaire, VAffairesPreavis, VEtapesAffaires
 from infolica.scripts.mailer import send_mail
@@ -48,7 +48,7 @@ class MailTemplates(object):
                     "title": "Infolica - Nouvelle étape",
                     "admin_mail": request.registry.settings["admin_mail"],
                     "step_list": lastSteps,
-                    "infolica_url_base": request.registry.settings["infolica_url_base"],
+                    "affaire_hyperlink": Utils.getURLAffaire(request, v_affaire.id),
                     "v_affaire": v_affaire,
                     "affaire_etape_index": affaire_etape_index,
                 },
@@ -97,8 +97,8 @@ class MailTemplates(object):
             {
                 "title": subject,
                 "admin_mail": request.registry.settings["admin_mail"],
-                "infolica_url_base": request.registry.settings["infolica_url_base"],
                 "v_affaire": v_affaire,
+                "affaire_hyperlink": Utils.getURLAffaire(request, affaire.id),
             },
         )
 
@@ -146,9 +146,9 @@ class MailTemplates(object):
                     "title": subject,
                     "admin_mail": request.registry.settings["admin_mail"],
                     "affaire": affaire,
+                    "affaire_hyperlink": Utils.getURLAffaire(request, affaire.id),
                     "client_adress": client_adress,
-                    "client_id": cl.id,
-                    "infolica_url_base": request.registry.settings["infolica_url_base"],
+                    "client_hyperlink": Utils.getURLClient(request, cl.id),
                 },
             )
 
@@ -178,7 +178,7 @@ class MailTemplates(object):
                 "admin_mail": request.registry.settings["admin_mail"],
                 "preavis": preavis,
                 "affaire": affaire,
-                "infolica_url_base": request.registry.settings["infolica_url_base"],
+                "affaire_hyperlink": Utils.getURLAffaire(request, affaire.id),
             },
         )
 
@@ -203,7 +203,6 @@ class MailTemplates(object):
             affaire = request.dbsession.query(Affaire).filter(Affaire.id == preavis.affaire_id).first()
             cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == affaire.cadastre_id).first().nom
 
-            link = str(os.path.join(request.registry.settings["infolica_url_base"], "preavis/edit", str(preavis_id))).replace("\\", "/")
             subject = "Infolica - Demande de préavis"
             if affaire.urgent:
                 subject += " - affaire urgente"
@@ -215,10 +214,59 @@ class MailTemplates(object):
                     "admin_mail": request.registry.settings["admin_mail"],
                     "affaire": affaire,
                     "cadastre": cadastre,
-                    "link": link,
+                    "link": Utils.getURLPreavis(request, preavis_id),
                     "message": message,
                 },
             )
 
             send_mail(request, mail_list, "", subject, html=text)
             return
+
+    @classmethod
+    def sendMailPreavisMessage(cls, request, preavis, operateur, message=None):
+        affaire_etape_notification_message_preavis_id = request.registry.settings["affaire_etape_notification_message_preavis_id"]
+        service_mo = request.registry.settings["service_mo"]
+        preavis = request.dbsession.query(VAffairesPreavis).filter(VAffairesPreavis.id == preavis.id).first()
+        operateurs = Utils.getOperateursActifs(request)
+        mail_list = []
+
+        # if operateur is internal service, send to external service
+        if operateur.service_id is None or operateur.service == service_mo:
+            operateurs = operateurs.filter(Operateur.service_id == preavis.service_id).join(EtapeMailer, EtapeMailer.operateur_id == Operateur.id).filter(EtapeMailer.etape_id == affaire_etape_notification_message_preavis_id, EtapeMailer.sendmail == True).all()
+            for op in operateurs:
+                mail_list = [op.mail]
+            link = Utils.getURLPreavis(request, preavis.id)
+            service_auteur = service_mo.upper()
+        # if operateur is external service, send to internal service
+        else:
+            operateurs = operateurs.filter(Operateur.service == service_mo).join(EtapeMailer, EtapeMailer.operateur_id == Operateur.id).filter(EtapeMailer.etape_id == affaire_etape_notification_message_preavis_id, EtapeMailer.sendmail == True).all()
+            for op in operateurs:
+                mail_list = [op.mail]
+            link = Utils.getURLAffaire(request, preavis.affaire_id)
+            service_auteur = preavis.service
+
+        if len(mail_list) > 0:
+            affaire = request.dbsession.query(Affaire).filter(Affaire.id == preavis.affaire_id).first()
+
+            subject = "Infolica préavis - Nouveau message"
+            if affaire.urgent:
+                subject += " - affaire urgente"
+
+            text = render(
+                "infolica:templates/emails/preavis_nouveau_message_notification.html",
+                {
+                    "title": subject,
+                    "admin_mail": request.registry.settings["admin_mail"],
+                    "affaire_id": preavis.affaire_id,
+                    "affaire_hyperlink": link,
+                    "message": message,
+                    "service_auteur": service_auteur,
+                    "operateur_externe": f"{preavis.operateur_service_prenom} {preavis.operateur_service_nom}" if preavis.operateur_service_prenom and preavis.operateur_service_nom else "non défini",
+                    "operateur_interne": f"{preavis.operateur_sgrf_prenom} {preavis.operateur_sgrf_nom}" if preavis.operateur_sgrf_prenom and preavis.operateur_sgrf_nom else "non défini",
+                    "service_externe": preavis.service,
+                    "last_message": message,
+                },
+            )
+            send_mail(request, mail_list, "", subject, html=text)
+
+        return

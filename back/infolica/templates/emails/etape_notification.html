@@ -3,7 +3,7 @@
 {% block content %}
   <!-- General informations about affaire -->
   <p>
-     L'affaire <b><a href="{{ infolica_url_base }}/affaires/edit/{{ v_affaire.id }}">{{ v_affaire.id }}{% if v_affaire.no_access %} {{ v_affaire.no_access }}{% endif %}</a></b>{% if v_affaire.urgent %} (avec mention urgente){% endif %} est en attente pour l'étape <b>{{ affaire_etape_index.nom }}</b>.
+     L'affaire <b><a href="{{ affaire_hyperlink }}">{{ v_affaire.id }}{% if v_affaire.no_access %} {{ v_affaire.no_access }}{% endif %}</a></b>{% if v_affaire.urgent %} (avec mention urgente){% endif %} est en attente pour l'étape <b>{{ affaire_etape_index.nom }}</b>.
   </p>
   <p>
     Cadastre: {{ v_affaire.cadastre}}

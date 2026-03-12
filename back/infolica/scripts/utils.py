@@ -426,3 +426,18 @@ class Utils(object):
         """
         today = date.today()
         return request.dbsession.query(Operateur).filter(Operateur.entree <= today, or_(Operateur.sortie == None, Operateur.sortie >= today))
+
+    @classmethod
+    def getURLAffaire(self, request, affaire_id):
+        infolica_url_base = request.registry.settings["infolica_url_base"]
+        return f"{infolica_url_base}/affaires/edit/{affaire_id}"
+
+    @classmethod
+    def getURLPreavis(self, request, preavis_id):
+        infolica_url_base = request.registry.settings["infolica_url_base"]
+        return f"{infolica_url_base}/preavis/edit/{preavis_id}"
+
+    @classmethod
+    def getURLClient(self, request, client_id):
+        infolica_url_base = request.registry.settings["infolica_url_base"]
+        return f"{infolica_url_base}/client/edit/{client_id}"

@@ -15,10 +15,11 @@ from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
 import os
 
+
 ###########################################################
 # ETAPES AFFAIRE
 ###########################################################
-@view_config(route_name='etapes_index_by_affaire_id', request_method='GET', renderer='json')
+@view_config(route_name="etapes_index_by_affaire_id", request_method="GET", renderer="json")
 def etape_index_by_affaire_id_view(request):
     """
     GET etape index by affaire_id
@@ -27,7 +28,7 @@ def etape_index_by_affaire_id_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
 
     if affaire_id is None:
         raise exc.HTTPBadRequest(detail="Aucun index spécifié")
@@ -54,19 +55,19 @@ def etape_index_by_affaire_id_view(request):
     if logique_processus is not None and etape.id in logique_processus:
         idx = logique_processus.index(etape.id)
 
-        if idx < len(logique_processus)-1:
+        if idx < len(logique_processus) - 1:
             next_step_id = logique_processus[idx + 1]
 
     data = {
-        'etape': etape.nom if etape is not None else None,
-        'predicted_next_step_id': next_step_id
+        "etape": etape.nom if etape is not None else None,
+        "predicted_next_step_id": next_step_id
     }
 
     return data
 
 
-@view_config(route_name='etapes_index', request_method='GET', renderer='json')
-@view_config(route_name='etapes_index_s', request_method='GET', renderer='json')
+@view_config(route_name="etapes_index", request_method="GET", renderer="json")
+@view_config(route_name="etapes_index_s", request_method="GET", renderer="json")
 def etapes_index_view(request):
     """
     GET etapes index
@@ -81,7 +82,7 @@ def etapes_index_view(request):
     return Utils.serialize_many(records)
 
 
-@view_config(route_name='affaire_etapes_by_affaire_id', request_method='GET', renderer='json')
+@view_config(route_name="affaire_etapes_by_affaire_id", request_method="GET", renderer="json")
 def affaires_etapes_view(request):
     """
     GET etapes affaire
@@ -90,7 +91,7 @@ def affaires_etapes_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    affaire_id = request.matchdict['id']
+    affaire_id = request.matchdict["id"]
 
     records = request.dbsession.query(VEtapesAffaires).filter(
         VEtapesAffaires.affaire_id == affaire_id
@@ -101,8 +102,8 @@ def affaires_etapes_view(request):
     return Utils.serialize_many(records)
 
 
-@view_config(route_name='etapes', request_method='POST', renderer='json')
-@view_config(route_name='etapes_s', request_method='POST', renderer='json')
+@view_config(route_name="etapes", request_method="POST", renderer="json")
+@view_config(route_name="etapes_s", request_method="POST", renderer="json")
 def etapes_new_view(request):
     """
     POST etapes affaire
@@ -111,9 +112,9 @@ def etapes_new_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
-    chef_equipe_id = request.params['chef_equipe_id'] if 'chef_equipe_id' in request.params else None
-    operateur_id = request.params['operateur_id'] if 'operateur_id' in request.params else None
+    affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
+    chef_equipe_id = request.params["chef_equipe_id"] if "chef_equipe_id" in request.params else None
+    operateur_id = request.params["operateur_id"] if "operateur_id" in request.params else None
 
     # Add new step
     model = Utils.addNewRecord(request, AffaireEtape)
@@ -127,7 +128,7 @@ def etapes_new_view(request):
         affaire.technicien_id = chef_equipe_id
 
     # Finally erase attribution on affaire if etape_priority == 1 and if last etape was different
-    if affaire_etape_index.priorite == int(request.registry.settings['affaire_etape_priorite_1_id']):
+    if affaire_etape_index.priorite == int(request.registry.settings["affaire_etape_priorite_1_id"]):
         last2Steps = request.dbsession.query(
             AffaireEtape
         ).join(
@@ -142,13 +143,11 @@ def etapes_new_view(request):
         if not int(last2Steps[0].etape_id) == int(last2Steps[1].etape_id):
             affaire.attribution = None
 
-
     # If last step was treatment & client_facture is outside of canton and has no SAP number, send mail to secretariat
-    etape_traitement_id = int(request.registry.settings['affaire_etape_traitement_id'])
+    etape_traitement_id = int(request.registry.settings["affaire_etape_traitement_id"])
     facture_type_facture_id = int(request.registry.settings["facture_type_facture_id"])
 
-
-    if (len(lastSteps) > 1 and lastSteps[1].etape_id == etape_traitement_id):
+    if len(lastSteps) > 1 and lastSteps[1].etape_id == etape_traitement_id:
         # get clients_facture
         clients_factures_id = request.dbsession.query(Facture.client_id).filter(Facture.type_id == facture_type_facture_id, Facture.affaire_id == affaire_id).all()
         clients_factures_id = [cl_id[0] for cl_id in clients_factures_id]
@@ -158,30 +157,29 @@ def etapes_new_view(request):
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(AffaireEtape.__tablename__))
 
 
-@view_config(route_name='etapes_by_id', request_method='DELETE', renderer='json')
+@view_config(route_name="etapes_by_id", request_method="DELETE", renderer="json")
 def etapes_delete_view(request):
     """
     DELETE etapes affaire
     """
     # Check authorization
-    if not Utils.has_permission(request, request.registry.settings['affaire_etape_edition']):
+    if not Utils.has_permission(request, request.registry.settings["affaire_etape_edition"]):
         raise exc.HTTPForbidden()
 
-    affaire_etape_id = request.matchdict['id']
+    affaire_etape_id = request.matchdict["id"]
 
     record = request.dbsession.query(AffaireEtape).filter(
         AffaireEtape.id == affaire_etape_id).first()
 
     if not record:
-        raise CustomError(
-            CustomError.RECORD_WITH_ID_NOT_FOUND.format(AffaireEtape.__tablename__, affaire_etape_id))
+        raise CustomError(CustomError.RECORD_WITH_ID_NOT_FOUND.format(AffaireEtape.__tablename__, affaire_etape_id))
 
     request.dbsession.delete(record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_DELETE.format(AffaireEtape.__tablename__))
 
 
-@view_config(route_name='controle_etape', request_method='GET', renderer='json')
+@view_config(route_name="controle_etape", request_method="GET", renderer="json")
 def controle_etape_view(request):
     """
     Controles - étape
@@ -189,7 +187,7 @@ def controle_etape_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
+    affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
 
     affaire = request.dbsession.query(
         VAffaire
@@ -207,7 +205,7 @@ def controle_etape_view(request):
     return results
 
 
-@view_config(route_name='check_etape_processus', request_method='GET', renderer='json')
+@view_config(route_name="check_etape_processus", request_method="GET", renderer="json")
 def check_etape_processus_view(request):
     """
     Controles s'il est possible d'enregistrer la nouvelle étape en esquivant les contrôles liés à l'étape
@@ -215,13 +213,12 @@ def check_etape_processus_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
-    etape_nouvelle_id = request.params['etape_id'] if 'etape_id' in request.params else None
+    affaire_id = request.params["affaire_id"] if "affaire_id" in request.params else None
+    etape_nouvelle_id = request.params["etape_id"] if "etape_id" in request.params else None
 
-    affaire_etape_priorite_1_id = request.registry.settings['affaire_etape_priorite_1_id']
-    affaire_etape_client_id = request.registry.settings['affaire_etape_client_id']
-    affaire_etape_devis_id = request.registry.settings['affaire_etape_devis_id']
-
+    affaire_etape_priorite_1_id = request.registry.settings["affaire_etape_priorite_1_id"]
+    affaire_etape_client_id = request.registry.settings["affaire_etape_client_id"]
+    affaire_etape_devis_id = request.registry.settings["affaire_etape_devis_id"]
 
     etape_actuelle = request.dbsession.query(
         AffaireEtapeIndex
@@ -238,9 +235,8 @@ def check_etape_processus_view(request):
         AffaireEtapeIndex.id == etape_nouvelle_id
     ).scalar()
 
-
     result = False
-    if (etape_nouvelle_ordre <= etape_actuelle.ordre):
+    if etape_nouvelle_ordre <= etape_actuelle.ordre:
         result = True
 
     # exceptions if actual or next step is client or devis
@@ -250,7 +246,7 @@ def check_etape_processus_view(request):
     return result
 
 
-@view_config(route_name='etape_index_all', request_method='GET', renderer='json')
+@view_config(route_name="etape_index_all", request_method="GET", renderer="json")
 def etape_index_all_view(request):
     """
     Return all etapes
@@ -259,30 +255,33 @@ def etape_index_all_view(request):
     if not check_connected(request):
         raise exc.HTTPForbidden()
 
-    affaire_etape_priorite_1_id = int(request.registry.settings['affaire_etape_priorite_1_id'])
+    affaire_etape_priorite_1_id = int(request.registry.settings["affaire_etape_priorite_1_id"])
 
-    aei = request.dbsession.query(
-        AffaireEtapeIndex
-    ).order_by(
-        AffaireEtapeIndex.priorite,
-        AffaireEtapeIndex.ordre,
-    ).all()
+    aei = (
+        request.dbsession.query(AffaireEtapeIndex)
+        .order_by(
+            AffaireEtapeIndex.priorite,
+            AffaireEtapeIndex.ordre,
+        )
+        .all()
+    )
 
-    etapes = {
-        'prio1': [],
-        'prio2': []
-    }
+    etapes = {"prio1": [], "prio2": []}
 
     for etape in aei:
         if etape.priorite == affaire_etape_priorite_1_id:
-            etapes['prio1'].append({
-                'id': etape.id,
-                'etape': etape.nom,
-            })
+            etapes["prio1"].append(
+                {
+                    "id": etape.id,
+                    "etape": etape.nom,
+                }
+            )
         else:
-            etapes['prio2'].append({
-                'id': etape.id,
-                'etape': etape.nom,
-            })
+            etapes["prio2"].append(
+                {
+                    "id": etape.id,
+                    "etape": etape.nom,
+                }
+            )
 
     return etapes

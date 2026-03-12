@@ -3,7 +3,7 @@
 {% block content %}
   <!-- General informations about affaire -->
   <p>
-    L'affaire <b><a href="{{ infolica_url_base }}/affaires/edit/{{ v_affaire.id }}">{{ v_affaire.id }}{% if v_affaire.no_access %} {{ v_affaire.no_access }}{% endif %}</a></b> {% if not v_affaire.urgent %}n'est plus urgente.{% else %}est urgente.
+    L'affaire <b><a href="{{ affaire_hyperlink }}">{{ v_affaire.id }}{% if v_affaire.no_access %} {{ v_affaire.no_access }}{% endif %}</a></b> {% if not v_affaire.urgent %}n'est plus urgente.{% else %}est urgente.
     <br>
     Échéance: {{ v_affaire.urgent_echeance.strftime("%d.%m.%Y") if v_affaire.urgent_echeance else "non défini" }}
   </p>
