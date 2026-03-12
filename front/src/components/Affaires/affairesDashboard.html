@@ -145,9 +145,10 @@
 
                 <md-dialog-content>
                     <div>
-                        <div class="md-subheader">Abandon de l'affaire</div>
                         <div style="margin-left: 17px;">
                             <p>L'affaire sera clôturée avec la mention "abandon" <span v-if="numerosReserves.length > 0"> et tous les numéros réservés seront abandonnés</span>.</p>
+
+                            <md-field><label>Remarques</label><md-textarea md-autogrow v-model="affaireAbandonRemark"></md-textarea></md-field>
                             <div style="text-align: right;">
                                 <md-button class="md-raised md-primary" @click="callAbandonAffaireAndNumeros">Abandonner</md-button>
                             </div>
