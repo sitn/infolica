@@ -1080,7 +1080,7 @@ def service_externe_affaire_preavis_tous(request):
         # Preavis.operateur_service_id,
         Preavis.date_demande,
         Preavis.date_reponse,
-        Preavis.remarque,
+        PreavisDecision.remarque_contexte,
         Preavis.etape,
     ).filter(
         Preavis.affaire_id == affaire_id
@@ -1088,6 +1088,8 @@ def service_externe_affaire_preavis_tous(request):
         Service, Service.id == Preavis.service_id
     ).join(
         PreavisType, PreavisType.id == Preavis.preavis_type_id
+    ).join(
+        PreavisDecision, PreavisDecision.preavis_id == Preavis.id
     ).order_by(
         Preavis.date_demande.asc(),
         Preavis.date_reponse.asc()
@@ -1106,7 +1108,7 @@ def service_externe_affaire_preavis_tous(request):
             # "operateur_service_id": res[],
             "date_demande": Utils.date_isoformat(res[7]),
             "date_reponse": Utils.date_isoformat(res[8]),
-            "remarque": res[9].replace("\n\nnull", ""),
+            "remarque": res[9],
             "etape": res[10],
         })
 
