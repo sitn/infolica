@@ -324,7 +324,10 @@ class Utils(object):
         return filename
 
     @classmethod
-    def newAffaireEtape(cls, request, affaire_id, etape_id, remarque=None, operateur_id=None, datetime_=datetime.now()):
+    def newAffaireEtape(cls, request, affaire_id, etape_id, remarque=None, operateur_id=None, datetime_=None):
+
+        if datetime_ is None:
+            datetime_ = datetime.now()
 
         if operateur_id is None:
             operateur_id = (cls.getOperateurFromUser(request).id,)

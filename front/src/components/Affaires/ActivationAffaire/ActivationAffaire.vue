@@ -37,11 +37,11 @@ export default {
      */
     async activateAffaire() {
       this.showProgressBar = true;
-      
+
       let formData = new FormData();
       formData.append('affaire_id', this.affaire.id);
       formData.append('etape_id', this.nouvelle_etape_affaire_id);
-      
+
       this.$http.post(
         process.env.VUE_APP_API_URL + process.env.VUE_APP_ACTIVATE_AFFAIRE_ENDPOINT,
         formData,
@@ -93,7 +93,7 @@ export default {
       formData.append("numero_id", num.numero_id);
       formData.append("numero_etat_id", num.numero_etatFutur_id);
       formData.append("date", moment(new Date()).format(process.env.VUE_APP_DATEFORMAT_WS));
-      
+
       return new Promise((resolve, reject) => {
         this.$http.post(
           process.env.VUE_APP_API_URL +
