@@ -127,9 +127,10 @@ class MailTemplates(object):
         # Contrôle que le client habite hors canton et que son numéros SAP est null
         cl_npa = int(cl.npa) if cl.npa is not None else -1
         if cl.no_sap is None and cl_npa not in request.registry.settings["npa_NE"]:
-            operateur_secretariat = request.registry.settings["operateur_secretariat"].split(",")
-            operateurs = Utils.getOperateursActifs(request).filter(Operateur.id.in_(operateur_secretariat)).all()
-            mail_list = [op.mail for op in operateurs]
+            affaire_etape_notification_client_hors_canton_id = request.registry.settings["affaire_etape_notification_client_hors_canton_id"]
+
+            operateurs = Utils.getOperateursActifs(request)
+            operateurs = operateurs.join(EtapeMailer, EtapeMailer.operateur_id == Operateur.id).filter(EtapeMailer.etape_id == affaire_etape_notification_client_hors_canton_id, EtapeMailer.sendmail == True).all()
 
             subject = "Infolica - Client hors canton à vérifier"
             client_adress = ", ".join(
@@ -162,14 +163,18 @@ class MailTemplates(object):
 
     @classmethod
     def sendMailPreavisReponse(cls, request, preavis_id):
+        affaire_etape_notification_message_preavis_id = request.registry.settings["affaire_etape_notification_message_preavis_id"]
+        service_mo = request.registry.settings["service_mo"]
+
         preavis = request.dbsession.query(VAffairesPreavis).filter(VAffairesPreavis.id == preavis_id).first()
         affaire = request.dbsession.query(Affaire).filter(Affaire.id == preavis.affaire_id).first()
 
-        subject = "Infolica - Un nouveau préavis a été saisi"
+        operateurs = Utils.getOperateursActifs(request)
+        operateurs = operateurs.filter(Operateur.service == service_mo).join(EtapeMailer, EtapeMailer.operateur_id == Operateur.id).filter(EtapeMailer.etape_id == affaire_etape_notification_message_preavis_id, EtapeMailer.sendmail == True).all()
+        for op in operateurs:
+            mail_list = [op.mail]
 
-        operateur_coordinateur_projets = request.registry.settings["operateur_coordinateur_projets"].split(",")
-        operateurs_liste = Utils.getOperateursActifs(request).filter(Operateur.id.in_(operateur_coordinateur_projets)).all()
-        mail_list = [op.mail for op in operateurs_liste]
+        subject = "Infolica - Un nouveau préavis a été saisi"
 
         text = render(
             "infolica:templates/emails/preavis_reponse_notification.html",

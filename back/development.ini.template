@@ -142,6 +142,10 @@ affaire_etape_reactivation_id = 28
 affaire_etape_devis_id = 29
 affaire_etape_client_hors_canton_id = 32
 affaire_premiere_etape_defaut_id = 13
+affaire_etape_affaire_urgente_mo_id = 33
+affaire_etape_affaire_urgente_ppe_id = 34
+affaire_etape_notification_message_preavis_id = 35
+affaire_etape_notification_client_hors_canton_id = 36
 
 # Facture type
 facture_type_facture_id = 1
@@ -150,11 +154,6 @@ emoluments_divers_tarifhoraire_id = 101
 
 # Client cadastration
 client_cadastration_id = 2896
-
-# Opérateurs à contacter pour les affaires urgentes
-operateur_affaire_urgente = 15,57,59,60
-operateur_secretariat = 9,39
-operateur_coordinateur_projets = 15,57
 
 # WeasyPrint webservice
 weasyprint_baseurl = /*TO COMPLETE*/
