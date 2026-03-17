@@ -36,7 +36,7 @@
                     <md-field>
                         <label>Opérateur·rice</label>
                         <md-select md-dense required v-model="etapeAffaire.chef_equipe_id">
-                            <md-option v-for="item in chefs_equipe_list" v-bind:key="item.id" v-bind:value="item.id" >{{ item.nom }}</md-option>
+                            <md-option v-for="item in chefs_equipe_list" v-bind:key="item.id" v-bind:value="item.id" >{{ item.prenom }} {{ item.nom }}</md-option>
                         </md-select>
                     </md-field>
                 </div>
