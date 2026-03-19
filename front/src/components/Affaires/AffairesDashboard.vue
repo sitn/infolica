@@ -48,6 +48,7 @@ export default {
   data() {
     return {
       affaire: {},
+      affaireAbandonRemark: "",
       affaireAttribution: {
         checked: false,
         show: false,
@@ -457,8 +458,10 @@ export default {
           Promise.all(promises)
           .then(() => {
             //Log edition facture
-            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_FIN_PROCESSUS_ID), "Abandon de l'affaire")
+            let remark = "Abandon de l'affaire" + (this.affaireAbandonRemark? " / " + this.affaireAbandonRemark: "");
+            logAffaireEtape(this.affaire.id, Number(process.env.VUE_APP_FIN_PROCESSUS_ID), remark)
             .then(() => this.$router.go());
+            this.affaireAbandonRemark = "";
           })
           .catch(err => handleException(err, this));
         }
