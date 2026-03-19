@@ -18,7 +18,7 @@ cp back/prepub.ini.template back/prepub.ini
 cp env.sample env.prepub
 ```
 
-Adapt `prepub.ini` and `env.prepub` according to your environnement. In case you pull your env files from a share, make sure to indicate at least variable `ENV_ORIGIN_PATH=overwriteme/path/to/env_files` in `env.prepub`. Then:
+Adapt `prepub.ini` and `env.prepub` according to your environnement. In case you pull your env files from a share, make sure to have `SITN_ENV_PATH` setted in your computer environment variables. Then:
 
 ```powershell
 python deploy prepub

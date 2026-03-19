@@ -58,7 +58,7 @@ def get_env_files(instance):
     docker_env_filename = f"env.{instance}"
 
     # Build src paths
-    env_source_path = Path(os.environ["ENV_ORIGIN_PATH"])
+    env_source_path = Path(os.environ["SITN_ENV_PATH"])
     back_env_source_path = env_source_path / "back" / back_env_filename
     front_env_source_path = env_source_path / "front" / front_env_filename
     front_env_instance_source_path = env_source_path / "front" / front_env_instance_filename
@@ -99,14 +99,10 @@ def main():
     if instance not in ALLOWED_INSTANCES:
         sys.exit(f"L'instance {instance} n'est pas autorisée.")
 
-    # load env file to get at least ENV_ORIGIN_PATH
-    dotenv_file = f".env"
-    load_env(dotenv_file)
-
     # get env files from server
     get_env_files(instance)
 
-    # re-load env file
+    # Load env file
     dotenv_file = f"env.{instance}"
     load_env(dotenv_file)
     shutil.copy(dotenv_file, ".env")
