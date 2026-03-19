@@ -58,7 +58,7 @@ def get_env_files(instance):
     docker_env_filename = f"env.{instance}"
 
     # Build src paths
-    env_source_path = Path(os.environ["SITN_ENV_PATH"])
+    env_source_path = Path(os.environ["SITN_ENV_PATH"]) / "infolica"
     back_env_source_path = env_source_path / "back" / back_env_filename
     front_env_source_path = env_source_path / "front" / front_env_filename
     front_env_instance_source_path = env_source_path / "front" / front_env_instance_filename
