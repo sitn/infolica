@@ -1,6 +1,6 @@
 # infolica
 
-Infolica est une application destinées à gérer le livre du cadastre du canton de Neuchâtel.
+Infolica est une application destinée à gérer le livre du cadastre du canton de Neuchâtel.
 
 ## Requirements
 
@@ -18,7 +18,7 @@ cp back/prepub.ini.template back/prepub.ini
 cp env.sample env.prepub
 ```
 
-Adapt `prepub.ini` and `env.prepub` according to your environnement. Then:
+Adapt `prepub.ini` and `env.prepub` according to your environnement. In case you pull your env files from a share, make sure to indicate at least variable `ENV_ORIGIN_PATH=overwriteme/path/to/env_files` in `env.prepub`. Then:
 
 ```powershell
 python deploy prepub
@@ -38,7 +38,7 @@ npm run serve
 ```
 
 #### Database
-> :warning: Infolica is based on PG Database and depends on some geographical components. Make sure to add the `postgis` and `pg_trgm` extensions to your database schema.
+> :warning: Infolica is based on PG Database and depends on some geographical components. Make sure to add the `postgis`, `pg_trgm`, `plpgsql` and `unaccent` extensions to your database schema.
 
 
 
@@ -82,10 +82,10 @@ VUE_APP_API_URL = "http://localhost/infolica_api/infolica/api"
 ### Install and configure Apache
 If you already have an Apache with mod_wsgi enabled, switch to Apache configuration step.
 
-You'll need to have an Apache 32bits if your python is 32bits or Apache 64bits if your python is 64bits. Download a pre-compiled wheel of mod_wsgi for python: https://www.lfd.uci.edu/~gohlke/pythonlibs/ in the root folder of your project. Make sure to choose the right version.
+You'll need to have an Apache 32bits if your python is 32bits or Apache 64bits if your python is 64bits. Download a pre-compiled wheel of mod_wsgi for python: [https://www.lfd.uci.edu/~gohlke/pythonlibs/](https://www.lfd.uci.edu/~gohlke/pythonlibs/) in the root folder of your project. Make sure to choose the right version.
 
-1. Install the wheel with pip install. Make sure you have Microsoft Visual C++ installed on your machine. 
-For an Apache 2.4, 64bits with Python 3.7 and Microsoft Visual C++ 15, download file mod_wsgi‑4.7.1+ap24vc15‑cp37‑cp37m‑win_amd64.whl on (https://www.lfd.uci.edu/~gohlke/pythonlibs/)[https://www.lfd.uci.edu/~gohlke/pythonlibs/
+1. Install the wheel with pip install. Make sure you have Microsoft Visual C++ installed on your machine.
+For an Apache 2.4, 64bits with Python 3.7 and Microsoft Visual C++ 15, download file mod_wsgi‑4.7.1+ap24vc15‑cp37‑cp37m‑win_amd64.whl on [https://www.lfd.uci.edu/~gohlke/pythonlibs/](https://www.lfd.uci.edu/~gohlke/pythonlibs/)
 ```
 pip install .\mod_wsgi-4.6.4+ap24vc15-cp37-cp37m-win_amd64.whl
 mod_wsgi-express module-config

@@ -2,59 +2,133 @@
 
 # SITN deploy helper
 
-import os
 import argparse
+import os
+import shutil
 import subprocess
 import sys
-import shutil
+from pathlib import Path
 
-ALLOWED_INSTANCES = ["prepub", "prod", "dev", "local", "test"]
+ALLOWED_INSTANCES = ["prepub", "production", "dev", "local", "test"]
+
 
 def load_env(env_file):
     with open(env_file) as f:
         for line in f:
-            if line.startswith('#') or not line.strip():
+            if line.startswith("#") or not line.strip():
                 continue
-            key, value = line.strip().split('=', 1)
-            os.environ[key] = value or ''
+            key, value = line.strip().split("=", 1)
+            os.environ[key] = value or ""
+
 
 def call_cmd(cmd):
     print(" ".join(cmd))
     subprocess.check_call(cmd)
+
+
+def get_env_files(instance):
+    instance = instance.lower()
+    if instance == "dev":
+        return
+
+    # Ask user confirmation
+    test = input(
+        """
+        Faut-il récupérer les fichier d'environnement du serveur ?
+        \t"1" pour récupérer les fichier du serveur
+        \t"2" pour continuer avec les fichiers locaux
+        \tToute autre entrée pour quitter le déploiement
+
+        Mon choix: """
+    )
+
+    if test == "2":
+        print(">> Poursuite du déploiement avec les fichiers locaux.")
+    elif test != "1":
+        print(">> Déploiement annulé.")
+
+    def _check_existing_path(path):
+        if not Path.exists(path):
+            raise Exception(f"Le chemin spécifié '{path}' n'existe pas")
+
+    # File names
+    back_env_filename = f"{instance}.ini"
+    front_env_filename = f".env"
+    front_env_instance_filename = f".env.{instance}.local"
+    docker_env_filename = f"env.{instance}"
+
+    # Build src paths
+    env_source_path = Path(os.environ["ENV_ORIGIN_PATH"])
+    back_env_source_path = env_source_path / "back" / back_env_filename
+    front_env_source_path = env_source_path / "front" / front_env_filename
+    front_env_instance_source_path = env_source_path / "front" / front_env_instance_filename
+    docker_env_source_path = env_source_path / docker_env_filename
+
+    # Check src paths
+    _check_existing_path(back_env_source_path)
+    _check_existing_path(front_env_source_path)
+    _check_existing_path(front_env_instance_source_path)
+    _check_existing_path(docker_env_source_path)
+
+    # Build dst paths
+    env_destination_path = Path.cwd()
+    back_env_destination_path = env_destination_path / "back" / back_env_filename
+    front_env_destination_path = env_destination_path / "front" / front_env_filename
+    front_env_instance_destination_path = env_destination_path / "front" / front_env_instance_filename
+    docker_env_destination_path = env_destination_path / docker_env_filename
+
+    # Check dst paths
+    _check_existing_path(back_env_destination_path.parent)
+    _check_existing_path(front_env_destination_path.parent)
+
+    # Copy files
+    shutil.copy(back_env_source_path, back_env_destination_path)
+    shutil.copy(front_env_source_path, front_env_destination_path)
+    shutil.copy(front_env_instance_source_path, front_env_instance_destination_path)
+    shutil.copy(docker_env_source_path, docker_env_destination_path)
+
 
 def main():
     parser = argparse.ArgumentParser(description="Déploiement infolica")
     parser.add_argument("env", nargs="*", help="The environment config")
     args = parser.parse_args()
     if len(args.env) != 1:
-        sys.exit("Vous devez utiliser ce script avec au moins un argument: " + '|'.join(ALLOWED_INSTANCES))
+        sys.exit("Vous devez utiliser ce script avec au moins un argument: " + "|".join(ALLOWED_INSTANCES))
     instance = args.env[0]
 
     if instance not in ALLOWED_INSTANCES:
         sys.exit(f"L'instance {instance} n'est pas autorisée.")
 
+    # load env file to get at least ENV_ORIGIN_PATH
+    dotenv_file = f".env"
+    load_env(dotenv_file)
+
+    # get env files from server
+    get_env_files(instance)
+
+    # re-load env file
     dotenv_file = f"env.{instance}"
     load_env(dotenv_file)
-    shutil.copy(dotenv_file, '.env')
-
+    shutil.copy(dotenv_file, ".env")
 
     # We store DOCKER_HOST to build locally
-    target_host = os.environ.get('DOCKER_HOST')
-    os.environ['DOCKER_HOST'] = ''
+    target_host = os.environ.get("DOCKER_HOST")
+    os.environ["DOCKER_HOST"] = ""
 
     call_cmd(["docker", "compose", "build", "back"])
     call_cmd(["docker", "compose", "build", "front"])
 
-    print('DOCKER_HOST is: {}'.format(os.environ.get('DOCKER_HOST', 'not setted')))
+    print("DOCKER_HOST is: {}".format(os.environ.get("DOCKER_HOST", "not setted")))
 
-    if instance != 'local':
+    if instance != "local":
         call_cmd(["docker", "compose", "push"])
-        os.environ['DOCKER_HOST'] = target_host
+        os.environ["DOCKER_HOST"] = target_host
         call_cmd(["docker", "compose", "pull"])
 
     call_cmd(["docker", "compose", "down"])
     call_cmd(["docker", "compose", "up", "-d"])
-    print('\a')
+    print("\a")
+
 
 if __name__ == "__main__":
     main()
