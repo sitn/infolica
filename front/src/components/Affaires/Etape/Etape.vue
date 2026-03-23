@@ -9,7 +9,7 @@ import DateRangePicker from "@/components/Utils/DateRangePicker/DateRangePicker.
 import NewStepSetter from "@/components/Utils/NewStepSetter/NewStepSetter.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { logAffaireEtape, checkPermission } from '@/services/helper';
+import { logAffaireEtape, checkPermission, getOperateurs } from '@/services/helper';
 
 
 const moment = require('moment');
@@ -19,11 +19,10 @@ export default {
   components: {
     ClotureAffaire,
     DateRangePicker,
-    NewStepSetter
+    NewStepSetter,
   },
   props: {
     affaire: Object,
-    chefs_equipe_list: Array,
     etapes_affaire_conf: Object,
     permission: Object,
     typesAffaires_conf: Object,
@@ -35,6 +34,7 @@ export default {
       logique_processus: false,
     },
     art35Radio: "",
+    chefs_equipe_list: [],
     cloreAffaire: false,
     controleEtape : [],
     dateperiod_start: null,
@@ -380,12 +380,23 @@ export default {
     /**get next step authorization (autorize next step if it is ) */
     getNextStepAuthorization(value) {
       this.allowSaveNewStep.logique_processus = value;
-    }
+    },
+
+    // get Operateurs
+    async getOperateursActifs() {
+      getOperateurs().then((response) => {
+        this.chefs_equipe_list = response.data.filter(x => {return ((x.sortie===null || x.sortie > new Date()) && x.chef_equipe===true)});
+      }).catch(err => {
+        handleException(err, this);
+      });
+    },
 
   },
 
   mounted: function() {
     this.$root.$on( "setEtapeNouveauxNumeros", (data) => this.setNumerosReserves(data) );
+
+    this.getOperateursActifs();
 
     // operateur is admin?
     this.isAdmin = checkPermission(process.env.VUE_APP_FONCTION_ADMIN);

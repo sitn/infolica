@@ -21,7 +21,7 @@ import ActivationAffaire from "@/components/Affaires/ActivationAffaire/Activatio
 import EmptyPage from "@/components/Utils/EmptyPage/EmptyPage.vue";
 
 import { handleException } from "@/services/exceptionsHandler";
-import { getOperateurs, checkPermission, getDocument, logAffaireEtape, getCurrentUserRoleId } from '@/services/helper'
+import { checkPermission, getDocument, logAffaireEtape, getCurrentUserRoleId } from '@/services/helper'
 
 import moment from "moment";
 
@@ -56,7 +56,6 @@ export default {
       },
       affaireLoaded: false,
       affaireDashboardLayout: null,
-      chefs_equipe_list: [],
       emptyPage: false,
       mapLoaded: false,
       numerosReserves: [],
@@ -363,23 +362,6 @@ export default {
           _this.initParams();
       }).catch(err => handleException(err, this));
     },
-
-
-    /**
-     * Get chefs d'équipe
-     */
-    async getChefsEquipe() {
-      getOperateurs()
-      .then(response => {
-        if (response && response.data) {
-          this.chefs_equipe_list = response.data.filter(x => x.chef_equipe).map(x => ({
-            id: x.id,
-            nom: [x.prenom, x.nom].filter(Boolean).join(" ")
-          }));
-        }
-      }).catch(err => handleException(err, this))
-    },
-
 
     /**
      * Show map
@@ -722,7 +704,6 @@ export default {
   mounted: function() {
     this.searchAffaireTypeLayout();
     this.setAffaire();
-    this.getChefsEquipe();
 
     this.$root.$on('mapHandlerReady', () => this.showMap() );
     this.$root.$on('setAffaire', () => this.setAffaire() );

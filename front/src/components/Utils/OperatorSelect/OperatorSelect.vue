@@ -22,7 +22,16 @@ export default {
     },
     role: {
       type: Object,
-    }
+      default: () => {
+        return {
+          secretaire: Number(process.env.VUE_APP_SECRETAIRE_ROLE_ID),
+          mo: Number(process.env.VUE_APP_MO_ROLE_ID),
+          ppe: Number(process.env.VUE_APP_PPE_ROLE_ID),
+          mo_ppe: Number(process.env.VUE_APP_MO_PPE_ROLE_ID),
+          responsable: Number(process.env.VUE_APP_RESPONSABLE_ROLE_ID)
+        }
+      }
+    },
   },
 
   emits: ['update:operator_id'],
