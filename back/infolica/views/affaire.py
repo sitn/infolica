@@ -550,7 +550,7 @@ def affaires_update_view(request):
     record = Utils.set_model_record(record, params)
 
     # If urgence defined after affaire creation, send e-mail
-    if affaire_urgence != params["urgent"]:
+    if "urgent" in params and affaire_urgence != params["urgent"]:
         MailTemplates.sendMailAffaireUrgente(request, record)
 
     return Utils.get_data_save_response(Constant.SUCCESS_SAVE.format(Affaire.__tablename__))
