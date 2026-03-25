@@ -16,6 +16,7 @@ from infolica.scripts.mail_templates import MailTemplates
 from infolica.scripts.authentication import check_connected
 
 from datetime import datetime
+from pathlib import Path
 import time
 import os
 import shutil
@@ -397,17 +398,19 @@ def service_externe_documents_view(request):
     affaire_id = request.params['affaire_id'] if 'affaire_id' in request.params else None
     operateur = strongAuthentication(request, affaire_id)
 
+    # get registry variables
+    affaires_directory = Path(request.registry.settings['affaires_directory'])
+    courriers_courriels_rel_path = request.registry.settings['courriers_courriels_rel_path']
+    documents_livres_rel_path = request.registry.settings['documents_livres_rel_path']
+
     affaire_chemin = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first().chemin
 
     # get rel path of service
     service_relpath = request.dbsession.query(Service).filter(Service.id == operateur.service_id).first().relpath
-    courriers_courriels_rel_path = request.registry.settings['courriers_courriels_rel_path']
     documents = []
-    for rel_path in [service_relpath, courriers_courriels_rel_path]:
+    for rel_path in [service_relpath, courriers_courriels_rel_path, documents_livres_rel_path]:
 
-        affaire_rel_path = os.path.join(affaire_chemin, rel_path)
-
-        affaire_path = os.path.join(request.registry.settings['affaires_directory'], affaire_rel_path)
+        affaire_path = affaires_directory / str(affaire_chemin) / rel_path
 
         if not os.path.exists(affaire_path):
             break
@@ -417,9 +420,11 @@ def service_externe_documents_view(request):
             for name in files:
                 if name.startswith(".") or name.startswith("~"):
                     continue
+                subpath = str(Path(root).relative_to(affaires_directory / str(affaire_chemin)))
+                subpath = "" if subpath == "." else subpath
                 file_i = {}
                 file_i['filename'] = name
-                file_i['rel_path'] = rel_path
+                file_i['rel_path'] = subpath
                 file_i['size'] = str(ceil(os.path.getsize(os.path.join(root, name))/1000)) + ' ko' # ko
                 file_i['creation_sort'] = os.path.getctime(os.path.join(root, name))
                 file_i['modification_sort'] = os.path.getmtime(os.path.join(root, name))
