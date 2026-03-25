@@ -173,6 +173,7 @@ temporary_directory = /*TO COMPLETE*/
 balance_file_rel_path = /*TO COMPLETE*/
 balance_filename_prefix = /*TO COMPLETE*/
 courriers_courriels_rel_path = /*TO COMPLETE*/
+documents_livres_rel_path = /*TO COMPLETE*/
 
 ######################################################################################
 # Security
