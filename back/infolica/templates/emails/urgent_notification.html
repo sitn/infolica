@@ -1,0 +1,24 @@
+{% extends "infolica:templates/emails/layout.html" %}
+
+{% block content %}
+  <!-- General informations about affaire -->
+  <p>
+    L'affaire <b><a href="{{ affaire_hyperlink }}">{{ v_affaire.id }}{% if v_affaire.no_access %} {{ v_affaire.no_access }}{% endif %}</a></b> {% if not v_affaire.urgent %}n'est plus urgente.{% else %}est urgente.
+    <br>
+    Échéance: {{ v_affaire.urgent_echeance.strftime("%d.%m.%Y") if v_affaire.urgent_echeance else "non défini" }}
+  </p>
+  <p>
+    Merci de traiter cette affaire en priorité.
+  </p>
+  {% endif %}
+  <p>
+    Données de l'affaire:
+    <ul>
+      <li>Type d'affaire: {{ v_affaire.type_affaire }}</li>
+      <li>Description: {{ v_affaire.nom }}</li>
+      <li>Chef de projet: {{ v_affaire.technicien_initiales }}</li>
+      <li>Cadastre: {{ v_affaire.cadastre }}</li>
+    </ul>
+  </p>
+
+{% endblock %}

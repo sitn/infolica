@@ -1,0 +1,24 @@
+{% extends "infolica:templates/emails/layout.html" %}
+
+{% block content %}
+  <!-- General informations about affaire -->
+  <p>
+    Un nouveau message a été envoyé par le {{ service_auteur }} dans la conversation du préavis de l'affaire <a href="{{ affaire_hyperlink }}">{{ affaire_id }}</a>:
+    <br>
+    <div style="margin-left: 20px; border: 1px; border-color: black; border-style: dashed; padding: 10px; width: fit-content;">
+      <em>
+        {{ last_message }}
+      </em>
+    </div>
+  </p>
+
+  <p>
+    Personnes en charge du préavis:
+    <br>
+    <ul>
+      <li>{{ service_externe }}: {{ operateur_externe }}</li>
+      <li>SGRF: {{ operateur_interne }}</li>
+    </ul>
+  </p>
+
+{% endblock %}

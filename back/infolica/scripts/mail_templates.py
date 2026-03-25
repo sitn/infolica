@@ -1,44 +1,35 @@
 # -*- coding: utf-8 -*--
 from datetime import datetime
 from infolica.models.models import Affaire, Cadastre, Client
-from infolica.models.models import AffaireEtape, AffaireEtapeIndex, EtapeMailer
+from infolica.models.models import AffaireEtape, AffaireEtapeIndex, EtapeMailer, Service
 from infolica.models.models import Operateur
 from infolica.models.models import VAffaire, VAffairesPreavis, VEtapesAffaires
 from infolica.scripts.mailer import send_mail
 from infolica.scripts.utils import Utils
 from sqlalchemy import func, and_
+from pyramid.renderers import render
 
 import os
 
 
 class MailTemplates(object):
-
     @classmethod
     def sendMailAffaireEtape(cls, request, model, chef_equipe_id, operateur_id):
         # send mail
         affaire_etape_index = request.dbsession.query(AffaireEtapeIndex).filter(AffaireEtapeIndex.id == model.etape_id).first()
         etape_mailer = request.dbsession.query(EtapeMailer).filter(model.etape_id == EtapeMailer.etape_id).all()
         v_affaire = request.dbsession.query(VAffaire).filter(VAffaire.id == model.affaire_id).first()
-        affaire = request.dbsession.query(Affaire).filter(Affaire.id == model.affaire_id).first()
-        operateur = request.dbsession.query(Operateur).all()
+        operateur = Utils.getOperateursActifs(request).all()
 
         # get list of done steps
-        lastSteps = request.dbsession.query(VEtapesAffaires).filter(
-            and_(
-                VEtapesAffaires.affaire_id == model.affaire_id,
-                VEtapesAffaires.etape_priorite == int(request.registry.settings['affaire_etape_priorite_1_id'])
-            )
-        ).order_by(VEtapesAffaires.next_datetime.desc()).all()
-
-        # set affaire_nom
-        affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
+        lastSteps = request.dbsession.query(VEtapesAffaires).filter(and_(VEtapesAffaires.affaire_id == model.affaire_id, VEtapesAffaires.etape_priorite == int(request.registry.settings["affaire_etape_priorite_1_id"]))).order_by(VEtapesAffaires.next_datetime.desc()).all()
 
         # only when chef_equipe is specified and chef equipe is not the initiator of new step
         mail_list = []
         if chef_equipe_id and (not chef_equipe_id == operateur_id):
-            chef_equipe_mail = request.dbsession.query(Operateur).filter(Operateur.id == chef_equipe_id).first().mail
+            chef_equipe_mail = Utils.getOperateursActifs(request).filter(Operateur.id == chef_equipe_id).first().mail
             if chef_equipe_mail is not None:
-                mail_list.append( chef_equipe_mail )
+                mail_list.append(chef_equipe_mail)
 
         # construct mail_list
         for em_i in etape_mailer:
@@ -48,146 +39,162 @@ class MailTemplates(object):
                     mail_list.append(mail)
 
         # Send mail only if step prio is 1 and if mail_list not empty
-        if affaire_etape_index.priorite == int(request.registry.settings['affaire_etape_priorite_1_id']) and len(mail_list)>0:
-            lastSteps_html = "".join(["<tr><td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
-                                <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{} {}</td>\
-                                <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
-                                <td style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>{}</td>\
-                                </tr>".format(
-                                    i.etape,
-                                    i.next_operateur_prenom if i.next_operateur_prenom else "",
-                                    i.next_operateur_nom if i.next_operateur_nom else "",
-                                    i.next_datetime.strftime("%d.%m.%Y - %H:%M") if i.next_datetime else "",
-                                    i.next_remarque if i.next_remarque else ""
-                                    ) for i in lastSteps])
+        if affaire_etape_index.priorite == int(request.registry.settings["affaire_etape_priorite_1_id"]) and len(mail_list) > 0:
+            subject = "Infolica - Nouvelle étape - Affaire " + str(v_affaire.id) + (" - URGENT" if v_affaire.urgent else "")
 
-            text = "L'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(v_affaire.id)) + "'>" + str(v_affaire.id) + affaire_nom + "</a></b>" + (" (avec mention urgente)" if v_affaire.urgent else "") + " est en attente pour l'étape <b>"+ affaire_etape_index.nom +"</b>."
-            text += "<br><br>Cadastre: " + str(v_affaire.cadastre)
-            text += "<br>Description: " + str(v_affaire.nom)
-            text += ("<br><br><br><h4>Historique de l'affaire</h4>\
-                <table style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>\
-                    <tr>\
-                        <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Étape</th>\
-                        <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Réalisée par</th>\
-                        <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Réalisée le</th>\
-                        <th style='border: 1px solid black; border-collapse: collapse; padding: 5px 25px 5px 10px;'>Remarque</th>\
-                    </tr>" + lastSteps_html + "</table>") if lastSteps_html != "" else ""
-            subject = "Infolica - affaire " + str(v_affaire.id) + (" - URGENT" if v_affaire.urgent else "")
+            text = render(
+                "infolica:templates/emails/etape_notification.html",
+                {
+                    "title": "Infolica - Nouvelle étape",
+                    "admin_mail": request.registry.settings["admin_mail"],
+                    "step_list": lastSteps,
+                    "affaire_hyperlink": Utils.getURLAffaire(request, v_affaire.id),
+                    "v_affaire": v_affaire,
+                    "affaire_etape_index": affaire_etape_index,
+                },
+            )
+
             send_mail(request, mail_list, "", subject, html=text)
 
         return (lastSteps, affaire_etape_index)
 
-
     @classmethod
-    def sendMailAffaireUrgente(cls, request, model):
+    def sendMailAffaireUrgente(cls, request, affaire):
+        affaire_etape_affaire_urgente_mo_id = request.registry.settings["affaire_etape_affaire_urgente_mo_id"]
+        affaire_etape_affaire_urgente_ppe_id = request.registry.settings["affaire_etape_affaire_urgente_ppe_id"]
+        affaire_type_ppe_id = request.registry.settings["affaire_type_ppe_id"]
+        affaire_type_modification_ppe_id = request.registry.settings["affaire_type_modification_ppe_id"]
+
         mail_list = []
-        operateur_affaire_urgente = request.registry.settings['operateur_affaire_urgente'].split(',')
-        for op_id in operateur_affaire_urgente:
-            op_mail = request.dbsession.query(Operateur).filter(Operateur.id == op_id).first().mail
+
+        operateur_etapeMailer = Utils.getOperateursActifs(request).join(EtapeMailer, EtapeMailer.operateur_id == Operateur.id).filter(EtapeMailer.sendmail == True)
+
+        # Check if user wants to be notified in case of PPE or other MO affaires (based on etape-mailer table)
+        if affaire.type_id in (affaire_type_ppe_id, affaire_type_modification_ppe_id):
+            operateur_etapeMailer = operateur_etapeMailer.filter(EtapeMailer.etape_id == affaire_etape_affaire_urgente_ppe_id)
+        else:
+            operateur_etapeMailer = operateur_etapeMailer.filter(EtapeMailer.etape_id == affaire_etape_affaire_urgente_mo_id)
+
+        for op in operateur_etapeMailer.all():
+            op_mail = op.mail
             if op_mail is not None:
                 mail_list.append(op_mail)
+
+        v_affaire = request.dbsession.query(VAffaire).filter(VAffaire.id == affaire.id).first()
+
         # Add technicien + creator of affaire
-        technicien = request.dbsession.query(Operateur).filter(Operateur.id == model.technicien_id).first()
-        if technicien.mail is not None:
+        technicien = operateur_etapeMailer.filter(Operateur.id == affaire.technicien_id).first()
+        if technicien and technicien.mail is not None:
             mail_list.append(technicien.mail)
 
         if len(mail_list) == 0:
             return
 
         subject = "Infolica - Affaire urgente"
-        cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == model.cadastre_id).first().nom
-        affaire_nom = " (" + model.no_access + ")" if model.no_access is not None else ""
-        text = "La mention 'URGENTE' a été attribuée à l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(model.id)) + "'>" + str(model.id) + affaire_nom + "</a></b>.<br>"
-        echeance = "non défini"
-        if not model.urgent_echeance is None:
-            echeance = datetime.strptime(model.urgent_echeance, '%Y-%m-%d').strftime("%d.%m.%Y")
-        text += "Échéance: " + echeance + "<br><br>"
-        text += "Merci de traiter cette affaire en priorité."
-        text += "<br><br><br>Données de l'affaire:<br> \
-                <ul><li>Chef de projet: " + str(technicien.initiales) + "</li>\
-                <li>Cadastre: " + str(cadastre) + "</li>\
-                <li>Description: " + str(model.nom) + "</li></ul>"
+
+        text = render(
+            "infolica:templates/emails/urgent_notification.html",
+            {
+                "title": subject,
+                "admin_mail": request.registry.settings["admin_mail"],
+                "v_affaire": v_affaire,
+                "affaire_hyperlink": Utils.getURLAffaire(request, affaire.id),
+            },
+        )
+
         send_mail(request, mail_list, "", subject, html=text)
         return
 
-
     @classmethod
     def sendMailClientHorsCanton(cls, request, client_id, affaire_id):
-        affaire_etape_client_hors_canton_id = int(request.registry.settings['affaire_etape_client_hors_canton_id'])
+        affaire_etape_client_hors_canton_id = int(request.registry.settings["affaire_etape_client_hors_canton_id"])
         affaire = request.dbsession.query(Affaire).filter(Affaire.id == affaire_id).first()
-        affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
         cl = request.dbsession.query(Client).filter(Client.id == client_id).first()
 
         # contrôle qu'aucune étape de demande de création du client hors canton n'ait été envoyée
-        nb_demandes = request.dbsession.query(
-            func.count(AffaireEtape.id)
-        ).filter(
-            # AffaireEtape.affaire_id == affaire_id,
-            AffaireEtape.etape_id == affaire_etape_client_hors_canton_id,
-            AffaireEtape.remarque == 'client_id=' + str(cl.id)
-        ).scalar()
+        nb_demandes = (
+            request.dbsession.query(func.count(AffaireEtape.id))
+            .filter(
+                # AffaireEtape.affaire_id == affaire_id,
+                AffaireEtape.etape_id == affaire_etape_client_hors_canton_id,
+                AffaireEtape.remarque == "client_id=" + str(cl.id),
+            )
+            .scalar()
+        )
         if nb_demandes > 0:
             return
 
-        #Contrôle que le client habite hors canton et que son numéros SAP est null
+        # Contrôle que le client habite hors canton et que son numéros SAP est null
         cl_npa = int(cl.npa) if cl.npa is not None else -1
-        if cl.no_sap is None and cl_npa not in request.registry.settings['npa_NE']:
-            operateur_secretariat = request.registry.settings["operateur_secretariat"].split(",")
-            mail_list = request.dbsession.query(Operateur.mail).filter(Operateur.id.in_(operateur_secretariat)).all()
-            mail_list = [mail[0] for mail in mail_list]
+        if cl.no_sap is None and cl_npa not in request.registry.settings["npa_NE"]:
+            affaire_etape_notification_client_hors_canton_id = request.registry.settings["affaire_etape_notification_client_hors_canton_id"]
 
-            html = "<h3>Vérification de client</h3>"
-            html += "<p>Un client hors canton et sans numéro SAP a été référencé dans la facturation de l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(affaire_id)) + "'>" + str(affaire_id) + affaire_nom + "</a></b>.</p>"
-            html += "<ul><li>" + ", ".join([
-                cl.entreprise if cl.entreprise is not None else " ".join([
-                    cl.titre if cl.titre is not None else "",
-                    cl.prenom if cl.prenom is not None else "",
-                    cl.nom if cl.nom is not None else ""
-                ]),
-                cl.adresse if cl.adresse is not None else "",
-                " ".join([
-                        cl.npa if cl.npa is not None else "",
-                        cl.localite if cl.localite is not None else ""
-                    ])
-                ]) + " &#8594; <a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'clients/edit', str(cl.id)) + "'>Lien sur la fiche du client</a>"+ "</li></ul>"
-            html += "<p>Merci d'entreprendre les démarches nécessaires pour corriger le client ou pour demander sa création dans SAP.</p>"
-            send_mail(request, mail_list, "", "Infolica - Client hors canton à vérifier", html=html)
+            operateurs = Utils.getOperateursActifs(request)
+            operateurs = operateurs.join(EtapeMailer, EtapeMailer.operateur_id == Operateur.id).filter(EtapeMailer.etape_id == affaire_etape_notification_client_hors_canton_id, EtapeMailer.sendmail == True).all()
 
-            affaire_etape = AffaireEtape(
-                affaire_id = affaire_id,
-                operateur_id = Utils.getOperateurFromUser(request).id,
-                etape_id = affaire_etape_client_hors_canton_id,
-                datetime = datetime.now(),
-                remarque = 'client_id=' + str(cl.id)
+            subject = "Infolica - Client hors canton à vérifier"
+            client_adress = ", ".join(
+                [
+                    cl.entreprise if cl.entreprise is not None else " ".join([cl.titre if cl.titre is not None else "", cl.prenom if cl.prenom is not None else "", cl.nom if cl.nom is not None else ""]),
+                    cl.adresse if cl.adresse is not None else "",
+                    " ".join([cl.npa if cl.npa is not None else "", cl.localite if cl.localite is not None else ""]),
+                ]
             )
+
+            text = render(
+                "infolica:templates/emails/client_hors_canton_notification.html",
+                {
+                    "title": subject,
+                    "admin_mail": request.registry.settings["admin_mail"],
+                    "affaire": affaire,
+                    "affaire_hyperlink": Utils.getURLAffaire(request, affaire.id),
+                    "client_adress": client_adress,
+                    "client_hyperlink": Utils.getURLClient(request, cl.id),
+                },
+            )
+
+            # update affaire_etape
+            affaire_etape = AffaireEtape(affaire_id=affaire_id, operateur_id=Utils.getOperateurFromUser(request).id, etape_id=affaire_etape_client_hors_canton_id, datetime=datetime.now(), remarque="client_id=" + str(cl.id))
             request.dbsession.add(affaire_etape)
 
-        return
+            send_mail(request, mail_list, "", subject, html=text)
 
+        return
 
     @classmethod
     def sendMailPreavisReponse(cls, request, preavis_id):
+        affaire_etape_notification_message_preavis_id = request.registry.settings["affaire_etape_notification_message_preavis_id"]
+        service_mo = request.registry.settings["service_mo"]
+
         preavis = request.dbsession.query(VAffairesPreavis).filter(VAffairesPreavis.id == preavis_id).first()
         affaire = request.dbsession.query(Affaire).filter(Affaire.id == preavis.affaire_id).first()
 
-        affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
+        operateurs = Utils.getOperateursActifs(request)
+        operateurs = operateurs.filter(Operateur.service == service_mo).join(EtapeMailer, EtapeMailer.operateur_id == Operateur.id).filter(EtapeMailer.etape_id == affaire_etape_notification_message_preavis_id, EtapeMailer.sendmail == True).all()
+        for op in operateurs:
+            mail_list = [op.mail]
 
-        operateur_coordinateur_projets = request.registry.settings["operateur_coordinateur_projets"].split(",")
-        mail_list = request.dbsession.query(Operateur.mail).filter(Operateur.id.in_(operateur_coordinateur_projets)).all()
-        mail_list = [mail[0] for mail in mail_list]
+        subject = "Infolica - Un nouveau préavis a été saisi"
 
-        html = "<h3>Un nouveau préavis a été saisi</h3>"
-        html += "<p>Le préavis du " + preavis.service + " a été saisi pour l'affaire <b><a href='" + os.path.join(request.registry.settings['infolica_url_base'], 'affaires/edit', str(preavis.affaire_id)) + "'>" + str(preavis.affaire_id) + affaire_nom + "</a></b>.<br/>"
-        html += "Il peut être consulté dans l'onglet Préavis de l'affaire, en cliquant sur le préavis en question dans le tableau.</p>"
+        text = render(
+            "infolica:templates/emails/preavis_reponse_notification.html",
+            {
+                "title": subject,
+                "admin_mail": request.registry.settings["admin_mail"],
+                "preavis": preavis,
+                "affaire": affaire,
+                "affaire_hyperlink": Utils.getURLAffaire(request, affaire.id),
+            },
+        )
 
-        send_mail(request, mail_list, "", "Infolica - Préavis saisi", html=html)
+        send_mail(request, mail_list, "", subject, html=text)
+
         return
-
 
     @classmethod
     def sendMailPreavisDemande(cls, request, preavis_id, service_id, message=None):
 
-        operateurs = request.dbsession.query(Operateur).filter(Operateur.service_id == service_id).all()
+        operateurs = Utils.getOperateursActifs(request).filter(Operateur.service_id == service_id).all()
 
         mail_list = []
         etape_mailer = request.dbsession.query(EtapeMailer)
@@ -201,31 +208,70 @@ class MailTemplates(object):
             affaire = request.dbsession.query(Affaire).filter(Affaire.id == preavis.affaire_id).first()
             cadastre = request.dbsession.query(Cadastre).filter(Cadastre.id == affaire.cadastre_id).first().nom
 
-            affaire_nom = " (" + affaire.no_access + ")" if affaire.no_access is not None else ""
-            link = str(os.path.join(request.registry.settings['infolica_url_base'], 'preavis/edit', str(preavis_id))).replace('\\', '/')
+            subject = "Infolica - Demande de préavis"
+            if affaire.urgent:
+                subject += " - affaire urgente"
 
-            subject_suffix = ''
+            text = render(
+                "infolica:templates/emails/preavis_demande_notification.html",
+                {
+                    "title": subject,
+                    "admin_mail": request.registry.settings["admin_mail"],
+                    "affaire": affaire,
+                    "cadastre": cadastre,
+                    "link": Utils.getURLPreavis(request, preavis_id),
+                    "message": message,
+                },
+            )
 
-            html = "<p>Bonjour,</p>"
-            html += "<p>"
-            html += "Une nouvelle demande de préavis est en attente dans la centrale à préavis."
-            if affaire.urgent is True:
-                subject_suffix = ' - affaire urgente'
-                html += "<br>"
-                html += "L'affaire porte la mention <b>urgente</b>."
-                if affaire.urgent_echeance is not None:
-                    html += " Le délai de traitement au SGRF a été fixé au " + datetime.strftime(affaire.urgent_echeance, '%d.%m.%Y')
-                html += "<br>"
-            html += "<ul>"
-            html += "<li>Référence de l'affaire au SGRF: " + str(affaire.id) + affaire_nom + "</li>"
-            html += "<li>Cadastre: " + cadastre + "</li>"
-            html += "<li>Description: " + affaire.nom + "</li>"
-            html += "<li>Lien: <a href='" + link + "'>" + link + "</a></li>"
-            if message is not None:
-                html += "<li>Remarque: " + message + "</li>"
-            html += "</ul>"
-            html += "</p>"
-
-            send_mail(request, mail_list, "", "Infolica - Demande de préavis" + subject_suffix, html=html, signature="Le service de la géomatique et du registre foncier")
+            send_mail(request, mail_list, "", subject, html=text)
             return
 
+    @classmethod
+    def sendMailPreavisMessage(cls, request, preavis, operateur, message=None):
+        affaire_etape_notification_message_preavis_id = request.registry.settings["affaire_etape_notification_message_preavis_id"]
+        service_mo = request.registry.settings["service_mo"]
+        preavis = request.dbsession.query(VAffairesPreavis).filter(VAffairesPreavis.id == preavis.id).first()
+        operateurs = Utils.getOperateursActifs(request)
+        mail_list = []
+
+        # if operateur is internal service, send to external service
+        if operateur.service_id is None or operateur.service == service_mo:
+            operateurs = operateurs.filter(Operateur.service_id == preavis.service_id).join(EtapeMailer, EtapeMailer.operateur_id == Operateur.id).filter(EtapeMailer.etape_id == affaire_etape_notification_message_preavis_id, EtapeMailer.sendmail == True).all()
+            for op in operateurs:
+                mail_list = [op.mail]
+            link = Utils.getURLPreavis(request, preavis.id)
+            service_auteur = service_mo.upper()
+        # if operateur is external service, send to internal service
+        else:
+            operateurs = operateurs.filter(Operateur.service == service_mo).join(EtapeMailer, EtapeMailer.operateur_id == Operateur.id).filter(EtapeMailer.etape_id == affaire_etape_notification_message_preavis_id, EtapeMailer.sendmail == True).all()
+            for op in operateurs:
+                mail_list = [op.mail]
+            link = Utils.getURLAffaire(request, preavis.affaire_id)
+            service_auteur = preavis.service
+
+        if len(mail_list) > 0:
+            affaire = request.dbsession.query(Affaire).filter(Affaire.id == preavis.affaire_id).first()
+
+            subject = "Infolica préavis - Nouveau message"
+            if affaire.urgent:
+                subject += " - affaire urgente"
+
+            text = render(
+                "infolica:templates/emails/preavis_nouveau_message_notification.html",
+                {
+                    "title": subject,
+                    "admin_mail": request.registry.settings["admin_mail"],
+                    "affaire_id": preavis.affaire_id,
+                    "affaire_hyperlink": link,
+                    "message": message,
+                    "service_auteur": service_auteur,
+                    "operateur_externe": f"{preavis.operateur_service_prenom} {preavis.operateur_service_nom}" if preavis.operateur_service_prenom and preavis.operateur_service_nom else "non défini",
+                    "operateur_interne": f"{preavis.operateur_sgrf_prenom} {preavis.operateur_sgrf_nom}" if preavis.operateur_sgrf_prenom and preavis.operateur_sgrf_nom else "non défini",
+                    "service_externe": preavis.service,
+                    "last_message": message,
+                },
+            )
+            send_mail(request, mail_list, "", subject, html=text)
+
+        return

@@ -1,0 +1,15 @@
+{% extends "infolica:templates/emails/layout.html" %}
+
+{% block content %}
+  <!-- General informations about affaire -->
+  <p>
+    Un client hors canton et sans numéro SAP a été référencé dans la facturation de l'affaire <b><a href='{{ affaire_hyperlink }}'>{{ affaire.id }}{% if affaire.no_access %}({{ affaire.no_access }}){% endif %}</a></b>.
+  </p>
+  <ul>
+    <li>
+      {{ client_adress }} &#8594; <a href='{{ client_hyperlink }}'>Lien sur la fiche du client</a>
+    </li>
+  </ul>
+  <p>Merci d'entreprendre les démarches nécessaires pour corriger le client ou pour demander sa création dans SAP.</p>
+
+{% endblock %}
