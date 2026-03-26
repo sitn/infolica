@@ -124,7 +124,7 @@ export default {
       }
 
       // dates
-      formData.append("urgent", this.affaireUrgente.urgent);
+      formData.append("urgent", this.affaireUrgente.urgent===true? true: false);
       formData.append("urgent_echeance", this.affaireUrgente.urgent_echeance !== null? moment(this.affaireUrgente.urgent_echeance, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
       formData.append("date_ouverture", this.affaire.date_ouverture? moment(this.affaire.date_ouverture, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
       formData.append("date_envoi", this.affaire.date_envoi? moment(this.affaire.date_envoi, process.env.VUE_APP_DATEFORMAT_CLIENT).format(process.env.VUE_APP_DATEFORMAT_WS): null);
