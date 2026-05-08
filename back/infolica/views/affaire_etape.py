@@ -13,7 +13,7 @@ from infolica.models.models import Affaire, VAffaire, AffaireType, Facture
 from infolica.scripts.mail_templates import MailTemplates
 from infolica.scripts.utils import Utils
 from infolica.scripts.authentication import check_connected
-import os
+from datetime import datetime
 
 
 ###########################################################
@@ -116,8 +116,14 @@ def etapes_new_view(request):
     chef_equipe_id = request.params["chef_equipe_id"] if "chef_equipe_id" in request.params else None
     operateur_id = request.params["operateur_id"] if "operateur_id" in request.params else None
 
+    ## transform multidict to dict and get datetime here
+    params = {}
+    for k in set(request.params.keys()):
+        params[k] = request.params[k]
+    params["datetime"] = datetime.now()
+
     # Add new step
-    model = Utils.addNewRecord(request, AffaireEtape)
+    model = Utils.addNewRecord(request, AffaireEtape, params)
 
     # # send mail
     (lastSteps, affaire_etape_index) = MailTemplates.sendMailAffaireEtape(request, model, chef_equipe_id, operateur_id)

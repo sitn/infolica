@@ -424,7 +424,6 @@ export const logAffaireEtape = async function(affaire_id, etape_id, remarque=nul
     }
 
     formData.append("operateur_id", JSON.parse(localStorage.getItem("infolica_user")).id);
-    formData.append("datetime", moment(new Date()).format(process.env.VUE_APP_DATETIMEFORMAT_WS));
 
     if (remarque) {
         formData.append("remarque", remarque + (remarque_===''? '': ' // ' + remarque_));
