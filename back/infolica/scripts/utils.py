@@ -442,4 +442,4 @@ class Utils(object):
     @classmethod
     def getURLClient(self, request, client_id):
         infolica_url_base = request.registry.settings["infolica_url_base"]
-        return f"{infolica_url_base}/client/edit/{client_id}"
+        return f"{infolica_url_base}/clients/edit/{client_id}"
