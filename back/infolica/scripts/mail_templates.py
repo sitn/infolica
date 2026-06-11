@@ -131,6 +131,7 @@ class MailTemplates(object):
 
             operateurs = Utils.getOperateursActifs(request)
             operateurs = operateurs.join(EtapeMailer, EtapeMailer.operateur_id == Operateur.id).filter(EtapeMailer.etape_id == affaire_etape_notification_client_hors_canton_id, EtapeMailer.sendmail == True).all()
+            mail_list = [op.mail for op in operateurs]
 
             subject = "Infolica - Client hors canton à vérifier"
             client_adress = ", ".join(
